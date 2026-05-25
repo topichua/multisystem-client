@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="56" viewBox="0 0 220 56" role="img" aria-label="Lantoro">
+  <defs>
+    <linearGradient id="lantoro-logo-bg" x1="8" y1="6" x2="48" y2="50" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2563eb" />
+      <stop offset="1" stop-color="#111827" />
+    </linearGradient>
+    <linearGradient id="lantoro-logo-mark" x1="18" y1="14" x2="40" y2="42" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffffff" />
+      <stop offset="1" stop-color="#bfdbfe" />
+    </linearGradient>
+  </defs>
+
+  <rect x="4" y="4" width="48" height="48" rx="14" fill="url(#lantoro-logo-bg)" />
+  <path d="M18 14h8v22h17v7H18V14z" fill="url(#lantoro-logo-mark)" />
+  <circle cx="40" cy="17" r="4" fill="#93c5fd" />
+
+  <text
+    x="68"
+    y="36"
+    fill="#111827"
+    font-family="Roboto Flex, Arial, sans-serif"
+    font-size="28"
+    font-weight="700"
+    letter-spacing="0.5"
+  >
+    Lantoro
+  </text>
+</svg>
