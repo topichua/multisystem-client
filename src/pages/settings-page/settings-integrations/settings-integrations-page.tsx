@@ -69,6 +69,10 @@ const createEmptyIntegrationsByType = (): Record<
   telegram: [],
 });
 
+const isKnownIntegrationType = (
+  type: IntegrationItem['type'],
+): type is IntegrationType => type === 'instagram' || type === 'telegram';
+
 export const SettingsIntegrationsPage = observer(() => {
   const store = useIntegrationsStore();
   const [messageApi, contextHolder] = message.useMessage();
@@ -90,10 +94,7 @@ export const SettingsIntegrationsPage = observer(() => {
   const integrationsByType = useMemo(() => {
     return store.items.reduce<Record<IntegrationType, IntegrationItem[]>>(
       (acc, integration) => {
-        if (
-          integration.type === "instagram" ||
-          integration.type === "telegram"
-        ) {
+        if (isKnownIntegrationType(integration.type)) {
           acc[integration.type].push(integration);
         }
 
