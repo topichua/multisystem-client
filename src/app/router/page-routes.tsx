@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from "react-router";
 import { HomePage } from "@/pages/home-page/home-page";
+import { QuickActionsPage } from "@/pages/home-page/quick-actions/quick-actions-page";
 import { LoginPage } from "@/pages/login-page/login-page";
 import { SettingsPage } from "@/pages/settings-page/settings-page";
 import { SettingsGroupDetailView } from "@/pages/settings-page/settings-groups/settings-group-detail-view";
@@ -39,10 +40,7 @@ export const PageRoutes = () => {
 
       <Route element={<ProtectedRoute />}>
         <Route path={pagesMap.home} element={<HomePage />}>
-          <Route
-            index
-            element={<Navigate to={pagesMap.conversations} replace />}
-          />
+          <Route index element={<QuickActionsPage />} />
           <Route path="conversations" element={<ConversationsPage />}>
             <Route index element={<EmptyConversation />} />
             <Route path=":conversationId" element={<ConversationDetails />} />
@@ -103,7 +101,7 @@ export const PageRoutes = () => {
 
       <Route
         path={pagesMap.fallback}
-        element={<Navigate to={pagesMap.conversations} replace />}
+        element={<Navigate to={pagesMap.home} replace />}
       />
     </Routes>
   );

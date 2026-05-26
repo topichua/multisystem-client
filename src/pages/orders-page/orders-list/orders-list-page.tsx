@@ -45,7 +45,7 @@ export const OrdersListPage = observer(() => {
                     const target = event.target as HTMLElement | null;
                     if (
                       target?.closest(
-                        "a,button,input,select,textarea,[role='button'],.ant-select,.ant-dropdown,.ant-popover",
+                        "a,button,input,select,textarea,[role='button'],[role='combobox'],.ant-select,.rc-select,.ant-dropdown,.ant-popover,[data-qa='layout-orders-list-status-select']",
                       )
                     ) {
                       return;

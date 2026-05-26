@@ -1,0 +1,91 @@
+<svg width="1672" height="941" viewBox="0 0 1672 941" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="pageGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1170 840) rotate(-154) scale(1020 720)">
+      <stop stop-color="#F7EEFF" stop-opacity="0.95"/>
+      <stop offset="0.42" stop-color="#FBFAFF" stop-opacity="0.72"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="1"/>
+    </radialGradient>
+
+    <linearGradient id="topLeftBlob" x1="48" y1="-64" x2="330" y2="154" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E9E1FF" stop-opacity="0.78"/>
+      <stop offset="1" stop-color="#F5F1FF" stop-opacity="0"/>
+    </linearGradient>
+
+    <linearGradient id="bottomLeftBlob" x1="-58" y1="725" x2="330" y2="940" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#DCEBFF" stop-opacity="0.86"/>
+      <stop offset="1" stop-color="#EEF5FF" stop-opacity="0"/>
+    </linearGradient>
+
+    <linearGradient id="rightBlob" x1="1320" y1="650" x2="1670" y2="945" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F4E9FF" stop-opacity="0.95"/>
+      <stop offset="0.55" stop-color="#F7E5FF" stop-opacity="0.72"/>
+      <stop offset="1" stop-color="#FFF1F8" stop-opacity="0.95"/>
+    </linearGradient>
+
+    <linearGradient id="rightSideBlob" x1="1540" y1="430" x2="1688" y2="678" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FBE4FF" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#F7DAFF" stop-opacity="0.25"/>
+    </linearGradient>
+
+    <pattern id="dots" width="29" height="29" patternUnits="userSpaceOnUse">
+      <circle cx="3" cy="3" r="3" fill="#CDB8F6" opacity="0.55"/>
+    </pattern>
+
+    <filter id="softBlur" x="-80" y="-80" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="24"/>
+    </filter>
+  </defs>
+
+  <rect width="1672" height="941" fill="url(#pageGlow)"/>
+
+  <!-- Top-left soft lavender shape -->
+  <path
+    d="M-42 -78C35 -132 178 -118 279 -70C373 -25 354 57 299 109C234 170 112 168 35 127C-45 85 -112 -27 -42 -78Z"
+    fill="url(#topLeftBlob)"
+  />
+
+  <!-- Faint floating circle -->
+  <circle cx="450" cy="119" r="42" stroke="#FFFFFF" stroke-opacity="0.95" stroke-width="1.4"/>
+  <circle cx="450" cy="119" r="43" stroke="#E8DCF8" stroke-opacity="0.25" stroke-width="1"/>
+
+  <!-- Top-right dotted pattern -->
+  <rect x="1408" y="64" width="184" height="130" fill="url(#dots)" opacity="0.65"/>
+
+  <!-- Bottom-left soft blue blob -->
+  <path
+    d="M-86 759C19 690 122 708 229 764C327 834 373 930 395 1000H-86V759Z"
+    fill="url(#bottomLeftBlob)"
+  />
+
+  <!-- Bottom-left thin blue arc -->
+  <path
+    d="M-38 590C61 589 152 620 211 694C268 765 282 848 286 949"
+    stroke="#96D9FF"
+    stroke-opacity="0.58"
+    stroke-width="1.4"
+  />
+
+  <!-- Right-side soft pink shape -->
+  <path
+    d="M1688 382C1606 370 1526 403 1511 480C1492 574 1582 604 1585 684C1588 746 1520 766 1469 753C1400 736 1352 713 1310 740C1260 772 1285 876 1306 941H1688V382Z"
+    fill="url(#rightSideBlob)"
+  />
+
+  <!-- Bottom-right lavender/pink blob -->
+  <path
+    d="M1292 942C1271 866 1294 784 1375 751C1465 714 1527 778 1606 753C1649 740 1674 705 1695 673V942H1292Z"
+    fill="url(#rightBlob)"
+  />
+
+  <!-- Bottom-right flowing line -->
+  <path
+    d="M1263 942C1245 852 1263 744 1350 683C1437 622 1514 734 1620 724C1665 720 1699 699 1725 675"
+    stroke="#E6A9F5"
+    stroke-opacity="0.62"
+    stroke-width="1.3"
+  />
+
+  <!-- Extra subtle ambient glows -->
+  <ellipse cx="1578" cy="906" rx="250" ry="110" fill="#FBE2FF" opacity="0.18" filter="url(#softBlur)"/>
+  <ellipse cx="78" cy="930" rx="260" ry="120" fill="#DCEBFF" opacity="0.18" filter="url(#softBlur)"/>
+</svg>

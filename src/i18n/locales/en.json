@@ -9,6 +9,36 @@
     "openConversationsAria": "Open conversations"
   },
   "brand": "Lantoro",
+  "quickActions": {
+    "title": "Manage your workspace",
+    "subtitle": "Everything you need for daily operations is right at your fingertips.",
+    "cards": {
+      "chats": {
+        "title": "Chats",
+        "description": "View and manage customer conversations."
+      },
+      "products": {
+        "title": "Products",
+        "description": "Browse and manage your product catalog."
+      },
+      "orders": {
+        "title": "Orders",
+        "description": "Track and manage customer orders."
+      },
+      "clients": {
+        "title": "Clients",
+        "description": "Manage client profiles and contact details."
+      },
+      "integrations": {
+        "title": "Integrations",
+        "description": "Connect and manage your external services."
+      },
+      "settings": {
+        "title": "Settings",
+        "description": "Configure workspace settings."
+      }
+    }
+  },
   "settings": {
     "title": "Settings",
     "menu": {

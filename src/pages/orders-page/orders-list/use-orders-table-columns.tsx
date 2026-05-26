@@ -44,7 +44,12 @@ export function useOrdersTableColumns(): TableColumnsType<OrderListItem> {
         key: "status",
         width: 200,
         render: (_, order) => (
-          <OrderStatusSelect orderId={order.id} statusId={order.statusId} />
+          <span
+            onClick={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
+          >
+            <OrderStatusSelect orderId={order.id} statusId={order.statusId} />
+          </span>
         ),
       },
       {
