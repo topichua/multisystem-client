@@ -14,6 +14,7 @@ export const pagesMap = {
   settingsGroups: "/settings/groups",
   settingsUser: "/settings/user",
   settingsSystem: "/settings/system",
+  settingsIntegrations: "/settings/integrations",
   login: "/login",
   fallback: "*",
 } as const;

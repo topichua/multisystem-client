@@ -17,6 +17,7 @@ export const SettingsPage = () => {
       { key: pagesMap.settingsGroups, label: t("settings.menu.groups") },
       { key: pagesMap.settingsUser, label: t("settings.menu.user") },
       { key: pagesMap.settingsSystem, label: t("settings.menu.system") },
+      { key: pagesMap.settingsIntegrations, label: "Integrations" },
     ],
     [t],
   );
@@ -28,6 +29,9 @@ export const SettingsPage = () => {
     }
     if (path.startsWith(pagesMap.settingsSystem)) {
       return pagesMap.settingsSystem;
+    }
+    if (path.startsWith(pagesMap.settingsIntegrations)) {
+      return pagesMap.settingsIntegrations;
     }
     return pagesMap.settingsGroups;
   }, [location.pathname]);

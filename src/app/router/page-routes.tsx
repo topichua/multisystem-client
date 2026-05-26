@@ -7,6 +7,7 @@ import { SettingsGroupsIndex } from "@/pages/settings-page/settings-groups/setti
 import { SettingsGroupsLayout } from "@/pages/settings-page/settings-groups/settings-groups-layout";
 import { SettingsSystemView } from "@/pages/settings-page/settings-system-view";
 import { SettingsUserView } from "@/pages/settings-page/settings-user-view";
+import { SettingsIntegrationsPage } from "@/pages/settings-page/settings-integrations/settings-integrations-page";
 import { ProductsPage } from "@/pages/products-page/products-page";
 import { ProductsCategoriesLayout } from "@/pages/products-page/products-categories/products-categories-layout";
 import { ProductsCategoriesIndex } from "@/pages/products-page/products-categories/products-categories-index";
@@ -56,6 +57,7 @@ export const PageRoutes = () => {
             </Route>
             <Route path="user" element={<SettingsUserView />} />
             <Route path="system" element={<SettingsSystemView />} />
+            <Route path="integrations" element={<SettingsIntegrationsPage />} />
           </Route>
           <Route path="products" element={<ProductsPage />}>
             <Route
