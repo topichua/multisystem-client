@@ -1,13 +1,13 @@
-import { apiClient } from '@/api/api-client';
+import { apiClient } from "@/api/api-client";
 
 import type {
   CategoriesListResponse,
   Category,
   CategoryCreatePayload,
   CategoryUpdatePayload,
-} from '@/features/categories/model/category.types';
+} from "@/features/categories/model/category.types";
 
-const basePath = '/categories';
+const basePath = "/categories";
 
 export const categoriesApi = {
   list: async (): Promise<Category[]> => {
@@ -17,7 +17,10 @@ export const categoriesApi = {
   },
 
   create: async (payload: CategoryCreatePayload): Promise<Category> => {
-    const { data } = await apiClient.post<Category>(basePath, { ...payload, sortOrder: 0 });
+    const { data } = await apiClient.post<Category>(basePath, {
+      ...payload,
+      sortOrder: 0,
+    });
 
     return data;
   },
@@ -28,8 +31,14 @@ export const categoriesApi = {
     return data;
   },
 
-  update: async (id: number, payload: CategoryUpdatePayload): Promise<Category> => {
-    const { data } = await apiClient.patch<Category>(`${basePath}/${id}`, payload);
+  update: async (
+    id: number,
+    payload: CategoryUpdatePayload,
+  ): Promise<Category> => {
+    const { data } = await apiClient.patch<Category>(
+      `${basePath}/${id}`,
+      payload,
+    );
 
     return data;
   },

@@ -1,6 +1,6 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
-import { GroupColorSwatch } from './group-select-visuals';
+import { GroupColorSwatch } from "./group-select-visuals";
 
 const Row = styled.span`
   display: inline-flex;

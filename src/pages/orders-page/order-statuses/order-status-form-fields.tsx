@@ -1,10 +1,10 @@
-import { Checkbox, Form, Input, Typography } from 'antd';
-import { useTranslation } from 'react-i18next';
+import { Checkbox, Form, Input, Typography } from "antd";
+import { useTranslation } from "react-i18next";
 
-import type { OrderStatus } from '@/features/orders/model/order.types';
-import { GroupPresetColorPicker } from '@/pages/settings-page/settings-groups/group-preset-color-picker';
+import type { OrderStatus } from "@/features/orders/model/order.types";
+import { GroupPresetColorPicker } from "@/pages/settings-page/settings-groups/group-preset-color-picker";
 
-import { isDuplicateOrderStatusName } from './order-status-name-validation';
+import { isDuplicateOrderStatusName } from "./order-status-name-validation";
 
 const { Text } = Typography;
 
@@ -29,17 +29,23 @@ export const OrderStatusFormFields = ({
     <>
       <Form.Item
         name="name"
-        label={t('orderStatuses.fieldName')}
+        label={t("orderStatuses.fieldName")}
         rules={[
-          { required: true, message: t('orderStatuses.nameRequired') },
+          { required: true, message: t("orderStatuses.nameRequired") },
           {
             validator: async (_, value: string) => {
-              if (value == null || String(value).trim() === '') {
+              if (value == null || String(value).trim() === "") {
                 return;
               }
 
-              if (isDuplicateOrderStatusName(value, statuses, editingStatusId ?? undefined)) {
-                throw new Error(t('orderStatuses.duplicateName'));
+              if (
+                isDuplicateOrderStatusName(
+                  value,
+                  statuses,
+                  editingStatusId ?? undefined,
+                )
+              ) {
+                throw new Error(t("orderStatuses.duplicateName"));
               }
             },
           },
@@ -49,15 +55,15 @@ export const OrderStatusFormFields = ({
       </Form.Item>
       <Form.Item
         name="color"
-        label={t('orderStatuses.fieldColor')}
-        rules={[{ required: true, message: t('orderStatuses.pickColor') }]}
+        label={t("orderStatuses.fieldColor")}
+        rules={[{ required: true, message: t("orderStatuses.pickColor") }]}
       >
         <GroupPresetColorPicker />
       </Form.Item>
       <Form.Item name="isDefault" valuePropName="checked">
         <Checkbox>
-          {t('orderStatuses.fieldDefault')}{' '}
-          <Text type="secondary">{t('orderStatuses.fieldDefaultHint')}</Text>
+          {t("orderStatuses.fieldDefault")}{" "}
+          <Text type="secondary">{t("orderStatuses.fieldDefaultHint")}</Text>
         </Checkbox>
       </Form.Item>
     </>

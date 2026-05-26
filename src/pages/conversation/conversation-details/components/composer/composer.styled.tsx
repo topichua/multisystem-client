@@ -1,9 +1,9 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
-import { dataQaAttrs } from '@/styled/data-qa-attrs';
+import { dataQaAttrs } from "@/styled/data-qa-attrs";
 
 export const Composer = styled.footer.attrs(() =>
-  dataQaAttrs('layout-conversation-details-composer'),
+  dataQaAttrs("layout-conversation-details-composer"),
 )`
   flex-shrink: 0;
   padding: 12px 16px;
@@ -20,7 +20,8 @@ export const ReplyBanner = styled.div`
   border-radius: ${({ theme }) => theme.radius.semiLarge};
   border-left: 3px solid ${({ theme }) => theme.colors.semantic.primary};
   background: ${({ theme }) => theme.colors.functional.background.natural};
-  box-shadow: inset 0 0 0 1px ${({ theme }) => theme.colors.functional.border.split};
+  box-shadow: inset 0 0 0 1px
+    ${({ theme }) => theme.colors.functional.border.split};
 `;
 
 export const ReplyBannerBody = styled.div`

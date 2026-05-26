@@ -3,21 +3,31 @@ import {
   CopySimpleIcon,
   DotsThreeVerticalIcon,
   TrashIcon,
-} from '@phosphor-icons/react';
-import { Button, Dropdown, Flex, message as antdMessage, Tooltip, Typography } from 'antd';
-import type { MenuProps } from 'antd';
-import { memo, useCallback, useMemo, useRef, useState } from 'react';
-import type { FocusEvent, MouseEvent } from 'react';
-import { useTranslation } from 'react-i18next';
+} from "@phosphor-icons/react";
+import {
+  Button,
+  Dropdown,
+  Flex,
+  message as antdMessage,
+  Tooltip,
+  Typography,
+} from "antd";
+import type { MenuProps } from "antd";
+import { memo, useCallback, useMemo, useRef, useState } from "react";
+import type { FocusEvent, MouseEvent } from "react";
+import { useTranslation } from "react-i18next";
 
-import type { ConversationMessage } from '@/features/conversations/model/types';
-import type { ReplyComposeTarget } from '../../reply-compose-target';
-import { MessageAttachments } from '../message-attachments/message-attachments';
-import { copyTextToClipboard, getMessageClipboardText } from './copy-message-to-clipboard';
-import * as S from './message-item.styled';
-import { normalizeWebhookReactionEmoji } from './normalize-webhook-reaction-emoji';
-import { replyQuoteAuthorLabel } from './reply-quote-author-label';
-import { formatMessageTime } from '@/utils/date-time';
+import type { ConversationMessage } from "@/features/conversations/model/types";
+import type { ReplyComposeTarget } from "../../reply-compose-target";
+import { MessageAttachments } from "../message-attachments/message-attachments";
+import {
+  copyTextToClipboard,
+  getMessageClipboardText,
+} from "./copy-message-to-clipboard";
+import * as S from "./message-item.styled";
+import { normalizeWebhookReactionEmoji } from "./normalize-webhook-reaction-emoji";
+import { replyQuoteAuthorLabel } from "./reply-quote-author-label";
+import { formatMessageTime } from "@/utils/date-time";
 
 const { Text, Paragraph } = Typography;
 
@@ -52,46 +62,51 @@ export const MessageItem = memo(
 
     const fromId = message.from?.id ?? null;
     const isOwn =
-      selfInstagramId != null && fromId != null && String(fromId) === String(selfInstagramId);
+      selfInstagramId != null &&
+      fromId != null &&
+      String(fromId) === String(selfInstagramId);
 
-    const pendingOutbound = message.outboundStatus === 'pending';
-    const failedOutbound = message.outboundStatus === 'failed';
+    const pendingOutbound = message.outboundStatus === "pending";
+    const failedOutbound = message.outboundStatus === "failed";
     const clientTempId = message.clientTempId;
-    const messageText = message.message ?? '';
+    const messageText = message.message ?? "";
     const webhookReaction = message.webhook_messaging?.reaction;
     const reactionEmoji =
-      webhookReaction != null ? normalizeWebhookReactionEmoji(webhookReaction.emoji ?? '') : '';
-    const showReactionBadge = reactionEmoji !== '';
+      webhookReaction != null
+        ? normalizeWebhookReactionEmoji(webhookReaction.emoji ?? "")
+        : "";
+    const showReactionBadge = reactionEmoji !== "";
     const timeLabel = formatMessageTime(message.created_time);
     const hasAttachments = (message.attachments?.data?.length ?? 0) > 0;
     const repliedTo = message.replied_to_message;
-    const hasReplyQuote = repliedTo != null && (repliedTo.message?.trim() ?? '') !== '';
-    const replyTargetId = message.reply_to_id ?? repliedTo?.id ?? '';
-    const replyQuoteScrollable = hasReplyQuote && replyTargetId !== '';
+    const hasReplyQuote =
+      repliedTo != null && (repliedTo.message?.trim() ?? "") !== "";
+    const replyTargetId = message.reply_to_id ?? repliedTo?.id ?? "";
+    const replyQuoteScrollable = hasReplyQuote && replyTargetId !== "";
 
     const handleReplyQuoteActivate = useCallback(() => {
-      if (replyTargetId !== '') {
+      if (replyTargetId !== "") {
         onScrollToMessage(replyTargetId);
       }
     }, [onScrollToMessage, replyTargetId]);
 
     const canStartReply =
       message.id != null &&
-      message.id !== '' &&
-      !message.id.startsWith('local:') &&
-      message.outboundStatus !== 'pending';
+      message.id !== "" &&
+      !message.id.startsWith("local:") &&
+      message.outboundStatus !== "pending";
 
     const replySnippet = useMemo(() => {
       const trimmed = messageText.trim();
       if (trimmed) {
         return trimmed.length > 80
-          ? `${trimmed.slice(0, 80)}${t('messages.ellipsisSnippet')}`
+          ? `${trimmed.slice(0, 80)}${t("messages.ellipsisSnippet")}`
           : trimmed;
       }
       if (hasAttachments) {
-        return t('messages.attachmentSnippet');
+        return t("messages.attachmentSnippet");
       }
-      return t('messages.ellipsisSnippet');
+      return t("messages.ellipsisSnippet");
     }, [messageText, hasAttachments, t]);
 
     const handleReplyClick = useCallback(() => {
@@ -106,23 +121,26 @@ export const MessageItem = memo(
       });
     }, [canStartReply, message.from, message.id, onStartReply, replySnippet]);
 
-    const clipboardText = useMemo(() => getMessageClipboardText(message), [message]);
-    const copyDisabled = clipboardText === '';
+    const clipboardText = useMemo(
+      () => getMessageClipboardText(message),
+      [message],
+    );
+    const copyDisabled = clipboardText === "";
 
     const handleCopy = useCallback(async () => {
       const ok = await copyTextToClipboard(clipboardText);
       if (ok) {
-        antdMessage.success(t('messages.copied'));
+        antdMessage.success(t("messages.copied"));
       } else {
-        antdMessage.error(t('messages.copyFailed'));
+        antdMessage.error(t("messages.copyFailed"));
       }
     }, [clipboardText, t]);
 
-    const menuItems: MenuProps['items'] = useMemo(
+    const menuItems: MenuProps["items"] = useMemo(
       () => [
         {
-          key: 'copy',
-          label: t('messages.copy'),
+          key: "copy",
+          label: t("messages.copy"),
           icon: <CopySimpleIcon size={16} weight="regular" />,
           disabled: copyDisabled,
           onClick: () => {
@@ -130,8 +148,8 @@ export const MessageItem = memo(
           },
         },
         {
-          key: 'delete',
-          label: t('messages.delete'),
+          key: "delete",
+          label: t("messages.delete"),
           icon: <TrashIcon size={16} weight="regular" />,
           disabled: true,
         },
@@ -140,33 +158,39 @@ export const MessageItem = memo(
     );
 
     const showTextTimeRow =
-      timeLabel !== '' ||
+      timeLabel !== "" ||
       messageText.trim().length > 0 ||
       hasAttachments ||
       showReactionBadge ||
       hasReplyQuote;
 
-    const handleMessageRowMouseLeave = useCallback((event: MouseEvent<HTMLDivElement>) => {
-      if (menuOpenRef.current) {
-        return;
-      }
-      const next = event.relatedTarget;
-      if (next instanceof Node && event.currentTarget.contains(next)) {
-        return;
-      }
-      setRowHovered(false);
-    }, []);
+    const handleMessageRowMouseLeave = useCallback(
+      (event: MouseEvent<HTMLDivElement>) => {
+        if (menuOpenRef.current) {
+          return;
+        }
+        const next = event.relatedTarget;
+        if (next instanceof Node && event.currentTarget.contains(next)) {
+          return;
+        }
+        setRowHovered(false);
+      },
+      [],
+    );
 
-    const handleMessageBubbleRowBlur = useCallback((event: FocusEvent<HTMLDivElement>) => {
-      if (menuOpenRef.current) {
-        return;
-      }
-      const next = event.relatedTarget;
-      if (next instanceof Node && event.currentTarget.contains(next)) {
-        return;
-      }
-      setRowHovered(false);
-    }, []);
+    const handleMessageBubbleRowBlur = useCallback(
+      (event: FocusEvent<HTMLDivElement>) => {
+        if (menuOpenRef.current) {
+          return;
+        }
+        const next = event.relatedTarget;
+        if (next instanceof Node && event.currentTarget.contains(next)) {
+          return;
+        }
+        setRowHovered(false);
+      },
+      [],
+    );
 
     const handleDropdownOpenChange = useCallback((open: boolean) => {
       menuOpenRef.current = open;
@@ -195,11 +219,14 @@ export const MessageItem = memo(
               onClick={(event) => event.stopPropagation()}
             >
               {canStartReply && (
-                <Tooltip title={t('messages.replyTooltip')} mouseEnterDelay={0.35}>
+                <Tooltip
+                  title={t("messages.replyTooltip")}
+                  mouseEnterDelay={0.35}
+                >
                   <S.IconHitButton
                     type="button"
                     onClick={handleReplyClick}
-                    aria-label={t('messages.replyAria')}
+                    aria-label={t("messages.replyAria")}
                   >
                     <ArrowBendDoubleUpLeftIcon size={20} weight="regular" />
                   </S.IconHitButton>
@@ -207,13 +234,13 @@ export const MessageItem = memo(
               )}
               <Dropdown
                 menu={{ items: menuItems }}
-                trigger={['click']}
-                placement={isOwn ? 'bottomLeft' : 'bottomRight'}
+                trigger={["click"]}
+                placement={isOwn ? "bottomLeft" : "bottomRight"}
                 onOpenChange={handleDropdownOpenChange}
               >
                 <S.IconHitButton
                   type="button"
-                  aria-label={t('messages.actionsAria')}
+                  aria-label={t("messages.actionsAria")}
                   aria-expanded={menuOpen}
                   aria-haspopup="menu"
                 >
@@ -230,13 +257,15 @@ export const MessageItem = memo(
                 <S.ReplyQuote
                   $isOwn={isOwn}
                   $interactive={replyQuoteScrollable}
-                  role={replyQuoteScrollable ? 'button' : undefined}
+                  role={replyQuoteScrollable ? "button" : undefined}
                   tabIndex={replyQuoteScrollable ? 0 : undefined}
-                  onClick={replyQuoteScrollable ? handleReplyQuoteActivate : undefined}
+                  onClick={
+                    replyQuoteScrollable ? handleReplyQuoteActivate : undefined
+                  }
                   onKeyDown={
                     replyQuoteScrollable
                       ? (event) => {
-                          if (event.key === 'Enter' || event.key === ' ') {
+                          if (event.key === "Enter" || event.key === " ") {
                             event.preventDefault();
                             handleReplyQuoteActivate();
                           }
@@ -247,7 +276,9 @@ export const MessageItem = memo(
                   <S.ReplyQuoteAuthor $isOwn={isOwn}>
                     {replyQuoteAuthorLabel(repliedTo.from)}
                   </S.ReplyQuoteAuthor>
-                  <S.ReplyQuoteText $isOwn={isOwn}>{repliedTo.message}</S.ReplyQuoteText>
+                  <S.ReplyQuoteText $isOwn={isOwn}>
+                    {repliedTo.message}
+                  </S.ReplyQuoteText>
                 </S.ReplyQuote>
               )}
 
@@ -257,7 +288,10 @@ export const MessageItem = memo(
               />
 
               {showTextTimeRow && (
-                <S.TextTimeRow $hasAttachments={hasAttachments} $hasReply={hasReplyQuote}>
+                <S.TextTimeRow
+                  $hasAttachments={hasAttachments}
+                  $hasReply={hasReplyQuote}
+                >
                   {messageText ? (
                     <Paragraph
                       className="conversation-message-body"
@@ -268,20 +302,31 @@ export const MessageItem = memo(
                   ) : (
                     <S.TextTimeSpacer aria-hidden />
                   )}
-                  {timeLabel !== '' && <S.Timestamp $isOwn={isOwn}>{timeLabel}</S.Timestamp>}
+                  {timeLabel !== "" && (
+                    <S.Timestamp $isOwn={isOwn}>{timeLabel}</S.Timestamp>
+                  )}
                 </S.TextTimeRow>
               )}
 
               {isOwn && failedOutbound && clientTempId != null && (
-                <Flex align="center" gap={8} wrap="wrap" style={{ marginTop: 8 }}>
-                  {message.sendError != null && message.sendError !== '' && (
+                <Flex
+                  align="center"
+                  gap={8}
+                  wrap="wrap"
+                  style={{ marginTop: 8 }}
+                >
+                  {message.sendError != null && message.sendError !== "" && (
                     <Text type="danger" style={{ fontSize: 12 }}>
                       {message.sendError}
                     </Text>
                   )}
 
-                  <Button type="link" size="small" onClick={() => onResend(clientTempId)}>
-                    {t('messages.resend')}
+                  <Button
+                    type="link"
+                    size="small"
+                    onClick={() => onResend(clientTempId)}
+                  >
+                    {t("messages.resend")}
                   </Button>
                 </Flex>
               )}
@@ -290,7 +335,9 @@ export const MessageItem = memo(
                 <S.ReactionBadge
                   $isOwn={isOwn}
                   role="img"
-                  aria-label={t('messages.reactionAria', { emoji: reactionEmoji })}
+                  aria-label={t("messages.reactionAria", {
+                    emoji: reactionEmoji,
+                  })}
                 >
                   {reactionEmoji}
                 </S.ReactionBadge>
@@ -300,7 +347,7 @@ export const MessageItem = memo(
 
           {showReadReceipt && isOwn && (
             <S.ReadReceipt $offsetForReaction={showReactionBadge}>
-              {t('messages.seen')}
+              {t("messages.seen")}
             </S.ReadReceipt>
           )}
         </S.MessageWrap>
@@ -309,4 +356,4 @@ export const MessageItem = memo(
   },
 );
 
-MessageItem.displayName = 'MessageItem';
+MessageItem.displayName = "MessageItem";

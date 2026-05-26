@@ -10,12 +10,12 @@ export type VariantFormValues = {
 };
 
 export const defaultVariantFormValues: VariantFormValues = {
-  color: '',
-  size: '',
+  color: "",
+  size: "",
   price: 10,
   quantity: 1,
   inStock: true,
-  sku: '',
-  imageUrl: '',
+  sku: "",
+  imageUrl: "",
   imageFile: null,
 };

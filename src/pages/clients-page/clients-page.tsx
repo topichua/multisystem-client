@@ -1,19 +1,19 @@
-import type { MenuProps } from 'antd';
-import { Menu } from 'antd';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Outlet, useLocation, useNavigate } from 'react-router';
+import type { MenuProps } from "antd";
+import { Menu } from "antd";
+import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { Outlet, useLocation, useNavigate } from "react-router";
 
-import { pagesMap } from '@/app/router/pages-map';
-import { SettingsShell } from '@/components/settings/settings-shell/settings-shell';
+import { pagesMap } from "@/app/router/pages-map";
+import { SettingsShell } from "@/components/settings/settings-shell/settings-shell";
 
 export const ClientsPage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const menuItems: MenuProps['items'] = useMemo(
-    () => [{ key: pagesMap.clientsWorkspace, label: t('clients.pageTitle') }],
+  const menuItems: MenuProps["items"] = useMemo(
+    () => [{ key: pagesMap.clientsWorkspace, label: t("clients.pageTitle") }],
     [t],
   );
 
@@ -28,7 +28,7 @@ export const ClientsPage = () => {
   return (
     <SettingsShell.Root>
       <SettingsShell.Sidebar>
-        <SettingsShell.Title>{t('clients.shellTitle')}</SettingsShell.Title>
+        <SettingsShell.Title>{t("clients.shellTitle")}</SettingsShell.Title>
         <SettingsShell.SidebarScroll>
           <div data-qa="layout-clients-primary-nav">
             <Menu
@@ -36,7 +36,7 @@ export const ClientsPage = () => {
               selectedKeys={[selectedKey]}
               items={menuItems}
               onClick={({ key }) => navigate(String(key))}
-              style={{ borderInlineEnd: 'none' }}
+              style={{ borderInlineEnd: "none" }}
             />
           </div>
         </SettingsShell.SidebarScroll>

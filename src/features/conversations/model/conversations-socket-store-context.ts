@@ -1,5 +1,6 @@
-import { createContext } from 'react';
+import { createContext } from "react";
 
-import type { ConversationsSocketStore } from './conversations-socket-store';
+import type { ConversationsSocketStore } from "./conversations-socket-store";
 
-export const ConversationsSocketStoreContext = createContext<ConversationsSocketStore | null>(null);
+export const ConversationsSocketStoreContext =
+  createContext<ConversationsSocketStore | null>(null);

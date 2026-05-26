@@ -1,8 +1,8 @@
-import { Navigate, Outlet, useLocation } from 'react-router';
+import { Navigate, Outlet, useLocation } from "react-router";
 
-import { useAuth } from '@/features/auth/model/use-auth';
+import { useAuth } from "@/features/auth/model/use-auth";
 
-import { pagesMap } from './pages-map';
+import { pagesMap } from "./pages-map";
 
 export const ProtectedRoute = () => {
   const { isAuthenticated } = useAuth();

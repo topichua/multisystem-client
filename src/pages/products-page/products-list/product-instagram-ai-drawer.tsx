@@ -1,8 +1,8 @@
-import { InstagramLogoIcon } from '@phosphor-icons/react';
-import { Drawer, Flex } from 'antd';
-import { useTranslation } from 'react-i18next';
+import { InstagramLogoIcon } from "@phosphor-icons/react";
+import { Drawer, Flex } from "antd";
+import { useTranslation } from "react-i18next";
 
-import { InstagramAiPanelConnected } from './instagram-ai-panel';
+import { InstagramAiPanelConnected } from "./instagram-ai-panel";
 
 type ProductInstagramAiDrawerProps = {
   open: boolean;
@@ -26,12 +26,15 @@ export const ProductInstagramAiDrawer = ({
       title={
         <Flex align="center" gap={12}>
           <InstagramLogoIcon size={24} />
-          {t('products.instagram.drawerTitle')}
+          {t("products.instagram.drawerTitle")}
         </Flex>
       }
       open={open}
       onClose={onClose}
-      width={Math.min(960, typeof window !== 'undefined' ? window.innerWidth - 24 : 960)}
+      width={Math.min(
+        960,
+        typeof window !== "undefined" ? window.innerWidth - 24 : 960,
+      )}
       destroyOnClose
       styles={{
         body: { padding: 16 },

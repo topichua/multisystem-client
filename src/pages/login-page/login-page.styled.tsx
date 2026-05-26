@@ -1,9 +1,9 @@
-import { Card } from 'antd';
-import styled from 'styled-components';
+import { Card } from "antd";
+import styled from "styled-components";
 
-import { dataQaAttrs } from '@/styled/data-qa-attrs';
+import { dataQaAttrs } from "@/styled/data-qa-attrs";
 
-export const Page = styled.main.attrs(() => dataQaAttrs('layout-login'))`
+export const Page = styled.main.attrs(() => dataQaAttrs("layout-login"))`
   min-height: 100vh;
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -14,7 +14,9 @@ export const Page = styled.main.attrs(() => dataQaAttrs('layout-login'))`
   }
 `;
 
-export const FormSide = styled.section.attrs(() => dataQaAttrs('layout-login-form-side'))`
+export const FormSide = styled.section.attrs(() =>
+  dataQaAttrs("layout-login-form-side"),
+)`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -30,10 +32,10 @@ export const FormSide = styled.section.attrs(() => dataQaAttrs('layout-login-for
     background: ${(props) => props.theme.colors.functional.background.elevated};
 
     &::before {
-      content: '';
+      content: "";
       position: absolute;
       inset: 0;
-      background-image: url('/background-images/login-cover_mobile.jpg');
+      background-image: url("/background-images/login-cover_mobile.jpg");
       background-size: cover;
       background-position: center;
       opacity: 0.3;
@@ -48,7 +50,9 @@ export const FormSide = styled.section.attrs(() => dataQaAttrs('layout-login-for
   }
 `;
 
-export const LoginCard = styled(Card).attrs(() => dataQaAttrs('layout-login-card'))`
+export const LoginCard = styled(Card).attrs(() =>
+  dataQaAttrs("layout-login-card"),
+)`
   width: 100%;
   max-width: 420px;
   border: none;
@@ -60,9 +64,11 @@ export const LoginCard = styled(Card).attrs(() => dataQaAttrs('layout-login-card
   }
 `;
 
-export const ImageSide = styled.section.attrs(() => dataQaAttrs('layout-login-image-side'))`
+export const ImageSide = styled.section.attrs(() =>
+  dataQaAttrs("layout-login-image-side"),
+)`
   min-height: 100vh;
-  background-image: url('/background-images/login-cover.jpg');
+  background-image: url("/background-images/login-cover.jpg");
   background-size: cover;
   background-position: center;
 
@@ -71,7 +77,9 @@ export const ImageSide = styled.section.attrs(() => dataQaAttrs('layout-login-im
   }
 `;
 
-export const Header = styled.div.attrs(() => dataQaAttrs('layout-login-header'))`
+export const Header = styled.div.attrs(() =>
+  dataQaAttrs("layout-login-header"),
+)`
   margin-bottom: 32px;
 `;
 

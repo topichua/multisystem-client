@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const Root = styled.div`
   box-sizing: border-box;
@@ -20,11 +20,13 @@ export const SubSidebar = styled.aside`
   flex-direction: column;
   min-height: 0;
   padding: 16px 8px;
-  border-right: 1px solid ${(props) => props.theme.colors.functional.border.cardBase};
+  border-right: 1px solid
+    ${(props) => props.theme.colors.functional.border.cardBase};
 
   @media (max-width: 767px) {
     border-right: none;
-    border-bottom: 1px solid ${(props) => props.theme.colors.functional.border.cardBase};
+    border-bottom: 1px solid
+      ${(props) => props.theme.colors.functional.border.cardBase};
     padding-top: 8px;
     max-height: min(45vh, 320px);
   }

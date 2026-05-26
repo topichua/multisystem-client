@@ -1,11 +1,14 @@
-import { makeAutoObservable, runInAction } from 'mobx';
+import { makeAutoObservable, runInAction } from "mobx";
 
-import { conversationGroupsApi } from '@/features/conversation-groups/api/conversation-groups-api';
+import { conversationGroupsApi } from "@/features/conversation-groups/api/conversation-groups-api";
 
-import type { ConversationGroup, ConversationGroupWritePayload } from './conversation-group.types';
+import type {
+  ConversationGroup,
+  ConversationGroupWritePayload,
+} from "./conversation-group.types";
 
 const errorMessage = (e: unknown): string =>
-  e instanceof Error ? e.message : 'Something went wrong';
+  e instanceof Error ? e.message : "Something went wrong";
 
 export class ConversationGroupsStore {
   groups: ConversationGroup[] = [];
@@ -55,7 +58,9 @@ export class ConversationGroupsStore {
     }
   };
 
-  createGroup = async (payload: ConversationGroupWritePayload): Promise<void> => {
+  createGroup = async (
+    payload: ConversationGroupWritePayload,
+  ): Promise<void> => {
     runInAction(() => {
       this.saveLoading = true;
     });
@@ -70,7 +75,10 @@ export class ConversationGroupsStore {
     }
   };
 
-  updateGroup = async (id: number, payload: ConversationGroupWritePayload): Promise<void> => {
+  updateGroup = async (
+    id: number,
+    payload: ConversationGroupWritePayload,
+  ): Promise<void> => {
     runInAction(() => {
       this.saveLoading = true;
     });

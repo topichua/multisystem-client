@@ -50,13 +50,13 @@ app -> pages -> features -> shared
 Use the root alias for cross-layer imports:
 
 ```ts
-import { useAuth } from '@/features/auth/model/useAuth';
+import { useAuth } from "@/features/auth/model/useAuth";
 ```
 
 Use relative imports only for colocated files:
 
 ```ts
-import * as S from './login-page.styled';
+import * as S from "./login-page.styled";
 ```
 
 Avoid `../../` imports between top-level layers.

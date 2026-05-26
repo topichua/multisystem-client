@@ -1,15 +1,18 @@
-import { apiClient } from '@/api/api-client';
+import { apiClient } from "@/api/api-client";
 
 export const aiApi = {
   getPosts: async (): Promise<unknown> => {
-    const { data } = await apiClient.get<unknown>('/api/instagram/media');
+    const { data } = await apiClient.get<unknown>("/api/instagram/media");
     return data;
   },
 
   analyzeProduct: async (mediaId: string): Promise<unknown> => {
-    const { data } = await apiClient.get<unknown>('/api/instagram/analyze-product', {
-      params: { mediaId },
-    });
+    const { data } = await apiClient.get<unknown>(
+      "/api/instagram/analyze-product",
+      {
+        params: { mediaId },
+      },
+    );
     return data;
   },
 };

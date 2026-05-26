@@ -1,15 +1,15 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import type { ProductDetails } from '@/features/products/model/product.types';
+import type { ProductDetails } from "@/features/products/model/product.types";
 
-import { filterProductMediaItems } from '../product-detail/product-detail-media';
-import { resolveGalleryPersistPayload } from '../product-edit-persist';
+import { filterProductMediaItems } from "../product-detail/product-detail-media";
+import { resolveGalleryPersistPayload } from "../product-edit-persist";
 import {
   buildGalleryFromProduct,
   createGalleryItemFromFile,
   resolveActiveCoverId,
   type GalleryItem,
-} from './product-gallery';
+} from "./product-gallery";
 
 type UseProductGalleryParams = {
   isEditMode: boolean;
@@ -35,7 +35,10 @@ export const useProductGallery = ({
   const coverIdRef = useRef<string | null>(null);
   const galleryDirtyRef = useRef(false);
 
-  const resolvedCoverId = useMemo(() => resolveActiveCoverId(gallery, coverId), [gallery, coverId]);
+  const resolvedCoverId = useMemo(
+    () => resolveActiveCoverId(gallery, coverId),
+    [gallery, coverId],
+  );
 
   useEffect(() => {
     galleryRef.current = gallery;
@@ -47,14 +50,14 @@ export const useProductGallery = ({
 
   const productMediaKey = useMemo(() => {
     if (!product) {
-      return '';
+      return "";
     }
 
     const media = filterProductMediaItems(product)
       .map((item) => `${item.id}:${item.url.trim()}`)
-      .join('|');
+      .join("|");
 
-    return `${product.mainImageUrl ?? ''}|${media}`;
+    return `${product.mainImageUrl ?? ""}|${media}`;
   }, [product]);
 
   useEffect(() => {
@@ -90,7 +93,12 @@ export const useProductGallery = ({
         resolveGalleryPersistPayload(items, activeCoverId);
 
       try {
-        await onPersistGallery(coverFile, galleryImages, coverUrl, remainingGalleryUrls);
+        await onPersistGallery(
+          coverFile,
+          galleryImages,
+          coverUrl,
+          remainingGalleryUrls,
+        );
       } finally {
         galleryDirtyRef.current = false;
       }
@@ -116,7 +124,10 @@ export const useProductGallery = ({
           URL.revokeObjectURL(victim.previewUrl);
         }
         const next = prev.filter((item) => item.id !== id);
-        const nextCoverId = coverIdRef.current === id ? (next[0]?.id ?? null) : coverIdRef.current;
+        const nextCoverId =
+          coverIdRef.current === id
+            ? (next[0]?.id ?? null)
+            : coverIdRef.current;
 
         if (coverIdRef.current === id) {
           setCoverId(nextCoverId);
@@ -173,13 +184,17 @@ export const useProductGallery = ({
 
   const resolveCoverAndGalleryFiles = useCallback(() => {
     const coverItem =
-      resolvedCoverId != null ? gallery.find((item) => item.id === resolvedCoverId) : null;
+      resolvedCoverId != null
+        ? gallery.find((item) => item.id === resolvedCoverId)
+        : null;
     const coverFile = coverItem?.file ?? null;
     const coverUrl = coverItem?.previewUrl.trim() || null;
     const galleryImages = gallery
       .filter((item) => item.id !== resolvedCoverId && item.file != null)
       .map((item) => item.file as File);
-    const remainingGalleryUrls = gallery.map((item) => item.previewUrl.trim()).filter(Boolean);
+    const remainingGalleryUrls = gallery
+      .map((item) => item.previewUrl.trim())
+      .filter(Boolean);
 
     return { coverFile, coverUrl, galleryImages, remainingGalleryUrls };
   }, [gallery, resolvedCoverId]);

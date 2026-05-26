@@ -1,5 +1,5 @@
-import { Card, Checkbox, Flex, Image, Typography, theme } from 'antd';
-import type { CheckboxChangeEvent } from 'antd/es/checkbox';
+import { Card, Checkbox, Flex, Image, Typography, theme } from "antd";
+import type { CheckboxChangeEvent } from "antd/es/checkbox";
 
 const { Text } = Typography;
 
@@ -21,7 +21,7 @@ export const ProductCard = ({
   size,
   color,
   price,
-  currency = '₴',
+  currency = "₴",
   stockCount,
   checked,
   onChange,
@@ -32,17 +32,17 @@ export const ProductCard = ({
     onChange?.(event.target.checked);
   };
 
-  const meta = [size, color].filter(Boolean).join(' / ');
+  const meta = [size, color].filter(Boolean).join(" / ");
 
   return (
     <Card
       hoverable
       style={{
-        background: 'transparent',
+        background: "transparent",
       }}
       styles={{
         root: {
-          borderColor: '#e2e1e1',
+          borderColor: "#e2e1e1",
         },
         body: {
           padding: 8,
@@ -57,7 +57,7 @@ export const ProductCard = ({
           width={96}
           height={80}
           style={{
-            objectFit: 'cover',
+            objectFit: "cover",
             borderRadius: token.borderRadius,
             background: token.colorFillAlter,
           }}
@@ -75,10 +75,10 @@ export const ProductCard = ({
           )}
 
           <Text strong style={{ fontSize: token.fontSizeHeading4 }}>
-            {price.toLocaleString('uk-UA')} {currency}
+            {price.toLocaleString("uk-UA")} {currency}
           </Text>
 
-          {typeof stockCount === 'number' && (
+          {typeof stockCount === "number" && (
             <Text type="secondary">В наявності ({stockCount} шт.)</Text>
           )}
         </Flex>

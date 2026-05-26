@@ -1,13 +1,15 @@
-import { useState, type ReactNode } from 'react';
+import { useState, type ReactNode } from "react";
 
-import { ConversationGroupsStoreContext } from './conversation-groups-store-context';
-import { ConversationGroupsStore } from './conversation-groups-store';
+import { ConversationGroupsStoreContext } from "./conversation-groups-store-context";
+import { ConversationGroupsStore } from "./conversation-groups-store";
 
 type ConversationGroupsProviderProps = {
   children: ReactNode;
 };
 
-export const ConversationGroupsProvider = ({ children }: ConversationGroupsProviderProps) => {
+export const ConversationGroupsProvider = ({
+  children,
+}: ConversationGroupsProviderProps) => {
   const [store] = useState(() => new ConversationGroupsStore());
 
   return (

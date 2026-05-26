@@ -16,4 +16,6 @@ export type CategoryCreatePayload = {
   parentId: number | null;
 };
 
-export type CategoryUpdatePayload = Partial<Pick<CategoryCreatePayload, 'name' | 'parentId'>>;
+export type CategoryUpdatePayload = Partial<
+  Pick<CategoryCreatePayload, "name" | "parentId">
+>;

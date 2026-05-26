@@ -1,18 +1,18 @@
-import type { FormInstance } from 'antd';
-import { message } from 'antd';
-import { useCallback, useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import type { FormInstance } from "antd";
+import { message } from "antd";
+import { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
-import type { ProductVariantDraft } from '@/features/products/model/product.types';
-import { useAiToolsStore } from '@/features/products/model/use-ai-tools-store';
-import { buildVariantDraftsFromInstagramAnalyze } from '@/features/products/utils/build-variant-drafts-from-instagram-analyze';
+import type { ProductVariantDraft } from "@/features/products/model/product.types";
+import { useAiToolsStore } from "@/features/products/model/use-ai-tools-store";
+import { buildVariantDraftsFromInstagramAnalyze } from "@/features/products/utils/build-variant-drafts-from-instagram-analyze";
 import {
   fetchUrlAsImageFile,
   isDownloadableProductImageUrl,
-} from '@/features/products/utils/fetch-remote-image-file';
+} from "@/features/products/utils/fetch-remote-image-file";
 
-import type { ProductCreateFormValues } from '../product-modal.types';
-import { createGalleryItemFromFile, type GalleryItem } from './product-gallery';
+import type { ProductCreateFormValues } from "../product-modal.types";
+import { createGalleryItemFromFile, type GalleryItem } from "./product-gallery";
 
 type UseProductInstagramFillParams = {
   aiToolsOpen: boolean;
@@ -71,35 +71,50 @@ export const useProductInstagramFill = ({
 
       clearGallery();
 
-      const nextGallery = imageFiles.map((file) => createGalleryItemFromFile(file));
+      const nextGallery = imageFiles.map((file) =>
+        createGalleryItemFromFile(file),
+      );
       replaceGallery(nextGallery);
 
-      const variantDrafts = buildVariantDraftsFromInstagramAnalyze(analyzed.variants, price);
+      const variantDrafts = buildVariantDraftsFromInstagramAnalyze(
+        analyzed.variants,
+        price,
+      );
 
-      const existingReferenceGroupId = form.getFieldValue('referenceGroupId') as string | undefined;
+      const existingReferenceGroupId = form.getFieldValue(
+        "referenceGroupId",
+      ) as string | undefined;
 
       form.setFieldsValue({
         name: analyzed.name,
         description: analyzed.description,
         price,
-        mediaUrl: '',
-        sourceType: 'instagram_post',
+        mediaUrl: "",
+        sourceType: "instagram_post",
         sourceId: selectedPostId,
         referenceGroupId: analyzed.brandOrLabel.trim()
           ? analyzed.brandOrLabel.trim()
-          : (existingReferenceGroupId ?? ''),
+          : (existingReferenceGroupId ?? ""),
         categoryId,
       });
 
       replaceVariantDrafts(variantDrafts);
 
-      message.success(t('products.instagram.fillFormSuccess'));
+      message.success(t("products.instagram.fillFormSuccess"));
       aiToolsStore.clearSelectedPost();
       onFilled();
     } finally {
       setBusy(false);
     }
-  }, [aiToolsStore, clearGallery, form, onFilled, replaceGallery, replaceVariantDrafts, t]);
+  }, [
+    aiToolsStore,
+    clearGallery,
+    form,
+    onFilled,
+    replaceGallery,
+    replaceVariantDrafts,
+    t,
+  ]);
 
   return { busy, analyzeAndFill };
 };

@@ -1,39 +1,49 @@
-import type { TableProps } from 'antd';
-import { message } from 'antd';
-import { useCallback, useEffect, useMemo, useState, type Key, type MouseEvent } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useLocation, useNavigate } from 'react-router';
+import type { TableProps } from "antd";
+import { message } from "antd";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type Key,
+  type MouseEvent,
+} from "react";
+import { useTranslation } from "react-i18next";
+import { useLocation, useNavigate } from "react-router";
 
-import { getProductEditPath, pagesMap } from '@/app/router/pages-map';
-import { getApiErrorMessage } from '@/api/get-api-error-message';
-import { productsApi } from '@/features/products/api/products-api';
+import { getProductEditPath, pagesMap } from "@/app/router/pages-map";
+import { getApiErrorMessage } from "@/api/get-api-error-message";
+import { productsApi } from "@/features/products/api/products-api";
 import {
   PRODUCT_MEDIA_URL_MAX_LENGTH,
   readFileAsDataUrl,
-} from '@/features/products/model/media-url';
-import { flattenCategories } from '@/features/categories/model/category-tree';
-import { useCategoriesStore } from '@/features/categories/model/use-categories-store';
+} from "@/features/products/model/media-url";
+import { flattenCategories } from "@/features/categories/model/category-tree";
+import { useCategoriesStore } from "@/features/categories/model/use-categories-store";
 import type {
   Product,
   ProductVariantCreatePayload,
   ProductVariantDraft,
   ProductVariantUpdatePayload,
-} from '@/features/products/model/product.types';
+} from "@/features/products/model/product.types";
 import {
   canUseVariantImageUrlForMedia,
   resolveVariantDraftForCreate,
   type GalleryItemForVariantResolve,
-} from '@/features/products/utils/resolve-variant-draft-for-create';
-import { readProductsListReturnSearch } from '@/features/products/model/products-list-url';
-import { useProductsStore } from '@/features/products/model/use-products-store';
+} from "@/features/products/utils/resolve-variant-draft-for-create";
+import { readProductsListReturnSearch } from "@/features/products/model/products-list-url";
+import { useProductsStore } from "@/features/products/model/use-products-store";
 
-import { collectRemovedProductMediaIds } from './product-detail/product-gallery-images';
+import { collectRemovedProductMediaIds } from "./product-detail/product-gallery-images";
 import {
   buildProductFieldPatch,
   isProductFieldUnchanged,
   resolveMainImageUrlForGallery,
-} from './product-edit-persist';
-import type { ProductCreateFormValues, ProductEditFormValues } from './product-modal.types';
+} from "./product-edit-persist";
+import type {
+  ProductCreateFormValues,
+  ProductEditFormValues,
+} from "./product-modal.types";
 
 export const useProductsListController = () => {
   const { t } = useTranslation();
@@ -70,7 +80,7 @@ export const useProductsListController = () => {
     [categoriesStore.categories],
   );
 
-  const rowSelection: TableProps<Product>['rowSelection'] = useMemo(
+  const rowSelection: TableProps<Product>["rowSelection"] = useMemo(
     () => ({
       selectedRowKeys,
       onChange: (keys) => setSelectedRowKeys(keys),
@@ -86,7 +96,7 @@ export const useProductsListController = () => {
   );
 
   const notifyAutoSaved = useCallback(() => {
-    messageApi.success(t('products.autoSaveSuccess'), 2);
+    messageApi.success(t("products.autoSaveSuccess"), 2);
   }, [messageApi, t]);
 
   const uploadGalleryImages = useCallback(
@@ -101,10 +111,12 @@ export const useProductsListController = () => {
         ),
       );
 
-      const failedCount = uploadResults.filter((result) => result.status === 'rejected').length;
+      const failedCount = uploadResults.filter(
+        (result) => result.status === "rejected",
+      ).length;
 
       if (failedCount > 0) {
-        messageApi.error(t('products.media.galleryUploadFailed'));
+        messageApi.error(t("products.media.galleryUploadFailed"));
       }
 
       await productsStore.loadProducts({ silent: true });
@@ -131,14 +143,16 @@ export const useProductsListController = () => {
             name: values.name,
             description: values.description,
             status: values.status,
-            sourceType: values.sourceType ?? 'manual',
+            sourceType: values.sourceType ?? "manual",
             sourceId: values.sourceId,
             referenceGroupId: values.referenceGroupId,
             price: values.price,
             currency: values.currency,
             inStock: values.inStock,
             quantity: values.quantity,
-            mainImageUrl: coverImage ? '' : coverUrl?.trim() || (values.mediaUrl ?? '').trim(),
+            mainImageUrl: coverImage
+              ? ""
+              : coverUrl?.trim() || (values.mediaUrl ?? "").trim(),
             categoryId: values.categoryId,
           },
           coverImage ?? null,
@@ -147,7 +161,10 @@ export const useProductsListController = () => {
         await uploadGalleryImages(created.id, galleryImages);
 
         for (const draft of variantDrafts) {
-          const { payload, imageFile } = resolveVariantDraftForCreate(draft, galleryForVariants);
+          const { payload, imageFile } = resolveVariantDraftForCreate(
+            draft,
+            galleryForVariants,
+          );
           const trimmedUrl = payload.imageUrl.trim();
 
           try {
@@ -165,26 +182,32 @@ export const useProductsListController = () => {
             ) {
               if (trimmedUrl.length > PRODUCT_MEDIA_URL_MAX_LENGTH) {
                 messageApi.error(
-                  t('products.media.urlTooLong', { max: PRODUCT_MEDIA_URL_MAX_LENGTH }),
+                  t("products.media.urlTooLong", {
+                    max: PRODUCT_MEDIA_URL_MAX_LENGTH,
+                  }),
                 );
               } else {
-                await productsApi.putVariantMedia(created.id, createdVariantId, {
-                  url: trimmedUrl,
-                  type: 'image',
-                });
+                await productsApi.putVariantMedia(
+                  created.id,
+                  createdVariantId,
+                  {
+                    url: trimmedUrl,
+                    type: "image",
+                  },
+                );
 
                 await productsStore.loadProductById(created.id);
               }
             }
           } catch (e) {
-            notifyError(e, 'products.variantCreateFailed');
+            notifyError(e, "products.variantCreateFailed");
           }
         }
 
-        messageApi.success(t('products.createSuccess'));
+        messageApi.success(t("products.createSuccess"));
         return created;
       } catch (e) {
-        notifyError(e, 'products.createFailed');
+        notifyError(e, "products.createFailed");
         return null;
       }
     },
@@ -198,13 +221,17 @@ export const useProductsListController = () => {
       }
 
       const deleteResults = await Promise.allSettled(
-        removedMediaIds.map((mediaId) => productsApi.deleteMedia(productId, mediaId)),
+        removedMediaIds.map((mediaId) =>
+          productsApi.deleteMedia(productId, mediaId),
+        ),
       );
 
-      const failedCount = deleteResults.filter((result) => result.status === 'rejected').length;
+      const failedCount = deleteResults.filter(
+        (result) => result.status === "rejected",
+      ).length;
 
       if (failedCount > 0) {
-        messageApi.error(t('products.media.deleteFailed'));
+        messageApi.error(t("products.media.deleteFailed"));
       }
     },
     [messageApi, t],
@@ -228,7 +255,10 @@ export const useProductsListController = () => {
         coverUrl,
         coverImage,
       );
-      const removedMediaIds = collectRemovedProductMediaIds(active, remainingGalleryUrls);
+      const removedMediaIds = collectRemovedProductMediaIds(
+        active,
+        remainingGalleryUrls,
+      );
       const coverChanged =
         coverImage != null ||
         mainImageUrl !== (active.mainImageUrl ?? null) ||
@@ -242,10 +272,18 @@ export const useProductsListController = () => {
       try {
         await deleteRemovedGalleryMedia(active.id, removedMediaIds);
 
-        if (coverImage != null || mainImageUrl !== (active.mainImageUrl ?? null)) {
-          await productsStore.updateProduct(active.id, { mainImageUrl }, coverImage ?? null, {
-            silent: true,
-          });
+        if (
+          coverImage != null ||
+          mainImageUrl !== (active.mainImageUrl ?? null)
+        ) {
+          await productsStore.updateProduct(
+            active.id,
+            { mainImageUrl },
+            coverImage ?? null,
+            {
+              silent: true,
+            },
+          );
         }
 
         await uploadGalleryImages(active.id, galleryImages);
@@ -253,15 +291,24 @@ export const useProductsListController = () => {
         notifyAutoSaved();
         return true;
       } catch (e) {
-        notifyError(e, 'products.updateFailed');
+        notifyError(e, "products.updateFailed");
         return false;
       }
     },
-    [deleteRemovedGalleryMedia, notifyAutoSaved, notifyError, productsStore, uploadGalleryImages],
+    [
+      deleteRemovedGalleryMedia,
+      notifyAutoSaved,
+      notifyError,
+      productsStore,
+      uploadGalleryImages,
+    ],
   );
 
   const patchProductField = useCallback(
-    async (field: keyof ProductEditFormValues, values: ProductEditFormValues): Promise<boolean> => {
+    async (
+      field: keyof ProductEditFormValues,
+      values: ProductEditFormValues,
+    ): Promise<boolean> => {
       const active = productsStore.activeProduct;
       if (!active) {
         return false;
@@ -277,11 +324,13 @@ export const useProductsListController = () => {
       }
 
       try {
-        await productsStore.updateProduct(active.id, payload, null, { silent: true });
+        await productsStore.updateProduct(active.id, payload, null, {
+          silent: true,
+        });
         notifyAutoSaved();
         return true;
       } catch (e) {
-        notifyError(e, 'products.updateFailed');
+        notifyError(e, "products.updateFailed");
         return false;
       }
     },
@@ -300,13 +349,13 @@ export const useProductsListController = () => {
     async (productId: number, options?: { navigateToList?: boolean }) => {
       try {
         await productsStore.deleteProduct(productId);
-        messageApi.success(t('products.deleteSuccess'));
+        messageApi.success(t("products.deleteSuccess"));
 
         if (options?.navigateToList) {
           navigateToProductsList();
         }
       } catch (e) {
-        notifyError(e, 'products.deleteFailed');
+        notifyError(e, "products.deleteFailed");
       }
     },
     [messageApi, navigateToProductsList, notifyError, productsStore, t],
@@ -325,10 +374,10 @@ export const useProductsListController = () => {
     (product: Product) => (event: MouseEvent<HTMLElement>) => {
       const target = event.target as HTMLElement;
       if (
-        target.closest('.ant-checkbox-wrapper') ||
-        target.closest('.ant-checkbox') ||
-        target.closest('button') ||
-        target.closest('a')
+        target.closest(".ant-checkbox-wrapper") ||
+        target.closest(".ant-checkbox") ||
+        target.closest("button") ||
+        target.closest("a")
       ) {
         return;
       }
@@ -351,36 +400,42 @@ export const useProductsListController = () => {
         return;
       }
 
-      const trimmedUrl = (payload.imageUrl ?? '').trim();
+      const trimmedUrl = (payload.imageUrl ?? "").trim();
 
       try {
         const createdVariantId = await productsStore.createProductVariant(
           productId,
           {
             ...payload,
-            imageUrl: imageFile ? '' : trimmedUrl,
+            imageUrl: imageFile ? "" : trimmedUrl,
           },
           imageFile ?? null,
           { silent: options?.silent },
         );
         if (!imageFile && createdVariantId != null && trimmedUrl) {
           if (trimmedUrl.length > PRODUCT_MEDIA_URL_MAX_LENGTH) {
-            messageApi.error(t('products.media.urlTooLong', { max: PRODUCT_MEDIA_URL_MAX_LENGTH }));
+            messageApi.error(
+              t("products.media.urlTooLong", {
+                max: PRODUCT_MEDIA_URL_MAX_LENGTH,
+              }),
+            );
           } else {
             await productsApi.putVariantMedia(productId, createdVariantId, {
               url: trimmedUrl,
-              type: 'image',
+              type: "image",
             });
-            await productsStore.loadProductById(productId, { silent: options?.silent });
+            await productsStore.loadProductById(productId, {
+              silent: options?.silent,
+            });
           }
         }
         if (options?.silent) {
           notifyAutoSaved();
         } else {
-          messageApi.success(t('products.variantCreateSuccess'));
+          messageApi.success(t("products.variantCreateSuccess"));
         }
       } catch (e) {
-        notifyError(e, 'products.variantCreateFailed');
+        notifyError(e, "products.variantCreateFailed");
       }
     },
     [messageApi, notifyAutoSaved, notifyError, productsStore, t],
@@ -398,7 +453,7 @@ export const useProductsListController = () => {
         return;
       }
 
-      const trimmedUrl = (payload.imageUrl ?? '').trim();
+      const trimmedUrl = (payload.imageUrl ?? "").trim();
 
       try {
         await productsStore.updateProductVariant(
@@ -406,7 +461,7 @@ export const useProductsListController = () => {
           variantId,
           {
             ...payload,
-            imageUrl: imageFile ? '' : trimmedUrl || null,
+            imageUrl: imageFile ? "" : trimmedUrl || null,
           },
           { silent: options?.silent },
         );
@@ -414,29 +469,37 @@ export const useProductsListController = () => {
         if (imageFile) {
           const dataUrl = await readFileAsDataUrl(imageFile);
           if (dataUrl.length > PRODUCT_MEDIA_URL_MAX_LENGTH) {
-            messageApi.error(t('products.media.urlTooLong', { max: PRODUCT_MEDIA_URL_MAX_LENGTH }));
+            messageApi.error(
+              t("products.media.urlTooLong", {
+                max: PRODUCT_MEDIA_URL_MAX_LENGTH,
+              }),
+            );
             return;
           }
           await productsApi.putVariantMedia(productId, variantId, {
             url: dataUrl,
-            type: 'image',
+            type: "image",
           });
-          await productsStore.loadProductById(productId, { silent: options?.silent });
+          await productsStore.loadProductById(productId, {
+            silent: options?.silent,
+          });
         } else if (trimmedUrl) {
           await productsApi.putVariantMedia(productId, variantId, {
             url: trimmedUrl,
-            type: 'image',
+            type: "image",
           });
-          await productsStore.loadProductById(productId, { silent: options?.silent });
+          await productsStore.loadProductById(productId, {
+            silent: options?.silent,
+          });
         }
 
         if (options?.silent) {
           notifyAutoSaved();
         } else {
-          messageApi.success(t('products.variantUpdateSuccess'));
+          messageApi.success(t("products.variantUpdateSuccess"));
         }
       } catch (e) {
-        notifyError(e, 'products.variantUpdateFailed');
+        notifyError(e, "products.variantUpdateFailed");
       }
     },
     [messageApi, notifyAutoSaved, notifyError, productsStore, t],
@@ -451,9 +514,9 @@ export const useProductsListController = () => {
 
       try {
         await productsStore.deleteProductVariant(productId, variantId);
-        messageApi.success(t('products.variantDeleteSuccess'));
+        messageApi.success(t("products.variantDeleteSuccess"));
       } catch (e) {
-        notifyError(e, 'products.variantDeleteFailed');
+        notifyError(e, "products.variantDeleteFailed");
       }
     },
     [messageApi, notifyError, productsStore, t],
@@ -467,7 +530,7 @@ export const useProductsListController = () => {
     try {
       await productsStore.loadProductById(id);
     } catch (e) {
-      notifyError(e, 'products.detailLoadFailed');
+      notifyError(e, "products.detailLoadFailed");
     }
   }, [notifyError, productsStore]);
 

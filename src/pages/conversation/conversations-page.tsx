@@ -1,9 +1,9 @@
-import { Outlet } from 'react-router';
+import { Outlet } from "react-router";
 
-import { ConversationsShell } from '@/components/layout/conversations-shell';
+import { ConversationsShell } from "@/components/layout/conversations-shell";
 
-import { ConversationGroupsPane } from './conversation-groups-pane/conversation-groups-pane';
-import { Conversation } from './conversation-list';
+import { ConversationGroupsPane } from "./conversation-groups-pane/conversation-groups-pane";
+import { Conversation } from "./conversation-list";
 
 export const ConversationsPage = () => {
   return (

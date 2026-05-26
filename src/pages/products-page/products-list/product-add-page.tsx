@@ -1,19 +1,19 @@
-import { ArrowLeftIcon } from '@phosphor-icons/react';
-import { Button, Flex, Popconfirm, Spin } from 'antd';
-import { observer } from 'mobx-react-lite';
-import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router';
-import AIAssistanceIcon from '@/components/icons/ai-assistance/AIAssistance.svg?react';
-import { pagesMap } from '@/app/router/pages-map';
-import { PaneDetailLayout } from '@/components/layout/pane-detail-layout';
-import { PaneSectionTitle } from '@/components/layout/pane-frame';
+import { ArrowLeftIcon } from "@phosphor-icons/react";
+import { Button, Flex, Popconfirm, Spin } from "antd";
+import { observer } from "mobx-react-lite";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useNavigate, useParams } from "react-router";
+import AIAssistanceIcon from "@/components/icons/ai-assistance/AIAssistance.svg?react";
+import { pagesMap } from "@/app/router/pages-map";
+import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
+import { PaneSectionTitle } from "@/components/layout/pane-frame";
 
-import { AiToolsProvider } from '@/features/products/model/ai-tools-provider';
+import { AiToolsProvider } from "@/features/products/model/ai-tools-provider";
 
-import { ProductCreateForm } from './product-create-form';
-import { useProductsListController } from './use-products-list-controller';
-import styled, { css } from 'styled-components';
+import { ProductCreateForm } from "./product-create-form";
+import { useProductsListController } from "./use-products-list-controller";
+import styled, { css } from "styled-components";
 
 export const ProductAddPage = observer(() => {
   const { productId } = useParams<{ productId?: string }>();
@@ -60,38 +60,51 @@ export const ProductAddPage = observer(() => {
   const activeProduct = productsStore.activeProduct;
   const pageLoading =
     isEditMode &&
-    (productsStore.detailLoading || (activeProduct == null && productsStore.detailError == null));
+    (productsStore.detailLoading ||
+      (activeProduct == null && productsStore.detailError == null));
 
   return (
     <>
       {contextHolder}
       <PaneDetailLayout.Root inset>
         <PaneDetailLayout.Header
-          data-qa={isEditMode ? 'layout-product-edit-header' : 'layout-product-add-header'}
+          data-qa={
+            isEditMode
+              ? "layout-product-edit-header"
+              : "layout-product-add-header"
+          }
         >
-          <Flex vertical gap={12} style={{ width: '100%' }}>
+          <Flex vertical gap={12} style={{ width: "100%" }}>
             <Button
               type="text"
               icon={<ArrowLeftIcon size={20} />}
               onClick={navigateToProductsList}
-              style={{ alignSelf: 'flex-start', paddingInlineStart: 0 }}
+              style={{ alignSelf: "flex-start", paddingInlineStart: 0 }}
             >
-              {t('products.detailBackToList')}
+              {t("products.detailBackToList")}
             </Button>
             <Flex align="center" justify="space-between" wrap="wrap" gap={12}>
               <PaneSectionTitle>
-                {isEditMode ? t('products.modalEditTitle') : t('products.modalCreateTitle')}
+                {isEditMode
+                  ? t("products.modalEditTitle")
+                  : t("products.modalCreateTitle")}
               </PaneSectionTitle>
               <Flex gap={8} wrap="wrap">
                 {isEditMode && activeProduct ? (
                   <Popconfirm
-                    title={t('products.deleteConfirm')}
+                    title={t("products.deleteConfirm")}
                     onConfirm={() =>
-                      void handleDeleteById(activeProduct.id, { navigateToList: true })
+                      void handleDeleteById(activeProduct.id, {
+                        navigateToList: true,
+                      })
                     }
                   >
-                    <Button danger loading={productsStore.deleteLoading} disabled={pageLoading}>
-                      {t('products.delete')}
+                    <Button
+                      danger
+                      loading={productsStore.deleteLoading}
+                      disabled={pageLoading}
+                    >
+                      {t("products.delete")}
                     </Button>
                   </Popconfirm>
                 ) : null}
@@ -109,12 +122,14 @@ export const ProductAddPage = observer(() => {
           </Flex>
         </PaneDetailLayout.Header>
         <PaneDetailLayout.Body
-          data-qa={isEditMode ? 'layout-product-edit-body' : 'layout-product-add-body'}
+          data-qa={
+            isEditMode ? "layout-product-edit-body" : "layout-product-add-body"
+          }
         >
           <Spin spinning={pageLoading}>
             <AiToolsProvider>
               <ProductCreateForm
-                mode={isEditMode ? 'edit' : 'create'}
+                mode={isEditMode ? "edit" : "create"}
                 product={activeProduct}
                 aiToolsOpen={aiToolsOpen}
                 setAiToolsOpen={setAiToolsOpen}

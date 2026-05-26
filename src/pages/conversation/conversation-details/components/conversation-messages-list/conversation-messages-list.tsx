@@ -1,12 +1,15 @@
-import { Flex, Spin } from 'antd';
-import { Fragment, memo } from 'react';
+import { Flex, Spin } from "antd";
+import { Fragment, memo } from "react";
 
-import type { ConversationMessage } from '@/features/conversations/model/types';
+import type { ConversationMessage } from "@/features/conversations/model/types";
 
-import * as S from '../../conversation-details.styled';
-import type { ReplyComposeTarget } from '../../reply-compose-target';
-import { MessageItem } from '../message-item/message-item';
-import { formatConversationDayLabel, isSameConversationDay } from '@/utils/date-time';
+import * as S from "../../conversation-details.styled";
+import type { ReplyComposeTarget } from "../../reply-compose-target";
+import { MessageItem } from "../message-item/message-item";
+import {
+  formatConversationDayLabel,
+  isSameConversationDay,
+} from "@/utils/date-time";
 
 type ConversationMessagesListProps = {
   chronologicalMessages: ConversationMessage[];
@@ -30,20 +33,26 @@ export const ConversationMessagesList = memo(function ConversationMessagesList({
   return (
     <S.MessagesInner>
       {loadingOlderMessages && (
-        <Flex justify="center" style={{ padding: '10px 0 4px' }}>
+        <Flex justify="center" style={{ padding: "10px 0 4px" }}>
           <Spin size="small" />
         </Flex>
       )}
       {chronologicalMessages.map((message, index) => {
-        const prevMessage = index > 0 ? chronologicalMessages[index - 1] : undefined;
+        const prevMessage =
+          index > 0 ? chronologicalMessages[index - 1] : undefined;
         const showDaySeparator =
           prevMessage == null ||
-          !isSameConversationDay(message.created_time, prevMessage.created_time);
+          !isSameConversationDay(
+            message.created_time,
+            prevMessage.created_time,
+          );
         const dayLabel = formatConversationDayLabel(message.created_time);
 
         return (
-          <Fragment key={message.clientTempId ?? message.id ?? `message-${index}`}>
-            {showDaySeparator && dayLabel !== '' && (
+          <Fragment
+            key={message.clientTempId ?? message.id ?? `message-${index}`}
+          >
+            {showDaySeparator && dayLabel !== "" && (
               <S.DaySeparator role="separator" aria-label={dayLabel}>
                 <span>{dayLabel}</span>
               </S.DaySeparator>
@@ -53,7 +62,9 @@ export const ConversationMessagesList = memo(function ConversationMessagesList({
               index={index}
               selfInstagramId={selfInstagramId}
               showReadReceipt={
-                index === lastOwnMessageIndex && message.read_at != null && message.read_at !== ''
+                index === lastOwnMessageIndex &&
+                message.read_at != null &&
+                message.read_at !== ""
               }
               onResend={onResend}
               onScrollToMessage={onScrollToMessage}
@@ -66,4 +77,4 @@ export const ConversationMessagesList = memo(function ConversationMessagesList({
   );
 });
 
-ConversationMessagesList.displayName = 'ConversationMessagesList';
+ConversationMessagesList.displayName = "ConversationMessagesList";

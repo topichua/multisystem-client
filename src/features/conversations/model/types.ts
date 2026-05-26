@@ -40,7 +40,7 @@ export type MessageToField = {
   data: MessageRecipient[];
 };
 
-export type MessageOutboundStatus = 'pending' | 'failed';
+export type MessageOutboundStatus = "pending" | "failed";
 
 export type MessagesPaging = {
   cursors?: { before?: string; after?: string };

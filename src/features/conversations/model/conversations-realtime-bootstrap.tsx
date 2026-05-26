@@ -1,12 +1,12 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
-import { useAuth } from '@/features/auth/model/use-auth';
-import { tokenStorage } from '@/features/auth/model/token-storage';
-import { useUserStore } from '@/features/auth/model/use-user-store';
-import { installMessageNotificationAudioUnlock } from '@/features/conversations/realtime/play-new-message-notification';
+import { useAuth } from "@/features/auth/model/use-auth";
+import { tokenStorage } from "@/features/auth/model/token-storage";
+import { useUserStore } from "@/features/auth/model/use-user-store";
+import { installMessageNotificationAudioUnlock } from "@/features/conversations/realtime/play-new-message-notification";
 
-import type { ConversationStore } from './conversation-store';
-import type { ConversationsSocketStore } from './conversations-socket-store';
+import type { ConversationStore } from "./conversation-store";
+import type { ConversationsSocketStore } from "./conversations-socket-store";
 
 type ConversationsRealtimeBootstrapProps = {
   conversationStore: ConversationStore;
@@ -21,7 +21,9 @@ export const ConversationsRealtimeBootstrap = ({
   const { company } = useUserStore();
 
   useEffect(() => {
-    conversationStore.setSelfInstagramAccountId(company?.instagramAccountId ?? null);
+    conversationStore.setSelfInstagramAccountId(
+      company?.instagramAccountId ?? null,
+    );
   }, [company?.instagramAccountId, conversationStore]);
 
   useEffect(() => {

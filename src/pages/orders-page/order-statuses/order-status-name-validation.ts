@@ -1,4 +1,4 @@
-import type { OrderStatus } from '@/features/orders/model/order.types';
+import type { OrderStatus } from "@/features/orders/model/order.types";
 
 const normalizeNameKey = (name: string): string => name.trim().toLowerCase();
 
@@ -9,7 +9,7 @@ export const isDuplicateOrderStatusName = (
 ): boolean => {
   const key = normalizeNameKey(name);
 
-  if (key === '') {
+  if (key === "") {
     return false;
   }
 

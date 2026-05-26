@@ -1,20 +1,20 @@
-import { apiClient } from '@/api/api-client';
+import { apiClient } from "@/api/api-client";
 
 import type {
   Client,
   ClientCreatePayload,
   ClientInstagramAssociationResponse,
   ClientUpdatePayload,
-} from '@/features/clients/model/client.types';
+} from "@/features/clients/model/client.types";
 
-const basePath = '/clients';
+const basePath = "/clients";
 
 function normalizeClientsList(data: unknown): Client[] {
   if (Array.isArray(data)) {
     return data as Client[];
   }
 
-  if (data && typeof data === 'object') {
+  if (data && typeof data === "object") {
     const record = data as Record<string, unknown>;
 
     if (Array.isArray(record.items)) {
@@ -25,7 +25,7 @@ function normalizeClientsList(data: unknown): Client[] {
       return record.clients as Client[];
     }
 
-    if (record.client != null && typeof record.client === 'object') {
+    if (record.client != null && typeof record.client === "object") {
       return [record.client as Client];
     }
   }
@@ -47,18 +47,22 @@ export const clientsApi = {
       params: { instagramId },
     });
 
-    if (!data || typeof data !== 'object') {
-      return { associated: false, status: '' };
+    if (!data || typeof data !== "object") {
+      return { associated: false, status: "" };
     }
 
     const record = data as Record<string, unknown>;
     const associated = Boolean(record.associated);
-    const status = typeof record.status === 'string' ? record.status : '';
+    const status = typeof record.status === "string" ? record.status : "";
     const rawClient = record.client;
     const client =
-      rawClient != null && typeof rawClient === 'object' ? (rawClient as Client) : undefined;
+      rawClient != null && typeof rawClient === "object"
+        ? (rawClient as Client)
+        : undefined;
 
-    return client !== undefined ? { associated, status, client } : { associated, status };
+    return client !== undefined
+      ? { associated, status, client }
+      : { associated, status };
   },
 
   getById: async (id: number): Promise<Client> => {

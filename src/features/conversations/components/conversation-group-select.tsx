@@ -1,22 +1,22 @@
-import { message, Select, Space } from 'antd';
-import { observer } from 'mobx-react-lite';
-import { useCallback, useMemo, useState } from 'react';
-import type { CSSProperties } from 'react';
-import { useTranslation } from 'react-i18next';
+import { message, Select, Space } from "antd";
+import { observer } from "mobx-react-lite";
+import { useCallback, useMemo, useState } from "react";
+import type { CSSProperties } from "react";
+import { useTranslation } from "react-i18next";
 
-import { getApiErrorMessage } from '@/api/get-api-error-message';
+import { getApiErrorMessage } from "@/api/get-api-error-message";
 import {
   GroupColoredNameTag,
   GroupColorSwatch,
   GroupOptionWithSwatch,
-} from '@/features/conversation-groups/components/group-select-visuals';
+} from "@/features/conversation-groups/components/group-select-visuals";
 import {
   type GroupSelectOptionData,
   toGroupSelectOptions,
-} from '@/features/conversation-groups/group-select-options';
-import { useEnsureConversationGroupsLoaded } from '@/features/conversation-groups/model/use-ensure-conversation-groups-loaded';
-import { useConversationGroupsStore } from '@/features/conversation-groups/model/use-conversation-groups-store';
-import { useConversationsStore } from '@/features/conversations/model/use-conversations-store';
+} from "@/features/conversation-groups/group-select-options";
+import { useEnsureConversationGroupsLoaded } from "@/features/conversation-groups/model/use-ensure-conversation-groups-loaded";
+import { useConversationGroupsStore } from "@/features/conversation-groups/model/use-conversation-groups-store";
+import { useConversationsStore } from "@/features/conversations/model/use-conversations-store";
 
 type ConversationGroupSelectProps = {
   conversationId: string | undefined;
@@ -27,7 +27,13 @@ type ConversationGroupSelectProps = {
 };
 
 export const ConversationGroupSelect = observer(
-  ({ conversationId, groupId, disabled, className, style }: ConversationGroupSelectProps) => {
+  ({
+    conversationId,
+    groupId,
+    disabled,
+    className,
+    style,
+  }: ConversationGroupSelectProps) => {
     const { t } = useTranslation();
     useEnsureConversationGroupsLoaded();
 
@@ -36,7 +42,10 @@ export const ConversationGroupSelect = observer(
     const [messageApi, contextHolder] = message.useMessage();
     const [saving, setSaving] = useState(false);
 
-    const options = useMemo(() => toGroupSelectOptions(groupsStore.groups), [groupsStore.groups]);
+    const options = useMemo(
+      () => toGroupSelectOptions(groupsStore.groups),
+      [groupsStore.groups],
+    );
 
     const applyGroup = useCallback(
       async (next: number | null) => {
@@ -47,9 +56,14 @@ export const ConversationGroupSelect = observer(
         setSaving(true);
 
         try {
-          await conversationsStore.updateConversationGroup(conversationId, next);
+          await conversationsStore.updateConversationGroup(
+            conversationId,
+            next,
+          );
         } catch (e) {
-          messageApi.error(getApiErrorMessage(e, t('groups.updateConversationGroupError')));
+          messageApi.error(
+            getApiErrorMessage(e, t("groups.updateConversationGroupError")),
+          );
         } finally {
           setSaving(false);
         }
@@ -68,7 +82,7 @@ export const ConversationGroupSelect = observer(
           className={className}
           style={{ minWidth: 200, ...style }}
           allowClear
-          placeholder={t('conversation.groupSelectPlaceholder')}
+          placeholder={t("conversation.groupSelectPlaceholder")}
           loading={loading}
           disabled={selectDisabled}
           value={groupId === null ? undefined : groupId}
@@ -76,13 +90,19 @@ export const ConversationGroupSelect = observer(
           optionRender={(option) => {
             const data = option.data as GroupSelectOptionData;
 
-            return <GroupOptionWithSwatch label={data.label} color={data.color} />;
+            return (
+              <GroupOptionWithSwatch label={data.label} color={data.color} />
+            );
           }}
           labelRender={(props) => {
             const id = props.value as number | undefined;
 
             if (id == null) {
-              return <span style={{ color: 'rgba(0,0,0,0.45)' }}>{t('conversation.noGroup')}</span>;
+              return (
+                <span style={{ color: "rgba(0,0,0,0.45)" }}>
+                  {t("conversation.noGroup")}
+                </span>
+              );
             }
 
             const g = groupsStore.groups.find((x) => x.id === id);
@@ -103,7 +123,7 @@ export const ConversationGroupSelect = observer(
             void applyGroup(next);
           }}
           popupMatchSelectWidth={false}
-          showSearch={{ optionFilterProp: 'label' }}
+          showSearch={{ optionFilterProp: "label" }}
         />
       </>
     );

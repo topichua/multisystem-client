@@ -1,8 +1,8 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
-import { dataQaAttrs } from '@/styled/data-qa-attrs';
+import { dataQaAttrs } from "@/styled/data-qa-attrs";
 
-export const PageLayout = styled.main.attrs(() => dataQaAttrs('layout-app'))`
+export const PageLayout = styled.main.attrs(() => dataQaAttrs("layout-app"))`
   box-sizing: border-box;
   height: 100vh;
   max-height: 100vh;
@@ -15,7 +15,9 @@ export const PageLayout = styled.main.attrs(() => dataQaAttrs('layout-app'))`
   }
 `;
 
-export const WorkspaceLayout = styled.section.attrs(() => dataQaAttrs('layout-workspace'))`
+export const WorkspaceLayout = styled.section.attrs(() =>
+  dataQaAttrs("layout-workspace"),
+)`
   box-sizing: border-box;
   background: transparent;
   display: grid;
@@ -35,7 +37,9 @@ export const WorkspaceLayout = styled.section.attrs(() => dataQaAttrs('layout-wo
   }
 `;
 
-export const MobileDock = styled.div.attrs(() => dataQaAttrs('layout-mobile-dock'))`
+export const MobileDock = styled.div.attrs(() =>
+  dataQaAttrs("layout-mobile-dock"),
+)`
   display: none;
 
   @media (max-width: 767px) {
@@ -50,7 +54,8 @@ export const MobileDock = styled.div.attrs(() => dataQaAttrs('layout-mobile-dock
     z-index: 100;
     padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
     background: ${({ theme }) => theme.colors.functional.background.elevated};
-    border-top: 1px solid ${({ theme }) => theme.colors.functional.border.cardBase};
+    border-top: 1px solid
+      ${({ theme }) => theme.colors.functional.border.cardBase};
     box-sizing: border-box;
   }
 `;

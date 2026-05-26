@@ -1,8 +1,10 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
-import { dataQaAttrs } from '@/styled/data-qa-attrs';
+import { dataQaAttrs } from "@/styled/data-qa-attrs";
 
-export const Root = styled.section.attrs(() => dataQaAttrs('layout-conversations-shell'))`
+export const Root = styled.section.attrs(() =>
+  dataQaAttrs("layout-conversations-shell"),
+)`
   background: transparent;
   display: grid;
   grid-template-columns: 240px 340px minmax(0, 1fr);
@@ -26,7 +28,9 @@ export const Root = styled.section.attrs(() => dataQaAttrs('layout-conversations
   }
 `;
 
-export const ListPane = styled.aside.attrs(() => dataQaAttrs('layout-conversations-list'))`
+export const ListPane = styled.aside.attrs(() =>
+  dataQaAttrs("layout-conversations-list"),
+)`
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -37,7 +41,9 @@ export const ListPane = styled.aside.attrs(() => dataQaAttrs('layout-conversatio
   }
 `;
 
-export const ThreadPane = styled.main.attrs(() => dataQaAttrs('layout-conversations-thread'))`
+export const ThreadPane = styled.main.attrs(() =>
+  dataQaAttrs("layout-conversations-thread"),
+)`
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -46,7 +52,8 @@ export const ThreadPane = styled.main.attrs(() => dataQaAttrs('layout-conversati
   min-width: 0;
   min-height: 0;
   overflow: hidden;
-  border-left: 1px solid ${(props) => props.theme.colors.functional.border.cardBase};
+  border-left: 1px solid
+    ${(props) => props.theme.colors.functional.border.cardBase};
 
   @media (max-width: 767px) {
     border-left: none;

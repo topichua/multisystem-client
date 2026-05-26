@@ -1,1 +1,1 @@
-export { PaneDetailLayout } from './pane-detail-layout';
+export { PaneDetailLayout } from "./pane-detail-layout";

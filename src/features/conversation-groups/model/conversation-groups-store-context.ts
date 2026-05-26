@@ -1,5 +1,6 @@
-import { createContext } from 'react';
+import { createContext } from "react";
 
-import type { ConversationGroupsStore } from './conversation-groups-store';
+import type { ConversationGroupsStore } from "./conversation-groups-store";
 
-export const ConversationGroupsStoreContext = createContext<ConversationGroupsStore | null>(null);
+export const ConversationGroupsStoreContext =
+  createContext<ConversationGroupsStore | null>(null);

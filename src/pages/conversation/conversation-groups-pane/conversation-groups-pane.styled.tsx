@@ -1,13 +1,16 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
-import { dataQaAttrs } from '@/styled/data-qa-attrs';
+import { dataQaAttrs } from "@/styled/data-qa-attrs";
 
-export const Aside = styled.aside.attrs(() => dataQaAttrs('layout-conversations-groups'))`
+export const Aside = styled.aside.attrs(() =>
+  dataQaAttrs("layout-conversations-groups"),
+)`
   display: flex;
   flex-direction: column;
   min-height: 0;
   padding: 16px;
-  border-right: 1px solid ${(props) => props.theme.colors.functional.border.cardBase};
+  border-right: 1px solid
+    ${(props) => props.theme.colors.functional.border.cardBase};
 
   @media (max-width: 767px) {
     display: none;

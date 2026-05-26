@@ -1,4 +1,4 @@
-import type { Conversation } from '@/features/conversations/model/types';
+import type { Conversation } from "@/features/conversations/model/types";
 
 /** Raw message shape from GET /conversations/:id/messages and WebSocket pushes. */
 export type InstagramMessageDto = {
@@ -32,7 +32,9 @@ export type ConversationsUpdatePayload = {
   message?: InstagramMessageDto;
 };
 
-export type ConversationsUpdateHandler = (payload: ConversationsUpdatePayload) => void;
+export type ConversationsUpdateHandler = (
+  payload: ConversationsUpdatePayload,
+) => void;
 
 export type ConversationsRealtimeAuthErrorHandler = () => void;
 

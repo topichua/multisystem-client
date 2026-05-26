@@ -1,11 +1,11 @@
-import { makeAutoObservable, runInAction } from 'mobx';
-import { io, type Socket } from 'socket.io-client';
+import { makeAutoObservable, runInAction } from "mobx";
+import { io, type Socket } from "socket.io-client";
 
 import type {
   ConversationsRealtimeConnectOptions,
   ConversationsUpdateHandler,
   ConversationsUpdatePayload,
-} from '@/features/conversations/realtime/conversations-realtime.types';
+} from "@/features/conversations/realtime/conversations-realtime.types";
 
 export class ConversationsSocketStore {
   connected = false;
@@ -43,9 +43,9 @@ export class ConversationsSocketStore {
 
     this.currentJwt = jwt;
 
-    this.socket = io(`${apiBaseUrl.replace(/\/$/, '')}/conversations`, {
+    this.socket = io(`${apiBaseUrl.replace(/\/$/, "")}/conversations`, {
       auth: { token: jwt },
-      transports: ['websocket', 'polling'],
+      transports: ["websocket", "polling"],
       withCredentials: true,
     });
 
@@ -69,12 +69,12 @@ export class ConversationsSocketStore {
     }
 
     this.subscribedConversationIds.add(conversationId);
-    this.socket?.emit('subscribe', { conversationId });
+    this.socket?.emit("subscribe", { conversationId });
   };
 
   unsubscribe = (conversationId: number): void => {
     this.subscribedConversationIds.delete(conversationId);
-    this.socket?.emit('unsubscribe', { conversationId });
+    this.socket?.emit("unsubscribe", { conversationId });
   };
 
   onUpdate = (handler: ConversationsUpdateHandler): (() => void) => {
@@ -101,7 +101,7 @@ export class ConversationsSocketStore {
     }
 
     for (const conversationId of this.subscribedConversationIds) {
-      this.socket.emit('subscribe', { conversationId });
+      this.socket.emit("subscribe", { conversationId });
     }
   };
 
@@ -116,30 +116,33 @@ export class ConversationsSocketStore {
       return;
     }
 
-    this.socket.off('connect');
-    this.socket.off('conversations.update');
-    this.socket.off('error');
+    this.socket.off("connect");
+    this.socket.off("conversations.update");
+    this.socket.off("error");
 
-    this.socket.on('connect', () => {
+    this.socket.on("connect", () => {
       runInAction(() => {
         this.connected = true;
       });
       this.resubscribeAll();
     });
 
-    this.socket.on('disconnect', () => {
+    this.socket.on("disconnect", () => {
       runInAction(() => {
         this.connected = false;
       });
     });
 
-    this.socket.on('conversations.update', (payload: ConversationsUpdatePayload) => {
-      console.log('[conversations socket] conversations.update', payload);
-      this.dispatchUpdate(payload);
-    });
+    this.socket.on(
+      "conversations.update",
+      (payload: ConversationsUpdatePayload) => {
+        console.log("[conversations socket] conversations.update", payload);
+        this.dispatchUpdate(payload);
+      },
+    );
 
-    this.socket.on('error', (err: { message?: string }) => {
-      console.error('Conversations WebSocket auth error:', err?.message);
+    this.socket.on("error", (err: { message?: string }) => {
+      console.error("Conversations WebSocket auth error:", err?.message);
       this.connectOptions.onAuthError?.();
       this.disconnect();
     });

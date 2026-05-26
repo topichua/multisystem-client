@@ -6,22 +6,22 @@ import {
   closestCenter,
   useSensor,
   useSensors,
-} from '@dnd-kit/core';
+} from "@dnd-kit/core";
 import {
   SortableContext,
   sortableKeyboardCoordinates,
   useSortable,
   verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-import { DotsSixVerticalIcon } from '@phosphor-icons/react';
-import { useCallback, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { DotsSixVerticalIcon } from "@phosphor-icons/react";
+import { useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import styled from "styled-components";
 
-import { GroupListLabelRow } from '@/features/conversation-groups/components/group-list-label-row';
-import type { OrderStatus } from '@/features/orders/model/order.types';
-import { formatOrderStatusName } from '@/features/orders/utils/format-order-status-name';
+import { GroupListLabelRow } from "@/features/conversation-groups/components/group-list-label-row";
+import type { OrderStatus } from "@/features/orders/model/order.types";
+import { formatOrderStatusName } from "@/features/orders/utils/format-order-status-name";
 
 const NavList = styled.ul`
   list-style: none;
@@ -36,17 +36,19 @@ const NavItem = styled.li<{ $selected: boolean; $isDragging: boolean }>`
   border-radius: 8px;
   background: ${({ $selected }) =>
     $selected
-      ? 'var(--ant-menu-item-selected-bg, var(--ant-color-primary-bg, #e6f4ff))'
-      : 'transparent'};
+      ? "var(--ant-menu-item-selected-bg, var(--ant-color-primary-bg, #e6f4ff))"
+      : "transparent"};
   opacity: ${({ $isDragging }) => ($isDragging ? 0.65 : 1)};
   box-shadow: ${({ $isDragging }) =>
-    $isDragging ? 'var(--ant-box-shadow-secondary, 0 2px 8px rgba(0, 0, 0, 0.12))' : 'none'};
+    $isDragging
+      ? "var(--ant-box-shadow-secondary, 0 2px 8px rgba(0, 0, 0, 0.12))"
+      : "none"};
 
   &:hover {
     background: ${({ $selected }) =>
       $selected
-        ? 'var(--ant-menu-item-selected-bg, var(--ant-color-primary-bg, #e6f4ff))'
-        : 'var(--ant-color-bg-text-hover, rgba(0, 0, 0, 0.06))'};
+        ? "var(--ant-menu-item-selected-bg, var(--ant-color-primary-bg, #e6f4ff))"
+        : "var(--ant-color-bg-text-hover, rgba(0, 0, 0, 0.06))"};
   }
 `;
 
@@ -109,9 +111,16 @@ const SortableOrderStatusNavItem = ({
   const displayName = formatOrderStatusName(
     status.name,
     status.isDefault,
-    t('orderStatuses.defaultLabel'),
+    t("orderStatuses.defaultLabel"),
   );
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
     id: status.id,
     disabled,
   });
@@ -133,7 +142,7 @@ const SortableOrderStatusNavItem = ({
     >
       <DragHandle
         type="button"
-        aria-label={t('orderStatuses.dragHandleAria')}
+        aria-label={t("orderStatuses.dragHandleAria")}
         disabled={disabled}
         {...attributes}
         {...listeners}
@@ -142,7 +151,7 @@ const SortableOrderStatusNavItem = ({
       </DragHandle>
       <NavButton
         type="button"
-        aria-current={selected ? 'page' : undefined}
+        aria-current={selected ? "page" : undefined}
         onClick={() => onSelect(status.id)}
       >
         <GroupListLabelRow name={displayName} color={status.color} />
@@ -166,11 +175,16 @@ export const OrderStatusesNavList = ({
   onSelect,
   onReorder,
 }: OrderStatusesNavListProps) => {
-  const statusIds = useMemo(() => statuses.map((status) => status.id), [statuses]);
+  const statusIds = useMemo(
+    () => statuses.map((status) => status.id),
+    [statuses],
+  );
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
   );
 
   const handleDragEnd = useCallback(
@@ -196,7 +210,11 @@ export const OrderStatusesNavList = ({
   );
 
   return (
-    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragEnd={handleDragEnd}
+    >
       <SortableContext items={statusIds} strategy={verticalListSortingStrategy}>
         <NavList role="list" data-qa="order-statuses-nav-list">
           {statuses.map((status) => (

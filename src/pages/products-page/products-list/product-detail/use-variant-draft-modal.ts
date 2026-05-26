@@ -1,21 +1,24 @@
-import { message } from 'antd';
-import { useCallback, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { message } from "antd";
+import { useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
 
-import type { ProductVariantDraft } from '@/features/products/model/product.types';
+import type { ProductVariantDraft } from "@/features/products/model/product.types";
 
 import {
   createEmptyVariantDraft,
   createVariantDraftClientId,
   isVariantDraftValid,
-} from './variant-draft-utils';
+} from "./variant-draft-utils";
 
 export const useVariantDraftModal = () => {
   const { t } = useTranslation();
   const [drafts, setDrafts] = useState<ProductVariantDraft[]>([]);
   const [editingIds, setEditingIds] = useState<Set<string>>(() => new Set());
 
-  const isRowEditing = useCallback((clientId: string) => editingIds.has(clientId), [editingIds]);
+  const isRowEditing = useCallback(
+    (clientId: string) => editingIds.has(clientId),
+    [editingIds],
+  );
 
   const markEditing = useCallback((clientId: string) => {
     setEditingIds((prev) => {
@@ -44,11 +47,16 @@ export const useVariantDraftModal = () => {
     markEditing(clientId);
   }, [markEditing]);
 
-  const updateDraft = useCallback((clientId: string, patch: Partial<ProductVariantDraft>) => {
-    setDrafts((prev) =>
-      prev.map((draft) => (draft.clientId === clientId ? { ...draft, ...patch } : draft)),
-    );
-  }, []);
+  const updateDraft = useCallback(
+    (clientId: string, patch: Partial<ProductVariantDraft>) => {
+      setDrafts((prev) =>
+        prev.map((draft) =>
+          draft.clientId === clientId ? { ...draft, ...patch } : draft,
+        ),
+      );
+    },
+    [],
+  );
 
   const saveDraft = useCallback(
     (clientId: string) => {
@@ -61,7 +69,7 @@ export const useVariantDraftModal = () => {
       });
 
       if (!isValid) {
-        message.error(t('products.form.required'));
+        message.error(t("products.form.required"));
         return false;
       }
 

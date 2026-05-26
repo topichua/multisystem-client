@@ -1,6 +1,6 @@
-import type { ProductDetails } from '@/features/products/model/product.types';
+import type { ProductDetails } from "@/features/products/model/product.types";
 
-import { filterProductMediaItems } from '../product-detail/product-detail-media';
+import { filterProductMediaItems } from "../product-detail/product-detail-media";
 
 export const MEDIA_TILE_SIZE = 96;
 
@@ -10,7 +10,9 @@ export type GalleryItem = {
   previewUrl: string;
 };
 
-export const buildGalleryFromProduct = (product: ProductDetails): GalleryItem[] => {
+export const buildGalleryFromProduct = (
+  product: ProductDetails,
+): GalleryItem[] => {
   const seen = new Set<string>();
   const items: GalleryItem[] = [];
 
@@ -24,7 +26,7 @@ export const buildGalleryFromProduct = (product: ProductDetails): GalleryItem[] 
   };
 
   if (product.mainImageUrl) {
-    addUrl(product.mainImageUrl, 'cover-main');
+    addUrl(product.mainImageUrl, "cover-main");
   }
 
   for (const media of filterProductMediaItems(product)) {
@@ -36,7 +38,7 @@ export const buildGalleryFromProduct = (product: ProductDetails): GalleryItem[] 
 
 export const createGalleryItemFromFile = (file: File): GalleryItem => {
   const id =
-    typeof crypto !== 'undefined' && 'randomUUID' in crypto
+    typeof crypto !== "undefined" && "randomUUID" in crypto
       ? crypto.randomUUID()
       : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 

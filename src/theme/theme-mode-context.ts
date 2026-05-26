@@ -1,6 +1,6 @@
-import { createContext } from 'react';
+import { createContext } from "react";
 
-import type { ThemeMode, ThemePreference } from '@/theme/theme-mode.types';
+import type { ThemeMode, ThemePreference } from "@/theme/theme-mode.types";
 
 export const ThemeModeContext = createContext<{
   mode: ThemeMode;

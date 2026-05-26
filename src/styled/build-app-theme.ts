@@ -1,17 +1,17 @@
-import type { DefaultTheme } from 'styled-components';
+import type { DefaultTheme } from "styled-components";
 
-import type { ThemeMode } from '@/theme/theme-mode.types';
+import type { ThemeMode } from "@/theme/theme-mode.types";
 
-import { APP_FONT_FAMILY } from '@/styled/constants';
-import * as darkColors from '@/styled/definitions/colors.dark';
-import * as lightColors from '@/styled/definitions/colors';
-import { text, bigText } from '@/styled/definitions/font-size';
-import { radiusDefinition } from '@/styled/definitions/radius';
-import { shadowDefinition } from '@/styled/definitions/shadows';
-import { spacingDefinition } from '@/styled/definitions/spacing';
+import { APP_FONT_FAMILY } from "@/styled/constants";
+import * as darkColors from "@/styled/definitions/colors.dark";
+import * as lightColors from "@/styled/definitions/colors";
+import { text, bigText } from "@/styled/definitions/font-size";
+import { radiusDefinition } from "@/styled/definitions/radius";
+import { shadowDefinition } from "@/styled/definitions/shadows";
+import { spacingDefinition } from "@/styled/definitions/spacing";
 
 export const buildAppTheme = (mode: ThemeMode): DefaultTheme => {
-  const colors = mode === 'dark' ? darkColors : lightColors;
+  const colors = mode === "dark" ? darkColors : lightColors;
 
   return {
     spacing: spacingDefinition,

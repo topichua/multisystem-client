@@ -1,11 +1,11 @@
-import { Pagination } from 'antd';
-import { useTranslation } from 'react-i18next';
+import { Pagination } from "antd";
+import { useTranslation } from "react-i18next";
 
 import {
   PaginationBar,
   PaginationSummary,
   StyledPaginationWrap,
-} from './products-table-pagination.styled';
+} from "./products-table-pagination.styled";
 
 type ProductsTablePaginationProps = {
   current: number;
@@ -27,7 +27,9 @@ export const ProductsTablePagination = ({
 
   return (
     <PaginationBar>
-      <PaginationSummary>{t('products.pagination.summary', { from, to, total })}</PaginationSummary>
+      <PaginationSummary>
+        {t("products.pagination.summary", { from, to, total })}
+      </PaginationSummary>
       {total > 0 ? (
         <StyledPaginationWrap>
           <Pagination

@@ -1,18 +1,18 @@
 export const normalizeWebhookReactionEmoji = (raw: string): string => {
-  const s = raw.trim().replace(/\uFE0E/g, '');
+  const s = raw.trim().replace(/\uFE0E/g, "");
   if (s.length === 0) {
-    return '';
+    return "";
   }
 
   const cp = s.codePointAt(0);
   if (cp === 0x2764) {
-    return '❤️';
+    return "❤️";
   }
   if (cp === 0x2665) {
-    return '❤️';
+    return "❤️";
   }
   if (cp === 0x2763) {
-    return '❤️';
+    return "❤️";
   }
 
   return s;

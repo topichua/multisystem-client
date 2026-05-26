@@ -1,6 +1,6 @@
-import { makeAutoObservable, runInAction } from 'mobx';
+import { makeAutoObservable, runInAction } from "mobx";
 
-import { ordersApi } from '@/features/orders/api/orders-api';
+import { ordersApi } from "@/features/orders/api/orders-api";
 import type {
   BuildOrderCreatePayloadInput,
   ClientOrderStats,
@@ -8,11 +8,11 @@ import type {
   OrderListItem,
   OrderStatus,
   OrderStatusUpdatePayload,
-} from '@/features/orders/model/order.types';
-import { buildOrderCreatePayload } from '@/features/orders/utils/build-order-create-payload';
-import { productsApi } from '@/features/products/api/products-api';
-import type { CatalogVariant } from '@/features/products/model/product.types';
-import { unknownErrorMessage } from '@/utils/unknown-error-message';
+} from "@/features/orders/model/order.types";
+import { buildOrderCreatePayload } from "@/features/orders/utils/build-order-create-payload";
+import { productsApi } from "@/features/products/api/products-api";
+import type { CatalogVariant } from "@/features/products/model/product.types";
+import { unknownErrorMessage } from "@/utils/unknown-error-message";
 
 const defaultPageSize = 50;
 const minCatalogSearchLength = 3;
@@ -102,7 +102,9 @@ export class OrdersStore {
     });
 
     try {
-      const response = await productsApi.listCatalogVariants({ keyword: query });
+      const response = await productsApi.listCatalogVariants({
+        keyword: query,
+      });
       runInAction(() => {
         this.catalogSearchResults = response.items;
       });
@@ -200,7 +202,10 @@ export class OrdersStore {
     }
   };
 
-  updateStatus = async (statusId: number, payload: OrderStatusUpdatePayload): Promise<void> => {
+  updateStatus = async (
+    statusId: number,
+    payload: OrderStatusUpdatePayload,
+  ): Promise<void> => {
     runInAction(() => {
       this.statusSaveLoading = true;
     });
@@ -250,13 +255,18 @@ export class OrdersStore {
   };
 
   private replaceOrderInLists = (updated: OrderListItem): void => {
-    this.orders = this.orders.map((order) => (order.id === updated.id ? updated : order));
+    this.orders = this.orders.map((order) =>
+      order.id === updated.id ? updated : order,
+    );
     this.clientOrders = this.clientOrders.map((order) =>
       order.id === updated.id ? updated : order,
     );
   };
 
-  updateOrderStatus = async (orderId: number, statusId: number): Promise<void> => {
+  updateOrderStatus = async (
+    orderId: number,
+    statusId: number,
+  ): Promise<void> => {
     const current = this.orders.find((order) => order.id === orderId);
     if (current?.statusId === statusId) {
       return;
@@ -362,7 +372,9 @@ export class OrdersStore {
     });
   };
 
-  createOrder = async (input: BuildOrderCreatePayloadInput): Promise<OrderListItem> => {
+  createOrder = async (
+    input: BuildOrderCreatePayloadInput,
+  ): Promise<OrderListItem> => {
     const payload: OrderCreatePayload = buildOrderCreatePayload(input);
 
     runInAction(() => {

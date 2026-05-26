@@ -1,4 +1,4 @@
-import type { TableColumnsType } from 'antd';
+import type { TableColumnsType } from "antd";
 import {
   Button,
   Flex,
@@ -10,20 +10,23 @@ import {
   Table,
   Typography,
   message,
-} from 'antd';
-import dayjs from 'dayjs';
-import { observer } from 'mobx-react-lite';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+} from "antd";
+import dayjs from "dayjs";
+import { observer } from "mobx-react-lite";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 
-import { getApiErrorMessage } from '@/api/get-api-error-message';
-import type { Client } from '@/features/clients/model/client.types';
-import { instagramUserIdToApiString } from '@/features/clients/model/client-instagram-payload';
-import { useClientsStore } from '@/features/clients/model/use-clients-store';
-import { ClientPhoneFormInput } from '@/components/client-phone-form-input';
-import { PaneDetailLayout } from '@/components/layout/pane-detail-layout';
-import { PaneSectionTitle } from '@/components/layout/pane-frame';
-import { normalizeClientPhoneForInput, phoneFieldRules } from '@/utils/phone-input';
+import { getApiErrorMessage } from "@/api/get-api-error-message";
+import type { Client } from "@/features/clients/model/client.types";
+import { instagramUserIdToApiString } from "@/features/clients/model/client-instagram-payload";
+import { useClientsStore } from "@/features/clients/model/use-clients-store";
+import { ClientPhoneFormInput } from "@/components/client-phone-form-input";
+import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
+import { PaneSectionTitle } from "@/components/layout/pane-frame";
+import {
+  normalizeClientPhoneForInput,
+  phoneFieldRules,
+} from "@/utils/phone-input";
 
 const { Text } = Typography;
 
@@ -35,10 +38,10 @@ type ClientFormValues = {
 };
 
 const emptyForm: ClientFormValues = {
-  first_name: '',
-  last_name: '',
-  phone: '',
-  delivery_info: '',
+  first_name: "",
+  last_name: "",
+  phone: "",
+  delivery_info: "",
 };
 
 function clientToFormValues(client: Client): ClientFormValues {
@@ -98,23 +101,25 @@ export const ClientsListPage = observer(() => {
           first_name: values.first_name,
           last_name: values.last_name,
           phone: values.phone,
-          delivery_info: values.delivery_info ?? '',
-          instagramId: instagramUserIdToApiString(editingClient.instagramUserId),
+          delivery_info: values.delivery_info ?? "",
+          instagramId: instagramUserIdToApiString(
+            editingClient.instagramUserId,
+          ),
         });
-        messageApi.success(t('clients.updateSuccess'));
+        messageApi.success(t("clients.updateSuccess"));
       } else {
         await store.createClient({
           first_name: values.first_name,
           last_name: values.last_name,
           phone: values.phone,
-          delivery_info: values.delivery_info ?? '',
-          instagramId: '',
+          delivery_info: values.delivery_info ?? "",
+          instagramId: "",
         });
-        messageApi.success(t('clients.createSuccess'));
+        messageApi.success(t("clients.createSuccess"));
       }
       closeModal();
     } catch (e) {
-      messageApi.error(getApiErrorMessage(e, t('clients.requestFailed')));
+      messageApi.error(getApiErrorMessage(e, t("clients.requestFailed")));
       return Promise.reject();
     }
   }, [closeModal, editingClient, form, messageApi, store, t]);
@@ -123,9 +128,9 @@ export const ClientsListPage = observer(() => {
     async (id: number) => {
       try {
         await store.deleteClient(id);
-        messageApi.success(t('clients.deleteSuccess'));
+        messageApi.success(t("clients.deleteSuccess"));
       } catch (e) {
-        messageApi.error(getApiErrorMessage(e, t('clients.deleteFailed')));
+        messageApi.error(getApiErrorMessage(e, t("clients.deleteFailed")));
       }
     },
     [messageApi, store, t],
@@ -134,51 +139,56 @@ export const ClientsListPage = observer(() => {
   const columns: TableColumnsType<Client> = useMemo(
     () => [
       {
-        title: t('clients.firstName'),
-        dataIndex: 'firstName',
-        key: 'firstName',
+        title: t("clients.firstName"),
+        dataIndex: "firstName",
+        key: "firstName",
         ellipsis: true,
       },
       {
-        title: t('clients.lastName'),
-        dataIndex: 'lastName',
-        key: 'lastName',
+        title: t("clients.lastName"),
+        dataIndex: "lastName",
+        key: "lastName",
         ellipsis: true,
       },
       {
-        title: t('clients.phone'),
-        dataIndex: 'phone',
-        key: 'phone',
+        title: t("clients.phone"),
+        dataIndex: "phone",
+        key: "phone",
         ellipsis: true,
       },
       {
-        title: t('clients.tableColumnDelivery'),
-        dataIndex: 'deliveryInfo',
-        key: 'deliveryInfo',
+        title: t("clients.tableColumnDelivery"),
+        dataIndex: "deliveryInfo",
+        key: "deliveryInfo",
         ellipsis: true,
       },
       {
-        title: t('clients.created'),
-        dataIndex: 'createdAt',
-        key: 'createdAt',
+        title: t("clients.created"),
+        dataIndex: "createdAt",
+        key: "createdAt",
         width: 160,
-        render: (value: string) => dayjs(value).format('YYYY-MM-DD HH:mm'),
+        render: (value: string) => dayjs(value).format("YYYY-MM-DD HH:mm"),
       },
       {
-        title: t('clients.tableActions'),
-        key: 'actions',
+        title: t("clients.tableActions"),
+        key: "actions",
         width: 160,
         render: (_, record) => (
           <Flex gap={8} wrap="wrap">
             <Button type="link" size="small" onClick={() => openEdit(record)}>
-              {t('clients.edit')}
+              {t("clients.edit")}
             </Button>
             <Popconfirm
-              title={t('clients.deleteConfirm')}
+              title={t("clients.deleteConfirm")}
               onConfirm={() => void handleDelete(record.id)}
             >
-              <Button type="link" size="small" danger loading={store.deleteLoadingId === record.id}>
-                {t('clients.delete')}
+              <Button
+                type="link"
+                size="small"
+                danger
+                loading={store.deleteLoadingId === record.id}
+              >
+                {t("clients.delete")}
               </Button>
             </Popconfirm>
           </Flex>
@@ -191,8 +201,8 @@ export const ClientsListPage = observer(() => {
   const phoneRules = useMemo(
     () =>
       phoneFieldRules({
-        requiredMessage: t('clients.required'),
-        invalidMessage: t('clients.phoneInvalid'),
+        requiredMessage: t("clients.required"),
+        invalidMessage: t("clients.phoneInvalid"),
       }),
     [t],
   );
@@ -212,17 +222,17 @@ export const ClientsListPage = observer(() => {
       <PaneDetailLayout.Root inset>
         <PaneDetailLayout.Header data-qa="layout-clients-list-header">
           <Flex justify="space-between" align="center" gap={16} wrap="wrap">
-            <PaneSectionTitle>{t('clients.pageTitle')}</PaneSectionTitle>
+            <PaneSectionTitle>{t("clients.pageTitle")}</PaneSectionTitle>
             <Flex gap={8} align="center" wrap="wrap" style={{ flexShrink: 0 }}>
               <Button type="primary" onClick={openCreate}>
-                {t('clients.createClientCta')}
+                {t("clients.createClientCta")}
               </Button>
             </Flex>
           </Flex>
         </PaneDetailLayout.Header>
         <PaneDetailLayout.Body data-qa="layout-clients-table-scroll">
           {store.listError && (
-            <Text type="danger" style={{ display: 'block', marginBottom: 8 }}>
+            <Text type="danger" style={{ display: "block", marginBottom: 8 }}>
               {store.listError}
             </Text>
           )}
@@ -232,17 +242,21 @@ export const ClientsListPage = observer(() => {
             dataSource={store.clients}
             pagination={false}
             loading={store.listLoading}
-            scroll={{ x: 'max-content' }}
+            scroll={{ x: "max-content" }}
           />
         </PaneDetailLayout.Body>
       </PaneDetailLayout.Root>
 
       <Modal
-        title={editingClient ? t('clients.modalEditTitle') : t('clients.modalCreateTitle')}
+        title={
+          editingClient
+            ? t("clients.modalEditTitle")
+            : t("clients.modalCreateTitle")
+        }
         open={modalOpen}
         onCancel={closeModal}
         onOk={handleSubmit}
-        okText={editingClient ? t('clients.save') : t('clients.modalCreateOk')}
+        okText={editingClient ? t("clients.save") : t("clients.modalCreateOk")}
         confirmLoading={store.saveLoading}
         destroyOnHidden
         width={480}
@@ -250,22 +264,29 @@ export const ClientsListPage = observer(() => {
         <Form form={form} layout="vertical" initialValues={emptyForm}>
           <Form.Item
             name="first_name"
-            label={t('clients.firstName')}
-            rules={[{ required: true, message: t('clients.required') }]}
+            label={t("clients.firstName")}
+            rules={[{ required: true, message: t("clients.required") }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="last_name"
-            label={t('clients.lastName')}
-            rules={[{ required: true, message: t('clients.required') }]}
+            label={t("clients.lastName")}
+            rules={[{ required: true, message: t("clients.required") }]}
           >
             <Input />
           </Form.Item>
-          <Form.Item name="phone" label={t('clients.phone')} rules={phoneRules}>
-            <ClientPhoneFormInput autoComplete="tel" placeholder={t('clients.phonePlaceholder')} />
+          <Form.Item name="phone" label={t("clients.phone")} rules={phoneRules}>
+            <ClientPhoneFormInput
+              autoComplete="tel"
+              placeholder={t("clients.phonePlaceholder")}
+            />
           </Form.Item>
-          <Form.Item name="delivery_info" required label={t('clients.deliveryInfo')}>
+          <Form.Item
+            name="delivery_info"
+            required
+            label={t("clients.deliveryInfo")}
+          >
             <Input.TextArea rows={2} />
           </Form.Item>
         </Form>

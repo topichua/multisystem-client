@@ -1,6 +1,6 @@
-import type { CatalogVariant } from '@/features/products/model/product.types';
-import { TrashIcon } from '@phosphor-icons/react';
-import { Button, Flex, Image, InputNumber, Typography, theme } from 'antd';
+import type { CatalogVariant } from "@/features/products/model/product.types";
+import { TrashIcon } from "@phosphor-icons/react";
+import { Button, Flex, Image, InputNumber, Typography, theme } from "antd";
 
 const { Text } = Typography;
 
@@ -18,9 +18,11 @@ export const OrderProductLine = ({
   onRemove,
 }: OrderProductLineProps) => {
   const { token } = theme.useToken();
-  const imageUrl = variant.imageUrl ?? variant.product.mainImageUrl ?? undefined;
-  const meta = [variant.color, variant.size].filter(Boolean).join(' / ');
-  const currency = variant.product.currency === 'UAH' ? '₴' : variant.product.currency;
+  const imageUrl =
+    variant.imageUrl ?? variant.product.mainImageUrl ?? undefined;
+  const meta = [variant.color, variant.size].filter(Boolean).join(" / ");
+  const currency =
+    variant.product.currency === "UAH" ? "₴" : variant.product.currency;
 
   return (
     <Flex align="center" gap={12}>
@@ -31,7 +33,7 @@ export const OrderProductLine = ({
         width={64}
         height={56}
         style={{
-          objectFit: 'cover',
+          objectFit: "cover",
           borderRadius: token.borderRadius,
           background: token.colorFillAlter,
           flexShrink: 0,
@@ -48,7 +50,7 @@ export const OrderProductLine = ({
           </Text>
         ) : null}
         <Text strong>
-          {variant.unitPrice.toLocaleString('uk-UA')} {currency}
+          {variant.unitPrice.toLocaleString("uk-UA")} {currency}
         </Text>
       </Flex>
 
@@ -57,7 +59,7 @@ export const OrderProductLine = ({
         max={variant.quantity > 0 ? variant.quantity : undefined}
         value={quantity}
         onChange={(value) => {
-          if (typeof value === 'number' && value >= 1) {
+          if (typeof value === "number" && value >= 1) {
             onQuantityChange(value);
           }
         }}

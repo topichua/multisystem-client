@@ -1,23 +1,23 @@
-import { Button, Form, Input, Modal, Select, Tree, message } from 'antd';
-import { observer } from 'mobx-react-lite';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Outlet, useLocation, useNavigate } from 'react-router';
+import { Button, Form, Input, Modal, Select, Tree, message } from "antd";
+import { observer } from "mobx-react-lite";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Outlet, useLocation, useNavigate } from "react-router";
 
-import { getApiErrorMessage } from '@/api/get-api-error-message';
-import { getProductCategoryPath } from '@/app/router/pages-map';
+import { getApiErrorMessage } from "@/api/get-api-error-message";
+import { getProductCategoryPath } from "@/app/router/pages-map";
 import {
   PaneScrollRegion,
   PaneSectionHeaderStack,
   PaneSectionTitle,
-} from '@/components/layout/pane-frame';
-import { PaneNavSplitLayout } from '@/components/layout/pane-nav-split-layout';
+} from "@/components/layout/pane-frame";
+import { PaneNavSplitLayout } from "@/components/layout/pane-nav-split-layout";
 import {
   categoriesEligibleAsParent,
   categoriesToTreeData,
   findAncestorIds,
-} from '@/features/categories/model/category-tree';
-import { useCategoriesStore } from '@/features/categories/model/use-categories-store';
+} from "@/features/categories/model/category-tree";
+import { useCategoriesStore } from "@/features/categories/model/use-categories-store";
 
 type CategoryCreateFormValues = {
   name: string;
@@ -25,7 +25,7 @@ type CategoryCreateFormValues = {
 };
 
 const defaultCreateValues: CategoryCreateFormValues = {
-  name: '',
+  name: "",
   parentId: null,
 };
 
@@ -52,7 +52,10 @@ export const ProductsCategoriesLayout = observer(() => {
     [store.categories],
   );
 
-  const treeData = useMemo(() => categoriesToTreeData(store.categories), [store.categories]);
+  const treeData = useMemo(
+    () => categoriesToTreeData(store.categories),
+    [store.categories],
+  );
 
   const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
 
@@ -87,14 +90,14 @@ export const ProductsCategoriesLayout = observer(() => {
 
     try {
       await store.createCategory(values);
-      messageApi.success(t('categories.createSuccess'));
+      messageApi.success(t("categories.createSuccess"));
       closeCreate();
 
       if (store.activeCategory) {
         navigate(getProductCategoryPath(store.activeCategory.id));
       }
     } catch (e) {
-      messageApi.error(getApiErrorMessage(e, t('categories.createFailed')));
+      messageApi.error(getApiErrorMessage(e, t("categories.createFailed")));
       return Promise.reject();
     }
   }, [closeCreate, form, messageApi, navigate, store, t]);
@@ -105,9 +108,9 @@ export const ProductsCategoriesLayout = observer(() => {
       <PaneNavSplitLayout.Root data-qa="layout-products-categories-shell">
         <PaneNavSplitLayout.SubSidebar data-qa="layout-products-categories-sidebar">
           <PaneSectionHeaderStack data-qa="layout-products-categories-header">
-            <PaneSectionTitle>{t('categories.title')}</PaneSectionTitle>
+            <PaneSectionTitle>{t("categories.title")}</PaneSectionTitle>
             <Button type="primary" onClick={openCreate}>
-              {t('categories.createCategory')}
+              {t("categories.createCategory")}
             </Button>
           </PaneSectionHeaderStack>
           <PaneScrollRegion data-qa="layout-products-categories-nav-scroll">
@@ -117,7 +120,9 @@ export const ProductsCategoriesLayout = observer(() => {
                 showLine
                 treeData={treeData}
                 selectedKeys={
-                  Number.isFinite(categoryIdFromPath) ? [String(categoryIdFromPath)] : []
+                  Number.isFinite(categoryIdFromPath)
+                    ? [String(categoryIdFromPath)]
+                    : []
                 }
                 expandedKeys={expandedKeys}
                 onExpand={(keys) => setExpandedKeys(keys as string[])}
@@ -144,29 +149,29 @@ export const ProductsCategoriesLayout = observer(() => {
       </PaneNavSplitLayout.Root>
 
       <Modal
-        title={t('categories.modalCreateTitle')}
+        title={t("categories.modalCreateTitle")}
         open={modalOpen}
         onCancel={closeCreate}
         onOk={handleCreate}
-        okText={t('categories.okCreate')}
+        okText={t("categories.okCreate")}
         confirmLoading={store.saveLoading}
         destroyOnHidden
       >
         <Form form={form} layout="vertical" initialValues={defaultCreateValues}>
           <Form.Item
             name="name"
-            label={t('categories.name')}
+            label={t("categories.name")}
             rules={[
-              { required: true, message: t('categories.nameRequired') },
-              { max: 120, message: t('categories.nameTooLong') },
+              { required: true, message: t("categories.nameRequired") },
+              { max: 120, message: t("categories.nameTooLong") },
             ]}
           >
-            <Input placeholder={t('categories.namePlaceholder')} />
+            <Input placeholder={t("categories.namePlaceholder")} />
           </Form.Item>
-          <Form.Item name="parentId" label={t('categories.parentCategory')}>
+          <Form.Item name="parentId" label={t("categories.parentCategory")}>
             <Select
               allowClear
-              placeholder={t('categories.noParent')}
+              placeholder={t("categories.noParent")}
               options={parentCategoryOptions.map((category) => ({
                 value: category.id,
                 label: category.name,

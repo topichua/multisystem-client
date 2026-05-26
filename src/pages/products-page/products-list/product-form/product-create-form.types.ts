@@ -1,4 +1,4 @@
-import type { Dispatch, SetStateAction } from 'react';
+import type { Dispatch, SetStateAction } from "react";
 
 import type {
   Product,
@@ -6,17 +6,20 @@ import type {
   ProductVariantCreatePayload,
   ProductVariantDraft,
   ProductVariantUpdatePayload,
-} from '@/features/products/model/product.types';
+} from "@/features/products/model/product.types";
 
-import type { ProductCreateFormValues, ProductEditFormValues } from '../product-modal.types';
-import type { GalleryItem } from './product-gallery';
+import type {
+  ProductCreateFormValues,
+  ProductEditFormValues,
+} from "../product-modal.types";
+import type { GalleryItem } from "./product-gallery";
 
 export type CategoryOption = {
   value: number;
   label: string;
 };
 
-export type ProductFormMode = 'create' | 'edit';
+export type ProductFormMode = "create" | "edit";
 
 export type ProductCreateFormProps = {
   mode?: ProductFormMode;

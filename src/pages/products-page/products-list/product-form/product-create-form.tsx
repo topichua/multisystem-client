@@ -1,31 +1,34 @@
-import { Button, Form, Spin, message } from 'antd';
-import { observer } from 'mobx-react-lite';
-import { useCallback, useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Button, Form, Spin, message } from "antd";
+import { observer } from "mobx-react-lite";
+import { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
-import type { ProductCreateFormValues } from '../product-modal.types';
-import { defaultCreateValues, productToCreateValues } from '../product-modal.types';
-import { ProductVariantsListSection } from '../product-detail/product-variants-list-section';
-import { useProductVariantInline } from '../product-detail/use-product-variant-inline';
-import { useVariantDraftModal } from '../product-detail/use-variant-draft-modal';
-import { VARIANT_DRAFT_TABLE_SCROLL_X } from '../product-detail/variant-draft-table-layout';
-import { useVariantDraftTableColumns } from '../product-detail/use-variant-draft-table-columns';
-import { VariantImagePickerModal } from '../product-detail/variant-image-picker-modal';
-import { ProductInstagramAiDrawer } from '../product-instagram-ai-drawer';
+import type { ProductCreateFormValues } from "../product-modal.types";
+import {
+  defaultCreateValues,
+  productToCreateValues,
+} from "../product-modal.types";
+import { ProductVariantsListSection } from "../product-detail/product-variants-list-section";
+import { useProductVariantInline } from "../product-detail/use-product-variant-inline";
+import { useVariantDraftModal } from "../product-detail/use-variant-draft-modal";
+import { VARIANT_DRAFT_TABLE_SCROLL_X } from "../product-detail/variant-draft-table-layout";
+import { useVariantDraftTableColumns } from "../product-detail/use-variant-draft-table-columns";
+import { VariantImagePickerModal } from "../product-detail/variant-image-picker-modal";
+import { ProductInstagramAiDrawer } from "../product-instagram-ai-drawer";
 
-import type { ProductCreateFormProps } from './product-create-form.types';
-import { ProductFormFields } from './product-form-fields';
-import { ProductGalleryField } from './product-gallery-field';
-import { useProductEditAutosave } from './use-product-edit-autosave';
-import { useProductGallery } from './use-product-gallery';
-import { useProductInstagramFill } from './use-product-instagram-fill';
-import { useProductVariantImagePicker } from './use-product-variant-image-picker';
+import type { ProductCreateFormProps } from "./product-create-form.types";
+import { ProductFormFields } from "./product-form-fields";
+import { ProductGalleryField } from "./product-gallery-field";
+import { useProductEditAutosave } from "./use-product-edit-autosave";
+import { useProductGallery } from "./use-product-gallery";
+import { useProductInstagramFill } from "./use-product-instagram-fill";
+import { useProductVariantImagePicker } from "./use-product-variant-image-picker";
 
-export const PRODUCT_FORM_ID = 'product-form';
+export const PRODUCT_FORM_ID = "product-form";
 
 export const ProductCreateForm = observer(
   ({
-    mode = 'create',
+    mode = "create",
     product = null,
     categoryOptions,
     submitLoading,
@@ -41,10 +44,12 @@ export const ProductCreateForm = observer(
     setAiToolsOpen,
   }: ProductCreateFormProps) => {
     const { t } = useTranslation();
-    const isEditMode = mode === 'edit';
+    const isEditMode = mode === "edit";
     const [form] = Form.useForm<ProductCreateFormValues>();
     const [isSaving, setIsSaving] = useState(false);
-    const [variantSavingClientId, setVariantSavingClientId] = useState<string | null>(null);
+    const [variantSavingClientId, setVariantSavingClientId] = useState<
+      string | null
+    >(null);
 
     const variantDraftModal = useVariantDraftModal();
     const variantInline = useProductVariantInline({
@@ -105,7 +110,7 @@ export const ProductCreateForm = observer(
       onFilled: () => setAiToolsOpen(false),
     });
 
-    const currencyWatch = Form.useWatch('currency', form) ?? 'UAH';
+    const currencyWatch = Form.useWatch("currency", form) ?? "UAH";
 
     const createVariantColumns = useVariantDraftTableColumns({
       currency: currencyWatch,
@@ -148,10 +153,11 @@ export const ProductCreateForm = observer(
 
       setIsSaving(true);
       try {
-        const { coverFile, coverUrl, galleryImages } = gallery.resolveCoverAndGalleryFiles();
+        const { coverFile, coverUrl, galleryImages } =
+          gallery.resolveCoverAndGalleryFiles();
 
         if (variantDraftModal.hasEditingRows) {
-          message.error(t('products.variant.finishEditingFirst'));
+          message.error(t("products.variant.finishEditingFirst"));
           return;
         }
 
@@ -227,8 +233,12 @@ export const ProductCreateForm = observer(
 
           {!isEditMode ? (
             <Form.Item style={{ marginTop: 20 }}>
-              <Button type="primary" htmlType="submit" loading={submitLoading || isSaving}>
-                {t('products.modalCreateOk')}
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={submitLoading || isSaving}
+              >
+                {t("products.modalCreateOk")}
               </Button>
             </Form.Item>
           ) : null}
@@ -243,7 +253,11 @@ export const ProductCreateForm = observer(
               if (imagePicker.clientId == null) {
                 return;
               }
-              imagePicker.applySelection(imagePicker.clientId, url, uploadedFile);
+              imagePicker.applySelection(
+                imagePicker.clientId,
+                url,
+                uploadedFile,
+              );
             }}
             onUploadNew={imagePicker.uploadNew}
           />
@@ -263,5 +277,8 @@ export const ProductCreateForm = observer(
   },
 );
 
-export type { ProductCreateFormProps, CategoryOption } from './product-create-form.types';
-export type { GalleryItem } from './product-gallery';
+export type {
+  ProductCreateFormProps,
+  CategoryOption,
+} from "./product-create-form.types";
+export type { GalleryItem } from "./product-gallery";

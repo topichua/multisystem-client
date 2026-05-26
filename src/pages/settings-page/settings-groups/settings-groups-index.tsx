@@ -1,12 +1,12 @@
-import { Button, Empty, Spin } from 'antd';
-import { observer } from 'mobx-react-lite';
-import { useTranslation } from 'react-i18next';
-import { Navigate, useOutletContext } from 'react-router';
+import { Button, Empty, Spin } from "antd";
+import { observer } from "mobx-react-lite";
+import { useTranslation } from "react-i18next";
+import { Navigate, useOutletContext } from "react-router";
 
-import { getSettingsGroupPath } from '@/app/router/pages-map';
-import { useConversationGroupsStore } from '@/features/conversation-groups/model/use-conversation-groups-store';
+import { getSettingsGroupPath } from "@/app/router/pages-map";
+import { useConversationGroupsStore } from "@/features/conversation-groups/model/use-conversation-groups-store";
 
-import type { SettingsGroupsOutletContext } from './settings-groups-layout';
+import type { SettingsGroupsOutletContext } from "./settings-groups-layout";
 
 export const SettingsGroupsIndex = observer(() => {
   const { t } = useTranslation();
@@ -24,9 +24,9 @@ export const SettingsGroupsIndex = observer(() => {
   }
 
   return (
-    <Empty description={t('groups.noGroupsYet')} style={{ marginTop: 48 }}>
+    <Empty description={t("groups.noGroupsYet")} style={{ marginTop: 48 }}>
       <Button type="primary" onClick={onCreateClick}>
-        {t('groups.createGroup')}
+        {t("groups.createGroup")}
       </Button>
     </Empty>
   );

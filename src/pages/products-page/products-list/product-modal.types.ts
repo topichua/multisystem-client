@@ -1,9 +1,9 @@
-import type { ProductDetails } from '@/features/products/model/product.types';
+import type { ProductDetails } from "@/features/products/model/product.types";
 
 export type ProductCreateFormValues = {
   name: string;
   description: string;
-  status: 'draft' | 'active' | 'archived';
+  status: "draft" | "active" | "archived";
   sourceType: string;
   sourceId: string;
   referenceGroupId: string;
@@ -30,44 +30,50 @@ export type ProductEditFormValues = {
 };
 
 export const defaultCreateValues: ProductCreateFormValues = {
-  name: '',
-  description: '',
-  status: 'draft',
-  sourceType: 'manual',
-  sourceId: '',
-  referenceGroupId: '',
+  name: "",
+  description: "",
+  status: "draft",
+  sourceType: "manual",
+  sourceId: "",
+  referenceGroupId: "",
   price: 0,
-  currency: 'UAH',
+  currency: "UAH",
   inStock: true,
   quantity: 0,
-  mediaUrl: '',
+  mediaUrl: "",
   categoryId: undefined,
 };
 
-export const productToCreateValues = (product: ProductDetails): ProductCreateFormValues => ({
+export const productToCreateValues = (
+  product: ProductDetails,
+): ProductCreateFormValues => ({
   name: product.name,
-  description: product.description ?? '',
-  status: (product.status as ProductCreateFormValues['status']) || 'draft',
-  sourceType: product.sourceType ?? 'manual',
-  sourceId: product.sourceId ?? '',
-  referenceGroupId: product.referenceGroupId == null ? '' : String(product.referenceGroupId),
+  description: product.description ?? "",
+  status: (product.status as ProductCreateFormValues["status"]) || "draft",
+  sourceType: product.sourceType ?? "manual",
+  sourceId: product.sourceId ?? "",
+  referenceGroupId:
+    product.referenceGroupId == null ? "" : String(product.referenceGroupId),
   price: product.price ?? 0,
-  currency: product.currency || 'UAH',
+  currency: product.currency || "UAH",
   inStock: product.inStock ?? false,
   quantity: product.quantity ?? 0,
-  mediaUrl: product.mainImageUrl ?? '',
+  mediaUrl: product.mainImageUrl ?? "",
   categoryId: product.categoryId ?? undefined,
 });
 
-export const productToEditValues = (product: ProductDetails): ProductEditFormValues => ({
+export const productToEditValues = (
+  product: ProductDetails,
+): ProductEditFormValues => ({
   name: product.name,
-  description: product.description ?? '',
+  description: product.description ?? "",
   status: product.status,
-  sourceType: product.sourceType ?? 'manual',
-  sourceId: product.sourceId ?? '',
-  referenceGroupId: product.referenceGroupId == null ? '' : String(product.referenceGroupId),
+  sourceType: product.sourceType ?? "manual",
+  sourceId: product.sourceId ?? "",
+  referenceGroupId:
+    product.referenceGroupId == null ? "" : String(product.referenceGroupId),
   price: product.price ?? undefined,
-  currency: product.currency || 'UAH',
+  currency: product.currency || "UAH",
   inStock: product.inStock ?? false,
   quantity: product.quantity ?? undefined,
   categoryId: product.categoryId ?? undefined,

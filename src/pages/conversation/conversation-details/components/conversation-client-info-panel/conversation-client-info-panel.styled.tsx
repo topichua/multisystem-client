@@ -1,9 +1,9 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
-import { dataQaAttrs } from '@/styled/data-qa-attrs';
+import { dataQaAttrs } from "@/styled/data-qa-attrs";
 
 export const Root = styled.aside.attrs(() =>
-  dataQaAttrs('layout-conversation-details-client-info'),
+  dataQaAttrs("layout-conversation-details-client-info"),
 )`
   box-sizing: border-box;
   flex-shrink: 0;
@@ -17,7 +17,7 @@ export const Root = styled.aside.attrs(() =>
 `;
 
 export const PanelHeader = styled.div.attrs(() =>
-  dataQaAttrs('layout-conversation-details-client-info-header'),
+  dataQaAttrs("layout-conversation-details-client-info-header"),
 )`
   flex-shrink: 0;
   display: flex;
@@ -25,11 +25,12 @@ export const PanelHeader = styled.div.attrs(() =>
   justify-content: space-between;
   gap: 8px;
   padding: 10px 12px;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.functional.border.split};
+  border-bottom: 1px solid
+    ${({ theme }) => theme.colors.functional.border.split};
 `;
 
 export const PanelScroll = styled.div.attrs(() =>
-  dataQaAttrs('layout-conversation-details-client-info-scroll'),
+  dataQaAttrs("layout-conversation-details-client-info-scroll"),
 )`
   flex: 1;
   min-height: 0;
@@ -49,9 +50,9 @@ export const EmptyCenter = styled.div`
 `;
 
 export const ParticipantPhoto = styled.div.attrs(() =>
-  dataQaAttrs('layout-conversation-details-client-info-photo'),
+  dataQaAttrs("layout-conversation-details-client-info-photo"),
 )<{ $flush?: boolean }>`
   display: flex;
   justify-content: center;
-  margin-bottom: ${({ $flush }) => ($flush ? 0 : '16px')};
+  margin-bottom: ${({ $flush }) => ($flush ? 0 : "16px")};
 `;

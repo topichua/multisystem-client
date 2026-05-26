@@ -1,16 +1,16 @@
-import * as light from './colors';
+import * as light from "./colors";
 
 const grey = {
-  1: '#0f1117',
-  2: '#151922',
-  3: '#1e2230',
-  4: '#3d4456',
-  5: '#6b7288',
-  6: '#8b93a8',
-  7: '#a8b0c4',
-  8: '#c5cad8',
-  9: '#e4e7ee',
-  10: '#f4f5f8',
+  1: "#0f1117",
+  2: "#151922",
+  3: "#1e2230",
+  4: "#3d4456",
+  5: "#6b7288",
+  6: "#8b93a8",
+  7: "#a8b0c4",
+  8: "#c5cad8",
+  9: "#e4e7ee",
+  10: "#f4f5f8",
 } as typeof light.base.grey;
 
 export const brandPalette = light.brandPalette;
@@ -45,14 +45,14 @@ export const functional = {
   background: {
     base: grey[1],
     elevated: grey[2],
-    primary: '#2a1f3d',
+    primary: "#2a1f3d",
     natural: grey[2],
-    success: '#0f291f',
-    error: '#2f1519',
-    warning: '#2d2600',
-    promotion: '#261431',
+    success: "#0f291f",
+    error: "#2f1519",
+    warning: "#2d2600",
+    promotion: "#261431",
     hover: grey[3],
-    active: '#352648',
+    active: "#352648",
     disabled: grey[2],
   },
 

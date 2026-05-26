@@ -1,4 +1,4 @@
-import type { OrderStatus } from '@/features/orders/model/order.types';
+import type { OrderStatus } from "@/features/orders/model/order.types";
 
 export type OrderStatusSelectOptionData = {
   value: number;

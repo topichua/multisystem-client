@@ -1,13 +1,13 @@
-import { makeAutoObservable, runInAction } from 'mobx';
+import { makeAutoObservable, runInAction } from "mobx";
 
-import { clientsApi } from '@/features/clients/api/clients-api';
+import { clientsApi } from "@/features/clients/api/clients-api";
 
 import type {
   Client,
   ClientCreatePayload,
   ClientUpdatePayload,
-} from '@/features/clients/model/client.types';
-import { unknownErrorMessage } from '@/utils/unknown-error-message';
+} from "@/features/clients/model/client.types";
+import { unknownErrorMessage } from "@/utils/unknown-error-message";
 
 export class ClientsStore {
   clients: Client[] = [];
@@ -94,7 +94,10 @@ export class ClientsStore {
     }
   };
 
-  updateClient = async (id: number, payload: ClientUpdatePayload): Promise<void> => {
+  updateClient = async (
+    id: number,
+    payload: ClientUpdatePayload,
+  ): Promise<void> => {
     runInAction(() => {
       this.saveLoading = true;
     });

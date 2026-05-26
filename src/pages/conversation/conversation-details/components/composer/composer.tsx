@@ -1,14 +1,17 @@
-import { SmileyIcon } from '@phosphor-icons/react';
-import { Button, Input, Popover } from 'antd';
-import type { TextAreaRef } from 'antd/es/input/TextArea';
-import EmojiPicker, { EmojiStyle, Theme as EmojiPickerTheme } from 'emoji-picker-react';
-import { memo, useCallback, useMemo, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { SmileyIcon } from "@phosphor-icons/react";
+import { Button, Input, Popover } from "antd";
+import type { TextAreaRef } from "antd/es/input/TextArea";
+import EmojiPicker, {
+  EmojiStyle,
+  Theme as EmojiPickerTheme,
+} from "emoji-picker-react";
+import { memo, useCallback, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 
-import type { ReplyComposeTarget } from '../../reply-compose-target';
-import { useThemeMode } from '@/theme/use-theme-mode';
+import type { ReplyComposeTarget } from "../../reply-compose-target";
+import { useThemeMode } from "@/theme/use-theme-mode";
 
-import * as S from './composer.styled';
+import * as S from "./composer.styled";
 
 type ComposerProps = {
   draft: string;
@@ -20,14 +23,21 @@ type ComposerProps = {
 };
 
 export const Composer = memo(
-  ({ draft, canSend, replyPreview, onCancelReply, onDraftChange, onSend }: ComposerProps) => {
+  ({
+    draft,
+    canSend,
+    replyPreview,
+    onCancelReply,
+    onDraftChange,
+    onSend,
+  }: ComposerProps) => {
     const { t } = useTranslation();
     const { mode } = useThemeMode();
     const textareaRef = useRef<TextAreaRef>(null);
     const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
 
     const pickerTheme = useMemo(
-      () => (mode === 'dark' ? EmojiPickerTheme.DARK : EmojiPickerTheme.LIGHT),
+      () => (mode === "dark" ? EmojiPickerTheme.DARK : EmojiPickerTheme.LIGHT),
       [mode],
     );
 
@@ -76,15 +86,19 @@ export const Composer = memo(
         {replyPreview != null && (
           <S.ReplyBanner>
             <S.ReplyBannerBody>
-              <S.ReplyBannerAuthor>{replyPreview.authorLabel}</S.ReplyBannerAuthor>
-              <S.ReplyBannerSnippet>{replyPreview.snippet}</S.ReplyBannerSnippet>
+              <S.ReplyBannerAuthor>
+                {replyPreview.authorLabel}
+              </S.ReplyBannerAuthor>
+              <S.ReplyBannerSnippet>
+                {replyPreview.snippet}
+              </S.ReplyBannerSnippet>
             </S.ReplyBannerBody>
             <Button
               type="text"
               size="small"
               onClick={onCancelReply}
-              aria-label={t('composer.cancelReplyAria')}
-              style={{ flexShrink: 0, color: 'inherit' }}
+              aria-label={t("composer.cancelReplyAria")}
+              style={{ flexShrink: 0, color: "inherit" }}
             >
               ×
             </Button>
@@ -96,7 +110,7 @@ export const Composer = memo(
             ref={textareaRef}
             value={draft}
             onChange={(event) => onDraftChange(event.target.value)}
-            placeholder={t('composer.placeholder')}
+            placeholder={t("composer.placeholder")}
             autoSize={{ minRows: 1, maxRows: 4 }}
             onPressEnter={(event) => {
               if (!event.shiftKey) {
@@ -117,7 +131,7 @@ export const Composer = memo(
           >
             <Button
               type="text"
-              aria-label={t('composer.openEmojiPickerAria')}
+              aria-label={t("composer.openEmojiPickerAria")}
               aria-expanded={emojiPickerOpen}
               icon={<SmileyIcon size={22} />}
               style={{ flexShrink: 0 }}
@@ -125,7 +139,7 @@ export const Composer = memo(
           </Popover>
 
           <Button type="primary" disabled={!canSend} onClick={onSend}>
-            {t('composer.send')}
+            {t("composer.send")}
           </Button>
         </S.ComposerRow>
       </S.Composer>
@@ -133,4 +147,4 @@ export const Composer = memo(
   },
 );
 
-Composer.displayName = 'Composer';
+Composer.displayName = "Composer";

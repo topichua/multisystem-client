@@ -1,8 +1,8 @@
-import type { Rule } from 'antd/es/form';
-import type { Country } from 'react-phone-number-input';
-import { isValidPhoneNumber, parsePhoneNumber } from 'react-phone-number-input';
+import type { Rule } from "antd/es/form";
+import type { Country } from "react-phone-number-input";
+import { isValidPhoneNumber, parsePhoneNumber } from "react-phone-number-input";
 
-export const CLIENT_PHONE_DEFAULT_COUNTRY: Country = 'UA';
+export const CLIENT_PHONE_DEFAULT_COUNTRY: Country = "UA";
 
 export function normalizeClientPhoneForInput(
   phone: string,
@@ -10,7 +10,7 @@ export function normalizeClientPhoneForInput(
 ): string {
   const t = phone.trim();
   if (!t) {
-    return '';
+    return "";
   }
   if (isValidPhoneNumber(t)) {
     return t;
@@ -26,14 +26,18 @@ export const phoneFieldRules = (options?: {
   requiredMessage?: string;
   invalidMessage?: string;
 }): Rule[] => {
-  const requiredMessage = options?.requiredMessage ?? 'Required';
-  const invalidMessage = options?.invalidMessage ?? 'Invalid phone number';
+  const requiredMessage = options?.requiredMessage ?? "Required";
+  const invalidMessage = options?.invalidMessage ?? "Invalid phone number";
 
   return [
     { required: true, message: requiredMessage },
     {
       validator: (_, value) => {
-        if (value === undefined || value === null || String(value).trim() === '') {
+        if (
+          value === undefined ||
+          value === null ||
+          String(value).trim() === ""
+        ) {
           return Promise.resolve();
         }
         if (!isValidPhoneNumber(String(value))) {

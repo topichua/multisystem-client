@@ -3,11 +3,11 @@ import type {
   ProductVariantCreatePayload,
   ProductVariantDraft,
   ProductVariantUpdatePayload,
-} from '@/features/products/model/product.types';
+} from "@/features/products/model/product.types";
 
-import { defaultVariantFormValues } from './variant-form.types';
+import { defaultVariantFormValues } from "./variant-form.types";
 
-const PERSISTED_VARIANT_ROW_KEY_PREFIX = 'variant-';
+const PERSISTED_VARIANT_ROW_KEY_PREFIX = "variant-";
 
 export const variantRowKey = (variantId: number): string =>
   `${PERSISTED_VARIANT_ROW_KEY_PREFIX}${variantId}`;
@@ -17,56 +17,66 @@ export const parseVariantRowKey = (clientId: string): number | null => {
     return null;
   }
 
-  const variantId = Number(clientId.slice(PERSISTED_VARIANT_ROW_KEY_PREFIX.length));
+  const variantId = Number(
+    clientId.slice(PERSISTED_VARIANT_ROW_KEY_PREFIX.length),
+  );
   return Number.isFinite(variantId) ? variantId : null;
 };
 
-export const variantToDraft = (variant: ProductVariant): ProductVariantDraft => ({
+export const variantToDraft = (
+  variant: ProductVariant,
+): ProductVariantDraft => ({
   clientId: variantRowKey(variant.id),
-  color: variant.color ?? '',
-  size: variant.size ?? '',
+  color: variant.color ?? "",
+  size: variant.size ?? "",
   price: variant.price ?? 0,
   quantity: variant.quantity ?? 0,
   inStock: variant.inStock ?? false,
-  sku: variant.sku ?? '',
-  imageUrl: variant.imageUrl ?? '',
+  sku: variant.sku ?? "",
+  imageUrl: variant.imageUrl ?? "",
   imageFile: null,
 });
 
-export const draftToCreatePayload = (draft: ProductVariantDraft): ProductVariantCreatePayload => ({
+export const draftToCreatePayload = (
+  draft: ProductVariantDraft,
+): ProductVariantCreatePayload => ({
   color: draft.color,
   size: draft.size,
   price: draft.price,
   inStock: draft.inStock,
   quantity: draft.quantity,
-  sku: draft.sku ?? '',
-  imageUrl: draft.imageFile ? '' : (draft.imageUrl ?? '').trim(),
+  sku: draft.sku ?? "",
+  imageUrl: draft.imageFile ? "" : (draft.imageUrl ?? "").trim(),
 });
 
-export const draftToUpdatePayload = (draft: ProductVariantDraft): ProductVariantUpdatePayload => ({
+export const draftToUpdatePayload = (
+  draft: ProductVariantDraft,
+): ProductVariantUpdatePayload => ({
   color: draft.color,
   size: draft.size,
   price: draft.price,
   inStock: draft.inStock,
   quantity: draft.quantity,
-  sku: draft.sku ?? '',
-  imageUrl: draft.imageFile ? '' : (draft.imageUrl ?? '').trim(),
+  sku: draft.sku ?? "",
+  imageUrl: draft.imageFile ? "" : (draft.imageUrl ?? "").trim(),
 });
 
 export const createVariantDraftClientId = (): string =>
-  typeof crypto !== 'undefined' && 'randomUUID' in crypto
+  typeof crypto !== "undefined" && "randomUUID" in crypto
     ? crypto.randomUUID()
     : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
-export const createEmptyVariantDraft = (clientId: string): ProductVariantDraft => ({
+export const createEmptyVariantDraft = (
+  clientId: string,
+): ProductVariantDraft => ({
   clientId,
-  color: '',
-  size: '',
+  color: "",
+  size: "",
   price: defaultVariantFormValues.price,
   quantity: defaultVariantFormValues.quantity,
   inStock: defaultVariantFormValues.inStock,
-  sku: '',
-  imageUrl: '',
+  sku: "",
+  imageUrl: "",
   imageFile: null,
 });
 

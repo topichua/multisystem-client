@@ -2,7 +2,7 @@ import type {
   BuildOrderCreatePayloadInput,
   OrderCreatePayload,
   OrderDeliveryPayload,
-} from '@/features/orders/model/order.types';
+} from "@/features/orders/model/order.types";
 
 export function buildOrderCreatePayload({
   linkedClient,
@@ -10,14 +10,14 @@ export function buildOrderCreatePayload({
   orderLines,
   formValues,
 }: BuildOrderCreatePayloadInput): OrderCreatePayload {
-  const currency = orderLines[0]?.variant.product.currency ?? 'UAH';
+  const currency = orderLines[0]?.variant.product.currency ?? "UAH";
   const recipientName = [linkedClient.firstName, linkedClient.lastName]
     .filter(Boolean)
-    .join(' ')
+    .join(" ")
     .trim();
 
   const delivery: OrderDeliveryPayload = {
-    provider: formValues.deliveryMethod ?? 'nova_poshta',
+    provider: formValues.deliveryMethod ?? "nova_poshta",
   };
 
   if (recipientName) {
@@ -33,7 +33,7 @@ export function buildOrderCreatePayload({
   const payload: OrderCreatePayload = {
     customerId: linkedClient.id,
     conversationId,
-    source: 'instagram',
+    source: "instagram",
     currency,
     items: orderLines.map((line) => ({
       productId: line.variant.productId,

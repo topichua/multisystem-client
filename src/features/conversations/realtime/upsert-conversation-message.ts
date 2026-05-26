@@ -1,4 +1,4 @@
-import type { ConversationMessage } from '@/features/conversations/model/types';
+import type { ConversationMessage } from "@/features/conversations/model/types";
 
 export const isNewConversationMessage = (
   existing: ConversationMessage[],

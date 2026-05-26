@@ -1,21 +1,33 @@
-import { Button, Flex, Image, Input, InputNumber, Popconfirm, Switch, Typography } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
-import { PencilSimpleIcon, TrashIcon } from '@phosphor-icons/react';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
+import {
+  Button,
+  Flex,
+  Image,
+  Input,
+  InputNumber,
+  Popconfirm,
+  Switch,
+  Typography,
+} from "antd";
+import type { ColumnsType } from "antd/es/table";
+import { PencilSimpleIcon, TrashIcon } from "@phosphor-icons/react";
+import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
-import type { ProductVariantDraft } from '@/features/products/model/product.types';
+import type { ProductVariantDraft } from "@/features/products/model/product.types";
 
 import {
   VARIANT_DRAFT_TABLE_COLUMN_WIDTHS,
   variantDraftCellFieldStyle,
-} from './variant-draft-table-layout';
-import { parseVariantRowKey } from './variant-draft-utils';
+} from "./variant-draft-table-layout";
+import { parseVariantRowKey } from "./variant-draft-utils";
 
 type UseVariantDraftTableColumnsParams = {
   currency: string;
   isRowEditing: (clientId: string) => boolean;
-  onUpdateDraft: (clientId: string, patch: Partial<ProductVariantDraft>) => void;
+  onUpdateDraft: (
+    clientId: string,
+    patch: Partial<ProductVariantDraft>,
+  ) => void;
   onSaveDraft: (clientId: string) => void | Promise<void>;
   onStartEditDraft: (clientId: string) => void;
   onDeleteDraft: (clientId: string) => void | Promise<void>;
@@ -52,8 +64,8 @@ export const useVariantDraftTableColumns = ({
 
     return [
       {
-        title: '',
-        key: 'mainImageUrl',
+        title: "",
+        key: "mainImageUrl",
         width: VARIANT_DRAFT_TABLE_COLUMN_WIDTHS.image,
         render: (_: unknown, row: ProductVariantDraft) => {
           const editing = isRowEditing(row.clientId);
@@ -66,19 +78,26 @@ export const useVariantDraftTableColumns = ({
               style={{ width: VARIANT_DRAFT_TABLE_COLUMN_WIDTHS.image }}
             >
               {row.imageFile ? (
-                <Image src={URL.createObjectURL(row.imageFile as File)} width={50} />
+                <Image
+                  src={URL.createObjectURL(row.imageFile as File)}
+                  width={50}
+                />
               ) : row.imageUrl ? (
-                <Image src={row.imageUrl} width={50} style={{ objectFit: 'cover' }} />
+                <Image
+                  src={row.imageUrl}
+                  width={50}
+                  style={{ objectFit: "cover" }}
+                />
               ) : null}
               {editing ? (
                 <Button
                   type="link"
                   size="small"
                   disabled={!onOpenImagePicker}
-                  style={{ padding: 0, height: 'auto' }}
+                  style={{ padding: 0, height: "auto" }}
                   onClick={() => onOpenImagePicker?.(row.clientId)}
                 >
-                  {t('products.variant.upload')}
+                  {t("products.variant.upload")}
                 </Button>
               ) : null}
             </Flex>
@@ -86,44 +105,48 @@ export const useVariantDraftTableColumns = ({
         },
       },
       {
-        title: t('products.variant.color'),
-        key: 'color',
+        title: t("products.variant.color"),
+        key: "color",
         width: VARIANT_DRAFT_TABLE_COLUMN_WIDTHS.color,
         render: (_: unknown, row: ProductVariantDraft) =>
           isRowEditing(row.clientId) ? (
             <Input
               size="small"
               value={row.color}
-              placeholder={t('products.variant.color')}
+              placeholder={t("products.variant.color")}
               style={variantDraftCellFieldStyle}
-              onChange={(event) => onUpdateDraft(row.clientId, { color: event.target.value })}
+              onChange={(event) =>
+                onUpdateDraft(row.clientId, { color: event.target.value })
+              }
               onBlur={() => triggerFieldBlur(row.clientId)}
             />
           ) : (
-            row.color || t('products.variantDash')
+            row.color || t("products.variantDash")
           ),
       },
       {
-        title: t('products.variant.size'),
-        key: 'size',
+        title: t("products.variant.size"),
+        key: "size",
         width: VARIANT_DRAFT_TABLE_COLUMN_WIDTHS.size,
         render: (_: unknown, row: ProductVariantDraft) =>
           isRowEditing(row.clientId) ? (
             <Input
               size="small"
               value={row.size}
-              placeholder={t('products.variant.size')}
+              placeholder={t("products.variant.size")}
               style={variantDraftCellFieldStyle}
-              onChange={(event) => onUpdateDraft(row.clientId, { size: event.target.value })}
+              onChange={(event) =>
+                onUpdateDraft(row.clientId, { size: event.target.value })
+              }
               onBlur={() => triggerFieldBlur(row.clientId)}
             />
           ) : (
-            row.size || t('products.variantDash')
+            row.size || t("products.variantDash")
           ),
       },
       {
-        title: t('products.variant.price'),
-        key: 'price',
+        title: t("products.variant.price"),
+        key: "price",
         width: VARIANT_DRAFT_TABLE_COLUMN_WIDTHS.price,
         render: (_: unknown, row: ProductVariantDraft) =>
           isRowEditing(row.clientId) ? (
@@ -133,7 +156,9 @@ export const useVariantDraftTableColumns = ({
               value={row.price}
               addonAfter={currency}
               style={variantDraftCellFieldStyle}
-              onChange={(value) => onUpdateDraft(row.clientId, { price: value ?? 0 })}
+              onChange={(value) =>
+                onUpdateDraft(row.clientId, { price: value ?? 0 })
+              }
               onBlur={() => triggerFieldBlur(row.clientId)}
             />
           ) : (
@@ -141,8 +166,8 @@ export const useVariantDraftTableColumns = ({
           ),
       },
       {
-        title: t('products.variant.quantity'),
-        key: 'quantity',
+        title: t("products.variant.quantity"),
+        key: "quantity",
         width: VARIANT_DRAFT_TABLE_COLUMN_WIDTHS.quantity,
         render: (_: unknown, row: ProductVariantDraft) =>
           isRowEditing(row.clientId) ? (
@@ -151,7 +176,9 @@ export const useVariantDraftTableColumns = ({
               min={0}
               value={row.quantity}
               style={variantDraftCellFieldStyle}
-              onChange={(value) => onUpdateDraft(row.clientId, { quantity: value ?? 0 })}
+              onChange={(value) =>
+                onUpdateDraft(row.clientId, { quantity: value ?? 0 })
+              }
               onBlur={() => triggerFieldBlur(row.clientId)}
             />
           ) : (
@@ -159,8 +186,8 @@ export const useVariantDraftTableColumns = ({
           ),
       },
       {
-        title: t('products.variant.inStock'),
-        key: 'inStock',
+        title: t("products.variant.inStock"),
+        key: "inStock",
         width: VARIANT_DRAFT_TABLE_COLUMN_WIDTHS.inStock,
         render: (_: unknown, row: ProductVariantDraft) =>
           isRowEditing(row.clientId) ? (
@@ -175,16 +202,16 @@ export const useVariantDraftTableColumns = ({
               }}
             />
           ) : row.inStock ? (
-            t('products.yes')
+            t("products.yes")
           ) : (
-            t('products.no')
+            t("products.no")
           ),
       },
       {
-        title: t('products.table.actions'),
-        key: 'actions',
+        title: t("products.table.actions"),
+        key: "actions",
         width: VARIANT_DRAFT_TABLE_COLUMN_WIDTHS.actions,
-        align: 'right' as const,
+        align: "right" as const,
         render: (_: unknown, row: ProductVariantDraft) => {
           const persistedVariantId = parseVariantRowKey(row.clientId);
 
@@ -196,11 +223,14 @@ export const useVariantDraftTableColumns = ({
                 <Flex
                   justify="flex-end"
                   align="center"
-                  style={{ width: VARIANT_DRAFT_TABLE_COLUMN_WIDTHS.actions, minHeight: 32 }}
+                  style={{
+                    width: VARIANT_DRAFT_TABLE_COLUMN_WIDTHS.actions,
+                    minHeight: 32,
+                  }}
                 >
                   {rowSaving ? (
                     <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-                      {t('products.saving')}
+                      {t("products.saving")}
                     </Typography.Text>
                   ) : null}
                 </Flex>
@@ -208,14 +238,17 @@ export const useVariantDraftTableColumns = ({
             }
 
             return (
-              <Flex justify="flex-end" style={{ width: VARIANT_DRAFT_TABLE_COLUMN_WIDTHS.actions }}>
+              <Flex
+                justify="flex-end"
+                style={{ width: VARIANT_DRAFT_TABLE_COLUMN_WIDTHS.actions }}
+              >
                 <Button
                   type="link"
                   size="small"
                   loading={variantSaveLoading}
                   onClick={() => void onSaveDraft(row.clientId)}
                 >
-                  {t('products.save')}
+                  {t("products.save")}
                 </Button>
               </Flex>
             );
@@ -231,11 +264,11 @@ export const useVariantDraftTableColumns = ({
                 type="text"
                 size="small"
                 icon={<PencilSimpleIcon size={18} />}
-                aria-label={t('products.edit')}
+                aria-label={t("products.edit")}
                 onClick={() => onStartEditDraft(row.clientId)}
               />
               <Popconfirm
-                title={t('products.variantDeleteConfirm')}
+                title={t("products.variantDeleteConfirm")}
                 onConfirm={() => void onDeleteDraft(row.clientId)}
               >
                 <Button
@@ -243,9 +276,10 @@ export const useVariantDraftTableColumns = ({
                   size="small"
                   danger
                   icon={<TrashIcon size={18} />}
-                  aria-label={t('products.delete')}
+                  aria-label={t("products.delete")}
                   loading={
-                    persistedVariantId != null && variantDeleteLoadingId === persistedVariantId
+                    persistedVariantId != null &&
+                    variantDeleteLoadingId === persistedVariantId
                   }
                 />
               </Popconfirm>

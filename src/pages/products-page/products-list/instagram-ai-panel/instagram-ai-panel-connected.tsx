@@ -1,9 +1,9 @@
-import { observer } from 'mobx-react-lite';
+import { observer } from "mobx-react-lite";
 
-import { useUserStore } from '@/features/auth/model/use-user-store';
-import { useAiToolsStore } from '@/features/products/model/use-ai-tools-store';
+import { useUserStore } from "@/features/auth/model/use-user-store";
+import { useAiToolsStore } from "@/features/products/model/use-ai-tools-store";
 
-import { InstagramAiPanel } from './instagram-ai-panel';
+import { InstagramAiPanel } from "./instagram-ai-panel";
 
 type InstagramAiPanelConnectedProps = {
   analyzeBusy: boolean;
@@ -12,7 +12,11 @@ type InstagramAiPanelConnectedProps = {
 };
 
 export const InstagramAiPanelConnected = observer(
-  ({ analyzeBusy, submitLoading, onAnalyzeAndFill }: InstagramAiPanelConnectedProps) => {
+  ({
+    analyzeBusy,
+    submitLoading,
+    onAnalyzeAndFill,
+  }: InstagramAiPanelConnectedProps) => {
     const aiToolsStore = useAiToolsStore();
     const { company } = useUserStore();
 

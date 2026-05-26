@@ -16,10 +16,10 @@ const createBeepWavBlob = (): Blob => {
     }
   };
 
-  writeString(0, 'RIFF');
+  writeString(0, "RIFF");
   view.setUint32(4, 36 + dataSize, true);
-  writeString(8, 'WAVE');
-  writeString(12, 'fmt ');
+  writeString(8, "WAVE");
+  writeString(12, "fmt ");
   view.setUint32(16, 16, true);
   view.setUint16(20, 1, true);
   view.setUint16(22, numChannels, true);
@@ -27,7 +27,7 @@ const createBeepWavBlob = (): Blob => {
   view.setUint32(28, byteRate, true);
   view.setUint16(32, blockAlign, true);
   view.setUint16(34, bitsPerSample, true);
-  writeString(36, 'data');
+  writeString(36, "data");
   view.setUint32(40, dataSize, true);
 
   for (let i = 0; i < samples; i += 1) {
@@ -40,7 +40,7 @@ const createBeepWavBlob = (): Blob => {
     view.setInt16(44 + i * 2, pcm, true);
   }
 
-  return new Blob([buffer], { type: 'audio/wav' });
+  return new Blob([buffer], { type: "audio/wav" });
 };
 
 let audio: HTMLAudioElement | null = null;
@@ -48,14 +48,14 @@ let audioUrl: string | null = null;
 let unlocked = false;
 
 const ensureAudio = (): HTMLAudioElement | null => {
-  if (typeof window === 'undefined') {
+  if (typeof window === "undefined") {
     return null;
   }
 
   if (audio == null) {
     audioUrl = URL.createObjectURL(createBeepWavBlob());
     audio = new Audio(audioUrl);
-    audio.preload = 'auto';
+    audio.preload = "auto";
   }
 
   return audio;
@@ -83,7 +83,7 @@ export const unlockMessageNotificationAudio = async (): Promise<void> => {
 };
 
 export const installMessageNotificationAudioUnlock = (): (() => void) => {
-  if (typeof window === 'undefined') {
+  if (typeof window === "undefined") {
     return () => undefined;
   }
 
@@ -93,14 +93,14 @@ export const installMessageNotificationAudioUnlock = (): (() => void) => {
 
   const options: AddEventListenerOptions = { capture: true, passive: true };
 
-  window.addEventListener('pointerdown', onUserGesture, options);
-  window.addEventListener('keydown', onUserGesture, options);
-  window.addEventListener('touchstart', onUserGesture, options);
+  window.addEventListener("pointerdown", onUserGesture, options);
+  window.addEventListener("keydown", onUserGesture, options);
+  window.addEventListener("touchstart", onUserGesture, options);
 
   return () => {
-    window.removeEventListener('pointerdown', onUserGesture, options);
-    window.removeEventListener('keydown', onUserGesture, options);
-    window.removeEventListener('touchstart', onUserGesture, options);
+    window.removeEventListener("pointerdown", onUserGesture, options);
+    window.removeEventListener("keydown", onUserGesture, options);
+    window.removeEventListener("touchstart", onUserGesture, options);
 
     if (audioUrl != null) {
       URL.revokeObjectURL(audioUrl);

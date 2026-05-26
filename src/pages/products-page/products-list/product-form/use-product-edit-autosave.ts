@@ -1,9 +1,12 @@
-import type { FormInstance } from 'antd';
-import { useCallback } from 'react';
+import type { FormInstance } from "antd";
+import { useCallback } from "react";
 
-import type { ProductDetails } from '@/features/products/model/product.types';
+import type { ProductDetails } from "@/features/products/model/product.types";
 
-import type { ProductCreateFormValues, ProductEditFormValues } from '../product-modal.types';
+import type {
+  ProductCreateFormValues,
+  ProductEditFormValues,
+} from "../product-modal.types";
 
 type UseProductEditAutosaveParams = {
   form: FormInstance<ProductCreateFormValues>;

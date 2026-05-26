@@ -20,23 +20,23 @@ export type InstagramAnalyzeProductResponse = {
 };
 
 const isRecord = (v: unknown): v is Record<string, unknown> =>
-  typeof v === 'object' && v !== null && !Array.isArray(v);
+  typeof v === "object" && v !== null && !Array.isArray(v);
 
 const isAnalyzeVariant = (v: unknown): v is InstagramAnalyzeVariant => {
   if (!isRecord(v)) return false;
-  return typeof v.color === 'string' && typeof v.size === 'string';
+  return typeof v.color === "string" && typeof v.size === "string";
 };
 
 const unwrapAnalyzePayload = (raw: unknown): Record<string, unknown> | null => {
   const root = isRecord(raw) ? raw : null;
   if (!root) return null;
 
-  const nestedKeys = ['data', 'product', 'result', 'payload'] as const;
+  const nestedKeys = ["data", "product", "result", "payload"] as const;
   for (const key of nestedKeys) {
     const inner = root[key];
     if (!isRecord(inner)) continue;
-    const hasName = typeof inner.name === 'string';
-    const hasTitle = typeof inner.title === 'string';
+    const hasName = typeof inner.name === "string";
+    const hasTitle = typeof inner.title === "string";
     if (hasName || hasTitle) return inner;
   }
 
@@ -45,39 +45,47 @@ const unwrapAnalyzePayload = (raw: unknown): Record<string, unknown> | null => {
 
 const parsePrice = (v: unknown): { value: number | null; error?: string } => {
   if (v == null) return { value: null };
-  if (typeof v === 'number') {
+  if (typeof v === "number") {
     return Number.isFinite(v)
       ? { value: v }
-      : { value: null, error: 'price must be a finite number' };
+      : { value: null, error: "price must be a finite number" };
   }
-  if (typeof v === 'string') {
+  if (typeof v === "string") {
     const trimmed = v.trim();
-    if (trimmed === '') return { value: null };
+    if (trimmed === "") return { value: null };
     const n = Number(trimmed);
     return Number.isFinite(n)
       ? { value: n }
-      : { value: null, error: 'price string is not a number' };
+      : { value: null, error: "price string is not a number" };
   }
-  return { value: null, error: 'price must be a number, numeric string, or null' };
+  return {
+    value: null,
+    error: "price must be a number, numeric string, or null",
+  };
 };
 
 /** Catalog category id only (`categoryId` / `category_id`). */
-const parseCategoryId = (v: unknown): { value: number | null; error?: string } => {
+const parseCategoryId = (
+  v: unknown,
+): { value: number | null; error?: string } => {
   if (v == null) return { value: null };
-  if (typeof v === 'number') {
+  if (typeof v === "number") {
     return Number.isFinite(v)
       ? { value: v }
-      : { value: null, error: 'categoryId must be a finite number' };
+      : { value: null, error: "categoryId must be a finite number" };
   }
-  if (typeof v === 'string') {
+  if (typeof v === "string") {
     const trimmed = v.trim();
-    if (trimmed === '') return { value: null };
+    if (trimmed === "") return { value: null };
     const n = Number.parseInt(trimmed, 10);
     return !Number.isNaN(n)
       ? { value: n }
-      : { value: null, error: 'categoryId string must be an integer' };
+      : { value: null, error: "categoryId string must be an integer" };
   }
-  return { value: null, error: 'categoryId must be a number or numeric string' };
+  return {
+    value: null,
+    error: "categoryId must be a number or numeric string",
+  };
 };
 
 /**
@@ -85,11 +93,11 @@ const parseCategoryId = (v: unknown): { value: number | null; error?: string } =
  */
 const parseMatchedCategoryLabel = (v: unknown): string | null => {
   if (v == null) return null;
-  if (typeof v === 'string') {
+  if (typeof v === "string") {
     const t = v.trim();
-    return t === '' ? null : t;
+    return t === "" ? null : t;
   }
-  if (typeof v === 'number' && Number.isFinite(v)) {
+  if (typeof v === "number" && Number.isFinite(v)) {
     return String(Math.trunc(v));
   }
   return null;
@@ -98,17 +106,23 @@ const parseMatchedCategoryLabel = (v: unknown): string | null => {
 const parseImages = (v: unknown): { value: string[]; error?: string } => {
   if (v == null) return { value: [] };
   if (!Array.isArray(v))
-    return { value: [], error: 'images must be an array of strings when present' };
-  const strings = v.filter((u): u is string => typeof u === 'string');
+    return {
+      value: [],
+      error: "images must be an array of strings when present",
+    };
+  const strings = v.filter((u): u is string => typeof u === "string");
   if (strings.length !== v.length) {
-    return { value: strings, error: 'images must contain only strings' };
+    return { value: strings, error: "images must contain only strings" };
   }
   return { value: strings };
 };
 
-const parseVariants = (v: unknown): { value: InstagramAnalyzeVariant[]; error?: string } => {
+const parseVariants = (
+  v: unknown,
+): { value: InstagramAnalyzeVariant[]; error?: string } => {
   if (v == null) return { value: [] };
-  if (!Array.isArray(v)) return { value: [], error: 'variants must be an array when present' };
+  if (!Array.isArray(v))
+    return { value: [], error: "variants must be an array when present" };
   return { value: v.filter(isAnalyzeVariant) };
 };
 
@@ -116,35 +130,39 @@ export type ParseInstagramAnalyzeResult =
   | { ok: true; value: InstagramAnalyzeProductResponse }
   | { ok: false; reasons: string[] };
 
-export const parseInstagramAnalyzeProductResponse = (raw: unknown): ParseInstagramAnalyzeResult => {
+export const parseInstagramAnalyzeProductResponse = (
+  raw: unknown,
+): ParseInstagramAnalyzeResult => {
   const reasons: string[] = [];
 
   const obj = unwrapAnalyzePayload(raw);
   if (!obj) {
-    reasons.push('response must be a JSON object');
+    reasons.push("response must be a JSON object");
     return { ok: false, reasons };
   }
 
   const name =
-    typeof obj.name === 'string'
+    typeof obj.name === "string"
       ? obj.name
-      : typeof obj.title === 'string'
+      : typeof obj.title === "string"
         ? obj.title
-        : typeof obj.productName === 'string'
+        : typeof obj.productName === "string"
           ? obj.productName
-          : typeof obj.product_name === 'string'
+          : typeof obj.product_name === "string"
             ? obj.product_name
             : null;
   if (!name) {
-    reasons.push('missing string field "name" (or "title", "productName", "product_name")');
+    reasons.push(
+      'missing string field "name" (or "title", "productName", "product_name")',
+    );
   }
 
   const description =
-    typeof obj.description === 'string'
+    typeof obj.description === "string"
       ? obj.description
-      : typeof obj.desc === 'string'
+      : typeof obj.desc === "string"
         ? obj.desc
-        : '';
+        : "";
 
   const priceResult = parsePrice(obj.price ?? obj.basePrice ?? obj.base_price);
   if (priceResult.error) reasons.push(priceResult.error);
@@ -159,13 +177,14 @@ export const parseInstagramAnalyzeProductResponse = (raw: unknown): ParseInstagr
     obj.matchedCategory ?? obj.matched_category,
   );
 
-  const variantsRaw = obj.variants ?? obj.productVariants ?? obj.product_variants;
+  const variantsRaw =
+    obj.variants ?? obj.productVariants ?? obj.product_variants;
   const variantsResult = parseVariants(variantsRaw);
   if (variantsResult.error) reasons.push(variantsResult.error);
 
   const brandRaw = obj.brandOrLabel ?? obj.brand_or_label ?? obj.label;
-  if (brandRaw != null && typeof brandRaw !== 'string') {
-    reasons.push('brandOrLabel must be a string when present');
+  if (brandRaw != null && typeof brandRaw !== "string") {
+    reasons.push("brandOrLabel must be a string when present");
   }
 
   if (reasons.length > 0 || !name) {
@@ -174,7 +193,9 @@ export const parseInstagramAnalyzeProductResponse = (raw: unknown): ParseInstagr
       reasons:
         reasons.length > 0
           ? reasons
-          : ['missing string field "name" (or "title", "productName", "product_name")'],
+          : [
+              'missing string field "name" (or "title", "productName", "product_name")',
+            ],
     };
   }
 
@@ -188,7 +209,7 @@ export const parseInstagramAnalyzeProductResponse = (raw: unknown): ParseInstagr
       images: imagesResult.value,
       matchedCategory: matchedCategoryLabel,
       variants: variantsResult.value,
-      brandOrLabel: typeof brandRaw === 'string' ? brandRaw : '',
+      brandOrLabel: typeof brandRaw === "string" ? brandRaw : "",
     },
   };
 };

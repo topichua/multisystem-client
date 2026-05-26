@@ -1,7 +1,7 @@
-import { useState, type ReactNode } from 'react';
+import { useState, type ReactNode } from "react";
 
-import { AiToolsStore } from './ai-tools-store';
-import { AiToolsStoreContext } from './ai-tools-store-context';
+import { AiToolsStore } from "./ai-tools-store";
+import { AiToolsStoreContext } from "./ai-tools-store-context";
 
 type AiToolsProviderProps = {
   children: ReactNode;
@@ -10,5 +10,9 @@ type AiToolsProviderProps = {
 export const AiToolsProvider = ({ children }: AiToolsProviderProps) => {
   const [store] = useState(() => new AiToolsStore());
 
-  return <AiToolsStoreContext.Provider value={store}>{children}</AiToolsStoreContext.Provider>;
+  return (
+    <AiToolsStoreContext.Provider value={store}>
+      {children}
+    </AiToolsStoreContext.Provider>
+  );
 };

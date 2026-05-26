@@ -1,7 +1,7 @@
-import { useState, type ReactNode } from 'react';
+import { useState, type ReactNode } from "react";
 
-import { OrdersStoreContext } from './orders-store-context';
-import { OrdersStore } from './orders-store';
+import { OrdersStoreContext } from "./orders-store-context";
+import { OrdersStore } from "./orders-store";
 
 type OrdersProviderProps = {
   children: ReactNode;
@@ -10,5 +10,9 @@ type OrdersProviderProps = {
 export const OrdersProvider = ({ children }: OrdersProviderProps) => {
   const [store] = useState(() => new OrdersStore());
 
-  return <OrdersStoreContext.Provider value={store}>{children}</OrdersStoreContext.Provider>;
+  return (
+    <OrdersStoreContext.Provider value={store}>
+      {children}
+    </OrdersStoreContext.Provider>
+  );
 };

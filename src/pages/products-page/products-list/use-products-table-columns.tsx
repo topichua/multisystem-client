@@ -1,28 +1,38 @@
-import { PencilSimpleIcon, TrashIcon } from '@phosphor-icons/react';
-import type { TableColumnsType } from 'antd';
-import { Button, Flex, Popconfirm, Tag, Typography } from 'antd';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
+import { PencilSimpleIcon, TrashIcon } from "@phosphor-icons/react";
+import type { TableColumnsType } from "antd";
+import { Button, Flex, Popconfirm, Tag, Typography } from "antd";
+import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
-import type { Product } from '@/features/products/model/product.types';
+import type { Product } from "@/features/products/model/product.types";
 
-type ProductStatusColor = 'default' | 'processing' | 'success' | 'warning' | 'error';
+type ProductStatusColor =
+  | "default"
+  | "processing"
+  | "success"
+  | "warning"
+  | "error";
 
 const { Text } = Typography;
 
 const statusToColor: Record<string, ProductStatusColor> = {
-  draft: 'default',
-  active: 'success',
-  archived: 'warning',
+  draft: "default",
+  active: "success",
+  archived: "warning",
 };
 
-const resolveSizesLabel = (value: Product['sizes'], fallback: string): string => {
+const resolveSizesLabel = (
+  value: Product["sizes"],
+  fallback: string,
+): string => {
   if (Array.isArray(value)) {
-    const cleaned = value.filter((size) => typeof size === 'string' && size.trim().length > 0);
-    return cleaned.length > 0 ? cleaned.join(', ') : fallback;
+    const cleaned = value.filter(
+      (size) => typeof size === "string" && size.trim().length > 0,
+    );
+    return cleaned.length > 0 ? cleaned.join(", ") : fallback;
   }
 
-  if (typeof value === 'string' && value.trim().length > 0) {
+  if (typeof value === "string" && value.trim().length > 0) {
     return value.trim();
   }
 
@@ -47,8 +57,8 @@ export const useProductsTableColumns = ({
   return useMemo(
     () => [
       {
-        title: t('products.table.product'),
-        key: 'product',
+        title: t("products.table.product"),
+        key: "product",
         width: 360,
         render: (_, product) => (
           <Flex align="center" gap={12}>
@@ -59,9 +69,9 @@ export const useProductsTableColumns = ({
                 width={48}
                 height={48}
                 style={{
-                  objectFit: 'cover',
+                  objectFit: "cover",
                   borderRadius: 8,
-                  backgroundColor: '#f2f2f2',
+                  backgroundColor: "#f2f2f2",
                   flexShrink: 0,
                 }}
               />
@@ -72,7 +82,7 @@ export const useProductsTableColumns = ({
                   width: 48,
                   height: 48,
                   borderRadius: 8,
-                  backgroundColor: '#f2f2f2',
+                  backgroundColor: "#f2f2f2",
                   flexShrink: 0,
                 }}
               />
@@ -82,58 +92,58 @@ export const useProductsTableColumns = ({
                 {product.name}
               </Text>
               <Text type="secondary" ellipsis style={{ maxWidth: 260 }}>
-                {resolveSizesLabel(product.sizes, t('products.noSizes'))}
+                {resolveSizesLabel(product.sizes, t("products.noSizes"))}
               </Text>
             </Flex>
           </Flex>
         ),
       },
       {
-        title: t('products.table.category'),
-        dataIndex: 'categoryId',
-        key: 'categoryId',
+        title: t("products.table.category"),
+        dataIndex: "categoryId",
+        key: "categoryId",
         width: 100,
-        render: (categoryId: Product['categoryId']) =>
+        render: (categoryId: Product["categoryId"]) =>
           categoryId != null
             ? (categoryNameById.get(categoryId) ?? `#${categoryId}`)
-            : t('products.noCategory'),
+            : t("products.noCategory"),
       },
       {
-        title: t('products.table.price'),
-        key: 'price',
+        title: t("products.table.price"),
+        key: "price",
         width: 100,
         render: (_, product) =>
           product.price != null
             ? `${product.price.toLocaleString()} ${product.currency}`
-            : t('products.noPrice'),
+            : t("products.noPrice"),
       },
       {
-        title: t('products.table.stock'),
-        key: 'stock',
+        title: t("products.table.stock"),
+        key: "stock",
         width: 100,
         render: (_, product) => {
           if (product.inStock === false) {
-            return t('products.outOfStock');
+            return t("products.outOfStock");
           }
           if (product.quantity == null) {
-            return t('products.unknownQuantity');
+            return t("products.unknownQuantity");
           }
 
           return product.quantity;
         },
       },
       {
-        title: t('products.table.status'),
-        dataIndex: 'status',
-        key: 'status',
+        title: t("products.table.status"),
+        dataIndex: "status",
+        key: "status",
         width: 100,
         render: (status: string) => (
-          <Tag color={statusToColor[status] ?? 'processing'}>{status}</Tag>
+          <Tag color={statusToColor[status] ?? "processing"}>{status}</Tag>
         ),
       },
       {
-        title: t('products.table.actions'),
-        key: 'actions',
+        title: t("products.table.actions"),
+        key: "actions",
         width: 50,
         render: (_, product) => (
           <Flex gap={4} align="center">
@@ -141,14 +151,14 @@ export const useProductsTableColumns = ({
               type="text"
               size="small"
               icon={<PencilSimpleIcon size={18} />}
-              aria-label={t('products.edit')}
+              aria-label={t("products.edit")}
               onClick={(e) => {
                 e.stopPropagation();
                 void onEdit(product.id);
               }}
             />
             <Popconfirm
-              title={t('products.deleteConfirm')}
+              title={t("products.deleteConfirm")}
               onConfirm={() => void onDelete(product.id)}
             >
               <Button
@@ -157,7 +167,7 @@ export const useProductsTableColumns = ({
                 danger
                 loading={deleteLoading}
                 icon={<TrashIcon size={18} />}
-                aria-label={t('products.delete')}
+                aria-label={t("products.delete")}
                 onClick={(e) => e.stopPropagation()}
               />
             </Popconfirm>

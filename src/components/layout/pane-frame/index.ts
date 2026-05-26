@@ -4,4 +4,4 @@ export {
   PaneSectionHeaderStack,
   PaneSectionHint,
   PaneSectionTitle,
-} from './pane-frame.styled';
+} from "./pane-frame.styled";

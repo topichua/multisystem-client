@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
-import { useOrdersStore } from '@/features/orders/model/use-orders-store';
+import { useOrdersStore } from "@/features/orders/model/use-orders-store";
 
 export const useEnsureOrderStatusesLoaded = (): void => {
   const ordersStore = useOrdersStore();

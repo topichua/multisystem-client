@@ -1,8 +1,8 @@
-import axios from 'axios';
+import axios from "axios";
 
 const API_URL = import.meta.env.VITE_API_URL;
 const missingApiUrlError = new Error(
-  'VITE_API_URL is not defined. Copy .env.example to .env and set your API URL.',
+  "VITE_API_URL is not defined. Copy .env.example to .env and set your API URL.",
 );
 
 type ApiClientAuthConfig = {

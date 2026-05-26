@@ -1,6 +1,6 @@
-import { makeAutoObservable, runInAction } from 'mobx';
+import { makeAutoObservable, runInAction } from "mobx";
 
-import { productsApi } from '@/features/products/api/products-api';
+import { productsApi } from "@/features/products/api/products-api";
 import type {
   Product,
   ProductCreatePayload,
@@ -9,19 +9,19 @@ import type {
   ProductVariantCreatePayload,
   ProductVariantUpdatePayload,
   ProductsListSort,
-} from '@/features/products/model/product.types';
-import { unknownErrorMessage } from '@/utils/unknown-error-message';
+} from "@/features/products/model/product.types";
+import { unknownErrorMessage } from "@/utils/unknown-error-message";
 
 import {
   normalizeAppliedListKeyword,
   productsListAppliedUrlStateEquals,
   type ProductsListAppliedUrlState,
-} from '@/features/products/model/products-list-url';
+} from "@/features/products/model/products-list-url";
 import {
   readStoredProductsListViewMode,
   writeStoredProductsListViewMode,
   type ProductsListViewMode,
-} from '@/features/products/model/products-list-view-storage';
+} from "@/features/products/model/products-list-view-storage";
 
 const defaultPageSize = 10;
 
@@ -46,8 +46,8 @@ export class ProductsStore {
   pageSize = defaultPageSize;
   activeProduct: ProductDetails | null = null;
 
-  listKeyword = '';
-  listSort: ProductsListSort = 'created_desc';
+  listKeyword = "";
+  listSort: ProductsListSort = "created_desc";
   listCategoryIds: number[] = [];
   listStatus: string | null = null;
   listMinPrice: number | null = null;
@@ -85,7 +85,7 @@ export class ProductsStore {
     if (this.listMinPrice != null || this.listMaxPrice != null) {
       n += 1;
     }
-    if (this.listSort !== 'created_desc') {
+    if (this.listSort !== "created_desc") {
       n += 1;
     }
     return n;
@@ -236,7 +236,7 @@ export class ProductsStore {
 
   clearListKeyword = (): void => {
     runInAction(() => {
-      this.listKeyword = '';
+      this.listKeyword = "";
       this.page = 1;
     });
     void this.loadProducts();
@@ -244,7 +244,7 @@ export class ProductsStore {
 
   resetListSortToDefault = (): void => {
     runInAction(() => {
-      this.listSort = 'created_desc';
+      this.listSort = "created_desc";
       this.page = 1;
     });
     void this.loadProducts();
@@ -252,8 +252,8 @@ export class ProductsStore {
 
   clearAllListFilters = (): void => {
     runInAction(() => {
-      this.listKeyword = '';
-      this.listSort = 'created_desc';
+      this.listKeyword = "";
+      this.listSort = "created_desc";
       this.listCategoryIds = [];
       this.listStatus = null;
       this.listMinPrice = null;
@@ -270,14 +270,19 @@ export class ProductsStore {
       page: this.page,
       pageSize: this.pageSize,
       ...(this.listKeyword ? { keyword: this.listKeyword } : {}),
-      ...(this.listCategoryIds.length ? { categoryIds: this.listCategoryIds } : {}),
+      ...(this.listCategoryIds.length
+        ? { categoryIds: this.listCategoryIds }
+        : {}),
       ...(this.listStatus ? { status: this.listStatus } : {}),
       ...(this.listMinPrice != null ? { minPrice: this.listMinPrice } : {}),
       ...(this.listMaxPrice != null ? { maxPrice: this.listMaxPrice } : {}),
     };
   }
 
-  loadProducts = async (options?: { page?: number; silent?: boolean }): Promise<void> => {
+  loadProducts = async (options?: {
+    page?: number;
+    silent?: boolean;
+  }): Promise<void> => {
     const silent = options?.silent === true;
     if (options?.page != null) {
       runInAction(() => {
@@ -383,7 +388,10 @@ export class ProductsStore {
     }
   };
 
-  loadProductById = async (id: number, options?: { silent?: boolean }): Promise<void> => {
+  loadProductById = async (
+    id: number,
+    options?: { silent?: boolean },
+  ): Promise<void> => {
     if (!options?.silent) {
       runInAction(() => {
         this.detailLoading = true;
@@ -432,7 +440,11 @@ export class ProductsStore {
     }
 
     try {
-      const created = await productsApi.createVariant(productId, payload, imageFile);
+      const created = await productsApi.createVariant(
+        productId,
+        payload,
+        imageFile,
+      );
 
       await this.loadProductById(productId, { silent: options?.silent });
       await this.loadProducts({ silent: true });
@@ -442,9 +454,9 @@ export class ProductsStore {
       if (resolvedId == null && this.activeProduct) {
         const match = this.activeProduct.variants.find(
           (v) =>
-            (v.color ?? '') === payload.color &&
-            (v.size ?? '') === payload.size &&
-            (v.sku ?? '') === (payload.sku ?? ''),
+            (v.color ?? "") === payload.color &&
+            (v.size ?? "") === payload.size &&
+            (v.sku ?? "") === (payload.sku ?? ""),
         );
 
         resolvedId = match?.id;
@@ -485,7 +497,10 @@ export class ProductsStore {
     }
   };
 
-  deleteProductVariant = async (productId: number, variantId: number): Promise<void> => {
+  deleteProductVariant = async (
+    productId: number,
+    variantId: number,
+  ): Promise<void> => {
     runInAction(() => {
       this.variantDeleteLoadingId = variantId;
     });

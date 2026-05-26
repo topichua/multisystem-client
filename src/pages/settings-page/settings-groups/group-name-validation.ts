@@ -1,4 +1,4 @@
-import type { ConversationGroup } from '@/features/conversation-groups/model/conversation-group.types';
+import type { ConversationGroup } from "@/features/conversation-groups/model/conversation-group.types";
 
 const normalizeNameKey = (name: string): string => name.trim().toLowerCase();
 
@@ -9,7 +9,7 @@ export const isDuplicateGroupName = (
 ): boolean => {
   const key = normalizeNameKey(name);
 
-  if (key === '') {
+  if (key === "") {
     return false;
   }
 

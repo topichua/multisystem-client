@@ -1,8 +1,8 @@
-import type { InstagramAnalyzeVariant } from '@/features/products/model/instagram-analyze.types';
-import type { ProductVariantDraft } from '@/features/products/model/product.types';
+import type { InstagramAnalyzeVariant } from "@/features/products/model/instagram-analyze.types";
+import type { ProductVariantDraft } from "@/features/products/model/product.types";
 
 const newClientId = (index: number): string => {
-  if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
+  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
     return crypto.randomUUID();
   }
   return `ig-${Date.now()}-${index}`;
@@ -18,13 +18,13 @@ export const buildVariantDraftsFromInstagramAnalyze = (
 
   return variants.map((row, index) => ({
     clientId: newClientId(index),
-    color: row.color ?? '',
-    size: row.size ?? '',
+    color: row.color ?? "",
+    size: row.size ?? "",
     price: productPrice,
     inStock: true,
     quantity: 1,
-    sku: '',
-    imageUrl: '',
+    sku: "",
+    imageUrl: "",
     imageFile: null,
   }));
 };

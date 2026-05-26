@@ -1,13 +1,13 @@
-import { makeAutoObservable, runInAction } from 'mobx';
+import { makeAutoObservable, runInAction } from "mobx";
 
-import { categoriesApi } from '@/features/categories/api/categories-api';
+import { categoriesApi } from "@/features/categories/api/categories-api";
 
 import type {
   Category,
   CategoryCreatePayload,
   CategoryUpdatePayload,
-} from '@/features/categories/model/category.types';
-import { unknownErrorMessage } from '@/utils/unknown-error-message';
+} from "@/features/categories/model/category.types";
+import { unknownErrorMessage } from "@/utils/unknown-error-message";
 
 export class CategoriesStore {
   categories: Category[] = [];
@@ -94,7 +94,10 @@ export class CategoriesStore {
     }
   };
 
-  updateCategory = async (id: number, payload: CategoryUpdatePayload): Promise<void> => {
+  updateCategory = async (
+    id: number,
+    payload: CategoryUpdatePayload,
+  ): Promise<void> => {
     runInAction(() => {
       this.saveLoading = true;
     });

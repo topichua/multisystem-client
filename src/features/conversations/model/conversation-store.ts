@@ -1,43 +1,45 @@
-import { makeAutoObservable, runInAction } from 'mobx';
+import { makeAutoObservable, runInAction } from "mobx";
 
 import {
   conversationsApi,
   createOptimisticOutboundMessage,
   mergeLatestMessagesPageWithSendResult,
   normalizeSentMessage,
-} from '@/features/conversations/api/conversations-api';
+} from "@/features/conversations/api/conversations-api";
 
-import { normalizeInstagramMessage } from '@/features/conversations/realtime/normalize-instagram-message';
+import { normalizeInstagramMessage } from "@/features/conversations/realtime/normalize-instagram-message";
 import type {
   ConversationsUpdatePayload,
   InstagramMessageDto,
-} from '@/features/conversations/realtime/conversations-realtime.types';
-import { playNewMessageNotification } from '@/features/conversations/realtime/play-new-message-notification';
+} from "@/features/conversations/realtime/conversations-realtime.types";
+import { playNewMessageNotification } from "@/features/conversations/realtime/play-new-message-notification";
 import {
   isNewConversationMessage,
   upsertConversationMessage,
-} from '@/features/conversations/realtime/upsert-conversation-message';
+} from "@/features/conversations/realtime/upsert-conversation-message";
 
-import { sortConversationsByInstUpdatedAt } from './sort-conversations';
+import { sortConversationsByInstUpdatedAt } from "./sort-conversations";
 import type {
   Conversation,
   ConversationMessage,
   MessageParticipant,
   MessagesPaging,
   SendMessagePayload,
-} from './types';
+} from "./types";
 
 const errorMessage = (e: unknown): string =>
-  e instanceof Error ? e.message : 'Something went wrong';
+  e instanceof Error ? e.message : "Something went wrong";
 
 const normalizeListGroupFilterIds = (ids: number[]): number[] =>
-  [...new Set(ids)].filter((id) => Number.isInteger(id) && id > 0).sort((a, b) => a - b);
+  [...new Set(ids)]
+    .filter((id) => Number.isInteger(id) && id > 0)
+    .sort((a, b) => a - b);
 
 const sameSortedNumberList = (a: number[], b: number[]): boolean =>
   a.length === b.length && a.every((id, i) => id === b[i]);
 
 const createClientTempId = (): string => {
-  if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
+  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
     return crypto.randomUUID();
   }
 
@@ -83,10 +85,15 @@ function mergeLatestPagePreservingLocalOutboundMessages(
       return false;
     }
 
-    return message.outboundStatus === 'pending' || message.outboundStatus === 'failed';
+    return (
+      message.outboundStatus === "pending" ||
+      message.outboundStatus === "failed"
+    );
   });
 
-  return localOnlyMessages.length === 0 ? latestPage : [...localOnlyMessages, ...latestPage];
+  return localOnlyMessages.length === 0
+    ? latestPage
+    : [...localOnlyMessages, ...latestPage];
 }
 
 function replaceOptimisticMessageWithConfirmed(
@@ -119,7 +126,8 @@ export class ConversationStore {
   conversationListGroupFilterIds: number[] = [];
   activeConversation: Conversation | null = null;
   messagesByConversationId: Record<string, ConversationMessage[]> = {};
-  messagesPagingByConversationId: Record<string, MessagesPaging | undefined> = {};
+  messagesPagingByConversationId: Record<string, MessagesPaging | undefined> =
+    {};
 
   listLoading = false;
   listError: string | null = null;
@@ -153,7 +161,9 @@ export class ConversationStore {
       return [];
     }
 
-    return this.messagesByConversationId[String(this.activeConversation.id)] ?? [];
+    return (
+      this.messagesByConversationId[String(this.activeConversation.id)] ?? []
+    );
   }
 
   get sortedConversations(): Conversation[] {
@@ -175,8 +185,13 @@ export class ConversationStore {
     );
   };
 
-  isStaleMessageListMutationGeneration = (conversationId: string, snapshot: number): boolean => {
-    return this.snapshotMessageListMutationGeneration(conversationId) !== snapshot;
+  isStaleMessageListMutationGeneration = (
+    conversationId: string,
+    snapshot: number,
+  ): boolean => {
+    return (
+      this.snapshotMessageListMutationGeneration(conversationId) !== snapshot
+    );
   };
 
   createMessagesRequestId = (conversationId: string): number => {
@@ -188,8 +203,13 @@ export class ConversationStore {
     return requestId;
   };
 
-  isLatestMessagesRequest = (conversationId: string, requestId: number): boolean => {
-    return this._messagesRequestIdByConversationId.get(conversationId) === requestId;
+  isLatestMessagesRequest = (
+    conversationId: string,
+    requestId: number,
+  ): boolean => {
+    return (
+      this._messagesRequestIdByConversationId.get(conversationId) === requestId
+    );
   };
 
   clearConversationListError = (): void => {
@@ -242,7 +262,8 @@ export class ConversationStore {
   };
 
   loadConversationMessages = (conversationId: string): Promise<void> => {
-    const mutationGenerationAtFetch = this.snapshotMessageListMutationGeneration(conversationId);
+    const mutationGenerationAtFetch =
+      this.snapshotMessageListMutationGeneration(conversationId);
     const requestId = this.createMessagesRequestId(conversationId);
 
     runInAction(() => {
@@ -257,7 +278,12 @@ export class ConversationStore {
           return;
         }
 
-        if (this.isStaleMessageListMutationGeneration(conversationId, mutationGenerationAtFetch)) {
+        if (
+          this.isStaleMessageListMutationGeneration(
+            conversationId,
+            mutationGenerationAtFetch,
+          )
+        ) {
           return;
         }
 
@@ -266,7 +292,10 @@ export class ConversationStore {
 
           this.messagesByConversationId = {
             ...this.messagesByConversationId,
-            [conversationId]: mergeLatestPagePreservingLocalOutboundMessages(existing, messages),
+            [conversationId]: mergeLatestPagePreservingLocalOutboundMessages(
+              existing,
+              messages,
+            ),
           };
 
           this.messagesPagingByConversationId = {
@@ -364,7 +393,11 @@ export class ConversationStore {
     sentBy?: MessageParticipant,
   ): Promise<void> => {
     const clientTempId = createClientTempId();
-    const optimistic = createOptimisticOutboundMessage(payload, sentBy, clientTempId);
+    const optimistic = createOptimisticOutboundMessage(
+      payload,
+      sentBy,
+      clientTempId,
+    );
 
     runInAction(() => {
       const existing = this.messagesByConversationId[conversationId] ?? [];
@@ -377,7 +410,12 @@ export class ConversationStore {
 
     this.bumpMessageListMutationGeneration(conversationId);
 
-    return this.dispatchOutboundSend(conversationId, clientTempId, payload, sentBy);
+    return this.dispatchOutboundSend(
+      conversationId,
+      clientTempId,
+      payload,
+      sentBy,
+    );
   };
 
   resendOutboundMessage = (
@@ -387,7 +425,7 @@ export class ConversationStore {
   ): Promise<void> => {
     const list = this.messagesByConversationId[conversationId] ?? [];
     const message = list.find(
-      (m) => m.clientTempId === clientTempId && m.outboundStatus === 'failed',
+      (m) => m.clientTempId === clientTempId && m.outboundStatus === "failed",
     );
 
     if (!message) {
@@ -396,7 +434,7 @@ export class ConversationStore {
 
     const payload: SendMessagePayload = {
       message: message.message,
-      ...(message.reply_to_id != null && message.reply_to_id !== ''
+      ...(message.reply_to_id != null && message.reply_to_id !== ""
         ? { reply_to_id: message.reply_to_id }
         : {}),
     };
@@ -408,7 +446,7 @@ export class ConversationStore {
           m.clientTempId === clientTempId
             ? {
                 ...m,
-                outboundStatus: 'pending',
+                outboundStatus: "pending",
                 sendError: undefined,
               }
             : m,
@@ -418,7 +456,12 @@ export class ConversationStore {
 
     this.bumpMessageListMutationGeneration(conversationId);
 
-    return this.dispatchOutboundSend(conversationId, clientTempId, payload, sentBy);
+    return this.dispatchOutboundSend(
+      conversationId,
+      clientTempId,
+      payload,
+      sentBy,
+    );
   };
 
   dispatchOutboundSend = (
@@ -435,18 +478,25 @@ export class ConversationStore {
         return conversationsApi
           .getMessages(conversationId, { page: 1 })
           .then(({ messages, paging }) => {
-            const merged = mergeLatestMessagesPageWithSendResult(messages, raw, payload, sentBy);
+            const merged = mergeLatestMessagesPageWithSendResult(
+              messages,
+              raw,
+              payload,
+              sentBy,
+            );
 
             runInAction(() => {
-              const existing = this.messagesByConversationId[conversationId] ?? [];
+              const existing =
+                this.messagesByConversationId[conversationId] ?? [];
 
               this.messagesByConversationId = {
                 ...this.messagesByConversationId,
-                [conversationId]: mergeLatestPagePreservingLocalOutboundMessages(
-                  existing,
-                  merged,
-                  clientTempId,
-                ),
+                [conversationId]:
+                  mergeLatestPagePreservingLocalOutboundMessages(
+                    existing,
+                    merged,
+                    clientTempId,
+                  ),
               };
 
               this.messagesPagingByConversationId = {
@@ -461,7 +511,8 @@ export class ConversationStore {
             const confirmed = normalizeSentMessage(raw, payload, sentBy);
 
             runInAction(() => {
-              const existing = this.messagesByConversationId[conversationId] ?? [];
+              const existing =
+                this.messagesByConversationId[conversationId] ?? [];
 
               this.messagesByConversationId = {
                 ...this.messagesByConversationId,
@@ -486,7 +537,7 @@ export class ConversationStore {
               m.clientTempId === clientTempId
                 ? {
                     ...m,
-                    outboundStatus: 'failed',
+                    outboundStatus: "failed",
                     sendError: errorMessage(e),
                   }
                 : m,
@@ -499,7 +550,10 @@ export class ConversationStore {
       .then(() => undefined);
   };
 
-  async updateConversationGroup(conversationId: string, groupId: number | null): Promise<void> {
+  async updateConversationGroup(
+    conversationId: string,
+    groupId: number | null,
+  ): Promise<void> {
     const raw = await conversationsApi.update(conversationId, { groupId });
 
     runInAction(() => {
@@ -509,7 +563,7 @@ export class ConversationStore {
             return c;
           }
 
-          if (raw && typeof raw === 'object' && 'id' in raw) {
+          if (raw && typeof raw === "object" && "id" in raw) {
             return raw;
           }
 
@@ -536,7 +590,9 @@ export class ConversationStore {
   };
 
   upsertConversation = (conversation: Conversation): void => {
-    const index = this.conversations.findIndex((item) => item.id === conversation.id);
+    const index = this.conversations.findIndex(
+      (item) => item.id === conversation.id,
+    );
 
     if (index >= 0) {
       const next = [...this.conversations];
@@ -546,7 +602,10 @@ export class ConversationStore {
     }
 
     if (this.matchesListGroupFilter(conversation)) {
-      this.conversations = sortConversationsByInstUpdatedAt([...this.conversations, conversation]);
+      this.conversations = sortConversationsByInstUpdatedAt([
+        ...this.conversations,
+        conversation,
+      ]);
     }
   };
 

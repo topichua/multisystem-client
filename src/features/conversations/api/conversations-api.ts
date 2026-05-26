@@ -1,4 +1,4 @@
-import { apiClient } from '@/api/api-client';
+import { apiClient } from "@/api/api-client";
 
 import type {
   Conversation,
@@ -10,19 +10,21 @@ import type {
   SendMessageApiResponse,
   SendMessagePayload,
   SyncConversationsPayload,
-} from '@/features/conversations/model/types';
+} from "@/features/conversations/model/types";
 
-const basePath = '/conversations';
+const basePath = "/conversations";
 
 export type ListConversationsParams = {
   groupIds?: number[];
 };
 
-export const isSendMessageApiResponse = (data: unknown): data is SendMessageApiResponse =>
-  typeof data === 'object' &&
+export const isSendMessageApiResponse = (
+  data: unknown,
+): data is SendMessageApiResponse =>
+  typeof data === "object" &&
   data !== null &&
-  'message_id' in data &&
-  typeof (data as SendMessageApiResponse).message_id === 'string';
+  "message_id" in data &&
+  typeof (data as SendMessageApiResponse).message_id === "string";
 
 export const createOptimisticOutboundMessage = (
   payload: SendMessagePayload,
@@ -31,14 +33,16 @@ export const createOptimisticOutboundMessage = (
 ): ConversationMessage => ({
   id: `local:${clientTempId}`,
   clientTempId,
-  outboundStatus: 'pending',
+  outboundStatus: "pending",
   created_time: new Date().toISOString(),
   conversation: {},
-  from: sentBy ? { id: sentBy.id, name: sentBy.name, username: sentBy.username } : undefined,
+  from: sentBy
+    ? { id: sentBy.id, name: sentBy.name, username: sentBy.username }
+    : undefined,
   to: { data: [] },
   message: payload.message,
   is_unsupported: false,
-  ...(payload.reply_to_id != null && payload.reply_to_id !== ''
+  ...(payload.reply_to_id != null && payload.reply_to_id !== ""
     ? { reply_to_id: payload.reply_to_id }
     : {}),
 });
@@ -82,7 +86,7 @@ export const normalizeSentMessage = (
       to: { data: [] },
       message: payload.message,
       is_unsupported: false,
-      ...(payload.reply_to_id != null && payload.reply_to_id !== ''
+      ...(payload.reply_to_id != null && payload.reply_to_id !== ""
         ? { reply_to_id: payload.reply_to_id }
         : {}),
     };
@@ -93,7 +97,7 @@ export const normalizeSentMessage = (
 
 export type GetMessagesResult = {
   messages: ConversationMessage[];
-  paging: MessagesListResponseBody['paging'];
+  paging: MessagesListResponseBody["paging"];
 };
 
 export type GetMessagesParams = {
@@ -105,7 +109,7 @@ export const conversationsApi = {
   list: async (params?: ListConversationsParams) => {
     const query =
       params?.groupIds != null && params.groupIds.length > 0
-        ? { groupIds: params.groupIds.join(',') }
+        ? { groupIds: params.groupIds.join(",") }
         : undefined;
 
     const { data } = await apiClient.get<ConversationsListResponse>(basePath, {
@@ -116,13 +120,18 @@ export const conversationsApi = {
   },
 
   sync: async (payload?: SyncConversationsPayload) => {
-    const { data } = await apiClient.post<unknown>(`${basePath}/sync`, payload ?? {});
+    const { data } = await apiClient.post<unknown>(
+      `${basePath}/sync`,
+      payload ?? {},
+    );
 
     return data;
   },
 
   getById: async (conversationId: string) => {
-    const { data } = await apiClient.get<Conversation>(`${basePath}/${conversationId}`);
+    const { data } = await apiClient.get<Conversation>(
+      `${basePath}/${conversationId}`,
+    );
 
     return data;
   },
@@ -131,13 +140,16 @@ export const conversationsApi = {
     conversationId: string,
     payload: ConversationUpdatePayload,
   ): Promise<Conversation | undefined> => {
-    const { data } = await apiClient.put<unknown>(`${basePath}/${conversationId}`, payload);
+    const { data } = await apiClient.put<unknown>(
+      `${basePath}/${conversationId}`,
+      payload,
+    );
 
     if (
       data &&
-      typeof data === 'object' &&
-      'id' in data &&
-      typeof (data as { id: unknown }).id === 'number'
+      typeof data === "object" &&
+      "id" in data &&
+      typeof (data as { id: unknown }).id === "number"
     ) {
       return data as Conversation;
     }
@@ -169,10 +181,9 @@ export const conversationsApi = {
     conversationId: string,
     payload: SendMessagePayload,
   ): Promise<SendMessageApiResponse | ConversationMessage> => {
-    const { data } = await apiClient.post<SendMessageApiResponse | ConversationMessage>(
-      `${basePath}/${conversationId}/messages`,
-      payload,
-    );
+    const { data } = await apiClient.post<
+      SendMessageApiResponse | ConversationMessage
+    >(`${basePath}/${conversationId}/messages`, payload);
 
     return data;
   },

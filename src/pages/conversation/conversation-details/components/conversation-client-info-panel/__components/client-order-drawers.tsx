@@ -1,9 +1,12 @@
-import { getApiErrorMessage } from '@/api/get-api-error-message';
-import type { Client } from '@/features/clients/model/client.types';
-import type { OrderDraftLine, OrderFormValues } from '@/features/orders/model/order.types';
-import { useOrdersStore } from '@/features/orders/model/use-orders-store';
-import type { CatalogVariant } from '@/features/products/model/product.types';
-import { observer } from 'mobx-react-lite';
+import { getApiErrorMessage } from "@/api/get-api-error-message";
+import type { Client } from "@/features/clients/model/client.types";
+import type {
+  OrderDraftLine,
+  OrderFormValues,
+} from "@/features/orders/model/order.types";
+import { useOrdersStore } from "@/features/orders/model/use-orders-store";
+import type { CatalogVariant } from "@/features/products/model/product.types";
+import { observer } from "mobx-react-lite";
 import {
   Alert,
   Avatar,
@@ -25,12 +28,12 @@ import {
   Tag,
   Typography,
   message,
-} from 'antd';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { CatalogVariantSearchItem } from './catalog-variant-search-item';
-import { OrderProductLine } from './order-product-line';
-import { ProductCard } from './product-card';
+} from "antd";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { CatalogVariantSearchItem } from "./catalog-variant-search-item";
+import { OrderProductLine } from "./order-product-line";
+import { ProductCard } from "./product-card";
 
 const { Text } = Typography;
 
@@ -59,30 +62,32 @@ const sectionTitle = (step: number, title: string) => (
 
 const recommendedProducts = [
   {
-    id: '1',
-    title: 'White Hoodie',
-    imageUrl: 'https://cdn.pixabay.com/photo/2020/10/05/10/51/cat-5628953_1280.jpg',
-    size: 'L',
-    color: 'White',
+    id: "1",
+    title: "White Hoodie",
+    imageUrl:
+      "https://cdn.pixabay.com/photo/2020/10/05/10/51/cat-5628953_1280.jpg",
+    size: "L",
+    color: "White",
     price: 1250,
     stockCount: 8,
   },
   {
-    id: '2',
-    title: 'Black Hoodie',
-    imageUrl: 'https://i.pinimg.com/236x/c6/2e/47/c62e47ccce4e8e568c9c7e381032bde9.jpg',
-    size: 'M',
-    color: 'Black',
+    id: "2",
+    title: "Black Hoodie",
+    imageUrl:
+      "https://i.pinimg.com/236x/c6/2e/47/c62e47ccce4e8e568c9c7e381032bde9.jpg",
+    size: "M",
+    color: "Black",
     price: 1390,
     stockCount: 4,
   },
   {
-    id: '3',
-    title: 'Grey Hoodie',
+    id: "3",
+    title: "Grey Hoodie",
     imageUrl:
-      'https://plus.unsplash.com/premium_photo-1673967831980-1d377baaded2?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y2F0c3xlbnwwfHwwfHx8MA%3D%3D',
-    size: 'XL',
-    color: 'Grey',
+      "https://plus.unsplash.com/premium_photo-1673967831980-1d377baaded2?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y2F0c3xlbnwwfHwwfHx8MA%3D%3D",
+    size: "XL",
+    color: "Grey",
     price: 1190,
     stockCount: 12,
   },
@@ -101,7 +106,7 @@ export const ClientOrderDrawer = observer(
     const ordersStore = useOrdersStore();
     const [messageApi, contextHolder] = message.useMessage();
     const [form] = Form.useForm<OrderFormValues>();
-    const [searchQuery, setSearchQuery] = useState('');
+    const [searchQuery, setSearchQuery] = useState("");
     const [productPickerKey, setProductPickerKey] = useState(0);
     const [orderLines, setOrderLines] = useState<OrderDraftLine[]>([]);
 
@@ -121,12 +126,16 @@ export const ClientOrderDrawer = observer(
     }, [trimmedSearch, ordersStore]);
 
     const orderTotals = useMemo(() => {
-      const productCount = orderLines.reduce((sum, line) => sum + line.quantity, 0);
+      const productCount = orderLines.reduce(
+        (sum, line) => sum + line.quantity,
+        0,
+      );
       const total = orderLines.reduce(
         (sum, line) => sum + line.quantity * line.variant.unitPrice,
         0,
       );
-      const currency = orderLines[0]?.variant.product.currency?.toLowerCase() ?? 'uah';
+      const currency =
+        orderLines[0]?.variant.product.currency?.toLowerCase() ?? "uah";
 
       return { productCount, total, currency };
     }, [orderLines]);
@@ -142,7 +151,13 @@ export const ClientOrderDrawer = observer(
     );
 
     const variantsById = useMemo(
-      () => new Map(ordersStore.catalogSearchResults.map((variant) => [variant.id, variant])),
+      () =>
+        new Map(
+          ordersStore.catalogSearchResults.map((variant) => [
+            variant.id,
+            variant,
+          ]),
+        ),
       [ordersStore.catalogSearchResults],
     );
 
@@ -151,34 +166,44 @@ export const ClientOrderDrawer = observer(
         setOrderLines((prev) => {
           const existing = prev.find((line) => line.variantId === variant.id);
           if (existing) {
-            const maxQty = variant.quantity > 0 ? variant.quantity : Number.MAX_SAFE_INTEGER;
+            const maxQty =
+              variant.quantity > 0 ? variant.quantity : Number.MAX_SAFE_INTEGER;
             const nextQuantity = Math.min(existing.quantity + 1, maxQty);
             return prev.map((line) =>
-              line.variantId === variant.id ? { ...line, quantity: nextQuantity, variant } : line,
+              line.variantId === variant.id
+                ? { ...line, quantity: nextQuantity, variant }
+                : line,
             );
           }
 
           return [...prev, { variantId: variant.id, quantity: 1, variant }];
         });
-        setSearchQuery('');
+        setSearchQuery("");
         ordersStore.clearCatalogSearch();
         setProductPickerKey((key) => key + 1);
       },
       [ordersStore],
     );
 
-    const updateLineQuantity = useCallback((variantId: number, quantity: number) => {
+    const updateLineQuantity = useCallback(
+      (variantId: number, quantity: number) => {
+        setOrderLines((prev) =>
+          prev.map((line) =>
+            line.variantId === variantId ? { ...line, quantity } : line,
+          ),
+        );
+      },
+      [],
+    );
+
+    const removeLine = useCallback((variantId: number) => {
       setOrderLines((prev) =>
-        prev.map((line) => (line.variantId === variantId ? { ...line, quantity } : line)),
+        prev.filter((line) => line.variantId !== variantId),
       );
     }, []);
 
-    const removeLine = useCallback((variantId: number) => {
-      setOrderLines((prev) => prev.filter((line) => line.variantId !== variantId));
-    }, []);
-
     const resetDrawerState = useCallback(() => {
-      setSearchQuery('');
+      setSearchQuery("");
       ordersStore.clearCatalogSearch();
       setProductPickerKey(0);
       setOrderLines([]);
@@ -209,13 +234,16 @@ export const ClientOrderDrawer = observer(
           orderLines,
           formValues,
         });
-        messageApi.success(t('conversation.clientOrders.placeOrderSuccess'));
+        messageApi.success(t("conversation.clientOrders.placeOrderSuccess"));
         resetDrawerState();
         onOrderCreated?.();
         onClose();
       } catch (error) {
         messageApi.error(
-          getApiErrorMessage(error, t('conversation.clientOrders.placeOrderFailed')),
+          getApiErrorMessage(
+            error,
+            t("conversation.clientOrders.placeOrderFailed"),
+          ),
         );
       }
     }, [
@@ -243,15 +271,24 @@ export const ClientOrderDrawer = observer(
 
     const deliveryMethodOptions = useMemo(
       () => [
-        { value: 'nova_poshta', label: t('conversation.clientOrders.drawer.deliveryNovaPoshta') },
+        {
+          value: "nova_poshta",
+          label: t("conversation.clientOrders.drawer.deliveryNovaPoshta"),
+        },
       ],
       [t],
     );
 
     const billingMethodOptions = useMemo(
       () => [
-        { value: 'cash', label: t('conversation.clientOrders.drawer.billingCash') },
-        { value: 'card', label: t('conversation.clientOrders.drawer.billingCard') },
+        {
+          value: "cash",
+          label: t("conversation.clientOrders.drawer.billingCash"),
+        },
+        {
+          value: "card",
+          label: t("conversation.clientOrders.drawer.billingCard"),
+        },
       ],
       [t],
     );
@@ -264,8 +301,10 @@ export const ClientOrderDrawer = observer(
       <>
         {contextHolder}
         <Drawer
-          title={t('conversation.clientOrders.drawerTitle')}
-          closable={{ 'aria-label': t('conversation.clientOrders.closeDrawerAria') }}
+          title={t("conversation.clientOrders.drawerTitle")}
+          closable={{
+            "aria-label": t("conversation.clientOrders.closeDrawerAria"),
+          }}
           onClose={handleDrawerClose}
           open={onOpen}
           size={960}
@@ -274,19 +313,21 @@ export const ClientOrderDrawer = observer(
             <Flex gap={16} vertical>
               <Flex justify="space-between" align="center" gap={16}>
                 <Statistic
-                  title={t('conversation.clientOrders.drawer.footerAmountOfProducts')}
+                  title={t(
+                    "conversation.clientOrders.drawer.footerAmountOfProducts",
+                  )}
                   value={orderTotals.productCount}
                 />
                 <Statistic
-                  title={t('conversation.clientOrders.drawer.footerTotal')}
+                  title={t("conversation.clientOrders.drawer.footerTotal")}
                   value={orderTotals.total}
                   suffix={orderTotals.currency}
-                  formatter={(value) => Number(value).toLocaleString('uk-UA')}
+                  formatter={(value) => Number(value).toLocaleString("uk-UA")}
                 />
               </Flex>
               <Flex gap={6} justify="flex-end">
                 <Button onClick={handleDrawerClose}>
-                  {t('conversation.clientOrders.drawer.cancel')}
+                  {t("conversation.clientOrders.drawer.cancel")}
                 </Button>
                 <Button
                   type="primary"
@@ -294,7 +335,7 @@ export const ClientOrderDrawer = observer(
                   loading={ordersStore.createLoading}
                   onClick={() => void handlePlaceOrder()}
                 >
-                  {t('conversation.clientOrders.drawer.placeOrder')}
+                  {t("conversation.clientOrders.drawer.placeOrder")}
                 </Button>
               </Flex>
             </Flex>
@@ -303,13 +344,16 @@ export const ClientOrderDrawer = observer(
           <Flex vertical gap={16}>
             <Card
               size="small"
-              title={sectionTitle(1, t('conversation.clientOrders.drawer.sectionClient'))}
+              title={sectionTitle(
+                1,
+                t("conversation.clientOrders.drawer.sectionClient"),
+              )}
               styles={{
                 root: {
-                  borderColor: '#e2e1e1',
+                  borderColor: "#e2e1e1",
                 },
                 header: {
-                  borderColor: '#e2e1e1',
+                  borderColor: "#e2e1e1",
                 },
               }}
             >
@@ -319,20 +363,22 @@ export const ClientOrderDrawer = observer(
                 </Avatar>
                 <Flex vertical>
                   <Text>
-                    <Text type="secondary">{t('conversation.clientOrders.drawer.labelName')} </Text>
+                    <Text type="secondary">
+                      {t("conversation.clientOrders.drawer.labelName")}{" "}
+                    </Text>
                     {linkedClient.firstName} {linkedClient.lastName}
                   </Text>
                   <Text>
                     <Text type="secondary">
-                      {t('conversation.clientOrders.drawer.labelPhone')}{' '}
+                      {t("conversation.clientOrders.drawer.labelPhone")}{" "}
                     </Text>
-                    {linkedClient.phone || '-'}
+                    {linkedClient.phone || "-"}
                   </Text>
                   <Text>
                     <Text type="secondary">
-                      {t('conversation.clientOrders.drawer.labelDelivery')}{' '}
+                      {t("conversation.clientOrders.drawer.labelDelivery")}{" "}
                     </Text>
-                    {linkedClient.deliveryInfo || '-'}
+                    {linkedClient.deliveryInfo || "-"}
                   </Text>
                 </Flex>
               </Flex>
@@ -340,16 +386,21 @@ export const ClientOrderDrawer = observer(
 
             <Card
               size="small"
-              title={sectionTitle(2, t('conversation.clientOrders.drawer.sectionProducts'))}
+              title={sectionTitle(
+                2,
+                t("conversation.clientOrders.drawer.sectionProducts"),
+              )}
               extra={
-                <Tag color="processing">{t('conversation.clientOrders.drawer.tagRecommended')}</Tag>
+                <Tag color="processing">
+                  {t("conversation.clientOrders.drawer.tagRecommended")}
+                </Tag>
               }
               styles={{
                 root: {
-                  borderColor: '#e2e1e1',
+                  borderColor: "#e2e1e1",
                 },
                 header: {
-                  borderColor: '#e2e1e1',
+                  borderColor: "#e2e1e1",
                 },
               }}
             >
@@ -359,12 +410,16 @@ export const ClientOrderDrawer = observer(
                   showIcon={false}
                   title={
                     <Text strong italic>
-                      {t('conversation.clientOrders.drawer.recommendedTitle')}
+                      {t("conversation.clientOrders.drawer.recommendedTitle")}
                     </Text>
                   }
                   description={
                     <Flex vertical gap={12}>
-                      <Text>{t('conversation.clientOrders.drawer.recommendedDescription')}</Text>
+                      <Text>
+                        {t(
+                          "conversation.clientOrders.drawer.recommendedDescription",
+                        )}
+                      </Text>
                       <Flex justify="space-between" gap={8}>
                         {recommendedProducts.map((item) => (
                           <ProductCard
@@ -384,16 +439,20 @@ export const ClientOrderDrawer = observer(
                   }
                 />
 
-                <Divider plain>{t('conversation.clientOrders.drawer.addProductDivider')}</Divider>
+                <Divider plain>
+                  {t("conversation.clientOrders.drawer.addProductDivider")}
+                </Divider>
 
                 <Select
                   key={productPickerKey}
                   showSearch
                   allowClear
-                  placeholder={t('conversation.clientOrders.drawer.productSearchPlaceholder')}
+                  placeholder={t(
+                    "conversation.clientOrders.drawer.productSearchPlaceholder",
+                  )}
                   filterOption={false}
                   loading={ordersStore.catalogSearchLoading}
-                  style={{ width: '100%' }}
+                  style={{ width: "100%" }}
                   listHeight={320}
                   options={variantSelectOptions}
                   onSearch={(value) => {
@@ -410,16 +469,18 @@ export const ClientOrderDrawer = observer(
                       </Flex>
                     ) : trimmedSearch.length < MIN_SEARCH_LENGTH ? (
                       <Text type="secondary">
-                        {t('conversation.clientOrders.drawer.searchMinChars', {
+                        {t("conversation.clientOrders.drawer.searchMinChars", {
                           count: MIN_SEARCH_LENGTH,
                         })}
                       </Text>
                     ) : (
-                      t('conversation.clientOrders.drawer.searchNoResults')
+                      t("conversation.clientOrders.drawer.searchNoResults")
                     )
                   }
                   optionRender={(option) => {
-                    const data = option.data as VariantSelectOptionData | undefined;
+                    const data = option.data as
+                      | VariantSelectOptionData
+                      | undefined;
                     if (!data?.variant) {
                       return option.label;
                     }
@@ -429,7 +490,7 @@ export const ClientOrderDrawer = observer(
                 />
 
                 <Divider plain>
-                  {t('conversation.clientOrders.drawer.addedProductsDivider')}
+                  {t("conversation.clientOrders.drawer.addedProductsDivider")}
                 </Divider>
 
                 {orderLines.length > 0 ? (
@@ -448,7 +509,9 @@ export const ClientOrderDrawer = observer(
                   </Flex>
                 ) : (
                   <Empty
-                    description={t('conversation.clientOrders.drawer.addedProductsEmpty')}
+                    description={t(
+                      "conversation.clientOrders.drawer.addedProductsEmpty",
+                    )}
                     image={Empty.PRESENTED_IMAGE_SIMPLE}
                   />
                 )}
@@ -457,13 +520,16 @@ export const ClientOrderDrawer = observer(
 
             <Card
               size="small"
-              title={sectionTitle(3, t('conversation.clientOrders.drawer.sectionOrderDetails'))}
+              title={sectionTitle(
+                3,
+                t("conversation.clientOrders.drawer.sectionOrderDetails"),
+              )}
               styles={{
                 root: {
-                  borderColor: '#e2e1e1',
+                  borderColor: "#e2e1e1",
                 },
                 header: {
-                  borderColor: '#e2e1e1',
+                  borderColor: "#e2e1e1",
                 },
               }}
             >
@@ -471,12 +537,14 @@ export const ClientOrderDrawer = observer(
                 <Row gutter={16}>
                   <Col span={12}>
                     <Form.Item
-                      label={t('conversation.clientOrders.drawer.deliveryMethodLabel')}
+                      label={t(
+                        "conversation.clientOrders.drawer.deliveryMethodLabel",
+                      )}
                       name="deliveryMethod"
                     >
                       <Select
                         placeholder={t(
-                          'conversation.clientOrders.drawer.deliveryMethodPlaceholder',
+                          "conversation.clientOrders.drawer.deliveryMethodPlaceholder",
                         )}
                         options={deliveryMethodOptions}
                       />
@@ -485,16 +553,20 @@ export const ClientOrderDrawer = observer(
 
                   <Col span={12}>
                     <Form.Item
-                      label={t('conversation.clientOrders.drawer.postAddressLabel')}
+                      label={t(
+                        "conversation.clientOrders.drawer.postAddressLabel",
+                      )}
                       name="postAddress"
                     >
                       <Select
-                        placeholder={t('conversation.clientOrders.drawer.postAddressPlaceholder')}
+                        placeholder={t(
+                          "conversation.clientOrders.drawer.postAddressPlaceholder",
+                        )}
                         options={[
-                          { value: 'jack', label: 'Jack' },
-                          { value: 'lucy', label: 'Lucy' },
-                          { value: 'Yiminghe', label: 'Yiminghe' },
-                          { value: 'disabled', label: 'Disabled' },
+                          { value: "jack", label: "Jack" },
+                          { value: "lucy", label: "Lucy" },
+                          { value: "Yiminghe", label: "Yiminghe" },
+                          { value: "disabled", label: "Disabled" },
                         ]}
                       />
                     </Form.Item>
@@ -502,11 +574,15 @@ export const ClientOrderDrawer = observer(
 
                   <Col span={12}>
                     <Form.Item
-                      label={t('conversation.clientOrders.drawer.billingMethodLabel')}
+                      label={t(
+                        "conversation.clientOrders.drawer.billingMethodLabel",
+                      )}
                       name="billingMethod"
                     >
                       <Select
-                        placeholder={t('conversation.clientOrders.drawer.billingMethodPlaceholder')}
+                        placeholder={t(
+                          "conversation.clientOrders.drawer.billingMethodPlaceholder",
+                        )}
                         options={billingMethodOptions}
                       />
                     </Form.Item>
@@ -514,11 +590,13 @@ export const ClientOrderDrawer = observer(
 
                   <Col span={12}>
                     <Form.Item
-                      label={t('conversation.clientOrders.drawer.commentLabel')}
+                      label={t("conversation.clientOrders.drawer.commentLabel")}
                       name="comment"
                     >
                       <Input
-                        placeholder={t('conversation.clientOrders.drawer.commentPlaceholder')}
+                        placeholder={t(
+                          "conversation.clientOrders.drawer.commentPlaceholder",
+                        )}
                       />
                     </Form.Item>
                   </Col>

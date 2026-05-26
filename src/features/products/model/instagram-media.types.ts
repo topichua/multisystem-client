@@ -1,6 +1,6 @@
 /** Instagram Graph API–shaped media rows from `/api/instagram/media`. */
 
-export type InstagramMediaType = 'CAROUSEL_ALBUM' | 'IMAGE' | 'VIDEO' | string;
+export type InstagramMediaType = "CAROUSEL_ALBUM" | "IMAGE" | "VIDEO" | string;
 
 export type InstagramMediaChild = {
   id: string;
@@ -37,67 +37,73 @@ export type InstagramMediaItem = {
 };
 
 const isRecord = (v: unknown): v is Record<string, unknown> =>
-  typeof v === 'object' && v !== null && !Array.isArray(v);
+  typeof v === "object" && v !== null && !Array.isArray(v);
 
 const isMediaChild = (v: unknown): v is InstagramMediaChild => {
   if (!isRecord(v)) return false;
   return (
-    typeof v.id === 'string' && typeof v.media_type === 'string' && typeof v.media_url === 'string'
+    typeof v.id === "string" &&
+    typeof v.media_type === "string" &&
+    typeof v.media_url === "string"
   );
 };
 
 const isMediaItem = (v: unknown): v is InstagramMediaItem => {
   if (!isRecord(v)) return false;
   if (
-    typeof v.id !== 'string' ||
-    typeof v.permalink !== 'string' ||
-    typeof v.timestamp !== 'string'
+    typeof v.id !== "string" ||
+    typeof v.permalink !== "string" ||
+    typeof v.timestamp !== "string"
   ) {
     return false;
   }
-  if (typeof v.media_type !== 'string') return false;
-  if (typeof v.like_count !== 'number' || typeof v.comments_count !== 'number') return false;
+  if (typeof v.media_type !== "string") return false;
+  if (typeof v.like_count !== "number" || typeof v.comments_count !== "number")
+    return false;
   if (v.children !== undefined) {
-    if (!Array.isArray(v.children) || !v.children.every(isMediaChild)) return false;
+    if (!Array.isArray(v.children) || !v.children.every(isMediaChild))
+      return false;
   }
   return true;
 };
 
 const unwrapPayload = (payload: unknown): unknown[] => {
   if (Array.isArray(payload)) return payload;
-  if (isRecord(payload) && 'data' in payload && Array.isArray(payload.data)) {
+  if (isRecord(payload) && "data" in payload && Array.isArray(payload.data)) {
     return payload.data;
   }
   return [];
 };
 
-const parseInstagramAccountProfile = (raw: unknown): InstagramAccountProfile | null => {
+const parseInstagramAccountProfile = (
+  raw: unknown,
+): InstagramAccountProfile | null => {
   if (!isRecord(raw)) {
     return null;
   }
 
   const profilePictureUrl =
-    typeof raw.profile_picture_url === 'string'
+    typeof raw.profile_picture_url === "string"
       ? raw.profile_picture_url
-      : typeof raw.profilePictureUrl === 'string'
+      : typeof raw.profilePictureUrl === "string"
         ? raw.profilePictureUrl
         : undefined;
 
   const name =
-    typeof raw.name === 'string'
+    typeof raw.name === "string"
       ? raw.name
-      : typeof raw.username === 'string'
+      : typeof raw.username === "string"
         ? raw.username
         : undefined;
 
   const biography =
-    typeof raw.biography === 'string'
+    typeof raw.biography === "string"
       ? raw.biography
-      : typeof raw.description === 'string'
+      : typeof raw.description === "string"
         ? raw.description
         : undefined;
 
-  const username = typeof raw.username === 'string' ? raw.username : undefined;
+  const username = typeof raw.username === "string" ? raw.username : undefined;
 
   if (!name && !biography && !profilePictureUrl && !username) {
     return null;
@@ -106,7 +112,9 @@ const parseInstagramAccountProfile = (raw: unknown): InstagramAccountProfile | n
   return { username, name, biography, profilePictureUrl };
 };
 
-const extractProfileFromPayload = (payload: unknown): InstagramAccountProfile | null => {
+const extractProfileFromPayload = (
+  payload: unknown,
+): InstagramAccountProfile | null => {
   if (!isRecord(payload)) {
     return null;
   }
@@ -118,10 +126,13 @@ const extractProfileFromPayload = (payload: unknown): InstagramAccountProfile | 
   );
 };
 
-export const parseInstagramMediaPayload = (payload: unknown): InstagramMediaItem[] =>
-  unwrapPayload(payload).filter(isMediaItem);
+export const parseInstagramMediaPayload = (
+  payload: unknown,
+): InstagramMediaItem[] => unwrapPayload(payload).filter(isMediaItem);
 
-export const parseInstagramMediaResponse = (payload: unknown): InstagramMediaResponse => ({
+export const parseInstagramMediaResponse = (
+  payload: unknown,
+): InstagramMediaResponse => ({
   posts: parseInstagramMediaPayload(payload),
   profile: extractProfileFromPayload(payload),
 });

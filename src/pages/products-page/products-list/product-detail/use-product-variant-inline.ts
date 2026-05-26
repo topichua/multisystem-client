@@ -1,13 +1,13 @@
-import { message } from 'antd';
-import { useCallback, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { message } from "antd";
+import { useCallback, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import type {
   ProductDetails,
   ProductVariantCreatePayload,
   ProductVariantDraft,
   ProductVariantUpdatePayload,
-} from '@/features/products/model/product.types';
+} from "@/features/products/model/product.types";
 
 import {
   createEmptyVariantDraft,
@@ -18,7 +18,7 @@ import {
   parseVariantRowKey,
   variantRowKey,
   variantToDraft,
-} from './variant-draft-utils';
+} from "./variant-draft-utils";
 
 type VariantPersistOptions = {
   silent?: boolean;
@@ -31,7 +31,9 @@ type InlineDraftState = {
   editingIds: Set<string>;
 };
 
-const createEmptyInlineDraftState = (productId: number | null): InlineDraftState => ({
+const createEmptyInlineDraftState = (
+  productId: number | null,
+): InlineDraftState => ({
   productId,
   pendingRows: [],
   rowEdits: {},
@@ -64,7 +66,9 @@ export const useProductVariantInline = ({
 }: UseProductVariantInlineParams) => {
   const { t } = useTranslation();
   const productId = product?.id ?? null;
-  const [draftState, setDraftState] = useState(() => createEmptyInlineDraftState(productId));
+  const [draftState, setDraftState] = useState(() =>
+    createEmptyInlineDraftState(productId),
+  );
 
   if (productId !== draftState.productId) {
     setDraftState(createEmptyInlineDraftState(productId));
@@ -73,7 +77,10 @@ export const useProductVariantInline = ({
   const { pendingRows, rowEdits, editingIds } = draftState;
   const variants = useMemo(() => product?.variants ?? [], [product?.variants]);
 
-  const isRowEditing = useCallback((clientId: string) => editingIds.has(clientId), [editingIds]);
+  const isRowEditing = useCallback(
+    (clientId: string) => editingIds.has(clientId),
+    [editingIds],
+  );
 
   const markEditing = useCallback((clientId: string) => {
     setDraftState((prev) => {
@@ -109,7 +116,10 @@ export const useProductVariantInline = ({
       if (fromTable) {
         return fromTable;
       }
-      return rowEdits[clientId] ?? pendingRows.find((row) => row.clientId === clientId);
+      return (
+        rowEdits[clientId] ??
+        pendingRows.find((row) => row.clientId === clientId)
+      );
     },
     [pendingRows, rowEdits, tableRows],
   );
@@ -143,7 +153,10 @@ export const useProductVariantInline = ({
 
           return {
             ...prev,
-            rowEdits: { ...prev.rowEdits, [clientId]: { ...current, ...patch } },
+            rowEdits: {
+              ...prev.rowEdits,
+              [clientId]: { ...current, ...patch },
+            },
           };
         });
         return;
@@ -180,7 +193,7 @@ export const useProductVariantInline = ({
     async (clientId: string) => {
       const row = findRow(clientId);
       if (!row || !isVariantDraftValid(row)) {
-        message.error(t('products.form.required'));
+        message.error(t("products.form.required"));
         return;
       }
 
@@ -196,10 +209,16 @@ export const useProductVariantInline = ({
             variantSaveOptions,
           );
         } else {
-          await onCreateVariant(draftToCreatePayload(row), imageFile, variantSaveOptions);
+          await onCreateVariant(
+            draftToCreatePayload(row),
+            imageFile,
+            variantSaveOptions,
+          );
           setDraftState((prev) => ({
             ...prev,
-            pendingRows: prev.pendingRows.filter((draft) => draft.clientId !== clientId),
+            pendingRows: prev.pendingRows.filter(
+              (draft) => draft.clientId !== clientId,
+            ),
           }));
         }
 
@@ -213,7 +232,14 @@ export const useProductVariantInline = ({
         // Errors are surfaced by the parent handlers.
       }
     },
-    [findRow, markSaved, onCreateVariant, onUpdateVariant, t, variantSaveOptions],
+    [
+      findRow,
+      markSaved,
+      onCreateVariant,
+      onUpdateVariant,
+      t,
+      variantSaveOptions,
+    ],
   );
 
   const deleteDraft = useCallback(
@@ -225,7 +251,9 @@ export const useProductVariantInline = ({
       } else {
         setDraftState((prev) => ({
           ...prev,
-          pendingRows: prev.pendingRows.filter((draft) => draft.clientId !== clientId),
+          pendingRows: prev.pendingRows.filter(
+            (draft) => draft.clientId !== clientId,
+          ),
         }));
       }
 

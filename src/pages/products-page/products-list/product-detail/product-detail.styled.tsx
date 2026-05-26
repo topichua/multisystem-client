@@ -1,9 +1,9 @@
-import type { ButtonProps } from 'antd';
-import { Button, Form, Image, Table } from 'antd';
-import type { FC } from 'react';
-import styled from 'styled-components';
+import type { ButtonProps } from "antd";
+import { Button, Form, Image, Table } from "antd";
+import type { FC } from "react";
+import styled from "styled-components";
 
-import { BRAND_PRIMARY } from '@/styled/brand';
+import { BRAND_PRIMARY } from "@/styled/brand";
 
 export const DetailShell = styled.div`
   display: flex;
@@ -113,7 +113,9 @@ export const HeroDescription = styled.span`
   color: ${({ theme }) => theme.colors.functional.text.subdued};
 `;
 
-export const InstagramPermalinkLink = styled(Button as FC<ButtonProps>).attrs({ type: 'link' })`
+export const InstagramPermalinkLink = styled(Button as FC<ButtonProps>).attrs({
+  type: "link",
+})`
   align-self: flex-start;
   padding-inline: 0;
   height: auto;
@@ -172,15 +174,15 @@ export const StatusPill = styled.span<{ $active?: boolean }>`
   border-radius: 999px;
   font-size: 13px;
   font-weight: 500;
-  background: ${({ $active }) => ($active ? '#ECFDF5' : '#F1F5F9')};
-  color: ${({ $active }) => ($active ? '#047857' : '#64748B')};
+  background: ${({ $active }) => ($active ? "#ECFDF5" : "#F1F5F9")};
+  color: ${({ $active }) => ($active ? "#047857" : "#64748B")};
 `;
 
 export const StatusDot = styled.span<{ $active?: boolean }>`
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: ${({ $active }) => ($active ? '#10B981' : '#94A3B8')};
+  background: ${({ $active }) => ($active ? "#10B981" : "#94A3B8")};
 `;
 
 export const MediaGalleryStack = styled.div`
@@ -300,11 +302,13 @@ export const VariantsTable = styled(Table)`
     font-weight: 600;
     font-size: 13px;
     color: ${({ theme }) => theme.colors.functional.text.subdued};
-    border-bottom: 1px solid ${({ theme }) => theme.colors.functional.border.split};
+    border-bottom: 1px solid
+      ${({ theme }) => theme.colors.functional.border.split};
   }
 
   .ant-table-tbody > tr > td {
-    border-bottom: 1px solid ${({ theme }) => theme.colors.functional.border.split};
+    border-bottom: 1px solid
+      ${({ theme }) => theme.colors.functional.border.split};
   }
 
   .ant-table-tbody > tr:last-child > td {

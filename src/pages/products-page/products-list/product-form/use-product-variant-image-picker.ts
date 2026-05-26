@@ -1,13 +1,13 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState } from "react";
 
-import type { ProductDetails } from '@/features/products/model/product.types';
+import type { ProductDetails } from "@/features/products/model/product.types";
 
-import { collectProductGalleryImages } from '../product-detail/product-gallery-images';
-import { filterProductMediaItems } from '../product-detail/product-detail-media';
-import { productsApi } from '@/features/products/api/products-api';
-import type { useProductVariantInline } from '../product-detail/use-product-variant-inline';
-import type { useVariantDraftModal } from '../product-detail/use-variant-draft-modal';
-import type { GalleryItem } from './product-gallery';
+import { collectProductGalleryImages } from "../product-detail/product-gallery-images";
+import { filterProductMediaItems } from "../product-detail/product-detail-media";
+import { productsApi } from "@/features/products/api/products-api";
+import type { useProductVariantInline } from "../product-detail/use-product-variant-inline";
+import type { useVariantDraftModal } from "../product-detail/use-variant-draft-modal";
+import type { GalleryItem } from "./product-gallery";
 
 type VariantDraftModal = ReturnType<typeof useVariantDraftModal>;
 type VariantInline = ReturnType<typeof useProductVariantInline>;
@@ -61,10 +61,16 @@ export const useProductVariantImagePicker = ({
     setClientId(null);
   };
 
-  const applySelection = (rowClientId: string, url: string, uploadedFile?: File) => {
+  const applySelection = (
+    rowClientId: string,
+    url: string,
+    uploadedFile?: File,
+  ) => {
     const galleryItem = gallery.find((item) => item.previewUrl === url);
     const file = uploadedFile ?? galleryItem?.file ?? null;
-    const patch = file ? { imageFile: file, imageUrl: '' } : { imageUrl: url, imageFile: null };
+    const patch = file
+      ? { imageFile: file, imageUrl: "" }
+      : { imageUrl: url, imageFile: null };
 
     if (isEditMode) {
       variantInline.updateDraft(rowClientId, patch);
@@ -87,7 +93,9 @@ export const useProductVariantImagePicker = ({
 
       try {
         const before = new Set(
-          (await productsApi.listMedia(product.id)).map((item) => item.url.trim()),
+          (await productsApi.listMedia(product.id)).map((item) =>
+            item.url.trim(),
+          ),
         );
         const sortOrder = filterProductMediaItems(product).length;
 

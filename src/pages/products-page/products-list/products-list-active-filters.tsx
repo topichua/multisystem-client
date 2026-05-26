@@ -1,21 +1,21 @@
-import { Button, Flex, Tag, Typography } from 'antd';
-import type { TFunction } from 'i18next';
-import { observer } from 'mobx-react-lite';
-import { useTranslation } from 'react-i18next';
+import { Button, Flex, Tag, Typography } from "antd";
+import type { TFunction } from "i18next";
+import { observer } from "mobx-react-lite";
+import { useTranslation } from "react-i18next";
 
-import { useProductsStore } from '@/features/products/model/use-products-store';
+import { useProductsStore } from "@/features/products/model/use-products-store";
 
 const { Text } = Typography;
 
 function productStatusFilterLabel(t: TFunction, status: string): string {
-  if (status === 'draft') {
-    return t('products.toolbar.statusDraft');
+  if (status === "draft") {
+    return t("products.toolbar.statusDraft");
   }
-  if (status === 'active') {
-    return t('products.toolbar.statusActive');
+  if (status === "active") {
+    return t("products.toolbar.statusActive");
   }
-  if (status === 'archived') {
-    return t('products.toolbar.statusArchived');
+  if (status === "archived") {
+    return t("products.toolbar.statusArchived");
   }
   return status;
 }
@@ -35,7 +35,7 @@ export const ProductsListActiveFilters = observer(
     const hasMin = productsStore.listMinPrice != null;
     const hasMax = productsStore.listMaxPrice != null;
     const hasPrice = hasMin || hasMax;
-    const hasSort = productsStore.listSort !== 'created_desc';
+    const hasSort = productsStore.listSort !== "created_desc";
 
     if (!hasKeyword && !hasCategories && !hasStatus && !hasPrice && !hasSort) {
       return null;
@@ -43,18 +43,22 @@ export const ProductsListActiveFilters = observer(
 
     const priceLabel =
       hasMin && hasMax
-        ? t('products.listFilters.tagPriceRange', {
+        ? t("products.listFilters.tagPriceRange", {
             min: productsStore.listMinPrice,
             max: productsStore.listMaxPrice,
           })
         : hasMin
-          ? t('products.listFilters.tagPriceMin', { min: productsStore.listMinPrice })
-          : t('products.listFilters.tagPriceMax', { max: productsStore.listMaxPrice });
+          ? t("products.listFilters.tagPriceMin", {
+              min: productsStore.listMinPrice,
+            })
+          : t("products.listFilters.tagPriceMax", {
+              max: productsStore.listMaxPrice,
+            });
 
     return (
       <Flex align="center" gap={24} wrap="wrap" style={{ marginBottom: 12 }}>
-        <Text strong style={{ display: 'block' }}>
-          {t('products.listFilters.activeTitle')}
+        <Text strong style={{ display: "block" }}>
+          {t("products.listFilters.activeTitle")}
         </Text>
         <Flex gap={8} wrap="wrap" align="center">
           {hasKeyword ? (
@@ -65,7 +69,9 @@ export const ProductsListActiveFilters = observer(
               }}
               color="purple"
             >
-              {t('products.listFilters.tagSearch', { keyword: productsStore.listKeyword })}
+              {t("products.listFilters.tagSearch", {
+                keyword: productsStore.listKeyword,
+              })}
             </Tag>
           ) : null}
           {hasSort ? (
@@ -76,7 +82,7 @@ export const ProductsListActiveFilters = observer(
               }}
               color="purple"
             >
-              {t('products.listFilters.tagSort', {
+              {t("products.listFilters.tagSort", {
                 label: t(`products.listSort.${productsStore.listSort}`),
               })}
             </Tag>
@@ -90,9 +96,10 @@ export const ProductsListActiveFilters = observer(
               }}
               color="purple"
             >
-              {t('products.listFilters.tagCategory', {
+              {t("products.listFilters.tagCategory", {
                 name:
-                  categoryNameById.get(id) ?? t('products.listFilters.tagCategoryFallback', { id }),
+                  categoryNameById.get(id) ??
+                  t("products.listFilters.tagCategoryFallback", { id }),
               })}
             </Tag>
           ))}
@@ -104,7 +111,7 @@ export const ProductsListActiveFilters = observer(
               }}
               color="purple"
             >
-              {t('products.listFilters.tagStatus', {
+              {t("products.listFilters.tagStatus", {
                 label: productStatusFilterLabel(t, productsStore.listStatus),
               })}
             </Tag>
@@ -120,8 +127,12 @@ export const ProductsListActiveFilters = observer(
               {priceLabel}
             </Tag>
           ) : null}
-          <Button type="link" size="small" onClick={() => productsStore.clearAllListFilters()}>
-            {t('products.listFilters.clearAll')}
+          <Button
+            type="link"
+            size="small"
+            onClick={() => productsStore.clearAllListFilters()}
+          >
+            {t("products.listFilters.clearAll")}
           </Button>
         </Flex>
       </Flex>

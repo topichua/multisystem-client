@@ -1,16 +1,17 @@
-import { apiClient } from '@/api/api-client';
+import { apiClient } from "@/api/api-client";
 
 import type {
   ConversationGroup,
   ConversationGroupsListResponse,
   ConversationGroupWritePayload,
-} from '@/features/conversation-groups/model/conversation-group.types';
+} from "@/features/conversation-groups/model/conversation-group.types";
 
-const basePath = '/conversation-groups';
+const basePath = "/conversation-groups";
 
 export const conversationGroupsApi = {
   list: async (): Promise<ConversationGroup[]> => {
-    const { data } = await apiClient.get<ConversationGroupsListResponse>(basePath);
+    const { data } =
+      await apiClient.get<ConversationGroupsListResponse>(basePath);
 
     return data.items;
   },
@@ -19,7 +20,10 @@ export const conversationGroupsApi = {
     await apiClient.post(basePath, payload);
   },
 
-  update: async (id: number, payload: ConversationGroupWritePayload): Promise<void> => {
+  update: async (
+    id: number,
+    payload: ConversationGroupWritePayload,
+  ): Promise<void> => {
     await apiClient.patch(`${basePath}/${id}`, payload);
   },
 

@@ -1,5 +1,5 @@
-import type { CatalogVariant } from '@/features/products/model/product.types';
-import { Flex, Image, Typography, theme } from 'antd';
+import type { CatalogVariant } from "@/features/products/model/product.types";
+import { Flex, Image, Typography, theme } from "antd";
 
 const { Text } = Typography;
 
@@ -7,14 +7,18 @@ type CatalogVariantSearchItemProps = {
   variant: CatalogVariant;
 };
 
-export const CatalogVariantSearchItem = ({ variant }: CatalogVariantSearchItemProps) => {
+export const CatalogVariantSearchItem = ({
+  variant,
+}: CatalogVariantSearchItemProps) => {
   const { token } = theme.useToken();
-  const imageUrl = variant.imageUrl ?? variant.product.mainImageUrl ?? undefined;
-  const meta = [variant.color, variant.size].filter(Boolean).join(' / ');
-  const currency = variant.product.currency === 'UAH' ? '₴' : variant.product.currency;
+  const imageUrl =
+    variant.imageUrl ?? variant.product.mainImageUrl ?? undefined;
+  const meta = [variant.color, variant.size].filter(Boolean).join(" / ");
+  const currency =
+    variant.product.currency === "UAH" ? "₴" : variant.product.currency;
 
   return (
-    <Flex align="center" gap={12} style={{ padding: '4px 0' }}>
+    <Flex align="center" gap={12} style={{ padding: "4px 0" }}>
       <Image
         src={imageUrl}
         alt={variant.label}
@@ -22,7 +26,7 @@ export const CatalogVariantSearchItem = ({ variant }: CatalogVariantSearchItemPr
         width={48}
         height={40}
         style={{
-          objectFit: 'cover',
+          objectFit: "cover",
           borderRadius: token.borderRadius,
           background: token.colorFillAlter,
           flexShrink: 0,
@@ -39,8 +43,10 @@ export const CatalogVariantSearchItem = ({ variant }: CatalogVariantSearchItemPr
           </Text>
         ) : null}
         <Text type="secondary">
-          {variant.unitPrice.toLocaleString('uk-UA')} {currency}
-          {variant.inStock ? ` · ${variant.quantity} шт.` : ' · немає в наявності'}
+          {variant.unitPrice.toLocaleString("uk-UA")} {currency}
+          {variant.inStock
+            ? ` · ${variant.quantity} шт.`
+            : " · немає в наявності"}
         </Text>
       </Flex>
     </Flex>

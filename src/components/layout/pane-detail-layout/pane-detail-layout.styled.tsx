@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components';
+import styled, { css } from "styled-components";
 
 export const Root = styled.div<{ $inset?: boolean }>`
   box-sizing: border-box;
@@ -18,7 +18,8 @@ export const Root = styled.div<{ $inset?: boolean }>`
 export const HeaderSlot = styled.div`
   flex-shrink: 0;
   padding-bottom: 16px;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.functional.border.split};
+  border-bottom: 1px solid
+    ${({ theme }) => theme.colors.functional.border.split};
 `;
 
 export const BodySlot = styled.div`

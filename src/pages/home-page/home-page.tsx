@@ -1,18 +1,19 @@
-import { Button, Drawer } from 'antd';
-import { ListIcon } from '@phosphor-icons/react';
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Outlet } from 'react-router';
+import { Button, Drawer } from "antd";
+import { ListIcon } from "@phosphor-icons/react";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Outlet } from "react-router";
 
-import { UserProfile } from '@/components/user-profile/user-profile';
-import { Sider } from '@/components/layout/sider/sider';
-import { Conversation } from '@/pages/conversation/conversation-list';
+import { UserProfile } from "@/components/user-profile/user-profile";
+import { Sider } from "@/components/layout/sider/sider";
+import { Conversation } from "@/pages/conversation/conversation-list";
 
-import * as S from './home-page.styled';
+import * as S from "./home-page.styled";
 
 export const HomePage = () => {
   const { t } = useTranslation();
-  const [isConversationDrawerOpen, setIsConversationDrawerOpen] = useState(false);
+  const [isConversationDrawerOpen, setIsConversationDrawerOpen] =
+    useState(false);
 
   return (
     <S.PageLayout>
@@ -23,7 +24,7 @@ export const HomePage = () => {
       <S.MobileDock>
         <Button
           type="text"
-          aria-label={t('nav.openConversationsAria')}
+          aria-label={t("nav.openConversationsAria")}
           icon={<ListIcon size={24} />}
           onClick={() => setIsConversationDrawerOpen(true)}
           data-qa="layout-mobile-dock-chats"
@@ -38,15 +39,21 @@ export const HomePage = () => {
   );
 };
 
-function ConversationDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
+function ConversationDrawer({
+  open,
+  onClose,
+}: {
+  open: boolean;
+  onClose: () => void;
+}) {
   const { t } = useTranslation();
 
   return (
     <Drawer
-      title={t('conversations.drawerTitle')}
+      title={t("conversations.drawerTitle")}
       placement="top"
       open={open}
-      size={'100vh'}
+      size={"100vh"}
       onClose={onClose}
       styles={{
         body: {

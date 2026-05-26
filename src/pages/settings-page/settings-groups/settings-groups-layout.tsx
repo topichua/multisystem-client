@@ -1,24 +1,24 @@
-import type { MenuProps } from 'antd';
-import { Button, Form, Menu, message } from 'antd';
-import { observer } from 'mobx-react-lite';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Outlet, useLocation, useNavigate } from 'react-router';
+import type { MenuProps } from "antd";
+import { Button, Form, Menu, message } from "antd";
+import { observer } from "mobx-react-lite";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Outlet, useLocation, useNavigate } from "react-router";
 
-import { getApiErrorMessage } from '@/api/get-api-error-message';
-import { getSettingsGroupPath } from '@/app/router/pages-map';
+import { getApiErrorMessage } from "@/api/get-api-error-message";
+import { getSettingsGroupPath } from "@/app/router/pages-map";
 import {
   PaneScrollRegion,
   PaneSectionHeaderStack,
   PaneSectionTitle,
-} from '@/components/layout/pane-frame';
-import { PaneNavSplitLayout } from '@/components/layout/pane-nav-split-layout';
-import { GroupListLabelRow } from '@/features/conversation-groups/components/group-list-label-row';
-import type { ConversationGroupWritePayload } from '@/features/conversation-groups/model/conversation-group.types';
-import { useConversationGroupsStore } from '@/features/conversation-groups/model/use-conversation-groups-store';
+} from "@/components/layout/pane-frame";
+import { PaneNavSplitLayout } from "@/components/layout/pane-nav-split-layout";
+import { GroupListLabelRow } from "@/features/conversation-groups/components/group-list-label-row";
+import type { ConversationGroupWritePayload } from "@/features/conversation-groups/model/conversation-group.types";
+import { useConversationGroupsStore } from "@/features/conversation-groups/model/use-conversation-groups-store";
 
-import { GroupFormModal, type GroupFormValues } from './group-form-modal';
-import { DEFAULT_GROUP_COLOR } from './group-color-presets';
+import { GroupFormModal, type GroupFormValues } from "./group-form-modal";
+import { DEFAULT_GROUP_COLOR } from "./group-color-presets";
 
 export const SettingsGroupsLayout = observer(() => {
   const { t } = useTranslation();
@@ -38,7 +38,7 @@ export const SettingsGroupsLayout = observer(() => {
     [store.groups],
   );
 
-  const menuItems: MenuProps['items'] = useMemo(
+  const menuItems: MenuProps["items"] = useMemo(
     () =>
       sortedGroups.map((g) => ({
         key: getSettingsGroupPath(g.id),
@@ -49,8 +49,8 @@ export const SettingsGroupsLayout = observer(() => {
 
   const openCreate = useCallback(() => {
     form.setFieldsValue({
-      name: '',
-      description: '',
+      name: "",
+      description: "",
       color: DEFAULT_GROUP_COLOR,
     });
     setModalOpen(true);
@@ -73,20 +73,23 @@ export const SettingsGroupsLayout = observer(() => {
     const payload: ConversationGroupWritePayload = {
       name: values.name,
       description: values.description,
-      color: typeof values.color === 'string' ? values.color : String(values.color),
+      color:
+        typeof values.color === "string" ? values.color : String(values.color),
       sort_order,
     };
 
     try {
       await store.createGroup(payload);
-      messageApi.success(t('groups.created'));
+      messageApi.success(t("groups.created"));
       closeModal();
-      const created = store.groups.find((g) => g.name.trim() === values.name.trim());
+      const created = store.groups.find(
+        (g) => g.name.trim() === values.name.trim(),
+      );
       if (created) {
         navigate(getSettingsGroupPath(created.id));
       }
     } catch (e) {
-      messageApi.error(getApiErrorMessage(e, t('groups.createError')));
+      messageApi.error(getApiErrorMessage(e, t("groups.createError")));
       return Promise.reject();
     }
   }, [closeModal, form, messageApi, navigate, store, t]);
@@ -97,9 +100,9 @@ export const SettingsGroupsLayout = observer(() => {
       <PaneNavSplitLayout.Root data-qa="layout-settings-groups-shell">
         <PaneNavSplitLayout.SubSidebar data-qa="layout-settings-groups-sidebar">
           <PaneSectionHeaderStack data-qa="layout-settings-groups-header">
-            <PaneSectionTitle>{t('groups.title')}</PaneSectionTitle>
+            <PaneSectionTitle>{t("groups.title")}</PaneSectionTitle>
             <Button type="primary" onClick={openCreate}>
-              {t('groups.createGroup')}
+              {t("groups.createGroup")}
             </Button>
           </PaneSectionHeaderStack>
           <PaneScrollRegion data-qa="layout-settings-groups-nav-scroll">
@@ -109,7 +112,7 @@ export const SettingsGroupsLayout = observer(() => {
                 selectedKeys={[location.pathname]}
                 items={menuItems}
                 onClick={({ key }) => navigate(String(key))}
-                style={{ borderInlineEnd: 'none' }}
+                style={{ borderInlineEnd: "none" }}
               />
             </div>
           </PaneScrollRegion>

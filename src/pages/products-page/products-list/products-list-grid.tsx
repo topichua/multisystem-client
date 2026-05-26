@@ -1,28 +1,49 @@
-import type { MouseEvent } from 'react';
+import type { MouseEvent } from "react";
 
-import { PencilSimpleIcon, TrashIcon } from '@phosphor-icons/react';
-import { Button, Card, Col, Empty, Flex, Popconfirm, Row, Spin, Tag, Typography } from 'antd';
-import { useTranslation } from 'react-i18next';
+import { PencilSimpleIcon, TrashIcon } from "@phosphor-icons/react";
+import {
+  Button,
+  Card,
+  Col,
+  Empty,
+  Flex,
+  Popconfirm,
+  Row,
+  Spin,
+  Tag,
+  Typography,
+} from "antd";
+import { useTranslation } from "react-i18next";
 
-import type { Product } from '@/features/products/model/product.types';
+import type { Product } from "@/features/products/model/product.types";
 
 const { Text } = Typography;
 
-type ProductStatusColor = 'default' | 'processing' | 'success' | 'warning' | 'error';
+type ProductStatusColor =
+  | "default"
+  | "processing"
+  | "success"
+  | "warning"
+  | "error";
 
 const statusToColor: Record<string, ProductStatusColor> = {
-  draft: 'default',
-  active: 'success',
-  archived: 'warning',
+  draft: "default",
+  active: "success",
+  archived: "warning",
 };
 
-const resolveSizesLabel = (value: Product['sizes'], fallback: string): string => {
+const resolveSizesLabel = (
+  value: Product["sizes"],
+  fallback: string,
+): string => {
   if (Array.isArray(value)) {
-    const cleaned = value.filter((size) => typeof size === 'string' && size.trim().length > 0);
-    return cleaned.length > 0 ? cleaned.join(', ') : fallback;
+    const cleaned = value.filter(
+      (size) => typeof size === "string" && size.trim().length > 0,
+    );
+    return cleaned.length > 0 ? cleaned.join(", ") : fallback;
   }
 
-  if (typeof value === 'string' && value.trim().length > 0) {
+  if (typeof value === "string" && value.trim().length > 0) {
     return value.trim();
   }
 
@@ -54,7 +75,11 @@ export const ProductsListGrid = ({
     (product: Product) =>
     (event: MouseEvent<HTMLDivElement>): void => {
       const target = event.target as HTMLElement;
-      if (target.closest('button') || target.closest('a') || target.closest('.ant-popconfirm')) {
+      if (
+        target.closest("button") ||
+        target.closest("a") ||
+        target.closest(".ant-popconfirm")
+      ) {
         return;
       }
       onOpenProduct(product)(event as unknown as MouseEvent<HTMLElement>);
@@ -76,11 +101,11 @@ export const ProductsListGrid = ({
                   <div
                     style={{
                       height: 160,
-                      background: '#f5f5f5',
-                      overflow: 'hidden',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
+                      background: "#f5f5f5",
+                      overflow: "hidden",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
                     }}
                   >
                     {product.mainImageUrl ? (
@@ -88,9 +113,9 @@ export const ProductsListGrid = ({
                         src={product.mainImageUrl}
                         alt=""
                         style={{
-                          width: '100%',
-                          height: '100%',
-                          objectFit: 'cover',
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
                         }}
                       />
                     ) : null}
@@ -102,41 +127,47 @@ export const ProductsListGrid = ({
                     {product.name}
                   </Text>
                   <Text type="secondary" ellipsis style={{ fontSize: 12 }}>
-                    {resolveSizesLabel(product.sizes, t('products.noSizes'))}
+                    {resolveSizesLabel(product.sizes, t("products.noSizes"))}
                   </Text>
                   <Text type="secondary" style={{ fontSize: 12 }}>
                     {product.categoryId != null
-                      ? (categoryNameById.get(product.categoryId) ?? `#${product.categoryId}`)
-                      : t('products.noCategory')}
+                      ? (categoryNameById.get(product.categoryId) ??
+                        `#${product.categoryId}`)
+                      : t("products.noCategory")}
                   </Text>
                   <Text>
                     {product.price != null
                       ? `${product.price.toLocaleString()} ${product.currency}`
-                      : t('products.noPrice')}
+                      : t("products.noPrice")}
                   </Text>
                   <Text type="secondary" style={{ fontSize: 12 }}>
                     {product.inStock === false
-                      ? t('products.outOfStock')
+                      ? t("products.outOfStock")
                       : product.quantity == null
-                        ? t('products.unknownQuantity')
+                        ? t("products.unknownQuantity")
                         : String(product.quantity)}
                   </Text>
                   <Tag
-                    color={statusToColor[product.status] ?? 'processing'}
-                    style={{ width: 'fit-content' }}
+                    color={statusToColor[product.status] ?? "processing"}
+                    style={{ width: "fit-content" }}
                   >
                     {product.status}
                   </Tag>
-                  <Flex gap={4} wrap="wrap" align="center" onClick={(e) => e.stopPropagation()}>
+                  <Flex
+                    gap={4}
+                    wrap="wrap"
+                    align="center"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <Button
                       type="text"
                       size="small"
                       icon={<PencilSimpleIcon size={18} />}
-                      aria-label={t('products.edit')}
+                      aria-label={t("products.edit")}
                       onClick={() => void onEdit(product.id)}
                     />
                     <Popconfirm
-                      title={t('products.deleteConfirm')}
+                      title={t("products.deleteConfirm")}
                       onConfirm={() => void onDelete(product.id)}
                     >
                       <Button
@@ -145,7 +176,7 @@ export const ProductsListGrid = ({
                         danger
                         loading={deleteLoading}
                         icon={<TrashIcon size={18} />}
-                        aria-label={t('products.delete')}
+                        aria-label={t("products.delete")}
                       />
                     </Popconfirm>
                   </Flex>

@@ -1,1 +1,1 @@
-export { PaneNavSplitLayout } from './pane-nav-split-layout';
+export { PaneNavSplitLayout } from "./pane-nav-split-layout";

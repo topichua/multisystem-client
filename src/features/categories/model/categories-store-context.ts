@@ -1,5 +1,7 @@
-import { createContext } from 'react';
+import { createContext } from "react";
 
-import type { CategoriesStore } from './categories-store';
+import type { CategoriesStore } from "./categories-store";
 
-export const CategoriesStoreContext = createContext<CategoriesStore | null>(null);
+export const CategoriesStoreContext = createContext<CategoriesStore | null>(
+  null,
+);

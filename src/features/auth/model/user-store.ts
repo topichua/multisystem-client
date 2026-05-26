@@ -1,11 +1,11 @@
-import { makeAutoObservable, runInAction } from 'mobx';
+import { makeAutoObservable, runInAction } from "mobx";
 
-import { authApi } from '@/features/auth/api/auth-api';
+import { authApi } from "@/features/auth/api/auth-api";
 
-import type { AuthSessionResponse } from './auth-session.types';
+import type { AuthSessionResponse } from "./auth-session.types";
 
 const errorMessage = (e: unknown): string =>
-  e instanceof Error ? e.message : 'Something went wrong';
+  e instanceof Error ? e.message : "Something went wrong";
 
 export class UserStore {
   session: AuthSessionResponse | null = null;
@@ -33,9 +33,12 @@ export class UserStore {
     if (!u) {
       return null;
     }
-    const last = typeof u.lastName === 'string' && u.lastName.trim() ? u.lastName.trim() : '';
-    const first = u.firstName?.trim() ?? '';
-    const full = [first, last].filter(Boolean).join(' ').trim();
+    const last =
+      typeof u.lastName === "string" && u.lastName.trim()
+        ? u.lastName.trim()
+        : "";
+    const first = u.firstName?.trim() ?? "";
+    const full = [first, last].filter(Boolean).join(" ").trim();
     return full || u.email;
   }
 

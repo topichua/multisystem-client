@@ -1,14 +1,14 @@
 import type {
   ProductVariantCreatePayload,
   ProductVariantDraft,
-} from '@/features/products/model/product.types';
+} from "@/features/products/model/product.types";
 
 export type GalleryItemForVariantResolve = {
   previewUrl: string;
   file?: File;
 };
 
-const isBlobUrl = (url: string): boolean => url.startsWith('blob:');
+const isBlobUrl = (url: string): boolean => url.startsWith("blob:");
 
 export const canUseVariantImageUrlForMedia = (url: string): boolean => {
   const trimmed = url.trim();
@@ -22,17 +22,19 @@ export const resolveVariantDraftForCreate = (
   const { imageFile: draftImageFile, imageUrl, ...rest } = draft;
 
   let imageFile = draftImageFile ?? null;
-  const trimmedUrl = (imageUrl ?? '').trim();
+  const trimmedUrl = (imageUrl ?? "").trim();
 
   if (!imageFile && trimmedUrl) {
-    const galleryMatch = gallery.find((item) => item.previewUrl.trim() === trimmedUrl);
+    const galleryMatch = gallery.find(
+      (item) => item.previewUrl.trim() === trimmedUrl,
+    );
     if (galleryMatch?.file) {
       imageFile = galleryMatch.file;
     }
   }
 
   const resolvedImageUrl =
-    !imageFile && canUseVariantImageUrlForMedia(trimmedUrl) ? trimmedUrl : '';
+    !imageFile && canUseVariantImageUrlForMedia(trimmedUrl) ? trimmedUrl : "";
 
   return {
     payload: {

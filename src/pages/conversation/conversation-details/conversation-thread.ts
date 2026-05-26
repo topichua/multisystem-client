@@ -1,9 +1,10 @@
-import type { ConversationMessage } from '@/features/conversations/model/types';
+import type { ConversationMessage } from "@/features/conversations/model/types";
 
 export const EMPTY_MESSAGES: ConversationMessage[] = [];
 
-export const chronologicalConversationMessages = (messages: ConversationMessage[]) =>
-  [...messages].reverse();
+export const chronologicalConversationMessages = (
+  messages: ConversationMessage[],
+) => [...messages].reverse();
 
 export const findLastOwnMessageIndex = (
   chronological: ConversationMessage[],
@@ -26,8 +27,12 @@ export const findLastOwnMessageIndex = (
   return last;
 };
 
-export const newestMessageScrollAnchor = (messagesNewestFirst: ConversationMessage[]): string => {
+export const newestMessageScrollAnchor = (
+  messagesNewestFirst: ConversationMessage[],
+): string => {
   const n = messagesNewestFirst[0];
 
-  return n != null ? `${n.id}:${n.clientTempId ?? ''}:${n.outboundStatus ?? ''}` : '';
+  return n != null
+    ? `${n.id}:${n.clientTempId ?? ""}:${n.outboundStatus ?? ""}`
+    : "";
 };

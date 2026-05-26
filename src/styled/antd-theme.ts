@@ -1,9 +1,9 @@
-import type { ThemeConfig } from 'antd';
-import { theme } from 'antd';
+import type { ThemeConfig } from "antd";
+import { theme } from "antd";
 
-import type { ThemeMode } from '@/theme/theme-mode.types';
-import { BRAND_PRIMARY } from '@/styled/brand';
-import { APP_FONT_FAMILY } from '@/styled/constants';
+import type { ThemeMode } from "@/theme/theme-mode.types";
+import { BRAND_PRIMARY } from "@/styled/brand";
+import { APP_FONT_FAMILY } from "@/styled/constants";
 
 const brandToken = theme.getDesignToken({
   algorithm: theme.defaultAlgorithm,
@@ -19,28 +19,28 @@ const appColors = {
   primaryActive: brandToken.colorPrimaryActive,
   primarySoft: brandToken.colorPrimaryBg,
 
-  success: '#10B981',
-  successSoft: '#ECFDF5',
+  success: "#10B981",
+  successSoft: "#ECFDF5",
 
-  warning: '#F59E0B',
-  warningSoft: '#FFFBEB',
+  warning: "#F59E0B",
+  warningSoft: "#FFFBEB",
 
-  error: '#EF4444',
-  errorSoft: '#FEF2F2',
+  error: "#EF4444",
+  errorSoft: "#FEF2F2",
 
-  bgLayout: '#F8FAFC',
-  bgContainer: '#FFFFFF',
-  bgElevated: '#FFFFFF',
+  bgLayout: "#F8FAFC",
+  bgContainer: "#FFFFFF",
+  bgElevated: "#FFFFFF",
 
-  text: '#0F172A',
-  textSecondary: '#475569',
-  textTertiary: '#64748B',
-  textDisabled: '#94A3B8',
+  text: "#0F172A",
+  textSecondary: "#475569",
+  textTertiary: "#64748B",
+  textDisabled: "#94A3B8",
 
-  border: '#E2E8F0',
-  borderSecondary: '#F1F5F9',
+  border: "#E2E8F0",
+  borderSecondary: "#F1F5F9",
 
-  shadow: '0 12px 32px rgba(15, 23, 42, 0.08)',
+  shadow: "0 12px 32px rgba(15, 23, 42, 0.08)",
 } as const;
 
 export const modernSaasTheme: ThemeConfig = {
@@ -79,8 +79,8 @@ export const modernSaasTheme: ThemeConfig = {
   components: {
     Button: {
       fontWeight: 500,
-      primaryShadow: 'none',
-      defaultShadow: 'none',
+      primaryShadow: "none",
+      defaultShadow: "none",
       defaultBg: appColors.bgContainer,
       defaultColor: appColors.text,
       defaultBorderColor: appColors.border,
@@ -97,14 +97,14 @@ export const modernSaasTheme: ThemeConfig = {
     },
 
     Menu: {
-      itemBg: 'transparent',
+      itemBg: "transparent",
       itemColor: appColors.textSecondary,
       itemHoverBg: appColors.primarySoft,
       itemHoverColor: appColors.primary,
       itemSelectedBg: appColors.primarySoft,
       itemSelectedColor: appColors.primary,
       itemActiveBg: appColors.primarySoft,
-      subMenuItemBg: 'transparent',
+      subMenuItemBg: "transparent",
     },
 
     Card: {
@@ -115,11 +115,11 @@ export const modernSaasTheme: ThemeConfig = {
     },
 
     Table: {
-      headerBg: '#F1F5F9',
+      headerBg: "#F1F5F9",
       headerColor: appColors.textSecondary,
       headerSplitColor: appColors.border,
       borderColor: appColors.borderSecondary,
-      rowHoverBg: '#F8FAFC',
+      rowHoverBg: "#F8FAFC",
       rowSelectedBg: appColors.primarySoft,
       rowSelectedHoverBg: brandToken.colorPrimaryBgHover,
     },
@@ -135,7 +135,7 @@ export const modernSaasTheme: ThemeConfig = {
       hoverBorderColor: appColors.primary,
       optionSelectedBg: appColors.primarySoft,
       optionSelectedColor: appColors.primary,
-      optionActiveBg: '#F8FAFC',
+      optionActiveBg: "#F8FAFC",
     },
 
     Modal: {
@@ -152,7 +152,7 @@ export const modernSaasTheme: ThemeConfig = {
     },
 
     Tag: {
-      defaultBg: '#F8FAFC',
+      defaultBg: "#F8FAFC",
       defaultColor: appColors.textSecondary,
     },
   },
@@ -172,28 +172,28 @@ const darkAppColors = {
   primaryActive: brandTokenDark.colorPrimaryActive,
   primarySoft: brandTokenDark.colorPrimaryBg,
 
-  success: '#34D399',
-  successSoft: '#064E3B',
+  success: "#34D399",
+  successSoft: "#064E3B",
 
-  warning: '#FBBF24',
-  warningSoft: '#422006',
+  warning: "#FBBF24",
+  warningSoft: "#422006",
 
-  error: '#F87171',
-  errorSoft: '#450A0A',
+  error: "#F87171",
+  errorSoft: "#450A0A",
 
-  bgLayout: '#0f1117',
-  bgContainer: '#151922',
-  bgElevated: '#1e2230',
+  bgLayout: "#0f1117",
+  bgContainer: "#151922",
+  bgElevated: "#1e2230",
 
-  text: '#E8EAEF',
-  textSecondary: '#A8B0C4',
-  textTertiary: '#8B93A8',
-  textDisabled: '#6B7288',
+  text: "#E8EAEF",
+  textSecondary: "#A8B0C4",
+  textTertiary: "#8B93A8",
+  textDisabled: "#6B7288",
 
-  border: '#2a3042',
-  borderSecondary: '#1e2230',
+  border: "#2a3042",
+  borderSecondary: "#1e2230",
 
-  shadow: '0 12px 32px rgba(0, 0, 0, 0.45)',
+  shadow: "0 12px 32px rgba(0, 0, 0, 0.45)",
 } as const;
 
 export const darkModernSaasTheme: ThemeConfig = {
@@ -232,8 +232,8 @@ export const darkModernSaasTheme: ThemeConfig = {
   components: {
     Button: {
       fontWeight: 500,
-      primaryShadow: 'none',
-      defaultShadow: 'none',
+      primaryShadow: "none",
+      defaultShadow: "none",
       defaultBg: darkAppColors.bgContainer,
       defaultColor: darkAppColors.text,
       defaultBorderColor: darkAppColors.border,
@@ -250,14 +250,14 @@ export const darkModernSaasTheme: ThemeConfig = {
     },
 
     Menu: {
-      itemBg: 'transparent',
+      itemBg: "transparent",
       itemColor: darkAppColors.textSecondary,
       itemHoverBg: darkAppColors.primarySoft,
       itemHoverColor: darkAppColors.primary,
       itemSelectedBg: darkAppColors.primarySoft,
       itemSelectedColor: darkAppColors.primary,
       itemActiveBg: darkAppColors.primarySoft,
-      subMenuItemBg: 'transparent',
+      subMenuItemBg: "transparent",
     },
 
     Card: {
@@ -268,11 +268,11 @@ export const darkModernSaasTheme: ThemeConfig = {
     },
 
     Table: {
-      headerBg: '#1e2230',
+      headerBg: "#1e2230",
       headerColor: darkAppColors.textSecondary,
       headerSplitColor: darkAppColors.border,
       borderColor: darkAppColors.borderSecondary,
-      rowHoverBg: '#242938',
+      rowHoverBg: "#242938",
       rowSelectedBg: darkAppColors.primarySoft,
       rowSelectedHoverBg: brandTokenDark.colorPrimaryBgHover,
     },
@@ -288,7 +288,7 @@ export const darkModernSaasTheme: ThemeConfig = {
       hoverBorderColor: darkAppColors.primary,
       optionSelectedBg: darkAppColors.primarySoft,
       optionSelectedColor: darkAppColors.primary,
-      optionActiveBg: '#242938',
+      optionActiveBg: "#242938",
     },
 
     Modal: {
@@ -305,14 +305,14 @@ export const darkModernSaasTheme: ThemeConfig = {
     },
 
     Tag: {
-      defaultBg: '#242938',
+      defaultBg: "#242938",
       defaultColor: darkAppColors.textSecondary,
     },
   },
 };
 
 export const createAntdTheme = (mode: ThemeMode): ThemeConfig => {
-  const base = mode === 'dark' ? darkModernSaasTheme : modernSaasTheme;
+  const base = mode === "dark" ? darkModernSaasTheme : modernSaasTheme;
   return {
     ...base,
     token: {

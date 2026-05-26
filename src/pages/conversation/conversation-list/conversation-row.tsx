@@ -1,16 +1,16 @@
-import { Avatar, Badge, Button, Dropdown, Flex, Typography } from 'antd';
-import { observer } from 'mobx-react-lite';
-import type { MouseEvent } from 'react';
-import { useRef, useState } from 'react';
+import { Avatar, Badge, Button, Dropdown, Flex, Typography } from "antd";
+import { observer } from "mobx-react-lite";
+import type { MouseEvent } from "react";
+import { useRef, useState } from "react";
 
-import type { Conversation as ConversationModel } from '@/features/conversations/model/types';
+import type { Conversation as ConversationModel } from "@/features/conversations/model/types";
 
-import { useConversationCardMenuItems } from './conversation-card-menu';
-import * as S from './conversation.styled';
-import ThreeDots from './ThreeDotsIcon.svg?react';
-import { useTranslation } from 'react-i18next';
+import { useConversationCardMenuItems } from "./conversation-card-menu";
+import * as S from "./conversation.styled";
+import ThreeDots from "./ThreeDotsIcon.svg?react";
+import { useTranslation } from "react-i18next";
 
-import { formatRelativeTimeShort } from '@/utils/date-time';
+import { formatRelativeTimeShort } from "@/utils/date-time";
 
 const { Title, Text } = Typography;
 
@@ -22,7 +22,12 @@ type ConversationRowProps = {
 };
 
 export const ConversationRow = observer(
-  ({ conversation, conversationId, onNavigate, onSelect }: ConversationRowProps) => {
+  ({
+    conversation,
+    conversationId,
+    onNavigate,
+    onSelect,
+  }: ConversationRowProps) => {
     const { t } = useTranslation();
     const conversationCardMenuItems = useConversationCardMenuItems();
     const [isHovered, setIsHovered] = useState(false);
@@ -53,7 +58,12 @@ export const ConversationRow = observer(
           hoverable
           $isSelected={conversationId === String(conversation.id)}
         >
-          <Flex justify="space-between" align="center" gap={12} style={{ minWidth: 0 }}>
+          <Flex
+            justify="space-between"
+            align="center"
+            gap={12}
+            style={{ minWidth: 0 }}
+          >
             <Flex align="center" gap={12} style={{ flex: 1, minWidth: 0 }}>
               <Avatar
                 size={56}
@@ -71,7 +81,11 @@ export const ConversationRow = observer(
                 >
                   {conversation.participant.name}
                 </Title>
-                <Flex align="center" gap={4} style={{ width: '100%', minWidth: 0 }}>
+                <Flex
+                  align="center"
+                  gap={4}
+                  style={{ width: "100%", minWidth: 0 }}
+                >
                   {conversation.lastMessage ? (
                     <>
                       <Text
@@ -83,7 +97,9 @@ export const ConversationRow = observer(
                           fontWeight: conversation.isUnread ? 600 : 400,
                         }}
                       >
-                        {conversation.isLastMessageFromMe ? `${t('conversations.youPrefix')} ` : ''}
+                        {conversation.isLastMessageFromMe
+                          ? `${t("conversations.youPrefix")} `
+                          : ""}
                         {conversation.lastMessage}
                       </Text>
                       <Text
@@ -121,13 +137,13 @@ export const ConversationRow = observer(
               {showActions && (
                 <Dropdown
                   menu={{ items: conversationCardMenuItems }}
-                  trigger={['click']}
+                  trigger={["click"]}
                   onOpenChange={setMenuOpen}
                 >
                   <Button
                     type="text"
                     size="small"
-                    aria-label={t('conversations.rowActionsAria')}
+                    aria-label={t("conversations.rowActionsAria")}
                     aria-expanded={menuOpen}
                     icon={<ThreeDots width={24} height={24} aria-hidden />}
                   />

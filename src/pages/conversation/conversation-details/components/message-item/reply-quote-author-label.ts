@@ -1,5 +1,5 @@
-import type { MessageParticipant } from '@/features/conversations/model/types';
-import i18n from '@/i18n';
+import type { MessageParticipant } from "@/features/conversations/model/types";
+import i18n from "@/i18n";
 
 export const replyQuoteAuthorLabel = (from?: MessageParticipant): string => {
   const name = from?.name?.trim();
@@ -12,5 +12,5 @@ export const replyQuoteAuthorLabel = (from?: MessageParticipant): string => {
     return `@${username}`;
   }
 
-  return i18n.t('messages.ellipsisSnippet');
+  return i18n.t("messages.ellipsisSnippet");
 };

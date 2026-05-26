@@ -1,4 +1,4 @@
-export type ProductStatus = 'draft' | 'active' | 'archived' | string;
+export type ProductStatus = "draft" | "active" | "archived" | string;
 
 export type Product = {
   id: number;
@@ -58,21 +58,23 @@ export type ProductDetails = Product & {
 };
 
 export const PRODUCTS_LIST_SORT_VALUES = [
-  'created_desc',
-  'created_asc',
-  'name_asc',
-  'name_desc',
-  'price_asc',
-  'price_desc',
+  "created_desc",
+  "created_asc",
+  "name_asc",
+  "name_desc",
+  "price_asc",
+  "price_desc",
 ] as const;
 
 export type ProductsListSort = (typeof PRODUCTS_LIST_SORT_VALUES)[number];
 
-export function parseProductsListSort(raw: string | null | undefined): ProductsListSort {
+export function parseProductsListSort(
+  raw: string | null | undefined,
+): ProductsListSort {
   if (raw && (PRODUCTS_LIST_SORT_VALUES as readonly string[]).includes(raw)) {
     return raw as ProductsListSort;
   }
-  return 'created_desc';
+  return "created_desc";
 }
 
 export type ProductsListResponse = {
@@ -140,7 +142,7 @@ export type ProductMediaUpdatePayload = Partial<{
 
 export type ProductVariantMediaItemPayload = {
   url: string;
-  type: 'image' | 'video';
+  type: "image" | "video";
   sourceUrl?: string;
   sortOrder?: number;
 };
@@ -152,8 +154,8 @@ export type ProductVariantMediaPutPayload = {
 export type ProductCreatePayload = {
   name: string;
   description: string;
-  status: 'draft' | 'active' | 'archived';
-  sourceType: 'manual' | string;
+  status: "draft" | "active" | "archived";
+  sourceType: "manual" | string;
   sourceId: string;
   referenceGroupId: string;
   price: number;

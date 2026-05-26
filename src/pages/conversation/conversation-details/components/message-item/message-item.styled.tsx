@@ -1,6 +1,6 @@
-import styled, { css, keyframes } from 'styled-components';
+import styled, { css, keyframes } from "styled-components";
 
-import { MESSAGE_SCROLL_HIGHLIGHT_CLASS } from '../../scroll-to-message-anchor';
+import { MESSAGE_SCROLL_HIGHLIGHT_CLASS } from "../../scroll-to-message-anchor";
 
 const messageScrollHighlightBg = keyframes`
   0% {
@@ -21,13 +21,13 @@ export const MessageInlineActions = styled.div<{ $visible?: boolean }>`
   align-items: center;
   gap: 0;
   opacity: ${({ $visible }) => ($visible ? 1 : 0)};
-  pointer-events: ${({ $visible }) => ($visible ? 'auto' : 'none')};
+  pointer-events: ${({ $visible }) => ($visible ? "auto" : "none")};
   transition: opacity 0.14s ease-out;
 `;
 
 export const MessageBubbleRow = styled.div<{ $isOwn?: boolean }>`
   display: flex;
-  flex-direction: ${({ $isOwn }) => ($isOwn ? 'row' : 'row-reverse')};
+  flex-direction: ${({ $isOwn }) => ($isOwn ? "row" : "row-reverse")};
   align-items: center;
   gap: 4px;
   max-width: 100%;
@@ -68,7 +68,7 @@ export const MessageRow = styled.div<{ $isOwn?: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  justify-content: ${({ $isOwn }) => ($isOwn ? 'flex-end' : 'flex-start')};
+  justify-content: ${({ $isOwn }) => ($isOwn ? "flex-end" : "flex-start")};
   gap: 2px;
   box-sizing: border-box;
   padding: 3px 0;
@@ -82,11 +82,14 @@ export const MessageRow = styled.div<{ $isOwn?: boolean }>`
 export const MessageWrap = styled.div<{ $isOwn?: boolean }>`
   display: flex;
   flex-direction: column;
-  align-items: ${({ $isOwn }) => ($isOwn ? 'flex-end' : 'flex-start')};
+  align-items: ${({ $isOwn }) => ($isOwn ? "flex-end" : "flex-start")};
   max-width: min(420px, 85%);
 `;
 
-export const ReplyQuote = styled.div<{ $isOwn?: boolean; $interactive?: boolean }>`
+export const ReplyQuote = styled.div<{
+  $isOwn?: boolean;
+  $interactive?: boolean;
+}>`
   width: 100%;
   min-width: 0;
   margin-bottom: 8px;
@@ -168,7 +171,7 @@ export const MessageBubble = styled.div<{
   border: 1px solid ${({ theme }) => theme.colors.functional.border.split};
   background: ${({ theme }) => theme.colors.functional.background.natural};
   opacity: ${({ $muted }) => ($muted ? 0.75 : 1)};
-  margin-bottom: ${({ $hasReaction }) => ($hasReaction ? '14px' : '0')};
+  margin-bottom: ${({ $hasReaction }) => ($hasReaction ? "14px" : "0")};
 
   ${({ theme, $isOwn }) =>
     $isOwn &&
@@ -183,12 +186,16 @@ export const MessageBubble = styled.div<{
     `}
 `;
 
-export const TextTimeRow = styled.div<{ $hasAttachments?: boolean; $hasReply?: boolean }>`
+export const TextTimeRow = styled.div<{
+  $hasAttachments?: boolean;
+  $hasReply?: boolean;
+}>`
   display: flex;
   align-items: flex-end;
   justify-content: flex-end;
   gap: 8px;
-  margin-top: ${({ $hasAttachments, $hasReply }) => ($hasAttachments || $hasReply ? '6px' : '0')};
+  margin-top: ${({ $hasAttachments, $hasReply }) =>
+    $hasAttachments || $hasReply ? "6px" : "0"};
 `;
 
 export const TextTimeSpacer = styled.span`
@@ -217,7 +224,7 @@ export const Timestamp = styled.span<{ $isOwn?: boolean }>`
 export const ReactionBadge = styled.span<{ $isOwn?: boolean }>`
   position: absolute;
   bottom: -18px;
-  ${({ $isOwn }) => ($isOwn ? 'right: 12px' : 'left: 12px')};
+  ${({ $isOwn }) => ($isOwn ? "right: 12px" : "left: 12px")};
   z-index: 1;
   display: inline-flex;
   align-items: center;
@@ -228,7 +235,8 @@ export const ReactionBadge = styled.span<{ $isOwn?: boolean }>`
   font-size: 15px;
   line-height: 1;
   font-family:
-    'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', 'EmojiSymbols', sans-serif;
+    "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", "EmojiSymbols",
+    sans-serif;
   border-radius: 14px;
   background: ${({ theme }) => theme.colors.functional.background.elevated};
   border: 1px solid ${({ theme }) => theme.colors.functional.border.split};
@@ -237,7 +245,8 @@ export const ReactionBadge = styled.span<{ $isOwn?: boolean }>`
 `;
 
 export const ReadReceipt = styled.span<{ $offsetForReaction?: boolean }>`
-  margin-top: ${({ $offsetForReaction }) => ($offsetForReaction ? '22px' : '5px')};
+  margin-top: ${({ $offsetForReaction }) =>
+    $offsetForReaction ? "22px" : "5px"};
   font-size: 11px;
   line-height: 1.25;
   color: ${({ theme }) => theme.colors.functional.text.subdued};

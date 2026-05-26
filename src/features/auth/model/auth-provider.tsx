@@ -1,16 +1,18 @@
-import { useCallback, useEffect, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 
-import { configureApiClientAuth } from '@/api/api-client';
+import { configureApiClientAuth } from "@/api/api-client";
 
-import { AuthContext } from './auth-context';
-import { tokenStorage } from './token-storage';
+import { AuthContext } from "./auth-context";
+import { tokenStorage } from "./token-storage";
 
 type AuthProviderProps = {
   children: ReactNode;
 };
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(Boolean(tokenStorage.getAccessToken()));
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    Boolean(tokenStorage.getAccessToken()),
+  );
 
   const login = useCallback((token: string) => {
     tokenStorage.setAccessToken(token);

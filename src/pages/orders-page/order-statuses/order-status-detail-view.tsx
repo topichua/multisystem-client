@@ -1,17 +1,20 @@
-import { Alert, Button, Flex, Form, message, Spin, Typography } from 'antd';
-import { observer } from 'mobx-react-lite';
-import { useCallback, useEffect, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router';
+import { Alert, Button, Flex, Form, message, Spin, Typography } from "antd";
+import { observer } from "mobx-react-lite";
+import { useCallback, useEffect, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { useNavigate, useParams } from "react-router";
 
-import { getApiErrorMessage } from '@/api/get-api-error-message';
-import { pagesMap } from '@/app/router/pages-map';
-import { PaneDetailLayout } from '@/components/layout/pane-detail-layout';
-import type { OrderStatusUpdatePayload } from '@/features/orders/model/order.types';
-import { useOrdersStore } from '@/features/orders/model/use-orders-store';
-import { formatOrderStatusName } from '@/features/orders/utils/format-order-status-name';
+import { getApiErrorMessage } from "@/api/get-api-error-message";
+import { pagesMap } from "@/app/router/pages-map";
+import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
+import type { OrderStatusUpdatePayload } from "@/features/orders/model/order.types";
+import { useOrdersStore } from "@/features/orders/model/use-orders-store";
+import { formatOrderStatusName } from "@/features/orders/utils/format-order-status-name";
 
-import { OrderStatusFormFields, type OrderStatusFormValues } from './order-status-form-fields';
+import {
+  OrderStatusFormFields,
+  type OrderStatusFormValues,
+} from "./order-status-form-fields";
 
 const { Title, Text } = Typography;
 
@@ -26,7 +29,10 @@ export const OrderStatusDetailView = observer(() => {
   const idNum = statusId != null ? Number(statusId) : NaN;
 
   const status = useMemo(
-    () => (Number.isFinite(idNum) ? store.statuses.find((s) => s.id === idNum) : undefined),
+    () =>
+      Number.isFinite(idNum)
+        ? store.statuses.find((s) => s.id === idNum)
+        : undefined,
     [store.statuses, idNum],
   );
 
@@ -52,20 +58,23 @@ export const OrderStatusDetailView = observer(() => {
 
     const payload: OrderStatusUpdatePayload = {
       name: values.name,
-      color: typeof values.color === 'string' ? values.color : String(values.color),
+      color:
+        typeof values.color === "string" ? values.color : String(values.color),
       isDefault: values.isDefault === true,
     };
 
     try {
       await store.updateStatus(status.id, payload);
-      messageApi.success(t('orderStatuses.updated'));
+      messageApi.success(t("orderStatuses.updated"));
     } catch (e) {
-      messageApi.error(getApiErrorMessage(e, t('orderStatuses.updateError')));
+      messageApi.error(getApiErrorMessage(e, t("orderStatuses.updateError")));
     }
   }, [form, messageApi, status, store, t]);
 
   if (!Number.isFinite(idNum)) {
-    return <Alert type="error" message={t('orderStatuses.invalidStatus')} showIcon />;
+    return (
+      <Alert type="error" message={t("orderStatuses.invalidStatus")} showIcon />
+    );
   }
 
   if (store.statusesLoading && !status) {
@@ -76,12 +85,15 @@ export const OrderStatusDetailView = observer(() => {
     return (
       <Alert
         type="warning"
-        message={t('orderStatuses.notFoundTitle')}
-        description={t('orderStatuses.notFoundDescription')}
+        message={t("orderStatuses.notFoundTitle")}
+        description={t("orderStatuses.notFoundDescription")}
         showIcon
         action={
-          <Button size="small" onClick={() => navigate(pagesMap.ordersStatuses)}>
-            {t('orderStatuses.backToStatuses')}
+          <Button
+            size="small"
+            onClick={() => navigate(pagesMap.ordersStatuses)}
+          >
+            {t("orderStatuses.backToStatuses")}
           </Button>
         }
       />
@@ -103,10 +115,10 @@ export const OrderStatusDetailView = observer(() => {
                 {formatOrderStatusName(
                   status.name,
                   status.isDefault,
-                  t('orderStatuses.defaultLabel'),
+                  t("orderStatuses.defaultLabel"),
                 )}
               </Title>
-              <Text type="secondary">{t('orderStatuses.editHint')}</Text>
+              <Text type="secondary">{t("orderStatuses.editHint")}</Text>
             </Flex>
             <Button
               type="primary"
@@ -114,13 +126,21 @@ export const OrderStatusDetailView = observer(() => {
               onClick={() => void handleSave()}
               style={{ flexShrink: 0 }}
             >
-              {t('orderStatuses.saveChanges')}
+              {t("orderStatuses.saveChanges")}
             </Button>
           </Flex>
         </PaneDetailLayout.Header>
         <PaneDetailLayout.Body>
-          <Form form={form} layout="vertical" style={{ maxWidth: 480 }} onFinish={handleSave}>
-            <OrderStatusFormFields statuses={store.statuses} editingStatusId={status.id} />
+          <Form
+            form={form}
+            layout="vertical"
+            style={{ maxWidth: 480 }}
+            onFinish={handleSave}
+          >
+            <OrderStatusFormFields
+              statuses={store.statuses}
+              editingStatusId={status.id}
+            />
           </Form>
         </PaneDetailLayout.Body>
       </PaneDetailLayout.Root>

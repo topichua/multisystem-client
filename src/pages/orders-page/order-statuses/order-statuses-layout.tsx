@@ -1,20 +1,20 @@
-import { Alert, Spin, message } from 'antd';
-import { observer } from 'mobx-react-lite';
-import { useCallback, useEffect, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Outlet, useLocation, useNavigate, useParams } from 'react-router';
+import { Alert, Spin, message } from "antd";
+import { observer } from "mobx-react-lite";
+import { useCallback, useEffect, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { Outlet, useLocation, useNavigate, useParams } from "react-router";
 
-import { getApiErrorMessage } from '@/api/get-api-error-message';
-import { getOrderStatusPath } from '@/app/router/pages-map';
+import { getApiErrorMessage } from "@/api/get-api-error-message";
+import { getOrderStatusPath } from "@/app/router/pages-map";
 import {
   PaneScrollRegion,
   PaneSectionHeaderStack,
   PaneSectionTitle,
-} from '@/components/layout/pane-frame';
-import { PaneNavSplitLayout } from '@/components/layout/pane-nav-split-layout';
-import { useOrdersStore } from '@/features/orders/model/use-orders-store';
+} from "@/components/layout/pane-frame";
+import { PaneNavSplitLayout } from "@/components/layout/pane-nav-split-layout";
+import { useOrdersStore } from "@/features/orders/model/use-orders-store";
 
-import { OrderStatusesNavList } from './order-statuses-nav-list';
+import { OrderStatusesNavList } from "./order-statuses-nav-list";
 
 export const OrderStatusesLayout = observer(() => {
   const { t } = useTranslation();
@@ -56,14 +56,19 @@ export const OrderStatusesLayout = observer(() => {
   const handleReorder = useCallback(
     async (ids: number[]) => {
       const currentIds = sortedStatuses.map((status) => status.id);
-      if (ids.length === currentIds.length && ids.every((id, index) => id === currentIds[index])) {
+      if (
+        ids.length === currentIds.length &&
+        ids.every((id, index) => id === currentIds[index])
+      ) {
         return;
       }
 
       try {
         await store.reorderStatuses(ids);
       } catch (e) {
-        messageApi.error(getApiErrorMessage(e, t('orderStatuses.reorderError')));
+        messageApi.error(
+          getApiErrorMessage(e, t("orderStatuses.reorderError")),
+        );
       }
     },
     [messageApi, sortedStatuses, store, t],
@@ -75,11 +80,16 @@ export const OrderStatusesLayout = observer(() => {
       <PaneNavSplitLayout.Root data-qa="layout-order-statuses-shell">
         <PaneNavSplitLayout.SubSidebar data-qa="layout-order-statuses-sidebar">
           <PaneSectionHeaderStack data-qa="layout-order-statuses-header">
-            <PaneSectionTitle>{t('orderStatuses.title')}</PaneSectionTitle>
+            <PaneSectionTitle>{t("orderStatuses.title")}</PaneSectionTitle>
           </PaneSectionHeaderStack>
           <PaneScrollRegion data-qa="layout-order-statuses-nav-scroll">
             {store.statusesError ? (
-              <Alert type="error" title={store.statusesError} showIcon style={{ margin: 16 }} />
+              <Alert
+                type="error"
+                title={store.statusesError}
+                showIcon
+                style={{ margin: 16 }}
+              />
             ) : null}
             {store.statusesLoading && store.statuses.length === 0 ? (
               <Spin style={{ margin: 24 }} />

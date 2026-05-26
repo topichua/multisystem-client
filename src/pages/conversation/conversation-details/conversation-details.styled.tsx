@@ -1,8 +1,10 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
-import { dataQaAttrs } from '@/styled/data-qa-attrs';
+import { dataQaAttrs } from "@/styled/data-qa-attrs";
 
-export const Root = styled.div.attrs(() => dataQaAttrs('layout-conversation-details'))`
+export const Root = styled.div.attrs(() =>
+  dataQaAttrs("layout-conversation-details"),
+)`
   display: flex;
   flex-direction: row;
   flex: 1;
@@ -12,7 +14,7 @@ export const Root = styled.div.attrs(() => dataQaAttrs('layout-conversation-deta
 `;
 
 export const ThreadColumn = styled.div.attrs(() =>
-  dataQaAttrs('layout-conversation-details-thread'),
+  dataQaAttrs("layout-conversation-details-thread"),
 )`
   display: flex;
   flex-direction: column;
@@ -22,7 +24,7 @@ export const ThreadColumn = styled.div.attrs(() =>
 `;
 
 export const MessagesScroll = styled.div.attrs(() =>
-  dataQaAttrs('layout-conversation-details-messages'),
+  dataQaAttrs("layout-conversation-details-messages"),
 )`
   flex: 1;
   min-height: 0;
@@ -32,7 +34,7 @@ export const MessagesScroll = styled.div.attrs(() =>
 `;
 
 export const MessagesInner = styled.div.attrs(() =>
-  dataQaAttrs('layout-conversation-details-message-list'),
+  dataQaAttrs("layout-conversation-details-message-list"),
 )`
   display: flex;
   flex-direction: column;
@@ -49,7 +51,7 @@ export const DaySeparator = styled.div`
 
   &::before,
   &::after {
-    content: '';
+    content: "";
     flex: 1;
     height: 1px;
     background: ${({ theme }) => theme.colors.functional.border.split};

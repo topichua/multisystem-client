@@ -1,9 +1,9 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from "react";
 
-import { useAuth } from '@/features/auth/model/use-auth';
+import { useAuth } from "@/features/auth/model/use-auth";
 
-import { UserStore } from './user-store';
-import { UserStoreContext } from './user-store-context';
+import { UserStore } from "./user-store";
+import { UserStoreContext } from "./user-store-context";
 
 type UserProviderProps = {
   children: ReactNode;
@@ -21,5 +21,9 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     }
   }, [isAuthenticated, store]);
 
-  return <UserStoreContext.Provider value={store}>{children}</UserStoreContext.Provider>;
+  return (
+    <UserStoreContext.Provider value={store}>
+      {children}
+    </UserStoreContext.Provider>
+  );
 };

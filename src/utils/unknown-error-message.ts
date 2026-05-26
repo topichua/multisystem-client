@@ -1,2 +1,2 @@
 export const unknownErrorMessage = (error: unknown): string =>
-  error instanceof Error ? error.message : 'Something went wrong';
+  error instanceof Error ? error.message : "Something went wrong";

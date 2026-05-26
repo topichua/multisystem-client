@@ -1,13 +1,13 @@
-import { Button, Empty, Spin } from 'antd';
-import { observer } from 'mobx-react-lite';
-import { useTranslation } from 'react-i18next';
-import { Navigate, useOutletContext } from 'react-router';
+import { Button, Empty, Spin } from "antd";
+import { observer } from "mobx-react-lite";
+import { useTranslation } from "react-i18next";
+import { Navigate, useOutletContext } from "react-router";
 
-import { getProductCategoryPath } from '@/app/router/pages-map';
-import { flattenCategories } from '@/features/categories/model/category-tree';
-import { useCategoriesStore } from '@/features/categories/model/use-categories-store';
+import { getProductCategoryPath } from "@/app/router/pages-map";
+import { flattenCategories } from "@/features/categories/model/category-tree";
+import { useCategoriesStore } from "@/features/categories/model/use-categories-store";
 
-import type { ProductsCategoriesOutletContext } from './products-categories-layout';
+import type { ProductsCategoriesOutletContext } from "./products-categories-layout";
 
 export const ProductsCategoriesIndex = observer(() => {
   const { t } = useTranslation();
@@ -25,9 +25,9 @@ export const ProductsCategoriesIndex = observer(() => {
   }
 
   return (
-    <Empty description={t('categories.emptyState')} style={{ marginTop: 48 }}>
+    <Empty description={t("categories.emptyState")} style={{ marginTop: 48 }}>
       <Button type="primary" onClick={onCreateClick}>
-        {t('categories.createCategory')}
+        {t("categories.createCategory")}
       </Button>
     </Empty>
   );

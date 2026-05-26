@@ -1,11 +1,13 @@
-import { Card, Typography } from 'antd';
-import styled, { css } from 'styled-components';
+import { Card, Typography } from "antd";
+import styled, { css } from "styled-components";
 
-import { dataQaAttrs } from '@/styled/data-qa-attrs';
+import { dataQaAttrs } from "@/styled/data-qa-attrs";
 
 const { Title: AntdTitle } = Typography;
 
-export const Column = styled.div.attrs(() => dataQaAttrs('layout-conversations-list-body'))`
+export const Column = styled.div.attrs(() =>
+  dataQaAttrs("layout-conversations-list-body"),
+)`
   flex: 1;
   min-height: 0;
   display: flex;
@@ -13,12 +15,16 @@ export const Column = styled.div.attrs(() => dataQaAttrs('layout-conversations-l
   overflow: hidden;
 `;
 
-export const ListHeader = styled.div.attrs(() => dataQaAttrs('layout-conversations-list-header'))`
+export const ListHeader = styled.div.attrs(() =>
+  dataQaAttrs("layout-conversations-list-header"),
+)`
   flex-shrink: 0;
   padding-top: 16px;
 `;
 
-export const ListScroll = styled.div.attrs(() => dataQaAttrs('layout-conversations-list-scroll'))`
+export const ListScroll = styled.div.attrs(() =>
+  dataQaAttrs("layout-conversations-list-scroll"),
+)`
   flex: 1;
   min-height: 0;
   overflow-y: auto;
@@ -50,7 +56,9 @@ export const ConversationCard = styled(Card)<{ $isSelected: boolean }>`
     background 0.12s ease;
 
   background: ${(props) =>
-    props.$isSelected ? props.theme.colors.functional.background.hover : 'transparent'};
+    props.$isSelected
+      ? props.theme.colors.functional.background.hover
+      : "transparent"};
 
   &:hover {
     box-shadow: none;
@@ -64,7 +72,8 @@ export const ConversationCard = styled(Card)<{ $isSelected: boolean }>`
 export const ConversationCardOuter = styled.div<{ $interactive?: boolean }>`
   padding: 0;
   border-radius: ${({ theme }) => theme.radius.semiLarge};
-  cursor: ${({ $interactive }) => ($interactive === false ? 'default' : 'pointer')};
+  cursor: ${({ $interactive }) =>
+    $interactive === false ? "default" : "pointer"};
   user-select: none;
 
   ${(p) =>

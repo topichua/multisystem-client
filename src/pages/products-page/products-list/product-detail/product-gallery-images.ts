@@ -1,6 +1,6 @@
-import type { ProductDetails } from '@/features/products/model/product.types';
+import type { ProductDetails } from "@/features/products/model/product.types";
 
-import { filterProductMediaItems } from './product-detail-media';
+import { filterProductMediaItems } from "./product-detail-media";
 
 export type ProductGalleryImage = {
   id: string;
@@ -29,7 +29,7 @@ export const collectProductGalleryImages = (
   };
 
   if (product?.mainImageUrl) {
-    add('cover-main', product.mainImageUrl);
+    add("cover-main", product.mainImageUrl);
   }
 
   for (const media of filterProductMediaItems(product)) {
@@ -48,7 +48,9 @@ export const collectRemovedProductMediaIds = (
   product: ProductDetails,
   remainingUrls: Iterable<string>,
 ): number[] => {
-  const remaining = new Set([...remainingUrls].map((url) => url.trim()).filter(Boolean));
+  const remaining = new Set(
+    [...remainingUrls].map((url) => url.trim()).filter(Boolean),
+  );
 
   return filterProductMediaItems(product)
     .filter((item) => !remaining.has(item.url.trim()))

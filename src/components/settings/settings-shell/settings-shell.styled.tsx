@@ -1,9 +1,14 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
-import { PaneScrollRegion, PaneSectionTitle } from '@/components/layout/pane-frame';
-import { dataQaAttrs } from '@/styled/data-qa-attrs';
+import {
+  PaneScrollRegion,
+  PaneSectionTitle,
+} from "@/components/layout/pane-frame";
+import { dataQaAttrs } from "@/styled/data-qa-attrs";
 
-export const Root = styled.section.attrs(() => dataQaAttrs('layout-settings-shell'))`
+export const Root = styled.section.attrs(() =>
+  dataQaAttrs("layout-settings-shell"),
+)`
   box-sizing: border-box;
   min-height: 0;
   min-width: 0;
@@ -26,34 +31,40 @@ export const Root = styled.section.attrs(() => dataQaAttrs('layout-settings-shel
   }
 `;
 
-export const Sidebar = styled.aside.attrs(() => dataQaAttrs('layout-settings-sidebar'))`
+export const Sidebar = styled.aside.attrs(() =>
+  dataQaAttrs("layout-settings-sidebar"),
+)`
   display: flex;
   flex-direction: column;
   min-height: 0;
   padding: 16px 0 0;
-  border-right: 1px solid ${(props) => props.theme.colors.functional.border.cardBase};
+  border-right: 1px solid
+    ${(props) => props.theme.colors.functional.border.cardBase};
 
   @media (max-width: 767px) {
     border-right: none;
-    border-bottom: 1px solid ${(props) => props.theme.colors.functional.border.cardBase};
+    border-bottom: 1px solid
+      ${(props) => props.theme.colors.functional.border.cardBase};
     padding: 8px 0 0;
   }
 `;
 
 export const Title = styled(PaneSectionTitle).attrs(() =>
-  dataQaAttrs('layout-settings-sidebar-heading'),
+  dataQaAttrs("layout-settings-sidebar-heading"),
 )`
   flex-shrink: 0;
   padding: 0 16px 12px;
 `;
 
 export const SidebarScroll = styled(PaneScrollRegion).attrs(() =>
-  dataQaAttrs('layout-settings-sidebar-scroll'),
+  dataQaAttrs("layout-settings-sidebar-scroll"),
 )`
   padding: 0 0 16px;
 `;
 
-export const Content = styled(PaneScrollRegion).attrs(() => dataQaAttrs('layout-settings-content'))`
+export const Content = styled(PaneScrollRegion).attrs(() =>
+  dataQaAttrs("layout-settings-content"),
+)`
   padding: 0;
   overflow: hidden;
   display: flex;

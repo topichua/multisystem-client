@@ -1,14 +1,20 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+} from "react";
 
-import { useConversationsSocketStore } from '@/features/conversations/model/use-conversations-socket-store';
-import { useConversationsStore } from '@/features/conversations/model/use-conversations-store';
+import { useConversationsSocketStore } from "@/features/conversations/model/use-conversations-socket-store";
+import { useConversationsStore } from "@/features/conversations/model/use-conversations-store";
 
 import {
   chronologicalConversationMessages,
   EMPTY_MESSAGES,
   findLastOwnMessageIndex,
   newestMessageScrollAnchor,
-} from './conversation-thread';
+} from "./conversation-thread";
 
 export const useConversationThread = (
   conversationId: string | undefined,
@@ -27,9 +33,10 @@ export const useConversationThread = (
   const socketStore = useConversationsSocketStore();
 
   const messagesScrollRef = useRef<HTMLDivElement>(null);
-  const pendingScrollRestoreRef = useRef<{ prevHeight: number; prevScrollTop: number } | null>(
-    null,
-  );
+  const pendingScrollRestoreRef = useRef<{
+    prevHeight: number;
+    prevScrollTop: number;
+  } | null>(null);
 
   const messages = conversationId
     ? (messagesByConversationId[conversationId] ?? EMPTY_MESSAGES)
@@ -45,7 +52,10 @@ export const useConversationThread = (
     [chronologicalMessages, selfInstagramId],
   );
 
-  const scrollToBottomAnchor = useMemo(() => newestMessageScrollAnchor(messages), [messages]);
+  const scrollToBottomAnchor = useMemo(
+    () => newestMessageScrollAnchor(messages),
+    [messages],
+  );
 
   const loadingMessages = Boolean(
     conversationId && messagesLoadingConversationId === conversationId,
@@ -55,7 +65,9 @@ export const useConversationThread = (
     conversationId && messagesLoadingMoreConversationId === conversationId,
   );
 
-  const messagePaging = conversationId ? messagesPagingByConversationId[conversationId] : undefined;
+  const messagePaging = conversationId
+    ? messagesPagingByConversationId[conversationId]
+    : undefined;
 
   useEffect(() => {
     pendingScrollRestoreRef.current = null;
@@ -125,7 +137,10 @@ export const useConversationThread = (
       return;
     }
 
-    if (messagesLoadingConversationId === conversationId || loadingOlderMessages) {
+    if (
+      messagesLoadingConversationId === conversationId ||
+      loadingOlderMessages
+    ) {
       return;
     }
 

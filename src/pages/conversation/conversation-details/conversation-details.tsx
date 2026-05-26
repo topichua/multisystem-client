@@ -1,44 +1,50 @@
-import { Flex, Spin, Typography } from 'antd';
-import { observer } from 'mobx-react-lite';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { Flex, Spin, Typography } from "antd";
+import { observer } from "mobx-react-lite";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useParams } from "react-router";
 
-import { useUserStore } from '@/features/auth/model/use-user-store';
-import { clientsApi } from '@/features/clients/api/clients-api';
-import { instagramUserIdToApiString } from '@/features/clients/model/client-instagram-payload';
+import { useUserStore } from "@/features/auth/model/use-user-store";
+import { clientsApi } from "@/features/clients/api/clients-api";
+import { instagramUserIdToApiString } from "@/features/clients/model/client-instagram-payload";
 import type {
   Client,
   ClientInstagramAssociationResponse,
-} from '@/features/clients/model/client.types';
-import { useConversationsStore } from '@/features/conversations/model/use-conversations-store';
-import type { SendMessagePayload } from '@/features/conversations/model/types';
+} from "@/features/clients/model/client.types";
+import { useConversationsStore } from "@/features/conversations/model/use-conversations-store";
+import type { SendMessagePayload } from "@/features/conversations/model/types";
 
-import * as S from './conversation-details.styled';
-import { ConversationClientInfoPanel } from './components/conversation-client-info-panel/conversation-client-info-panel';
-import { Composer } from './components/composer/composer';
-import { ConversationMessagesList } from './components/conversation-messages-list/conversation-messages-list';
-import { Header } from './components/header/header';
-import type { ReplyComposeTarget } from './reply-compose-target';
-import { scrollMessageAnchorIntoView } from './scroll-to-message-anchor';
-import { useConversationThread } from './use-conversation-thread';
+import * as S from "./conversation-details.styled";
+import { ConversationClientInfoPanel } from "./components/conversation-client-info-panel/conversation-client-info-panel";
+import { Composer } from "./components/composer/composer";
+import { ConversationMessagesList } from "./components/conversation-messages-list/conversation-messages-list";
+import { Header } from "./components/header/header";
+import type { ReplyComposeTarget } from "./reply-compose-target";
+import { scrollMessageAnchorIntoView } from "./scroll-to-message-anchor";
+import { useConversationThread } from "./use-conversation-thread";
 
 const { Text } = Typography;
 
 export const ConversationDetails = observer(() => {
   const { t } = useTranslation();
   const { conversationId } = useParams();
-  const [draft, setDraft] = useState('');
-  const [replyTarget, setReplyTarget] = useState<ReplyComposeTarget | null>(null);
+  const [draft, setDraft] = useState("");
+  const [replyTarget, setReplyTarget] = useState<ReplyComposeTarget | null>(
+    null,
+  );
   const [clientInfoOpen, setClientInfoOpen] = useState(false);
   const [instagramAssociation, setInstagramAssociation] = useState<
     ClientInstagramAssociationResponse | undefined
   >();
-  const [linkedFromList, setLinkedFromList] = useState<{ loading: boolean; client?: Client }>({
+  const [linkedFromList, setLinkedFromList] = useState<{
+    loading: boolean;
+    client?: Client;
+  }>({
     loading: false,
   });
 
-  const { conversations, sendConversationMessage, resendOutboundMessage } = useConversationsStore();
+  const { conversations, sendConversationMessage, resendOutboundMessage } =
+    useConversationsStore();
 
   const { company } = useUserStore();
 
@@ -57,7 +63,10 @@ export const ConversationDetails = observer(() => {
   const canSend = Boolean(draft.trim());
 
   const activeConversation = useMemo(
-    () => (conversationId ? conversations.find((c) => String(c.id) === conversationId) : undefined),
+    () =>
+      conversationId
+        ? conversations.find((c) => String(c.id) === conversationId)
+        : undefined,
     [conversations, conversationId],
   );
 
@@ -71,12 +80,18 @@ export const ConversationDetails = observer(() => {
   }, [instagramAssociation, linkedFromList.client]);
 
   const linkedClientLoading = Boolean(
-    instagramAssociation?.associated && !instagramAssociation.client && linkedFromList.loading,
+    instagramAssociation?.associated &&
+    !instagramAssociation.client &&
+    linkedFromList.loading,
   );
 
   const handleClientCreated = useCallback((created: Client) => {
     setLinkedFromList({ loading: false, client: created });
-    setInstagramAssociation({ associated: true, status: 'ok', client: created });
+    setInstagramAssociation({
+      associated: true,
+      status: "ok",
+      client: created,
+    });
   }, []);
 
   const handleStartReply = useCallback((target: ReplyComposeTarget) => {
@@ -94,10 +109,10 @@ export const ConversationDetails = observer(() => {
       return;
     }
 
-    setDraft('');
+    setDraft("");
     const payload: SendMessagePayload = {
       message: text,
-      ...(replyTarget != null && replyTarget.messageId !== ''
+      ...(replyTarget != null && replyTarget.messageId !== ""
         ? { reply_to_id: replyTarget.messageId }
         : {}),
     };
@@ -170,7 +185,9 @@ export const ConversationDetails = observer(() => {
     void clientsApi.list().then(
       (list) => {
         const found = list.find(
-          (c) => instagramUserIdToApiString(c.instagramUserId) === participantInstagramId,
+          (c) =>
+            instagramUserIdToApiString(c.instagramUserId) ===
+            participantInstagramId,
         );
         if (!cancelled) {
           setLinkedFromList({ loading: false, client: found });
@@ -200,7 +217,10 @@ export const ConversationDetails = observer(() => {
           onClientInfoToggle={() => setClientInfoOpen((v) => !v)}
         />
 
-        <S.MessagesScroll ref={thread.messagesScrollRef} onScroll={thread.handleMessagesScroll}>
+        <S.MessagesScroll
+          ref={thread.messagesScrollRef}
+          onScroll={thread.handleMessagesScroll}
+        >
           {thread.messagesError && (
             <Text type="danger" role="alert">
               {thread.messagesError}
@@ -208,12 +228,16 @@ export const ConversationDetails = observer(() => {
           )}
 
           {thread.loadingMessages ? (
-            <Flex justify="center" align="center" style={{ flex: 1, minHeight: 160 }}>
+            <Flex
+              justify="center"
+              align="center"
+              style={{ flex: 1, minHeight: 160 }}
+            >
               <Spin />
             </Flex>
           ) : thread.messagesLength === 0 ? (
             <Flex justify="center">
-              <Text type="secondary">{t('conversations.noMessages')}</Text>
+              <Text type="secondary">{t("conversations.noMessages")}</Text>
             </Flex>
           ) : (
             <ConversationMessagesList

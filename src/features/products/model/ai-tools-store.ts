@@ -1,16 +1,16 @@
-import { makeAutoObservable, runInAction } from 'mobx';
+import { makeAutoObservable, runInAction } from "mobx";
 
-import { aiApi } from '@/features/products/api/ai-api';
+import { aiApi } from "@/features/products/api/ai-api";
 import {
   parseInstagramAnalyzeProductResponse,
   type InstagramAnalyzeProductResponse,
-} from '@/features/products/model/instagram-analyze.types';
+} from "@/features/products/model/instagram-analyze.types";
 import {
   parseInstagramMediaResponse,
   type InstagramAccountProfile,
   type InstagramMediaItem,
-} from '@/features/products/model/instagram-media.types';
-import { unknownErrorMessage } from '@/utils/unknown-error-message';
+} from "@/features/products/model/instagram-media.types";
+import { unknownErrorMessage } from "@/utils/unknown-error-message";
 
 export class AiToolsStore {
   postsList: InstagramMediaItem[] = [];
@@ -36,7 +36,9 @@ export class AiToolsStore {
     this.analyzeError = null;
   };
 
-  analyzeProduct = async (mediaId: string): Promise<InstagramAnalyzeProductResponse | null> => {
+  analyzeProduct = async (
+    mediaId: string,
+  ): Promise<InstagramAnalyzeProductResponse | null> => {
     runInAction(() => {
       this.analyzeLoading = true;
       this.analyzeError = null;
@@ -46,14 +48,17 @@ export class AiToolsStore {
       const raw = await aiApi.analyzeProduct(mediaId);
       const parsed = parseInstagramAnalyzeProductResponse(raw);
       if (parsed.ok === false) {
-        const detail = parsed.reasons.join('; ');
+        const detail = parsed.reasons.join("; ");
         if (import.meta.env.DEV) {
-          console.warn('[instagram analyze] parse failed', { reasons: parsed.reasons, raw });
+          console.warn("[instagram analyze] parse failed", {
+            reasons: parsed.reasons,
+            raw,
+          });
         }
         runInAction(() => {
           this.analyzeError = detail
             ? `Invalid analyze response: ${detail}`
-            : 'Invalid analyze response';
+            : "Invalid analyze response";
         });
         return null;
       }

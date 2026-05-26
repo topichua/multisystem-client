@@ -1,5 +1,5 @@
-import type { Client } from '@/features/clients/model/client.types';
-import type { CatalogVariant } from '@/features/products/model/product.types';
+import type { Client } from "@/features/clients/model/client.types";
+import type { CatalogVariant } from "@/features/products/model/product.types";
 
 export type OrderCreateItemPayload = {
   productId: number;

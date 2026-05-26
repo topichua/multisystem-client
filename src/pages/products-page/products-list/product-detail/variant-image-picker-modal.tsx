@@ -1,10 +1,10 @@
-import { ImageSquareIcon } from '@phosphor-icons/react';
-import { Button, Flex, Image, Modal, Spin, Typography, Upload } from 'antd';
-import ImgCrop from 'antd-img-crop';
-import { useTranslation } from 'react-i18next';
+import { ImageSquareIcon } from "@phosphor-icons/react";
+import { Button, Flex, Image, Modal, Spin, Typography, Upload } from "antd";
+import ImgCrop from "antd-img-crop";
+import { useTranslation } from "react-i18next";
 
-import type { ProductGalleryImage } from './product-gallery-images';
-import { variantNestedModalStyles } from './modal-style-tokens';
+import type { ProductGalleryImage } from "./product-gallery-images";
+import { variantNestedModalStyles } from "./modal-style-tokens";
 
 const THUMB_SIZE = 88;
 
@@ -36,7 +36,7 @@ export const VariantImagePickerModal = ({
 
   return (
     <Modal
-      title={t('products.variant.imagePickerTitle')}
+      title={t("products.variant.imagePickerTitle")}
       open={open}
       onCancel={onClose}
       footer={null}
@@ -48,7 +48,7 @@ export const VariantImagePickerModal = ({
         {images.length > 0 ? (
           <Flex vertical gap={8}>
             <Typography.Text type="secondary">
-              {t('products.variant.imagePickerExisting')}
+              {t("products.variant.imagePickerExisting")}
             </Typography.Text>
             <Flex gap={12} wrap="wrap">
               {images.map((image) => {
@@ -63,17 +63,17 @@ export const VariantImagePickerModal = ({
                       padding: 8,
                       borderRadius: 8,
                       border: isSelected
-                        ? '2px solid var(--ant-color-primary, #1677ff)'
-                        : '1px solid var(--ant-color-border, #d9d9d9)',
-                      background: 'transparent',
-                      cursor: 'pointer',
+                        ? "2px solid var(--ant-color-primary, #1677ff)"
+                        : "1px solid var(--ant-color-border, #d9d9d9)",
+                      background: "transparent",
+                      cursor: "pointer",
                     }}
                   >
                     <Image
                       src={image.url}
                       width={THUMB_SIZE}
                       height={THUMB_SIZE}
-                      style={{ objectFit: 'cover', display: 'block' }}
+                      style={{ objectFit: "cover", display: "block" }}
                       preview={false}
                     />
                   </button>
@@ -83,21 +83,21 @@ export const VariantImagePickerModal = ({
           </Flex>
         ) : (
           <Typography.Text type="secondary">
-            {t('products.variant.imagePickerEmpty')}
+            {t("products.variant.imagePickerEmpty")}
           </Typography.Text>
         )}
 
         <Flex vertical gap={8} align="flex-start">
           <Typography.Text type="secondary">
-            {t('products.variant.imagePickerUploadNew')}
+            {t("products.variant.imagePickerUploadNew")}
           </Typography.Text>
           <Spin spinning={uploadLoading}>
             <ImgCrop
               aspect={1}
               quality={0.92}
-              modalTitle={t('products.media.cropModalTitle')}
-              modalOk={t('products.media.cropOk')}
-              modalCancel={t('products.media.cropCancel')}
+              modalTitle={t("products.media.cropModalTitle")}
+              modalOk={t("products.media.cropOk")}
+              modalCancel={t("products.media.cropCancel")}
               zoomSlider
             >
               <Upload
@@ -115,7 +115,7 @@ export const VariantImagePickerModal = ({
                 }}
               >
                 <Button icon={<ImageSquareIcon size={18} />}>
-                  {t('products.media.uploadSelect')}
+                  {t("products.media.uploadSelect")}
                 </Button>
               </Upload>
             </ImgCrop>

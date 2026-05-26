@@ -1,7 +1,7 @@
-import type { ColumnsType } from 'antd/es/table';
-import type { TableProps } from 'antd';
-import { PlusIcon } from '@phosphor-icons/react';
-import { useTranslation } from 'react-i18next';
+import type { ColumnsType } from "antd/es/table";
+import type { TableProps } from "antd";
+import { PlusIcon } from "@phosphor-icons/react";
+import { useTranslation } from "react-i18next";
 
 import {
   AddVariantButton,
@@ -9,7 +9,7 @@ import {
   VariantsSection,
   VariantsTable,
   VariantsTitle,
-} from './product-detail.styled';
+} from "./product-detail.styled";
 
 type ProductVariantsListSectionProps<T> = {
   count: number;
@@ -18,7 +18,7 @@ type ProductVariantsListSectionProps<T> = {
   rowKey: keyof T;
   variantSaveLoading: boolean;
   onAddVariant: () => void;
-  tableScroll?: TableProps['scroll'];
+  tableScroll?: TableProps["scroll"];
 };
 
 export function ProductVariantsListSection<T extends object>({
@@ -36,20 +36,26 @@ export function ProductVariantsListSection<T extends object>({
     <VariantsSection>
       <VariantsHeader>
         <VariantsTitle>
-          {t('products.variantsTitle')} ({count})
+          {t("products.variantsTitle")} ({count})
         </VariantsTitle>
-        <AddVariantButton type="button" disabled={variantSaveLoading} onClick={onAddVariant}>
+        <AddVariantButton
+          type="button"
+          disabled={variantSaveLoading}
+          onClick={onAddVariant}
+        >
           <PlusIcon size={18} weight="bold" />
-          {t('products.variantAddCta')}
+          {t("products.variantAddCta")}
         </AddVariantButton>
       </VariantsHeader>
       <VariantsTable
-        rowKey={(record) => String((record as Record<string, unknown>)[rowKey as string])}
+        rowKey={(record) =>
+          String((record as Record<string, unknown>)[rowKey as string])
+        }
         size="small"
         pagination={false}
         dataSource={dataSource as Record<string, unknown>[]}
         columns={columns as ColumnsType<unknown>}
-        scroll={tableScroll ?? { x: 'max-content', y: 280 }}
+        scroll={tableScroll ?? { x: "max-content", y: 280 }}
       />
     </VariantsSection>
   );
