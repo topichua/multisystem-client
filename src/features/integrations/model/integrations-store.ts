@@ -86,7 +86,6 @@ export class IntegrationsStore {
       const created = await integrationsApi.create({ integration_type });
 
       if (created.url) {
-        window.location.assign(created.url);
         return created;
       }
 

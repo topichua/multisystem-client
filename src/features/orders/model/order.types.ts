@@ -88,6 +88,69 @@ export type OrderListItem = {
   updatedAt: string;
 };
 
+export type OrderConversation = {
+  id: number;
+  externalSourceId: string | null;
+  externalId: string | null;
+  instUpdatedAt: string | null;
+  readAt: string | null;
+  participantId: string | null;
+  source: number | null;
+  managerId: number | null;
+  groupId: number | null;
+};
+
+export type OrderDeliveryInfo = {
+  id: number;
+  orderId: number;
+  provider: string;
+  recipientName: string | null;
+  phone: string | null;
+  city: string | null;
+  cityRef: string | null;
+  warehouse: string | null;
+  warehouseRef: string | null;
+  address: string | null;
+  trackingNumber: string | null;
+  rawProviderPayload: Record<string, unknown> | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type OrderDetailsItem = {
+  id: number;
+  orderId: number;
+  productId: number | null;
+  variantId: number | null;
+  productTitleSnapshot: string | null;
+  variantTitleSnapshot: string | null;
+  variantAttributesSnapshot: Record<string, unknown> | null;
+  imageUrlSnapshot: string | null;
+  skuSnapshot: string | null;
+  quantity: number;
+  unitPriceAmount: number;
+  totalPriceAmount: number;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type OrderDetailsEvent = {
+  id: number;
+  orderId: number;
+  type: string;
+  payload: Record<string, unknown> | null;
+  actorId: number | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type OrderDetails = OrderListItem & {
+  conversation: OrderConversation | null;
+  items: OrderDetailsItem[];
+  deliveryInfos: OrderDeliveryInfo[];
+  events: OrderDetailsEvent[];
+};
+
 export type OrdersListResponse = {
   items: OrderListItem[];
   total: number;

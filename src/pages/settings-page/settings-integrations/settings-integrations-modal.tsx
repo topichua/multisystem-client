@@ -21,6 +21,9 @@ import {
   Typography,
 } from "antd";
 import { useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
+
+import { openIntegrationAuthWindow } from "@/features/integrations/open-integration-auth";
 
 export type AddIntegrationType =
   | "instagram"
@@ -32,70 +35,73 @@ export type AddIntegrationType =
 
 type AddIntegrationItem = {
   type: AddIntegrationType;
-  title: string;
-  description: string;
+  titleKey: string;
+  descriptionKey: string;
   icon: React.ReactNode;
 };
 
 type AddIntegrationGroup = {
-  title: string;
+  titleKey: string;
   items: AddIntegrationItem[];
 };
 
 type AddIntegrationModalProps = {
   open: boolean;
   onCancel: () => void;
-  onSelectIntegration: (type: AddIntegrationType) => Promise<void> | void;
+  onSelectIntegration: (
+    type: AddIntegrationType,
+    authWindow: Window | null,
+  ) => Promise<void> | void;
 };
 
 const INTEGRATION_GROUPS: AddIntegrationGroup[] = [
   {
-    title: "Social networks and messengers",
+    titleKey: "integrations.modal.groupSocial",
     items: [
       {
         type: "instagram",
-        title: "Instagram",
-        description: "Connect Instagram account",
+        titleKey: "integrations.modal.items.instagram.title",
+        descriptionKey: "integrations.modal.items.instagram.description",
         icon: <InstagramOutlined />,
       },
       {
         type: "telegram",
-        title: "Telegram",
-        description: "Connect Telegram bot",
+        titleKey: "integrations.modal.items.telegram.title",
+        descriptionKey: "integrations.modal.items.telegram.description",
         icon: <SendOutlined />,
       },
       {
         type: "whatsapp",
-        title: "WhatsApp",
-        description: "Connect WhatsApp Business",
+        titleKey: "integrations.modal.items.whatsapp.title",
+        descriptionKey: "integrations.modal.items.whatsapp.description",
         icon: <WhatsAppOutlined />,
       },
     ],
   },
   {
-    title: "Delivery",
+    titleKey: "integrations.modal.groupDelivery",
     items: [
       {
         type: "nova-poshta",
-        title: "Nova Poshta",
-        description: "Connect warehouse and delivery settings",
+        titleKey: "integrations.modal.items.novaPoshta.title",
+        descriptionKey: "integrations.modal.items.novaPoshta.description",
         icon: <TruckOutlined />,
       },
     ],
   },
   {
-    title: "Other services",
+    titleKey: "integrations.modal.groupOther",
     items: [
       {
         type: "tiktok",
-        title: "TikTok",
-        description: "Connect TikTok account",
+        titleKey: "integrations.modal.items.tiktok.title",
+        descriptionKey: "integrations.modal.items.tiktok.description",
         icon: <MessageOutlined />,
       },
       {
         type: "prom",
-        title: "Prom",
-        description: "Connect Prom store",
+        titleKey: "integrations.modal.items.prom.title",
+        descriptionKey: "integrations.modal.items.prom.description",
         icon: <ShopOutlined />,
       },
     ],
@@ -107,6 +113,7 @@ export const AddIntegrationModal = ({
   onCancel,
   onSelectIntegration,
 }: AddIntegrationModalProps) => {
+  const { t } = useTranslation();
   const [loadingType, setLoadingType] = useState<AddIntegrationType | null>(
     null,
   );
@@ -114,9 +121,10 @@ export const AddIntegrationModal = ({
   const handleSelectIntegration = useCallback(
     async (type: AddIntegrationType) => {
       setLoadingType(type);
+      const authWindow = openIntegrationAuthWindow();
 
       try {
-        await onSelectIntegration(type);
+        await onSelectIntegration(type, authWindow);
       } finally {
         setLoadingType(null);
       }
@@ -131,11 +139,11 @@ export const AddIntegrationModal = ({
       title={
         <div>
           <Typography.Title level={3} style={{ margin: 0 }}>
-            Add integration
+            {t("integrations.modal.title")}
           </Typography.Title>
 
           <Typography.Text type="secondary">
-            Select the service you want to connect
+            {t("integrations.modal.subtitle")}
           </Typography.Text>
         </div>
       }
@@ -153,13 +161,13 @@ export const AddIntegrationModal = ({
       >
         {INTEGRATION_GROUPS.map((group) => (
           <Space
-            key={group.title}
+            key={group.titleKey}
             direction="vertical"
             size={12}
             style={{ width: "100%" }}
           >
             <Typography.Title level={5} style={{ margin: 0 }}>
-              {group.title}
+              {t(group.titleKey)}
             </Typography.Title>
 
             <Row gutter={[12, 12]}>
@@ -179,13 +187,15 @@ export const AddIntegrationModal = ({
                         <Avatar size={40} shape="square" icon={item.icon} />
 
                         <div>
-                          <Typography.Text strong>{item.title}</Typography.Text>
+                          <Typography.Text strong>
+                            {t(item.titleKey)}
+                          </Typography.Text>
 
                           <Typography.Paragraph
                             type="secondary"
                             style={{ margin: 0, fontSize: 12 }}
                           >
-                            {item.description}
+                            {t(item.descriptionKey)}
                           </Typography.Paragraph>
                         </div>
                       </Flex>
@@ -198,14 +208,14 @@ export const AddIntegrationModal = ({
         ))}
 
         <Typography.Text type="secondary">
-          Didn&apos;t find the required service?{" "}
+          {t("integrations.modal.suggestPrefix")}{" "}
           <Button
             type="link"
             size="small"
             icon={<ApiOutlined />}
             style={{ padding: 0 }}
           >
-            Suggest integration
+            {t("integrations.modal.suggestCta")}
           </Button>
         </Typography.Text>
       </Space>

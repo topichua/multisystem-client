@@ -38,7 +38,7 @@ const appColors = {
   textDisabled: "#94A3B8",
 
   border: "#E2E8F0",
-  borderSecondary: "#F1F5F9",
+  borderSecondary: "#e2e1e1",
 
   shadow: "0 12px 32px rgba(15, 23, 42, 0.08)",
 } as const;
@@ -191,7 +191,7 @@ const darkAppColors = {
   textDisabled: "#6B7288",
 
   border: "#2a3042",
-  borderSecondary: "#1e2230",
+  borderSecondary: "#e2e1e1",
 
   shadow: "0 12px 32px rgba(0, 0, 0, 0.45)",
 } as const;

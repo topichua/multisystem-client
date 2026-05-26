@@ -3,6 +3,7 @@ import { apiClient } from "@/api/api-client";
 import type {
   ClientOrderStats,
   OrderCreatePayload,
+  OrderDetails,
   OrderListItem,
   OrderStatus,
   OrderStatusUpdatePayload,
@@ -116,6 +117,13 @@ export const ordersApi = {
     });
 
     return normalizeOrdersList(data);
+  },
+
+  getById: async (orderId: number): Promise<OrderDetails> => {
+    const { data } = await apiClient.get<OrderDetails>(
+      `${basePath}/${orderId}`,
+    );
+    return data;
   },
 
   create: async (payload: OrderCreatePayload): Promise<OrderListItem> => {

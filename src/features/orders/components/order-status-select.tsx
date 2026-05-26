@@ -23,6 +23,7 @@ type OrderStatusSelectProps = {
   disabled?: boolean;
   className?: string;
   style?: CSSProperties;
+  onChangeSuccess?: (nextStatusId: number) => void;
 };
 
 export const OrderStatusSelect = observer(
@@ -32,6 +33,7 @@ export const OrderStatusSelect = observer(
     disabled,
     className,
     style,
+    onChangeSuccess,
   }: OrderStatusSelectProps) => {
     const { t } = useTranslation();
     useEnsureOrderStatusesLoaded();
@@ -56,6 +58,7 @@ export const OrderStatusSelect = observer(
         startTransition(async () => {
           try {
             await ordersStore.updateOrderStatus(orderId, nextStatusId);
+            onChangeSuccess?.(nextStatusId);
           } catch (e) {
             messageApi.error(
               getApiErrorMessage(e, t("orders.updateStatusError")),
@@ -70,6 +73,7 @@ export const OrderStatusSelect = observer(
         ordersStore,
         setOptimisticStatusId,
         t,
+        onChangeSuccess,
       ],
     );
 

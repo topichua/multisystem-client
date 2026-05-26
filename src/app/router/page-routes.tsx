@@ -21,6 +21,7 @@ import { OrderStatusDetailView } from "@/pages/orders-page/order-statuses/order-
 import { OrderStatusesIndex } from "@/pages/orders-page/order-statuses/order-statuses-index";
 import { OrderStatusesLayout } from "@/pages/orders-page/order-statuses/order-statuses-layout";
 import { OrdersListPage } from "@/pages/orders-page/orders-list/orders-list-page";
+import { OrderDetailsPage } from "@/pages/orders-page/order-details/order-details-page";
 
 import { pagesMap } from "./pages-map";
 import { ProtectedRoute } from "./protected-route";
@@ -84,6 +85,7 @@ export const PageRoutes = () => {
               element={<Navigate to={pagesMap.ordersList} replace />}
             />
             <Route path="list" element={<OrdersListPage />} />
+            <Route path=":orderId" element={<OrderDetailsPage />} />
             <Route path="statuses" element={<OrderStatusesLayout />}>
               <Route index element={<OrderStatusesIndex />} />
               <Route path=":statusId" element={<OrderStatusDetailView />} />

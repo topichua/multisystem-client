@@ -14,7 +14,79 @@
     "menu": {
       "groups": "Groups",
       "user": "User",
-      "system": "System"
+      "system": "System",
+      "integrations": "Integrations"
+    }
+  },
+  "integrations": {
+    "title": "Integrations",
+    "subtitle": "Manage all connections to external services and accounts",
+    "addIntegration": "Add integration",
+    "searchPlaceholder": "Search integrations...",
+    "allIntegrations": "All integrations",
+    "noIntegrationsYet": "No integrations yet",
+    "noMatchFilters": "No integrations match your filters",
+    "connectedIntegrations": "Connected integrations",
+    "connectSuccess": "Integration connected",
+    "connectFailed": "Failed to connect integration",
+    "disconnectSuccess": "Integration disconnected",
+    "disconnectFailed": "Failed to disconnect integration",
+    "disconnectConfirmTitle": "Disconnect integration?",
+    "disconnectConfirmContent": "Disconnect \"{{name}}\"?",
+    "disconnectConfirmOk": "Disconnect",
+    "disconnectConfirmCancel": "Cancel",
+    "disconnectAction": "Disconnect",
+    "connectedTag": "Connected",
+    "typeLabel": "Type: {{type}}",
+    "addedLabel": "Added: {{date}}",
+    "types": {
+      "instagram": {
+        "label": "Instagram",
+        "description": "Manage Instagram accounts",
+        "connectLabel": "Connect account",
+        "empty": "No Instagram integrations"
+      },
+      "telegram": {
+        "label": "Telegram",
+        "description": "Connect Telegram bots and accounts",
+        "connectLabel": "Connect bot",
+        "empty": "No Telegram integrations"
+      }
+    },
+    "modal": {
+      "title": "Add integration",
+      "subtitle": "Select the service you want to connect",
+      "groupSocial": "Social networks and messengers",
+      "groupDelivery": "Delivery",
+      "groupOther": "Other services",
+      "suggestPrefix": "Didn't find the required service?",
+      "suggestCta": "Suggest integration",
+      "items": {
+        "instagram": {
+          "title": "Instagram",
+          "description": "Connect Instagram account"
+        },
+        "telegram": {
+          "title": "Telegram",
+          "description": "Connect Telegram bot"
+        },
+        "whatsapp": {
+          "title": "WhatsApp",
+          "description": "Connect WhatsApp Business"
+        },
+        "novaPoshta": {
+          "title": "Nova Poshta",
+          "description": "Connect warehouse and delivery settings"
+        },
+        "tiktok": {
+          "title": "TikTok",
+          "description": "Connect TikTok account"
+        },
+        "prom": {
+          "title": "Prom",
+          "description": "Connect Prom store"
+        }
+      }
     }
   },
   "system": {
@@ -395,6 +467,77 @@
       "internalNote": "Internal note",
       "createdAt": "Created"
     },
+    "invalidOrderId": "Invalid order ID",
+    "notFound": "Order not found",
+    "backToOrders": "Back to all orders",
+    "orderTitle": "Order",
+    "orderAmount": "Order total",
+    "product": "Product",
+    "quantity": "Qty",
+    "price": "Price",
+    "sum": "Sum",
+    "sku": "SKU",
+    "actor": "User",
+    "orderId": "Order ID",
+    "createdAt": "Created",
+    "source": "Source",
+    "currency": "Currency",
+    "paidAt": "Paid at",
+    "paymentReference": "Payment reference",
+    "paymentStatusLabel": "Payment status",
+    "deliveryStatusLabel": "Delivery status",
+    "deliveryProvider": "Delivery service",
+    "recipientName": "Recipient",
+    "phone": "Phone",
+    "city": "City",
+    "warehouse": "Branch",
+    "address": "Address",
+    "trackingNumber": "Tracking number",
+    "customerId": "Client ID",
+    "instagramUserId": "Instagram ID",
+    "savedDeliveryInfo": "Saved delivery info",
+    "customerCreatedAt": "Client created",
+    "subtotal": "Subtotal",
+    "discount": "Discount",
+    "deliveryAmount": "Delivery",
+    "total": "Total",
+    "overview": "Overview",
+    "orderInfo": "Order information",
+    "delivery": "Delivery",
+    "payment": "Payment",
+    "conversationId": "Conversation ID",
+    "conversationUpdatedAt": "Updated in Instagram",
+    "products": "Products ({{count}})",
+    "customer": "Customer",
+    "notes": "Notes",
+    "noNotes": "No notes",
+    "customerNote": "Customer note",
+    "internalNote": "Internal note",
+    "history": "Order history",
+    "noHistory": "No history yet",
+    "productsTab": "Products",
+    "customerTab": "Customer",
+    "conversation": "Conversation",
+    "groupId": "Group ID",
+    "managerId": "Manager ID",
+    "readAt": "Read at",
+    "historyTab": "History",
+    "sources": {
+      "instagram": "Instagram"
+    },
+    "deliveryProviders": {
+      "nova_poshta": "Nova Poshta"
+    },
+    "events": {
+      "created": "Order created",
+      "itemAdded": "Item added: {{product}}{{quantitySuffix}}",
+      "quantitySuffix": " ({{count}} pcs.)",
+      "totalsUpdated": "Order total updated: {{amount}}",
+      "deliveryUpdated": "Delivery updated",
+      "deliveryUpdatedWithTracking": "Delivery updated, tracking: {{trackingNumber}}",
+      "paymentUpdated": "Payment status updated",
+      "statusUpdated": "Order status updated"
+    },
     "paymentStatus": {
       "unpaid": "Unpaid",
       "pending": "Awaiting payment",
@@ -402,7 +545,8 @@
       "partially_paid": "Partially paid",
       "refunded": "Refunded",
       "failed": "Payment failed",
-      "canceled": "Payment canceled"
+      "canceled": "Payment canceled",
+      "cancelled": "Payment canceled"
     },
     "deliveryStatus": {
       "pending": "Pending",

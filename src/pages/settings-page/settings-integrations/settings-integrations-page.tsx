@@ -27,13 +27,19 @@ import {
 } from "@ant-design/icons";
 import { observer } from "mobx-react-lite";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import { getApiErrorMessage } from "@/api/get-api-error-message";
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
 import { PaneScrollRegion } from "@/components/layout/pane-frame";
 import { PaneNavSplitLayout } from "@/components/layout/pane-nav-split-layout";
-import { useIntegrationsStore } from "@/features/integrations/model/use-integrations-store";
+import {
+  closeIntegrationAuthWindow,
+  navigateIntegrationAuthUrl,
+  openIntegrationAuthWindow,
+} from "@/features/integrations/open-integration-auth";
 import type { IntegrationItem } from "@/features/integrations/model/integration.types";
+import { useIntegrationsStore } from "@/features/integrations/model/use-integrations-store";
 
 import {
   AddIntegrationModal,
@@ -43,16 +49,18 @@ import {
 const INTEGRATION_TYPES = [
   {
     type: "instagram",
-    label: "Instagram",
-    description: "Manage Instagram accounts",
-    connectLabel: "Connect account",
+    labelKey: "integrations.types.instagram.label",
+    descriptionKey: "integrations.types.instagram.description",
+    connectLabelKey: "integrations.types.instagram.connectLabel",
+    emptyKey: "integrations.types.instagram.empty",
     icon: <InstagramOutlined />,
   },
   {
     type: "telegram",
-    label: "Telegram",
-    description: "Connect Telegram bots and accounts",
-    connectLabel: "Connect bot",
+    labelKey: "integrations.types.telegram.label",
+    descriptionKey: "integrations.types.telegram.description",
+    connectLabelKey: "integrations.types.telegram.connectLabel",
+    emptyKey: "integrations.types.telegram.empty",
     icon: <SendOutlined />,
   },
 ] as const;
@@ -70,12 +78,13 @@ const createEmptyIntegrationsByType = (): Record<
 });
 
 const isKnownIntegrationType = (
-  type: IntegrationItem['type'],
-): type is IntegrationType => type === 'instagram' || type === 'telegram';
+  type: IntegrationItem["type"],
+): type is IntegrationType => type === "instagram" || type === "telegram";
 
 export const SettingsIntegrationsPage = observer(() => {
   const store = useIntegrationsStore();
   const [messageApi, contextHolder] = message.useMessage();
+  const { t } = useTranslation();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -110,7 +119,8 @@ export const SettingsIntegrationsPage = observer(() => {
     }
 
     return INTEGRATION_TYPES.filter((item) => {
-      const typeMatches = item.label.toLowerCase().includes(normalizedQuery);
+      const label = t(item.labelKey);
+      const typeMatches = label.toLowerCase().includes(normalizedQuery);
 
       const integrationMatches = integrationsByType[item.type].some(
         (integration) => {
@@ -123,7 +133,7 @@ export const SettingsIntegrationsPage = observer(() => {
 
       return typeMatches || integrationMatches;
     });
-  }, [integrationsByType, normalizedQuery]);
+  }, [integrationsByType, normalizedQuery, t]);
 
   const visibleIntegrationTypes = useMemo(() => {
     if (selectedFilter === "all") {
@@ -137,10 +147,8 @@ export const SettingsIntegrationsPage = observer(() => {
     (item: IntegrationDefinition) => {
       const integrations = integrationsByType[item.type];
 
-      if (
-        !normalizedQuery ||
-        item.label.toLowerCase().includes(normalizedQuery)
-      ) {
+      const label = t(item.labelKey);
+      if (!normalizedQuery || label.toLowerCase().includes(normalizedQuery)) {
         return integrations;
       }
 
@@ -151,7 +159,7 @@ export const SettingsIntegrationsPage = observer(() => {
         return haystack.includes(normalizedQuery);
       });
     },
-    [integrationsByType, normalizedQuery],
+    [integrationsByType, normalizedQuery, t],
   );
 
   const handleMenuClick: MenuProps["onClick"] = ({ key }) => {
@@ -164,7 +172,7 @@ export const SettingsIntegrationsPage = observer(() => {
       icon: item.icon,
       label: (
         <Flex align="center" justify="space-between" gap={12}>
-          <Typography.Text>{item.label}</Typography.Text>
+          <Typography.Text>{t(item.labelKey)}</Typography.Text>
           <Badge count={integrationsByType[item.type].length} showZero />
         </Flex>
       ),
@@ -176,14 +184,16 @@ export const SettingsIntegrationsPage = observer(() => {
         icon: <AppstoreOutlined />,
         label: (
           <Flex align="center" justify="space-between" gap={12}>
-            <Typography.Text>All integrations</Typography.Text>
+            <Typography.Text>
+              {t("integrations.allIntegrations")}
+            </Typography.Text>
             <Badge count={store.items.length} showZero />
           </Flex>
         ),
       },
       ...typeItems,
     ];
-  }, [integrationsByType, menuIntegrationTypes, store.items.length]);
+  }, [integrationsByType, menuIntegrationTypes, store.items.length, t]);
 
   const isEmpty = store.items.length === 0;
 
@@ -191,74 +201,91 @@ export const SettingsIntegrationsPage = observer(() => {
     <Flex align="flex-start" justify="space-between" gap={16} wrap="wrap">
       <div>
         <Typography.Title level={3} style={{ margin: 0 }}>
-          Integrations
+          {t("integrations.title")}
         </Typography.Title>
         <Typography.Text type="secondary">
-          Manage all connections to external services and accounts
+          {t("integrations.subtitle")}
         </Typography.Text>
       </div>
       <Button type="primary" icon={<PlusOutlined />} onClick={openModal}>
-        Add integration
+        {t("integrations.addIntegration")}
       </Button>
     </Flex>
   );
 
   const handleSelectIntegration = useCallback(
-    async (type: AddIntegrationType) => {
+    async (type: AddIntegrationType, authWindow: Window | null) => {
       try {
         const created = await store.connectIntegration(type);
-        if (!created.url) {
-          messageApi.success("Integration connected");
+
+        if (created.url) {
+          navigateIntegrationAuthUrl(created.url, authWindow);
           closeModal();
+          return;
         }
+
+        closeIntegrationAuthWindow(authWindow);
+        messageApi.success(t("integrations.connectSuccess"));
+        closeModal();
       } catch (e) {
+        closeIntegrationAuthWindow(authWindow);
         messageApi.error(
-          getApiErrorMessage(e, "Failed to connect integration"),
+          getApiErrorMessage(e, t("integrations.connectFailed")),
         );
         throw e;
       }
     },
-    [closeModal, messageApi, store],
+    [closeModal, messageApi, store, t],
   );
 
   const handleDisconnect = useCallback(
     (integration: IntegrationItem) => {
       Modal.confirm({
-        title: "Disconnect integration?",
-        content: `Disconnect "${integration.name}"?`,
-        okText: "Disconnect",
+        title: t("integrations.disconnectConfirmTitle"),
+        content: t("integrations.disconnectConfirmContent", {
+          name: integration.name,
+        }),
+        okText: t("integrations.disconnectConfirmOk"),
         okType: "danger",
-        cancelText: "Cancel",
+        cancelText: t("integrations.disconnectConfirmCancel"),
         onOk: async () => {
           try {
             await store.disconnectIntegration(integration.type, integration.id);
-            messageApi.success("Integration disconnected");
+            messageApi.success(t("integrations.disconnectSuccess"));
           } catch (e) {
             messageApi.error(
-              getApiErrorMessage(e, "Failed to disconnect integration"),
+              getApiErrorMessage(e, t("integrations.disconnectFailed")),
             );
             return Promise.reject();
           }
         },
       });
     },
-    [messageApi, store],
+    [messageApi, store, t],
   );
 
   const handleConnectType = useCallback(
     async (type: IntegrationType) => {
+      const authWindow = openIntegrationAuthWindow();
+
       try {
         const created = await store.connectIntegration(type);
-        if (!created.url) {
-          messageApi.success("Integration connected");
+
+        if (created.url) {
+          navigateIntegrationAuthUrl(created.url, authWindow);
+          return;
         }
+
+        closeIntegrationAuthWindow(authWindow);
+        messageApi.success(t("integrations.connectSuccess"));
       } catch (e) {
+        closeIntegrationAuthWindow(authWindow);
         messageApi.error(
-          getApiErrorMessage(e, "Failed to connect integration"),
+          getApiErrorMessage(e, t("integrations.connectFailed")),
         );
       }
     },
-    [messageApi, store],
+    [messageApi, store, t],
   );
 
   return (
@@ -287,12 +314,12 @@ export const SettingsIntegrationsPage = observer(() => {
               <Empty
                 description={
                   <Typography.Text type="secondary">
-                    No integrations yet
+                    {t("integrations.noIntegrationsYet")}
                   </Typography.Text>
                 }
               >
                 <Button type="primary" onClick={openModal}>
-                  Add integration
+                  {t("integrations.addIntegration")}
                 </Button>
               </Empty>
             </Flex>
@@ -301,7 +328,7 @@ export const SettingsIntegrationsPage = observer(() => {
               <PaneNavSplitLayout.SubSidebar data-qa="layout-settings-integrations-sidebar">
                 <div style={{ flexShrink: 0, marginBottom: 12 }}>
                   <Input
-                    placeholder="Search integrations..."
+                    placeholder={t("integrations.searchPlaceholder")}
                     prefix={<SearchOutlined />}
                     value={query}
                     allowClear
@@ -329,7 +356,7 @@ export const SettingsIntegrationsPage = observer(() => {
                     style={{ width: "100%" }}
                   >
                     {visibleIntegrationTypes.length === 0 ? (
-                      <Empty description="No integrations match your filters" />
+                      <Empty description={t("integrations.noMatchFilters")} />
                     ) : (
                       visibleIntegrationTypes.map((item) => {
                         const visibleIntegrations =
@@ -353,10 +380,10 @@ export const SettingsIntegrationsPage = observer(() => {
                                     level={4}
                                     style={{ margin: 0 }}
                                   >
-                                    {item.label}
+                                    {t(item.labelKey)}
                                   </Typography.Title>
                                   <Typography.Text type="secondary">
-                                    {item.description}
+                                    {t(item.descriptionKey)}
                                   </Typography.Text>
                                 </div>
                               </Space>
@@ -367,7 +394,7 @@ export const SettingsIntegrationsPage = observer(() => {
                                   void handleConnectType(item.type)
                                 }
                               >
-                                {item.connectLabel}
+                                {t(item.connectLabelKey)}
                               </Button>
                             </Flex>
 
@@ -376,7 +403,7 @@ export const SettingsIntegrationsPage = observer(() => {
                             {visibleIntegrations.length === 0 ? (
                               <Empty
                                 image={Empty.PRESENTED_IMAGE_SIMPLE}
-                                description={`No ${item.label} integrations`}
+                                description={t(item.emptyKey)}
                               />
                             ) : (
                               <Space
@@ -401,14 +428,20 @@ export const SettingsIntegrationsPage = observer(() => {
                                             <Typography.Text strong>
                                               {integration.name}
                                             </Typography.Text>
-                                            <Tag color="success">Connected</Tag>
+                                            <Tag color="success">
+                                              {t("integrations.connectedTag")}
+                                            </Tag>
                                           </Space>
                                           <Flex gap={32} wrap="wrap">
                                             <Typography.Text type="secondary">
-                                              Type: {integration.type}
+                                              {t("integrations.typeLabel", {
+                                                type: integration.type,
+                                              })}
                                             </Typography.Text>
                                             <Typography.Text type="secondary">
-                                              Added: {integration.connectedAt}
+                                              {t("integrations.addedLabel", {
+                                                date: integration.connectedAt,
+                                              })}
                                             </Typography.Text>
                                           </Flex>
                                         </div>
@@ -419,7 +452,9 @@ export const SettingsIntegrationsPage = observer(() => {
                                           items: [
                                             {
                                               key: "disconnect",
-                                              label: "Disconnect",
+                                              label: t(
+                                                "integrations.disconnectAction",
+                                              ),
                                               danger: true,
                                               disabled: store.isDisconnecting(
                                                 integration.type,

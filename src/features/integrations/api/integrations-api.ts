@@ -25,8 +25,6 @@ export const integrationsApi = {
     type: IntegrationCreatePayload["integration_type"],
     id: number,
   ): Promise<void> => {
-    await apiClient.delete(`${basePath}/${id}`, {
-      params: { integration_type: type },
-    });
+    await apiClient.delete(`${basePath}/${type}/${id}`);
   },
 };
