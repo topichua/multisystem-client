@@ -1,13 +1,12 @@
 import { makeAutoObservable, runInAction } from "mobx";
 
 import { productsApi } from "@/features/products/api/products-api";
+import type { VariantCustomField } from "@/features/products/model/product-create-api.types";
 import type {
   Product,
   ProductCreatePayload,
   ProductDetails,
   ProductUpdatePayload,
-  ProductVariantCreatePayload,
-  ProductVariantUpdatePayload,
   ProductsListSort,
 } from "@/features/products/model/product.types";
 import { unknownErrorMessage } from "@/utils/unknown-error-message";
@@ -68,6 +67,9 @@ export class ProductsStore {
   variantDeleteLoadingId: number | null = null;
   detailLoading = false;
   detailError: string | null = null;
+
+  variantCustomFields: VariantCustomField[] = [];
+  variantCustomFieldsLoading = false;
 
   constructor() {
     makeAutoObservable(this);
@@ -427,92 +429,28 @@ export class ProductsStore {
     });
   };
 
-  createProductVariant = async (
-    productId: number,
-    payload: ProductVariantCreatePayload,
-    imageFile?: File | null,
-    options?: { silent?: boolean },
-  ): Promise<number | undefined> => {
-    if (!options?.silent) {
-      runInAction(() => {
-        this.variantSaveLoading = true;
-      });
-    }
-
-    try {
-      const created = await productsApi.createVariant(
-        productId,
-        payload,
-        imageFile,
-      );
-
-      await this.loadProductById(productId, { silent: options?.silent });
-      await this.loadProducts({ silent: true });
-
-      let resolvedId = created?.id;
-
-      if (resolvedId == null && this.activeProduct) {
-        const match = this.activeProduct.variants.find(
-          (v) =>
-            (v.color ?? "") === payload.color &&
-            (v.size ?? "") === payload.size &&
-            (v.sku ?? "") === (payload.sku ?? ""),
-        );
-
-        resolvedId = match?.id;
-      }
-
-      return resolvedId;
-    } finally {
-      if (!options?.silent) {
-        runInAction(() => {
-          this.variantSaveLoading = false;
-        });
-      }
-    }
-  };
-
-  updateProductVariant = async (
-    productId: number,
-    variantId: number,
-    payload: ProductVariantUpdatePayload,
-    options?: { silent?: boolean },
-  ): Promise<void> => {
-    if (!options?.silent) {
-      runInAction(() => {
-        this.variantSaveLoading = true;
-      });
-    }
-
-    try {
-      await productsApi.updateVariant(productId, variantId, payload);
-      await this.loadProductById(productId, { silent: options?.silent });
-      await this.loadProducts({ silent: true });
-    } finally {
-      if (!options?.silent) {
-        runInAction(() => {
-          this.variantSaveLoading = false;
-        });
-      }
-    }
-  };
-
-  deleteProductVariant = async (
-    productId: number,
-    variantId: number,
-  ): Promise<void> => {
+  loadVariantCustomFields = async (): Promise<void> => {
     runInAction(() => {
-      this.variantDeleteLoadingId = variantId;
+      this.variantCustomFieldsLoading = true;
     });
 
     try {
-      await productsApi.deleteVariant(productId, variantId);
-      await this.loadProductById(productId);
-      await this.loadProducts({ silent: true });
+      const result = await productsApi.getVariantCustomFields();
+
+      runInAction(() => {
+        this.variantCustomFields = [...result.items].sort(
+          (a, b) => a.sortOrder - b.sortOrder,
+        );
+      });
+    } catch {
+      runInAction(() => {
+        this.variantCustomFields = [];
+      });
     } finally {
       runInAction(() => {
-        this.variantDeleteLoadingId = null;
+        this.variantCustomFieldsLoading = false;
       });
     }
   };
+  // Variant-related store methods removed — not used by the products list controller.
 }

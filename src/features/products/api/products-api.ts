@@ -1,5 +1,11 @@
 import { apiClient } from "@/api/api-client";
 import type {
+  CreateProductPayload,
+  ProductUploadedMedia,
+  UploadedProductMediaResponse,
+  VariantCustomFieldsResponse,
+} from "@/features/products/model/product-create-api.types";
+import type {
   CatalogVariant,
   CatalogVariantsListResponse,
   Product,
@@ -9,8 +15,6 @@ import type {
   ProductMediaItem,
   ProductMediaUpdatePayload,
   ProductUpdatePayload,
-  ProductVariantMediaItemPayload,
-  ProductVariantMediaPutPayload,
   ProductVariant,
   ProductVariantCreatePayload,
   ProductVariantUpdatePayload,
@@ -19,6 +23,9 @@ import type {
 } from "@/features/products/model/product.types";
 
 const basePath = "/products";
+const workspacePath = "/workspace";
+
+export const PRODUCT_MEDIA_UPLOAD_FIELD_NAME = "image";
 
 const appendVariantFormFields = (
   formData: FormData,
@@ -376,20 +383,6 @@ export const productsApi = {
 
     await apiClient.post(`${basePath}/${productId}/media`, body);
   },
-
-  putVariantMedia: async (
-    productId: number,
-    variantId: number,
-    payload: ProductVariantMediaItemPayload | ProductVariantMediaPutPayload,
-  ): Promise<void> => {
-    const body: ProductVariantMediaPutPayload =
-      "items" in payload ? payload : { items: [payload] };
-    await apiClient.put(
-      `${basePath}/${productId}/variants/${variantId}/media`,
-      body,
-    );
-  },
-
   updateMedia: async (
     productId: number,
     mediaId: number,
@@ -398,23 +391,39 @@ export const productsApi = {
     await apiClient.patch(`${basePath}/${productId}/media/${mediaId}`, payload);
   },
 
-  deleteMedia: async (productId: number, mediaId: number): Promise<void> => {
-    await apiClient.delete(`${basePath}/${productId}/media/${mediaId}`);
+  getVariantCustomFields: async (): Promise<VariantCustomFieldsResponse> => {
+    const { data } = await apiClient.get<VariantCustomFieldsResponse>(
+      `${workspacePath}/variant-custom-fields`,
+    );
+
+    return data;
   },
 
-  uploadProductMedia: async (
-    productId: number,
-    image: File,
-    sortOrder?: number,
-  ): Promise<void> => {
+  uploadMedia: async (file: File): Promise<ProductUploadedMedia> => {
     const formData = new FormData();
+    formData.append(PRODUCT_MEDIA_UPLOAD_FIELD_NAME, file, file.name);
 
-    formData.append("image", image);
+    const { data } = await apiClient.post<UploadedProductMediaResponse>(
+      `${basePath}/upload-media`,
+      formData,
+      axiosMultipartFormDataConfig(),
+    );
 
-    if (sortOrder != null) {
-      formData.append("sortOrder", String(sortOrder));
-    }
+    return {
+      id: data.id,
+      src: data.cdnUrl,
+    };
+  },
 
-    await apiClient.post(`${basePath}/${productId}/media`, formData);
+  deleteUploadedMedia: async (mediaId: number): Promise<void> => {
+    await apiClient.delete(`${basePath}/upload-media/${mediaId}`);
+  },
+
+  createProduct: async (
+    payload: CreateProductPayload,
+  ): Promise<ProductDetails> => {
+    const { data } = await apiClient.post<ProductDetails>(basePath, payload);
+
+    return data;
   },
 };

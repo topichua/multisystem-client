@@ -8,8 +8,6 @@ export type ProductCreateFormValues = {
   sourceId: string;
   referenceGroupId: string;
   price: number;
-  currency: string;
-  inStock: boolean;
   quantity: number;
   mediaUrl: string;
   categoryId?: number;
@@ -37,8 +35,6 @@ export const defaultCreateValues: ProductCreateFormValues = {
   sourceId: "",
   referenceGroupId: "",
   price: 0,
-  currency: "UAH",
-  inStock: true,
   quantity: 0,
   mediaUrl: "",
   categoryId: undefined,
@@ -55,8 +51,6 @@ export const productToCreateValues = (
   referenceGroupId:
     product.referenceGroupId == null ? "" : String(product.referenceGroupId),
   price: product.price ?? 0,
-  currency: product.currency || "UAH",
-  inStock: product.inStock ?? false,
   quantity: product.quantity ?? 0,
   mediaUrl: product.mainImageUrl ?? "",
   categoryId: product.categoryId ?? undefined,

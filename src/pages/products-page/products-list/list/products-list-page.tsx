@@ -11,10 +11,10 @@ import type { Product } from "@/features/products/model/product.types";
 
 import { ProductsListActiveFilters } from "./products-list-active-filters";
 import { ProductsListFiltersPanel } from "./products-list-filters-panel";
-import { ProductsListGrid } from "./products-list-grid";
+// import { ProductsListGrid } from "./products-list-grid";
 import { ProductsListToolbar } from "./products-list-toolbar";
 import { ProductsTablePagination } from "./products-table-pagination";
-import { useProductsListController } from "./use-products-list-controller";
+import { useProductsListController } from "../controllers/use-products-list-controller";
 import { useProductsListUrlSync } from "./use-products-list-url-sync";
 import { useProductsTableColumns } from "./use-products-table-columns";
 
@@ -25,13 +25,13 @@ export const ProductsListPage = observer(() => {
   const navigate = useNavigate();
   const [filtersOpen, setFiltersOpen] = useState(false);
   const {
-    contextHolder,
+    // contextHolder,
     productsStore,
     categoryNameById,
     rowSelection,
     handleDeleteById,
-    handleOpenProduct,
-    handleRowClick,
+    // handleOpenProduct,
+    // handleRowClick,
   } = useProductsListController();
 
   useProductsListUrlSync(productsStore);
@@ -39,13 +39,12 @@ export const ProductsListPage = observer(() => {
   const columns = useProductsTableColumns({
     categoryNameById,
     deleteLoading: productsStore.deleteLoading,
-    onEdit: handleOpenProduct,
+    onEdit: () => {},
     onDelete: (productId) => handleDeleteById(productId),
   });
 
   return (
     <>
-      {contextHolder}
       <PaneDetailLayout.Root inset>
         <PaneDetailLayout.Header data-qa="layout-products-list-header">
           <Flex justify="space-between" align="center" gap={16} wrap="wrap">
@@ -81,22 +80,23 @@ export const ProductsListPage = observer(() => {
                   rowSelection={rowSelection}
                   loading={productsStore.listLoading}
                   pagination={false}
-                  onRow={(record) => ({
-                    onClick: handleRowClick(record),
+                  onRow={() => ({
+                    onClick: () => {},
                     style: { cursor: "pointer" },
                   })}
                   scroll={{ x: "max-content" }}
                 />
               ) : (
-                <ProductsListGrid
-                  products={productsStore.products}
-                  loading={productsStore.listLoading}
-                  categoryNameById={categoryNameById}
-                  onOpenProduct={handleRowClick}
-                  onEdit={handleOpenProduct}
-                  onDelete={(productId) => handleDeleteById(productId)}
-                  deleteLoading={productsStore.deleteLoading}
-                />
+                <></>
+                // <ProductsListGrid
+                //   products={productsStore.products}
+                //   loading={productsStore.listLoading}
+                //   categoryNameById={categoryNameById}
+                //   onOpenProduct={(handleRowClick)}
+                //   onEdit={handleOpenProduct}
+                //   onDelete={(productId) => handleDeleteById(productId)}
+                //   deleteLoading={productsStore.deleteLoading}
+                // />
               )}
               <ProductsTablePagination
                 current={productsStore.currentPage}

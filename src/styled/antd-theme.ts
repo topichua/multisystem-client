@@ -124,6 +124,10 @@ export const modernSaasTheme: ThemeConfig = {
       rowSelectedHoverBg: brandToken.colorPrimaryBgHover,
     },
 
+    Typography: {
+      titleMarginBottom: 0,
+    },
+
     Input: {
       activeBorderColor: appColors.primary,
       hoverBorderColor: appColors.primary,

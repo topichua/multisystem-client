@@ -2,7 +2,7 @@ import { InstagramLogoIcon } from "@phosphor-icons/react";
 import { Drawer, Flex } from "antd";
 import { useTranslation } from "react-i18next";
 
-import { InstagramAiPanelConnected } from "./instagram-ai-panel";
+import { InstagramAiPanelConnected } from ".";
 
 type ProductInstagramAiDrawerProps = {
   open: boolean;
