@@ -1,7 +1,8 @@
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
-import { ArrowLeftIcon } from "@phosphor-icons/react";
+import { ArrowLeftIcon, PlusIcon } from "@phosphor-icons/react";
 import { Button, Flex, Form } from "antd";
-import type { FormInstance } from "antd";
+import type { FormInstance, FormProps } from "antd";
+import { useCallback } from "react";
 import {
   ProductTypeSection,
   type ProductType,
@@ -10,7 +11,7 @@ import { ProductMainInfoSection } from "./sections/product-main-info-section";
 import { SingleProductCharacteristicsSection } from "./sections/single-product-characteristics-section";
 import { ProductMediaSection } from "./sections/product-media-section";
 import { ProductVariantsSection } from "./sections/product-variants-section";
-import { ProductSidePanel } from "./sections/product-side-panel";
+import { ProductStatus } from "./sections/product-status";
 import { ProductFormHeader } from "./sections/product-form-header";
 import type {
   ProductAddFormValues,
@@ -51,8 +52,11 @@ export type ProductFormProps = {
   // Variants section
   variantsProps: ProductAddPageControllerReturn["variantsProps"];
 
-  // Side panel
-  sidebarProps: ProductAddPageControllerReturn["sidebarProps"];
+  // Product status section
+  statusProps: ProductAddPageControllerReturn["statusProps"];
+
+  // Submit button
+  submitButtonProps: ProductAddPageControllerReturn["submitButtonProps"];
 
   // Submit handler
   onSubmit: (values: ProductAddFormValues) => Promise<void>;
@@ -73,33 +77,55 @@ export const ProductForm = ({
   singleCharacteristicsProps,
   mediaProps,
   variantsProps,
-  sidebarProps,
+  statusProps,
+  submitButtonProps,
   onSubmit,
-}: ProductFormProps) => (
-  <PaneDetailLayout.Root inset>
-    <PaneDetailLayout.Header>
-      <Button
-        type="text"
-        icon={<ArrowLeftIcon size={20} />}
-        onClick={onBack}
-        style={{ alignSelf: "flex-start", paddingInlineStart: 0 }}
-      >
-        {backLabel}
-      </Button>
-    </PaneDetailLayout.Header>
+}: ProductFormProps) => {
+  const handleFinishFailed = useCallback<
+    NonNullable<FormProps<ProductAddFormValues>["onFinishFailed"]>
+  >(
+    ({ errorFields }) => {
+      const firstError = errorFields[0];
 
-    <PaneDetailLayout.Body>
-      <Form
-        form={form}
-        layout="vertical"
-        initialValues={initialValues}
-        onFinish={onSubmit}
-      >
-        <Flex vertical gap={32}>
-          <ProductFormHeader title={title} subtitle={subtitle} />
+      if (!firstError) {
+        return;
+      }
 
-          <Flex gap={24} align="flex-start">
-            <Flex vertical gap={24} flex="1 1 auto" style={{ minWidth: 0 }}>
+      window.requestAnimationFrame(() => {
+        form.scrollToField(firstError.name, {
+          behavior: "smooth",
+          block: "center",
+        });
+      });
+    },
+    [form],
+  );
+
+  return (
+    <PaneDetailLayout.Root inset>
+      <PaneDetailLayout.Header>
+        <Button
+          type="text"
+          icon={<ArrowLeftIcon size={20} />}
+          onClick={onBack}
+          style={{ alignSelf: "flex-start", paddingInlineStart: 0 }}
+        >
+          {backLabel}
+        </Button>
+      </PaneDetailLayout.Header>
+
+      <PaneDetailLayout.Body>
+        <Form
+          form={form}
+          layout="vertical"
+          initialValues={initialValues}
+          onFinish={onSubmit}
+          onFinishFailed={handleFinishFailed}
+        >
+          <Flex vertical gap={32} style={{ maxWidth: 1100, margin: "0 auto" }}>
+            <ProductFormHeader title={title} subtitle={subtitle} />
+
+            <Flex vertical gap={24}>
               <ProductTypeSection
                 value={productType}
                 onChange={onProductTypeChange}
@@ -132,6 +158,11 @@ export const ProductForm = ({
                 />
               ) : null}
 
+              <ProductStatus
+                requiredMessage={statusProps.requiredMessage}
+                statusLabel={statusProps.statusLabel}
+              />
+
               <ProductMediaSection
                 uploadedProductMedia={mediaProps.uploadedProductMedia}
                 productMediaUploadingCount={
@@ -162,18 +193,20 @@ export const ProductForm = ({
                   onAddManualVariant={variantsProps.onAddManualVariant}
                 />
               ) : null}
-            </Flex>
 
-            <ProductSidePanel
-              isSubmitting={sidebarProps.isSubmitting}
-              isSubmitDisabled={sidebarProps.isSubmitDisabled}
-              submitLabel={sidebarProps.submitLabel}
-              requiredMessage={sidebarProps.requiredMessage}
-              statusLabel={sidebarProps.statusLabel}
-            />
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={submitButtonProps.loading}
+                disabled={submitButtonProps.disabled}
+                icon={<PlusIcon size={18} />}
+              >
+                {submitButtonProps.label}
+              </Button>
+            </Flex>
           </Flex>
-        </Flex>
-      </Form>
-    </PaneDetailLayout.Body>
-  </PaneDetailLayout.Root>
-);
+        </Form>
+      </PaneDetailLayout.Body>
+    </PaneDetailLayout.Root>
+  );
+};

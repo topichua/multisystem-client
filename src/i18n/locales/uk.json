@@ -253,6 +253,19 @@
     "addProductCta": "Додати товар",
     "modalCreateTitle": "Додати товар",
     "modalCreateOk": "Додати товар",
+    "addPage": {
+      "title": "Додати товар",
+      "subtitle": "Заповніть інформацію про товар"
+    },
+    "productType": {
+      "title": "Тип товару",
+      "description": "Оберіть тип товару. Він визначає набір полів у формі.",
+      "singleTitle": "Один товар",
+      "singleDescription": "Товар без варіантів",
+      "variantsTitle": "Товар із варіантами",
+      "variantsDescription": "Товар із варіантами (розмір, колір тощо)",
+      "switchToSingleBlocked": "У вас уже додані варіанти. Вони можуть бути втрачені."
+    },
     "instagram": {
       "drawerTitle": "Пости Instagram",
       "selectPostHint": "Оберіть пост зліва, щоб переглянути його та заповнити форму товару.",
@@ -312,6 +325,38 @@
     "variantCreateTitle": "Додати варіант",
     "variantEditTitle": "Редагувати варіант",
     "openInstagram": "Відкрити в Instagram",
+    "status": {
+      "draft": "Чернетка",
+      "active": "Активний",
+      "archived": "Архівований"
+    },
+    "publication": {
+      "title": "Параметри публікації",
+      "draftHint": "Чернетка — товар не буде видимий клієнтам"
+    },
+    "characteristics": {
+      "title": "Характеристики",
+      "singleDescription": "Додайте необов'язкові характеристики, наприклад колір або розмір. Кожне значення обирається для товару один раз.",
+      "chooseFirst": "Спочатку оберіть характеристику",
+      "choose": "Оберіть характеристику",
+      "chooseValue": "Оберіть значення",
+      "selectValue": "Оберіть значення",
+      "enterValue": "Введіть значення",
+      "enterCustomValue": "Введіть власне значення",
+      "add": "Додати характеристику",
+      "addValues": "Додайте значення",
+      "addCustomValues": "Додайте власні значення"
+    },
+    "variantsForm": {
+      "title": "Варіанти товару",
+      "description": "Додайте характеристики, наприклад колір або розмір. Ціна й кількість налаштовуються для кожного варіанта.",
+      "variants": "Варіанти",
+      "empty": "Варіантів ще немає. Додайте характеристики, щоб згенерувати варіанти автоматично, або додайте варіант вручну.",
+      "addAtLeastOne": "Додайте щонайменше один варіант.",
+      "duplicate": "Варіант із такими характеристиками вже існує.",
+      "manualMissingFields": "У ручних варіантах потрібно заповнити всі значення характеристик.",
+      "singleConfirm": "Товар буде створено як один товар."
+    },
     "form": {
       "name": "Назва",
       "description": "Опис",
@@ -329,10 +374,15 @@
       "sourceId": "Source ID",
       "referenceGroupId": "Reference Group ID",
       "inStock": "В наявності",
-      "required": "Обов'язково"
+      "required": "Обов'язково",
+      "mainInfoTitle": "Основна інформація про товар",
+      "namePlaceholder": "Введіть назву товару",
+      "categoryPlaceholder": "Оберіть категорію товару",
+      "descriptionPlaceholder": "Введіть опис товару..."
     },
     "media": {
       "sectionTitle": "Зображення товару",
+      "sectionSubtitle": "Додайте фото товару",
       "empty": "Поки немає зображень.",
       "add": "Додати зображення",
       "addSubmit": "Додати зображення",
@@ -355,7 +405,12 @@
       "previewOpen": "Перегляд",
       "uploadManyHint": "Кожне обрання відкриває обрізку; можна додати скільки завгодно зображень.",
       "replaceCover": "Замінити обкладинку",
-      "cancelReplace": "Скасувати заміну"
+      "cancelReplace": "Скасувати заміну",
+      "uploadHintShort": "PNG, JPG, WEBP до 10 МБ",
+      "invalidType": "Дозволені лише зображення PNG, JPG і WEBP",
+      "tooLarge": "Зображення має бути меншим за 10 МБ",
+      "uploadFailed": "Не вдалося завантажити зображення",
+      "usedByVariants": "Це зображення використовується у варіантах товару. Спочатку приберіть його з варіантів."
     },
     "variant": {
       "color": "Колір",
@@ -372,7 +427,22 @@
       "imagePickerTitle": "Зображення варіанта",
       "imagePickerExisting": "Оберіть із фото товару",
       "imagePickerEmpty": "У товару ще немає фото. Завантажте нижче.",
-      "imagePickerUploadNew": "Або завантажте нове зображення"
+      "imagePickerUploadNew": "Або завантажте нове зображення",
+      "images": "Зображення",
+      "imageCountOne": "{{count}} зображ.",
+      "imageCount": "{{count}} зображ.",
+      "manageImages": "Керувати зображеннями",
+      "addImages": "Додати зображення",
+      "discountPrice": "Ціна зі знижкою",
+      "fallbackName": "Варіант",
+      "productImages": "Зображення товару",
+      "selectExistingImages": "Оберіть наявні зображення товару для цього варіанта.",
+      "uploadProductImagesFirst": "Спочатку завантажте зображення товару.",
+      "variantOnlyImagesHint": "Зображення, завантажені тут, належать лише цьому варіанту.",
+      "uploadVariantOnlyImage": "Завантажити зображення лише для варіанта",
+      "mainImage": "Головне",
+      "variantOnly": "Лише варіант",
+      "deleteImageFailed": "Не вдалося видалити зображення варіанта"
     },
     "table": {
       "product": "Товар",

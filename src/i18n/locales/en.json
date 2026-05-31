@@ -325,6 +325,19 @@
     "addProductCta": "Add product",
     "modalCreateTitle": "Add product",
     "modalCreateOk": "Add product",
+    "addPage": {
+      "title": "Add product",
+      "subtitle": "Fill information about product"
+    },
+    "productType": {
+      "title": "Product type",
+      "description": "Select the product type. This determines the set of fields in the form.",
+      "singleTitle": "Single product",
+      "singleDescription": "Product without variants",
+      "variantsTitle": "Product with variants",
+      "variantsDescription": "Product with variants (size, color, etc.)",
+      "switchToSingleBlocked": "You already have variants added. They may be lost."
+    },
     "instagram": {
       "drawerTitle": "Instagram posts",
       "selectPostHint": "Select a post on the left to preview and fill the product form.",
@@ -384,6 +397,38 @@
     "variantCreateTitle": "Add variant",
     "variantEditTitle": "Edit variant",
     "openInstagram": "Open in Instagram",
+    "status": {
+      "draft": "Draft",
+      "active": "Active",
+      "archived": "Archived"
+    },
+    "publication": {
+      "title": "Publication parameters",
+      "draftHint": "Draft — product will not be visible to customers"
+    },
+    "characteristics": {
+      "title": "Characteristics",
+      "singleDescription": "Add optional characteristics like color or size. Each value is selected once for the product.",
+      "chooseFirst": "Choose characteristic first",
+      "choose": "Choose characteristic",
+      "chooseValue": "Choose value",
+      "selectValue": "Select value",
+      "enterValue": "Enter value",
+      "enterCustomValue": "Enter custom value",
+      "add": "Add characteristic",
+      "addValues": "Add values",
+      "addCustomValues": "Add custom values"
+    },
+    "variantsForm": {
+      "title": "Product variants",
+      "description": "Add characteristics like color or size. Price and quantity are configured for each variant.",
+      "variants": "Variants",
+      "empty": "No variants yet. Add characteristics to generate variants automatically or add variant manually.",
+      "addAtLeastOne": "Add at least one variant.",
+      "duplicate": "Variant with the same characteristics already exists.",
+      "manualMissingFields": "Manual variants must have all characteristic values filled.",
+      "singleConfirm": "Product will be created as a single product."
+    },
     "form": {
       "name": "Name",
       "description": "Description",
@@ -401,10 +446,15 @@
       "sourceId": "Source ID",
       "referenceGroupId": "Reference Group ID",
       "inStock": "In stock",
-      "required": "Required"
+      "required": "Required",
+      "mainInfoTitle": "Main information about product",
+      "namePlaceholder": "Type name of product",
+      "categoryPlaceholder": "Choose product category",
+      "descriptionPlaceholder": "Type description of a product..."
     },
     "media": {
       "sectionTitle": "Product images",
+      "sectionSubtitle": "Add product pictures",
       "empty": "No images yet.",
       "add": "Add image",
       "addSubmit": "Add image",
@@ -427,7 +477,12 @@
       "previewOpen": "Preview",
       "uploadManyHint": "Each pick opens crop; you can add as many images as you need.",
       "replaceCover": "Replace cover image",
-      "cancelReplace": "Cancel replacement"
+      "cancelReplace": "Cancel replacement",
+      "uploadHintShort": "PNG, JPG, WEBP less than 10MB",
+      "invalidType": "Only PNG, JPG, and WEBP images are allowed",
+      "tooLarge": "Image must be less than 10MB",
+      "uploadFailed": "Failed to upload image",
+      "usedByVariants": "This image is used in product variants. Remove it from variants first."
     },
     "variant": {
       "color": "Color",
@@ -444,7 +499,22 @@
       "imagePickerTitle": "Variant image",
       "imagePickerExisting": "Choose from product photos",
       "imagePickerEmpty": "No product photos yet. Upload one below.",
-      "imagePickerUploadNew": "Or upload a new image"
+      "imagePickerUploadNew": "Or upload a new image",
+      "images": "Images",
+      "imageCountOne": "{{count}} image",
+      "imageCount": "{{count}} images",
+      "manageImages": "Manage images",
+      "addImages": "Add images",
+      "discountPrice": "Discount price",
+      "fallbackName": "Variant",
+      "productImages": "Product images",
+      "selectExistingImages": "Select existing product images for this variant.",
+      "uploadProductImagesFirst": "Upload product images first.",
+      "variantOnlyImagesHint": "Images uploaded here belong only to this variant.",
+      "uploadVariantOnlyImage": "Upload variant-only image",
+      "mainImage": "Main",
+      "variantOnly": "Variant only",
+      "deleteImageFailed": "Failed to delete variant image"
     },
     "table": {
       "product": "Product",

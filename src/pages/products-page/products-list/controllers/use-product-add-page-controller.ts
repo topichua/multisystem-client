@@ -43,12 +43,6 @@ import type { ProductType } from "../form/sections/product-type-section";
 // Constants
 // ─────────────────────────────────────────────────────────────────────────────
 
-const VARIANTS_TO_SINGLE_BLOCKED_MESSAGE =
-  "у вас вже додані варіанти, вони можуть бути втрачені";
-
-const PRODUCT_MEDIA_USED_BY_VARIANTS_MESSAGE =
-  "This image is used in product variants. Remove it from variants first.";
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
 // ─────────────────────────────────────────────────────────────────────────────
@@ -131,6 +125,7 @@ export type ProductAddPageControllerReturn = {
       dragUploadTitle: string;
       mainImageLabel: string;
       deleteTooltip: string;
+      uploadHint: string;
     };
   };
 
@@ -152,13 +147,17 @@ export type ProductAddPageControllerReturn = {
     onAddManualVariant: () => void;
   };
 
-  // Side panel
-  sidebarProps: {
-    isSubmitting: boolean;
-    isSubmitDisabled: boolean;
-    submitLabel: string;
+  // Product status section
+  statusProps: {
     requiredMessage: string;
     statusLabel: string;
+  };
+
+  // Submit button
+  submitButtonProps: {
+    loading: boolean;
+    disabled: boolean;
+    label: string;
   };
 
   // Variant images modal
@@ -347,7 +346,10 @@ export const useProductAddPageController =
             await productsApi.deleteUploadedMedia(media.id);
           } catch (error) {
             messageApi.error(
-              getApiErrorMessage(error, "Failed to delete variant image"),
+              getApiErrorMessage(
+                error,
+                t("products.variant.deleteImageFailed"),
+              ),
             );
           }
         }
@@ -366,6 +368,7 @@ export const useProductAddPageController =
       watchedQuantity,
       watchedStatus,
       messageApi,
+      t,
     ]);
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -422,7 +425,7 @@ export const useProductAddPageController =
             hasCharacteristicsAdded ||
             hasMeaningfulVariantUserData(variantsWithForm)
           ) {
-            messageApi.warning(VARIANTS_TO_SINGLE_BLOCKED_MESSAGE);
+            messageApi.warning(t("products.productType.switchToSingleBlocked"));
             return;
           }
 
@@ -438,7 +441,7 @@ export const useProductAddPageController =
         setProductType("variants");
         form.setFieldValue("singleCharacteristics", []);
       },
-      [form, hasCharacteristicsAdded, messageApi, productType],
+      [form, hasCharacteristicsAdded, messageApi, productType, t],
     );
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -518,7 +521,10 @@ export const useProductAddPageController =
               await productsApi.deleteUploadedMedia(media.id);
             } catch (error) {
               messageApi.error(
-                getApiErrorMessage(error, "Failed to delete variant image"),
+                getApiErrorMessage(
+                  error,
+                  t("products.variant.deleteImageFailed"),
+                ),
               );
             }
           }
@@ -545,13 +551,13 @@ export const useProductAddPageController =
           });
         } catch (error) {
           messageApi.error(
-            getApiErrorMessage(error, "Failed to delete variant"),
+            getApiErrorMessage(error, t("products.variantDeleteFailed")),
           );
         } finally {
           setDeletingVariantKey(null);
         }
       },
-      [form, messageApi],
+      [form, messageApi, t],
     );
 
     const handleAddManualVariant = useCallback(() => {
@@ -625,7 +631,10 @@ export const useProductAddPageController =
     const handleProductMediaUpload = useCallback(
       async (options: ProductMediaUploadRequestOptions) => {
         const file = options.file as File;
-        const validationError = validateProductImageFile(file);
+        const validationError = validateProductImageFile(file, {
+          invalidType: t("products.media.invalidType"),
+          tooLarge: t("products.media.tooLarge"),
+        });
 
         if (validationError) {
           options.onError?.(new Error(validationError));
@@ -642,12 +651,14 @@ export const useProductAddPageController =
           options.onSuccess?.(uploaded);
         } catch (error) {
           options.onError?.(error as Error);
-          messageApi.error(getApiErrorMessage(error, "Failed to upload image"));
+          messageApi.error(
+            getApiErrorMessage(error, t("products.media.uploadFailed")),
+          );
         } finally {
           setProductMediaUploadingCount((count) => Math.max(0, count - 1));
         }
       },
-      [messageApi],
+      [messageApi, t],
     );
 
     const handleDeleteUploadedProductMedia = useCallback(
@@ -658,7 +669,7 @@ export const useProductAddPageController =
         );
 
         if (isProductMediaUsedByVariants(mediaId, variantsWithForm)) {
-          messageApi.warning(PRODUCT_MEDIA_USED_BY_VARIANTS_MESSAGE);
+          messageApi.warning(t("products.media.usedByVariants"));
           return;
         }
 
@@ -684,7 +695,10 @@ export const useProductAddPageController =
 
     const handleProductImageBeforeUpload = useCallback(
       (file: File) => {
-        const validationError = validateProductImageFile(file);
+        const validationError = validateProductImageFile(file, {
+          invalidType: t("products.media.invalidType"),
+          tooLarge: t("products.media.tooLarge"),
+        });
         if (validationError) {
           messageApi.error(validationError);
           return Upload.LIST_IGNORE;
@@ -692,7 +706,7 @@ export const useProductAddPageController =
 
         return true;
       },
-      [messageApi],
+      [messageApi, t],
     );
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -716,7 +730,7 @@ export const useProductAddPageController =
           });
 
           if (payload.variants.length === 0) {
-            messageApi.error("Add at least one variant.");
+            messageApi.error(t("products.variantsForm.addAtLeastOne"));
             return;
           }
 
@@ -749,15 +763,13 @@ export const useProductAddPageController =
         );
 
         if (productType === "variants" && variantsForSubmit.length === 0) {
-          messageApi.error("Add at least one variant.");
+          messageApi.error(t("products.variantsForm.addAtLeastOne"));
           return;
         }
 
         const duplicateKeys = findDuplicateVariantKeys(variantsForSubmit);
         if (duplicateKeys.size > 0) {
-          messageApi.error(
-            "Variant with the same characteristics already exists.",
-          );
+          messageApi.error(t("products.variantsForm.duplicate"));
           return;
         }
 
@@ -768,17 +780,15 @@ export const useProductAddPageController =
             variant.customFields.some((field) => !field.value.trim()),
         );
         if (manualVariantsWithMissingFields.length > 0) {
-          messageApi.error(
-            "Manual variants must have all characteristic values filled.",
-          );
+          messageApi.error(t("products.variantsForm.manualMissingFields"));
           return;
         }
 
         if (productType === "variants" && variantsForSubmit.length === 1) {
           Modal.confirm({
-            content: "Product will be created as a single product.",
+            content: t("products.variantsForm.singleConfirm"),
             okText: t("products.modalCreateOk"),
-            cancelText: "Cancel",
+            cancelText: t("products.cancelEdit"),
             onOk: () =>
               submitCreateProduct(values, "single", variantsForSubmit),
           });
@@ -819,8 +829,8 @@ export const useProductAddPageController =
       },
 
       // Page meta
-      title: "Add product",
-      subtitle: "Fill information about product",
+      title: t("products.addPage.title"),
+      subtitle: t("products.addPage.subtitle"),
       backLabel: t("products.detailBackToList"),
       navigateToProductsList,
 
@@ -857,11 +867,12 @@ export const useProductAddPageController =
         onUpload: handleProductMediaUpload,
         onDelete: handleDeleteUploadedProductMedia,
         texts: {
-          title: "Product images",
-          subtitle: "Add product pictures",
+          title: t("products.media.sectionTitle"),
+          subtitle: t("products.media.sectionSubtitle"),
           dragUploadTitle: t("products.media.dragUploadTitle"),
           mainImageLabel: t("products.media.coverRadioLabel"),
           deleteTooltip: t("products.media.deleteTooltip"),
+          uploadHint: t("products.media.uploadHintShort"),
         },
       },
 
@@ -877,13 +888,17 @@ export const useProductAddPageController =
         onAddManualVariant: handleAddManualVariant,
       },
 
-      // Side panel
-      sidebarProps: {
-        isSubmitting: isCreatingProduct,
-        isSubmitDisabled: isCreatingProduct || productMediaUploadingCount > 0,
-        submitLabel: t("products.modalCreateOk"),
+      // Product status section
+      statusProps: {
         requiredMessage,
         statusLabel: t("products.form.status"),
+      },
+
+      // Submit button
+      submitButtonProps: {
+        loading: isCreatingProduct,
+        disabled: isCreatingProduct || productMediaUploadingCount > 0,
+        label: t("products.modalCreateOk"),
       },
 
       // Variant images modal

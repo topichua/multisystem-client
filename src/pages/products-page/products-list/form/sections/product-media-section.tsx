@@ -25,6 +25,7 @@ export type ProductMediaSectionProps = {
     dragUploadTitle: string;
     mainImageLabel: string;
     deleteTooltip: string;
+    uploadHint: string;
   };
 };
 
@@ -64,7 +65,7 @@ export const ProductMediaSection = ({
 
             <p className="ant-upload-text">{texts.dragUploadTitle}</p>
 
-            <p className="ant-upload-hint">PNG, JPG, WEBP less then 10Mb</p>
+            <p className="ant-upload-hint">{texts.uploadHint}</p>
           </Dragger>
         </Spin>
 

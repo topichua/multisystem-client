@@ -1,7 +1,8 @@
 import { CloudArrowUpIcon, TrashIcon } from "@phosphor-icons/react";
 import { Button, Flex, Modal, Spin, Tag, Typography, Upload } from "antd";
 import type { UploadProps } from "antd";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 
 import { PRODUCT_MEDIA_UPLOAD_FIELD_NAME } from "@/features/products/api/products-api";
@@ -28,6 +29,13 @@ type ProductVariantImagesModalProps = {
   onApply: (variantKey: string, media: VariantMediaItem[]) => void;
   onUploadVariantImage: (file: File) => Promise<VariantMediaItem>;
   onRemoveVariantImage: (media: VariantMediaItem) => Promise<void>;
+};
+
+type ProductVariantImagesModalInnerProps = Omit<
+  ProductVariantImagesModalProps,
+  "variant"
+> & {
+  variant: ProductVariantUi;
 };
 
 const MediaThumb = styled.button<{ $selected?: boolean }>`
@@ -86,12 +94,15 @@ const VariantMediaCard = styled.div`
   }
 `;
 
-function formatVariantLabel(variant: ProductVariantUi): string {
+function formatVariantLabel(
+  variant: ProductVariantUi,
+  fallback: string,
+): string {
   const values = variant.customFields
     .map((field) => field.value.trim())
     .filter(Boolean);
 
-  return values.length > 0 ? values.join(" / ") : "Variant";
+  return values.length > 0 ? values.join(" / ") : fallback;
 }
 
 export function ProductVariantImagesModal({
@@ -103,18 +114,40 @@ export function ProductVariantImagesModal({
   onUploadVariantImage,
   onRemoveVariantImage,
 }: ProductVariantImagesModalProps) {
-  const [draftMedia, setDraftMedia] = useState<VariantMediaItem[]>([]);
+  if (!open || !variant) {
+    return null;
+  }
+
+  return (
+    <ProductVariantImagesModalInner
+      key={variant.key}
+      open={open}
+      variant={variant}
+      productMedia={productMedia}
+      onClose={onClose}
+      onApply={onApply}
+      onUploadVariantImage={onUploadVariantImage}
+      onRemoveVariantImage={onRemoveVariantImage}
+    />
+  );
+}
+
+function ProductVariantImagesModalInner({
+  open,
+  variant,
+  productMedia,
+  onClose,
+  onApply,
+  onUploadVariantImage,
+  onRemoveVariantImage,
+}: ProductVariantImagesModalInnerProps) {
+  const { t } = useTranslation();
+  const [draftMedia, setDraftMedia] = useState<VariantMediaItem[]>(() =>
+    variant.media.map((item) => ({ ...item })),
+  );
   const [uploadingCount, setUploadingCount] = useState(0);
   const [removingMediaId, setRemovingMediaId] = useState<number | null>(null);
   const [isApplying, setIsApplying] = useState(false);
-
-  useEffect(() => {
-    if (!open || !variant) {
-      return;
-    }
-
-    setDraftMedia(variant.media.map((item) => ({ ...item })));
-  }, [open, variant]);
 
   const isProductImageSelected = useCallback(
     (mediaId: number) => draftMedia.some((item) => item.id === mediaId),
@@ -140,7 +173,10 @@ export function ProductVariantImagesModal({
   const handleVariantMediaUpload = useCallback(
     async (options: VariantMediaUploadRequestOptions) => {
       const file = options.file as File;
-      const validationError = validateProductImageFile(file);
+      const validationError = validateProductImageFile(file, {
+        invalidType: t("products.media.invalidType"),
+        tooLarge: t("products.media.tooLarge"),
+      });
 
       if (validationError) {
         options.onError?.(new Error(validationError));
@@ -166,7 +202,7 @@ export function ProductVariantImagesModal({
         setUploadingCount((count) => Math.max(0, count - 1));
       }
     },
-    [onUploadVariantImage],
+    [onUploadVariantImage, t],
   );
 
   const handleRemoveDraftMedia = useCallback(
@@ -205,49 +241,53 @@ export function ProductVariantImagesModal({
     }
   }, [draftMedia, onApply, onClose, variant]);
 
-  const handleBeforeUpload = useCallback((file: File) => {
-    const validationError = validateProductImageFile(file);
-    if (validationError) {
-      return Upload.LIST_IGNORE;
-    }
+  const handleBeforeUpload = useCallback(
+    (file: File) => {
+      const validationError = validateProductImageFile(file, {
+        invalidType: t("products.media.invalidType"),
+        tooLarge: t("products.media.tooLarge"),
+      });
+      if (validationError) {
+        return Upload.LIST_IGNORE;
+      }
 
-    return true;
-  }, []);
-
-  if (!variant) {
-    return null;
-  }
+      return true;
+    },
+    [t],
+  );
 
   return (
     <Modal
       open={open}
-      title="Variant images"
+      title={t("products.variant.imagePickerTitle")}
       width={720}
       onCancel={onClose}
       footer={
         <Flex justify="flex-end" gap={8}>
-          <Button onClick={onClose}>Cancel</Button>
+          <Button onClick={onClose}>{t("products.cancelEdit")}</Button>
           <Button
             type="primary"
             loading={isApplying}
             onClick={() => void handleApply()}
           >
-            Apply
+            {t("products.media.cropOk")}
           </Button>
         </Flex>
       }
       destroyOnClose
     >
       <Flex vertical gap={24}>
-        <Text type="secondary">{formatVariantLabel(variant)}</Text>
+        <Text type="secondary">
+          {formatVariantLabel(variant, t("products.variant.fallbackName"))}
+        </Text>
 
         <Flex vertical gap={12}>
           <Title level={5} style={{ margin: 0 }}>
-            Product images
+            {t("products.variant.productImages")}
           </Title>
 
           <Text type="secondary">
-            Select existing product images for this variant.
+            {t("products.variant.selectExistingImages")}
           </Text>
 
           {productMedia.length > 0 ? (
@@ -269,17 +309,19 @@ export function ProductVariantImagesModal({
               })}
             </Flex>
           ) : (
-            <Text type="secondary">Upload product images first.</Text>
+            <Text type="secondary">
+              {t("products.variant.uploadProductImagesFirst")}
+            </Text>
           )}
         </Flex>
 
         <Flex vertical gap={12}>
           <Title level={5} style={{ margin: 0 }}>
-            Variant images
+            {t("products.variant.imagePickerTitle")}
           </Title>
 
           <Text type="secondary">
-            Images uploaded here belong only to this variant.
+            {t("products.variant.variantOnlyImagesHint")}
           </Text>
 
           <Spin spinning={uploadingCount > 0}>
@@ -295,7 +337,9 @@ export function ProductVariantImagesModal({
               <p className="ant-upload-drag-icon">
                 <CloudArrowUpIcon size={28} />
               </p>
-              <p className="ant-upload-text">Upload variant-only image</p>
+              <p className="ant-upload-text">
+                {t("products.variant.uploadVariantOnlyImage")}
+              </p>
             </Dragger>
           </Spin>
 
@@ -305,11 +349,11 @@ export function ProductVariantImagesModal({
                 <VariantMediaCard key={media.id}>
                   {index === 0 ? (
                     <Tag className="variant-media-tag" color="purple">
-                      Main
+                      {t("products.variant.mainImage")}
                     </Tag>
                   ) : media.origin === "variant" ? (
                     <Tag className="variant-media-tag" color="blue">
-                      Variant only
+                      {t("products.variant.variantOnly")}
                     </Tag>
                   ) : null}
 

@@ -10,6 +10,7 @@ import {
 } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 
 import type { VariantCustomField } from "@/features/products/model/product-create-api.types";
@@ -74,6 +75,10 @@ type RenderManualCharacteristicCellParams = {
     fieldId: number,
     value: string,
   ) => void;
+  texts: {
+    selectValue: string;
+    enterValue: string;
+  };
 };
 
 function renderManualCharacteristicCell({
@@ -81,6 +86,7 @@ function renderManualCharacteristicCell({
   record,
   availableFields,
   onUpdateCustomField,
+  texts,
 }: RenderManualCharacteristicCellParams) {
   const currentValue =
     record.customFields.find((field) => field.fieldId === column.fieldId)
@@ -96,7 +102,7 @@ function renderManualCharacteristicCell({
     return (
       <Select
         value={currentValue || undefined}
-        placeholder="Select value"
+        placeholder={texts.selectValue}
         options={options}
         style={{ width: "100%" }}
         onChange={(value) =>
@@ -109,7 +115,7 @@ function renderManualCharacteristicCell({
   return (
     <Input
       value={currentValue}
-      placeholder="Enter value"
+      placeholder={texts.enterValue}
       onChange={(event) =>
         onUpdateCustomField(record.key, column.fieldId, event.target.value)
       }
@@ -146,6 +152,8 @@ export function useProductAddVariantTableColumns({
   onUpdateManualVariantCustomField,
   deletingVariantKey,
 }: UseProductAddVariantTableColumnsParams): ColumnsType<ProductVariantUi> {
+  const { t } = useTranslation();
+
   return useMemo((): ColumnsType<ProductVariantUi> => {
     const characteristicColumns = resolveSelectedCharacteristicColumns(
       selectedCharacteristics,
@@ -161,6 +169,10 @@ export function useProductAddVariantTableColumns({
             record,
             availableFields,
             onUpdateCustomField: onUpdateManualVariantCustomField,
+            texts: {
+              selectValue: t("products.characteristics.selectValue"),
+              enterValue: t("products.characteristics.enterValue"),
+            },
           });
         }
 
@@ -170,7 +182,7 @@ export function useProductAddVariantTableColumns({
 
     return [
       {
-        title: "Images",
+        title: t("products.variant.images"),
         key: "images",
         width: 220,
         fixed: "left",
@@ -185,15 +197,22 @@ export function useProductAddVariantTableColumns({
 
               <Flex vertical gap={4} style={{ minWidth: 0 }}>
                 <Text type="secondary" style={{ fontSize: 12 }}>
-                  {record.media.length} image
-                  {record.media.length === 1 ? "" : "s"}
+                  {record.media.length === 1
+                    ? t("products.variant.imageCountOne", {
+                        count: record.media.length,
+                      })
+                    : t("products.variant.imageCount", {
+                        count: record.media.length,
+                      })}
                 </Text>
 
                 <Button
                   size="small"
                   onClick={() => onManageVariantImages(record)}
                 >
-                  {record.media.length > 0 ? "Manage images" : "Add images"}
+                  {record.media.length > 0
+                    ? t("products.variant.manageImages")
+                    : t("products.variant.addImages")}
                 </Button>
               </Flex>
             </Flex>
@@ -202,7 +221,7 @@ export function useProductAddVariantTableColumns({
       },
       ...characteristicColumns,
       {
-        title: "SKU",
+        title: t("products.variant.sku"),
         dataIndex: "sku",
         width: 180,
         render: (_: unknown, _record: ProductVariantUi, index: number) => (
@@ -223,7 +242,7 @@ export function useProductAddVariantTableColumns({
       {
         title: (
           <span>
-            Price <Text type="danger">*</Text>
+            {t("products.variant.price")} <Text type="danger">*</Text>
           </span>
         ),
         dataIndex: "price",
@@ -231,7 +250,7 @@ export function useProductAddVariantTableColumns({
         render: (_: unknown, _record: ProductVariantUi, index: number) => (
           <Form.Item
             name={["variants", index, "price"]}
-            rules={[{ required: true, message: "Required" }]}
+            rules={[{ required: true, message: t("products.form.required") }]}
             style={{ marginBottom: 0 }}
           >
             <InputNumber min={0} placeholder="0.00" style={{ width: "100%" }} />
@@ -241,7 +260,7 @@ export function useProductAddVariantTableColumns({
       {
         title: (
           <span>
-            Quantity <Text type="danger">*</Text>
+            {t("products.variant.quantity")} <Text type="danger">*</Text>
           </span>
         ),
         dataIndex: "quantity",
@@ -249,7 +268,7 @@ export function useProductAddVariantTableColumns({
         render: (_: unknown, _record: ProductVariantUi, index: number) => (
           <Form.Item
             name={["variants", index, "quantity"]}
-            rules={[{ required: true, message: "Required" }]}
+            rules={[{ required: true, message: t("products.form.required") }]}
             style={{ marginBottom: 0 }}
           >
             <InputNumber min={0} placeholder="0" style={{ width: "100%" }} />
@@ -257,7 +276,7 @@ export function useProductAddVariantTableColumns({
         ),
       },
       {
-        title: "Discount price",
+        title: t("products.variant.discountPrice"),
         dataIndex: "discountPrice",
         width: 180,
         render: (_: unknown, _record: ProductVariantUi, index: number) => (
@@ -270,7 +289,7 @@ export function useProductAddVariantTableColumns({
         ),
       },
       {
-        title: "Actions",
+        title: t("products.table.actions"),
         dataIndex: "actions",
         width: 100,
         fixed: "right",
@@ -292,5 +311,6 @@ export function useProductAddVariantTableColumns({
     onManageVariantImages,
     onUpdateManualVariantCustomField,
     selectedCharacteristics,
+    t,
   ]);
 }
