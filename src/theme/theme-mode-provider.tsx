@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { ThemeModeContext } from "@/theme/theme-mode-context";
 import type { ThemeMode, ThemePreference } from "@/theme/theme-mode.types";
 
-const STORAGE_KEY = "lantoro-theme";
+const STORAGE_KEY = 'multisale-theme';
 
 function readStoredPreference(): ThemePreference {
   try {

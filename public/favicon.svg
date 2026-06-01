@@ -1,19 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Lantoro">
   <defs>
-    <linearGradient id="lantoro-bg" x1="12" y1="8" x2="54" y2="58" gradientUnits="userSpaceOnUse">
+    <linearGradient id="multisale-bg" x1="12" y1="8" x2="54" y2="58" gradientUnits="userSpaceOnUse">
       <stop stop-color="#2563eb" />
       <stop offset="1" stop-color="#111827" />
     </linearGradient>
-    <linearGradient id="lantoro-mark" x1="20" y1="16" x2="45" y2="48" gradientUnits="userSpaceOnUse">
+    <linearGradient id="multisale-mark" x1="20" y1="16" x2="45" y2="48" gradientUnits="userSpaceOnUse">
       <stop stop-color="#ffffff" />
       <stop offset="1" stop-color="#bfdbfe" />
     </linearGradient>
   </defs>
 
-  <rect width="64" height="64" rx="16" fill="url(#lantoro-bg)" />
+  <rect width="64" height="64" rx="16" fill="url(#multisale-bg)" />
   <path
     d="M20 16h9v25h19v8H20V16z"
-    fill="url(#lantoro-mark)"
+    fill="url(#multisale-mark)"
   />
   <circle cx="45" cy="19" r="5" fill="#93c5fd" />
 </svg>

@@ -1,6 +1,6 @@
 export type ProductsListViewMode = "list" | "grid";
 
-const STORAGE_KEY = "lantoro.productsListViewMode";
+const STORAGE_KEY = 'multisale.productsListViewMode';
 
 export function readStoredProductsListViewMode(): ProductsListViewMode {
   try {
