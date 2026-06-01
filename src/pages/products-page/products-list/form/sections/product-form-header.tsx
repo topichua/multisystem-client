@@ -22,7 +22,7 @@ export const ProductFormHeader = ({
       <Text type="secondary">{subtitle}</Text>
     </Flex>
 
-    <AiButton $filled icon={<AIAssistanceIcon />} disabled>
+    <AiButton $filled icon={<AIAssistanceIcon />}>
       Add with Instagram using AI
     </AiButton>
   </Flex>

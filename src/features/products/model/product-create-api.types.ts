@@ -8,6 +8,8 @@ export type ProductCreateCurrency = "UAH";
 
 export type VariantCustomFieldType = "options" | "text";
 
+export type CreateProductCustomFieldType = "OPTION" | "TEXT";
+
 export type VariantCustomField = {
   id: number;
   key: string;
@@ -34,10 +36,26 @@ export type ProductUploadedMedia = {
   src: string;
 };
 
-export type CreateProductVariantCustomFieldValue = {
-  fieldId: number;
+export type CreateProductVariantCustomFieldExistingFieldValue = {
+  field: {
+    id: number;
+  };
   value: string;
+  order: number;
 };
+
+export type CreateProductVariantCustomFieldNewFieldValue = {
+  field: {
+    name: string;
+    type: CreateProductCustomFieldType;
+  };
+  value: string;
+  order: number;
+};
+
+export type CreateProductVariantCustomFieldValue =
+  | CreateProductVariantCustomFieldExistingFieldValue
+  | CreateProductVariantCustomFieldNewFieldValue;
 
 export type CreateProductVariantPayload = {
   status: ProductLifecycleStatus;

@@ -1,8 +1,14 @@
 import { Card, Col, Flex, Form, Input, InputNumber, Row, Select } from "antd";
 import { Typography } from "antd";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
+
+type StatusOption = {
+  value: string;
+  label: string;
+};
 
 export type ProductMainInfoSectionProps = {
   categoryOptions: Array<{ value: number; label: string }>;
@@ -12,6 +18,7 @@ export type ProductMainInfoSectionProps = {
     category: string;
     price: string;
     quantity: string;
+    status: string;
   };
 };
 
@@ -21,10 +28,18 @@ export const ProductMainInfoSection = ({
   labels,
 }: ProductMainInfoSectionProps) => {
   const { t } = useTranslation();
+  const statusOptions: StatusOption[] = useMemo(
+    () => [
+      { value: "draft", label: t("products.status.draft") },
+      { value: "active", label: t("products.status.active") },
+      { value: "archived", label: t("products.status.archived") },
+    ],
+    [t],
+  );
 
   return (
     <Card>
-      <Flex vertical gap={24}>
+      <Flex vertical gap={12}>
         <Title level={4} style={{ margin: 0 }}>
           {t("products.form.mainInfoTitle")}
         </Title>
@@ -126,6 +141,28 @@ export const ProductMainInfoSection = ({
             </Form.Item>
           </Col>
         </Row>
+
+        <Flex vertical gap={16}>
+          <Title level={5} style={{ margin: 0 }}>
+            {t("products.publication.title")}
+          </Title>
+
+          <Form.Item
+            name="status"
+            label={labels.status}
+            rules={[
+              {
+                required: true,
+                message: requiredMessage,
+              },
+            ]}
+            style={{ marginBottom: 0 }}
+          >
+            <Select options={statusOptions} />
+          </Form.Item>
+
+          <Text type="secondary">{t("products.publication.draftHint")}</Text>
+        </Flex>
       </Flex>
     </Card>
   );

@@ -12,7 +12,9 @@ import {
 } from "../form/product-form.types";
 import { normalizeCreateProductPayload } from "../form/payload/normalize-create-product-payload";
 import type {
+  ProductCharacteristicFormRow,
   ProductVariantUi,
+  SingleProductCharacteristicFormRow,
   UploadedProductMedia,
   VariantMediaItem,
 } from "../form/variants/product-add-variant.types";
@@ -32,6 +34,7 @@ import {
   normalizeSelectedCharacteristics,
   normalizeSingleCharacteristics,
   sortVariantCustomFields,
+  syncManualVariantCustomFields,
   syncProductVariantsToForm,
   updateManualVariantCustomField,
 } from "../form/variants/product-add-variant.utils";
@@ -51,14 +54,12 @@ type ProductMediaUploadRequestOptions = Parameters<
   NonNullable<UploadProps["customRequest"]>
 >[0];
 
-type CharacteristicRow = {
+type CharacteristicRow = ProductCharacteristicFormRow & {
   attributeId?: number;
-  values?: string[];
 };
 
-type SingleCharacteristicRow = {
+type SingleCharacteristicRow = SingleProductCharacteristicFormRow & {
   attributeId?: number;
-  value?: string;
 };
 
 export type ProductAddFormValues = ProductCreateFormValues & {
@@ -145,12 +146,6 @@ export type ProductAddPageControllerReturn = {
       attributeId?: number,
     ) => Array<{ value: string; label: string }>;
     onAddManualVariant: () => void;
-  };
-
-  // Product status section
-  statusProps: {
-    requiredMessage: string;
-    statusLabel: string;
   };
 
   // Submit button
@@ -258,9 +253,12 @@ export const useProductAddPageController =
     const characteristicsSignature = useMemo(
       () =>
         JSON.stringify(
-          normalizeSelectedCharacteristics(watchedCharacteristics),
+          normalizeSelectedCharacteristics(
+            watchedCharacteristics,
+            variantCustomFields,
+          ),
         ),
-      [watchedCharacteristics],
+      [variantCustomFields, watchedCharacteristics],
     );
 
     const variantCustomFieldsKey = useMemo(
@@ -273,8 +271,12 @@ export const useProductAddPageController =
       watchedCharacteristics.length > 0;
 
     const selectedCharacteristics = useMemo(
-      () => normalizeSelectedCharacteristics(watchedCharacteristics),
-      [watchedCharacteristics],
+      () =>
+        normalizeSelectedCharacteristics(
+          watchedCharacteristics,
+          variantCustomFields,
+        ),
+      [variantCustomFields, watchedCharacteristics],
     );
 
     const variantCustomFieldOptions = useMemo(
@@ -303,14 +305,18 @@ export const useProductAddPageController =
         productVariantsRef.current,
         form.getFieldValue("variants"),
       );
-      const manualVariants = filterManualVariants(previousVariants);
+      const normalizedCharacteristics = normalizeSelectedCharacteristics(
+        watchedCharacteristics,
+        variantCustomFields,
+      );
+      const manualVariants = filterManualVariants(previousVariants).map(
+        (variant) =>
+          syncManualVariantCustomFields(variant, normalizedCharacteristics),
+      );
       const currentExcludedKeys = excludedVariantKeysRef.current;
 
       const allGeneratedVariants = generateProductVariantsFromCharacteristics({
-        selectedCharacteristics: normalizeSelectedCharacteristics(
-          watchedCharacteristics,
-        ),
-        availableFields: variantCustomFields,
+        selectedCharacteristics: normalizedCharacteristics,
         base: {
           price: Number(watchedPrice ?? 0),
           quantity: Number(watchedQuantity ?? 0),
@@ -385,20 +391,28 @@ export const useProductAddPageController =
       (currentAttributeId?: number) =>
         mapCharacteristicFieldSelectOptions(
           variantCustomFieldOptions,
-          normalizeSelectedCharacteristics(watchedCharacteristics).map(
-            (characteristic) => characteristic.attributeId,
+          normalizeSelectedCharacteristics(
+            watchedCharacteristics,
+            variantCustomFields,
+          ).flatMap((characteristic) =>
+            characteristic.field.kind === "existing"
+              ? [characteristic.field.id]
+              : [],
           ),
           currentAttributeId,
         ),
-      [variantCustomFieldOptions, watchedCharacteristics],
+      [variantCustomFieldOptions, variantCustomFields, watchedCharacteristics],
     );
 
     const getSingleCharacteristicFieldOptionsForRow = useCallback(
       (currentAttributeId?: number) =>
         mapCharacteristicFieldSelectOptions(
           variantCustomFieldOptions,
-          normalizeSingleCharacteristics(watchedSingleCharacteristics).map(
-            (characteristic) => characteristic.attributeId,
+          normalizeSingleCharacteristics(watchedSingleCharacteristics).flatMap(
+            (characteristic) =>
+              characteristic.field.kind === "existing"
+                ? [characteristic.field.id]
+                : [],
           ),
           currentAttributeId,
         ),
@@ -572,8 +586,8 @@ export const useProductAddPageController =
         status: watchedStatus ?? "draft",
         selectedCharacteristics: normalizeSelectedCharacteristics(
           watchedCharacteristics,
+          variantCustomFields,
         ),
-        availableFields: variantCustomFields,
       });
 
       const nextVariants = [...mergedVariants, manualVariant];
@@ -589,7 +603,7 @@ export const useProductAddPageController =
     ]);
 
     const handleUpdateManualVariantCustomField = useCallback(
-      (variantKey: string, fieldId: number, value: string) => {
+      (variantKey: string, fieldStableKey: string, value: string) => {
         setProductVariants((current) => {
           const mergedVariants = mergeProductVariantsWithFormValues(
             current,
@@ -601,7 +615,11 @@ export const useProductAddPageController =
               return variant;
             }
 
-            return updateManualVariantCustomField(variant, fieldId, value);
+            return updateManualVariantCustomField(
+              variant,
+              fieldStableKey,
+              value,
+            );
           });
 
           syncProductVariantsToForm(form, nextVariants);
@@ -734,9 +752,8 @@ export const useProductAddPageController =
             return;
           }
 
-          await productsApi.createProduct(payload);
+          await productsStore.createProduct(payload);
           messageApi.success(t("products.createSuccess"));
-          await productsStore.loadProducts({ silent: true });
           navigateToProductsList();
         } catch (error) {
           messageApi.error(
@@ -886,12 +903,6 @@ export const useProductAddPageController =
         getCharacteristicFieldOptionsForRow,
         getCharacteristicValueOptions,
         onAddManualVariant: handleAddManualVariant,
-      },
-
-      // Product status section
-      statusProps: {
-        requiredMessage,
-        statusLabel: t("products.form.status"),
       },
 
       // Submit button

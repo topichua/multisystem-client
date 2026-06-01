@@ -16,7 +16,10 @@ import styled from "styled-components";
 import type { VariantCustomField } from "@/features/products/model/product-create-api.types";
 
 import type { SelectedCharacteristic } from "./generate-product-variants";
-import type { ProductVariantUi } from "./product-add-variant.types";
+import type {
+  ProductVariantUi,
+  ProductVariantUiCustomField,
+} from "./product-add-variant.types";
 import {
   getCharacteristicValueOptions,
   resolveSelectedCharacteristicColumns,
@@ -38,13 +41,24 @@ const ColorSwatch = styled.span<{ $color: string }>`
   border: 1px solid ${(props) => props.theme.colors.functional.border.split};
 `;
 
+function getCustomFieldStableKey(field: ProductVariantUiCustomField): string {
+  if (!field.field) {
+    return `existing:${field.fieldId}`;
+  }
+
+  return field.field.kind === "existing"
+    ? `existing:${field.field.id}`
+    : `new:${field.field.clientKey}`;
+}
+
 function renderGeneratedCharacteristicValue(
   column: SelectedCharacteristicColumn,
   record: ProductVariantUi,
 ) {
   const value =
-    record.customFields.find((field) => field.fieldId === column.fieldId)
-      ?.value ?? "";
+    record.customFields.find(
+      (field) => getCustomFieldStableKey(field) === column.fieldStableKey,
+    )?.value ?? "";
   const displayValue = value.trim() ? value : "—";
 
   if (
@@ -72,7 +86,7 @@ type RenderManualCharacteristicCellParams = {
   availableFields: VariantCustomField[];
   onUpdateCustomField: (
     variantKey: string,
-    fieldId: number,
+    fieldStableKey: string,
     value: string,
   ) => void;
   texts: {
@@ -89,10 +103,12 @@ function renderManualCharacteristicCell({
   texts,
 }: RenderManualCharacteristicCellParams) {
   const currentValue =
-    record.customFields.find((field) => field.fieldId === column.fieldId)
-      ?.value ?? "";
+    record.customFields.find(
+      (field) => getCustomFieldStableKey(field) === column.fieldStableKey,
+    )?.value ?? "";
   const field = availableFields.find((item) => item.id === column.fieldId);
-  const isOptionsField = field?.type === "options";
+  const isOptionsField =
+    column.fieldType === "OPTION" || field?.type === "options";
   const options = getCharacteristicValueOptions(
     column.fieldId,
     availableFields,
@@ -106,7 +122,7 @@ function renderManualCharacteristicCell({
         options={options}
         style={{ width: "100%" }}
         onChange={(value) =>
-          onUpdateCustomField(record.key, column.fieldId, value)
+          onUpdateCustomField(record.key, column.fieldStableKey, value)
         }
       />
     );
@@ -117,7 +133,11 @@ function renderManualCharacteristicCell({
       value={currentValue}
       placeholder={texts.enterValue}
       onChange={(event) =>
-        onUpdateCustomField(record.key, column.fieldId, event.target.value)
+        onUpdateCustomField(
+          record.key,
+          column.fieldStableKey,
+          event.target.value,
+        )
       }
     />
   );
@@ -130,7 +150,7 @@ type UseProductAddVariantTableColumnsParams = {
   onDeleteVariant: (variant: ProductVariantUi) => void;
   onUpdateManualVariantCustomField: (
     variantKey: string,
-    fieldId: number,
+    fieldStableKey: string,
     value: string,
   ) => void;
   deletingVariantKey: string | null;
@@ -157,10 +177,9 @@ export function useProductAddVariantTableColumns({
   return useMemo((): ColumnsType<ProductVariantUi> => {
     const characteristicColumns = resolveSelectedCharacteristicColumns(
       selectedCharacteristics,
-      availableFields,
     ).map((column) => ({
       title: column.fieldLabel,
-      key: `characteristic-${column.fieldId}`,
+      key: `characteristic-${column.fieldStableKey}`,
       width: 180,
       render: (_: unknown, record: ProductVariantUi) => {
         if (record.source === "manual") {

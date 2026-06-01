@@ -25,7 +25,6 @@ export const ProductAddPage = observer(() => {
         singleCharacteristicsProps={controller.singleCharacteristicsProps}
         mediaProps={controller.mediaProps}
         variantsProps={controller.variantsProps}
-        statusProps={controller.statusProps}
         submitButtonProps={controller.submitButtonProps}
         onSubmit={controller.onSubmit}
       />

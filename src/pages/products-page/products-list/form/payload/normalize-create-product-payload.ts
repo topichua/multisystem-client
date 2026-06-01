@@ -8,6 +8,7 @@ import type {
 
 import type { ProductCreateFormValues } from "../product-form.types";
 import type {
+  CharacteristicFieldRef,
   ProductVariantUi,
   UploadedProductMedia,
   VariantMediaItem,
@@ -39,10 +40,55 @@ function normalizeLifecycleStatus(
 function normalizeVariantCustomFields(
   customFields: ProductVariantUi["customFields"],
 ): CreateProductVariantCustomFieldValue[] {
-  return customFields.map((field) => ({
-    fieldId: field.fieldId,
-    value: field.value,
-  }));
+  return customFields
+    .map((field, index) => normalizeVariantCustomField(field, index))
+    .filter((field) => field.value);
+}
+
+function normalizeVariantCustomField(
+  field: ProductVariantUi["customFields"][number],
+  index: number,
+): CreateProductVariantCustomFieldValue {
+  const value = field.value.trim();
+  const order = field.order ?? index;
+
+  if (field.field?.kind === "existing") {
+    return {
+      field: { id: field.field.id },
+      value,
+      order,
+    };
+  }
+
+  if (field.field?.kind === "new") {
+    return {
+      field: {
+        name: field.field.name.trim(),
+        type: field.field.type,
+      },
+      value,
+      order,
+    };
+  }
+
+  return {
+    field: { id: field.fieldId },
+    value,
+    order,
+  };
+}
+
+export function normalizeCustomFieldRef(
+  field: CharacteristicFieldRef,
+): CreateProductVariantCustomFieldValue["field"] {
+  if (field.kind === "existing") {
+    return { id: field.id };
+  }
+
+  return {
+    name: field.name.trim(),
+    type: field.type,
+  };
 }
 
 function normalizeOptionalSku(
@@ -86,10 +132,28 @@ function buildSingleProductCustomFields(
 
   return normalizeSingleCharacteristics(
     formValuesWithCharacteristics.singleCharacteristics,
-  ).map((item) => ({
-    fieldId: item.attributeId,
+  ).map(normalizeSingleCharacteristicCustomField);
+}
+
+function normalizeSingleCharacteristicCustomField(
+  item: ReturnType<typeof normalizeSingleCharacteristics>[number],
+): CreateProductVariantCustomFieldValue {
+  if (item.field.kind === "existing") {
+    return {
+      field: { id: item.field.id },
+      value: item.value,
+      order: item.order,
+    };
+  }
+
+  return {
+    field: {
+      name: item.field.name.trim(),
+      type: item.field.type,
+    },
     value: item.value,
-  }));
+    order: item.order,
+  };
 }
 
 function buildSingleProductVariant(

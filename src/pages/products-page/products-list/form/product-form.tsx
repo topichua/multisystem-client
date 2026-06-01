@@ -11,7 +11,6 @@ import { ProductMainInfoSection } from "./sections/product-main-info-section";
 import { SingleProductCharacteristicsSection } from "./sections/single-product-characteristics-section";
 import { ProductMediaSection } from "./sections/product-media-section";
 import { ProductVariantsSection } from "./sections/product-variants-section";
-import { ProductStatus } from "./sections/product-status";
 import { ProductFormHeader } from "./sections/product-form-header";
 import type {
   ProductAddFormValues,
@@ -52,9 +51,6 @@ export type ProductFormProps = {
   // Variants section
   variantsProps: ProductAddPageControllerReturn["variantsProps"];
 
-  // Product status section
-  statusProps: ProductAddPageControllerReturn["statusProps"];
-
   // Submit button
   submitButtonProps: ProductAddPageControllerReturn["submitButtonProps"];
 
@@ -77,7 +73,6 @@ export const ProductForm = ({
   singleCharacteristicsProps,
   mediaProps,
   variantsProps,
-  statusProps,
   submitButtonProps,
   onSubmit,
 }: ProductFormProps) => {
@@ -121,6 +116,7 @@ export const ProductForm = ({
           initialValues={initialValues}
           onFinish={onSubmit}
           onFinishFailed={handleFinishFailed}
+          style={{ marginBottom: 50 }}
         >
           <Flex vertical gap={32} style={{ maxWidth: 1100, margin: "0 auto" }}>
             <ProductFormHeader title={title} subtitle={subtitle} />
@@ -135,6 +131,18 @@ export const ProductForm = ({
                 categoryOptions={categoryOptions}
                 requiredMessage={requiredMessage}
                 labels={labels}
+              />
+
+              <ProductMediaSection
+                uploadedProductMedia={mediaProps.uploadedProductMedia}
+                productMediaUploadingCount={
+                  mediaProps.productMediaUploadingCount
+                }
+                deletingProductMediaId={mediaProps.deletingProductMediaId}
+                onBeforeUpload={mediaProps.onBeforeUpload}
+                onUpload={mediaProps.onUpload}
+                onDelete={mediaProps.onDelete}
+                texts={mediaProps.texts}
               />
 
               {productType === "single" ? (
@@ -157,23 +165,6 @@ export const ProductForm = ({
                   }
                 />
               ) : null}
-
-              <ProductStatus
-                requiredMessage={statusProps.requiredMessage}
-                statusLabel={statusProps.statusLabel}
-              />
-
-              <ProductMediaSection
-                uploadedProductMedia={mediaProps.uploadedProductMedia}
-                productMediaUploadingCount={
-                  mediaProps.productMediaUploadingCount
-                }
-                deletingProductMediaId={mediaProps.deletingProductMediaId}
-                onBeforeUpload={mediaProps.onBeforeUpload}
-                onUpload={mediaProps.onUpload}
-                onDelete={mediaProps.onDelete}
-                texts={mediaProps.texts}
-              />
 
               {productType === "variants" ? (
                 <ProductVariantsSection
@@ -200,6 +191,7 @@ export const ProductForm = ({
                 loading={submitButtonProps.loading}
                 disabled={submitButtonProps.disabled}
                 icon={<PlusIcon size={18} />}
+                size="large"
               >
                 {submitButtonProps.label}
               </Button>

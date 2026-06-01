@@ -41,14 +41,14 @@ const resolveSizesLabel = (
 
 type UseProductsTableColumnsParams = {
   categoryNameById: Map<number, string>;
-  deleteLoading: boolean;
+  deleteLoadingId: number | null;
   onEdit: (productId: number) => void | Promise<void>;
   onDelete: (productId: number) => Promise<void>;
 };
 
 export const useProductsTableColumns = ({
   categoryNameById,
-  deleteLoading,
+  deleteLoadingId,
   onEdit,
   onDelete,
 }: UseProductsTableColumnsParams): TableColumnsType<Product> => {
@@ -165,7 +165,7 @@ export const useProductsTableColumns = ({
                 type="text"
                 size="small"
                 danger
-                loading={deleteLoading}
+                loading={deleteLoadingId === product.id}
                 icon={<TrashIcon size={18} />}
                 aria-label={t("products.delete")}
                 onClick={(e) => e.stopPropagation()}
@@ -175,6 +175,6 @@ export const useProductsTableColumns = ({
         ),
       },
     ],
-    [categoryNameById, deleteLoading, onDelete, onEdit, t],
+    [categoryNameById, deleteLoadingId, onDelete, onEdit, t],
   );
 };

@@ -1,12 +1,19 @@
-import type { VariantCustomField } from "@/features/products/model/product-create-api.types";
+import type { CreateProductCustomFieldType } from "@/features/products/model/product-create-api.types";
 
-import type { ProductVariantUi } from "./product-add-variant.types";
+import type {
+  CharacteristicFieldRef,
+  ProductVariantUi,
+} from "./product-add-variant.types";
 
 export const EMPTY_PRODUCT_VARIANT_KEY = "variant:empty";
 
 export type SelectedCharacteristic = {
-  attributeId: number;
+  field: CharacteristicFieldRef;
+  fieldKey: string;
+  fieldLabel: string;
+  fieldType: CreateProductCustomFieldType;
   values: string[];
+  order: number;
 };
 
 export type GenerateProductVariantsBaseValues = {
@@ -19,23 +26,31 @@ const DEFAULT_VARIANT_IN_STOCK = true;
 
 export type GenerateProductVariantsParams = {
   selectedCharacteristics: SelectedCharacteristic[];
-  availableFields: VariantCustomField[];
   base: GenerateProductVariantsBaseValues;
   previousVariants: ProductVariantUi[];
 };
 
 type CharacteristicDimension = {
-  fieldId: number;
+  field: CharacteristicFieldRef;
+  fieldStableKey: string;
   fieldKey: string;
   fieldLabel: string;
+  fieldType: CreateProductCustomFieldType;
   values: string[];
-  sortOrder: number;
+  order: number;
 };
 
 type FieldValuePair = {
-  fieldId: number;
+  field: CharacteristicFieldRef;
+  fieldStableKey: string;
   value: string;
 };
+
+function getFieldStableKey(field: CharacteristicFieldRef): string {
+  return field.kind === "existing"
+    ? `existing:${field.id}`
+    : `new:${field.clientKey}`;
+}
 
 function normalizeCharacteristicValues(values: string[]): string[] {
   const seen = new Set<string>();
@@ -55,30 +70,28 @@ function normalizeCharacteristicValues(values: string[]): string[] {
 
 function resolveCharacteristicDimensions(
   selectedCharacteristics: SelectedCharacteristic[],
-  availableFields: VariantCustomField[],
 ): CharacteristicDimension[] {
-  const fieldsById = new Map(availableFields.map((field) => [field.id, field]));
-
   const dimensions = selectedCharacteristics.flatMap((characteristic) => {
-    const field = fieldsById.get(characteristic.attributeId);
     const values = normalizeCharacteristicValues(characteristic.values ?? []);
 
-    if (!field || values.length === 0) {
+    if (values.length === 0) {
       return [];
     }
 
     return [
       {
-        fieldId: field.id,
-        fieldKey: field.key,
-        fieldLabel: field.label,
+        field: characteristic.field,
+        fieldStableKey: getFieldStableKey(characteristic.field),
+        fieldKey: characteristic.fieldKey,
+        fieldLabel: characteristic.fieldLabel,
+        fieldType: characteristic.fieldType,
         values,
-        sortOrder: field.sortOrder,
+        order: characteristic.order,
       },
     ];
   });
 
-  return dimensions.sort((left, right) => left.sortOrder - right.sortOrder);
+  return dimensions.sort((left, right) => left.order - right.order);
 }
 
 function cartesianProduct<T>(dimensions: T[][]): T[][] {
@@ -95,11 +108,13 @@ function cartesianProduct<T>(dimensions: T[][]): T[][] {
   );
 }
 
-/** Stable key from sorted `fieldId=value` segments (values trimmed). */
+/** Stable key from sorted `field=value` segments (values trimmed). */
 export function buildProductVariantKey(pairs: FieldValuePair[]): string {
   return [...pairs]
-    .sort((left, right) => left.fieldId - right.fieldId)
-    .map((pair) => `${pair.fieldId}=${pair.value.trim()}`)
+    .sort((left, right) =>
+      left.fieldStableKey.localeCompare(right.fieldStableKey),
+    )
+    .map((pair) => `${pair.fieldStableKey}=${pair.value.trim()}`)
     .join("|");
 }
 
@@ -113,13 +128,18 @@ function buildVariantFromPairs(
   const previous = previousByKey.get(key);
 
   const customFields = pairs.map((pair) => {
-    const dimension = dimensions.find((item) => item.fieldId === pair.fieldId);
+    const dimension = dimensions.find(
+      (item) => item.fieldStableKey === pair.fieldStableKey,
+    );
 
     return {
-      fieldId: pair.fieldId,
-      fieldKey: dimension?.fieldKey ?? String(pair.fieldId),
-      fieldLabel: dimension?.fieldLabel ?? String(pair.fieldId),
+      fieldId: pair.field.kind === "existing" ? pair.field.id : 0,
+      field: pair.field,
+      fieldKey: dimension?.fieldKey ?? pair.fieldStableKey,
+      fieldLabel: dimension?.fieldLabel ?? pair.fieldStableKey,
+      fieldType: dimension?.fieldType ?? "OPTION",
       value: pair.value,
+      order: dimension?.order ?? 0,
     };
   });
 
@@ -157,34 +177,59 @@ function buildVariantFromPairs(
 
 export function generateProductVariantsFromCharacteristics({
   selectedCharacteristics,
-  availableFields,
   base,
   previousVariants,
 }: GenerateProductVariantsParams): ProductVariantUi[] {
   const previousByKey = new Map(
     previousVariants.map((variant) => [variant.key, variant]),
   );
-  const dimensions = resolveCharacteristicDimensions(
-    selectedCharacteristics,
-    availableFields,
+  const dimensions = resolveCharacteristicDimensions(selectedCharacteristics);
+  const optionDimensions = dimensions.filter(
+    (dimension) => dimension.fieldType === "OPTION",
   );
+  const textFields = dimensions
+    .filter((dimension) => dimension.fieldType === "TEXT")
+    .flatMap((dimension) =>
+      dimension.values.map((value) => ({
+        fieldId: dimension.field.kind === "existing" ? dimension.field.id : 0,
+        field: dimension.field,
+        fieldKey: dimension.fieldKey,
+        fieldLabel: dimension.fieldLabel,
+        fieldType: dimension.fieldType,
+        value,
+        order: dimension.order,
+      })),
+    );
 
-  if (dimensions.length === 0) {
+  if (optionDimensions.length === 0) {
     return [];
   }
 
   const valueCombinations = cartesianProduct(
-    dimensions.map((dimension) =>
+    optionDimensions.map((dimension) =>
       dimension.values.map((value) => ({
-        fieldId: dimension.fieldId,
+        field: dimension.field,
+        fieldStableKey: dimension.fieldStableKey,
         value,
       })),
     ),
   );
 
-  return valueCombinations.map((pairs) =>
-    buildVariantFromPairs(pairs, dimensions, base, previousByKey),
-  );
+  return valueCombinations.map((pairs) => {
+    const variant = buildVariantFromPairs(
+      pairs,
+      optionDimensions,
+      base,
+      previousByKey,
+    );
+
+    return {
+      ...variant,
+      customFields: [...variant.customFields, ...textFields].sort(
+        (left, right) => (left.order ?? 0) - (right.order ?? 0),
+      ),
+    };
+  });
 }
 
 /*

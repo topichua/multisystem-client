@@ -1,12 +1,17 @@
 import type { FormInstance } from "antd";
 import type { Dispatch, SetStateAction } from "react";
 
-import type { VariantCustomField } from "@/features/products/model/product-create-api.types";
+import type {
+  CreateProductCustomFieldType,
+  VariantCustomField,
+  VariantCustomFieldType,
+} from "@/features/products/model/product-create-api.types";
 
 import { EMPTY_PRODUCT_VARIANT_KEY } from "./generate-product-variants";
 import type { SelectedCharacteristic } from "./generate-product-variants";
 import type { ProductStatus } from "@/features/products/model/product.types";
 import type {
+  CharacteristicFieldRef,
   ProductAddVariantFormValues,
   ProductVariantUi,
   VariantMediaItem,
@@ -14,17 +19,83 @@ import type {
 
 export type SelectedCharacteristicColumn = {
   fieldId: number;
+  field: CharacteristicFieldRef;
+  fieldStableKey: string;
   fieldKey: string;
   fieldLabel: string;
-  sortOrder: number;
+  fieldType: CreateProductCustomFieldType;
+  order: number;
 };
 
+export function mapResponseFieldTypeToCreateFieldType(
+  type: VariantCustomFieldType,
+): CreateProductCustomFieldType {
+  return type === "options" ? "OPTION" : "TEXT";
+}
+
+export function normalizeCharacteristicName(name: string): string {
+  return name.trim().replace(/\s+/g, " ").toLocaleLowerCase();
+}
+
+export function getCharacteristicFieldStableKey(
+  field: CharacteristicFieldRef,
+): string {
+  return field.kind === "existing"
+    ? `existing:${field.id}`
+    : `new:${field.clientKey}`;
+}
+
+export function getCharacteristicFieldLabel(
+  field: CharacteristicFieldRef,
+  availableFields: readonly VariantCustomField[],
+): string {
+  if (field.kind === "new") {
+    return field.name;
+  }
+
+  return (
+    availableFields.find((availableField) => availableField.id === field.id)
+      ?.label ?? String(field.id)
+  );
+}
+
+export function getCharacteristicFieldType(
+  field: CharacteristicFieldRef,
+  availableFields: readonly VariantCustomField[],
+): CreateProductCustomFieldType | null {
+  if (field.kind === "new") {
+    return field.type;
+  }
+
+  const availableField = availableFields.find((item) => item.id === field.id);
+  return availableField
+    ? mapResponseFieldTypeToCreateFieldType(availableField.type)
+    : null;
+}
+
+export function isOptionCharacteristic(
+  field: CharacteristicFieldRef,
+  availableFields: readonly VariantCustomField[],
+): boolean {
+  return getCharacteristicFieldType(field, availableFields) === "OPTION";
+}
+
+export function isTextCharacteristic(
+  field: CharacteristicFieldRef,
+  availableFields: readonly VariantCustomField[],
+): boolean {
+  return getCharacteristicFieldType(field, availableFields) === "TEXT";
+}
+
 type CharacteristicFormRow = {
+  field?: CharacteristicFieldRef;
   attributeId?: number;
   values?: string[];
+  value?: string;
 };
 
 export type SingleCharacteristicFormRow = {
+  field?: CharacteristicFieldRef;
   attributeId?: number;
   value?: string;
 };
@@ -65,30 +136,44 @@ function isSingleCharacteristicFormRow(
   return typeof value === "object" && value !== null;
 }
 
-export function normalizeSingleCharacteristics(
-  raw: unknown,
-): Array<{ attributeId: number; value: string }> {
+export function normalizeSingleCharacteristics(raw: unknown): Array<{
+  field: CharacteristicFieldRef;
+  attributeId?: number;
+  value: string;
+  order: number;
+}> {
   if (!Array.isArray(raw)) {
     return [];
   }
 
-  return raw.flatMap((item) => {
+  return raw.flatMap((item, index) => {
     if (!isSingleCharacteristicFormRow(item)) {
       return [];
     }
 
     const attributeId = item.attributeId;
+    const field =
+      item.field ??
+      (typeof attributeId === "number" && Number.isFinite(attributeId)
+        ? ({
+            kind: "existing",
+            id: attributeId,
+          } satisfies CharacteristicFieldRef)
+        : undefined);
     const value = typeof item.value === "string" ? item.value.trim() : "";
 
-    if (
-      typeof attributeId !== "number" ||
-      !Number.isFinite(attributeId) ||
-      !value
-    ) {
+    if (!field || !value) {
       return [];
     }
 
-    return [{ attributeId, value }];
+    return [
+      {
+        field,
+        attributeId: field.kind === "existing" ? field.id : undefined,
+        value,
+        order: index,
+      },
+    ];
   });
 }
 
@@ -108,27 +193,55 @@ export function mapCharacteristicFieldSelectOptions(
 
 export function normalizeSelectedCharacteristics(
   raw: unknown,
+  availableFields: readonly VariantCustomField[] = [],
 ): SelectedCharacteristic[] {
   if (!Array.isArray(raw)) {
     return [];
   }
 
-  return raw.flatMap((item) => {
+  return raw.flatMap((item, index) => {
     if (!isCharacteristicFormRow(item)) {
       return [];
     }
 
     const attributeId = item.attributeId;
+    const field =
+      item.field ??
+      (typeof attributeId === "number" && Number.isFinite(attributeId)
+        ? ({
+            kind: "existing",
+            id: attributeId,
+          } satisfies CharacteristicFieldRef)
+        : undefined);
     const values = item.values;
 
-    if (typeof attributeId !== "number" || !Number.isFinite(attributeId)) {
+    if (!field) {
       return [];
     }
 
+    const fieldType = getCharacteristicFieldType(field, availableFields);
+    if (!fieldType) {
+      return [];
+    }
+
+    const fieldStableKey = getCharacteristicFieldStableKey(field);
+
     return [
       {
-        attributeId,
-        values: Array.isArray(values) ? values : [],
+        field,
+        fieldKey:
+          field.kind === "existing"
+            ? (availableFields.find((item) => item.id === field.id)?.key ??
+              fieldStableKey)
+            : field.clientKey,
+        fieldLabel: getCharacteristicFieldLabel(field, availableFields),
+        fieldType,
+        values: Array.isArray(values)
+          ? values
+          : typeof item.value === "string"
+            ? [item.value]
+            : [],
+        order: index,
       },
     ];
   });
@@ -318,30 +431,31 @@ export function seedInitialProductVariant(
 
 export function resolveSelectedCharacteristicColumns(
   selectedCharacteristics: SelectedCharacteristic[],
-  availableFields: VariantCustomField[],
 ): SelectedCharacteristicColumn[] {
-  const fieldsById = new Map(availableFields.map((field) => [field.id, field]));
   const columns: SelectedCharacteristicColumn[] = [];
 
   for (const characteristic of selectedCharacteristics) {
-    const field = fieldsById.get(characteristic.attributeId);
-    if (!field) {
-      continue;
-    }
+    const fieldStableKey = getCharacteristicFieldStableKey(
+      characteristic.field,
+    );
 
-    if (columns.some((column) => column.fieldId === field.id)) {
+    if (columns.some((column) => column.fieldStableKey === fieldStableKey)) {
       continue;
     }
 
     columns.push({
-      fieldId: field.id,
-      fieldKey: field.key,
-      fieldLabel: field.label,
-      sortOrder: field.sortOrder,
+      fieldId:
+        characteristic.field.kind === "existing" ? characteristic.field.id : 0,
+      field: characteristic.field,
+      fieldStableKey,
+      fieldKey: characteristic.fieldKey,
+      fieldLabel: characteristic.fieldLabel,
+      fieldType: characteristic.fieldType,
+      order: characteristic.order,
     });
   }
 
-  return columns.sort((left, right) => left.sortOrder - right.sortOrder);
+  return columns.sort((left, right) => left.order - right.order);
 }
 
 const MANUAL_VARIANT_KEY_PREFIX = "manual:";
@@ -359,7 +473,6 @@ export type CreateManualVariantParams = {
   quantity: number;
   status: ProductStatus;
   selectedCharacteristics: SelectedCharacteristic[];
-  availableFields: VariantCustomField[];
 };
 
 export function createManualVariant({
@@ -367,18 +480,17 @@ export function createManualVariant({
   quantity,
   status,
   selectedCharacteristics,
-  availableFields,
 }: CreateManualVariantParams): ProductVariantUi {
-  const columns = resolveSelectedCharacteristicColumns(
-    selectedCharacteristics,
-    availableFields,
-  );
+  const columns = resolveSelectedCharacteristicColumns(selectedCharacteristics);
 
   const customFields = columns.map((column) => ({
     fieldId: column.fieldId,
+    field: column.field,
     fieldKey: column.fieldKey,
     fieldLabel: column.fieldLabel,
+    fieldType: column.fieldType,
     value: "",
+    order: column.order,
   }));
 
   return {
@@ -391,6 +503,36 @@ export function createManualVariant({
     inStock: true,
     sku: "",
     media: [],
+  };
+}
+
+export function syncManualVariantCustomFields(
+  variant: ProductVariantUi,
+  selectedCharacteristics: SelectedCharacteristic[],
+): ProductVariantUi {
+  const columns = resolveSelectedCharacteristicColumns(selectedCharacteristics);
+  const fieldsByStableKey = new Map(
+    variant.customFields.map((field) => [
+      getProductVariantCustomFieldStableKey(field),
+      field,
+    ]),
+  );
+
+  return {
+    ...variant,
+    customFields: columns.map((column) => {
+      const previous = fieldsByStableKey.get(column.fieldStableKey);
+
+      return {
+        fieldId: column.fieldId,
+        field: column.field,
+        fieldKey: column.fieldKey,
+        fieldLabel: column.fieldLabel,
+        fieldType: column.fieldType,
+        value: previous?.value ?? "",
+        order: column.order,
+      };
+    }),
   };
 }
 
@@ -408,9 +550,25 @@ export function buildVariantKeyFromCustomFields(
   }
 
   return [...customFields]
-    .sort((left, right) => left.fieldId - right.fieldId)
-    .map((field) => `${field.fieldId}=${field.value.trim()}`)
+    .filter((field) => field.fieldType !== "TEXT")
+    .sort((left, right) =>
+      getProductVariantCustomFieldStableKey(left).localeCompare(
+        getProductVariantCustomFieldStableKey(right),
+      ),
+    )
+    .map(
+      (field) =>
+        `${getProductVariantCustomFieldStableKey(field)}=${field.value.trim()}`,
+    )
     .join("|");
+}
+
+function getProductVariantCustomFieldStableKey(
+  field: ProductVariantUi["customFields"][number],
+): string {
+  return field.field
+    ? getCharacteristicFieldStableKey(field.field)
+    : `existing:${field.fieldId}`;
 }
 
 export function findDuplicateVariantKeys(
@@ -447,11 +605,13 @@ export function filterManualVariants(
 
 export function updateManualVariantCustomField(
   variant: ProductVariantUi,
-  fieldId: number,
+  fieldStableKey: string,
   value: string,
 ): ProductVariantUi {
   const updatedCustomFields = variant.customFields.map((field) =>
-    field.fieldId === fieldId ? { ...field, value } : field,
+    getProductVariantCustomFieldStableKey(field) === fieldStableKey
+      ? { ...field, value }
+      : field,
   );
 
   return {

@@ -1,6 +1,6 @@
 import { Button, Flex, Table, Typography } from "antd";
 import { observer } from "mobx-react-lite";
-import { useState } from "react";
+import { useCallback, useState, type MouseEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 
@@ -11,12 +11,12 @@ import type { Product } from "@/features/products/model/product.types";
 
 import { ProductsListActiveFilters } from "./products-list-active-filters";
 import { ProductsListFiltersPanel } from "./products-list-filters-panel";
-// import { ProductsListGrid } from "./products-list-grid";
 import { ProductsListToolbar } from "./products-list-toolbar";
 import { ProductsTablePagination } from "./products-table-pagination";
 import { useProductsListController } from "../controllers/use-products-list-controller";
 import { useProductsListUrlSync } from "./use-products-list-url-sync";
 import { useProductsTableColumns } from "./use-products-table-columns";
+import { ProductsListGrid } from "./products-list-grid";
 
 const { Text } = Typography;
 
@@ -24,100 +24,103 @@ export const ProductsListPage = observer(() => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const {
-    // contextHolder,
-    productsStore,
-    categoryNameById,
-    rowSelection,
-    handleDeleteById,
-    // handleOpenProduct,
-    // handleRowClick,
-  } = useProductsListController();
+  const { productsStore, categoryNameById, rowSelection, handleDeleteById } =
+    useProductsListController();
 
   useProductsListUrlSync(productsStore);
 
+  const handleOpenProduct = useCallback((_productId: number) => {
+    // TODO: Re-enable product details/edit navigation when the edit page is ready.
+    console.log("🚀 ~ _productId:", _productId);
+  }, []);
+
+  const handleProductRowClick = useCallback(
+    (product: Product) => {
+      return (event: MouseEvent<HTMLElement>) => {
+        console.log("🚀 ~ event:", event);
+        // TODO: Open product details/edit page when that flow is implemented.
+        handleOpenProduct(product.id);
+      };
+    },
+    [handleOpenProduct],
+  );
+
   const columns = useProductsTableColumns({
     categoryNameById,
-    deleteLoading: productsStore.deleteLoading,
-    onEdit: () => {},
+    deleteLoadingId: productsStore.deleteLoadingId,
+    onEdit: handleOpenProduct,
     onDelete: (productId) => handleDeleteById(productId),
   });
 
   return (
-    <>
-      <PaneDetailLayout.Root inset>
-        <PaneDetailLayout.Header data-qa="layout-products-list-header">
-          <Flex justify="space-between" align="center" gap={16} wrap="wrap">
-            <PaneSectionTitle>{t("products.listTitle")}</PaneSectionTitle>
-            <Button
-              type="primary"
-              onClick={() => navigate(pagesMap.productsListAdd)}
-            >
-              {t("products.addProductCta")}
-            </Button>
-          </Flex>
-        </PaneDetailLayout.Header>
-        <PaneDetailLayout.Body data-qa="layout-products-table-scroll">
-          <Flex gap={24} align="flex-start" wrap="wrap">
-            <div style={{ flex: "1 1 360px", minWidth: 0 }}>
-              <ProductsListToolbar
-                onToggleFilters={() => setFiltersOpen((open) => !open)}
+    <PaneDetailLayout.Root inset>
+      <PaneDetailLayout.Header data-qa="layout-products-list-header">
+        <Flex justify="space-between" align="center" gap={16} wrap="wrap">
+          <PaneSectionTitle>{t("products.listTitle")}</PaneSectionTitle>
+          <Button
+            type="primary"
+            onClick={() => navigate(pagesMap.productsListAdd)}
+          >
+            {t("products.addProductCta")}
+          </Button>
+        </Flex>
+      </PaneDetailLayout.Header>
+      <PaneDetailLayout.Body data-qa="layout-products-table-scroll">
+        <Flex gap={24} align="flex-start" wrap="wrap">
+          <div style={{ flex: "1 1 360px", minWidth: 0 }}>
+            <ProductsListToolbar
+              onToggleFilters={() => setFiltersOpen((open) => !open)}
+            />
+            <ProductsListActiveFilters categoryNameById={categoryNameById} />
+            {productsStore.listError && (
+              <Text type="danger" style={{ display: "block", marginBottom: 8 }}>
+                {productsStore.listError}
+              </Text>
+            )}
+            {productsStore.listViewMode === "list" ? (
+              <Table<Product>
+                rowKey="id"
+                columns={columns}
+                dataSource={productsStore.products}
+                rowSelection={rowSelection}
+                loading={productsStore.listLoading}
+                pagination={false}
+                onRow={(product) => ({
+                  onClick: handleProductRowClick(product),
+                  style: { cursor: "pointer" },
+                })}
+                scroll={{ x: "max-content" }}
               />
-              <ProductsListActiveFilters categoryNameById={categoryNameById} />
-              {productsStore.listError && (
-                <Text
-                  type="danger"
-                  style={{ display: "block", marginBottom: 8 }}
-                >
-                  {productsStore.listError}
-                </Text>
-              )}
-              {productsStore.listViewMode === "list" ? (
-                <Table<Product>
-                  rowKey="id"
-                  columns={columns}
-                  dataSource={productsStore.products}
-                  rowSelection={rowSelection}
-                  loading={productsStore.listLoading}
-                  pagination={false}
-                  onRow={() => ({
-                    onClick: () => {},
-                    style: { cursor: "pointer" },
-                  })}
-                  scroll={{ x: "max-content" }}
-                />
-              ) : (
-                <></>
-                // <ProductsListGrid
-                //   products={productsStore.products}
-                //   loading={productsStore.listLoading}
-                //   categoryNameById={categoryNameById}
-                //   onOpenProduct={(handleRowClick)}
-                //   onEdit={handleOpenProduct}
-                //   onDelete={(productId) => handleDeleteById(productId)}
-                //   deleteLoading={productsStore.deleteLoading}
-                // />
-              )}
-              <ProductsTablePagination
-                current={productsStore.currentPage}
-                pageSize={productsStore.pageSize}
-                total={productsStore.total}
-                onChange={(page) => {
-                  productsStore.setListPage(page);
-                }}
+            ) : (
+              <ProductsListGrid
+                products={productsStore.products}
+                loading={productsStore.listLoading}
+                categoryNameById={categoryNameById}
+                onOpenProduct={handleProductRowClick}
+                onEdit={handleOpenProduct}
+                onDelete={(productId) => handleDeleteById(productId)}
+                deleteLoadingId={productsStore.deleteLoadingId}
+              />
+            )}
+            <ProductsTablePagination
+              current={productsStore.currentPage}
+              pageSize={productsStore.pageSize}
+              total={productsStore.total}
+              onChange={(page) => {
+                productsStore.setListPage(page);
+              }}
+            />
+          </div>
+          {filtersOpen ? (
+            <div style={{ flex: "0 1 300px", width: "100%", maxWidth: 420 }}>
+              <ProductsListFiltersPanel
+                open={filtersOpen}
+                onClose={() => setFiltersOpen(false)}
               />
             </div>
-            {filtersOpen ? (
-              <div style={{ flex: "0 1 300px", width: "100%", maxWidth: 420 }}>
-                <ProductsListFiltersPanel
-                  open={filtersOpen}
-                  onClose={() => setFiltersOpen(false)}
-                />
-              </div>
-            ) : null}
-          </Flex>
-        </PaneDetailLayout.Body>
-      </PaneDetailLayout.Root>
-    </>
+          ) : null}
+        </Flex>
+      </PaneDetailLayout.Body>
+    </PaneDetailLayout.Root>
   );
 });

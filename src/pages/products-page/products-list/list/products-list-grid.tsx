@@ -57,7 +57,7 @@ type ProductsListGridProps = {
   onOpenProduct: (product: Product) => (event: MouseEvent<HTMLElement>) => void;
   onEdit: (productId: number) => void;
   onDelete: (productId: number) => Promise<void>;
-  deleteLoading: boolean;
+  deleteLoadingId: number | null;
 };
 
 export const ProductsListGrid = ({
@@ -67,7 +67,7 @@ export const ProductsListGrid = ({
   onOpenProduct,
   onEdit,
   onDelete,
-  deleteLoading,
+  deleteLoadingId,
 }: ProductsListGridProps) => {
   const { t } = useTranslation();
 
@@ -174,7 +174,7 @@ export const ProductsListGrid = ({
                         type="text"
                         size="small"
                         danger
-                        loading={deleteLoading}
+                        loading={deleteLoadingId === product.id}
                         icon={<TrashIcon size={18} />}
                         aria-label={t("products.delete")}
                       />

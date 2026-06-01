@@ -31,11 +31,11 @@ export const ProductInstagramAiDrawer = ({
       }
       open={open}
       onClose={onClose}
-      width={Math.min(
+      size={Math.min(
         960,
         typeof window !== "undefined" ? window.innerWidth - 24 : 960,
       )}
-      destroyOnClose
+      destroyOnHidden
       styles={{
         body: { padding: 16 },
       }}

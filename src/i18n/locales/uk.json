@@ -44,7 +44,78 @@
     "menu": {
       "groups": "Групи",
       "user": "Користувач",
-      "system": "Система"
+      "system": "Система",
+      "integrations": "Інтеграції"
+    }
+  },
+  "integrations": {
+    "title": "Інтеграції",
+    "subtitle": "Керуйте всіма підключеннями до зовнішніх сервісів і акаунтів",
+    "addIntegration": "Додати інтеграцію",
+    "searchPlaceholder": "Пошук інтеграцій...",
+    "allIntegrations": "Усі інтеграції",
+    "noIntegrationsYet": "Інтеграцій поки немає",
+    "noMatchFilters": "Жодна інтеграція не відповідає фільтрам",
+    "connectSuccess": "Інтеграцію підключено",
+    "connectFailed": "Не вдалося підключити інтеграцію",
+    "disconnectSuccess": "Інтеграцію відключено",
+    "disconnectFailed": "Не вдалося відключити інтеграцію",
+    "disconnectConfirmTitle": "Відключити інтеграцію?",
+    "disconnectConfirmContent": "Відключити \"{{name}}\"?",
+    "disconnectConfirmOk": "Відключити",
+    "disconnectConfirmCancel": "Скасувати",
+    "disconnectAction": "Відключити",
+    "connectedTag": "Підключено",
+    "typeLabel": "Тип: {{type}}",
+    "addedLabel": "Додано: {{date}}",
+    "types": {
+      "instagram": {
+        "label": "Instagram",
+        "description": "Керуйте акаунтами Instagram",
+        "connectLabel": "Підключити акаунт",
+        "empty": "Немає інтеграцій Instagram"
+      },
+      "telegram": {
+        "label": "Telegram",
+        "description": "Підключайте ботів і акаунти Telegram",
+        "connectLabel": "Підключити бота",
+        "empty": "Немає інтеграцій Telegram"
+      }
+    },
+    "modal": {
+      "title": "Додати інтеграцію",
+      "subtitle": "Оберіть сервіс, який хочете підключити",
+      "groupSocial": "Соціальні мережі та месенджери",
+      "groupDelivery": "Доставка",
+      "groupOther": "Інші сервіси",
+      "suggestPrefix": "Не знайшли потрібний сервіс?",
+      "suggestCta": "Запропонувати інтеграцію",
+      "items": {
+        "instagram": {
+          "title": "Instagram",
+          "description": "Підключити акаунт Instagram"
+        },
+        "telegram": {
+          "title": "Telegram",
+          "description": "Підключити Telegram-бота"
+        },
+        "whatsapp": {
+          "title": "WhatsApp",
+          "description": "Підключити WhatsApp Business"
+        },
+        "novaPoshta": {
+          "title": "Нова Пошта",
+          "description": "Підключити налаштування відділень і доставки"
+        },
+        "tiktok": {
+          "title": "TikTok",
+          "description": "Підключити акаунт TikTok"
+        },
+        "prom": {
+          "title": "Prom",
+          "description": "Підключити магазин Prom"
+        }
+      }
     }
   },
   "system": {
@@ -100,7 +171,6 @@
     "drawerTitle": "Розмови",
     "selectConversation": "Оберіть розмову",
     "noMessages": "Поки немає повідомлень.",
-    "listLoadingErrorPrefix": "",
     "youPrefix": "Ви:",
     "filterAllGroups": "Усі групи",
     "markRead": "Позначити прочитаним",
@@ -114,27 +184,11 @@
     "clientPanelAria": "Інформація про клієнта",
     "closeClientPanelAria": "Закрити панель клієнта",
     "clientPanelTitle": "Клієнт",
-    "participantSection": "Учасник",
-    "conversationSection": "Розмова",
-    "labelId": "ID",
-    "labelName": "Ім'я",
-    "labelUsername": "Юзернейм",
-    "labelPhoto": "Фото",
-    "openPhotoUrl": "Відкрити посилання",
-    "labelUpdatedIg": "Оновлено (IG)",
-    "labelUnread": "Не прочитано",
-    "labelSource": "Джерело",
-    "labelGroup": "Група",
-    "labelLastFromMe": "Останнє від мене",
-    "labelLastPreview": "Попередній перегляд останнього повідомлення",
-    "yes": "Так",
-    "no": "Ні",
     "noGroup": "Без групи",
     "groupSelectPlaceholder": "Без групи",
     "clientNotLinked": "Ще не збережено як клієнта.",
     "addClient": "Додати клієнта",
     "backFromCreate": "Назад",
-    "clientDetailsSection": "Клієнт",
     "clientRecordMissing": "Не вдалося завантажити картку клієнта.",
     "clientOrders": {
       "delivery": "Доставка",
@@ -150,7 +204,6 @@
       "totalLabel": "Разом",
       "showMore": "Показати більше",
       "showLess": "Показати менше",
-      "goodsCount": "{{count}} товарів",
       "createOrder": "Створити замовлення",
       "drawerTitle": "Створити замовлення",
       "closeDrawerAria": "Закрити",
@@ -187,10 +240,7 @@
         "billingCard": "Картка",
         "commentLabel": "Коментар",
         "commentPlaceholder": "Коментар до замовлення"
-      },
-      "statusDelivered": "Доставлено",
-      "statusNotDelivered": "Не доставлено",
-      "statusDelivering": "Доставляється"
+      }
     }
   },
   "products": {
@@ -200,21 +250,13 @@
       "summary": "Показано {{from}}–{{to}} з {{total}} товарів"
     },
     "toolbar": {
-      "searchPlaceholder": "Пошук товарів…",
       "filters": "Фільтри",
       "category": "Категорія",
       "status": "Статус",
-      "allCategories": "Усі категорії",
       "allStatuses": "Усі статуси",
       "statusDraft": "Чернетка",
       "statusActive": "Активний",
       "statusArchived": "Архівований",
-      "sortNewest": "Сортування: спочатку нові",
-      "sortOldest": "Сортування: спочатку старі",
-      "sortNameAsc": "Сортування: назва А–Я",
-      "sortNameDesc": "Сортування: назва Я–А",
-      "sortPriceAsc": "Сортування: ціна (зростання)",
-      "sortPriceDesc": "Сортування: ціна (спадання)",
       "searchPlaceholderMinChars": "Пошук товарів (мінімум 3 символи)…"
     },
     "listSort": {
@@ -246,12 +288,9 @@
       "panelApply": "Застосувати"
     },
     "listView": {
-      "list": "Список",
-      "grid": "Плитки",
       "toggleAria": "Вигляд списку товарів"
     },
     "addProductCta": "Додати товар",
-    "modalCreateTitle": "Додати товар",
     "modalCreateOk": "Додати товар",
     "addPage": {
       "title": "Додати товар",
@@ -273,7 +312,6 @@
       "noBio": "Біо недоступне",
       "noCaption": "Без підпису",
       "openOnInstagram": "Відкрити в Instagram",
-      "categoryRequired": "Спочатку оберіть категорію у формі або використайте результат із запропонованою категорією.",
       "fillFormHeading": "Заповнити форму товару за допомогою AI",
       "fillFormIntro": "AI проаналізує пост і заповнить форму запропонованими даними. Ви можете все змінити й зберегти товар, коли будете готові.",
       "fillFormWhatTitle": "Що буде заповнено:",
@@ -282,15 +320,9 @@
       "fillFormItemPrice": "Ціна (якщо вказана)",
       "fillFormItemMedia": "Обкладинка та зображення галереї (якщо URL можна завантажити)",
       "fillFormItemVariants": "Чернетки варіантів (кольори та розміри)",
-      "analyzeFillButton": "Проаналізувати й заповнити форму",
-      "fillFormSuccess": "Форму заповнено з поста. Перевірте дані та збережіть товар, коли будете готові."
+      "analyzeFillButton": "Проаналізувати й заповнити форму"
     },
-    "modalEditTitle": "Редагувати товар",
-    "detailTitle": "Деталі товару",
     "detailBackToList": "Назад до списку товарів",
-    "detailMediaTitle": "Фото",
-    "save": "Зберегти",
-    "saving": "Збереження…",
     "autoSaveSuccess": "Збережено",
     "edit": "Редагувати",
     "cancelEdit": "Скасувати",
@@ -298,7 +330,6 @@
     "deleteConfirm": "Видалити цей товар?",
     "createSuccess": "Товар додано",
     "createFailed": "Не вдалося додати товар",
-    "updateSuccess": "Товар оновлено",
     "updateFailed": "Не вдалося оновити товар",
     "deleteSuccess": "Товар видалено",
     "deleteFailed": "Не вдалося видалити товар",
@@ -311,20 +342,10 @@
     "detailLoadFailed": "Не вдалося завантажити товар",
     "noSizes": "Розміри не вказані",
     "noCategory": "Без категорії",
-    "noDescription": "Опис відсутній",
     "noPrice": "Ціну не вказано",
-    "noProductSelected": "Товар не вибрано",
     "outOfStock": "Немає в наявності",
     "unknownQuantity": "Невідомо",
-    "variantDash": "—",
-    "variantDeleteConfirm": "Видалити цей варіант?",
-    "yes": "Так",
-    "no": "Ні",
-    "variantsTitle": "Варіанти",
     "variantAddCta": "Додати варіант",
-    "variantCreateTitle": "Додати варіант",
-    "variantEditTitle": "Редагувати варіант",
-    "openInstagram": "Відкрити в Instagram",
     "status": {
       "draft": "Чернетка",
       "active": "Активний",
@@ -345,7 +366,19 @@
       "enterCustomValue": "Введіть власне значення",
       "add": "Додати характеристику",
       "addValues": "Додайте значення",
-      "addCustomValues": "Додайте власні значення"
+      "addCustomValues": "Додайте власні значення",
+      "savedCharacteristics": "Збережені характеристики",
+      "createAs": "Створити «{{name}}» як:",
+      "text": "Текст",
+      "option": "Список",
+      "freeField": "вільне поле",
+      "optionValues": "варіанти на вибір",
+      "optionCount": "{{count}} вар.",
+      "enterNameToCreate": "Введіть назву, щоб створити нову характеристику",
+      "enterName": "Введіть назву характеристики",
+      "addOptionValue": "Додати «{{value}}»",
+      "savedToList": "— збережеться у список",
+      "dragRow": "Перетягнути характеристику"
     },
     "variantsForm": {
       "title": "Варіанти товару",
@@ -361,19 +394,9 @@
       "name": "Назва",
       "description": "Опис",
       "status": "Статус",
-      "currency": "Валюта",
       "price": "Ціна",
       "quantity": "Кількість",
       "category": "Категорія",
-      "mediaUrl": "Посилання на зображення (HTTPS)",
-      "mediaSourceUrl": "Джерело (необов'язково)",
-      "mediaUpload": "Медіа",
-      "coverImage": "Обкладинка",
-      "optionalPlaceholder": "Необов'язково",
-      "sourceType": "Source type",
-      "sourceId": "Source ID",
-      "referenceGroupId": "Reference Group ID",
-      "inStock": "В наявності",
       "required": "Обов'язково",
       "mainInfoTitle": "Основна інформація про товар",
       "namePlaceholder": "Введіть назву товару",
@@ -383,29 +406,12 @@
     "media": {
       "sectionTitle": "Зображення товару",
       "sectionSubtitle": "Додайте фото товару",
-      "empty": "Поки немає зображень.",
-      "add": "Додати зображення",
-      "addSubmit": "Додати зображення",
-      "deleteConfirm": "Прибрати це зображення?",
       "deleteTooltip": "Видалити",
       "deleteFailed": "Не вдалося видалити зображення",
-      "uploadSelect": "Обрати файл зображення",
       "dragUploadTitle": "Натисни або перетягни зображення сюди",
-      "dragUploadHint": "Кожен файл відкриває обрізку. Можна додати кілька; на сервер поки йде лише обрана обкладинка.",
-      "coverPickHint": "Обери, яке зображення буде обкладинкою товару.",
       "coverRadioLabel": "Обкладинка",
-      "removeFromGallery": "Прибрати",
-      "clearAllImages": "Прибрати всі зображення",
       "urlTooLong": "Посилання не довше {{max}} символів (ліміт сервера). Використай коротше HTTPS або менше зображення.",
-      "uploadHint": "API очікує JSON: поле \"url\" (рядок) та \"type\": \"image\". Локальний файл перетворюється на data URL — великі фото можуть перевищити ліміт; краще залити файл у сховище й вставити HTTPS.",
-      "uploadClear": "Прибрати",
-      "cropModalTitle": "Обрізати зображення",
       "cropOk": "Застосувати",
-      "cropCancel": "Скасувати",
-      "previewOpen": "Перегляд",
-      "uploadManyHint": "Кожне обрання відкриває обрізку; можна додати скільки завгодно зображень.",
-      "replaceCover": "Замінити обкладинку",
-      "cancelReplace": "Скасувати заміну",
       "uploadHintShort": "PNG, JPG, WEBP до 10 МБ",
       "invalidType": "Дозволені лише зображення PNG, JPG і WEBP",
       "tooLarge": "Зображення має бути меншим за 10 МБ",
@@ -413,21 +419,10 @@
       "usedByVariants": "Це зображення використовується у варіантах товару. Спочатку приберіть його з варіантів."
     },
     "variant": {
-      "color": "Колір",
-      "size": "Розмір",
       "price": "Ціна",
       "quantity": "Кількість",
-      "inStock": "В наявності",
-      "imageUrl": "Посилання на зображення",
-      "mediaUpload": "Зображення варіанта",
-      "mediaUploadHint": "Після збереження відправляємо JSON на PUT …/variants/…/media — { items: [{ url, type: \"image\" }] }. Файл стає data URL, якщо вкладається в ліміт.",
       "sku": "SKU",
-      "upload": "Завантажити",
-      "finishEditingFirst": "Збережіть або видаліть варіанти, які ще редагуються.",
       "imagePickerTitle": "Зображення варіанта",
-      "imagePickerExisting": "Оберіть із фото товару",
-      "imagePickerEmpty": "У товару ще немає фото. Завантажте нижче.",
-      "imagePickerUploadNew": "Або завантажте нове зображення",
       "images": "Зображення",
       "imageCountOne": "{{count}} зображ.",
       "imageCount": "{{count}} зображ.",
@@ -488,8 +483,6 @@
       "id": "ID",
       "customer": "Клієнт",
       "status": "Статус",
-      "payment": "Оплата",
-      "delivery": "Доставка",
       "total": "Сума",
       "source": "Джерело",
       "internalNote": "Внутрішня нотатка",
@@ -615,8 +608,7 @@
     "deleteFailed": "Не вдалося видалити клієнта",
     "required": "Обов'язково",
     "phonePlaceholder": "+380 …",
-    "phoneInvalid": "Уведіть коректний номер телефону",
-    "phoneMinDigits": "Уведіть щонайменше {{count}} цифр"
+    "phoneInvalid": "Уведіть коректний номер телефону"
   },
   "categories": {
     "title": "Категорії",

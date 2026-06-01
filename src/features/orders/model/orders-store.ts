@@ -130,11 +130,6 @@ export class OrdersStore {
     this.page = page;
   };
 
-  setStatusId = (statusId: number | null): void => {
-    this.statusId = statusId;
-    this.page = 1;
-  };
-
   loadStatuses = async (options?: { force?: boolean }): Promise<void> => {
     if (this.statuses.length > 0 && options?.force !== true) {
       return;
