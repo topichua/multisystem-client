@@ -4,7 +4,7 @@ import { initReactI18next } from "react-i18next";
 import en from "@/i18n/locales/en.json";
 import uk from "@/i18n/locales/uk.json";
 
-export const LOCALE_STORAGE_KEY = 'multisale-locale';
+export const LOCALE_STORAGE_KEY = "multisale-locale";
 
 function storedLng(): string {
   try {

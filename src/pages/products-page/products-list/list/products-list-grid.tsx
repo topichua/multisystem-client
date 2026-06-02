@@ -83,11 +83,11 @@ export const ProductsListGrid = ({
                   <div
                     style={{
                       height: 160,
-                      background: '#f5f5f5',
-                      overflow: 'hidden',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
+                      background: "#f5f5f5",
+                      overflow: "hidden",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
                     }}
                   >
                     {product.mainImageUrl ? (
@@ -95,9 +95,9 @@ export const ProductsListGrid = ({
                         src={product.mainImageUrl}
                         alt=""
                         style={{
-                          width: '100%',
-                          height: '100%',
-                          objectFit: 'cover',
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
                         }}
                       />
                     ) : null}
@@ -112,23 +112,23 @@ export const ProductsListGrid = ({
                     {product.categoryId != null
                       ? (categoryNameById.get(product.categoryId) ??
                         `#${product.categoryId}`)
-                      : t('products.noCategory')}
+                      : t("products.noCategory")}
                   </Text>
                   <Text>
                     {product.price != null
                       ? `${product.price.toLocaleString()} ${product.currency}`
-                      : t('products.noPrice')}
+                      : t("products.noPrice")}
                   </Text>
                   <Text type="secondary" style={{ fontSize: 12 }}>
                     {product.inStock === false
-                      ? t('products.outOfStock')
+                      ? t("products.outOfStock")
                       : product.quantity == null
-                        ? t('products.unknownQuantity')
+                        ? t("products.unknownQuantity")
                         : String(product.quantity)}
                   </Text>
                   <Tag
-                    color={statusToColor[product.status] ?? 'processing'}
-                    style={{ width: 'fit-content' }}
+                    color={statusToColor[product.status] ?? "processing"}
+                    style={{ width: "fit-content" }}
                   >
                     {product.status}
                   </Tag>
@@ -142,11 +142,11 @@ export const ProductsListGrid = ({
                       type="text"
                       size="small"
                       icon={<PencilSimpleIcon size={18} />}
-                      aria-label={t('products.edit')}
+                      aria-label={t("products.edit")}
                       onClick={() => void onEdit(product.id)}
                     />
                     <Popconfirm
-                      title={t('products.deleteConfirm')}
+                      title={t("products.deleteConfirm")}
                       onConfirm={() => void onDelete(product.id)}
                     >
                       <Button
@@ -155,7 +155,7 @@ export const ProductsListGrid = ({
                         danger
                         loading={deleteLoadingId === product.id}
                         icon={<TrashIcon size={18} />}
-                        aria-label={t('products.delete')}
+                        aria-label={t("products.delete")}
                       />
                     </Popconfirm>
                   </Flex>
