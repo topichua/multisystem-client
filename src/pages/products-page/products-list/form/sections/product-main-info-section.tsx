@@ -41,7 +41,7 @@ export const ProductMainInfoSection = ({
     <Card>
       <Flex vertical gap={12}>
         <Title level={5} style={{ margin: 0 }}>
-          {t('products.form.mainInfoTitle')}
+          {t("products.form.mainInfoTitle")}
         </Title>
 
         <Row gutter={24}>
@@ -56,7 +56,7 @@ export const ProductMainInfoSection = ({
                 },
               ]}
             >
-              <Input placeholder={t('products.form.namePlaceholder')} />
+              <Input placeholder={t("products.form.namePlaceholder")} />
             </Form.Item>
           </Col>
 
@@ -72,7 +72,7 @@ export const ProductMainInfoSection = ({
               ]}
             >
               <Select
-                placeholder={t('products.form.categoryPlaceholder')}
+                placeholder={t("products.form.categoryPlaceholder")}
                 options={categoryOptions}
               />
             </Form.Item>
@@ -80,11 +80,11 @@ export const ProductMainInfoSection = ({
 
           <Col span={24}>
             <Form.Item
-              label={t('products.form.description')}
+              label={t("products.form.description")}
               name="description"
             >
               <Input.TextArea
-                placeholder={t('products.form.descriptionPlaceholder')}
+                placeholder={t("products.form.descriptionPlaceholder")}
                 maxLength={1000}
                 showCount
                 autoSize={{ minRows: 2, maxRows: 10 }}
@@ -102,7 +102,7 @@ export const ProductMainInfoSection = ({
                   message: requiredMessage,
                 },
                 {
-                  type: 'number',
+                  type: "number",
                   min: 0,
                   message: requiredMessage,
                 },
@@ -111,7 +111,7 @@ export const ProductMainInfoSection = ({
               <InputNumber
                 min={0}
                 placeholder="0.00"
-                style={{ width: '100%' }}
+                style={{ width: "100%" }}
               />
             </Form.Item>
           </Col>
@@ -126,7 +126,7 @@ export const ProductMainInfoSection = ({
                   message: requiredMessage,
                 },
                 {
-                  type: 'number',
+                  type: "number",
                   min: 0,
                   message: requiredMessage,
                 },
@@ -136,7 +136,7 @@ export const ProductMainInfoSection = ({
                 min={0}
                 precision={0}
                 placeholder="0"
-                style={{ width: '100%' }}
+                style={{ width: "100%" }}
               />
             </Form.Item>
           </Col>
@@ -144,7 +144,7 @@ export const ProductMainInfoSection = ({
 
         <Flex vertical gap={16}>
           <Title level={5} style={{ margin: 0 }}>
-            {t('products.publication.title')}
+            {t("products.publication.title")}
           </Title>
 
           <Form.Item
@@ -161,7 +161,7 @@ export const ProductMainInfoSection = ({
             <Select options={statusOptions} />
           </Form.Item>
 
-          <Text type="secondary">{t('products.publication.draftHint')}</Text>
+          <Text type="secondary">{t("products.publication.draftHint")}</Text>
         </Flex>
       </Flex>
     </Card>

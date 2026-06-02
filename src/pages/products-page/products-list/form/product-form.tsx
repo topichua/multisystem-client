@@ -103,7 +103,7 @@ export const ProductForm = ({
           type="text"
           icon={<ArrowLeftIcon size={20} />}
           onClick={onBack}
-          style={{ alignSelf: 'flex-start', paddingInlineStart: 0 }}
+          style={{ alignSelf: "flex-start", paddingInlineStart: 0 }}
         >
           {backLabel}
         </Button>
@@ -118,7 +118,7 @@ export const ProductForm = ({
           onFinishFailed={handleFinishFailed}
           style={{ marginBottom: 50 }}
         >
-          <Flex vertical gap={16} style={{ maxWidth: 1100, margin: '0 auto' }}>
+          <Flex vertical gap={16} style={{ maxWidth: 1100, margin: "0 auto" }}>
             <ProductFormHeader title={title} subtitle={subtitle} />
 
             <Flex vertical gap={16}>
@@ -146,7 +146,7 @@ export const ProductForm = ({
                 texts={mediaProps.texts}
               />
 
-              {productType === 'single' ? (
+              {productType === "single" ? (
                 <SingleProductCharacteristicsSection
                   form={form}
                   watchedSingleCharacteristics={
@@ -167,7 +167,7 @@ export const ProductForm = ({
                 />
               ) : null}
 
-              {productType === 'variants' ? (
+              {productType === "variants" ? (
                 <ProductVariantsSection
                   productVariants={variantsProps.productVariants}
                   variantTableColumns={variantsProps.variantTableColumns}
@@ -192,7 +192,7 @@ export const ProductForm = ({
                 loading={submitButtonProps.loading}
                 disabled={submitButtonProps.disabled}
                 icon={
-                  submitButtonProps.icon === 'save' ? (
+                  submitButtonProps.icon === "save" ? (
                     <FloppyDiskIcon size={18} />
                   ) : (
                     <PlusIcon size={18} />

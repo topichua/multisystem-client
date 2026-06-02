@@ -80,13 +80,13 @@ export const ProductVariantsSection = ({
       <Flex vertical gap={24}>
         <Flex vertical gap={4}>
           <Title level={5} style={{ margin: 0 }}>
-            {t('products.variantsForm.title')}
+            {t("products.variantsForm.title")}
           </Title>
 
-          <Text type="secondary">{t('products.variantsForm.description')}</Text>
+          <Text type="secondary">{t("products.variantsForm.description")}</Text>
         </Flex>
 
-        <Card size="small" title={t('products.characteristics.title')}>
+        <Card size="small" title={t("products.characteristics.title")}>
           <Form.List name="characteristics">
             {(fields, { add, remove, move }) => {
               const rowIds = fields.map((field) => field.key);
@@ -127,10 +127,10 @@ export const ProductVariantsSection = ({
                             : undefined;
                           const rowField =
                             row?.field ??
-                            (typeof row?.attributeId === 'number' &&
+                            (typeof row?.attributeId === "number" &&
                             Number.isFinite(row.attributeId)
                               ? ({
-                                  kind: 'existing',
+                                  kind: "existing",
                                   id: row.attributeId,
                                 } satisfies CharacteristicFieldRef)
                               : undefined);
@@ -142,42 +142,42 @@ export const ProductVariantsSection = ({
                               )
                             : null;
                           const rowAttributeId =
-                            rowField?.kind === 'existing'
+                            rowField?.kind === "existing"
                               ? rowField.id
                               : undefined;
                           const valuesPlaceholder = !hasSelectedCharacteristic
-                            ? t('products.characteristics.chooseFirst')
-                            : fieldType === 'OPTION'
-                              ? t('products.characteristics.addValues')
-                              : t('products.characteristics.addCustomValues');
+                            ? t("products.characteristics.chooseFirst")
+                            : fieldType === "OPTION"
+                              ? t("products.characteristics.addValues")
+                              : t("products.characteristics.addCustomValues");
 
                           return (
                             <SortableCharacteristicRow
                               key={field.key}
                               id={field.key}
-                              dragLabel={t('products.characteristics.dragRow')}
+                              dragLabel={t("products.characteristics.dragRow")}
                             >
                               <Form.Item
-                                name={[field.name, 'field']}
+                                name={[field.name, "field"]}
                                 getValueFromEvent={(
                                   nextField: CharacteristicFieldRef | undefined,
                                 ) => {
                                   form.setFieldValue(
                                     [
-                                      'characteristics',
+                                      "characteristics",
                                       field.name,
-                                      'attributeId',
+                                      "attributeId",
                                     ],
-                                    nextField?.kind === 'existing'
+                                    nextField?.kind === "existing"
                                       ? nextField.id
                                       : undefined,
                                   );
                                   form.setFieldValue(
-                                    ['characteristics', field.name, 'values'],
+                                    ["characteristics", field.name, "values"],
                                     undefined,
                                   );
                                   form.setFieldValue(
-                                    ['characteristics', field.name, 'value'],
+                                    ["characteristics", field.name, "value"],
                                     undefined,
                                   );
                                   return nextField;
@@ -187,12 +187,12 @@ export const ProductVariantsSection = ({
                                     validator: async (_, nextField) => {
                                       if (!nextField) {
                                         throw new Error(
-                                          t('products.characteristics.choose'),
+                                          t("products.characteristics.choose"),
                                         );
                                       }
 
                                       if (
-                                        nextField.kind === 'new' &&
+                                        nextField.kind === "new" &&
                                         (!nextField.name.trim() ||
                                           !normalizeCharacteristicName(
                                             nextField.name,
@@ -200,7 +200,7 @@ export const ProductVariantsSection = ({
                                       ) {
                                         throw new Error(
                                           t(
-                                            'products.characteristics.enterName',
+                                            "products.characteristics.enterName",
                                           ),
                                         );
                                       }
@@ -211,7 +211,7 @@ export const ProductVariantsSection = ({
                               >
                                 <CharacteristicFieldSelect
                                   placeholder={t(
-                                    'products.characteristics.choose',
+                                    "products.characteristics.choose",
                                   )}
                                   availableFields={variantCustomFields}
                                   selectedFields={selectedFields}
@@ -220,14 +220,14 @@ export const ProductVariantsSection = ({
                                 />
                               </Form.Item>
 
-                              {fieldType === 'TEXT' ? (
+                              {fieldType === "TEXT" ? (
                                 <Form.Item
-                                  name={[field.name, 'value']}
+                                  name={[field.name, "value"]}
                                   rules={[
                                     {
                                       required: true,
                                       message: t(
-                                        'products.characteristics.enterValue',
+                                        "products.characteristics.enterValue",
                                       ),
                                     },
                                   ]}
@@ -240,12 +240,12 @@ export const ProductVariantsSection = ({
                                 </Form.Item>
                               ) : (
                                 <Form.Item
-                                  name={[field.name, 'values']}
+                                  name={[field.name, "values"]}
                                   rules={[
                                     {
                                       required: true,
                                       message: t(
-                                        'products.characteristics.addValues',
+                                        "products.characteristics.addValues",
                                       ),
                                     },
                                   ]}
@@ -276,9 +276,9 @@ export const ProductVariantsSection = ({
                   <Button
                     icon={<PlusIcon />}
                     onClick={() => add()}
-                    style={{ alignSelf: 'flex-start' }}
+                    style={{ alignSelf: "flex-start" }}
                   >
-                    {t('products.characteristics.add')}
+                    {t("products.characteristics.add")}
                   </Button>
                 </Flex>
               );
@@ -288,7 +288,7 @@ export const ProductVariantsSection = ({
 
         <Flex vertical gap={12}>
           <Title level={5} style={{ margin: 0 }}>
-            {t('products.variantsForm.variants')}{' '}
+            {t("products.variantsForm.variants")}{" "}
             <Text type="secondary" style={{ fontSize: 14 }}>
               {productVariants.length}
             </Text>
@@ -302,17 +302,17 @@ export const ProductVariantsSection = ({
               gap={16}
               style={{
                 padding: 32,
-                border: '1px dashed #d9d9d9',
+                border: "1px dashed #d9d9d9",
                 borderRadius: 8,
-                background: '#fafafa',
+                background: "#fafafa",
               }}
             >
-              <Text type="secondary" style={{ textAlign: 'center' }}>
-                {t('products.variantsForm.empty')}
+              <Text type="secondary" style={{ textAlign: "center" }}>
+                {t("products.variantsForm.empty")}
               </Text>
 
               <Button icon={<PlusIcon />} onClick={onAddManualVariant}>
-                {t('products.variantAddCta')}
+                {t("products.variantAddCta")}
               </Button>
             </Flex>
           ) : (
@@ -328,9 +328,9 @@ export const ProductVariantsSection = ({
               <Button
                 icon={<PlusIcon />}
                 onClick={onAddManualVariant}
-                style={{ alignSelf: 'flex-start' }}
+                style={{ alignSelf: "flex-start" }}
               >
-                {t('products.variantAddCta')}
+                {t("products.variantAddCta")}
               </Button>
             </>
           )}

@@ -10,7 +10,7 @@ export const UploadedMediaPreview = styled.div<{ $isMain: boolean }>`
   overflow: hidden;
   border: 1px solid ${(props) => props.theme.colors.functional.border.split};
   box-shadow: ${(props) =>
-    props.$isMain ? `0 0 0 2px ${props.theme.colors.base.blue[5]}` : 'none'};
+    props.$isMain ? `0 0 0 2px ${props.theme.colors.base.blue[5]}` : "none"};
 
   img {
     width: 100%;

@@ -44,9 +44,9 @@ export const ProductTypeSection = ({
     <Card>
       <Flex vertical wrap={true} gap={16}>
         <Flex vertical>
-          <Title level={5}>{t('products.productType.title')}</Title>
+          <Title level={5}>{t("products.productType.title")}</Title>
 
-          <Text type="secondary">{t('products.productType.description')}</Text>
+          <Text type="secondary">{t("products.productType.description")}</Text>
         </Flex>
 
         <Radio.Group
@@ -65,8 +65,8 @@ export const ProductTypeSection = ({
                   onClick={() => onChange(option.value)}
                   style={{
                     width: 400,
-                    borderColor: isSelected ? '#9254de' : undefined,
-                    boxShadow: isSelected ? '0 0 0 1px #9254de' : undefined,
+                    borderColor: isSelected ? "#9254de" : undefined,
+                    boxShadow: isSelected ? "0 0 0 1px #9254de" : undefined,
                   }}
                   styles={{
                     body: {
@@ -80,7 +80,7 @@ export const ProductTypeSection = ({
                         style={{
                           fontSize: 28,
                           lineHeight: 1,
-                          color: isSelected ? '#9254de' : undefined,
+                          color: isSelected ? "#9254de" : undefined,
                         }}
                       >
                         {option.icon}
