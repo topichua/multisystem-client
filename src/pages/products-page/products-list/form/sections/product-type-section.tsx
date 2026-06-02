@@ -70,7 +70,7 @@ export const ProductTypeSection = ({
                   }}
                   styles={{
                     body: {
-                      padding: 24,
+                      padding: "12px 16px 12px 24px",
                     },
                   }}
                 >
