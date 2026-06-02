@@ -87,7 +87,7 @@ export const ProductMainInfoSection = ({
                 placeholder={t('products.form.descriptionPlaceholder')}
                 maxLength={1000}
                 showCount
-                autoSize={{ minRows: 4, maxRows: 6 }}
+                autoSize={{ minRows: 2, maxRows: 10 }}
               />
             </Form.Item>
           </Col>

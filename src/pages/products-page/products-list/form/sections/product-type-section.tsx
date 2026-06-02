@@ -74,20 +74,22 @@ export const ProductTypeSection = ({
                     },
                   }}
                 >
-                  <Flex align="flex-start" gap={20}>
-                    <Text
-                      style={{
-                        fontSize: 28,
-                        lineHeight: 1,
-                        color: isSelected ? '#9254de' : undefined,
-                      }}
-                    >
-                      {option.icon}
-                    </Text>
+                  <Flex justify="space-between" align="flex-start" gap={0}>
+                    <Flex gap={16}>
+                      <Text
+                        style={{
+                          fontSize: 28,
+                          lineHeight: 1,
+                          color: isSelected ? '#9254de' : undefined,
+                        }}
+                      >
+                        {option.icon}
+                      </Text>
 
-                    <Flex vertical flex={1}>
-                      <Text strong>{t(option.titleKey)}</Text>
-                      <Text type="secondary">{t(option.descriptionKey)}</Text>
+                      <Flex vertical flex={1}>
+                        <Text strong>{t(option.titleKey)}</Text>
+                        <Text type="secondary">{t(option.descriptionKey)}</Text>
+                      </Flex>
                     </Flex>
 
                     <Radio value={option.value} />
