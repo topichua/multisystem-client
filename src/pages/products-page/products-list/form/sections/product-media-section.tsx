@@ -148,7 +148,7 @@ export const ProductMediaSection = ({
     <Card>
       <Flex vertical gap={24}>
         <Flex vertical>
-          <Title level={4} style={{ margin: 0 }}>
+          <Title level={5} style={{ margin: 0 }}>
             {texts.title}
           </Title>
 

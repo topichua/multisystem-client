@@ -9,13 +9,10 @@ export type ProductFormHeaderProps = {
   subtitle: string;
 };
 
-export const ProductFormHeader = ({
-  title,
-  subtitle,
-}: ProductFormHeaderProps) => (
+export const ProductFormHeader = ({ title, subtitle }: ProductFormHeaderProps) => (
   <Flex justify="space-between" align="flex-start" gap={24}>
     <Flex vertical>
-      <Title level={3} style={{ margin: 0 }}>
+      <Title level={2} style={{ margin: 0 }}>
         {title}
       </Title>
 

@@ -71,7 +71,7 @@ export const SingleProductCharacteristicsSection = ({
     <Card>
       <Flex vertical gap={24}>
         <Flex vertical gap={4}>
-          <Title level={4} style={{ margin: 0 }}>
+          <Title level={5} style={{ margin: 0 }}>
             {t("products.characteristics.title")}
           </Title>
 
