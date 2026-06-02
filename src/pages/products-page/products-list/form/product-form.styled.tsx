@@ -3,14 +3,14 @@ import styled, { css } from "styled-components";
 
 export const UploadedMediaPreview = styled.div<{ $isMain: boolean }>`
   position: relative;
-  width: 134px;
-  height: 134px;
+  width: 138px;
+  height: 138px;
   flex-shrink: 0;
   border-radius: 8px;
   overflow: hidden;
   border: 1px solid ${(props) => props.theme.colors.functional.border.split};
   box-shadow: ${(props) =>
-    props.$isMain ? `0 0 0 2px ${props.theme.colors.base.blue[5]}` : "none"};
+    props.$isMain ? `0 0 0 2px ${props.theme.colors.base.blue[5]}` : 'none'};
 
   img {
     width: 100%;

@@ -167,7 +167,7 @@ export const ProductMediaSection = ({
               showUploadList={false}
               beforeUpload={onBeforeUpload}
               customRequest={onUpload}
-              style={{ width: 300 }}
+              style={{ minHeight: 134 }}
             >
               <p className="ant-upload-drag-icon">
                 <CloudArrowUpIcon size={32} />
