@@ -3,12 +3,12 @@ import { makeAutoObservable, runInAction } from "mobx";
 import { productsApi } from "@/features/products/api/products-api";
 import type {
   CreateProductPayload,
+  UpdateProductPayload,
   VariantCustomField,
 } from "@/features/products/model/product-create-api.types";
 import type {
   Product,
   ProductDetails,
-  // ProductUpdatePayload,
   ProductsListSort,
 } from "@/features/products/model/product.types";
 import { unknownErrorMessage } from "@/utils/unknown-error-message";
@@ -344,33 +344,33 @@ export class ProductsStore {
     }
   };
 
-  // updateProduct = async (
-  //   id: number,
-  //   payload: ProductUpdatePayload,
-  //   coverImage?: File | null,
-  //   options?: { silent?: boolean },
-  // ): Promise<void> => {
-  //   if (!options?.silent) {
-  //     runInAction(() => {
-  //       this.saveLoading = true;
-  //     });
-  //   }
+  updateProduct = async (
+    id: number,
+    payload: UpdateProductPayload,
+    options?: { silent?: boolean },
+  ): Promise<ProductDetails> => {
+    if (!options?.silent) {
+      runInAction(() => {
+        this.saveLoading = true;
+      });
+    }
 
-  //   try {
-  //     const updated = await productsApi.update(id, payload, coverImage);
-  //     runInAction(() => {
-  //       this.activeProduct = updated;
-  //     });
+    try {
+      const updated = await productsApi.updateProduct(id, payload);
+      runInAction(() => {
+        this.activeProduct = updated;
+      });
 
-  //     await this.loadProducts({ silent: true });
-  //   } finally {
-  //     if (!options?.silent) {
-  //       runInAction(() => {
-  //         this.saveLoading = false;
-  //       });
-  //     }
-  //   }
-  // };
+      await this.loadProducts({ silent: true });
+      return updated;
+    } finally {
+      if (!options?.silent) {
+        runInAction(() => {
+          this.saveLoading = false;
+        });
+      }
+    }
+  };
 
   deleteProduct = async (id: number): Promise<void> => {
     runInAction(() => {
@@ -394,44 +394,45 @@ export class ProductsStore {
     }
   };
 
-  // loadProductById = async (
-  //   id: number,
-  //   options?: { silent?: boolean },
-  // ): Promise<void> => {
-  //   if (!options?.silent) {
-  //     runInAction(() => {
-  //       this.detailLoading = true;
-  //       this.detailError = null;
-  //     });
-  //   }
+  loadProductById = async (
+    id: number,
+    options?: { silent?: boolean },
+  ): Promise<ProductDetails> => {
+    if (!options?.silent) {
+      runInAction(() => {
+        this.detailLoading = true;
+        this.detailError = null;
+      });
+    }
 
-  //   try {
-  //     const data = await productsApi.getById(id);
-  //     runInAction(() => {
-  //       this.activeProduct = data;
-  //     });
-  //   } catch (e) {
-  //     if (!options?.silent) {
-  //       runInAction(() => {
-  //         this.detailError = unknownErrorMessage(e);
-  //       });
-  //     }
-  //     throw e;
-  //   } finally {
-  //     if (!options?.silent) {
-  //       runInAction(() => {
-  //         this.detailLoading = false;
-  //       });
-  //     }
-  //   }
-  // };
+    try {
+      const data = await productsApi.getById(id);
+      runInAction(() => {
+        this.activeProduct = data;
+      });
+      return data;
+    } catch (e) {
+      if (!options?.silent) {
+        runInAction(() => {
+          this.detailError = unknownErrorMessage(e);
+        });
+      }
+      throw e;
+    } finally {
+      if (!options?.silent) {
+        runInAction(() => {
+          this.detailLoading = false;
+        });
+      }
+    }
+  };
 
-  // clearActiveProduct = (): void => {
-  //   runInAction(() => {
-  //     this.activeProduct = null;
-  //     this.detailError = null;
-  //   });
-  // };
+  clearActiveProduct = (): void => {
+    runInAction(() => {
+      this.activeProduct = null;
+      this.detailError = null;
+    });
+  };
 
   loadVariantCustomFields = async (): Promise<void> => {
     runInAction(() => {

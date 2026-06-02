@@ -1,5 +1,5 @@
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
-import { ArrowLeftIcon, PlusIcon } from "@phosphor-icons/react";
+import { ArrowLeftIcon, FloppyDiskIcon, PlusIcon } from "@phosphor-icons/react";
 import { Button, Flex, Form } from "antd";
 import type { FormInstance, FormProps } from "antd";
 import { useCallback } from "react";
@@ -142,6 +142,7 @@ export const ProductForm = ({
                 onBeforeUpload={mediaProps.onBeforeUpload}
                 onUpload={mediaProps.onUpload}
                 onDelete={mediaProps.onDelete}
+                onReorder={mediaProps.onReorder}
                 texts={mediaProps.texts}
               />
 
@@ -190,7 +191,13 @@ export const ProductForm = ({
                 htmlType="submit"
                 loading={submitButtonProps.loading}
                 disabled={submitButtonProps.disabled}
-                icon={<PlusIcon size={18} />}
+                icon={
+                  submitButtonProps.icon === "save" ? (
+                    <FloppyDiskIcon size={18} />
+                  ) : (
+                    <PlusIcon size={18} />
+                  )
+                }
                 size="large"
               >
                 {submitButtonProps.label}

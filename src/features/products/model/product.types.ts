@@ -1,8 +1,10 @@
 export type ProductStatus = "draft" | "active" | "archived" | string;
+export type ProductType = "single" | "variants" | string;
 
 export type Product = {
   id: number;
   name: string;
+  productType?: ProductType;
   description?: string | null;
   status: ProductStatus;
   price: number | null;
@@ -27,8 +29,9 @@ export type ProductCategoryRef = {
 
 export type ProductVariant = {
   id: number;
-  color: string | null;
-  size: string | null;
+  customFields?: ProductVariantCustomField[];
+  color?: string | null;
+  size?: string | null;
   price: number | null;
   inStock: boolean | null;
   quantity: number | null;
@@ -36,7 +39,17 @@ export type ProductVariant = {
   sku: string | null;
   createdAt: string;
   updatedAt: string;
-  media: unknown[];
+  status?: ProductStatus;
+  media: ProductMediaItem[];
+};
+
+export type ProductVariantCustomField = {
+  fieldId: number;
+  key: string;
+  label: string;
+  type: "options" | "text" | string;
+  value: string;
+  order: number;
 };
 
 export type ProductSourceReference = {
@@ -53,7 +66,7 @@ export type ProductDetails = Product & {
   updatedByUserId?: number | null;
   category?: ProductCategoryRef | null;
   variants: ProductVariant[];
-  media: unknown[];
+  media: ProductMediaItem[];
   sourceReferences: ProductSourceReference[];
 };
 
@@ -118,6 +131,8 @@ export type CatalogVariantsListResponse = {
 
 export type ProductMediaItem = {
   id: number;
+  uploadMediaId?: number | null;
+  productId?: number | null;
   url: string;
   type?: string | null;
   sourceUrl?: string | null;

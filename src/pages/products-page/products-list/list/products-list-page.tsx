@@ -2,9 +2,9 @@ import { Button, Flex, Table, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { useCallback, useState, type MouseEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 
-import { pagesMap } from "@/app/router/pages-map";
+import { getProductEditPath, pagesMap } from "@/app/router/pages-map";
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
 import { PaneSectionTitle } from "@/components/layout/pane-frame";
 import type { Product } from "@/features/products/model/product.types";
@@ -23,22 +23,36 @@ const { Text } = Typography;
 export const ProductsListPage = observer(() => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
   const [filtersOpen, setFiltersOpen] = useState(false);
   const { productsStore, categoryNameById, rowSelection, handleDeleteById } =
     useProductsListController();
 
   useProductsListUrlSync(productsStore);
 
-  const handleOpenProduct = useCallback((_productId: number) => {
-    // TODO: Re-enable product details/edit navigation when the edit page is ready.
-    console.log("🚀 ~ _productId:", _productId);
-  }, []);
+  const handleOpenProduct = useCallback(
+    (productId: number) => {
+      navigate(getProductEditPath(productId), {
+        state: { productsListSearch: location.search },
+      });
+    },
+    [location.search, navigate],
+  );
 
   const handleProductRowClick = useCallback(
     (product: Product) => {
       return (event: MouseEvent<HTMLElement>) => {
-        console.log("🚀 ~ event:", event);
-        // TODO: Open product details/edit page when that flow is implemented.
+        const target = event.target as HTMLElement;
+
+        if (
+          target.closest(".ant-checkbox-wrapper") ||
+          target.closest(".ant-checkbox") ||
+          target.closest("button") ||
+          target.closest("a")
+        ) {
+          return;
+        }
+
         handleOpenProduct(product.id);
       };
     },
@@ -68,9 +82,7 @@ export const ProductsListPage = observer(() => {
       <PaneDetailLayout.Body data-qa="layout-products-table-scroll">
         <Flex gap={24} align="flex-start" wrap="wrap">
           <div style={{ flex: "1 1 360px", minWidth: 0 }}>
-            <ProductsListToolbar
-              onToggleFilters={() => setFiltersOpen((open) => !open)}
-            />
+            <ProductsListToolbar onToggleFilters={() => setFiltersOpen(true)} />
             <ProductsListActiveFilters categoryNameById={categoryNameById} />
             {productsStore.listError && (
               <Text type="danger" style={{ display: "block", marginBottom: 8 }}>
@@ -111,15 +123,11 @@ export const ProductsListPage = observer(() => {
               }}
             />
           </div>
-          {filtersOpen ? (
-            <div style={{ flex: "0 1 300px", width: "100%", maxWidth: 420 }}>
-              <ProductsListFiltersPanel
-                open={filtersOpen}
-                onClose={() => setFiltersOpen(false)}
-              />
-            </div>
-          ) : null}
         </Flex>
+        <ProductsListFiltersPanel
+          open={filtersOpen}
+          onClose={() => setFiltersOpen(false)}
+        />
       </PaneDetailLayout.Body>
     </PaneDetailLayout.Root>
   );

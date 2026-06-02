@@ -118,14 +118,83 @@ export function buildProductVariantKey(pairs: FieldValuePair[]): string {
     .join("|");
 }
 
+function getGeneratedOptionCustomFields(variant: ProductVariantUi): Array<{
+  fieldStableKey: string;
+  value: string;
+}> {
+  if (variant.source !== "generated") {
+    return [];
+  }
+
+  return variant.customFields
+    .filter((field) => field.fieldType !== "TEXT")
+    .flatMap((field) => {
+      const value = field.value.trim();
+      if (!value) {
+        return [];
+      }
+
+      return [
+        {
+          fieldStableKey: field.field
+            ? getFieldStableKey(field.field)
+            : `existing:${field.fieldId}`,
+          value,
+        },
+      ];
+    });
+}
+
+function findPreviousVariantForPairs(
+  pairs: FieldValuePair[],
+  previousVariants: ProductVariantUi[],
+): ProductVariantUi | undefined {
+  const pairsByField = new Map(
+    pairs.map((pair) => [pair.fieldStableKey, pair.value.trim()]),
+  );
+
+  let bestMatch:
+    | {
+        variant: ProductVariantUi;
+        matchedFieldCount: number;
+      }
+    | undefined;
+
+  for (const variant of previousVariants) {
+    const previousFields = getGeneratedOptionCustomFields(variant);
+    if (previousFields.length === 0) {
+      continue;
+    }
+
+    const isSubsetMatch = previousFields.every(
+      (field) => pairsByField.get(field.fieldStableKey) === field.value,
+    );
+    if (!isSubsetMatch) {
+      continue;
+    }
+
+    if (!bestMatch || previousFields.length > bestMatch.matchedFieldCount) {
+      bestMatch = {
+        variant,
+        matchedFieldCount: previousFields.length,
+      };
+    }
+  }
+
+  return bestMatch?.variant;
+}
+
 function buildVariantFromPairs(
   pairs: FieldValuePair[],
   dimensions: CharacteristicDimension[],
   base: GenerateProductVariantsBaseValues,
   previousByKey: Map<string, ProductVariantUi>,
+  previousVariants: ProductVariantUi[],
 ): ProductVariantUi {
   const key = buildProductVariantKey(pairs);
-  const previous = previousByKey.get(key);
+  const exactPrevious = previousByKey.get(key);
+  const previous =
+    exactPrevious ?? findPreviousVariantForPairs(pairs, previousVariants);
 
   const customFields = pairs.map((pair) => {
     const dimension = dimensions.find(
@@ -144,6 +213,7 @@ function buildVariantFromPairs(
   });
 
   return {
+    ...(exactPrevious?.id != null ? { id: exactPrevious.id } : {}),
     key,
     source: "generated",
     customFields,
@@ -221,6 +291,7 @@ export function generateProductVariantsFromCharacteristics({
       optionDimensions,
       base,
       previousByKey,
+      previousVariants,
     );
 
     return {

@@ -1,12 +1,8 @@
-import {
-  FunnelSimpleIcon,
-  MagnifyingGlassIcon,
-  XIcon,
-} from "@phosphor-icons/react";
+import { FunnelSimpleIcon, MagnifyingGlassIcon } from "@phosphor-icons/react";
 import {
   Button,
-  Card,
   Checkbox,
+  Drawer,
   Flex,
   Input,
   InputNumber,
@@ -106,23 +102,45 @@ export const ProductsListFiltersPanel = observer(
     };
 
     return (
-      <Card
-        size="small"
-        styles={{ body: { padding: 16 } }}
-        title={
-          <Flex justify="space-between" align="center" gap={12}>
-            <Text strong>{t("products.toolbar.filters")}</Text>
+      <Drawer
+        title={t("products.toolbar.filters")}
+        open={open}
+        placement="right"
+        width="auto"
+        onClose={onClose}
+        destroyOnHidden
+        styles={{
+          body: {
+            padding: 16,
+            overflowY: "auto",
+          },
+          footer: {
+            padding: 16,
+          },
+        }}
+        footer={
+          <Flex gap={8}>
             <Button
-              type="text"
-              size="small"
-              icon={<XIcon size={18} />}
-              aria-label={t("products.listFilters.panelCloseAria")}
-              onClick={onClose}
-            />
+              style={{ flex: 1 }}
+              onClick={() => productsStore.resetFilterDraft()}
+            >
+              {t("products.listFilters.panelClear")}
+            </Button>
+            <Button
+              type="primary"
+              style={{ flex: 1 }}
+              icon={<FunnelSimpleIcon size={16} />}
+              onClick={() => {
+                productsStore.applyFiltersFromPanel();
+                onClose();
+              }}
+            >
+              {t("products.listFilters.panelApply")}
+            </Button>
           </Flex>
         }
       >
-        <Flex vertical gap={20}>
+        <Flex vertical gap={20} style={{ width: 360, maxWidth: "80vw" }}>
           <div>
             <Text strong style={{ display: "block", marginBottom: 8 }}>
               {t("products.toolbar.category")}
@@ -224,27 +242,8 @@ export const ProductsListFiltersPanel = observer(
               />
             </Flex>
           </div>
-
-          <Flex gap={8}>
-            <Button
-              style={{ flex: 1 }}
-              onClick={() => productsStore.resetFilterDraft()}
-            >
-              {t("products.listFilters.panelClear")}
-            </Button>
-            <Button
-              type="primary"
-              style={{ flex: 1 }}
-              icon={<FunnelSimpleIcon size={16} />}
-              onClick={() => {
-                productsStore.applyFiltersFromPanel();
-              }}
-            >
-              {t("products.listFilters.panelApply")}
-            </Button>
-          </Flex>
         </Flex>
-      </Card>
+      </Drawer>
     );
   },
 );

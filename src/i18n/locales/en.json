@@ -296,6 +296,10 @@
       "title": "Add product",
       "subtitle": "Fill information about product"
     },
+    "editPage": {
+      "title": "Edit product",
+      "subtitle": "Update product information"
+    },
     "productType": {
       "title": "Product type",
       "description": "Select the product type. This determines the set of fields in the form.",
@@ -303,7 +307,10 @@
       "singleDescription": "Product without variants",
       "variantsTitle": "Product with variants",
       "variantsDescription": "Product with variants (size, color, etc.)",
-      "switchToSingleBlocked": "You already have variants added. They may be lost."
+      "switchToSingleBlocked": "You already have variants added. They may be lost.",
+      "switchToSingleConfirmTitle": "Switch to single product?",
+      "switchToSingleConfirmText": "This will keep only the first variant and may remove other variants after saving.",
+      "switchToSingleConfirmOk": "Switch type"
     },
     "instagram": {
       "drawerTitle": "Instagram posts",
@@ -325,11 +332,13 @@
     "detailBackToList": "Back to products list",
     "autoSaveSuccess": "Saved",
     "edit": "Edit",
+    "saveChanges": "Save changes",
     "cancelEdit": "Cancel",
     "delete": "Delete",
     "deleteConfirm": "Delete this product?",
     "createSuccess": "Product created",
     "createFailed": "Failed to create product",
+    "updateSuccess": "Product updated",
     "updateFailed": "Failed to update product",
     "deleteSuccess": "Product deleted",
     "deleteFailed": "Failed to delete product",
@@ -340,7 +349,6 @@
     "variantDeleteSuccess": "Variant deleted",
     "variantDeleteFailed": "Failed to delete variant",
     "detailLoadFailed": "Failed to load product",
-    "noSizes": "Sizes are not specified",
     "noCategory": "No category",
     "noPrice": "Price is not specified",
     "outOfStock": "Out of stock",
@@ -388,7 +396,8 @@
       "addAtLeastOne": "Add at least one variant.",
       "duplicate": "Variant with the same characteristics already exists.",
       "manualMissingFields": "Manual variants must have all characteristic values filled.",
-      "singleConfirm": "Product will be created as a single product."
+      "singleConfirm": "Product will be created as a single product.",
+      "singleUpdateConfirm": "Product will be saved as a single product. Extra variant data may be lost."
     },
     "form": {
       "name": "Name",
@@ -413,6 +422,7 @@
       "urlTooLong": "URL must be at most {{max}} characters (server limit). Use a shorter HTTPS link or a smaller image.",
       "cropOk": "Apply",
       "uploadHintShort": "PNG, JPG, WEBP less than 10MB",
+      "reorderHint": "Drag images to change their order. The first image is used as the main product image.",
       "invalidType": "Only PNG, JPG, and WEBP images are allowed",
       "tooLarge": "Image must be less than 10MB",
       "uploadFailed": "Failed to upload image",
@@ -435,6 +445,7 @@
       "uploadProductImagesFirst": "Upload product images first.",
       "variantOnlyImagesHint": "Images uploaded here belong only to this variant.",
       "uploadVariantOnlyImage": "Upload variant-only image",
+      "reorderImagesHint": "Drag images to change their order. The first image is used as the main variant image.",
       "mainImage": "Main",
       "variantOnly": "Variant only",
       "deleteImageFailed": "Failed to delete variant image"

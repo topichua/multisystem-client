@@ -55,6 +55,7 @@ export type ProductVariantUiCustomField = {
 export type ProductVariantSource = "generated" | "manual";
 
 export type ProductVariantUi = {
+  id?: number;
   key: string;
   source: ProductVariantSource;
   customFields: ProductVariantUiCustomField[];

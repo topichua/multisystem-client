@@ -4,6 +4,9 @@ import type {
   CreateProductVariantPayload,
   ProductLifecycleStatus,
   ProductType,
+  UpdateProductPayload,
+  UpdateProductVariantCustomFieldValue,
+  UpdateProductVariantPayload,
 } from "@/features/products/model/product-create-api.types";
 
 import type { ProductCreateFormValues } from "../product-form.types";
@@ -21,6 +24,9 @@ export type NormalizeCreateProductPayloadInput = {
   productMedia: UploadedProductMedia[];
   variants: ProductVariantUi[];
 };
+
+export type NormalizeUpdateProductPayloadInput =
+  NormalizeCreateProductPayloadInput;
 
 const PRODUCT_CREATE_SOURCE_TYPE = "manual" as const;
 const PRODUCT_CREATE_CURRENCY = "UAH" as const;
@@ -73,6 +79,55 @@ function normalizeVariantCustomField(
 
   return {
     field: { id: field.fieldId },
+    value,
+    order,
+  };
+}
+
+function normalizeUpdateVariantCustomFields(
+  customFields: ProductVariantUi["customFields"],
+): UpdateProductVariantCustomFieldValue[] {
+  return customFields
+    .map((field, index) => normalizeUpdateVariantCustomField(field, index))
+    .filter((field) => field.value);
+}
+
+function normalizeUpdateVariantCustomField(
+  field: ProductVariantUi["customFields"][number],
+  index: number,
+): UpdateProductVariantCustomFieldValue {
+  const value = field.value.trim();
+  const order = field.order ?? index;
+
+  if (field.field?.kind === "existing") {
+    return {
+      field: {
+        id: field.field.id,
+        name: field.fieldLabel,
+        type: field.fieldType,
+      },
+      value,
+      order,
+    };
+  }
+
+  if (field.field?.kind === "new") {
+    return {
+      field: {
+        name: field.field.name.trim(),
+        type: field.field.type,
+      },
+      value,
+      order,
+    };
+  }
+
+  return {
+    field: {
+      id: field.fieldId,
+      name: field.fieldLabel,
+      type: field.fieldType,
+    },
     value,
     order,
   };
@@ -156,6 +211,27 @@ function normalizeSingleCharacteristicCustomField(
   };
 }
 
+function normalizeUpdateSingleCharacteristicCustomField(
+  item: ReturnType<typeof normalizeSingleCharacteristics>[number],
+): UpdateProductVariantCustomFieldValue {
+  if (item.field.kind === "existing") {
+    return {
+      field: { id: item.field.id },
+      value: item.value,
+      order: item.order,
+    };
+  }
+
+  return {
+    field: {
+      name: item.field.name.trim(),
+      type: item.field.type,
+    },
+    value: item.value,
+    order: item.order,
+  };
+}
+
 function buildSingleProductVariant(
   formValues: ProductCreateFormValues,
   productStatus: ProductLifecycleStatus,
@@ -177,6 +253,33 @@ function buildSingleProductVariant(
   };
 }
 
+function buildSingleProductUpdateVariant(
+  formValues: ProductCreateFormValues,
+  productStatus: ProductLifecycleStatus,
+  variantsFromSubmit: ProductVariantUi[],
+): UpdateProductVariantPayload {
+  const existingVariant =
+    variantsFromSubmit.length > 0 ? variantsFromSubmit[0] : undefined;
+  const variantMedia = existingVariant?.media ?? [];
+
+  return {
+    ...(existingVariant?.id != null ? { id: existingVariant.id } : {}),
+    status: productStatus,
+    customFields: normalizeSingleCharacteristics(
+      (
+        formValues as ProductCreateFormValues & {
+          singleCharacteristics?: unknown;
+        }
+      ).singleCharacteristics,
+    ).map(normalizeUpdateSingleCharacteristicCustomField),
+    price: Number(formValues.price ?? 0),
+    inStock: PRODUCT_DEFAULT_IN_STOCK,
+    quantity: Number(formValues.quantity ?? 0),
+    mediaIds: normalizeVariantMediaIds(variantMedia),
+    ...normalizeOptionalSku(existingVariant?.sku),
+  };
+}
+
 function buildVariantsProductVariant(
   variant: ProductVariantUi,
   productStatus: ProductLifecycleStatus,
@@ -186,6 +289,24 @@ function buildVariantsProductVariant(
   return {
     status,
     customFields: normalizeVariantCustomFields(variant.customFields),
+    price: Number(variant.price ?? 0),
+    inStock: PRODUCT_DEFAULT_IN_STOCK,
+    quantity: Number(variant.quantity ?? 0),
+    mediaIds: normalizeVariantMediaIds(variant.media),
+    ...normalizeOptionalSku(variant.sku),
+  };
+}
+
+function buildVariantsProductUpdateVariant(
+  variant: ProductVariantUi,
+  productStatus: ProductLifecycleStatus,
+): UpdateProductVariantPayload {
+  const status = normalizeLifecycleStatus(variant.status, productStatus);
+
+  return {
+    ...(variant.id != null ? { id: variant.id } : {}),
+    status,
+    customFields: normalizeUpdateVariantCustomFields(variant.customFields),
     price: Number(variant.price ?? 0),
     inStock: PRODUCT_DEFAULT_IN_STOCK,
     quantity: Number(variant.quantity ?? 0),
@@ -226,6 +347,47 @@ export function normalizeCreateProductPayload({
   return {
     name: formValues.name.trim() ?? "",
     ...(description ? { description } : {}),
+    status: productStatus,
+    productType,
+    sourceType: PRODUCT_CREATE_SOURCE_TYPE,
+    price: Number(formValues.price ?? 0),
+    currency: PRODUCT_CREATE_CURRENCY,
+    inStock: PRODUCT_DEFAULT_IN_STOCK,
+    quantity: Number(formValues.quantity ?? 0),
+    mediaIds: normalizeProductMediaIds(productMedia),
+    categoryId,
+    variants: normalizedVariants,
+  };
+}
+
+export function normalizeUpdateProductPayload({
+  formValues,
+  productType,
+  productMedia,
+  variants,
+}: NormalizeUpdateProductPayloadInput): UpdateProductPayload {
+  const categoryId = formValues.categoryId;
+  if (categoryId == null) {
+    throw new Error("Product category is required");
+  }
+
+  const productStatus = normalizeLifecycleStatus(formValues.status);
+  const description = formValues.description.trim() ?? "";
+
+  const normalizedVariants =
+    productType === "single"
+      ? [buildSingleProductUpdateVariant(formValues, productStatus, variants)]
+      : variants.map((variant) =>
+          buildVariantsProductUpdateVariant(variant, productStatus),
+        );
+
+  if (productType === "variants" && normalizedVariants.length === 0) {
+    throw new Error("Variants product must include at least one variant");
+  }
+
+  return {
+    name: formValues.name.trim() ?? "",
+    description,
     status: productStatus,
     productType,
     sourceType: PRODUCT_CREATE_SOURCE_TYPE,

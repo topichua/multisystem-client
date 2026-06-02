@@ -1,4 +1,24 @@
-import { CloudArrowUpIcon, TrashIcon } from "@phosphor-icons/react";
+import {
+  DndContext,
+  type DragEndEvent,
+  KeyboardSensor,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  rectSortingStrategy,
+  sortableKeyboardCoordinates,
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import {
+  CloudArrowUpIcon,
+  DotsSixVerticalIcon,
+  TrashIcon,
+} from "@phosphor-icons/react";
 import { Button, Flex, Modal, Spin, Tag, Typography, Upload } from "antd";
 import type { UploadProps } from "antd";
 import { useCallback, useState } from "react";
@@ -92,7 +112,89 @@ const VariantMediaCard = styled.div`
     background: rgba(255, 255, 255, 0.92) !important;
     border-radius: 6px;
   }
+
+  .variant-media-drag {
+    position: absolute;
+    bottom: 4px;
+    left: 4px;
+    z-index: 1;
+    cursor: grab;
+    background: rgba(255, 255, 255, 0.92) !important;
+    border-radius: 6px;
+
+    &:active {
+      cursor: grabbing;
+    }
+  }
 `;
+
+type SortableVariantMediaCardProps = {
+  media: VariantMediaItem;
+  index: number;
+  removing: boolean;
+  onRemove: (media: VariantMediaItem) => void;
+};
+
+function SortableVariantMediaCard({
+  media,
+  index,
+  removing,
+  onRemove,
+}: SortableVariantMediaCardProps) {
+  const { t } = useTranslation();
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: media.id });
+
+  return (
+    <VariantMediaCard
+      ref={setNodeRef}
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.65 : 1,
+      }}
+    >
+      {index === 0 ? (
+        <Tag className="variant-media-tag" color="purple">
+          {t("products.variant.mainImage")}
+        </Tag>
+      ) : media.origin === "variant" ? (
+        <Tag className="variant-media-tag" color="blue">
+          {t("products.variant.variantOnly")}
+        </Tag>
+      ) : null}
+
+      <Button
+        type="text"
+        size="small"
+        className="variant-media-drag"
+        icon={<DotsSixVerticalIcon size={14} />}
+        {...attributes}
+        {...listeners}
+      />
+
+      <img src={media.src} alt="" />
+
+      <Button
+        type="text"
+        danger
+        size="small"
+        className="variant-media-delete"
+        icon={<TrashIcon size={14} />}
+        loading={removing}
+        onClick={() => {
+          onRemove(media);
+        }}
+      />
+    </VariantMediaCard>
+  );
+}
 
 function formatVariantLabel(
   variant: ProductVariantUi,
@@ -148,6 +250,12 @@ function ProductVariantImagesModalInner({
   const [uploadingCount, setUploadingCount] = useState(0);
   const [removingMediaId, setRemovingMediaId] = useState<number | null>(null);
   const [isApplying, setIsApplying] = useState(false);
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
 
   const isProductImageSelected = useCallback(
     (mediaId: number) => draftMedia.some((item) => item.id === mediaId),
@@ -224,6 +332,41 @@ function ProductVariantImagesModalInner({
       }
     },
     [onRemoveVariantImage],
+  );
+
+  const handleReorderDraftMedia = useCallback(
+    (activeMediaId: number, overMediaId: number) => {
+      setDraftMedia((current) => {
+        const activeIndex = current.findIndex(
+          (media) => media.id === activeMediaId,
+        );
+        const overIndex = current.findIndex(
+          (media) => media.id === overMediaId,
+        );
+
+        if (activeIndex < 0 || overIndex < 0 || activeIndex === overIndex) {
+          return current;
+        }
+
+        const next = [...current];
+        const [moved] = next.splice(activeIndex, 1);
+        next.splice(overIndex, 0, moved);
+        return next;
+      });
+    },
+    [],
+  );
+
+  const handleDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      const { active, over } = event;
+      if (!over || active.id === over.id) {
+        return;
+      }
+
+      handleReorderDraftMedia(Number(active.id), Number(over.id));
+    },
+    [handleReorderDraftMedia],
   );
 
   const handleApply = useCallback(async () => {
@@ -323,6 +466,9 @@ function ProductVariantImagesModalInner({
           <Text type="secondary">
             {t("products.variant.variantOnlyImagesHint")}
           </Text>
+          <Text type="secondary" style={{ fontSize: 12 }}>
+            {t("products.variant.reorderImagesHint")}
+          </Text>
 
           <Spin spinning={uploadingCount > 0}>
             <Dragger
@@ -344,35 +490,30 @@ function ProductVariantImagesModalInner({
           </Spin>
 
           {draftMedia.length > 0 ? (
-            <Flex gap={12} wrap="wrap">
-              {draftMedia.map((media, index) => (
-                <VariantMediaCard key={media.id}>
-                  {index === 0 ? (
-                    <Tag className="variant-media-tag" color="purple">
-                      {t("products.variant.mainImage")}
-                    </Tag>
-                  ) : media.origin === "variant" ? (
-                    <Tag className="variant-media-tag" color="blue">
-                      {t("products.variant.variantOnly")}
-                    </Tag>
-                  ) : null}
-
-                  <img src={media.src} alt="" />
-
-                  <Button
-                    type="text"
-                    danger
-                    size="small"
-                    className="variant-media-delete"
-                    icon={<TrashIcon size={14} />}
-                    loading={removingMediaId === media.id}
-                    onClick={() => {
-                      void handleRemoveDraftMedia(media);
-                    }}
-                  />
-                </VariantMediaCard>
-              ))}
-            </Flex>
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext
+                items={draftMedia.map((media) => media.id)}
+                strategy={rectSortingStrategy}
+              >
+                <Flex gap={12} wrap="wrap">
+                  {draftMedia.map((media, index) => (
+                    <SortableVariantMediaCard
+                      key={media.id}
+                      media={media}
+                      index={index}
+                      removing={removingMediaId === media.id}
+                      onRemove={(item) => {
+                        void handleRemoveDraftMedia(item);
+                      }}
+                    />
+                  ))}
+                </Flex>
+              </SortableContext>
+            </DndContext>
           ) : null}
         </Flex>
       </Flex>

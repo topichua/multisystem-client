@@ -81,3 +81,28 @@ export type CreateProductPayload = {
   categoryId: number;
   variants: CreateProductVariantPayload[];
 };
+
+export type UpdateProductVariantCustomFieldValue = {
+  field: {
+    id?: number;
+    name?: string;
+    type?: CreateProductCustomFieldType;
+  };
+  value: string;
+  order?: number;
+};
+
+export type UpdateProductVariantPayload = {
+  id?: number;
+  status: ProductLifecycleStatus;
+  customFields: UpdateProductVariantCustomFieldValue[];
+  price: number;
+  inStock: boolean;
+  quantity: number;
+  sku?: string;
+  mediaIds: number[];
+};
+
+export type UpdateProductPayload = Omit<CreateProductPayload, "variants"> & {
+  variants: UpdateProductVariantPayload[];
+};

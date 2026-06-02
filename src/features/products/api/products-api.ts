@@ -2,6 +2,7 @@ import { apiClient } from "@/api/api-client";
 import type {
   CreateProductPayload,
   ProductUploadedMedia,
+  UpdateProductPayload,
   UploadedProductMediaResponse,
   VariantCustomFieldsResponse,
 } from "@/features/products/model/product-create-api.types";
@@ -14,7 +15,6 @@ import type {
   ProductMediaCreatePayload,
   ProductMediaItem,
   ProductMediaUpdatePayload,
-  ProductUpdatePayload,
   ProductVariant,
   ProductVariantCreatePayload,
   ProductVariantUpdatePayload,
@@ -153,26 +153,6 @@ function appendProductCreateFormFields(
   formData.append("categoryId", String(payload.categoryId));
 }
 
-function appendProductUpdateFormFields(
-  formData: FormData,
-  payload: ProductUpdatePayload,
-): void {
-  for (const [key, raw] of Object.entries(payload)) {
-    if (raw === undefined) {
-      continue;
-    }
-    if (raw === null) {
-      formData.append(key, "");
-    } else if (typeof raw === "boolean") {
-      formData.append(key, String(raw));
-    } else if (typeof raw === "number") {
-      formData.append(key, String(raw));
-    } else {
-      formData.append(key, raw);
-    }
-  }
-}
-
 function axiosMultipartFormDataConfig() {
   return {
     transformRequest: [
@@ -255,30 +235,6 @@ export const productsApi = {
 
   getById: async (id: number): Promise<ProductDetails> => {
     const { data } = await apiClient.get<ProductDetails>(`${basePath}/${id}`);
-
-    return data;
-  },
-
-  update: async (
-    id: number,
-    payload: ProductUpdatePayload,
-    coverImage?: File | null,
-  ): Promise<ProductDetails> => {
-    const formData = new FormData();
-    appendProductUpdateFormFields(formData, payload);
-    if (coverImage) {
-      formData.append(
-        productCreateUploadFieldName(),
-        coverImage,
-        coverImage.name,
-      );
-    }
-
-    const { data } = await apiClient.patch<ProductDetails>(
-      `${basePath}/${id}`,
-      formData,
-      axiosMultipartFormDataConfig(),
-    );
 
     return data;
   },
@@ -423,6 +379,18 @@ export const productsApi = {
     payload: CreateProductPayload,
   ): Promise<ProductDetails> => {
     const { data } = await apiClient.post<ProductDetails>(basePath, payload);
+
+    return data;
+  },
+
+  updateProduct: async (
+    id: number,
+    payload: UpdateProductPayload,
+  ): Promise<ProductDetails> => {
+    const { data } = await apiClient.put<ProductDetails>(
+      `${basePath}/${id}`,
+      payload,
+    );
 
     return data;
   },

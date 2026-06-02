@@ -3,8 +3,8 @@ import styled, { css } from "styled-components";
 
 export const UploadedMediaPreview = styled.div<{ $isMain: boolean }>`
   position: relative;
-  width: 104px;
-  height: 104px;
+  width: 134px;
+  height: 134px;
   flex-shrink: 0;
   border-radius: 8px;
   overflow: hidden;
@@ -34,6 +34,20 @@ export const UploadedMediaPreview = styled.div<{ $isMain: boolean }>`
     z-index: 1;
     background: rgba(255, 255, 255, 0.92) !important;
     border-radius: 6px;
+  }
+
+  .uploaded-media-drag {
+    position: absolute;
+    bottom: 4px;
+    left: 4px;
+    z-index: 1;
+    cursor: grab;
+    background: rgba(255, 255, 255, 0.92) !important;
+    border-radius: 6px;
+
+    &:active {
+      cursor: grabbing;
+    }
   }
 `;
 

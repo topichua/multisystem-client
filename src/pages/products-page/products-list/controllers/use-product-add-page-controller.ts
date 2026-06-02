@@ -1,35 +1,32 @@
-import { Form, message, Modal, Upload } from "antd";
-import type { UploadProps } from "antd";
+import { Form, message, Modal } from "antd";
 import type { FormInstance } from "antd";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useParams } from "react-router";
 import { getApiErrorMessage } from "@/api/get-api-error-message";
 import type { ProductType as ApiProductType } from "@/features/products/model/product-create-api.types";
-import { productsApi } from "@/features/products/api/products-api";
 import {
   defaultCreateValues,
   type ProductCreateFormValues,
 } from "../form/product-form.types";
-import { normalizeCreateProductPayload } from "../form/payload/normalize-create-product-payload";
+import {
+  normalizeCreateProductPayload,
+  normalizeUpdateProductPayload,
+} from "../form/payload/normalize-create-product-payload";
+import { productDetailToProductForm } from "../form/payload/product-detail-to-product-form";
 import type {
   ProductCharacteristicFormRow,
   ProductVariantUi,
   SingleProductCharacteristicFormRow,
-  UploadedProductMedia,
-  VariantMediaItem,
 } from "../form/variants/product-add-variant.types";
 import { generateProductVariantsFromCharacteristics } from "../form/variants/generate-product-variants";
-import { validateProductImageFile } from "../form/media/product-image-upload";
 import {
   createManualVariant,
   filterManualVariants,
   findDuplicateVariantKeys,
-  getVariantOnlyMedia,
   hasMeaningfulVariantUserData,
   mergeProductVariantsWithFormValues,
   getCharacteristicValueOptions as buildCharacteristicValueOptions,
-  getRemovedVariantOnlyMedia,
-  isProductMediaUsedByVariants,
   mapCharacteristicFieldSelectOptions,
   normalizeSelectedCharacteristics,
   normalizeSingleCharacteristics,
@@ -41,6 +38,14 @@ import {
 import { useProductAddVariantTableColumns } from "../form/variants/use-product-add-variant-table-columns";
 import { useProductsListController } from "./use-products-list-controller";
 import type { ProductType } from "../form/sections/product-type-section";
+import {
+  useProductMediaController,
+  type ProductMediaControllerReturn,
+} from "./use-product-media-controller";
+import {
+  useProductVariantImagesController,
+  type ProductVariantImagesModalControllerProps,
+} from "./use-product-variant-images-controller";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Constants
@@ -49,10 +54,6 @@ import type { ProductType } from "../form/sections/product-type-section";
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
 // ─────────────────────────────────────────────────────────────────────────────
-
-type ProductMediaUploadRequestOptions = Parameters<
-  NonNullable<UploadProps["customRequest"]>
->[0];
 
 type CharacteristicRow = ProductCharacteristicFormRow & {
   attributeId?: number;
@@ -71,6 +72,7 @@ export type ProductAddFormValues = ProductCreateFormValues & {
 export type ProductAddPageControllerReturn = {
   // Context holder for message API
   contextHolder: React.ReactElement;
+  pageLoading: boolean;
 
   // Form
   form: FormInstance<ProductAddFormValues>;
@@ -113,13 +115,7 @@ export type ProductAddPageControllerReturn = {
   };
 
   // Media section
-  mediaProps: {
-    uploadedProductMedia: UploadedProductMedia[];
-    productMediaUploadingCount: number;
-    deletingProductMediaId: number | null;
-    onBeforeUpload: (file: File) => boolean | typeof Upload.LIST_IGNORE;
-    onUpload: (options: ProductMediaUploadRequestOptions) => void;
-    onDelete: (mediaId: number) => void;
+  mediaProps: Omit<ProductMediaControllerReturn, "setProductMedia"> & {
     texts: {
       title: string;
       subtitle: string;
@@ -127,6 +123,7 @@ export type ProductAddPageControllerReturn = {
       mainImageLabel: string;
       deleteTooltip: string;
       uploadHint: string;
+      reorderHint: string;
     };
   };
 
@@ -153,18 +150,11 @@ export type ProductAddPageControllerReturn = {
     loading: boolean;
     disabled: boolean;
     label: string;
+    icon: "create" | "save";
   };
 
   // Variant images modal
-  variantImagesModalProps: {
-    open: boolean;
-    variant: ProductVariantUi | null;
-    productMedia: UploadedProductMedia[];
-    onClose: () => void;
-    onApply: (variantKey: string, media: VariantMediaItem[]) => void;
-    onUploadVariantImage: (file: File) => Promise<VariantMediaItem>;
-    onRemoveVariantImage: (media: VariantMediaItem) => Promise<void>;
-  };
+  variantImagesModalProps: ProductVariantImagesModalControllerProps;
 
   // Submit handler
   onSubmit: (values: ProductAddFormValues) => Promise<void>;
@@ -189,8 +179,15 @@ export const useProductAddPageController =
       loadVariantCustomFields,
     } = useProductsListController();
     const { t } = useTranslation();
+    const { productId } = useParams();
     const [messageApi, contextHolder] = message.useMessage();
     const [form] = Form.useForm<ProductAddFormValues>();
+    const parsedProductId = productId ? Number(productId) : null;
+    const editingProductId =
+      parsedProductId != null && Number.isFinite(parsedProductId)
+        ? parsedProductId
+        : null;
+    const isEditMode = editingProductId != null;
 
     // ─────────────────────────────────────────────────────────────────────────
     // State
@@ -200,17 +197,9 @@ export const useProductAddPageController =
     const [productVariants, setProductVariants] = useState<ProductVariantUi[]>(
       [],
     );
-    const [uploadedProductMedia, setUploadedProductMedia] = useState<
-      UploadedProductMedia[]
-    >([]);
-    const [productMediaUploadingCount, setProductMediaUploadingCount] =
-      useState(0);
-    const [deletingProductMediaId, setDeletingProductMediaId] = useState<
-      number | null
-    >(null);
-    const [isCreatingProduct, setIsCreatingProduct] = useState(false);
-    const [variantImagesModalVariant, setVariantImagesModalVariant] =
-      useState<ProductVariantUi | null>(null);
+    const [isSavingProduct, setIsSavingProduct] = useState(false);
+    const [isInitialEditLoading, setIsInitialEditLoading] =
+      useState(isEditMode);
     const [excludedVariantKeys, setExcludedVariantKeys] = useState<Set<string>>(
       () => new Set(),
     );
@@ -224,6 +213,7 @@ export const useProductAddPageController =
 
     const productVariantsRef = useRef(productVariants);
     const excludedVariantKeysRef = useRef(excludedVariantKeys);
+    const applyingInitialEditValuesRef = useRef(false);
 
     useEffect(() => {
       productVariantsRef.current = productVariants;
@@ -232,6 +222,58 @@ export const useProductAddPageController =
     useEffect(() => {
       excludedVariantKeysRef.current = excludedVariantKeys;
     }, [excludedVariantKeys]);
+
+    const mergeVariantsWithFormValues = useCallback(
+      (variants: ProductVariantUi[]) =>
+        mergeProductVariantsWithFormValues(
+          variants,
+          form.getFieldValue("variants"),
+        ),
+      [form],
+    );
+
+    const getProductVariantsWithFormValues = useCallback(
+      () => mergeVariantsWithFormValues(productVariantsRef.current),
+      [mergeVariantsWithFormValues],
+    );
+
+    const syncVariantsToForm = useCallback(
+      (variants: ProductVariantUi[]) => {
+        syncProductVariantsToForm(form, variants);
+      },
+      [form],
+    );
+
+    const {
+      uploadedProductMedia,
+      productMediaUploadingCount,
+      deletingProductMediaId,
+      setProductMedia,
+      onBeforeUpload: handleProductImageBeforeUpload,
+      onUpload: handleProductMediaUpload,
+      onDelete: handleDeleteUploadedProductMedia,
+      onReorder: handleReorderProductMedia,
+    } = useProductMediaController({
+      getProductVariants: getProductVariantsWithFormValues,
+      messageApi,
+      texts: {
+        invalidType: t("products.media.invalidType"),
+        tooLarge: t("products.media.tooLarge"),
+        uploadFailed: t("products.media.uploadFailed"),
+        usedByVariants: t("products.media.usedByVariants"),
+      },
+    });
+
+    const {
+      variantImagesModalProps,
+      onManageVariantImages: handleManageVariantImages,
+    } = useProductVariantImagesController({
+      productMedia: uploadedProductMedia,
+      getProductVariants: getProductVariantsWithFormValues,
+      mergeVariantsWithFormValues,
+      setProductVariants,
+      syncVariantsToForm,
+    });
 
     // ─────────────────────────────────────────────────────────────────────────
     // Form watch values
@@ -297,7 +339,70 @@ export const useProductAddPageController =
     }, [loadVariantCustomFields]);
 
     useEffect(() => {
+      if (!editingProductId) {
+        productsStore.clearActiveProduct();
+        return;
+      }
+
+      let alive = true;
+
+      void (async () => {
+        setIsInitialEditLoading(true);
+
+        try {
+          const product = await productsStore.loadProductById(editingProductId);
+
+          if (!alive) {
+            return;
+          }
+
+          const detailFormState = productDetailToProductForm(product);
+
+          applyingInitialEditValuesRef.current = true;
+          setProductType(detailFormState.productType);
+          setProductMedia(detailFormState.productMedia);
+          setProductVariants(detailFormState.variants);
+          setExcludedVariantKeys(new Set(detailFormState.excludedVariantKeys));
+          form.setFieldsValue(detailFormState.formValues);
+          syncProductVariantsToForm(form, detailFormState.variants);
+        } catch (error) {
+          messageApi.error(
+            getApiErrorMessage(error, t("products.detailLoadFailed")),
+          );
+          navigateToProductsList();
+        } finally {
+          if (alive) {
+            setIsInitialEditLoading(false);
+          }
+        }
+      })();
+
+      return () => {
+        alive = false;
+      };
+    }, [
+      editingProductId,
+      form,
+      messageApi,
+      navigateToProductsList,
+      productsStore,
+      setProductMedia,
+      t,
+    ]);
+
+    useEffect(() => {
       if (productType !== "variants") {
+        return;
+      }
+      if (applyingInitialEditValuesRef.current) {
+        applyingInitialEditValuesRef.current = false;
+        return;
+      }
+      if (
+        Array.isArray(watchedCharacteristics) &&
+        watchedCharacteristics.length > 0 &&
+        variantCustomFields.length === 0
+      ) {
         return;
       }
 
@@ -331,37 +436,8 @@ export const useProductAddPageController =
 
       const nextVariants = [...filteredGeneratedVariants, ...manualVariants];
 
-      const removedVariantOnlyMedia = getRemovedVariantOnlyMedia(
-        previousVariants.filter((variant) => variant.source === "generated"),
-        filteredGeneratedVariants,
-      );
-
-      const applyGeneratedVariants = () => {
-        setProductVariants(nextVariants);
-        syncProductVariantsToForm(form, nextVariants);
-      };
-
-      if (removedVariantOnlyMedia.length === 0) {
-        applyGeneratedVariants();
-        return;
-      }
-
-      void (async () => {
-        for (const media of removedVariantOnlyMedia) {
-          try {
-            await productsApi.deleteUploadedMedia(media.id);
-          } catch (error) {
-            messageApi.error(
-              getApiErrorMessage(
-                error,
-                t("products.variant.deleteImageFailed"),
-              ),
-            );
-          }
-        }
-
-        applyGeneratedVariants();
-      })();
+      setProductVariants(nextVariants);
+      syncProductVariantsToForm(form, nextVariants);
       // characteristicsSignature tracks watchedCharacteristics
       // eslint-disable-next-line react-hooks/exhaustive-deps -- watchedCharacteristics
     }, [
@@ -373,8 +449,6 @@ export const useProductAddPageController =
       watchedPrice,
       watchedQuantity,
       watchedStatus,
-      messageApi,
-      t,
     ]);
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -435,6 +509,35 @@ export const useProductAddPageController =
             form.getFieldValue("variants"),
           );
 
+          const switchToSingle = () => {
+            const firstVariant = variantsWithForm[0];
+            const singleCharacteristics =
+              firstVariant?.customFields.map((field) => ({
+                field: field.field,
+                attributeId:
+                  field.field?.kind === "existing" ? field.field.id : undefined,
+                value: field.value,
+              })) ?? [];
+
+            setProductType("single");
+            setProductVariants(firstVariant ? [firstVariant] : []);
+            setExcludedVariantKeys(new Set());
+            form.setFieldValue("characteristics", []);
+            form.setFieldValue("variants", []);
+            form.setFieldValue("singleCharacteristics", singleCharacteristics);
+          };
+
+          if (isEditMode && variantsWithForm.length > 0) {
+            Modal.confirm({
+              title: t("products.productType.switchToSingleConfirmTitle"),
+              content: t("products.productType.switchToSingleConfirmText"),
+              okText: t("products.productType.switchToSingleConfirmOk"),
+              cancelText: t("products.cancelEdit"),
+              onOk: switchToSingle,
+            });
+            return;
+          }
+
           if (
             hasCharacteristicsAdded ||
             hasMeaningfulVariantUserData(variantsWithForm)
@@ -443,81 +546,15 @@ export const useProductAddPageController =
             return;
           }
 
-          setProductType("single");
-          setProductVariants([]);
-          setExcludedVariantKeys(new Set());
-          form.setFieldValue("characteristics", []);
-          form.setFieldValue("variants", []);
-          form.setFieldValue("singleCharacteristics", []);
+          switchToSingle();
           return;
         }
 
         setProductType("variants");
         form.setFieldValue("singleCharacteristics", []);
       },
-      [form, hasCharacteristicsAdded, messageApi, productType, t],
+      [form, hasCharacteristicsAdded, isEditMode, messageApi, productType, t],
     );
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // Variant images modal handlers
-    // ─────────────────────────────────────────────────────────────────────────
-
-    const handleManageVariantImages = useCallback(
-      (variant: ProductVariantUi) => {
-        const mergedVariants = mergeProductVariantsWithFormValues(
-          productVariantsRef.current,
-          form.getFieldValue("variants"),
-        );
-        const latestVariant =
-          mergedVariants.find((item) => item.key === variant.key) ?? variant;
-
-        setVariantImagesModalVariant(latestVariant);
-      },
-      [form],
-    );
-
-    const handleApplyVariantImages = useCallback(
-      (variantKey: string, media: VariantMediaItem[]) => {
-        setProductVariants((current) => {
-          const mergedVariants = mergeProductVariantsWithFormValues(
-            current,
-            form.getFieldValue("variants"),
-          );
-          const nextVariants = mergedVariants.map((item) =>
-            item.key === variantKey ? { ...item, media } : item,
-          );
-
-          syncProductVariantsToForm(form, nextVariants);
-          return nextVariants;
-        });
-      },
-      [form],
-    );
-
-    const handleUploadVariantOnlyImage = useCallback(async (file: File) => {
-      const uploaded = await productsApi.uploadMedia(file);
-
-      return {
-        id: uploaded.id,
-        src: uploaded.src,
-        origin: "variant" as const,
-      };
-    }, []);
-
-    const handleRemoveVariantOnlyImage = useCallback(
-      async (media: VariantMediaItem) => {
-        if (media.origin !== "variant") {
-          return;
-        }
-
-        await productsApi.deleteUploadedMedia(media.id);
-      },
-      [],
-    );
-
-    const handleCloseVariantImagesModal = useCallback(() => {
-      setVariantImagesModalVariant(null);
-    }, []);
 
     // ─────────────────────────────────────────────────────────────────────────
     // Variant handlers
@@ -528,21 +565,6 @@ export const useProductAddPageController =
         setDeletingVariantKey(variant.key);
 
         try {
-          const variantOnlyMedia = getVariantOnlyMedia(variant);
-
-          for (const media of variantOnlyMedia) {
-            try {
-              await productsApi.deleteUploadedMedia(media.id);
-            } catch (error) {
-              messageApi.error(
-                getApiErrorMessage(
-                  error,
-                  t("products.variant.deleteImageFailed"),
-                ),
-              );
-            }
-          }
-
           if (variant.source === "generated") {
             setExcludedVariantKeys((current) => {
               const next = new Set(current);
@@ -643,91 +665,6 @@ export const useProductAddPageController =
     });
 
     // ─────────────────────────────────────────────────────────────────────────
-    // Product media handlers
-    // ─────────────────────────────────────────────────────────────────────────
-
-    const handleProductMediaUpload = useCallback(
-      async (options: ProductMediaUploadRequestOptions) => {
-        const file = options.file as File;
-        const validationError = validateProductImageFile(file, {
-          invalidType: t("products.media.invalidType"),
-          tooLarge: t("products.media.tooLarge"),
-        });
-
-        if (validationError) {
-          options.onError?.(new Error(validationError));
-          messageApi.error(validationError);
-          return;
-        }
-
-        setProductMediaUploadingCount((count) => count + 1);
-
-        try {
-          const uploaded = await productsApi.uploadMedia(file);
-
-          setUploadedProductMedia((previous) => [...previous, uploaded]);
-          options.onSuccess?.(uploaded);
-        } catch (error) {
-          options.onError?.(error as Error);
-          messageApi.error(
-            getApiErrorMessage(error, t("products.media.uploadFailed")),
-          );
-        } finally {
-          setProductMediaUploadingCount((count) => Math.max(0, count - 1));
-        }
-      },
-      [messageApi, t],
-    );
-
-    const handleDeleteUploadedProductMedia = useCallback(
-      async (mediaId: number) => {
-        const variantsWithForm = mergeProductVariantsWithFormValues(
-          productVariantsRef.current,
-          form.getFieldValue("variants"),
-        );
-
-        if (isProductMediaUsedByVariants(mediaId, variantsWithForm)) {
-          messageApi.warning(t("products.media.usedByVariants"));
-          return;
-        }
-
-        setDeletingProductMediaId(mediaId);
-
-        try {
-          await productsApi.deleteUploadedMedia(mediaId);
-          setUploadedProductMedia((previous) =>
-            previous.filter((media) => media.id !== mediaId),
-          );
-        } catch (error) {
-          messageApi.error(
-            getApiErrorMessage(error, t("products.media.deleteFailed")),
-          );
-        } finally {
-          setDeletingProductMediaId((current) =>
-            current === mediaId ? null : current,
-          );
-        }
-      },
-      [form, messageApi, t],
-    );
-
-    const handleProductImageBeforeUpload = useCallback(
-      (file: File) => {
-        const validationError = validateProductImageFile(file, {
-          invalidType: t("products.media.invalidType"),
-          tooLarge: t("products.media.tooLarge"),
-        });
-        if (validationError) {
-          messageApi.error(validationError);
-          return Upload.LIST_IGNORE;
-        }
-
-        return true;
-      },
-      [messageApi, t],
-    );
-
-    // ─────────────────────────────────────────────────────────────────────────
     // Submit handlers
     // ─────────────────────────────────────────────────────────────────────────
 
@@ -737,7 +674,7 @@ export const useProductAddPageController =
         submitProductType: ApiProductType,
         variantsForSubmit: ProductVariantUi[],
       ) => {
-        setIsCreatingProduct(true);
+        setIsSavingProduct(true);
 
         try {
           const payload = normalizeCreateProductPayload({
@@ -760,10 +697,56 @@ export const useProductAddPageController =
             getApiErrorMessage(error, t("products.createFailed")),
           );
         } finally {
-          setIsCreatingProduct(false);
+          setIsSavingProduct(false);
         }
       },
       [
+        messageApi,
+        navigateToProductsList,
+        productsStore,
+        t,
+        uploadedProductMedia,
+      ],
+    );
+
+    const submitUpdateProduct = useCallback(
+      async (
+        values: ProductCreateFormValues,
+        submitProductType: ApiProductType,
+        variantsForSubmit: ProductVariantUi[],
+      ) => {
+        if (!editingProductId) {
+          return;
+        }
+
+        setIsSavingProduct(true);
+
+        try {
+          const payload = normalizeUpdateProductPayload({
+            formValues: values,
+            productType: submitProductType,
+            productMedia: uploadedProductMedia,
+            variants: variantsForSubmit,
+          });
+
+          if (payload.variants.length === 0) {
+            messageApi.error(t("products.variantsForm.addAtLeastOne"));
+            return;
+          }
+
+          await productsStore.updateProduct(editingProductId, payload);
+          messageApi.success(t("products.updateSuccess"));
+          navigateToProductsList();
+        } catch (error) {
+          messageApi.error(
+            getApiErrorMessage(error, t("products.updateFailed")),
+          );
+        } finally {
+          setIsSavingProduct(false);
+        }
+      },
+      [
+        editingProductId,
         messageApi,
         navigateToProductsList,
         productsStore,
@@ -801,29 +784,48 @@ export const useProductAddPageController =
           return;
         }
 
+        const submitProduct = isEditMode
+          ? submitUpdateProduct
+          : submitCreateProduct;
+        const singleVariantsForSubmit =
+          isEditMode && variantsForSubmit.length > 0 ? variantsForSubmit : [];
+
         if (productType === "variants" && variantsForSubmit.length === 1) {
           Modal.confirm({
-            content: t("products.variantsForm.singleConfirm"),
-            okText: t("products.modalCreateOk"),
+            content: t(
+              isEditMode
+                ? "products.variantsForm.singleUpdateConfirm"
+                : "products.variantsForm.singleConfirm",
+            ),
+            okText: t(
+              isEditMode ? "products.saveChanges" : "products.modalCreateOk",
+            ),
             cancelText: t("products.cancelEdit"),
-            onOk: () =>
-              submitCreateProduct(values, "single", variantsForSubmit),
+            onOk: () => submitProduct(values, "single", variantsForSubmit),
           });
           return;
         }
 
         if (productType === "single") {
-          await submitCreateProduct(values, "single", []);
+          await submitProduct(values, "single", singleVariantsForSubmit);
           return;
         }
 
-        await submitCreateProduct(
+        await submitProduct(
           values,
           productType as ApiProductType,
           variantsForSubmit,
         );
       },
-      [form, messageApi, productType, submitCreateProduct, t],
+      [
+        form,
+        isEditMode,
+        messageApi,
+        productType,
+        submitCreateProduct,
+        submitUpdateProduct,
+        t,
+      ],
     );
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -835,6 +837,7 @@ export const useProductAddPageController =
     return {
       // Context holder
       contextHolder,
+      pageLoading: isInitialEditLoading,
 
       // Form
       form,
@@ -846,8 +849,12 @@ export const useProductAddPageController =
       },
 
       // Page meta
-      title: t("products.addPage.title"),
-      subtitle: t("products.addPage.subtitle"),
+      title: t(
+        isEditMode ? "products.editPage.title" : "products.addPage.title",
+      ),
+      subtitle: t(
+        isEditMode ? "products.editPage.subtitle" : "products.addPage.subtitle",
+      ),
       backLabel: t("products.detailBackToList"),
       navigateToProductsList,
 
@@ -883,6 +890,7 @@ export const useProductAddPageController =
         onBeforeUpload: handleProductImageBeforeUpload,
         onUpload: handleProductMediaUpload,
         onDelete: handleDeleteUploadedProductMedia,
+        onReorder: handleReorderProductMedia,
         texts: {
           title: t("products.media.sectionTitle"),
           subtitle: t("products.media.sectionSubtitle"),
@@ -890,6 +898,7 @@ export const useProductAddPageController =
           mainImageLabel: t("products.media.coverRadioLabel"),
           deleteTooltip: t("products.media.deleteTooltip"),
           uploadHint: t("products.media.uploadHintShort"),
+          reorderHint: t("products.media.reorderHint"),
         },
       },
 
@@ -907,21 +916,19 @@ export const useProductAddPageController =
 
       // Submit button
       submitButtonProps: {
-        loading: isCreatingProduct,
-        disabled: isCreatingProduct || productMediaUploadingCount > 0,
-        label: t("products.modalCreateOk"),
+        loading: isSavingProduct,
+        disabled:
+          isSavingProduct ||
+          productMediaUploadingCount > 0 ||
+          (isEditMode && productsStore.detailLoading),
+        label: t(
+          isEditMode ? "products.saveChanges" : "products.modalCreateOk",
+        ),
+        icon: isEditMode ? "save" : "create",
       },
 
       // Variant images modal
-      variantImagesModalProps: {
-        open: variantImagesModalVariant != null,
-        variant: variantImagesModalVariant,
-        productMedia: uploadedProductMedia,
-        onClose: handleCloseVariantImagesModal,
-        onApply: handleApplyVariantImages,
-        onUploadVariantImage: handleUploadVariantOnlyImage,
-        onRemoveVariantImage: handleRemoveVariantOnlyImage,
-      },
+      variantImagesModalProps,
 
       // Submit handler
       onSubmit: handleCreateProductSubmit,
