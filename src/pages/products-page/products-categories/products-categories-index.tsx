@@ -1,13 +1,12 @@
 import { Button, Empty, Spin } from "antd";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
-import { Navigate, useOutletContext } from "react-router";
+import { useOutletContext } from "react-router";
 
-import { getProductCategoryPath } from "@/app/router/pages-map";
-import { flattenCategories } from "@/features/categories/model/category-tree";
 import { useCategoriesStore } from "@/features/categories/model/use-categories-store";
 
 import type { ProductsCategoriesOutletContext } from "./products-categories-layout";
+import { getRootCategories } from "./products-categories.utils";
 
 export const ProductsCategoriesIndex = observer(() => {
   const { t } = useTranslation();
@@ -18,10 +17,15 @@ export const ProductsCategoriesIndex = observer(() => {
     return <Spin style={{ marginTop: 24 }} />;
   }
 
-  const flat = flattenCategories(store.categories);
+  const rootCategories = getRootCategories(store.categories);
 
-  if (flat.length > 0) {
-    return <Navigate to={getProductCategoryPath(flat[0].id)} replace />;
+  if (rootCategories.length > 0) {
+    return (
+      <Empty
+        description={t("categories.selectCategory")}
+        style={{ marginTop: 48 }}
+      />
+    );
   }
 
   return (

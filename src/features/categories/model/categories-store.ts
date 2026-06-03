@@ -54,11 +54,18 @@ export class CategoriesStore {
     }
   };
 
-  loadCategoryById = async (id: number): Promise<void> => {
-    runInAction(() => {
-      this.detailLoading = true;
-      this.detailError = null;
-    });
+  loadCategoryById = async (
+    id: number,
+    options?: { silent?: boolean },
+  ): Promise<void> => {
+    const silent = options?.silent === true;
+
+    if (!silent) {
+      runInAction(() => {
+        this.detailLoading = true;
+        this.detailError = null;
+      });
+    }
 
     try {
       const data = await categoriesApi.getById(id);
@@ -70,13 +77,17 @@ export class CategoriesStore {
         this.detailError = unknownErrorMessage(e);
       });
     } finally {
-      runInAction(() => {
-        this.detailLoading = false;
-      });
+      if (!silent) {
+        runInAction(() => {
+          this.detailLoading = false;
+        });
+      }
     }
   };
 
-  createCategory = async (payload: CategoryCreatePayload): Promise<void> => {
+  createCategory = async (
+    payload: CategoryCreatePayload,
+  ): Promise<Category> => {
     runInAction(() => {
       this.saveLoading = true;
     });
@@ -87,6 +98,7 @@ export class CategoriesStore {
         this.activeCategory = createdCategory;
       });
       await this.loadCategories({ silent: true });
+      return createdCategory;
     } finally {
       runInAction(() => {
         this.saveLoading = false;
@@ -97,7 +109,7 @@ export class CategoriesStore {
   updateCategory = async (
     id: number,
     payload: CategoryUpdatePayload,
-  ): Promise<void> => {
+  ): Promise<Category> => {
     runInAction(() => {
       this.saveLoading = true;
     });
@@ -108,6 +120,7 @@ export class CategoriesStore {
         this.activeCategory = updatedCategory;
       });
       await this.loadCategories({ silent: true });
+      return updatedCategory;
     } finally {
       runInAction(() => {
         this.saveLoading = false;

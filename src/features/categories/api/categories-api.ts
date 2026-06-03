@@ -1,46 +1,52 @@
 import { apiClient } from "@/api/api-client";
 
 import type {
-  CategoriesListResponse,
   Category,
   CategoryCreatePayload,
   CategoryUpdatePayload,
 } from "@/features/categories/model/category.types";
+import {
+  normalizeCategories,
+  normalizeCategory,
+  type CategoryApiResponse,
+} from "@/features/categories/model/normalize-category";
 
 const basePath = "/categories";
 
 export const categoriesApi = {
   list: async (): Promise<Category[]> => {
-    const { data } = await apiClient.get<CategoriesListResponse>(basePath);
+    const { data } = await apiClient.get<CategoryApiResponse[]>(basePath);
 
-    return data;
+    return normalizeCategories(data);
   },
 
   create: async (payload: CategoryCreatePayload): Promise<Category> => {
-    const { data } = await apiClient.post<Category>(basePath, {
+    const { data } = await apiClient.post<CategoryApiResponse>(basePath, {
       ...payload,
       sortOrder: 0,
     });
 
-    return data;
+    return normalizeCategory(data);
   },
 
   getById: async (id: number): Promise<Category> => {
-    const { data } = await apiClient.get<Category>(`${basePath}/${id}`);
+    const { data } = await apiClient.get<CategoryApiResponse>(
+      `${basePath}/${id}`,
+    );
 
-    return data;
+    return normalizeCategory(data);
   },
 
   update: async (
     id: number,
     payload: CategoryUpdatePayload,
   ): Promise<Category> => {
-    const { data } = await apiClient.patch<Category>(
+    const { data } = await apiClient.patch<CategoryApiResponse>(
       `${basePath}/${id}`,
       payload,
     );
 
-    return data;
+    return normalizeCategory(data);
   },
 
   delete: async (id: number): Promise<void> => {
