@@ -1,24 +1,42 @@
 import styled from "styled-components";
 
-import { BRAND_PRIMARY } from "@/styled/brand";
-
 export const CategoryNavItem = styled.button<{ $active: boolean }>`
   width: 100%;
   padding: 12px;
   border: 0;
   border-radius: 8px;
-  background: ${({ $active }) => ($active ? "#f4f1ff" : "transparent")};
+  background: ${({ $active, theme }) =>
+    $active ? theme.colors.functional.background.primary : "transparent"};
+  color: ${({ theme }) => theme.colors.functional.text.primary};
   cursor: pointer;
   text-align: left;
   margin-bottom: 4px;
 
   &:hover {
-    background: ${({ $active }) => ($active ? "#f4f1ff" : "#f5f5f5")};
+    background: ${({ $active, theme }) =>
+      $active
+        ? theme.colors.functional.background.primary
+        : theme.colors.functional.background.hover};
   }
 
   &:focus-visible {
-    outline: 2px solid ${BRAND_PRIMARY};
+    outline: 2px solid ${({ theme }) => theme.colors.functional.border.selected};
     outline-offset: 2px;
+  }
+
+  .ant-typography {
+    color: ${({ theme }) => theme.colors.functional.text.primary};
+  }
+
+  .ant-typography-secondary {
+    color: ${({ theme }) => theme.colors.functional.text.subdued};
+  }
+
+  svg {
+    color: ${({ $active, theme }) =>
+      $active
+        ? theme.colors.semantic.primary
+        : theme.colors.functional.text.subdued};
   }
 `;
 
@@ -29,6 +47,12 @@ export const CategoryNavIcon = styled.div<{ $active: boolean }>`
   display: grid;
   place-items: center;
   flex: 0 0 auto;
-  color: ${({ $active }) => ($active ? BRAND_PRIMARY : "#8c8c8c")};
-  background: ${({ $active }) => ($active ? "#eee9ff" : "#f5f5f5")};
+  color: ${({ $active, theme }) =>
+    $active
+      ? theme.colors.semantic.primary
+      : theme.colors.functional.text.subdued};
+  background: ${({ $active, theme }) =>
+    $active
+      ? theme.colors.functional.background.active
+      : theme.colors.functional.background.natural};
 `;
