@@ -1,12 +1,12 @@
 import styled from "styled-components";
 
-export const Root = styled.div`
+export const Root = styled.div<{ customWidth?: number }>`
   box-sizing: border-box;
   flex: 1;
   min-height: 0;
   min-width: 0;
   display: grid;
-  grid-template-columns: 260px minmax(0, 1fr);
+  grid-template-columns: ${(props) => props.customWidth}px minmax(0, 1fr);
   overflow: hidden;
 
   @media (max-width: 767px) {

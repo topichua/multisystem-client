@@ -2,6 +2,12 @@ import type { TreeDataNode } from "antd";
 
 import type { Category } from "@/features/categories/model/category.types";
 
+export const countCategoryDescendants = (category: Category): number =>
+  (category.children ?? []).reduce(
+    (sum, child) => sum + 1 + countCategoryDescendants(child),
+    0,
+  );
+
 export const flattenCategories = (roots: Category[]): Category[] => {
   const out: Category[] = [];
 

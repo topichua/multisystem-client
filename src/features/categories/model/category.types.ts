@@ -6,6 +6,7 @@ export type Category = {
   createdByUserId: number;
   createdAt: string;
   updatedAt: string;
+  productsCount?: number;
   children: Category[];
 };
 

@@ -1,4 +1,14 @@
-import { Button, Form, Input, Modal, Select, Tree, message } from "antd";
+import {
+  Button,
+  Empty,
+  Flex,
+  Form,
+  Input,
+  Modal,
+  Select,
+  Typography,
+  message,
+} from "antd";
 import { observer } from "mobx-react-lite";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -14,10 +24,13 @@ import {
 import { PaneNavSplitLayout } from "@/components/layout/pane-nav-split-layout";
 import {
   categoriesEligibleAsParent,
-  categoriesToTreeData,
-  findAncestorIds,
+  countCategoryDescendants,
 } from "@/features/categories/model/category-tree";
 import { useCategoriesStore } from "@/features/categories/model/use-categories-store";
+import { CaretRightIcon, FolderIcon, PlusIcon } from "@phosphor-icons/react";
+import * as S from "./products-categories-layout.styled";
+
+const { Text } = Typography;
 
 type CategoryCreateFormValues = {
   name: string;
@@ -37,6 +50,7 @@ export const ProductsCategoriesLayout = observer(() => {
   const [messageApi, contextHolder] = message.useMessage();
   const [form] = Form.useForm<CategoryCreateFormValues>();
   const [modalOpen, setModalOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
 
   useEffect(() => {
     void store.loadCategories();
@@ -51,24 +65,6 @@ export const ProductsCategoriesLayout = observer(() => {
     () => categoriesEligibleAsParent(store.categories),
     [store.categories],
   );
-
-  const treeData = useMemo(
-    () => categoriesToTreeData(store.categories),
-    [store.categories],
-  );
-
-  const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
-
-  useEffect(() => {
-    if (!Number.isFinite(categoryIdFromPath)) {
-      return;
-    }
-
-    const ancestorIds = findAncestorIds(store.categories, categoryIdFromPath);
-    const next = ancestorIds.map(String);
-
-    setExpandedKeys((prev) => Array.from(new Set([...prev, ...next])));
-  }, [categoryIdFromPath, store.categories]);
 
   const openCreate = useCallback(() => {
     form.setFieldsValue(defaultCreateValues);
@@ -89,11 +85,14 @@ export const ProductsCategoriesLayout = observer(() => {
     }
 
     try {
-      await store.createCategory(values);
+      await store.createCategory({
+        name: values.name,
+        parentId: values.parentId ?? null,
+      });
       messageApi.success(t("categories.createSuccess"));
       closeCreate();
 
-      if (store.activeCategory) {
+      if (values.parentId == null && store.activeCategory) {
         navigate(getProductCategoryPath(store.activeCategory.id));
       }
     } catch (e) {
@@ -102,38 +101,93 @@ export const ProductsCategoriesLayout = observer(() => {
     }
   }, [closeCreate, form, messageApi, navigate, store, t]);
 
+  const rootCategories = useMemo(
+    () => store.categories.filter((category) => category.parentId == null),
+    [store.categories],
+  );
+
+  const visibleCategories = useMemo(() => {
+    const normalizedSearch = searchValue.trim().toLowerCase();
+
+    if (!normalizedSearch) {
+      return rootCategories;
+    }
+
+    return rootCategories.filter((category) =>
+      category.name.toLowerCase().includes(normalizedSearch),
+    );
+  }, [rootCategories, searchValue]);
+
   return (
     <>
       {contextHolder}
-      <PaneNavSplitLayout.Root data-qa="layout-products-categories-shell">
+      <PaneNavSplitLayout.Root
+        data-qa="layout-products-categories-shell"
+        customWidth={350}
+      >
         <PaneNavSplitLayout.SubSidebar data-qa="layout-products-categories-sidebar">
           <PaneSectionHeaderStack data-qa="layout-products-categories-header">
-            <PaneSectionTitle>{t("categories.title")}</PaneSectionTitle>
-            <Button type="primary" onClick={openCreate}>
-              {t("categories.createCategory")}
-            </Button>
+            <Flex align="center" justify="space-between" gap={12}>
+              <div>
+                <PaneSectionTitle>{t("categories.title")}</PaneSectionTitle>
+                <Text type="secondary">
+                  {store.categories.length} {t("categories.itemsCount")}
+                </Text>
+              </div>
+
+              <Button type="primary" icon={<PlusIcon />} onClick={openCreate}>
+                {t("categories.createCategory")}
+              </Button>
+            </Flex>
+
+            <Input.Search
+              allowClear
+              placeholder={t("categories.searchPlaceholder")}
+              value={searchValue}
+              onChange={(event) => setSearchValue(event.target.value)}
+            />
           </PaneSectionHeaderStack>
+
           <PaneScrollRegion data-qa="layout-products-categories-nav-scroll">
             <div data-qa="layout-products-categories-nav">
-              <Tree
-                blockNode
-                showLine
-                treeData={treeData}
-                selectedKeys={
-                  Number.isFinite(categoryIdFromPath)
-                    ? [String(categoryIdFromPath)]
-                    : []
-                }
-                expandedKeys={expandedKeys}
-                onExpand={(keys) => setExpandedKeys(keys as string[])}
-                onSelect={(keys) => {
-                  const id = keys[0];
-                  if (id == null) {
-                    return;
-                  }
-                  navigate(getProductCategoryPath(Number(id)));
-                }}
-              />
+              {visibleCategories.length === 0 ? (
+                <Empty
+                  image={Empty.PRESENTED_IMAGE_SIMPLE}
+                  description={t("categories.emptySearch")}
+                />
+              ) : (
+                visibleCategories.map((category) => {
+                  const isActive = category.id === categoryIdFromPath;
+                  const subcategoriesCount = countCategoryDescendants(category);
+
+                  return (
+                    <S.CategoryNavItem
+                      key={category.id}
+                      $active={isActive}
+                      onClick={() =>
+                        navigate(getProductCategoryPath(category.id))
+                      }
+                    >
+                      <Flex align="center" gap={12}>
+                        <S.CategoryNavIcon $active={isActive}>
+                          <FolderIcon />
+                        </S.CategoryNavIcon>
+
+                        <Flex vertical flex={1}>
+                          <Text strong>{category.name}</Text>
+
+                          <Text type="secondary">
+                            {subcategoriesCount}{" "}
+                            {t("categories.subcategoriesCount")}
+                          </Text>
+                        </Flex>
+
+                        <CaretRightIcon />
+                      </Flex>
+                    </S.CategoryNavItem>
+                  );
+                })
+              )}
             </div>
           </PaneScrollRegion>
         </PaneNavSplitLayout.SubSidebar>
@@ -156,6 +210,7 @@ export const ProductsCategoriesLayout = observer(() => {
         okText={t("categories.okCreate")}
         confirmLoading={store.saveLoading}
         destroyOnHidden
+        width={400}
       >
         <Form form={form} layout="vertical" initialValues={defaultCreateValues}>
           <Form.Item
@@ -168,7 +223,13 @@ export const ProductsCategoriesLayout = observer(() => {
           >
             <Input placeholder={t("categories.namePlaceholder")} />
           </Form.Item>
-          <Form.Item name="parentId" label={t("categories.parentCategory")}>
+          <Form.Item
+            name="parentId"
+            label={t("categories.parentCategory")}
+            extra={
+              <Text type="secondary">{t("categories.parentCategoryHint")}</Text>
+            }
+          >
             <Select
               allowClear
               placeholder={t("categories.noParent")}

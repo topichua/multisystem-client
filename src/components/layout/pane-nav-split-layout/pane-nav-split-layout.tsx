@@ -4,6 +4,7 @@ import * as S from "./pane-nav-split-layout.styled";
 
 type DivProps = {
   children?: ReactNode;
+  customWidth?: number;
 } & Omit<HTMLAttributes<HTMLDivElement>, "children">;
 
 type AsideProps = {
@@ -11,8 +12,10 @@ type AsideProps = {
 } & Omit<HTMLAttributes<HTMLElement>, "children">;
 
 export const PaneNavSplitLayout = {
-  Root: ({ children, ...rest }: DivProps) => (
-    <S.Root {...rest}>{children}</S.Root>
+  Root: ({ children, customWidth = 260, ...rest }: DivProps) => (
+    <S.Root customWidth={customWidth} {...rest}>
+      {children}
+    </S.Root>
   ),
 
   SubSidebar: ({ children, ...rest }: AsideProps) => (
