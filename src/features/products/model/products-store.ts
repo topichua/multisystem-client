@@ -1,5 +1,6 @@
 import { makeAutoObservable, runInAction } from "mobx";
 
+import { characteristicsApi } from "@/features/characteristics/api/characteristics-api";
 import { productsApi } from "@/features/products/api/products-api";
 import type {
   CreateProductPayload,
@@ -440,7 +441,7 @@ export class ProductsStore {
     });
 
     try {
-      const result = await productsApi.getVariantCustomFields();
+      const result = await characteristicsApi.list();
 
       runInAction(() => {
         this.variantCustomFields = [...result.items].sort(

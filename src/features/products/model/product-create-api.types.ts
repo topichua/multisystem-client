@@ -6,23 +6,13 @@ export type ProductCreateSourceType = "manual";
 
 export type ProductCreateCurrency = "UAH";
 
-export type VariantCustomFieldType = "options" | "text";
+export type {
+  CharacteristicFieldType as VariantCustomFieldType,
+  Characteristic as VariantCustomField,
+  CharacteristicsListResponse as VariantCustomFieldsResponse,
+} from "@/features/characteristics/model/characteristic.types";
 
 export type CreateProductCustomFieldType = "OPTION" | "TEXT";
-
-export type VariantCustomField = {
-  id: number;
-  key: string;
-  label: string;
-  type: VariantCustomFieldType;
-  options?: string[];
-  sortOrder: number;
-};
-
-export type VariantCustomFieldsResponse = {
-  workspaceId: number;
-  items: VariantCustomField[];
-};
 
 export type UploadedProductMediaResponse = {
   id: number;

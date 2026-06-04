@@ -4,7 +4,6 @@ import type {
   ProductUploadedMedia,
   UpdateProductPayload,
   UploadedProductMediaResponse,
-  VariantCustomFieldsResponse,
 } from "@/features/products/model/product-create-api.types";
 import type {
   CatalogVariant,
@@ -23,7 +22,6 @@ import type {
 } from "@/features/products/model/product.types";
 
 const basePath = "/products";
-const workspacePath = "/workspace";
 
 export const PRODUCT_MEDIA_UPLOAD_FIELD_NAME = "image";
 
@@ -345,14 +343,6 @@ export const productsApi = {
     payload: ProductMediaUpdatePayload,
   ): Promise<void> => {
     await apiClient.patch(`${basePath}/${productId}/media/${mediaId}`, payload);
-  },
-
-  getVariantCustomFields: async (): Promise<VariantCustomFieldsResponse> => {
-    const { data } = await apiClient.get<VariantCustomFieldsResponse>(
-      `${workspacePath}/variant-custom-fields`,
-    );
-
-    return data;
   },
 
   uploadMedia: async (file: File): Promise<ProductUploadedMedia> => {
