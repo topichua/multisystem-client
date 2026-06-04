@@ -3,6 +3,8 @@ import { apiClient } from "@/api/api-client";
 import type {
   Characteristic,
   CharacteristicCreatePayload,
+  CharacteristicDetail,
+  CharacteristicOptionPayload,
   CharacteristicsListResponse,
   CharacteristicUpdatePayload,
 } from "@/features/characteristics/model/characteristic.types";
@@ -16,7 +18,17 @@ export const characteristicsApi = {
     return data;
   },
 
-  create: async (payload: CharacteristicCreatePayload): Promise<Characteristic> => {
+  getById: async (id: number): Promise<CharacteristicDetail> => {
+    const { data } = await apiClient.get<CharacteristicDetail>(
+      `${basePath}/${id}`,
+    );
+
+    return data;
+  },
+
+  create: async (
+    payload: CharacteristicCreatePayload,
+  ): Promise<Characteristic> => {
     const { data } = await apiClient.post<Characteristic>(basePath, payload);
 
     return data;
@@ -36,5 +48,24 @@ export const characteristicsApi = {
 
   delete: async (id: number): Promise<void> => {
     await apiClient.delete(`${basePath}/${id}`);
+  },
+
+  createOption: async (
+    id: number,
+    payload: CharacteristicOptionPayload,
+  ): Promise<void> => {
+    await apiClient.post(`${basePath}/${id}/option`, payload);
+  },
+
+  updateOption: async (
+    id: number,
+    optionId: number,
+    payload: CharacteristicOptionPayload,
+  ): Promise<void> => {
+    await apiClient.put(`${basePath}/${id}/option/${optionId}`, payload);
+  },
+
+  deleteOption: async (id: number, optionId: number): Promise<void> => {
+    await apiClient.delete(`${basePath}/${id}/option/${optionId}`);
   },
 };

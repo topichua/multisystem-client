@@ -103,16 +103,16 @@ export const ProductsListFiltersPanel = observer(
 
     return (
       <Drawer
-        title={t("products.toolbar.filters")}
+        title={t('products.toolbar.filters')}
         open={open}
         placement="right"
-        width="auto"
+        size="auto"
         onClose={onClose}
         destroyOnHidden
         styles={{
           body: {
             padding: 16,
-            overflowY: "auto",
+            overflowY: 'auto',
           },
           footer: {
             padding: 16,
@@ -124,7 +124,7 @@ export const ProductsListFiltersPanel = observer(
               style={{ flex: 1 }}
               onClick={() => productsStore.resetFilterDraft()}
             >
-              {t("products.listFilters.panelClear")}
+              {t('products.listFilters.panelClear')}
             </Button>
             <Button
               type="primary"
@@ -135,20 +135,20 @@ export const ProductsListFiltersPanel = observer(
                 onClose();
               }}
             >
-              {t("products.listFilters.panelApply")}
+              {t('products.listFilters.panelApply')}
             </Button>
           </Flex>
         }
       >
-        <Flex vertical gap={20} style={{ width: 360, maxWidth: "80vw" }}>
+        <Flex vertical gap={20} style={{ width: 360, maxWidth: '80vw' }}>
           <div>
-            <Text strong style={{ display: "block", marginBottom: 8 }}>
-              {t("products.toolbar.category")}
+            <Text strong style={{ display: 'block', marginBottom: 8 }}>
+              {t('products.toolbar.category')}
             </Text>
             <Input
               allowClear
               placeholder={t(
-                "products.listFilters.panelCategorySearchPlaceholder",
+                'products.listFilters.panelCategorySearchPlaceholder',
               )}
               prefix={<MagnifyingGlassIcon size={16} />}
               value={categoryQuery}
@@ -158,8 +158,8 @@ export const ProductsListFiltersPanel = observer(
             <div
               style={{
                 maxHeight: 220,
-                overflowY: "auto",
-                border: "1px solid #f0f0f0",
+                overflowY: 'auto',
+                border: '1px solid #f0f0f0',
                 borderRadius: 8,
                 padding: 8,
               }}
@@ -170,7 +170,7 @@ export const ProductsListFiltersPanel = observer(
                   indeterminate={someSelected}
                   onChange={(e) => toggleSelectAllCategories(e.target.checked)}
                 >
-                  {t("products.listFilters.panelSelectAll")}
+                  {t('products.listFilters.panelSelectAll')}
                 </Checkbox>
               </div>
               {filteredCategories.map((c) => (
@@ -187,37 +187,37 @@ export const ProductsListFiltersPanel = observer(
           </div>
 
           <div>
-            <Text strong style={{ display: "block", marginBottom: 8 }}>
-              {t("products.toolbar.status")}
+            <Text strong style={{ display: 'block', marginBottom: 8 }}>
+              {t('products.toolbar.status')}
             </Text>
             <Select
-              style={{ width: "100%" }}
-              value={productsStore.draftStatus ?? ""}
+              style={{ width: '100%' }}
+              value={productsStore.draftStatus ?? ''}
               options={[
-                { value: "", label: t("products.toolbar.allStatuses") },
-                { value: "draft", label: t("products.toolbar.statusDraft") },
-                { value: "active", label: t("products.toolbar.statusActive") },
+                { value: '', label: t('products.toolbar.allStatuses') },
+                { value: 'draft', label: t('products.toolbar.statusDraft') },
+                { value: 'active', label: t('products.toolbar.statusActive') },
                 {
-                  value: "archived",
-                  label: t("products.toolbar.statusArchived"),
+                  value: 'archived',
+                  label: t('products.toolbar.statusArchived'),
                 },
               ]}
               onChange={(v) =>
                 productsStore.setDraftStatus(
-                  v === undefined || v === null || v === "" ? null : String(v),
+                  v === undefined || v === null || v === '' ? null : String(v),
                 )
               }
             />
           </div>
 
           <div>
-            <Text strong style={{ display: "block", marginBottom: 8 }}>
-              {t("products.listFilters.panelPriceSection")}
+            <Text strong style={{ display: 'block', marginBottom: 8 }}>
+              {t('products.listFilters.panelPriceSection')}
             </Text>
             <Flex gap={8} align="center">
               <InputNumber
                 style={{ flex: 1, minWidth: 0 }}
-                placeholder={t("products.listFilters.panelPriceFrom")}
+                placeholder={t('products.listFilters.panelPriceFrom')}
                 value={productsStore.draftMinPrice ?? undefined}
                 onChange={(v) => {
                   if (v == null) {
@@ -230,7 +230,7 @@ export const ProductsListFiltersPanel = observer(
               <span>–</span>
               <InputNumber
                 style={{ flex: 1, minWidth: 0 }}
-                placeholder={t("products.listFilters.panelPriceTo")}
+                placeholder={t('products.listFilters.panelPriceTo')}
                 value={productsStore.draftMaxPrice ?? undefined}
                 onChange={(v) => {
                   if (v == null) {

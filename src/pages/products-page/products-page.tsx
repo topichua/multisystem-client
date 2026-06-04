@@ -16,6 +16,10 @@ export const ProductsPage = () => {
     () => [
       { key: pagesMap.productsList, label: t("products.listTitle") },
       { key: pagesMap.productsCategories, label: t("categories.title") },
+      {
+        key: pagesMap.productsCharacteristics,
+        label: t("characteristics.title"),
+      },
     ],
     [t],
   );
@@ -27,6 +31,10 @@ export const ProductsPage = () => {
 
     if (location.pathname.startsWith(pagesMap.productsCategories)) {
       return pagesMap.productsCategories;
+    }
+
+    if (location.pathname.startsWith(pagesMap.productsCharacteristics)) {
+      return pagesMap.productsCharacteristics;
     }
 
     return pagesMap.productsList;

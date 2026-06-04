@@ -31,11 +31,11 @@ createRoot(document.getElementById("root")!).render(
                 <CharacteristicsProvider>
                   <ClientsProvider>
                     <ProductsProvider>
-                    <OrdersProvider>
-                      <ConversationGroupsProvider>
-                        <App />
-                      </ConversationGroupsProvider>
-                    </OrdersProvider>
+                      <OrdersProvider>
+                        <ConversationGroupsProvider>
+                          <App />
+                        </ConversationGroupsProvider>
+                      </OrdersProvider>
                     </ProductsProvider>
                   </ClientsProvider>
                 </CharacteristicsProvider>

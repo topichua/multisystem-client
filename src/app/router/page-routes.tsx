@@ -13,6 +13,9 @@ import { ProductsPage } from "@/pages/products-page/products-page";
 import { ProductsCategoriesLayout } from "@/pages/products-page/products-categories/products-categories-layout";
 import { ProductsCategoriesIndex } from "@/pages/products-page/products-categories/products-categories-index";
 import { ProductCategoryDetailView } from "@/pages/products-page/products-categories/product-category-detail-view";
+import { ProductsCharacteristicsLayout } from "@/pages/products-page/products-characteristics/products-characteristics-layout";
+import { ProductsCharacteristicsIndex } from "@/pages/products-page/products-characteristics/products-characteristics-index";
+import { ProductCharacteristicDetailView } from "@/pages/products-page/products-characteristics/product-characteristic-detail-view";
 import { ProductAddPage } from "@/pages/products-page/products-list/pages/product-add-page";
 import { ProductsListPage } from "@/pages/products-page/products-list/list/products-list-page";
 import { ClientsPage } from "@/pages/clients-page/clients-page";
@@ -74,6 +77,16 @@ export const PageRoutes = () => {
               <Route
                 path=":categoryId"
                 element={<ProductCategoryDetailView />}
+              />
+            </Route>
+            <Route
+              path="characteristics"
+              element={<ProductsCharacteristicsLayout />}
+            >
+              <Route index element={<ProductsCharacteristicsIndex />} />
+              <Route
+                path=":characteristicId"
+                element={<ProductCharacteristicDetailView />}
               />
             </Route>
           </Route>
