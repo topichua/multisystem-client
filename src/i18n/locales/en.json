@@ -456,7 +456,10 @@
       "price": "Price",
       "stock": "Quantity",
       "status": "Status",
-      "actions": "Actions"
+      "actions": "Actions",
+      "expandRowAria": "Expand product row",
+      "collapseRowAria": "Collapse product row",
+      "noVariants": "No variants"
     }
   },
   "orderStatuses": {

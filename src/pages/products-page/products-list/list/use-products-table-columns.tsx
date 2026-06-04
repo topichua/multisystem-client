@@ -1,7 +1,12 @@
-import { PencilSimpleIcon, TrashIcon } from "@phosphor-icons/react";
+import {
+  CaretRightIcon,
+  DotsThreeIcon,
+  PencilSimpleIcon,
+  TrashIcon,
+} from "@phosphor-icons/react";
 import type { TableColumnsType } from "antd";
-import { Button, Flex, Popconfirm, Tag, Typography } from "antd";
-import { useMemo } from "react";
+import { Button, Dropdown, Flex, Modal, Tag, Typography } from "antd";
+import { useMemo, type Key } from "react";
 import { useTranslation } from "react-i18next";
 
 import type { Product } from "@/features/products/model/product.types";
@@ -24,6 +29,8 @@ const statusToColor: Record<string, ProductStatusColor> = {
 type UseProductsTableColumnsParams = {
   categoryNameById: Map<number, string>;
   deleteLoadingId: number | null;
+  expandedRowKeys: Key[];
+  onToggleRowExpand: (productId: number) => void;
   onEdit: (productId: number) => void | Promise<void>;
   onDelete: (productId: number) => Promise<void>;
 };
@@ -31,6 +38,8 @@ type UseProductsTableColumnsParams = {
 export const useProductsTableColumns = ({
   categoryNameById,
   deleteLoadingId,
+  expandedRowKeys,
+  onToggleRowExpand,
   onEdit,
   onDelete,
 }: UseProductsTableColumnsParams): TableColumnsType<Product> => {
@@ -42,40 +51,76 @@ export const useProductsTableColumns = ({
         title: t("products.table.product"),
         key: "product",
         width: 360,
-        render: (_, product) => (
-          <Flex align="center" gap={12}>
-            {product.mainImageUrl ? (
-              <img
-                src={product.mainImageUrl}
-                alt={product.name}
-                width={48}
-                height={48}
-                style={{
-                  objectFit: "cover",
-                  borderRadius: 8,
-                  backgroundColor: "#f2f2f2",
-                  flexShrink: 0,
-                }}
-              />
-            ) : (
-              <div
-                aria-hidden
-                style={{
-                  width: 48,
-                  height: 48,
-                  borderRadius: 8,
-                  backgroundColor: "#f2f2f2",
-                  flexShrink: 0,
-                }}
-              />
-            )}
-            <Flex vertical gap={2}>
-              <Text strong ellipsis style={{ maxWidth: 260 }}>
-                {product.name}
-              </Text>
+        render: (_, product) => {
+          const hasVariants = Boolean(product.variants?.length);
+          const isExpanded =
+            hasVariants && expandedRowKeys.includes(product.id);
+
+          return (
+            <Flex align="center" gap={4}>
+              {hasVariants ? (
+                <Button
+                  type="text"
+                  size="small"
+                  aria-label={
+                    isExpanded
+                      ? t("products.table.collapseRowAria")
+                      : t("products.table.expandRowAria")
+                  }
+                  aria-expanded={isExpanded}
+                  icon={
+                    <CaretRightIcon
+                      size={16}
+                      style={{
+                        transform: isExpanded ? "rotate(90deg)" : undefined,
+                        transition: "transform 0.2s ease",
+                      }}
+                    />
+                  }
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onToggleRowExpand(product.id);
+                  }}
+                  onMouseDown={(e) => e.stopPropagation()}
+                />
+              ) : (
+                <span aria-hidden style={{ width: 24, flexShrink: 0 }} />
+              )}
+              <Flex align="center" gap={8} style={{ minWidth: 0, flex: 1 }}>
+                {product.mainImageUrl ? (
+                  <img
+                    src={product.mainImageUrl}
+                    alt={product.name}
+                    width={48}
+                    height={48}
+                    style={{
+                      objectFit: "cover",
+                      borderRadius: 8,
+                      backgroundColor: "#f2f2f2",
+                      flexShrink: 0,
+                    }}
+                  />
+                ) : (
+                  <div
+                    aria-hidden
+                    style={{
+                      width: 48,
+                      height: 48,
+                      borderRadius: 8,
+                      backgroundColor: "#f2f2f2",
+                      flexShrink: 0,
+                    }}
+                  />
+                )}
+                <Flex vertical gap={2} style={{ minWidth: 0, flex: 1 }}>
+                  <Text strong ellipsis style={{ maxWidth: 260 }}>
+                    {product.name}
+                  </Text>
+                </Flex>
+              </Flex>
             </Flex>
-          </Flex>
-        ),
+          );
+        },
       },
       {
         title: t("products.table.category"),
@@ -125,35 +170,67 @@ export const useProductsTableColumns = ({
         key: "actions",
         width: 50,
         render: (_, product) => (
-          <Flex gap={4} align="center">
-            <Button
-              type="text"
-              size="small"
-              icon={<PencilSimpleIcon size={18} />}
-              aria-label={t("products.edit")}
-              onClick={(e) => {
-                e.stopPropagation();
-                void onEdit(product.id);
+          <div
+            onClick={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
+            onPointerDown={(e) => e.stopPropagation()}
+          >
+            <Dropdown
+              trigger={["click"]}
+              menu={{
+                items: [
+                  {
+                    key: "edit",
+                    label: t("products.edit"),
+                    icon: <PencilSimpleIcon size={16} />,
+                  },
+                  {
+                    key: "delete",
+                    label: t("products.delete"),
+                    danger: true,
+                    disabled: deleteLoadingId === product.id,
+                    icon: <TrashIcon size={16} />,
+                  },
+                ],
+                onClick: ({ key, domEvent }) => {
+                  domEvent.stopPropagation();
+                  if (key === "edit") {
+                    void onEdit(product.id);
+                    return;
+                  }
+                  if (key === "delete") {
+                    Modal.confirm({
+                      title: t("products.deleteConfirm"),
+                      okText: t("products.delete"),
+                      okType: "danger",
+                      onOk: () => onDelete(product.id),
+                    });
+                  }
+                },
               }}
-            />
-            <Popconfirm
-              title={t("products.deleteConfirm")}
-              onConfirm={() => void onDelete(product.id)}
             >
               <Button
                 type="text"
                 size="small"
-                danger
                 loading={deleteLoadingId === product.id}
-                icon={<TrashIcon size={18} />}
-                aria-label={t("products.delete")}
+                icon={<DotsThreeIcon size={25} />}
+                aria-label={t("products.table.actions")}
                 onClick={(e) => e.stopPropagation()}
+                onMouseDown={(e) => e.stopPropagation()}
               />
-            </Popconfirm>
-          </Flex>
+            </Dropdown>
+          </div>
         ),
       },
     ],
-    [categoryNameById, deleteLoadingId, onDelete, onEdit, t],
+    [
+      categoryNameById,
+      deleteLoadingId,
+      expandedRowKeys,
+      onDelete,
+      onEdit,
+      onToggleRowExpand,
+      t,
+    ],
   );
 };

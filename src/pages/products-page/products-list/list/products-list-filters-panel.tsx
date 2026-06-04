@@ -13,11 +13,57 @@ import { observer } from "mobx-react-lite";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { flattenCategories } from "@/features/categories/model/category-tree";
+import type { Category } from "@/features/categories/model/category.types";
 import { useCategoriesStore } from "@/features/categories/model/use-categories-store";
 import { useProductsStore } from "@/features/products/model/use-products-store";
 
 const { Text } = Typography;
+const CATEGORY_LEVEL_INDENT = 20;
+
+type CategoryFilterItem = {
+  category: Category;
+  level: number;
+};
+
+const flattenCategoriesForFilter = (
+  categories: Category[],
+  level = 0,
+): CategoryFilterItem[] =>
+  categories.flatMap((category) => [
+    { category, level },
+    ...flattenCategoriesForFilter(category.children ?? [], level + 1),
+  ]);
+
+const filterCategoriesForFilter = (
+  categories: Category[],
+  query: string,
+): CategoryFilterItem[] => {
+  const normalizedQuery = query.trim().toLowerCase();
+
+  if (!normalizedQuery) {
+    return flattenCategoriesForFilter(categories);
+  }
+
+  const walk = (nodes: Category[], level: number): CategoryFilterItem[] =>
+    nodes.flatMap((category) => {
+      const categoryMatches = category.name
+        .toLowerCase()
+        .includes(normalizedQuery);
+      const matchingChildren = walk(category.children ?? [], level + 1);
+
+      if (!categoryMatches && matchingChildren.length === 0) {
+        return [];
+      }
+
+      const visibleChildren = categoryMatches
+        ? flattenCategoriesForFilter(category.children ?? [], level + 1)
+        : matchingChildren;
+
+      return [{ category, level }, ...visibleChildren];
+    });
+
+  return walk(categories, 0);
+};
 
 type ProductsListFiltersPanelProps = {
   open: boolean;
@@ -32,22 +78,20 @@ export const ProductsListFiltersPanel = observer(
     const [categoryQuery, setCategoryQuery] = useState("");
     const filtersPanelWasOpenRef = useRef(false);
 
-    const flatCategories = useMemo(
-      () => flattenCategories(categoriesStore.categories),
+    const categoryFilterItems = useMemo(
+      () => flattenCategoriesForFilter(categoriesStore.categories),
       [categoriesStore.categories],
     );
 
-    const filteredCategories = useMemo(() => {
-      const q = categoryQuery.trim().toLowerCase();
-      if (!q) {
-        return flatCategories;
-      }
-      return flatCategories.filter((c) => c.name.toLowerCase().includes(q));
-    }, [categoryQuery, flatCategories]);
+    const filteredCategoryItems = useMemo(
+      () =>
+        filterCategoriesForFilter(categoriesStore.categories, categoryQuery),
+      [categoryQuery, categoriesStore.categories],
+    );
 
     const allIds = useMemo(
-      () => flatCategories.map((c) => c.id),
-      [flatCategories],
+      () => categoryFilterItems.map((item) => item.category.id),
+      [categoryFilterItems],
     );
     const draftSet = useMemo(
       () => new Set(productsStore.draftCategoryIds),
@@ -103,7 +147,7 @@ export const ProductsListFiltersPanel = observer(
 
     return (
       <Drawer
-        title={t('products.toolbar.filters')}
+        title={t("products.toolbar.filters")}
         open={open}
         placement="right"
         size="auto"
@@ -112,7 +156,7 @@ export const ProductsListFiltersPanel = observer(
         styles={{
           body: {
             padding: 16,
-            overflowY: 'auto',
+            overflowY: "auto",
           },
           footer: {
             padding: 16,
@@ -124,7 +168,7 @@ export const ProductsListFiltersPanel = observer(
               style={{ flex: 1 }}
               onClick={() => productsStore.resetFilterDraft()}
             >
-              {t('products.listFilters.panelClear')}
+              {t("products.listFilters.panelClear")}
             </Button>
             <Button
               type="primary"
@@ -135,20 +179,20 @@ export const ProductsListFiltersPanel = observer(
                 onClose();
               }}
             >
-              {t('products.listFilters.panelApply')}
+              {t("products.listFilters.panelApply")}
             </Button>
           </Flex>
         }
       >
-        <Flex vertical gap={20} style={{ width: 360, maxWidth: '80vw' }}>
+        <Flex vertical gap={20} style={{ width: 360, maxWidth: "80vw" }}>
           <div>
-            <Text strong style={{ display: 'block', marginBottom: 8 }}>
-              {t('products.toolbar.category')}
+            <Text strong style={{ display: "block", marginBottom: 8 }}>
+              {t("products.toolbar.category")}
             </Text>
             <Input
               allowClear
               placeholder={t(
-                'products.listFilters.panelCategorySearchPlaceholder',
+                "products.listFilters.panelCategorySearchPlaceholder",
               )}
               prefix={<MagnifyingGlassIcon size={16} />}
               value={categoryQuery}
@@ -158,8 +202,8 @@ export const ProductsListFiltersPanel = observer(
             <div
               style={{
                 maxHeight: 220,
-                overflowY: 'auto',
-                border: '1px solid #f0f0f0',
+                overflowY: "auto",
+                border: "1px solid #f0f0f0",
                 borderRadius: 8,
                 padding: 8,
               }}
@@ -170,16 +214,24 @@ export const ProductsListFiltersPanel = observer(
                   indeterminate={someSelected}
                   onChange={(e) => toggleSelectAllCategories(e.target.checked)}
                 >
-                  {t('products.listFilters.panelSelectAll')}
+                  {t("products.listFilters.panelSelectAll")}
                 </Checkbox>
               </div>
-              {filteredCategories.map((c) => (
-                <div key={c.id} style={{ marginBottom: 4 }}>
+              {filteredCategoryItems.map(({ category, level }) => (
+                <div
+                  key={category.id}
+                  style={{
+                    marginBottom: 4,
+                    paddingLeft: level * CATEGORY_LEVEL_INDENT,
+                  }}
+                >
                   <Checkbox
-                    checked={draftSet.has(c.id)}
-                    onChange={(e) => toggleCategory(c.id, e.target.checked)}
+                    checked={draftSet.has(category.id)}
+                    onChange={(e) =>
+                      toggleCategory(category.id, e.target.checked)
+                    }
                   >
-                    {c.name}
+                    {category.name}
                   </Checkbox>
                 </div>
               ))}
@@ -187,37 +239,37 @@ export const ProductsListFiltersPanel = observer(
           </div>
 
           <div>
-            <Text strong style={{ display: 'block', marginBottom: 8 }}>
-              {t('products.toolbar.status')}
+            <Text strong style={{ display: "block", marginBottom: 8 }}>
+              {t("products.toolbar.status")}
             </Text>
             <Select
-              style={{ width: '100%' }}
-              value={productsStore.draftStatus ?? ''}
+              style={{ width: "100%" }}
+              value={productsStore.draftStatus ?? ""}
               options={[
-                { value: '', label: t('products.toolbar.allStatuses') },
-                { value: 'draft', label: t('products.toolbar.statusDraft') },
-                { value: 'active', label: t('products.toolbar.statusActive') },
+                { value: "", label: t("products.toolbar.allStatuses") },
+                { value: "draft", label: t("products.toolbar.statusDraft") },
+                { value: "active", label: t("products.toolbar.statusActive") },
                 {
-                  value: 'archived',
-                  label: t('products.toolbar.statusArchived'),
+                  value: "archived",
+                  label: t("products.toolbar.statusArchived"),
                 },
               ]}
               onChange={(v) =>
                 productsStore.setDraftStatus(
-                  v === undefined || v === null || v === '' ? null : String(v),
+                  v === undefined || v === null || v === "" ? null : String(v),
                 )
               }
             />
           </div>
 
           <div>
-            <Text strong style={{ display: 'block', marginBottom: 8 }}>
-              {t('products.listFilters.panelPriceSection')}
+            <Text strong style={{ display: "block", marginBottom: 8 }}>
+              {t("products.listFilters.panelPriceSection")}
             </Text>
             <Flex gap={8} align="center">
               <InputNumber
                 style={{ flex: 1, minWidth: 0 }}
-                placeholder={t('products.listFilters.panelPriceFrom')}
+                placeholder={t("products.listFilters.panelPriceFrom")}
                 value={productsStore.draftMinPrice ?? undefined}
                 onChange={(v) => {
                   if (v == null) {
@@ -230,7 +282,7 @@ export const ProductsListFiltersPanel = observer(
               <span>–</span>
               <InputNumber
                 style={{ flex: 1, minWidth: 0 }}
-                placeholder={t('products.listFilters.panelPriceTo')}
+                placeholder={t("products.listFilters.panelPriceTo")}
                 value={productsStore.draftMaxPrice ?? undefined}
                 onChange={(v) => {
                   if (v == null) {

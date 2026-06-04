@@ -14,11 +14,12 @@ export type Product = {
   mainImageUrl: string | null;
   sourceType?: string;
   sourceId?: string | null;
-  referenceGroupId: number | null;
+  referenceGroupId?: number | null;
   categoryId: number | null;
   createdAt: string;
   updatedAt: string;
   sizes?: string[] | string | null;
+  variants?: ProductVariant[];
 };
 
 export type ProductCategoryRef = {
@@ -29,7 +30,7 @@ export type ProductCategoryRef = {
 
 export type ProductVariant = {
   id: number;
-  customFields?: ProductVariantCustomField[];
+  customFields: ProductVariantCustomField[];
   color?: string | null;
   size?: string | null;
   price: number | null;
@@ -39,7 +40,7 @@ export type ProductVariant = {
   sku: string | null;
   createdAt: string;
   updatedAt: string;
-  status?: ProductStatus;
+  status: ProductStatus;
   media: ProductMediaItem[];
 };
 
@@ -95,6 +96,8 @@ export type ProductsListResponse = {
   total: number;
   page: number;
   pageSize: number;
+  limit?: number;
+  offset?: number;
 };
 
 export type CatalogVariantProduct = {

@@ -456,7 +456,10 @@
       "price": "Ціна",
       "stock": "Кількість",
       "status": "Статус",
-      "actions": "Дії"
+      "actions": "Дії",
+      "expandRowAria": "Розгорнути рядок товару",
+      "collapseRowAria": "Згорнути рядок товару",
+      "noVariants": "Варіантів немає"
     }
   },
   "orderStatuses": {
