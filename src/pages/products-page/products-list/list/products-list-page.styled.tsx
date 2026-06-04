@@ -1,7 +1,8 @@
 import styled from "styled-components";
 
 export const ProductsTableWrapper = styled.div`
-  --products-expanded-row-bg: #fafafa;
+  --products-expanded-row-bg: ${({ theme }) =>
+    theme.colors.functional.background.base};
 
   .ant-table-tbody > tr.product-row-expanded > td {
     border-bottom: none;
