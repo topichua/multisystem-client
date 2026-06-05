@@ -29,7 +29,7 @@ const AddValueIcon = styled.span`
   height: 28px;
   border-radius: 8px;
   color: #fff;
-  background: #7257d6;
+  background: ${(props) => props.theme.colors.functional.border.selected};
   flex-shrink: 0;
 `;
 

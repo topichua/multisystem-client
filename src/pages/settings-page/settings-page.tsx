@@ -4,7 +4,10 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Outlet, useLocation, useNavigate } from "react-router";
 
-import { pagesMap } from "@/app/router/pages-map";
+import {
+  getSelectedSectionNavPath,
+  settingsSectionNavItems,
+} from "@/app/router/navigation";
 import { SettingsShell } from "@/components/settings/settings-shell/settings-shell";
 
 export const SettingsPage = () => {
@@ -13,31 +16,18 @@ export const SettingsPage = () => {
   const { t } = useTranslation();
 
   const menuItems: MenuProps["items"] = useMemo(
-    () => [
-      { key: pagesMap.settingsGroups, label: t("settings.menu.groups") },
-      { key: pagesMap.settingsUser, label: t("settings.menu.user") },
-      { key: pagesMap.settingsSystem, label: t("settings.menu.system") },
-      {
-        key: pagesMap.settingsIntegrations,
-        label: t("settings.menu.integrations"),
-      },
-    ],
+    () =>
+      settingsSectionNavItems.map((item) => ({
+        key: item.path,
+        label: t(item.labelKey),
+      })),
     [t],
   );
 
-  const selectedSettingsKey = useMemo(() => {
-    const path = location.pathname;
-    if (path.startsWith(pagesMap.settingsUser)) {
-      return pagesMap.settingsUser;
-    }
-    if (path.startsWith(pagesMap.settingsSystem)) {
-      return pagesMap.settingsSystem;
-    }
-    if (path.startsWith(pagesMap.settingsIntegrations)) {
-      return pagesMap.settingsIntegrations;
-    }
-    return pagesMap.settingsGroups;
-  }, [location.pathname]);
+  const selectedSettingsKey = useMemo(
+    () => getSelectedSectionNavPath(settingsSectionNavItems, location.pathname),
+    [location.pathname],
+  );
 
   return (
     <SettingsShell.Root>

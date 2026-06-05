@@ -8,14 +8,20 @@ import {
   type ProductType,
 } from "./sections/product-type-section";
 import { ProductMainInfoSection } from "./sections/product-main-info-section";
-import { SingleProductCharacteristicsSection } from "./sections/single-product-characteristics-section";
-import { ProductMediaSection } from "./sections/product-media-section";
-import { ProductVariantsSection } from "./sections/product-variants-section";
+import {
+  SingleProductCharacteristicsSection,
+  type SingleProductCharacteristicsSectionProps,
+} from "./sections/single-product-characteristics-section";
+import {
+  ProductMediaSection,
+  type ProductMediaSectionProps,
+} from "./sections/product-media-section";
+import {
+  ProductVariantsSection,
+  type ProductVariantsSectionProps,
+} from "./sections/product-variants-section";
 import { ProductFormHeader } from "./sections/product-form-header";
-import type {
-  ProductAddFormValues,
-  ProductAddPageControllerReturn,
-} from "../controllers/use-product-add-page-controller";
+import type { ProductAddFormValues } from "./product-form.types";
 
 export type ProductFormProps = {
   form: FormInstance<ProductAddFormValues>;
@@ -43,16 +49,24 @@ export type ProductFormProps = {
   };
 
   // Single characteristics section
-  singleCharacteristicsProps: ProductAddPageControllerReturn["singleCharacteristicsProps"];
+  singleCharacteristicsProps: Omit<
+    SingleProductCharacteristicsSectionProps,
+    "form"
+  >;
 
   // Media section
-  mediaProps: ProductAddPageControllerReturn["mediaProps"];
+  mediaProps: ProductMediaSectionProps;
 
   // Variants section
-  variantsProps: ProductAddPageControllerReturn["variantsProps"];
+  variantsProps: ProductVariantsSectionProps;
 
   // Submit button
-  submitButtonProps: ProductAddPageControllerReturn["submitButtonProps"];
+  submitButtonProps: {
+    loading: boolean;
+    disabled: boolean;
+    label: string;
+    icon: "create" | "save";
+  };
 
   // Submit handler
   onSubmit: (values: ProductAddFormValues) => Promise<void>;
@@ -158,9 +172,6 @@ export const ProductForm = ({
                   isVariantCustomFieldsLoading={
                     singleCharacteristicsProps.isVariantCustomFieldsLoading
                   }
-                  getSingleCharacteristicFieldOptionsForRow={
-                    singleCharacteristicsProps.getSingleCharacteristicFieldOptionsForRow
-                  }
                   getCharacteristicValueOptions={
                     singleCharacteristicsProps.getCharacteristicValueOptions
                   }
@@ -175,9 +186,6 @@ export const ProductForm = ({
                   variantCustomFields={variantsProps.variantCustomFields}
                   isVariantCustomFieldsLoading={
                     variantsProps.isVariantCustomFieldsLoading
-                  }
-                  getCharacteristicFieldOptionsForRow={
-                    variantsProps.getCharacteristicFieldOptionsForRow
                   }
                   getCharacteristicValueOptions={
                     variantsProps.getCharacteristicValueOptions

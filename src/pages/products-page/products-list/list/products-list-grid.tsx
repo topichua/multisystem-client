@@ -12,25 +12,17 @@ import {
   Spin,
   Tag,
   Typography,
+  theme,
 } from "antd";
 import { useTranslation } from "react-i18next";
 
 import type { Product } from "@/features/products/model/product.types";
+import {
+  formatProductPrice,
+  productStatusToColor,
+} from "@/features/products/utils/product-display";
 
 const { Text } = Typography;
-
-type ProductStatusColor =
-  | "default"
-  | "processing"
-  | "success"
-  | "warning"
-  | "error";
-
-const statusToColor: Record<string, ProductStatusColor> = {
-  draft: "default",
-  active: "success",
-  archived: "warning",
-};
 
 type ProductsListGridProps = {
   products: Product[];
@@ -52,6 +44,7 @@ export const ProductsListGrid = ({
   deleteLoadingId,
 }: ProductsListGridProps) => {
   const { t } = useTranslation();
+  const { token } = theme.useToken();
 
   const handleCardClick =
     (product: Product) =>
@@ -83,7 +76,7 @@ export const ProductsListGrid = ({
                   <div
                     style={{
                       height: 160,
-                      background: "#f5f5f5",
+                      background: token.colorFillAlter,
                       overflow: "hidden",
                       display: "flex",
                       alignItems: "center",
@@ -115,9 +108,11 @@ export const ProductsListGrid = ({
                       : t("products.noCategory")}
                   </Text>
                   <Text>
-                    {product.price != null
-                      ? `${product.price.toLocaleString()} ${product.currency}`
-                      : t("products.noPrice")}
+                    {formatProductPrice(
+                      product.price,
+                      product.currency,
+                      t("products.noPrice"),
+                    )}
                   </Text>
                   <Text type="secondary" style={{ fontSize: 12 }}>
                     {product.inStock === false
@@ -127,7 +122,7 @@ export const ProductsListGrid = ({
                         : String(product.quantity)}
                   </Text>
                   <Tag
-                    color={statusToColor[product.status] ?? "processing"}
+                    color={productStatusToColor(product.status)}
                     style={{ width: "fit-content" }}
                   >
                     {product.status}

@@ -6,6 +6,7 @@ import {
   readStoredProductsListViewMode,
   type ProductsListViewMode,
 } from "@/features/products/model/products-list-view-storage";
+import { PRODUCTS_DEFAULT_PAGE_SIZE } from "@/features/products/model/product.constants";
 
 export type { ProductsListViewMode };
 
@@ -26,8 +27,6 @@ export function parseProductsListViewMode(
 ): ProductsListViewMode {
   return raw === "grid" ? "grid" : "list";
 }
-
-const DEFAULT_PAGE_SIZE = 10;
 
 export const PRODUCTS_LIST_KEYWORD_MIN_LENGTH = 3;
 
@@ -88,7 +87,7 @@ export function parseProductsListUrlSearchParams(
       Math.max(
         1,
         parseOptionalPositiveInt(searchParams.get("pageSize")) ??
-          DEFAULT_PAGE_SIZE,
+          PRODUCTS_DEFAULT_PAGE_SIZE,
       ),
     ),
     view: searchParams.has("view")
@@ -126,7 +125,7 @@ export function serializeProductsListUrlSearchParams(
   if (state.page !== 1) {
     sp.set("page", String(state.page));
   }
-  if (state.pageSize !== DEFAULT_PAGE_SIZE) {
+  if (state.pageSize !== PRODUCTS_DEFAULT_PAGE_SIZE) {
     sp.set("pageSize", String(state.pageSize));
   }
   if (state.view === "grid") {

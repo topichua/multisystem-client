@@ -1,11 +1,9 @@
 import { makeAutoObservable, runInAction } from "mobx";
 
 import { authApi } from "@/features/auth/api/auth-api";
+import { unknownErrorMessage } from "@/utils/unknown-error-message";
 
 import type { AuthSessionResponse } from "./auth-session.types";
-
-const errorMessage = (e: unknown): string =>
-  e instanceof Error ? e.message : "Something went wrong";
 
 export class UserStore {
   session: AuthSessionResponse | null = null;
@@ -57,7 +55,7 @@ export class UserStore {
       })
       .catch((e) => {
         runInAction(() => {
-          this.sessionError = errorMessage(e);
+          this.sessionError = unknownErrorMessage(e);
         });
       })
       .finally(() => {

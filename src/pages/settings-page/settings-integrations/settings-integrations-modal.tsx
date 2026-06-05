@@ -1,13 +1,13 @@
 import {
-  ApiOutlined,
-  CloseOutlined,
-  InstagramOutlined,
-  MessageOutlined,
-  SendOutlined,
-  ShopOutlined,
-  TruckOutlined,
-  WhatsAppOutlined,
-} from "@ant-design/icons";
+  InstagramLogoIcon,
+  PlugsIcon,
+  StorefrontIcon,
+  TelegramLogoIcon,
+  TiktokLogoIcon,
+  TruckIcon,
+  WhatsappLogoIcon,
+  XIcon,
+} from "@phosphor-icons/react";
 import {
   Avatar,
   Button,
@@ -18,12 +18,14 @@ import {
   Row,
   Space,
   Spin,
+  Tag,
   Typography,
 } from "antd";
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { openIntegrationAuthWindow } from "@/features/integrations/open-integration-auth";
+import { isConnectableIntegrationType } from "@/features/integrations/model/integrations-store";
 
 export type AddIntegrationType =
   | "instagram"
@@ -62,19 +64,19 @@ const INTEGRATION_GROUPS: AddIntegrationGroup[] = [
         type: "instagram",
         titleKey: "integrations.modal.items.instagram.title",
         descriptionKey: "integrations.modal.items.instagram.description",
-        icon: <InstagramOutlined />,
+        icon: <InstagramLogoIcon />,
       },
       {
         type: "telegram",
         titleKey: "integrations.modal.items.telegram.title",
         descriptionKey: "integrations.modal.items.telegram.description",
-        icon: <SendOutlined />,
+        icon: <TelegramLogoIcon />,
       },
       {
         type: "whatsapp",
         titleKey: "integrations.modal.items.whatsapp.title",
         descriptionKey: "integrations.modal.items.whatsapp.description",
-        icon: <WhatsAppOutlined />,
+        icon: <WhatsappLogoIcon />,
       },
     ],
   },
@@ -85,7 +87,7 @@ const INTEGRATION_GROUPS: AddIntegrationGroup[] = [
         type: "nova-poshta",
         titleKey: "integrations.modal.items.novaPoshta.title",
         descriptionKey: "integrations.modal.items.novaPoshta.description",
-        icon: <TruckOutlined />,
+        icon: <TruckIcon />,
       },
     ],
   },
@@ -96,13 +98,13 @@ const INTEGRATION_GROUPS: AddIntegrationGroup[] = [
         type: "tiktok",
         titleKey: "integrations.modal.items.tiktok.title",
         descriptionKey: "integrations.modal.items.tiktok.description",
-        icon: <MessageOutlined />,
+        icon: <TiktokLogoIcon />,
       },
       {
         type: "prom",
         titleKey: "integrations.modal.items.prom.title",
         descriptionKey: "integrations.modal.items.prom.description",
-        icon: <ShopOutlined />,
+        icon: <StorefrontIcon />,
       },
     ],
   },
@@ -150,7 +152,7 @@ export const AddIntegrationModal = ({
       open={open}
       footer={null}
       width={760}
-      closeIcon={<CloseOutlined />}
+      closeIcon={<XIcon />}
       onCancel={onCancel}
       destroyOnHidden
     >
@@ -171,38 +173,59 @@ export const AddIntegrationModal = ({
             </Typography.Title>
 
             <Row gutter={[12, 12]}>
-              {group.items.map((item) => (
-                <Col key={item.type} xs={24} sm={12} md={8}>
-                  <Spin spinning={loadingType === item.type}>
-                    <Card
-                      hoverable
-                      size="small"
-                      onClick={() => {
-                        if (!isLoading) {
-                          void handleSelectIntegration(item.type);
-                        }
-                      }}
-                    >
-                      <Flex align="center" gap={12}>
-                        <Avatar size={40} shape="square" icon={item.icon} />
+              {group.items.map((item) => {
+                const isConnectable = isConnectableIntegrationType(item.type);
+                const isDisabled = isLoading || !isConnectable;
 
-                        <div>
-                          <Typography.Text strong>
-                            {t(item.titleKey)}
-                          </Typography.Text>
+                return (
+                  <Col key={item.type} xs={24} sm={12} md={8}>
+                    <Spin spinning={loadingType === item.type}>
+                      <Card
+                        hoverable={!isDisabled}
+                        size="small"
+                        aria-disabled={!isConnectable}
+                        style={{
+                          cursor: isDisabled ? "not-allowed" : "pointer",
+                          opacity: isConnectable ? 1 : 0.62,
+                        }}
+                        onClick={() => {
+                          if (!isDisabled) {
+                            void handleSelectIntegration(item.type);
+                          }
+                        }}
+                      >
+                        <Flex align="center" gap={12}>
+                          <Avatar size={40} shape="square" icon={item.icon} />
 
-                          <Typography.Paragraph
-                            type="secondary"
-                            style={{ margin: 0, fontSize: 12 }}
-                          >
-                            {t(item.descriptionKey)}
-                          </Typography.Paragraph>
-                        </div>
-                      </Flex>
-                    </Card>
-                  </Spin>
-                </Col>
-              ))}
+                          <div style={{ minWidth: 0 }}>
+                            <Space size={6} wrap>
+                              <Typography.Text strong>
+                                {t(item.titleKey)}
+                              </Typography.Text>
+
+                              {!isConnectable ? (
+                                <Tag
+                                  color="default"
+                                  style={{ marginInlineEnd: 0 }}
+                                >
+                                  {t("integrations.modal.comingSoon")}
+                                </Tag>
+                              ) : null}
+                            </Space>
+
+                            <Typography.Paragraph
+                              type="secondary"
+                              style={{ margin: 0, fontSize: 12 }}
+                            >
+                              {t(item.descriptionKey)}
+                            </Typography.Paragraph>
+                          </div>
+                        </Flex>
+                      </Card>
+                    </Spin>
+                  </Col>
+                );
+              })}
             </Row>
           </Space>
         ))}
@@ -212,7 +235,7 @@ export const AddIntegrationModal = ({
           <Button
             type="link"
             size="small"
-            icon={<ApiOutlined />}
+            icon={<PlugsIcon />}
             style={{ padding: 0 }}
           >
             {t("integrations.modal.suggestCta")}

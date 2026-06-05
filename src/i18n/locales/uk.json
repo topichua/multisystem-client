@@ -9,6 +9,9 @@
     "openConversationsAria": "Відкрити розмови"
   },
   "brand": "Lantoro",
+  "errors": {
+    "somethingWentWrong": "Щось пішло не так"
+  },
   "quickActions": {
     "title": "Керуйте вашим робочим простором",
     "subtitle": "Усе необхідне для щоденної роботи завжди у вас під рукою.",
@@ -58,6 +61,7 @@
     "noMatchFilters": "Жодна інтеграція не відповідає фільтрам",
     "connectSuccess": "Інтеграцію підключено",
     "connectFailed": "Не вдалося підключити інтеграцію",
+    "notAvailableYet": "Ця інтеграція поки недоступна",
     "disconnectSuccess": "Інтеграцію відключено",
     "disconnectFailed": "Не вдалося відключити інтеграцію",
     "disconnectConfirmTitle": "Відключити інтеграцію?",
@@ -88,6 +92,7 @@
       "groupSocial": "Соціальні мережі та месенджери",
       "groupDelivery": "Доставка",
       "groupOther": "Інші сервіси",
+      "comingSoon": "Скоро",
       "suggestPrefix": "Не знайшли потрібний сервіс?",
       "suggestCta": "Запропонувати інтеграцію",
       "items": {
@@ -341,6 +346,7 @@
     "deleteConfirm": "Видалити цей товар?",
     "createSuccess": "Товар додано",
     "createFailed": "Не вдалося додати товар",
+    "categoryRequired": "Категорія товару обов'язкова",
     "updateSuccess": "Товар оновлено",
     "updateFailed": "Не вдалося оновити товар",
     "deleteSuccess": "Товар видалено",
@@ -827,9 +833,6 @@
     "invalidCredentials": "Невірна пошта або пароль"
   },
   "profile": {
-    "menuPlaceholder": "Текст",
-    "menuPlaceholder1": "Текст 1",
-    "menuPlaceholder2": "Текст 2",
     "logOut": "Вийти"
   },
   "time": {

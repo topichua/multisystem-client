@@ -19,9 +19,9 @@ import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 
-import { GroupListLabelRow } from "@/features/conversation-groups/components/group-list-label-row";
 import type { OrderStatus } from "@/features/orders/model/order.types";
 import { formatOrderStatusName } from "@/features/orders/utils/format-order-status-name";
+import { ColorLabelRow } from "@/shared/components/color-label-row/color-label-row";
 
 const NavList = styled.ul`
   list-style: none;
@@ -154,7 +154,7 @@ const SortableOrderStatusNavItem = ({
         aria-current={selected ? "page" : undefined}
         onClick={() => onSelect(status.id)}
       >
-        <GroupListLabelRow name={displayName} color={status.color} />
+        <ColorLabelRow name={displayName} color={status.color} />
       </NavButton>
     </NavItem>
   );

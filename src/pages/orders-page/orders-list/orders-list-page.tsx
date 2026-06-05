@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 
+import { getOrderDetailsPath } from "@/app/router/pages-map";
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
 import { PaneSectionTitle } from "@/components/layout/pane-frame";
 import type { OrderListItem } from "@/features/orders/model/order.types";
@@ -50,7 +51,7 @@ export const OrdersListPage = observer(() => {
                     ) {
                       return;
                     }
-                    navigate(`/orders/${record.id}`);
+                    navigate(getOrderDetailsPath(record.id));
                   },
                 })}
                 pagination={{

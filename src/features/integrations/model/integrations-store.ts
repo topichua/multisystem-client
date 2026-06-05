@@ -1,11 +1,14 @@
 import { makeAutoObservable, runInAction } from "mobx";
 
 import { integrationsApi } from "@/features/integrations/api/integrations-api";
+import { unknownErrorMessage } from "@/utils/unknown-error-message";
 
 import type { IntegrationItem, IntegrationType } from "./integration.types";
 
-const errorMessage = (e: unknown): string =>
-  e instanceof Error ? e.message : "Something went wrong";
+const INTEGRATION_NOT_AVAILABLE_ERROR = "INTEGRATION_NOT_AVAILABLE";
+
+export const isIntegrationNotAvailableError = (error: unknown): boolean =>
+  error instanceof Error && error.message === INTEGRATION_NOT_AVAILABLE_ERROR;
 
 export const CONNECTABLE_INTEGRATION_TYPES = [
   "instagram",
@@ -15,7 +18,7 @@ export const CONNECTABLE_INTEGRATION_TYPES = [
 export type ConnectableIntegrationType =
   (typeof CONNECTABLE_INTEGRATION_TYPES)[number];
 
-const isConnectableIntegrationType = (
+export const isConnectableIntegrationType = (
   type: string,
 ): type is ConnectableIntegrationType =>
   (CONNECTABLE_INTEGRATION_TYPES as readonly string[]).includes(type);
@@ -60,7 +63,7 @@ export class IntegrationsStore {
       });
     } catch (e) {
       runInAction(() => {
-        this.listError = errorMessage(e);
+        this.listError = unknownErrorMessage(e);
       });
     } finally {
       if (!silent) {
@@ -75,7 +78,7 @@ export class IntegrationsStore {
     integration_type: string,
   ): Promise<IntegrationItem> => {
     if (!isConnectableIntegrationType(integration_type)) {
-      throw new Error("This integration is not available yet");
+      throw new Error(INTEGRATION_NOT_AVAILABLE_ERROR);
     }
 
     runInAction(() => {

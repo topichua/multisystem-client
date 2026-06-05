@@ -4,7 +4,10 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Outlet, useLocation, useNavigate } from "react-router";
 
-import { pagesMap } from "@/app/router/pages-map";
+import {
+  getSelectedSectionNavPath,
+  productsSectionNavItems,
+} from "@/app/router/navigation";
 import { SettingsShell } from "@/components/settings/settings-shell/settings-shell";
 
 export const ProductsPage = () => {
@@ -13,32 +16,18 @@ export const ProductsPage = () => {
   const location = useLocation();
 
   const menuItems: MenuProps["items"] = useMemo(
-    () => [
-      { key: pagesMap.productsList, label: t("products.listTitle") },
-      { key: pagesMap.productsCategories, label: t("categories.title") },
-      {
-        key: pagesMap.productsCharacteristics,
-        label: t("characteristics.title"),
-      },
-    ],
+    () =>
+      productsSectionNavItems.map((item) => ({
+        key: item.path,
+        label: t(item.labelKey),
+      })),
     [t],
   );
 
-  const selectedKey = useMemo(() => {
-    if (location.pathname.startsWith(pagesMap.productsList)) {
-      return pagesMap.productsList;
-    }
-
-    if (location.pathname.startsWith(pagesMap.productsCategories)) {
-      return pagesMap.productsCategories;
-    }
-
-    if (location.pathname.startsWith(pagesMap.productsCharacteristics)) {
-      return pagesMap.productsCharacteristics;
-    }
-
-    return pagesMap.productsList;
-  }, [location.pathname]);
+  const selectedKey = useMemo(
+    () => getSelectedSectionNavPath(productsSectionNavItems, location.pathname),
+    [location.pathname],
+  );
 
   return (
     <SettingsShell.Root>

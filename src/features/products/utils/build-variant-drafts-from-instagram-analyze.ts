@@ -1,5 +1,5 @@
 import type { InstagramAnalyzeVariant } from "@/features/products/model/instagram-analyze.types";
-import type { ProductVariantDraft } from "@/features/products/model/product.types";
+import type { ProductVariantDraft } from "@/features/products/model/product-variant-draft.types";
 
 const newClientId = (index: number): string => {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {

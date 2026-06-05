@@ -4,7 +4,7 @@ import {
   FunnelSimpleIcon,
   MagnifyingGlassIcon,
 } from "@phosphor-icons/react";
-import { Button, Flex, Input, Select, Tag } from "antd";
+import { Button, Flex, Input, Select, Tag, theme } from "antd";
 import { observer } from "mobx-react-lite";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -27,6 +27,7 @@ type ProductsListToolbarProps = {
 export const ProductsListToolbar = observer(
   ({ onToggleFilters }: ProductsListToolbarProps) => {
     const { t } = useTranslation();
+    const { token } = theme.useToken();
     const productsStore = useProductsStore();
     const [keywordDraft, setKeywordDraft] = useState(
       () => productsStore.listKeyword,
@@ -107,7 +108,7 @@ export const ProductsListToolbar = observer(
                     lineHeight: "20px",
                     paddingInline: 8,
                     background: BRAND_PRIMARY,
-                    color: "#fff",
+                    color: token.colorTextLightSolid,
                     border: "none",
                   }}
                 >

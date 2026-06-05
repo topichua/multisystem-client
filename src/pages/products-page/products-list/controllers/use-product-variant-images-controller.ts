@@ -16,7 +16,6 @@ export type ProductVariantImagesModalControllerProps = {
   onClose: () => void;
   onApply: (variantKey: string, media: VariantMediaItem[]) => void;
   onUploadVariantImage: (file: File) => Promise<VariantMediaItem>;
-  onRemoveVariantImage: (media: VariantMediaItem) => Promise<void>;
 };
 
 export type UseProductVariantImagesControllerParams = {
@@ -80,8 +79,6 @@ export function useProductVariantImagesController({
     };
   }, []);
 
-  const onRemoveVariantOnlyImage = useCallback(async () => {}, []);
-
   const onCloseVariantImagesModal = useCallback(() => {
     setVariantImagesModalVariant(null);
   }, []);
@@ -95,7 +92,6 @@ export function useProductVariantImagesController({
       onClose: onCloseVariantImagesModal,
       onApply: onApplyVariantImages,
       onUploadVariantImage: onUploadVariantOnlyImage,
-      onRemoveVariantImage: onRemoveVariantOnlyImage,
     },
   };
 }

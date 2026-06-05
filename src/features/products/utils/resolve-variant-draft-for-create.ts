@@ -1,7 +1,7 @@
 import type {
-  ProductVariantCreatePayload,
+  ProductVariantCreateDraftPayload,
   ProductVariantDraft,
-} from "@/features/products/model/product.types";
+} from "@/features/products/model/product-variant-draft.types";
 
 export type GalleryItemForVariantResolve = {
   previewUrl: string;
@@ -18,7 +18,7 @@ export const canUseVariantImageUrlForMedia = (url: string): boolean => {
 export const resolveVariantDraftForCreate = (
   draft: ProductVariantDraft,
   gallery: GalleryItemForVariantResolve[] = [],
-): { payload: ProductVariantCreatePayload; imageFile: File | null } => {
+): { payload: ProductVariantCreateDraftPayload; imageFile: File | null } => {
   const { imageFile: draftImageFile, imageUrl, ...rest } = draft;
 
   let imageFile = draftImageFile ?? null;

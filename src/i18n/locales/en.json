@@ -9,6 +9,9 @@
     "openConversationsAria": "Open conversations"
   },
   "brand": "Lantoro",
+  "errors": {
+    "somethingWentWrong": "Something went wrong"
+  },
   "quickActions": {
     "title": "Manage your workspace",
     "subtitle": "Everything you need for daily operations is right at your fingertips.",
@@ -58,6 +61,7 @@
     "noMatchFilters": "No integrations match your filters",
     "connectSuccess": "Integration connected",
     "connectFailed": "Failed to connect integration",
+    "notAvailableYet": "This integration is not available yet",
     "disconnectSuccess": "Integration disconnected",
     "disconnectFailed": "Failed to disconnect integration",
     "disconnectConfirmTitle": "Disconnect integration?",
@@ -88,6 +92,7 @@
       "groupSocial": "Social networks and messengers",
       "groupDelivery": "Delivery",
       "groupOther": "Other services",
+      "comingSoon": "Coming soon",
       "suggestPrefix": "Didn't find the required service?",
       "suggestCta": "Suggest integration",
       "items": {
@@ -339,6 +344,7 @@
     "deleteConfirm": "Delete this product?",
     "createSuccess": "Product created",
     "createFailed": "Failed to create product",
+    "categoryRequired": "Product category is required",
     "updateSuccess": "Product updated",
     "updateFailed": "Failed to update product",
     "deleteSuccess": "Product deleted",
@@ -793,9 +799,6 @@
     "invalidCredentials": "Invalid email or password"
   },
   "profile": {
-    "menuPlaceholder": "Some text",
-    "menuPlaceholder1": "Some text 1",
-    "menuPlaceholder2": "Some text 2",
     "logOut": "Log out"
   },
   "time": {

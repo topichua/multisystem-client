@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 
 import { OrderStatusSelect } from "@/features/orders/components/order-status-select";
 import type { OrderListItem } from "@/features/orders/model/order.types";
+import { formatMoney } from "@/features/orders/utils/format-money";
 
 const { Text } = Typography;
 
@@ -16,11 +17,6 @@ function formatCustomerName(order: OrderListItem): string {
       .join(" ")
       .trim() || "—"
   );
-}
-
-function formatMoney(amount: number, currency: string): string {
-  const suffix = currency === "UAH" ? "₴" : currency;
-  return `${amount.toLocaleString("uk-UA")} ${suffix}`;
 }
 
 export function useOrdersTableColumns(): TableColumnsType<OrderListItem> {

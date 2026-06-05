@@ -7,10 +7,12 @@ import { useLocation, useNavigate } from "react-router";
 import { getProductEditPath, pagesMap } from "@/app/router/pages-map";
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
 import { PaneSectionTitle } from "@/components/layout/pane-frame";
-import type {
-  Product,
-  ProductVariant,
-} from "@/features/products/model/product.types";
+import type { Product } from "@/features/products/model/product.types";
+import {
+  formatProductPrice,
+  getVariantTitle,
+  variantStatusToColor,
+} from "@/features/products/utils/product-display";
 
 import { ProductsListActiveFilters } from "./products-list-active-filters";
 import { ProductsListFiltersPanel } from "./products-list-filters-panel";
@@ -23,30 +25,6 @@ import { ProductsListGrid } from "./products-list-grid";
 import * as S from "./products-list-page.styled";
 
 const { Text } = Typography;
-
-const variantStatusToColor: Record<string, string> = {
-  draft: "default",
-  active: "success",
-  archived: "warning",
-};
-
-const getVariantTitle = (variant: ProductVariant): string =>
-  [...(variant.customFields ?? [])]
-    .sort((a, b) => a.order - b.order)
-    .map((field) => field.value)
-    .filter(Boolean)
-    .join(" / ");
-
-const formatProductPrice = (
-  price: number | null | undefined,
-  currency: string | null | undefined,
-): string => {
-  if (price == null) {
-    return "—";
-  }
-
-  return `${price.toLocaleString()} ${currency ?? ""}`.trim();
-};
 
 export const ProductsListPage = observer(() => {
   const { t } = useTranslation();
@@ -154,11 +132,7 @@ export const ProductsListPage = observer(() => {
                   </Text>
 
                   <Flex align="center" gap={24} style={{ flexShrink: 0 }}>
-                    <Tag
-                      color={
-                        variantStatusToColor[variant.status] ?? "processing"
-                      }
-                    >
+                    <Tag color={variantStatusToColor(variant.status)}>
                       {variant.status}
                     </Tag>
 

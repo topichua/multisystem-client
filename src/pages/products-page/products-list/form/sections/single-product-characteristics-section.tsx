@@ -39,9 +39,6 @@ export type SingleProductCharacteristicsSectionProps = {
   watchedSingleCharacteristics: SingleCharacteristicRow[] | undefined;
   variantCustomFields: VariantCustomField[];
   isVariantCustomFieldsLoading: boolean;
-  getSingleCharacteristicFieldOptionsForRow: (
-    currentAttributeId?: number,
-  ) => Array<{ value: number; label: string; disabled?: boolean }>;
   getCharacteristicValueOptions: (
     attributeId?: number,
   ) => Array<{ value: string; label: string }>;

@@ -26,6 +26,9 @@ export const getSettingsGroupPath = (groupId: string | number) =>
 export const getOrderStatusPath = (statusId: string | number) =>
   `${pagesMap.ordersStatuses}/${statusId}`;
 
+export const getOrderDetailsPath = (orderId: string | number): string =>
+  `${pagesMap.orders}/${orderId}`;
+
 export const getProductCategoryPath = (categoryId: string | number) =>
   `${pagesMap.productsCategories}/${categoryId}`;
 

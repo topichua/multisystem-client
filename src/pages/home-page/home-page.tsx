@@ -4,8 +4,8 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Outlet } from "react-router";
 
-import { UserProfile } from "@/components/user-profile/user-profile";
-import { Sider } from "@/components/layout/sider/sider";
+import { AppSider } from "@/app/layout/app-sider/app-sider";
+import { UserProfile } from "@/app/layout/user-profile/user-profile";
 import { Conversation } from "@/pages/conversation/conversation-list";
 
 import * as S from "./home-page.styled";
@@ -17,7 +17,7 @@ export const HomePage = () => {
 
   return (
     <S.PageLayout>
-      <Sider />
+      <AppSider />
       <S.WorkspaceLayout>
         <Outlet />
       </S.WorkspaceLayout>

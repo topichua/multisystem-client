@@ -13,9 +13,9 @@ import {
   PaneSectionTitle,
 } from "@/components/layout/pane-frame";
 import { PaneNavSplitLayout } from "@/components/layout/pane-nav-split-layout";
-import { GroupListLabelRow } from "@/features/conversation-groups/components/group-list-label-row";
 import type { ConversationGroupWritePayload } from "@/features/conversation-groups/model/conversation-group.types";
 import { useConversationGroupsStore } from "@/features/conversation-groups/model/use-conversation-groups-store";
+import { ColorLabelRow } from "@/shared/components/color-label-row/color-label-row";
 
 import { GroupFormModal, type GroupFormValues } from "./group-form-modal";
 import { DEFAULT_GROUP_COLOR } from "./group-color-presets";
@@ -42,7 +42,7 @@ export const SettingsGroupsLayout = observer(() => {
     () =>
       sortedGroups.map((g) => ({
         key: getSettingsGroupPath(g.id),
-        label: <GroupListLabelRow name={g.name} color={g.color} />,
+        label: <ColorLabelRow name={g.name} color={g.color} />,
       })),
     [sortedGroups],
   );

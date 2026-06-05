@@ -1,4 +1,7 @@
 import type { OrderDetails } from "@/features/orders/model/order.types";
+import { formatMoney } from "@/features/orders/utils/format-money";
+
+export { formatMoney };
 
 type OrderItem = OrderDetails["items"][number];
 type OrderEvent = OrderDetails["events"][number];
@@ -48,24 +51,6 @@ export const formatDate = (value: string | null | undefined): string => {
   })
     .format(date)
     .replace(",", "");
-};
-
-export const formatMoney = (
-  value: number | null | undefined,
-  currency = "UAH",
-): string => {
-  if (typeof value !== "number" || !Number.isFinite(value)) return EMPTY_VALUE;
-
-  try {
-    return new Intl.NumberFormat("uk-UA", {
-      style: "currency",
-      currency,
-      minimumFractionDigits: Number.isInteger(value) ? 0 : 2,
-      maximumFractionDigits: 2,
-    }).format(value);
-  } catch {
-    return `${value.toLocaleString("uk-UA")} ${currency}`;
-  }
 };
 
 export const getCustomerName = (

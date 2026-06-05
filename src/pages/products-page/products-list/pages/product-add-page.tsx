@@ -52,9 +52,6 @@ export const ProductAddPage = observer(() => {
             onUploadVariantImage={
               controller.variantImagesModalProps.onUploadVariantImage
             }
-            onRemoveVariantImage={
-              controller.variantImagesModalProps.onRemoveVariantImage
-            }
           />
         </>
       )}

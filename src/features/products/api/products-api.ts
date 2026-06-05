@@ -9,36 +9,15 @@ import type {
   CatalogVariant,
   CatalogVariantsListResponse,
   Product,
-  ProductCreatePayload,
   ProductDetails,
-  ProductMediaCreatePayload,
-  ProductMediaItem,
-  ProductMediaUpdatePayload,
-  ProductVariant,
-  ProductVariantCreatePayload,
-  ProductVariantUpdatePayload,
   ProductsListResponse,
   ProductsListSort,
 } from "@/features/products/model/product.types";
+import { PRODUCTS_DEFAULT_PAGE_SIZE } from "@/features/products/model/product.constants";
 
 const basePath = "/products";
 
 export const PRODUCT_MEDIA_UPLOAD_FIELD_NAME = "image";
-
-const appendVariantFormFields = (
-  formData: FormData,
-  payload: ProductVariantCreatePayload | ProductVariantUpdatePayload,
-) => {
-  Object.entries(payload).forEach(([key, value]) => {
-    if (value !== undefined && value !== null && value !== "") {
-      formData.append(key, String(value));
-    }
-  });
-};
-
-function productCreateUploadFieldName(): string {
-  return import.meta.env.VITE_PRODUCT_CREATE_FILE_FIELD?.trim() || "mainImage";
-}
 
 export type ProductsListQueryParams = {
   sort: ProductsListSort;
@@ -84,10 +63,6 @@ function productsListQueryToRecord(
   return out;
 }
 
-function normalizeMediaArray(data: unknown): ProductMediaItem[] {
-  return Array.isArray(data) ? (data as ProductMediaItem[]) : [];
-}
-
 function normalizeCatalogVariantsList(
   data: unknown,
 ): CatalogVariantsListResponse {
@@ -108,7 +83,12 @@ function normalizeCatalogVariantsList(
 
 function normalizeProductsList(data: unknown): ProductsListResponse {
   if (!data || typeof data !== "object") {
-    return { items: [], total: 0, page: 1, pageSize: 10 };
+    return {
+      items: [],
+      total: 0,
+      page: 1,
+      pageSize: PRODUCTS_DEFAULT_PAGE_SIZE,
+    };
   }
 
   const record = data as Record<string, unknown>;
@@ -119,7 +99,7 @@ function normalizeProductsList(data: unknown): ProductsListResponse {
       ? record.pageSize
       : typeof record.limit === "number"
         ? record.limit
-        : 10;
+        : PRODUCTS_DEFAULT_PAGE_SIZE;
   const page =
     typeof record.page === "number"
       ? record.page
@@ -131,24 +111,6 @@ function normalizeProductsList(data: unknown): ProductsListResponse {
         : 1;
 
   return { items, total, page, pageSize };
-}
-
-function appendProductCreateFormFields(
-  formData: FormData,
-  payload: ProductCreatePayload,
-): void {
-  formData.append("name", payload.name);
-  formData.append("description", payload.description ?? "");
-  formData.append("status", payload.status);
-  formData.append("sourceType", payload.sourceType);
-  formData.append("sourceId", payload.sourceId ?? "");
-  formData.append("referenceGroupId", payload.referenceGroupId ?? "");
-  formData.append("price", String(payload.price));
-  formData.append("currency", payload.currency);
-  formData.append("inStock", String(payload.inStock));
-  formData.append("quantity", String(payload.quantity));
-  formData.append("mainImageUrl", payload.mainImageUrl ?? "");
-  formData.append("categoryId", String(payload.categoryId));
 }
 
 function axiosMultipartFormDataConfig() {
@@ -208,29 +170,6 @@ export const productsApi = {
     return normalizeProductsList(data);
   },
 
-  create: async (
-    payload: ProductCreatePayload,
-    coverImage?: File | null,
-  ): Promise<Product> => {
-    const formData = new FormData();
-    appendProductCreateFormFields(formData, payload);
-    if (coverImage) {
-      formData.append(
-        productCreateUploadFieldName(),
-        coverImage,
-        coverImage.name,
-      );
-    }
-
-    const { data } = await apiClient.post<Product>(
-      basePath,
-      formData,
-      axiosMultipartFormDataConfig(),
-    );
-
-    return data;
-  },
-
   getById: async (id: number): Promise<ProductDetails> => {
     const { data } = await apiClient.get<ProductDetails>(`${basePath}/${id}`);
 
@@ -239,110 +178,6 @@ export const productsApi = {
 
   delete: async (id: number): Promise<void> => {
     await apiClient.delete(`${basePath}/${id}`);
-  },
-
-  createVariant: async (
-    productId: number,
-    payload: ProductVariantCreatePayload,
-    imageFile?: File | null,
-  ): Promise<ProductVariant | undefined> => {
-    if (imageFile) {
-      const formData = new FormData();
-
-      appendVariantFormFields(formData, payload);
-      formData.append("image", imageFile, imageFile.name);
-
-      const { data } = await apiClient.post<ProductVariant>(
-        `${basePath}/${productId}/variants`,
-        formData,
-      );
-
-      return data ?? undefined;
-    }
-
-    const { data } = await apiClient.post<ProductVariant>(
-      `${basePath}/${productId}/variants`,
-      payload,
-    );
-
-    return data ?? undefined;
-  },
-
-  updateVariant: async (
-    productId: number,
-    variantId: number,
-    payload: ProductVariantUpdatePayload,
-  ): Promise<void> => {
-    await apiClient.patch(
-      `${basePath}/${productId}/variants/${variantId}`,
-      payload,
-    );
-  },
-
-  deleteVariant: async (
-    productId: number,
-    variantId: number,
-  ): Promise<void> => {
-    await apiClient.delete(`${basePath}/${productId}/variants/${variantId}`);
-  },
-
-  listMedia: async (productId: number): Promise<ProductMediaItem[]> => {
-    const { data } = await apiClient.get<unknown>(
-      `${basePath}/${productId}/media`,
-    );
-
-    return normalizeMediaArray(data);
-  },
-
-  listMediaEffective: async (
-    productId: number,
-    variantId?: number,
-  ): Promise<ProductMediaItem[]> => {
-    const { data } = await apiClient.get<unknown>(
-      `${basePath}/${productId}/media/effective`,
-      {
-        params: variantId != null ? { variantId } : undefined,
-      },
-    );
-
-    return normalizeMediaArray(data);
-  },
-
-  listVariantMedia: async (
-    productId: number,
-    variantId: number,
-  ): Promise<ProductMediaItem[]> => {
-    const { data } = await apiClient.get<unknown>(
-      `${basePath}/${productId}/variants/${variantId}/media`,
-    );
-
-    return normalizeMediaArray(data);
-  },
-
-  createMedia: async (
-    productId: number,
-    payload: ProductMediaCreatePayload,
-  ): Promise<void> => {
-    const body: Record<string, unknown> = {
-      url: payload.url,
-      type: payload.type,
-      sortOrder: payload.sortOrder,
-    };
-    if (payload.sourceUrl) {
-      body.sourceUrl = payload.sourceUrl;
-    }
-    if (payload.variantId != null && payload.variantId >= 1) {
-      body.variantId = payload.variantId;
-    }
-
-    await apiClient.post(`${basePath}/${productId}/media`, body);
-  },
-  updateMedia: async (
-    productId: number,
-    mediaId: number,
-    payload: ProductMediaUpdatePayload,
-  ): Promise<void> => {
-    await apiClient.patch(`${basePath}/${productId}/media/${mediaId}`, payload);
   },
 
   uploadMedia: async (file: File): Promise<ProductUploadedMedia> => {
@@ -359,10 +194,6 @@ export const productsApi = {
       id: data.id,
       src: data.cdnUrl,
     };
-  },
-
-  deleteUploadedMedia: async (mediaId: number): Promise<void> => {
-    await apiClient.delete(`${basePath}/upload-media/${mediaId}`);
   },
 
   createProduct: async (

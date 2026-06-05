@@ -1,5 +1,5 @@
 import { CubeIcon, SquaresFourIcon } from "@phosphor-icons/react";
-import { Card, Flex, Radio, Typography } from "antd";
+import { Card, Flex, Radio, Typography, theme } from "antd";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -39,6 +39,7 @@ export const ProductTypeSection = ({
   onChange,
 }: ProductTypeSectionProps) => {
   const { t } = useTranslation();
+  const { token } = theme.useToken();
 
   return (
     <Card>
@@ -65,8 +66,10 @@ export const ProductTypeSection = ({
                   onClick={() => onChange(option.value)}
                   style={{
                     width: 400,
-                    borderColor: isSelected ? "#9254de" : undefined,
-                    boxShadow: isSelected ? "0 0 0 1px #9254de" : undefined,
+                    borderColor: isSelected ? token.colorPrimary : undefined,
+                    boxShadow: isSelected
+                      ? `0 0 0 1px ${token.colorPrimary}`
+                      : undefined,
                   }}
                   styles={{
                     body: {
@@ -80,7 +83,7 @@ export const ProductTypeSection = ({
                         style={{
                           fontSize: 28,
                           lineHeight: 1,
-                          color: isSelected ? "#9254de" : undefined,
+                          color: isSelected ? token.colorPrimary : undefined,
                         }}
                       >
                         {option.icon}

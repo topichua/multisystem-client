@@ -2,6 +2,7 @@ import { message, type TableProps } from "antd";
 import { useCallback, useEffect, useMemo, useState, type Key } from "react";
 import { useLocation, useNavigate } from "react-router";
 
+import { getApiErrorMessage } from "@/api/get-api-error-message";
 import { pagesMap } from "@/app/router/pages-map";
 import { flattenCategories } from "@/features/categories/model/category-tree";
 import { useCategoriesStore } from "@/features/categories/model/use-categories-store";
@@ -71,7 +72,7 @@ export const useProductsListController = () => {
           navigateToProductsList();
         }
       } catch (e) {
-        console.log(e, "products.deleteFailed");
+        messageApi.error(getApiErrorMessage(e, t("products.deleteFailed")));
       }
     },
     [messageApi, navigateToProductsList, productsStore, t],

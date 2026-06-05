@@ -1,6 +1,5 @@
-import styled, { keyframes, css } from "styled-components";
-
 import { Button as CommonButton } from "antd";
+import styled, { css, keyframes } from "styled-components";
 
 import { dataQaAttrs } from "@/styled/data-qa-attrs";
 

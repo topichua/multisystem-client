@@ -17,6 +17,7 @@ import {
   isNewConversationMessage,
   upsertConversationMessage,
 } from "@/features/conversations/realtime/upsert-conversation-message";
+import { unknownErrorMessage } from "@/utils/unknown-error-message";
 
 import { sortConversationsByInstUpdatedAt } from "./sort-conversations";
 import type {
@@ -26,9 +27,6 @@ import type {
   MessagesPaging,
   SendMessagePayload,
 } from "./types";
-
-const errorMessage = (e: unknown): string =>
-  e instanceof Error ? e.message : "Something went wrong";
 
 const normalizeListGroupFilterIds = (ids: number[]): number[] =>
   [...new Set(ids)]
@@ -252,7 +250,7 @@ export class ConversationStore {
       });
     } catch (e) {
       runInAction(() => {
-        this.listError = errorMessage(e);
+        this.listError = unknownErrorMessage(e);
       });
     } finally {
       runInAction(() => {
@@ -310,7 +308,7 @@ export class ConversationStore {
         }
 
         runInAction(() => {
-          this.messagesError = errorMessage(e);
+          this.messagesError = unknownErrorMessage(e);
         });
       })
       .finally(() => {
@@ -374,7 +372,7 @@ export class ConversationStore {
       })
       .catch((e) => {
         runInAction(() => {
-          this.messagesError = errorMessage(e);
+          this.messagesError = unknownErrorMessage(e);
         });
       })
       .finally(() => {
@@ -538,7 +536,7 @@ export class ConversationStore {
                 ? {
                     ...m,
                     outboundStatus: "failed",
-                    sendError: errorMessage(e),
+                    sendError: unknownErrorMessage(e),
                   }
                 : m,
             ),

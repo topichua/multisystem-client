@@ -8,6 +8,7 @@ import {
   InputNumber,
   Select,
   Typography,
+  theme,
 } from "antd";
 import { observer } from "mobx-react-lite";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -73,6 +74,7 @@ type ProductsListFiltersPanelProps = {
 export const ProductsListFiltersPanel = observer(
   ({ open, onClose }: ProductsListFiltersPanelProps) => {
     const { t } = useTranslation();
+    const { token } = theme.useToken();
     const productsStore = useProductsStore();
     const categoriesStore = useCategoriesStore();
     const [categoryQuery, setCategoryQuery] = useState("");
@@ -203,7 +205,7 @@ export const ProductsListFiltersPanel = observer(
               style={{
                 maxHeight: 220,
                 overflowY: "auto",
-                border: "1px solid #f0f0f0",
+                border: `1px solid ${token.colorBorderSecondary}`,
                 borderRadius: 8,
                 padding: 8,
               }}

@@ -26,7 +26,7 @@ export const PageContainer = styled.div`
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  box-shadow: 0px 24px 48px -12px rgba(0, 22, 54, 0.14);
+  box-shadow: ${({ theme }) => theme.shadow.xl};
 
   &::before {
     content: "";
@@ -52,7 +52,7 @@ export const PageHeader = styled.div`
   text-align: center;
 `;
 
-export const HeroIcon = styled.div`
+export const HeroIcon = styled.div<AccentProps>`
   width: 72px;
   height: 72px;
   margin: 0 auto 18px;
@@ -62,10 +62,10 @@ export const HeroIcon = styled.div`
   justify-content: center;
 
   border-radius: 24px;
-  color: #722ed1;
-  background: rgba(114, 46, 209, 0.1);
+  color: ${({ $accent }) => $accent};
+  background: ${({ $accentBg }) => $accentBg};
   border: 1px solid ${({ theme }) => theme.colors.functional.border.split};
-  box-shadow: 0 16px 36px rgba(114, 46, 209, 0.16);
+  box-shadow: ${({ theme }) => theme.shadow.large};
   font-size: 32px;
 `;
 
@@ -107,7 +107,7 @@ export const QuickActionCard = styled(Card)<AccentProps>`
   border: 1px solid ${({ theme }) => theme.colors.functional.border.cardBase};
   background: ${({ theme }) => theme.colors.functional.background.elevated};
   color: ${({ theme }) => theme.colors.functional.text.primary};
-  box-shadow: 0 18px 44px rgba(0, 22, 54, 0.08);
+  box-shadow: ${({ theme }) => theme.shadow.cardShadow};
 
   transition:
     transform 0.2s ease,
@@ -142,7 +142,7 @@ export const QuickActionCard = styled(Card)<AccentProps>`
 
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 0 24px 56px rgba(0, 22, 54, 0.12);
+    box-shadow: ${({ theme }) => theme.shadow.xl};
   }
 
   &:focus-visible {

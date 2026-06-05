@@ -12,6 +12,7 @@ import type {
   ProductDetails,
   ProductsListSort,
 } from "@/features/products/model/product.types";
+import { PRODUCTS_DEFAULT_PAGE_SIZE } from "@/features/products/model/product.constants";
 import { unknownErrorMessage } from "@/utils/unknown-error-message";
 
 import {
@@ -24,8 +25,6 @@ import {
   writeStoredProductsListViewMode,
   type ProductsListViewMode,
 } from "@/features/products/model/products-list-view-storage";
-
-const defaultPageSize = 10;
 
 function snapshotFromStore(store: ProductsStore): ProductsListAppliedUrlState {
   return {
@@ -45,7 +44,7 @@ export class ProductsStore {
   products: Product[] = [];
   total = 0;
   page = 1;
-  pageSize = defaultPageSize;
+  pageSize = PRODUCTS_DEFAULT_PAGE_SIZE;
   activeProduct: ProductDetails | null = null;
 
   listKeyword = "";
@@ -183,7 +182,6 @@ export class ProductsStore {
       this.listMaxPrice = this.draftMaxPrice;
       this.page = 1;
     });
-    void this.loadProducts();
   };
 
   setListKeyword = (value: string): void => {
@@ -195,7 +193,6 @@ export class ProductsStore {
       this.listKeyword = applied;
       this.page = 1;
     });
-    void this.loadProducts();
   };
 
   setListSort = (sort: ProductsListSort): void => {
@@ -203,7 +200,6 @@ export class ProductsStore {
       this.listSort = sort;
       this.page = 1;
     });
-    void this.loadProducts();
   };
 
   setListPage = (nextPage: number): void => {
@@ -211,7 +207,6 @@ export class ProductsStore {
     runInAction(() => {
       this.page = safe;
     });
-    void this.loadProducts();
   };
 
   removeListCategoryId = (id: number): void => {
@@ -219,7 +214,6 @@ export class ProductsStore {
       this.listCategoryIds = this.listCategoryIds.filter((c) => c !== id);
       this.page = 1;
     });
-    void this.loadProducts();
   };
 
   clearListStatus = (): void => {
@@ -227,7 +221,6 @@ export class ProductsStore {
       this.listStatus = null;
       this.page = 1;
     });
-    void this.loadProducts();
   };
 
   clearListPriceRange = (): void => {
@@ -236,7 +229,6 @@ export class ProductsStore {
       this.listMaxPrice = null;
       this.page = 1;
     });
-    void this.loadProducts();
   };
 
   clearListKeyword = (): void => {
@@ -244,7 +236,6 @@ export class ProductsStore {
       this.listKeyword = "";
       this.page = 1;
     });
-    void this.loadProducts();
   };
 
   resetListSortToDefault = (): void => {
@@ -252,7 +243,6 @@ export class ProductsStore {
       this.listSort = "created_desc";
       this.page = 1;
     });
-    void this.loadProducts();
   };
 
   clearAllListFilters = (): void => {
@@ -264,9 +254,8 @@ export class ProductsStore {
       this.listMinPrice = null;
       this.listMaxPrice = null;
       this.page = 1;
-      this.pageSize = defaultPageSize;
+      this.pageSize = PRODUCTS_DEFAULT_PAGE_SIZE;
     });
-    void this.loadProducts();
   };
 
   private buildListQueryParams() {

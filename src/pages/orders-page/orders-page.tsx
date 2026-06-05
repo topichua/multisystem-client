@@ -4,7 +4,10 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Outlet, useLocation, useNavigate } from "react-router";
 
-import { pagesMap } from "@/app/router/pages-map";
+import {
+  getSelectedSectionNavPath,
+  ordersSectionNavItems,
+} from "@/app/router/navigation";
 import { SettingsShell } from "@/components/settings/settings-shell/settings-shell";
 
 export const OrdersPage = () => {
@@ -13,24 +16,18 @@ export const OrdersPage = () => {
   const location = useLocation();
 
   const menuItems: MenuProps["items"] = useMemo(
-    () => [
-      { key: pagesMap.ordersList, label: t("orders.listTitle") },
-      { key: pagesMap.ordersStatuses, label: t("orders.menu.statuses") },
-    ],
+    () =>
+      ordersSectionNavItems.map((item) => ({
+        key: item.path,
+        label: t(item.labelKey),
+      })),
     [t],
   );
 
-  const selectedKey = useMemo(() => {
-    if (location.pathname.startsWith(pagesMap.ordersStatuses)) {
-      return pagesMap.ordersStatuses;
-    }
-
-    if (location.pathname.startsWith(pagesMap.ordersList)) {
-      return pagesMap.ordersList;
-    }
-
-    return pagesMap.ordersList;
-  }, [location.pathname]);
+  const selectedKey = useMemo(
+    () => getSelectedSectionNavPath(ordersSectionNavItems, location.pathname),
+    [location.pathname],
+  );
 
   return (
     <SettingsShell.Root>

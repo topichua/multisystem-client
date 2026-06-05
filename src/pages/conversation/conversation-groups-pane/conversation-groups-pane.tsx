@@ -9,10 +9,10 @@ import {
   PaneSectionHint,
   PaneSectionTitle,
 } from "@/components/layout/pane-frame";
-import { GroupListLabelRow } from "@/features/conversation-groups/components/group-list-label-row";
 import { useEnsureConversationGroupsLoaded } from "@/features/conversation-groups/model/use-ensure-conversation-groups-loaded";
 import { useConversationGroupsStore } from "@/features/conversation-groups/model/use-conversation-groups-store";
 import { useConversationsStore } from "@/features/conversations/model/use-conversations-store";
+import { ColorLabelRow } from "@/shared/components/color-label-row/color-label-row";
 
 import {
   isClickInsideAntCheckboxWrapper,
@@ -74,7 +74,7 @@ export const ConversationGroupsPane = observer(() => {
                 }}
               >
                 <Checkbox value={g.id}>
-                  <GroupListLabelRow name={g.name} color={g.color} />
+                  <ColorLabelRow name={g.name} color={g.color} />
                 </Checkbox>
               </S.GroupFilterCheckboxRow>
             ))}

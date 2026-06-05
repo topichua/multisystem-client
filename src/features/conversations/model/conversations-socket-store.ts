@@ -136,7 +136,6 @@ export class ConversationsSocketStore {
     this.socket.on(
       "conversations.update",
       (payload: ConversationsUpdatePayload) => {
-        console.log("[conversations socket] conversations.update", payload);
         this.dispatchUpdate(payload);
       },
     );

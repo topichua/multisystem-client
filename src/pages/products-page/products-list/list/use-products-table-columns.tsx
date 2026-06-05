@@ -5,27 +5,17 @@ import {
   TrashIcon,
 } from "@phosphor-icons/react";
 import type { TableColumnsType } from "antd";
-import { Button, Dropdown, Flex, Modal, Tag, Typography } from "antd";
+import { Button, Dropdown, Flex, Modal, Tag, Typography, theme } from "antd";
 import { useMemo, type Key } from "react";
 import { useTranslation } from "react-i18next";
 
 import type { Product } from "@/features/products/model/product.types";
-import { toJS } from "mobx";
-
-type ProductStatusColor =
-  | "default"
-  | "processing"
-  | "success"
-  | "warning"
-  | "error";
+import {
+  formatProductPrice,
+  productStatusToColor,
+} from "@/features/products/utils/product-display";
 
 const { Text } = Typography;
-
-const statusToColor: Record<string, ProductStatusColor> = {
-  draft: "default",
-  active: "success",
-  archived: "warning",
-};
 
 type UseProductsTableColumnsParams = {
   categoryNameById: Map<number, string>;
@@ -45,6 +35,7 @@ export const useProductsTableColumns = ({
   onDelete,
 }: UseProductsTableColumnsParams): TableColumnsType<Product> => {
   const { t } = useTranslation();
+  const { token } = theme.useToken();
 
   return useMemo(
     () => [
@@ -53,7 +44,6 @@ export const useProductsTableColumns = ({
         key: "product",
         width: 360,
         render: (_, product) => {
-          console.log("🚀 ~ useProductsTableColumns ~ product:", toJS(product));
           const variantsCount = product.variants?.length ?? 0;
           const hasVariants = variantsCount > 0;
           const isExpanded =
@@ -99,7 +89,7 @@ export const useProductsTableColumns = ({
                     style={{
                       objectFit: "cover",
                       borderRadius: 8,
-                      backgroundColor: "#f2f2f2",
+                      backgroundColor: token.colorFillAlter,
                       flexShrink: 0,
                     }}
                   />
@@ -110,7 +100,7 @@ export const useProductsTableColumns = ({
                       width: 48,
                       height: 48,
                       borderRadius: 8,
-                      backgroundColor: "#f2f2f2",
+                      backgroundColor: token.colorFillAlter,
                       flexShrink: 0,
                     }}
                   />
@@ -148,7 +138,7 @@ export const useProductsTableColumns = ({
         width: 100,
         render: (_, product) =>
           product.price != null
-            ? `${product.price.toLocaleString()} ${product.currency}`
+            ? formatProductPrice(product.price, product.currency)
             : t("products.noPrice"),
       },
       {
@@ -172,7 +162,7 @@ export const useProductsTableColumns = ({
         key: "status",
         width: 100,
         render: (status: string) => (
-          <Tag color={statusToColor[status] ?? "processing"}>{status}</Tag>
+          <Tag color={productStatusToColor(status)}>{status}</Tag>
         ),
       },
       {
@@ -241,6 +231,7 @@ export const useProductsTableColumns = ({
       onEdit,
       onToggleRowExpand,
       t,
+      token.colorFillAlter,
     ],
   );
 };

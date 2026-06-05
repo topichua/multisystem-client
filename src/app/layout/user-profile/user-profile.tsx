@@ -21,18 +21,6 @@ export const UserProfile = ({
   const items: MenuProps["items"] = useMemo(
     () => [
       {
-        key: "text",
-        label: t("profile.menuPlaceholder"),
-      },
-      {
-        key: "text-1",
-        label: t("profile.menuPlaceholder1"),
-      },
-      {
-        key: "text-2",
-        label: t("profile.menuPlaceholder2"),
-      },
-      {
         key: "log-out",
         label: t("profile.logOut"),
         onClick: logout,

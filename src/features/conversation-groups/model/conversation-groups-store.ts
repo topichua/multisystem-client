@@ -1,14 +1,12 @@
 import { makeAutoObservable, runInAction } from "mobx";
 
 import { conversationGroupsApi } from "@/features/conversation-groups/api/conversation-groups-api";
+import { unknownErrorMessage } from "@/utils/unknown-error-message";
 
 import type {
   ConversationGroup,
   ConversationGroupWritePayload,
 } from "./conversation-group.types";
-
-const errorMessage = (e: unknown): string =>
-  e instanceof Error ? e.message : "Something went wrong";
 
 export class ConversationGroupsStore {
   groups: ConversationGroup[] = [];
@@ -47,7 +45,7 @@ export class ConversationGroupsStore {
       });
     } catch (e) {
       runInAction(() => {
-        this.listError = errorMessage(e);
+        this.listError = unknownErrorMessage(e);
       });
     } finally {
       if (!silent) {

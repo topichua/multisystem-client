@@ -8,6 +8,11 @@ import type {
   UpdateProductVariantCustomFieldValue,
   UpdateProductVariantPayload,
 } from "@/features/products/model/product-create-api.types";
+import {
+  PRODUCT_DEFAULT_CURRENCY,
+  PRODUCT_DEFAULT_IN_STOCK,
+  PRODUCT_DEFAULT_SOURCE_TYPE,
+} from "@/features/products/model/product.constants";
 
 import type { ProductCreateFormValues } from "../product-form.types";
 import type {
@@ -28,9 +33,7 @@ export type NormalizeCreateProductPayloadInput = {
 export type NormalizeUpdateProductPayloadInput =
   NormalizeCreateProductPayloadInput;
 
-const PRODUCT_CREATE_SOURCE_TYPE = "manual" as const;
-const PRODUCT_CREATE_CURRENCY = "UAH" as const;
-const PRODUCT_DEFAULT_IN_STOCK = true;
+export const PRODUCT_CATEGORY_REQUIRED_ERROR = "PRODUCT_CATEGORY_REQUIRED";
 
 function normalizeLifecycleStatus(
   status: unknown,
@@ -323,7 +326,7 @@ export function normalizeCreateProductPayload({
 }: NormalizeCreateProductPayloadInput): CreateProductPayload {
   const categoryId = formValues.categoryId;
   if (categoryId == null) {
-    throw new Error("Product category is required");
+    throw new Error(PRODUCT_CATEGORY_REQUIRED_ERROR);
   }
 
   const productStatus = normalizeLifecycleStatus(formValues.status);
@@ -349,9 +352,9 @@ export function normalizeCreateProductPayload({
     ...(description ? { description } : {}),
     status: productStatus,
     productType,
-    sourceType: PRODUCT_CREATE_SOURCE_TYPE,
+    sourceType: PRODUCT_DEFAULT_SOURCE_TYPE,
     price: Number(formValues.price ?? 0),
-    currency: PRODUCT_CREATE_CURRENCY,
+    currency: PRODUCT_DEFAULT_CURRENCY,
     inStock: PRODUCT_DEFAULT_IN_STOCK,
     quantity: Number(formValues.quantity ?? 0),
     mediaIds: normalizeProductMediaIds(productMedia),
@@ -368,7 +371,7 @@ export function normalizeUpdateProductPayload({
 }: NormalizeUpdateProductPayloadInput): UpdateProductPayload {
   const categoryId = formValues.categoryId;
   if (categoryId == null) {
-    throw new Error("Product category is required");
+    throw new Error(PRODUCT_CATEGORY_REQUIRED_ERROR);
   }
 
   const productStatus = normalizeLifecycleStatus(formValues.status);
@@ -390,9 +393,9 @@ export function normalizeUpdateProductPayload({
     description,
     status: productStatus,
     productType,
-    sourceType: PRODUCT_CREATE_SOURCE_TYPE,
+    sourceType: PRODUCT_DEFAULT_SOURCE_TYPE,
     price: Number(formValues.price ?? 0),
-    currency: PRODUCT_CREATE_CURRENCY,
+    currency: PRODUCT_DEFAULT_CURRENCY,
     inStock: PRODUCT_DEFAULT_IN_STOCK,
     quantity: Number(formValues.quantity ?? 0),
     mediaIds: normalizeProductMediaIds(productMedia),

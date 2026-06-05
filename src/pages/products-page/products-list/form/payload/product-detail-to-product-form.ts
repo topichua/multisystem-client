@@ -4,7 +4,7 @@ import type {
   ProductVariant,
   ProductVariantCustomField,
 } from "@/features/products/model/product.types";
-import type { ProductCreateFormValues } from "../product-form.types";
+import type { ProductAddFormValues } from "../product-form.types";
 import type {
   CharacteristicFieldRef,
   ProductCharacteristicFormRow,
@@ -17,15 +17,7 @@ import { buildProductVariantKey } from "../variants/generate-product-variants";
 import { mapResponseFieldTypeToCreateFieldType } from "../variants/product-add-variant.utils";
 
 export type ProductDetailFormState = {
-  formValues: ProductCreateFormValues & {
-    characteristics: Array<
-      ProductCharacteristicFormRow & { attributeId?: number }
-    >;
-    singleCharacteristics: Array<
-      SingleProductCharacteristicFormRow & { attributeId?: number }
-    >;
-    variants: unknown[];
-  };
+  formValues: ProductAddFormValues;
   productType: "single" | "variants";
   productMedia: UploadedProductMedia[];
   variants: ProductVariantUi[];
@@ -271,15 +263,8 @@ export function productDetailToProductForm(
         product.status === "active" || product.status === "archived"
           ? product.status
           : "draft",
-      sourceType: product.sourceType ?? "manual",
-      sourceId: product.sourceId ?? "",
-      referenceGroupId:
-        product.referenceGroupId == null
-          ? ""
-          : String(product.referenceGroupId),
       price: Number(product.price ?? 0),
       quantity: Number(product.quantity ?? 0),
-      mediaUrl: product.mainImageUrl ?? "",
       categoryId: product.categoryId ?? undefined,
       characteristics:
         productType === "variants"

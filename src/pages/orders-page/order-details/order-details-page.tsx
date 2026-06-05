@@ -2,6 +2,7 @@ import { Alert, Spin, Typography } from "antd";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router";
 
+import { pagesMap } from "@/app/router/pages-map";
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
 import { coerceOrderId } from "./utils/order-details.utils";
 import { useOrderDetails } from "./hooks/use-order-details";
@@ -27,7 +28,7 @@ export const OrderDetailsPage = () => {
       <OrderDetailsHeader
         order={order}
         orderId={orderId}
-        onBack={() => navigate("/orders/list")}
+        onBack={() => navigate(pagesMap.ordersList)}
         onStatusChangeSuccess={applyOrderStatusLocally}
       />
 

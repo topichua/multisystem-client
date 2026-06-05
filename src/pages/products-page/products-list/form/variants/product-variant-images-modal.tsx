@@ -48,7 +48,6 @@ type ProductVariantImagesModalProps = {
   onClose: () => void;
   onApply: (variantKey: string, media: VariantMediaItem[]) => void;
   onUploadVariantImage: (file: File) => Promise<VariantMediaItem>;
-  onRemoveVariantImage: (media: VariantMediaItem) => Promise<void>;
 };
 
 type ProductVariantImagesModalInnerProps = Omit<
@@ -131,14 +130,12 @@ const VariantMediaCard = styled.div`
 type SortableVariantMediaCardProps = {
   media: VariantMediaItem;
   index: number;
-  removing: boolean;
   onRemove: (media: VariantMediaItem) => void;
 };
 
 function SortableVariantMediaCard({
   media,
   index,
-  removing,
   onRemove,
 }: SortableVariantMediaCardProps) {
   const { t } = useTranslation();
@@ -187,7 +184,6 @@ function SortableVariantMediaCard({
         size="small"
         className="variant-media-delete"
         icon={<TrashIcon size={14} />}
-        loading={removing}
         onClick={() => {
           onRemove(media);
         }}
@@ -214,7 +210,6 @@ export function ProductVariantImagesModal({
   onClose,
   onApply,
   onUploadVariantImage,
-  onRemoveVariantImage,
 }: ProductVariantImagesModalProps) {
   if (!open || !variant) {
     return null;
@@ -229,7 +224,6 @@ export function ProductVariantImagesModal({
       onClose={onClose}
       onApply={onApply}
       onUploadVariantImage={onUploadVariantImage}
-      onRemoveVariantImage={onRemoveVariantImage}
     />
   );
 }
@@ -241,14 +235,12 @@ function ProductVariantImagesModalInner({
   onClose,
   onApply,
   onUploadVariantImage,
-  onRemoveVariantImage,
 }: ProductVariantImagesModalInnerProps) {
   const { t } = useTranslation();
   const [draftMedia, setDraftMedia] = useState<VariantMediaItem[]>(() =>
     variant.media.map((item) => ({ ...item })),
   );
   const [uploadingCount, setUploadingCount] = useState(0);
-  const [removingMediaId, setRemovingMediaId] = useState<number | null>(null);
   const [isApplying, setIsApplying] = useState(false);
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
@@ -313,26 +305,9 @@ function ProductVariantImagesModalInner({
     [onUploadVariantImage, t],
   );
 
-  const handleRemoveDraftMedia = useCallback(
-    async (media: VariantMediaItem) => {
-      setRemovingMediaId(media.id);
-
-      try {
-        if (media.origin === "variant") {
-          await onRemoveVariantImage(media);
-        }
-
-        setDraftMedia((current) =>
-          current.filter((item) => item.id !== media.id),
-        );
-      } finally {
-        setRemovingMediaId((current) =>
-          current === media.id ? null : current,
-        );
-      }
-    },
-    [onRemoveVariantImage],
-  );
+  const handleRemoveDraftMedia = useCallback((media: VariantMediaItem) => {
+    setDraftMedia((current) => current.filter((item) => item.id !== media.id));
+  }, []);
 
   const handleReorderDraftMedia = useCallback(
     (activeMediaId: number, overMediaId: number) => {
@@ -505,9 +480,8 @@ function ProductVariantImagesModalInner({
                       key={media.id}
                       media={media}
                       index={index}
-                      removing={removingMediaId === media.id}
                       onRemove={(item) => {
-                        void handleRemoveDraftMedia(item);
+                        handleRemoveDraftMedia(item);
                       }}
                     />
                   ))}
