@@ -20,18 +20,13 @@ const TypeCardsGrid = styled.div`
 
 const TypeCardButton = styled.button<{ $selected: boolean }>`
   width: 100%;
-  min-height: 86px;
-  padding: 16px 40px 16px 16px;
+  padding: 12px 26px;
   border: 1px solid
     ${({ $selected, theme }) =>
       $selected
         ? theme.colors.functional.border.selected
         : theme.colors.functional.border.split};
   border-radius: 8px;
-  background: ${({ $selected, theme }) =>
-    $selected
-      ? theme.colors.functional.background.active
-      : theme.colors.functional.background.natural};
   color: ${({ theme }) => theme.colors.functional.text.primary};
   cursor: pointer;
   position: relative;
@@ -56,8 +51,6 @@ const TypeCardContent = styled.div`
 `;
 
 const TypeIconBox = styled.span<{ $selected: boolean }>`
-  width: 44px;
-  height: 44px;
   border-radius: 8px;
   display: grid;
   place-items: center;
@@ -66,17 +59,17 @@ const TypeIconBox = styled.span<{ $selected: boolean }>`
     $selected
       ? theme.colors.functional.text.inverted
       : theme.colors.functional.text.primary};
-  background: ${({ $selected, theme }) =>
+  color: ${({ $selected, theme }) =>
     $selected
       ? theme.colors.semantic.primary
-      : theme.colors.functional.background.hover};
+      : theme.colors.functional.text.primary};
 `;
 
 const TypeTextStack = styled.span`
   display: flex;
   min-width: 0;
   flex-direction: column;
-  gap: 2px;
+  /* gap: 2px; */
 `;
 
 const TypeTitle = styled.span`
@@ -203,7 +196,7 @@ export const CharacteristicCreateModal = ({
       okText={t("characteristics.okCreate")}
       confirmLoading={confirmLoading}
       destroyOnHidden
-      width={600}
+      width={450}
     >
       <Form form={form} layout="vertical">
         <Form.Item

@@ -51,7 +51,7 @@ export const ProductsCharacteristicsSidebar = ({
           <div>
             <PaneSectionTitle>{t("characteristics.title")}</PaneSectionTitle>
             <Text type="secondary">
-              {totalCount} {t("characteristics.itemsCount")}
+              {t("characteristics.itemsCount", { count: totalCount })}
             </Text>
           </div>
 

@@ -11,12 +11,9 @@ import {
   Typography,
 } from "antd";
 import { useTranslation } from "react-i18next";
-
 import type { Category } from "@/features/categories/model/category.types";
-import { formatDate } from "@/utils/date-time";
-
-import { CATEGORY_NAME_MAX_LENGTH } from "../products-categories.constants";
 import * as S from "../product-category-detail-view.styled";
+import { CATEGORY_NAME_MAX_LENGTH } from "../products-categories.constants";
 
 const { Title, Text } = Typography;
 
@@ -158,8 +155,8 @@ export const SubcategoriesSection = ({
                         {child.name}
                       </Text>
                       <Text italic type="secondary" style={{ fontSize: 11 }}>
-                        {t("categories.createdOn", {
-                          date: formatDate(child.createdAt),
+                        {t("categories.metaProductsCount", {
+                          count: child.productsCount,
                         })}
                       </Text>
                     </Flex>

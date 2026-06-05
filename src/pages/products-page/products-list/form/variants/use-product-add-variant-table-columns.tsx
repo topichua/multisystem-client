@@ -216,13 +216,9 @@ export function useProductAddVariantTableColumns({
 
               <Flex vertical gap={4} style={{ minWidth: 0 }}>
                 <Text type="secondary" style={{ fontSize: 12 }}>
-                  {record.media.length === 1
-                    ? t("products.variant.imageCountOne", {
-                        count: record.media.length,
-                      })
-                    : t("products.variant.imageCount", {
-                        count: record.media.length,
-                      })}
+                  {t("products.variant.imageCount", {
+                    count: record.media.length,
+                  })}
                 </Text>
 
                 <Button

@@ -45,7 +45,7 @@ export const ProductsCategoriesSidebar = ({
           <div>
             <PaneSectionTitle>{t("categories.title")}</PaneSectionTitle>
             <Text type="secondary">
-              {totalCount} {t("categories.itemsCount")}
+              {t("categories.itemsCount", { count: totalCount })}
             </Text>
           </div>
 
@@ -93,8 +93,9 @@ export const ProductsCategoriesSidebar = ({
                       </Text>
 
                       <Text type="secondary">
-                        {subcategoriesCount}{" "}
-                        {t("categories.subcategoriesCount")}
+                        {t("categories.subcategoriesCount", {
+                          count: subcategoriesCount,
+                        })}
                       </Text>
                     </Flex>
 

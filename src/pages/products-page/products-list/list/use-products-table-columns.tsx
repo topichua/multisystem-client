@@ -10,6 +10,7 @@ import { useMemo, type Key } from "react";
 import { useTranslation } from "react-i18next";
 
 import type { Product } from "@/features/products/model/product.types";
+import { toJS } from "mobx";
 
 type ProductStatusColor =
   | "default"
@@ -52,7 +53,9 @@ export const useProductsTableColumns = ({
         key: "product",
         width: 360,
         render: (_, product) => {
-          const hasVariants = Boolean(product.variants?.length);
+          console.log("🚀 ~ useProductsTableColumns ~ product:", toJS(product));
+          const variantsCount = product.variants?.length ?? 0;
+          const hasVariants = variantsCount > 0;
           const isExpanded =
             hasVariants && expandedRowKeys.includes(product.id);
 
@@ -112,10 +115,17 @@ export const useProductsTableColumns = ({
                     }}
                   />
                 )}
-                <Flex vertical gap={2} style={{ minWidth: 0, flex: 1 }}>
+                <Flex vertical gap={0} style={{ minWidth: 0, flex: 1 }}>
                   <Text strong ellipsis style={{ maxWidth: 260 }}>
                     {product.name}
                   </Text>
+                  {hasVariants && (
+                    <Text italic type="secondary" ellipsis>
+                      {t("products.table.variantsCount", {
+                        count: variantsCount,
+                      })}
+                    </Text>
+                  )}
                 </Flex>
               </Flex>
             </Flex>
