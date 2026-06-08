@@ -3,125 +3,141 @@ import { theme } from "antd";
 
 import type { ThemeMode } from "@/theme/theme-mode.types";
 import { BRAND_PRIMARY } from "@/styled/brand";
-import { APP_FONT_FAMILY } from "@/styled/constants";
+import { APP_CODE_FONT_FAMILY, APP_FONT_FAMILY } from "@/styled/constants";
 
-const brandToken = theme.getDesignToken({
-  algorithm: theme.defaultAlgorithm,
-  token: {
-    colorPrimary: BRAND_PRIMARY,
-    colorInfo: BRAND_PRIMARY,
-  },
-});
+const shared: ThemeConfig["token"] = {
+  fontFamily: APP_FONT_FAMILY,
+  fontFamilyCode: APP_CODE_FONT_FAMILY,
+  fontSize: 14,
+  lineHeight: 1.45,
+  borderRadiusSM: 6,
+  borderRadius: 8,
+  borderRadiusLG: 12,
+  colorPrimary: BRAND_PRIMARY,
+  wireframe: false,
+};
 
-const appColors = {
-  primary: brandToken.colorPrimary,
-  primaryHover: brandToken.colorPrimaryHover,
-  primaryActive: brandToken.colorPrimaryActive,
-  primarySoft: brandToken.colorPrimaryBg,
+const lightColors = {
+  primary: BRAND_PRIMARY,
+  primaryHover: "#8377d6",
+  primaryActive: "#5d51ba",
+  primarySoft: "#ece9f9",
+  primarySoftHover: "#ddd7f3",
 
-  success: "#10B981",
-  successSoft: "#ECFDF5",
+  success: "#259060",
+  warning: "#c97d1e",
+  error: "#d43a2a",
+  info: "#2c7bc8",
 
-  warning: "#F59E0B",
-  warningSoft: "#FFFBEB",
+  bgBase: "#ffffff",
+  bgLayout: "#fafafb",
+  bgContainer: "#ffffff",
+  bgElevated: "#f7f7f9",
+  bgSpotlight: "#26262c",
+  bgFill: "#f0f0f3",
+  tableHeader: "#f0f0f3",
 
-  error: "#EF4444",
-  errorSoft: "#FEF2F2",
+  text: "#26262c",
+  textSecondary: "#57575f",
+  textTertiary: "#7f7f88",
+  textQuaternary: "#ababb3",
 
-  bgLayout: "#F8FAFC",
-  bgContainer: "#FFFFFF",
-  bgElevated: "#FFFFFF",
+  border: "#c9c9cf",
+  borderSecondary: "#ededf0",
 
-  text: "#0F172A",
-  textSecondary: "#475569",
-  textTertiary: "#64748B",
-  textDisabled: "#94A3B8",
-
-  border: "#E2E8F0",
-  borderSecondary: "#e2e1e1",
-
-  shadow: "0 12px 32px rgba(15, 23, 42, 0.08)",
+  shadow: "0 12px 32px rgba(38, 38, 44, 0.08)",
+  focusShadow: "0 0 0 2px rgba(110, 98, 205, 0.16)",
 } as const;
 
-export const modernSaasTheme: ThemeConfig = {
+export const lightTheme: ThemeConfig = {
   algorithm: theme.defaultAlgorithm,
 
   token: {
-    colorPrimary: BRAND_PRIMARY,
-    colorInfo: BRAND_PRIMARY,
+    ...shared,
 
-    colorSuccess: appColors.success,
-    colorWarning: appColors.warning,
-    colorError: appColors.error,
+    colorSuccess: lightColors.success,
+    colorWarning: lightColors.warning,
+    colorError: lightColors.error,
+    colorInfo: lightColors.info,
 
-    colorBgLayout: appColors.bgLayout,
-    colorBgContainer: appColors.bgContainer,
-    colorBgElevated: appColors.bgElevated,
+    colorBgBase: lightColors.bgBase,
+    colorBgLayout: lightColors.bgLayout,
+    colorBgContainer: lightColors.bgContainer,
+    colorBgElevated: lightColors.bgElevated,
+    colorBgSpotlight: lightColors.bgSpotlight,
 
-    colorTextBase: appColors.text,
-    colorText: appColors.text,
-    colorTextSecondary: appColors.textSecondary,
-    colorTextTertiary: appColors.textTertiary,
-    colorTextDisabled: appColors.textDisabled,
+    colorTextBase: lightColors.text,
+    colorText: lightColors.text,
+    colorTextSecondary: lightColors.textSecondary,
+    colorTextTertiary: lightColors.textTertiary,
+    colorTextQuaternary: lightColors.textQuaternary,
+    colorTextDisabled: lightColors.textQuaternary,
 
-    colorBorder: appColors.border,
-    colorBorderSecondary: appColors.borderSecondary,
-    colorSplit: appColors.borderSecondary,
+    colorBorder: lightColors.border,
+    colorBorderSecondary: lightColors.borderSecondary,
+    colorSplit: lightColors.borderSecondary,
 
-    fontSize: 14,
+    colorFillSecondary: lightColors.bgFill,
+    controlItemBgHover: lightColors.bgFill,
+    controlItemBgActive: lightColors.primarySoft,
+    colorPrimaryBg: lightColors.primarySoft,
+    colorPrimaryBgHover: lightColors.primarySoftHover,
+
     fontSizeHeading1: 32,
     fontSizeHeading2: 24,
     fontSizeHeading3: 20,
 
-    boxShadow: appColors.shadow,
+    boxShadow: lightColors.shadow,
   },
 
   components: {
     Button: {
-      fontWeight: 500,
+      colorPrimaryHover: lightColors.primaryHover,
+      colorPrimaryActive: lightColors.primaryActive,
       primaryShadow: "none",
       defaultShadow: "none",
-      defaultBg: appColors.bgContainer,
-      defaultColor: appColors.text,
-      defaultBorderColor: appColors.border,
-      defaultHoverBorderColor: appColors.primary,
-      defaultHoverColor: appColors.primary,
+      fontWeight: 500,
+      defaultBg: lightColors.bgContainer,
+      defaultColor: lightColors.text,
+      defaultBorderColor: lightColors.border,
+      defaultHoverBorderColor: lightColors.primary,
+      defaultHoverColor: lightColors.primary,
     },
 
     Layout: {
-      bodyBg: appColors.bgLayout,
-      headerBg: appColors.bgContainer,
-      siderBg: appColors.bgContainer,
-      triggerBg: appColors.bgContainer,
-      triggerColor: appColors.text,
+      bodyBg: lightColors.bgLayout,
+      headerBg: lightColors.bgContainer,
+      siderBg: lightColors.bgContainer,
+      triggerBg: lightColors.bgContainer,
+      triggerColor: lightColors.text,
     },
 
     Menu: {
       itemBg: "transparent",
-      itemColor: appColors.textSecondary,
-      itemHoverBg: appColors.primarySoft,
-      itemHoverColor: appColors.primary,
-      itemSelectedBg: appColors.primarySoft,
-      itemSelectedColor: appColors.primary,
-      itemActiveBg: appColors.primarySoft,
+      itemColor: lightColors.textSecondary,
+      itemHoverBg: lightColors.bgFill,
+      itemHoverColor: lightColors.primary,
+      itemSelectedBg: lightColors.primarySoft,
+      itemSelectedColor: lightColors.primary,
+      itemActiveBg: lightColors.primarySoft,
       subMenuItemBg: "transparent",
     },
 
     Card: {
-      colorBgContainer: appColors.bgContainer,
-      headerBg: appColors.bgContainer,
-      colorBorderSecondary: appColors.borderSecondary,
-      boxShadowTertiary: appColors.shadow,
+      colorBgContainer: lightColors.bgContainer,
+      headerBg: lightColors.bgContainer,
+      colorBorderSecondary: lightColors.borderSecondary,
+      boxShadowTertiary: lightColors.shadow,
     },
 
     Table: {
-      headerBg: "#F1F5F9",
-      headerColor: appColors.textSecondary,
-      headerSplitColor: appColors.border,
-      borderColor: appColors.borderSecondary,
-      rowHoverBg: "#F8FAFC",
-      rowSelectedBg: appColors.primarySoft,
-      rowSelectedHoverBg: brandToken.colorPrimaryBgHover,
+      headerBg: lightColors.tableHeader,
+      headerColor: lightColors.textSecondary,
+      headerSplitColor: lightColors.border,
+      borderColor: lightColors.borderSecondary,
+      rowHoverBg: lightColors.bgLayout,
+      rowSelectedBg: lightColors.primarySoft,
+      rowSelectedHoverBg: lightColors.primarySoftHover,
     },
 
     Typography: {
@@ -129,199 +145,198 @@ export const modernSaasTheme: ThemeConfig = {
     },
 
     Input: {
-      activeBorderColor: appColors.primary,
-      hoverBorderColor: appColors.primary,
-      activeShadow: `0 0 0 ${brandToken.controlOutlineWidth}px ${brandToken.controlOutline}`,
+      activeBorderColor: lightColors.primary,
+      hoverBorderColor: lightColors.border,
+      activeShadow: lightColors.focusShadow,
     },
 
     Select: {
-      activeBorderColor: appColors.primary,
-      hoverBorderColor: appColors.primary,
-      optionSelectedBg: appColors.primarySoft,
-      optionSelectedColor: appColors.primary,
-      optionActiveBg: "#F8FAFC",
+      activeBorderColor: lightColors.primary,
+      hoverBorderColor: lightColors.border,
+      optionSelectedBg: lightColors.primarySoft,
+      optionSelectedColor: lightColors.primary,
+      optionActiveBg: lightColors.bgFill,
     },
 
     Modal: {
-      contentBg: appColors.bgContainer,
-      headerBg: appColors.bgContainer,
-      titleColor: appColors.text,
+      contentBg: lightColors.bgContainer,
+      headerBg: lightColors.bgContainer,
+      titleColor: lightColors.text,
     },
 
     Tabs: {
-      inkBarColor: appColors.primary,
-      itemSelectedColor: appColors.primary,
-      itemHoverColor: appColors.primary,
-      itemActiveColor: appColors.primaryActive,
+      inkBarColor: lightColors.primary,
+      itemSelectedColor: lightColors.primary,
+      itemHoverColor: lightColors.primary,
+      itemActiveColor: lightColors.primaryActive,
     },
 
     Tag: {
-      defaultBg: "#F8FAFC",
-      defaultColor: appColors.textSecondary,
+      defaultBg: lightColors.bgFill,
+      defaultColor: lightColors.textSecondary,
     },
   },
 };
 
-const brandTokenDark = theme.getDesignToken({
-  algorithm: theme.darkAlgorithm,
-  token: {
-    colorPrimary: BRAND_PRIMARY,
-    colorInfo: BRAND_PRIMARY,
-  },
-});
+const darkColors = {
+  primary: BRAND_PRIMARY,
+  primaryHover: "#8377d6",
+  primaryActive: "#5d51ba",
+  primarySoft: "rgba(110, 98, 205, 0.2)",
+  primarySoftHover: "rgba(110, 98, 205, 0.28)",
 
-const darkAppColors = {
-  primary: brandTokenDark.colorPrimary,
-  primaryHover: brandTokenDark.colorPrimaryHover,
-  primaryActive: brandTokenDark.colorPrimaryActive,
-  primarySoft: brandTokenDark.colorPrimaryBg,
+  success: "#34c28a",
+  warning: "#dea838",
+  error: "#e85d49",
+  info: "#54a6e6",
 
-  success: "#34D399",
-  successSoft: "#064E3B",
+  bgBase: "#19191e",
+  bgLayout: "#19191e",
+  bgContainer: "#212128",
+  bgElevated: "#28282f",
+  bgSpotlight: "#303038",
+  bgFill: "#303038",
+  tableHeader: "#28282f",
 
-  warning: "#FBBF24",
-  warningSoft: "#422006",
+  text: "#f6f6f8",
+  textSecondary: "#b0b0b9",
+  textTertiary: "#7f7f88",
+  textQuaternary: "#616169",
 
-  error: "#F87171",
-  errorSoft: "#450A0A",
-
-  bgLayout: "#0f1117",
-  bgContainer: "#151922",
-  bgElevated: "#1e2230",
-
-  text: "#E8EAEF",
-  textSecondary: "#A8B0C4",
-  textTertiary: "#8B93A8",
-  textDisabled: "#6B7288",
-
-  border: "#2a3042",
-  borderSecondary: "#e2e1e1",
+  border: "#4a4a53",
+  borderSecondary: "#33333b",
 
   shadow: "0 12px 32px rgba(0, 0, 0, 0.45)",
+  focusShadow: "0 0 0 2px rgba(110, 98, 205, 0.28)",
 } as const;
 
-export const darkModernSaasTheme: ThemeConfig = {
+export const darkTheme: ThemeConfig = {
   algorithm: theme.darkAlgorithm,
 
   token: {
-    colorPrimary: BRAND_PRIMARY,
-    colorInfo: BRAND_PRIMARY,
+    ...shared,
 
-    colorSuccess: darkAppColors.success,
-    colorWarning: darkAppColors.warning,
-    colorError: darkAppColors.error,
+    colorSuccess: darkColors.success,
+    colorWarning: darkColors.warning,
+    colorError: darkColors.error,
+    colorInfo: darkColors.info,
 
-    colorBgLayout: darkAppColors.bgLayout,
-    colorBgContainer: darkAppColors.bgContainer,
-    colorBgElevated: darkAppColors.bgElevated,
+    colorBgBase: darkColors.bgBase,
+    colorBgLayout: darkColors.bgLayout,
+    colorBgContainer: darkColors.bgContainer,
+    colorBgElevated: darkColors.bgElevated,
+    colorBgSpotlight: darkColors.bgSpotlight,
 
-    colorTextBase: darkAppColors.text,
-    colorText: darkAppColors.text,
-    colorTextSecondary: darkAppColors.textSecondary,
-    colorTextTertiary: darkAppColors.textTertiary,
-    colorTextDisabled: darkAppColors.textDisabled,
+    colorTextBase: darkColors.text,
+    colorText: darkColors.text,
+    colorTextSecondary: darkColors.textSecondary,
+    colorTextTertiary: darkColors.textTertiary,
+    colorTextQuaternary: darkColors.textQuaternary,
+    colorTextDisabled: darkColors.textQuaternary,
 
-    colorBorder: darkAppColors.border,
-    colorBorderSecondary: darkAppColors.borderSecondary,
-    colorSplit: darkAppColors.borderSecondary,
+    colorBorder: darkColors.border,
+    colorBorderSecondary: darkColors.borderSecondary,
+    colorSplit: darkColors.borderSecondary,
 
-    fontSize: 14,
+    colorFillSecondary: darkColors.bgFill,
+    controlItemBgHover: darkColors.bgFill,
+    controlItemBgActive: darkColors.primarySoft,
+    colorPrimaryBg: "rgba(110, 98, 205, 0.18)",
+    colorPrimaryBgHover: darkColors.primarySoftHover,
+
     fontSizeHeading1: 32,
     fontSizeHeading2: 24,
     fontSizeHeading3: 20,
 
-    boxShadow: darkAppColors.shadow,
+    boxShadow: darkColors.shadow,
   },
 
   components: {
     Button: {
-      fontWeight: 500,
+      colorPrimaryHover: darkColors.primaryHover,
+      colorPrimaryActive: darkColors.primaryActive,
       primaryShadow: "none",
       defaultShadow: "none",
-      defaultBg: darkAppColors.bgContainer,
-      defaultColor: darkAppColors.text,
-      defaultBorderColor: darkAppColors.border,
-      defaultHoverBorderColor: darkAppColors.primary,
-      defaultHoverColor: darkAppColors.primary,
+      fontWeight: 500,
+      defaultBg: darkColors.bgContainer,
+      defaultColor: darkColors.text,
+      defaultBorderColor: darkColors.border,
+      defaultHoverBorderColor: darkColors.primary,
+      defaultHoverColor: darkColors.primary,
     },
 
     Layout: {
-      bodyBg: darkAppColors.bgLayout,
-      headerBg: darkAppColors.bgContainer,
-      siderBg: darkAppColors.bgContainer,
-      triggerBg: darkAppColors.bgContainer,
-      triggerColor: darkAppColors.text,
+      bodyBg: darkColors.bgLayout,
+      headerBg: darkColors.bgContainer,
+      siderBg: darkColors.bgContainer,
+      triggerBg: darkColors.bgContainer,
+      triggerColor: darkColors.text,
     },
 
     Menu: {
       itemBg: "transparent",
-      itemColor: darkAppColors.textSecondary,
-      itemHoverBg: darkAppColors.primarySoft,
-      itemHoverColor: darkAppColors.primary,
-      itemSelectedBg: darkAppColors.primarySoft,
-      itemSelectedColor: darkAppColors.primary,
-      itemActiveBg: darkAppColors.primarySoft,
+      itemColor: darkColors.textSecondary,
+      itemHoverBg: darkColors.bgFill,
+      itemHoverColor: darkColors.primaryHover,
+      itemSelectedBg: darkColors.primarySoft,
+      itemSelectedColor: "#9a8fe6",
+      itemActiveBg: darkColors.primarySoft,
       subMenuItemBg: "transparent",
     },
 
     Card: {
-      colorBgContainer: darkAppColors.bgContainer,
-      headerBg: darkAppColors.bgContainer,
-      colorBorderSecondary: darkAppColors.borderSecondary,
-      boxShadowTertiary: darkAppColors.shadow,
+      colorBgContainer: darkColors.bgContainer,
+      headerBg: darkColors.bgContainer,
+      colorBorderSecondary: darkColors.borderSecondary,
+      boxShadowTertiary: darkColors.shadow,
     },
 
     Table: {
-      headerBg: "#1e2230",
-      headerColor: darkAppColors.textSecondary,
-      headerSplitColor: darkAppColors.border,
-      borderColor: darkAppColors.borderSecondary,
-      rowHoverBg: "#242938",
-      rowSelectedBg: darkAppColors.primarySoft,
-      rowSelectedHoverBg: brandTokenDark.colorPrimaryBgHover,
+      headerBg: darkColors.tableHeader,
+      headerColor: darkColors.textSecondary,
+      headerSplitColor: darkColors.border,
+      borderColor: darkColors.borderSecondary,
+      rowHoverBg: darkColors.bgFill,
+      rowSelectedBg: darkColors.primarySoft,
+      rowSelectedHoverBg: darkColors.primarySoftHover,
     },
 
     Input: {
-      activeBorderColor: darkAppColors.primary,
-      hoverBorderColor: darkAppColors.primary,
-      activeShadow: `0 0 0 ${brandTokenDark.controlOutlineWidth}px ${brandTokenDark.controlOutline}`,
+      activeBorderColor: darkColors.primary,
+      hoverBorderColor: darkColors.border,
+      activeShadow: darkColors.focusShadow,
     },
 
     Select: {
-      activeBorderColor: darkAppColors.primary,
-      hoverBorderColor: darkAppColors.primary,
-      optionSelectedBg: darkAppColors.primarySoft,
-      optionSelectedColor: darkAppColors.primary,
-      optionActiveBg: "#242938",
+      activeBorderColor: darkColors.primary,
+      hoverBorderColor: darkColors.border,
+      optionSelectedBg: darkColors.primarySoft,
+      optionSelectedColor: "#9a8fe6",
+      optionActiveBg: darkColors.bgFill,
     },
 
     Modal: {
-      contentBg: darkAppColors.bgContainer,
-      headerBg: darkAppColors.bgContainer,
-      titleColor: darkAppColors.text,
+      contentBg: darkColors.bgContainer,
+      headerBg: darkColors.bgContainer,
+      titleColor: darkColors.text,
     },
 
     Tabs: {
-      inkBarColor: darkAppColors.primary,
-      itemSelectedColor: darkAppColors.primary,
-      itemHoverColor: darkAppColors.primary,
-      itemActiveColor: darkAppColors.primaryActive,
+      inkBarColor: darkColors.primaryHover,
+      itemSelectedColor: darkColors.primaryHover,
+      itemHoverColor: darkColors.primaryHover,
+      itemActiveColor: darkColors.primaryActive,
     },
 
     Tag: {
-      defaultBg: "#242938",
-      defaultColor: darkAppColors.textSecondary,
+      defaultBg: darkColors.bgFill,
+      defaultColor: darkColors.textSecondary,
     },
   },
 };
 
-export const createAntdTheme = (mode: ThemeMode): ThemeConfig => {
-  const base = mode === "dark" ? darkModernSaasTheme : modernSaasTheme;
-  return {
-    ...base,
-    token: {
-      ...base.token,
-      fontFamily: APP_FONT_FAMILY,
-    },
-  };
-};
+export const modernSaasTheme = lightTheme;
+export const darkModernSaasTheme = darkTheme;
+
+export const createAntdTheme = (mode: ThemeMode): ThemeConfig =>
+  mode === "dark" ? darkTheme : lightTheme;

@@ -17,7 +17,7 @@ export const PaginationSummary = styled.span`
   color: ${({ theme }) => theme.colors.functional.text.subdued};
 `;
 
-const activeBg = "rgba(114, 46, 209, 0.08)";
+const activeBg = "rgba(110, 98, 205, 0.08)";
 
 export const StyledPaginationWrap = styled.div`
   .ant-pagination {
