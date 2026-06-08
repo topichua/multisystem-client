@@ -19,6 +19,7 @@ import {
   formatText,
   getCustomerInitials,
   getCustomerName,
+  getOrderSourceLabel,
 } from "../utils/order-details.utils";
 
 const { Text } = Typography;
@@ -27,14 +28,10 @@ type OrderCustomerTabProps = {
   order: OrderDetails;
 };
 
-const getSourceLabel = (
-  t: ReturnType<typeof useTranslation>["t"],
-  source: string | null | undefined,
-): string =>
-  source
-    ? t(`orders.sources.${source}`, { defaultValue: source })
-    : EMPTY_VALUE;
-
+/**
+ * @deprecated Kept temporarily for the legacy tabbed order details layout.
+ * Use OrderDetailsContent for the current order details design.
+ */
 export function OrderCustomerTab({ order }: OrderCustomerTabProps) {
   const { t } = useTranslation();
 
@@ -81,7 +78,9 @@ export function OrderCustomerTab({ order }: OrderCustomerTabProps) {
 
             <Flex vertical>
               <Text strong>{getCustomerName(order.customer)}</Text>
-              <Text type="secondary">{getSourceLabel(t, order.source)}</Text>
+              <Text type="secondary">
+                {getOrderSourceLabel(t, order.source)}
+              </Text>
             </Flex>
           </Flex>
 
@@ -105,7 +104,7 @@ export function OrderCustomerTab({ order }: OrderCustomerTabProps) {
               {
                 key: "source",
                 label: t("orders.source"),
-                children: getSourceLabel(t, order.source),
+                children: getOrderSourceLabel(t, order.source),
               },
               {
                 key: "groupId",

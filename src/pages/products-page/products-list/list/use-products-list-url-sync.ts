@@ -4,6 +4,7 @@ import { useSearchParams } from "react-router";
 import type { ProductsStore } from "@/features/products/model/products-store";
 import {
   parseProductsListUrlSearchParams,
+  productsListAppliedUrlStateEquals,
   productsListUrlSearchStringCanonical,
   serializeProductsListUrlSearchParams,
 } from "@/features/products/model/products-list-url";
@@ -33,7 +34,15 @@ export function useProductsListUrlSync(store: ProductsStore): void {
     ) {
       return;
     }
+    const urlState = parseProductsListUrlSearchParams(searchParams);
+    const storeAheadOfUrl = !productsListAppliedUrlStateEquals(
+      store.appliedUrlSnapshot,
+      urlState,
+    );
     setSearchParams(next, { replace: true });
+    if (listUrlBootstrapped.current && storeAheadOfUrl) {
+      void store.loadProducts();
+    }
   }, [
     searchParams,
     setSearchParams,

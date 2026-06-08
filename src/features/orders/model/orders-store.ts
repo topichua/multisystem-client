@@ -1,6 +1,13 @@
+import dayjs from "dayjs";
 import { makeAutoObservable, runInAction } from "mobx";
 
 import { ordersApi } from "@/features/orders/api/orders-api";
+import type { OrderSourceFilter } from "@/features/orders/model/order-list.constants";
+import {
+  normalizeAppliedListKeyword,
+  ordersListAppliedUrlStateEquals,
+  type OrdersListAppliedUrlState,
+} from "@/features/orders/model/orders-list-url";
 import type {
   BuildOrderCreatePayloadInput,
   ClientOrderStats,
@@ -17,12 +24,49 @@ import { unknownErrorMessage } from "@/utils/unknown-error-message";
 const defaultPageSize = 50;
 const minCatalogSearchLength = 3;
 
+function snapshotFromStore(store: OrdersStore): OrdersListAppliedUrlState {
+  return {
+    keyword: store.listKeyword,
+    statusIds: [...store.listStatusIds],
+    sources: [...store.listSources],
+    totalPriceFrom: store.listTotalPriceFrom,
+    totalPriceTo: store.listTotalPriceTo,
+    createdFrom: store.listCreatedFrom,
+    createdTo: store.listCreatedTo,
+    page: store.page,
+    pageSize: store.pageSize,
+  };
+}
+
+function toApiIsoDateStart(value: string): string {
+  return dayjs(value).startOf("day").toISOString();
+}
+
+function toApiIsoDateEnd(value: string): string {
+  return dayjs(value).endOf("day").toISOString();
+}
+
 export class OrdersStore {
   orders: OrderListItem[] = [];
   total = 0;
   page = 1;
   pageSize = defaultPageSize;
   statusId: number | null = null;
+
+  listKeyword = "";
+  listStatusIds: number[] = [];
+  listSources: OrderSourceFilter[] = [];
+  listTotalPriceFrom: number | null = null;
+  listTotalPriceTo: number | null = null;
+  listCreatedFrom: string | null = null;
+  listCreatedTo: string | null = null;
+
+  draftStatusIds: number[] = [];
+  draftSources: OrderSourceFilter[] = [];
+  draftTotalPriceFrom: number | null = null;
+  draftTotalPriceTo: number | null = null;
+  draftCreatedFrom: string | null = null;
+  draftCreatedTo: string | null = null;
 
   listLoading = false;
   listError: string | null = null;
@@ -52,6 +96,207 @@ export class OrdersStore {
     makeAutoObservable(this);
   }
 
+  get appliedUrlSnapshot(): OrdersListAppliedUrlState {
+    return snapshotFromStore(this);
+  }
+
+  get appliedNonKeywordFilterCount(): number {
+    let count = this.listStatusIds.length + this.listSources.length;
+    if (this.listTotalPriceFrom != null || this.listTotalPriceTo != null) {
+      count += 1;
+    }
+    if (this.listCreatedFrom != null || this.listCreatedTo != null) {
+      count += 1;
+    }
+    return count;
+  }
+
+  assignListStateFromUrl(parsed: OrdersListAppliedUrlState): boolean {
+    const next: OrdersListAppliedUrlState = {
+      ...parsed,
+      statusIds: [...new Set(parsed.statusIds)],
+      sources: [...new Set(parsed.sources)],
+    };
+    if (ordersListAppliedUrlStateEquals(snapshotFromStore(this), next)) {
+      return false;
+    }
+    runInAction(() => {
+      this.listKeyword = normalizeAppliedListKeyword(next.keyword);
+      this.listStatusIds = next.statusIds;
+      this.listSources = next.sources;
+      this.listTotalPriceFrom = next.totalPriceFrom;
+      this.listTotalPriceTo = next.totalPriceTo;
+      this.listCreatedFrom = next.createdFrom;
+      this.listCreatedTo = next.createdTo;
+      this.page = next.page;
+      this.pageSize = next.pageSize;
+    });
+    return true;
+  }
+
+  syncFilterDraftFromApplied = (): void => {
+    runInAction(() => {
+      this.draftStatusIds = [...this.listStatusIds];
+      this.draftSources = [...this.listSources];
+      this.draftTotalPriceFrom = this.listTotalPriceFrom;
+      this.draftTotalPriceTo = this.listTotalPriceTo;
+      this.draftCreatedFrom = this.listCreatedFrom;
+      this.draftCreatedTo = this.listCreatedTo;
+    });
+  };
+
+  resetFilterDraft = (): void => {
+    runInAction(() => {
+      this.draftStatusIds = [];
+      this.draftSources = [];
+      this.draftTotalPriceFrom = null;
+      this.draftTotalPriceTo = null;
+      this.draftCreatedFrom = null;
+      this.draftCreatedTo = null;
+    });
+  };
+
+  setDraftStatusIds = (ids: number[]): void => {
+    runInAction(() => {
+      this.draftStatusIds = ids;
+    });
+  };
+
+  setDraftSources = (sources: OrderSourceFilter[]): void => {
+    runInAction(() => {
+      this.draftSources = sources;
+    });
+  };
+
+  setDraftTotalPriceFrom = (value: number | null): void => {
+    runInAction(() => {
+      this.draftTotalPriceFrom = value;
+    });
+  };
+
+  setDraftTotalPriceTo = (value: number | null): void => {
+    runInAction(() => {
+      this.draftTotalPriceTo = value;
+    });
+  };
+
+  setDraftCreatedFrom = (value: string | null): void => {
+    runInAction(() => {
+      this.draftCreatedFrom = value;
+    });
+  };
+
+  setDraftCreatedTo = (value: string | null): void => {
+    runInAction(() => {
+      this.draftCreatedTo = value;
+    });
+  };
+
+  applyFiltersFromPanel = (): void => {
+    runInAction(() => {
+      this.listStatusIds = [...new Set(this.draftStatusIds)];
+      this.listSources = [...new Set(this.draftSources)];
+      this.listTotalPriceFrom = this.draftTotalPriceFrom;
+      this.listTotalPriceTo = this.draftTotalPriceTo;
+      this.listCreatedFrom = this.draftCreatedFrom;
+      this.listCreatedTo = this.draftCreatedTo;
+      this.page = 1;
+    });
+  };
+
+  setListKeyword = (value: string): void => {
+    const applied = normalizeAppliedListKeyword(value);
+    if (applied === this.listKeyword) {
+      return;
+    }
+    runInAction(() => {
+      this.listKeyword = applied;
+      this.page = 1;
+    });
+  };
+
+  setListPage = (nextPage: number): void => {
+    const safe = Math.max(1, nextPage);
+    runInAction(() => {
+      this.page = safe;
+    });
+  };
+
+  removeListStatusId = (id: number): void => {
+    runInAction(() => {
+      this.listStatusIds = this.listStatusIds.filter(
+        (statusId) => statusId !== id,
+      );
+      this.page = 1;
+    });
+  };
+
+  removeListSource = (source: OrderSourceFilter): void => {
+    runInAction(() => {
+      this.listSources = this.listSources.filter((item) => item !== source);
+      this.page = 1;
+    });
+  };
+
+  clearListTotalPriceRange = (): void => {
+    runInAction(() => {
+      this.listTotalPriceFrom = null;
+      this.listTotalPriceTo = null;
+      this.page = 1;
+    });
+  };
+
+  clearListCreatedRange = (): void => {
+    runInAction(() => {
+      this.listCreatedFrom = null;
+      this.listCreatedTo = null;
+      this.page = 1;
+    });
+  };
+
+  clearListKeyword = (): void => {
+    runInAction(() => {
+      this.listKeyword = "";
+      this.page = 1;
+    });
+  };
+
+  clearAllListFilters = (): void => {
+    runInAction(() => {
+      this.listKeyword = "";
+      this.listStatusIds = [];
+      this.listSources = [];
+      this.listTotalPriceFrom = null;
+      this.listTotalPriceTo = null;
+      this.listCreatedFrom = null;
+      this.listCreatedTo = null;
+      this.page = 1;
+      this.pageSize = defaultPageSize;
+    });
+  };
+
+  private buildListQueryParams() {
+    return {
+      page: this.page,
+      pageSize: this.pageSize,
+      ...(this.listKeyword ? { keyword: this.listKeyword } : {}),
+      ...(this.listStatusIds.length ? { statuses: this.listStatusIds } : {}),
+      ...(this.listSources.length ? { sources: [...this.listSources] } : {}),
+      ...(this.listTotalPriceFrom != null
+        ? { totalPriceFrom: this.listTotalPriceFrom }
+        : {}),
+      ...(this.listTotalPriceTo != null
+        ? { totalPriceTo: this.listTotalPriceTo }
+        : {}),
+      ...(this.listCreatedFrom
+        ? { createdFrom: toApiIsoDateStart(this.listCreatedFrom) }
+        : {}),
+      ...(this.listCreatedTo
+        ? { createdTo: toApiIsoDateEnd(this.listCreatedTo) }
+        : {}),
+    };
+  }
+
   loadOrders = async (options?: { silent?: boolean }): Promise<void> => {
     const silent = options?.silent === true;
 
@@ -63,11 +308,7 @@ export class OrdersStore {
     }
 
     try {
-      const response = await ordersApi.list({
-        page: this.page,
-        pageSize: this.pageSize,
-        statusId: this.statusId,
-      });
+      const response = await ordersApi.list(this.buildListQueryParams());
       runInAction(() => {
         this.orders = response.items;
         this.total = response.total;
@@ -276,6 +517,12 @@ export class OrdersStore {
       runInAction(() => {
         this.replaceOrderInLists(updated);
       });
+      if (
+        this.listStatusIds.length > 0 &&
+        !this.listStatusIds.includes(updated.statusId)
+      ) {
+        await this.loadOrders({ silent: true });
+      }
     } finally {
       runInAction(() => {
         this.updatingOrderStatusId = null;

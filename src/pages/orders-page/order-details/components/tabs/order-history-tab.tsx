@@ -5,7 +5,10 @@ import { useTranslation } from "react-i18next";
 
 import type { OrderDetails } from "@/features/orders/model/order.types";
 
-import { formatDate, getEventDescription } from "../utils/order-details.utils";
+import {
+  formatDate,
+  getEventDescription,
+} from "../../utils/order-details.utils";
 
 const { Text } = Typography;
 
@@ -13,6 +16,10 @@ type OrderHistoryTabProps = {
   order: OrderDetails;
 };
 
+/**
+ * @deprecated Kept temporarily for the legacy tabbed order details layout.
+ * Use OrderDetailsContent for the current order details design.
+ */
 export function OrderHistoryTab({ order }: OrderHistoryTabProps) {
   const { t } = useTranslation();
 

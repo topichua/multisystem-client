@@ -23,10 +23,12 @@ import {
   formatText,
   getCustomerInitials,
   getCustomerName,
+  getDeliveryProviderLabel,
   getEventDescription,
-} from "../utils/order-details.utils";
-import { OrderProductsTable } from "./order-products-table";
-import { DeliveryStatusTag, PaymentStatusTag } from "./order-status-tags";
+  getOrderSourceLabel,
+} from "../../utils/order-details.utils";
+import { OrderProductsTable } from "../order-products-table";
+import { DeliveryStatusTag, PaymentStatusTag } from "../order-status-tags";
 
 const { Text, Paragraph } = Typography;
 
@@ -34,22 +36,10 @@ type OrderOverviewTabProps = {
   order: OrderDetails;
 };
 
-const getSourceLabel = (
-  t: ReturnType<typeof useTranslation>["t"],
-  source: string | null | undefined,
-): string =>
-  source
-    ? t(`orders.sources.${source}`, { defaultValue: source })
-    : EMPTY_VALUE;
-
-const getDeliveryProviderLabel = (
-  t: ReturnType<typeof useTranslation>["t"],
-  provider: string | null | undefined,
-): string =>
-  provider
-    ? t(`orders.deliveryProviders.${provider}`, { defaultValue: provider })
-    : EMPTY_VALUE;
-
+/**
+ * @deprecated Kept temporarily for the legacy tabbed order details layout.
+ * Use OrderDetailsContent for the current order details design.
+ */
 export function OrderOverviewTab({ order }: OrderOverviewTabProps) {
   const { t } = useTranslation();
   const orderItems = order.items;
@@ -98,7 +88,7 @@ export function OrderOverviewTab({ order }: OrderOverviewTabProps) {
     {
       key: "source",
       label: t("orders.source"),
-      children: getSourceLabel(t, order.source),
+      children: getOrderSourceLabel(t, order.source),
     },
     {
       key: "currency",
@@ -277,7 +267,7 @@ export function OrderOverviewTab({ order }: OrderOverviewTabProps) {
                     {
                       key: "source",
                       label: t("orders.source"),
-                      children: getSourceLabel(t, order.source),
+                      children: getOrderSourceLabel(t, order.source),
                     },
                     {
                       key: "conversationId",
@@ -316,7 +306,9 @@ export function OrderOverviewTab({ order }: OrderOverviewTabProps) {
 
               <Flex vertical>
                 <Text strong>{getCustomerName(order.customer)}</Text>
-                <Text type="secondary">{getSourceLabel(t, order.source)}</Text>
+                <Text type="secondary">
+                  {getOrderSourceLabel(t, order.source)}
+                </Text>
               </Flex>
             </Flex>
 

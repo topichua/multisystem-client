@@ -89,31 +89,65 @@ export type OrdersListQueryParams = {
   pageSize?: number;
   statusId?: number | null;
   clientId?: number;
+  statuses?: number[];
+  keyword?: string;
+  createdFrom?: string;
+  createdTo?: string;
+  totalPriceFrom?: number;
+  totalPriceTo?: number;
+  sources?: string[];
 };
 
-function ordersListQueryToRecord(
+function buildOrdersListSearchParams(
   params: OrdersListQueryParams,
-): Record<string, number> {
-  const out: Record<string, number> = {
-    page: params.page ?? 1,
-    pageSize: params.pageSize ?? 50,
-  };
+): URLSearchParams {
+  const sp = new URLSearchParams();
+  sp.set("page", String(params.page ?? 1));
+  sp.set("pageSize", String(params.pageSize ?? 50));
 
   if (params.statusId != null) {
-    out.statusId = params.statusId;
+    sp.set("statusId", String(params.statusId));
   }
 
   if (params.clientId != null) {
-    out.clientId = params.clientId;
+    sp.set("clientId", String(params.clientId));
   }
 
-  return out;
+  if (params.statuses?.length) {
+    sp.set("statuses", [...new Set(params.statuses)].join(","));
+  }
+
+  if (params.keyword) {
+    sp.set("keyword", params.keyword);
+  }
+
+  if (params.createdFrom) {
+    sp.set("createdFrom", params.createdFrom);
+  }
+
+  if (params.createdTo) {
+    sp.set("createdTo", params.createdTo);
+  }
+
+  if (params.totalPriceFrom != null) {
+    sp.set("totalPriceFrom", String(params.totalPriceFrom));
+  }
+
+  if (params.totalPriceTo != null) {
+    sp.set("totalPriceTo", String(params.totalPriceTo));
+  }
+
+  if (params.sources?.length) {
+    sp.set("sources", [...new Set(params.sources)].join(","));
+  }
+
+  return sp;
 }
 
 export const ordersApi = {
   list: async (params?: OrdersListQueryParams): Promise<OrdersListResponse> => {
     const { data } = await apiClient.get<unknown>(basePath, {
-      params: ordersListQueryToRecord(params ?? {}),
+      params: buildOrdersListSearchParams(params ?? {}),
     });
 
     return normalizeOrdersList(data);
@@ -139,7 +173,7 @@ export const ordersApi = {
     const { data } = await apiClient.get<unknown>(
       `/clients/${clientId}/orders`,
       {
-        params: ordersListQueryToRecord({
+        params: buildOrdersListSearchParams({
           page: params?.page,
           pageSize: params?.pageSize,
           clientId: clientId,

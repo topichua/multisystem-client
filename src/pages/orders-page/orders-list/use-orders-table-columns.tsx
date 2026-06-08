@@ -1,5 +1,5 @@
 import type { TableColumnsType } from "antd";
-import { Typography } from "antd";
+import { Tag, Typography } from "antd";
 import dayjs from "dayjs";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -25,10 +25,11 @@ export function useOrdersTableColumns(): TableColumnsType<OrderListItem> {
   return useMemo(
     () => [
       {
-        title: t("orders.table.id"),
+        // title: t('orders.table.id'),
         dataIndex: "id",
         key: "id",
         width: 80,
+        render: (_, order) => <Text># {order.id}</Text>,
       },
       {
         title: t("orders.table.customer"),
@@ -36,17 +37,11 @@ export function useOrdersTableColumns(): TableColumnsType<OrderListItem> {
         render: (_, order) => <Text>{formatCustomerName(order)}</Text>,
       },
       {
-        title: t("orders.table.status"),
-        key: "status",
-        width: 200,
-        render: (_, order) => (
-          <span
-            onClick={(e) => e.stopPropagation()}
-            onMouseDown={(e) => e.stopPropagation()}
-          >
-            <OrderStatusSelect orderId={order.id} statusId={order.statusId} />
-          </span>
-        ),
+        title: t("orders.table.source"),
+        dataIndex: "source",
+        key: "source",
+        width: 110,
+        render: (_, order) => <Tag color="blue">{order.source}</Tag>,
       },
       {
         title: t("orders.table.total"),
@@ -56,12 +51,25 @@ export function useOrdersTableColumns(): TableColumnsType<OrderListItem> {
           <Text strong>{formatMoney(order.totalAmount, order.currency)}</Text>
         ),
       },
+
       {
-        title: t("orders.table.source"),
-        dataIndex: "source",
-        key: "source",
-        width: 110,
+        title: t("orders.table.status"),
+        key: "status",
+        width: 200,
+        render: (_, order) => (
+          <span
+            onClick={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
+          >
+            <OrderStatusSelect
+              variant="borderless"
+              orderId={order.id}
+              statusId={order.statusId}
+            />
+          </span>
+        ),
       },
+
       {
         title: t("orders.table.internalNote"),
         dataIndex: "internalNote",

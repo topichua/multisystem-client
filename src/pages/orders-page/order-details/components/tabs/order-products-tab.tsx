@@ -3,9 +3,8 @@ import type { DescriptionsProps } from "antd";
 import { useTranslation } from "react-i18next";
 
 import type { OrderDetails } from "@/features/orders/model/order.types";
-
-import { formatMoney } from "../utils/order-details.utils";
-import { OrderProductsTable } from "./order-products-table";
+import { formatMoney } from "../../utils/order-details.utils";
+import { OrderProductsTable } from "../order-products-table";
 
 const { Text } = Typography;
 
@@ -13,6 +12,10 @@ type OrderProductsTabProps = {
   order: OrderDetails;
 };
 
+/**
+ * @deprecated Kept temporarily for the legacy tabbed order details layout.
+ * Use OrderDetailsContent for the current order details design.
+ */
 export function OrderProductsTab({ order }: OrderProductsTabProps) {
   const { t } = useTranslation();
 

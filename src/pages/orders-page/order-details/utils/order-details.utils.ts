@@ -6,6 +6,7 @@ export { formatMoney };
 type OrderItem = OrderDetails["items"][number];
 type OrderEvent = OrderDetails["events"][number];
 type JsonRecord = Record<string, unknown>;
+type TranslateFn = (key: string, options?: Record<string, unknown>) => string;
 
 export const EMPTY_VALUE = "—";
 
@@ -53,6 +54,24 @@ export const formatDate = (value: string | null | undefined): string => {
     .replace(",", "");
 };
 
+export const getOrderSourceLabel = (
+  translate: TranslateFn,
+  source: string | null | undefined,
+): string =>
+  source
+    ? translate(`orders.sources.${source}`, { defaultValue: source })
+    : EMPTY_VALUE;
+
+export const getDeliveryProviderLabel = (
+  translate: TranslateFn,
+  provider: string | null | undefined,
+): string =>
+  provider
+    ? translate(`orders.deliveryProviders.${provider}`, {
+        defaultValue: provider,
+      })
+    : EMPTY_VALUE;
+
 export const getCustomerName = (
   customer: OrderDetails["customer"] | null | undefined,
 ): string => {
@@ -92,7 +111,7 @@ export const getEventDescription = (
   event: OrderEvent,
   orderItems: OrderItem[],
   currency: string,
-  translate: (key: string, options?: Record<string, unknown>) => string,
+  translate: TranslateFn,
 ): string => {
   const payload = isRecord(event.payload) ? event.payload : {};
 
@@ -139,6 +158,7 @@ export const getEventDescription = (
       return translate("orders.events.paymentUpdated");
 
     case "order.status_updated":
+    case "order.status_changed":
       return translate("orders.events.statusUpdated");
 
     default:

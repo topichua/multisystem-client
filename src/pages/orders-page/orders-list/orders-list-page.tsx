@@ -1,6 +1,6 @@
 import { Flex, Spin, Table, Typography } from "antd";
 import { observer } from "mobx-react-lite";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 
@@ -10,6 +10,10 @@ import { PaneSectionTitle } from "@/components/layout/pane-frame";
 import type { OrderListItem } from "@/features/orders/model/order.types";
 import { useOrdersStore } from "@/features/orders/model/use-orders-store";
 
+import { OrdersListActiveFilters } from "./orders-list-active-filters";
+import { OrdersListFiltersPanel } from "./orders-list-filters-panel";
+import { OrdersListToolbar } from "./orders-list-toolbar";
+import { useOrdersListUrlSync } from "./use-orders-list-url-sync";
 import { useOrdersTableColumns } from "./use-orders-table-columns";
 
 const { Text } = Typography;
@@ -19,10 +23,12 @@ export const OrdersListPage = observer(() => {
   const store = useOrdersStore();
   const columns = useOrdersTableColumns();
   const navigate = useNavigate();
+  const [filtersOpen, setFiltersOpen] = useState(false);
+
+  useOrdersListUrlSync(store);
 
   useEffect(() => {
     void store.loadStatuses();
-    void store.loadOrders();
   }, [store]);
 
   return (
@@ -31,44 +37,50 @@ export const OrdersListPage = observer(() => {
         <PaneSectionTitle>{t("orders.allOrdersTitle")}</PaneSectionTitle>
       </PaneDetailLayout.Header>
       <PaneDetailLayout.Body data-qa="layout-orders-table-scroll">
+        <OrdersListToolbar onToggleFilters={() => setFiltersOpen(true)} />
+        <OrdersListActiveFilters />
         {store.listError ? (
-          <Text type="danger">{store.listError}</Text>
-        ) : (
-          <Flex vertical gap={16} style={{ minHeight: 200 }}>
-            <Spin spinning={store.listLoading}>
-              <Table
-                rowKey="id"
-                columns={columns}
-                dataSource={store.orders}
-                onRow={(record: OrderListItem) => ({
-                  style: { cursor: "pointer" },
-                  onClick: (event) => {
-                    const target = event.target as HTMLElement | null;
-                    if (
-                      target?.closest(
-                        "a,button,input,select,textarea,[role='button'],[role='combobox'],.ant-select,.rc-select,.ant-dropdown,.ant-popover,[data-qa='layout-orders-list-status-select']",
-                      )
-                    ) {
-                      return;
-                    }
-                    navigate(getOrderDetailsPath(record.id));
-                  },
-                })}
-                pagination={{
-                  current: store.page,
-                  pageSize: store.pageSize,
-                  total: store.total,
-                  showSizeChanger: false,
-                  onChange: (page) => {
-                    store.setPage(page);
-                    void store.loadOrders();
-                  },
-                }}
-                scroll={{ x: 1100 }}
-              />
-            </Spin>
-          </Flex>
-        )}
+          <Text type="danger" style={{ display: "block", marginBottom: 8 }}>
+            {store.listError}
+          </Text>
+        ) : null}
+        <Flex vertical gap={16} style={{ minHeight: 200 }}>
+          <Spin spinning={store.listLoading}>
+            <Table
+              rowKey="id"
+              columns={columns}
+              dataSource={store.orders}
+              onRow={(record: OrderListItem) => ({
+                style: { cursor: "pointer" },
+                onClick: (event) => {
+                  const target = event.target as HTMLElement | null;
+                  if (
+                    target?.closest(
+                      "a,button,input,select,textarea,[role='button'],[role='combobox'],.ant-select,.rc-select,.ant-dropdown,.ant-popover,[data-qa='layout-orders-list-status-select']",
+                    )
+                  ) {
+                    return;
+                  }
+                  navigate(getOrderDetailsPath(record.id));
+                },
+              })}
+              pagination={{
+                current: store.page,
+                pageSize: store.pageSize,
+                total: store.total,
+                showSizeChanger: false,
+                onChange: (page) => {
+                  store.setListPage(page);
+                },
+              }}
+              scroll={{ x: 1100 }}
+            />
+          </Spin>
+        </Flex>
+        <OrdersListFiltersPanel
+          open={filtersOpen}
+          onClose={() => setFiltersOpen(false)}
+        />
       </PaneDetailLayout.Body>
     </PaneDetailLayout.Root>
   );

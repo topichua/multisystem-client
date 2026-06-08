@@ -7,7 +7,7 @@ import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
 import { coerceOrderId } from "./utils/order-details.utils";
 import { useOrderDetails } from "./hooks/use-order-details";
 import { OrderDetailsHeader } from "./components/order-details-header";
-import { OrderDetailsTabs } from "./components/order-details-tabs";
+import { OrderDetailsContent } from "./components/order-details-content";
 
 const { Text } = Typography;
 
@@ -23,12 +23,17 @@ export const OrderDetailsPage = () => {
   const { order, loading, error, applyOrderStatusLocally } =
     useOrderDetails(orderId);
 
+  const handlePrint = () => {
+    window.print();
+  };
+
   return (
     <PaneDetailLayout.Root inset>
       <OrderDetailsHeader
         order={order}
         orderId={orderId}
         onBack={() => navigate(pagesMap.ordersList)}
+        onPrint={handlePrint}
         onStatusChangeSuccess={applyOrderStatusLocally}
       />
 
@@ -42,7 +47,7 @@ export const OrderDetailsPage = () => {
             <Text type="secondary">{t("orders.notFound")}</Text>
           ) : null}
 
-          {order ? <OrderDetailsTabs order={order} /> : null}
+          {order ? <OrderDetailsContent order={order} /> : null}
         </Spin>
       </PaneDetailLayout.Body>
     </PaneDetailLayout.Root>
