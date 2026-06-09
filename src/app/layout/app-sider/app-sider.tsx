@@ -14,6 +14,10 @@ import { pagesMap } from "@/app/router/pages-map";
 import { useThemeMode } from "@/theme/use-theme-mode";
 
 import { UserProfile } from "../user-profile/user-profile";
+import {
+  readStoredAppSiderExpanded,
+  writeStoredAppSiderExpanded,
+} from "./app-sider-expanded-storage";
 import * as S from "./app-sider.styled";
 
 const { Text } = Typography;
@@ -119,13 +123,15 @@ const ThemeSwitchRow = observer(({ showLabel }: { showLabel: boolean }) => {
 export const AppSider = observer(() => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(readStoredAppSiderExpanded);
 
   const openSider = () => {
+    writeStoredAppSiderExpanded(true);
     setIsExpanded(true);
   };
 
   const closeSider = () => {
+    writeStoredAppSiderExpanded(false);
     setIsExpanded(false);
   };
 
