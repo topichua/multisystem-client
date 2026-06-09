@@ -19,12 +19,16 @@ export const pagesMap = {
   settingsUser: "/settings/user",
   settingsSystem: "/settings/system",
   settingsIntegrations: "/settings/integrations",
+  settingsTemplates: "/settings/templates",
   login: "/login",
   fallback: "*",
 } as const;
 
 export const getSettingsGroupPath = (groupId: string | number) =>
   `${pagesMap.settingsGroups}/${groupId}`;
+
+export const getSettingsTemplatePath = (templateId: string | number) =>
+  `${pagesMap.settingsTemplates}/${templateId}`;
 
 export const getOrderStatusPath = (statusId: string | number) =>
   `${pagesMap.ordersStatuses}/${statusId}`;

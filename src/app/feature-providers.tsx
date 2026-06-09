@@ -6,6 +6,7 @@ import { CategoriesProvider } from "@/features/categories/model/categories-provi
 import { CharacteristicsProvider } from "@/features/characteristics/model/characteristics-provider";
 import { ClientsProvider } from "@/features/clients/model/clients-provider";
 import { ConversationGroupsProvider } from "@/features/conversation-groups/model/conversation-groups-provider";
+import { MessageTemplatesProvider } from "@/features/message-templates/model/message-templates-provider";
 import { ConversationsProvider } from "@/features/conversations/model/conversations-provider";
 import { OrdersProvider } from "@/features/orders/model/orders-provider";
 import { ProductsProvider } from "@/features/products/model/products-provider";
@@ -20,7 +21,9 @@ export const FeatureProviders = ({ children }: { children: ReactNode }) => (
               <ProductsProvider>
                 <OrdersProvider>
                   <ConversationGroupsProvider>
-                    {children}
+                    <MessageTemplatesProvider>
+                      {children}
+                    </MessageTemplatesProvider>
                   </ConversationGroupsProvider>
                 </OrdersProvider>
               </ProductsProvider>

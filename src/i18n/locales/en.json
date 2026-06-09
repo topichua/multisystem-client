@@ -70,8 +70,36 @@
       "groups": "Groups",
       "user": "User",
       "system": "System",
-      "integrations": "Integrations"
+      "integrations": "Integrations",
+      "templates": "Templates"
     }
+  },
+  "templates": {
+    "title": "Templates",
+    "createTemplate": "Create template",
+    "emptyState": "No templates yet",
+    "emptyPreview": "No text",
+    "noTemplatesYet": "No templates yet",
+    "notFound": "Template not found",
+    "notFoundTitle": "Template not found",
+    "invalidTemplate": "Invalid template id",
+    "backToTemplates": "Back to templates",
+    "editHint": "Ready reply for one-click insertion in the conversation.",
+    "saveChanges": "Save changes",
+    "delete": "Delete",
+    "name": "Template name",
+    "body": "Message text",
+    "bodyHint": "{{count}} characters · inserted into the conversation composer",
+    "required": "Required field",
+    "modalCreateTitle": "New template",
+    "modalOk": "Create",
+    "created": "Template created",
+    "createError": "Could not create template",
+    "updated": "Template updated",
+    "updateError": "Could not update template",
+    "deleted": "Template deleted",
+    "deleteError": "Could not delete template",
+    "deleteConfirmTitle": "Delete this template?"
   },
   "integrations": {
     "title": "Integrations",

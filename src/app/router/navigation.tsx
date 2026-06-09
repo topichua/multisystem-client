@@ -223,24 +223,29 @@ export const clientsSectionNavItems: readonly SectionNavItem[] = [
 
 export const settingsSectionNavItems: readonly SectionNavItem[] = [
   {
-    key: "settings-groups",
+    key: 'settings-groups',
     path: pagesMap.settingsGroups,
-    labelKey: "settings.menu.groups",
+    labelKey: 'settings.menu.groups',
   },
   {
-    key: "settings-user",
+    key: 'settings-templates',
+    path: pagesMap.settingsTemplates,
+    labelKey: 'settings.menu.templates',
+  },
+  {
+    key: 'settings-user',
     path: pagesMap.settingsUser,
-    labelKey: "settings.menu.user",
+    labelKey: 'settings.menu.user',
   },
   {
-    key: "settings-system",
+    key: 'settings-system',
     path: pagesMap.settingsSystem,
-    labelKey: "settings.menu.system",
+    labelKey: 'settings.menu.system',
   },
   {
-    key: "settings-integrations",
+    key: 'settings-integrations',
     path: pagesMap.settingsIntegrations,
-    labelKey: "settings.menu.integrations",
+    labelKey: 'settings.menu.integrations',
   },
 ] as const;
 

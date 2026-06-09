@@ -70,8 +70,36 @@
       "groups": "Групи",
       "user": "Користувач",
       "system": "Система",
-      "integrations": "Інтеграції"
+      "integrations": "Інтеграції",
+      "templates": "Шаблони"
     }
+  },
+  "templates": {
+    "title": "Шаблони",
+    "createTemplate": "Створити шаблон",
+    "emptyState": "Шаблонів поки немає",
+    "emptyPreview": "Без тексту",
+    "noTemplatesYet": "Шаблонів поки немає",
+    "notFound": "Шаблон не знайдено",
+    "notFoundTitle": "Шаблон не знайдено",
+    "invalidTemplate": "Некоректний ідентифікатор шаблону",
+    "backToTemplates": "До шаблонів",
+    "editHint": "Готова відповідь для вставки одним кліком у діалозі.",
+    "saveChanges": "Зберегти зміни",
+    "delete": "Видалити",
+    "name": "Назва шаблону",
+    "body": "Текст повідомлення",
+    "bodyHint": "{{count}} символів · вставляється в композер діалогу",
+    "required": "Обов'язкове поле",
+    "modalCreateTitle": "Новий шаблон",
+    "modalOk": "Створити",
+    "created": "Шаблон створено",
+    "createError": "Не вдалося створити шаблон",
+    "updated": "Шаблон оновлено",
+    "updateError": "Не вдалося оновити шаблон",
+    "deleted": "Шаблон видалено",
+    "deleteError": "Не вдалося видалити шаблон",
+    "deleteConfirmTitle": "Видалити цей шаблон?"
   },
   "integrations": {
     "title": "Інтеграції",

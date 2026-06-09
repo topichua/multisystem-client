@@ -9,6 +9,9 @@ import { SettingsGroupsLayout } from "@/pages/settings-page/settings-groups/sett
 import { SettingsSystemView } from "@/pages/settings-page/settings-system-view";
 import { SettingsUserView } from "@/pages/settings-page/settings-user-view";
 import { SettingsIntegrationsPage } from "@/pages/settings-page/settings-integrations/settings-integrations-page";
+import { SettingsTemplateDetailView } from "@/pages/settings-page/settings-templates/settings-template-detail-view";
+import { SettingsTemplatesIndex } from "@/pages/settings-page/settings-templates/settings-templates-index";
+import { SettingsTemplatesLayout } from "@/pages/settings-page/settings-templates/settings-templates-layout";
 import { ProductsPage } from "@/pages/products-page/products-page";
 import { ProductsCategoriesLayout } from "@/pages/products-page/products-categories/products-categories-layout";
 import { ProductsCategoriesIndex } from "@/pages/products-page/products-categories/products-categories-index";
@@ -64,6 +67,13 @@ export const PageRoutes = () => {
             <Route path="user" element={<SettingsUserView />} />
             <Route path="system" element={<SettingsSystemView />} />
             <Route path="integrations" element={<SettingsIntegrationsPage />} />
+            <Route path="templates" element={<SettingsTemplatesLayout />}>
+              <Route index element={<SettingsTemplatesIndex />} />
+              <Route
+                path=":templateId"
+                element={<SettingsTemplateDetailView />}
+              />
+            </Route>
           </Route>
           <Route path="products" element={<ProductsPage />}>
             <Route
