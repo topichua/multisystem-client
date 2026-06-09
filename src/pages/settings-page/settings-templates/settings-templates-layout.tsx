@@ -2,10 +2,10 @@ import { Form, message } from "antd";
 import { observer } from "mobx-react-lite";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Outlet, useLocation, useNavigate } from "react-router";
+import { matchPath, Outlet, useLocation, useNavigate } from "react-router";
 
 import { getApiErrorMessage } from "@/api/get-api-error-message";
-import { getSettingsTemplatePath } from "@/app/router/pages-map";
+import { getSettingsTemplatePath, pagesMap } from "@/app/router/pages-map";
 import { PaneNavSplitLayout } from "@/components/layout/pane-nav-split-layout";
 import { useMessageTemplatesStore } from "@/features/message-templates/model/use-message-templates-store";
 
@@ -37,12 +37,19 @@ export const SettingsTemplatesLayout = observer(() => {
   );
 
   const activeTemplateId = useMemo(() => {
-    const match = sortedTemplates.find((template) =>
-      location.pathname.startsWith(getSettingsTemplatePath(template.id)),
+    const match = matchPath(
+      {
+        path: `${pagesMap.settingsTemplates}/:templateId`,
+        end: true,
+      },
+      location.pathname,
     );
+    const parsedId = match?.params.templateId
+      ? Number(match.params.templateId)
+      : NaN;
 
-    return match?.id ?? null;
-  }, [location.pathname, sortedTemplates]);
+    return Number.isFinite(parsedId) ? parsedId : null;
+  }, [location.pathname]);
 
   const openCreate = useCallback(() => {
     form.setFieldsValue({ name: "", template: "" });

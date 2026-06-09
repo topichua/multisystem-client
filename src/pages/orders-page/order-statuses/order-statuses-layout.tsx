@@ -2,10 +2,16 @@ import { Alert, Spin, message } from "antd";
 import { observer } from "mobx-react-lite";
 import { useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Outlet, useLocation, useNavigate, useParams } from "react-router";
+import {
+  matchPath,
+  Outlet,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router";
 
 import { getApiErrorMessage } from "@/api/get-api-error-message";
-import { getOrderStatusPath } from "@/app/router/pages-map";
+import { getOrderStatusPath, pagesMap } from "@/app/router/pages-map";
 import {
   PaneScrollRegion,
   PaneSectionHeaderStack,
@@ -39,12 +45,19 @@ export const OrderStatusesLayout = observer(() => {
       return fromPath;
     }
 
-    const match = sortedStatuses.find((status) =>
-      location.pathname.startsWith(getOrderStatusPath(status.id)),
+    const match = matchPath(
+      {
+        path: `${pagesMap.ordersStatuses}/:statusId`,
+        end: true,
+      },
+      location.pathname,
     );
+    const parsedId = match?.params.statusId
+      ? Number(match.params.statusId)
+      : NaN;
 
-    return match?.id ?? null;
-  }, [location.pathname, sortedStatuses, statusIdParam]);
+    return Number.isFinite(parsedId) ? parsedId : null;
+  }, [location.pathname, statusIdParam]);
 
   const handleSelect = useCallback(
     (id: number) => {

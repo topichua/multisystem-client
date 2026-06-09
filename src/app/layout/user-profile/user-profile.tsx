@@ -41,16 +41,16 @@ export const UserProfile = observer(
     const displayName = userStore.displayName ?? t("profile.user");
     const initials = getInitials(displayName);
 
-    const items: MenuProps['items'] = useMemo(
+    const items: MenuProps["items"] = useMemo(
       () => [
         {
-          key: 'profile_changes',
-          label: t('profile.changeSettings'),
+          key: "profile_changes",
+          label: t("profile.changeSettings"),
           onClick: () => navigate(pagesMap.settingsUser),
         },
         {
-          key: 'log-out',
-          label: t('profile.logOut'),
+          key: "log-out",
+          label: t("profile.logOut"),
           onClick: logout,
         },
       ],
@@ -60,14 +60,14 @@ export const UserProfile = observer(
     return (
       <Popover
         placement={menuPlacement}
-        trigger={['click', 'hover']}
+        trigger={["click", "hover"]}
         arrow={false}
         destroyOnHidden
         styles={{ container: { padding: 4 } }}
         content={
           <Menu
             selectable={false}
-            style={{ border: 'none', boxShadow: 'none', minWidth: 200 }}
+            style={{ border: "none", boxShadow: "none", minWidth: 200 }}
             items={items}
           />
         }
@@ -80,7 +80,7 @@ export const UserProfile = observer(
           </S.ProfileAvatarSlot>
           <S.ProfileText $collapsed={collapsed}>
             <S.ProfileName>{displayName}</S.ProfileName>
-            <S.ProfileSubtitle>{t('profile.myProfile')}</S.ProfileSubtitle>
+            <S.ProfileSubtitle>{t("profile.myProfile")}</S.ProfileSubtitle>
           </S.ProfileText>
         </S.ProfileTrigger>
       </Popover>

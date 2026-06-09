@@ -59,8 +59,7 @@ export const ProfileSubtitle = styled.span`
 export const FormDivider = styled.hr`
   margin: 24px 0;
   border: 0;
-  border-top: 1px solid
-    ${(props) => props.theme.colors.functional.border.split};
+  border-top: 1px solid ${(props) => props.theme.colors.functional.border.split};
 `;
 
 export const FormGrid = styled.div`

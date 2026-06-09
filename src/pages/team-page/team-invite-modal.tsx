@@ -50,7 +50,11 @@ export const TeamInviteModal = ({
         form={form}
         layout="vertical"
         requiredMark
-        initialValues={{ email: "", roleSlug: "manager" satisfies InviteRoleSlug }}
+        onFinish={() => void onSubmit()}
+        initialValues={{
+          email: "",
+          roleSlug: "manager" satisfies InviteRoleSlug,
+        }}
       >
         <Form.Item
           name="email"
@@ -68,7 +72,10 @@ export const TeamInviteModal = ({
           label={t("team.invite.role")}
           rules={[{ required: true, message: t("team.invite.roleRequired") }]}
         >
-          <S.RoleOptionList role="radiogroup" aria-label={t("team.invite.role")}>
+          <S.RoleOptionList
+            role="radiogroup"
+            aria-label={t("team.invite.role")}
+          >
             {INVITE_ROLE_SLUGS.map((slug) => {
               const selected = selectedRoleSlug === slug;
 
@@ -100,11 +107,7 @@ export const TeamInviteModal = ({
 
         <S.ModalFooter>
           <Button onClick={onCancel}>{t("team.invite.cancel")}</Button>
-          <Button
-            type="primary"
-            loading={inviteLoading}
-            onClick={() => void onSubmit()}
-          >
+          <Button type="primary" htmlType="submit" loading={inviteLoading}>
             <Flex align="center" gap={8} justify="center">
               <EnvelopeSimpleIcon size={16} />
               {t("team.invite.submit")}

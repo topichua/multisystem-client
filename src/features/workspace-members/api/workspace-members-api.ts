@@ -4,7 +4,6 @@ import type {
   WorkspaceMember,
   WorkspaceMemberInvitePayload,
   WorkspaceMemberInviteResponse,
-  WorkspaceMembersListResponse,
 } from "../model/workspace-member.types";
 
 const basePath = "/workspaces/members";
@@ -19,11 +18,27 @@ function isWorkspaceMember(value: unknown): value is WorkspaceMember {
   );
 }
 
+function normalizeWorkspaceMembersList(data: unknown): WorkspaceMember[] {
+  if (Array.isArray(data)) {
+    return data.filter(isWorkspaceMember);
+  }
+
+  if (
+    typeof data === "object" &&
+    data !== null &&
+    "items" in data &&
+    Array.isArray(data.items)
+  ) {
+    return data.items.filter(isWorkspaceMember);
+  }
+
+  return [];
+}
+
 export const workspaceMembersApi = {
   list: async (): Promise<WorkspaceMember[]> => {
-    const { data } =
-      await apiClient.get<WorkspaceMembersListResponse>(basePath);
-    return Array.isArray(data?.items) ? data.items : [];
+    const { data } = await apiClient.get<unknown>(basePath);
+    return normalizeWorkspaceMembersList(data);
   },
 
   invite: async (

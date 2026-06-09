@@ -1,4 +1,4 @@
-import { Button, Form, Input, message, Typography } from "antd";
+import { Button, Form, Input, message } from "antd";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -8,8 +8,6 @@ import { useAuth } from "@/features/auth/model/use-auth";
 import * as S from "./login-page.styled";
 
 type LoginFormValues = LoginRequest;
-
-const { Title } = Typography;
 
 export const LoginPage = () => {
   const { t } = useTranslation();
@@ -42,9 +40,8 @@ export const LoginPage = () => {
           <S.Header>
             <S.Brand>
               <S.Logo src="/logos/logo.png" alt={t("brand")} />
-              <Title>Multi-sale</Title>
+              <S.PageTitle>{t("brand")}</S.PageTitle>
             </S.Brand>
-            {/* <S.PageDescription>{t('login.subtitle')}</S.PageDescription> */}
           </S.Header>
 
           <Form

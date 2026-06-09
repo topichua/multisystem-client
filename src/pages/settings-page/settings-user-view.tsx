@@ -1,17 +1,17 @@
-import { UserIcon } from '@phosphor-icons/react';
-import { Button, Form, Input, Typography } from 'antd';
-import { observer } from 'mobx-react-lite';
-import { useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
-import type { TFunction } from 'i18next';
+import { UserIcon } from "@phosphor-icons/react";
+import { Button, Form, Input, Typography } from "antd";
+import { observer } from "mobx-react-lite";
+import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import type { TFunction } from "i18next";
 
-import { ClientPhoneFormInput } from '@/components/client-phone-form-input';
-import { PaneDetailLayout } from '@/components/layout/pane-detail-layout';
-import { PaneSectionHint } from '@/components/layout/pane-frame';
-import type { AuthUserRole } from '@/features/auth/model/auth-session.types';
-import { useUserStore } from '@/features/auth/model/use-user-store';
+import { ClientPhoneFormInput } from "@/components/client-phone-form-input";
+import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
+import { PaneSectionHint } from "@/components/layout/pane-frame";
+import type { AuthUserRole } from "@/features/auth/model/auth-session.types";
+import { useUserStore } from "@/features/auth/model/use-user-store";
 
-import * as S from './settings-user-view.styled';
+import * as S from "./settings-user-view.styled";
 
 const { Title } = Typography;
 
@@ -30,7 +30,7 @@ function getInitials(value: string | null): string | undefined {
   const parts = source.split(/\s+/).filter(Boolean);
   const letters =
     parts.length > 1
-      ? `${parts[0]?.[0] ?? ''}${parts[1]?.[0] ?? ''}`
+      ? `${parts[0]?.[0] ?? ""}${parts[1]?.[0] ?? ""}`
       : source.slice(0, 2);
 
   return letters.toUpperCase();
@@ -38,7 +38,7 @@ function getInitials(value: string | null): string | undefined {
 
 function getRoleLabel(t: TFunction, role: AuthUserRole | null): string {
   if (!role) {
-    return '';
+    return "";
   }
 
   const key = `userSettings.roles.${role}`;
@@ -49,7 +49,7 @@ function getPhoneFromMetadata(
   metadata: Record<string, unknown> | undefined,
 ): string {
   const phone = metadata?.phone;
-  return typeof phone === 'string' ? phone : '';
+  return typeof phone === "string" ? phone : "";
 }
 
 export const SettingsUserView = observer(() => {
@@ -57,12 +57,12 @@ export const SettingsUserView = observer(() => {
   const userStore = useUserStore();
   const [form] = Form.useForm<UserSettingsFormValues>();
 
-  const displayName = userStore.displayName ?? t('profile.user');
+  const displayName = userStore.displayName ?? t("profile.user");
   const initials = getInitials(displayName);
   const companyName = userStore.company?.name;
   const roleLabel = getRoleLabel(t, userStore.role);
   const profileSubtitle = companyName
-    ? t('userSettings.profileSubtitle', {
+    ? t("userSettings.profileSubtitle", {
         role: roleLabel,
         company: companyName,
       })
@@ -85,10 +85,10 @@ export const SettingsUserView = observer(() => {
     <PaneDetailLayout.Root inset data-qa="layout-settings-user">
       <PaneDetailLayout.Header data-qa="layout-settings-user-header">
         <Title level={4} style={{ marginTop: 0 }}>
-          {t('userSettings.title')}
+          {t("userSettings.title")}
         </Title>
         <PaneSectionHint style={{ marginTop: 0 }}>
-          {t('userSettings.subtitle')}
+          {t("userSettings.subtitle")}
         </PaneSectionHint>
       </PaneDetailLayout.Header>
       <PaneDetailLayout.Body data-qa="layout-settings-user-body">
@@ -108,26 +108,26 @@ export const SettingsUserView = observer(() => {
                 ) : null}
               </S.ProfileText>
             </S.ProfileIdentity>
-            <Button>{t('userSettings.changePhoto')}</Button>
+            <Button>{t("userSettings.changePhoto")}</Button>
           </S.ProfileRow>
 
           <S.FormDivider />
 
           <Form form={form} layout="vertical" requiredMark={false}>
             <S.FormGrid>
-              <Form.Item name="fullName" label={t('userSettings.fullName')}>
+              <Form.Item name="fullName" label={t("userSettings.fullName")}>
                 <Input autoComplete="name" />
               </Form.Item>
-              <Form.Item name="email" label={t('userSettings.email')}>
+              <Form.Item name="email" label={t("userSettings.email")}>
                 <Input autoComplete="email" />
               </Form.Item>
-              <Form.Item name="phone" label={t('userSettings.phone')}>
+              <Form.Item name="phone" label={t("userSettings.phone")}>
                 <ClientPhoneFormInput
                   autoComplete="tel"
-                  placeholder={t('userSettings.phonePlaceholder')}
+                  placeholder={t("userSettings.phonePlaceholder")}
                 />
               </Form.Item>
-              <Form.Item label={t('userSettings.role')}>
+              <Form.Item label={t("userSettings.role")}>
                 <Input disabled value={roleLabel} />
               </Form.Item>
             </S.FormGrid>
@@ -136,7 +136,7 @@ export const SettingsUserView = observer(() => {
           <S.FormDivider />
 
           <S.FormFooter>
-            <Button type="primary">{t('userSettings.saveChanges')}</Button>
+            <Button type="primary">{t("userSettings.saveChanges")}</Button>
           </S.FormFooter>
         </S.FormCard>
       </PaneDetailLayout.Body>

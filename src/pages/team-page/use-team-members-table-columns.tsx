@@ -8,8 +8,8 @@ import type { WorkspaceMember } from "@/features/workspace-members/model/workspa
 
 import { TeamMemberCell } from "./team-member-cell";
 
-function memberStatusToColor(status: string): string {
-  const normalized = status.toLowerCase();
+function memberStatusToColor(status: string | null | undefined): string {
+  const normalized = (status ?? "").toLowerCase();
 
   if (normalized.includes("active") || normalized.includes("joined")) {
     return "success";
@@ -61,7 +61,7 @@ export function useTeamMembersTableColumns({
         dataIndex: "status",
         key: "status",
         width: 120,
-        render: (value: string) => (
+        render: (value: string | null | undefined) => (
           <Tag color={memberStatusToColor(value)}>{value || "—"}</Tag>
         ),
       },

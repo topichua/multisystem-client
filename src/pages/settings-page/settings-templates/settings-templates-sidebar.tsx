@@ -60,43 +60,43 @@ export const SettingsTemplatesSidebar = ({
         {listLoading && templates.length === 0 ? (
           <Spin style={{ margin: 24 }} />
         ) : (
-        <div data-qa="layout-settings-templates-nav">
-          {templates.length === 0 ? (
-            <Empty
-              image={Empty.PRESENTED_IMAGE_SIMPLE}
-              description={t("templates.emptyState")}
-            />
-          ) : (
-            templates.map((template) => {
-              const isActive = template.id === activeTemplateId;
+          <div data-qa="layout-settings-templates-nav">
+            {templates.length === 0 ? (
+              <Empty
+                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                description={t("templates.emptyState")}
+              />
+            ) : (
+              templates.map((template) => {
+                const isActive = template.id === activeTemplateId;
 
-              return (
-                <S.TemplateNavItem
-                  key={template.id}
-                  type="button"
-                  $active={isActive}
-                  aria-current={isActive ? "page" : undefined}
-                  onClick={() => onTemplateClick(template.id)}
-                >
-                  <Flex align="flex-start" gap={12}>
-                    <S.TemplateNavIcon $active={isActive}>
-                      <ChatTextIcon size={18} />
-                    </S.TemplateNavIcon>
+                return (
+                  <S.TemplateNavItem
+                    key={template.id}
+                    type="button"
+                    $active={isActive}
+                    aria-current={isActive ? "page" : undefined}
+                    onClick={() => onTemplateClick(template.id)}
+                  >
+                    <Flex align="flex-start" gap={12}>
+                      <S.TemplateNavIcon $active={isActive}>
+                        <ChatTextIcon size={18} />
+                      </S.TemplateNavIcon>
 
-                    <Flex vertical flex={1} style={{ minWidth: 0 }}>
-                      <Text strong ellipsis={{ tooltip: template.name }}>
-                        {template.name}
-                      </Text>
-                      <Text type="secondary" ellipsis>
-                        {getTemplatePreview(template.template, t)}
-                      </Text>
+                      <Flex vertical flex={1} style={{ minWidth: 0 }}>
+                        <Text strong ellipsis={{ tooltip: template.name }}>
+                          {template.name}
+                        </Text>
+                        <Text type="secondary" ellipsis>
+                          {getTemplatePreview(template.template, t)}
+                        </Text>
+                      </Flex>
                     </Flex>
-                  </Flex>
-                </S.TemplateNavItem>
-              );
-            })
-          )}
-        </div>
+                  </S.TemplateNavItem>
+                );
+              })
+            )}
+          </div>
         )}
       </PaneScrollRegion>
     </PaneNavSplitLayout.SubSidebar>

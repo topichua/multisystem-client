@@ -105,7 +105,7 @@ export const FormActions = styled.div`
 `;
 
 export const PageTitle = styled.h1`
-  margin-bottom: 8px;
+  margin: 0;
   font-size: 32px;
   line-height: 1.2;
 `;

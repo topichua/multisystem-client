@@ -33,7 +33,10 @@ export const SettingsTemplatesIndex = observer(() => {
   }
 
   return (
-    <Empty description={t("templates.noTemplatesYet")} style={{ marginTop: 48 }}>
+    <Empty
+      description={t("templates.noTemplatesYet")}
+      style={{ marginTop: 48 }}
+    >
       <Button type="primary" onClick={onCreateClick}>
         {t("templates.createTemplate")}
       </Button>

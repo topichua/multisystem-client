@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import { getApiErrorMessage } from "@/api/get-api-error-message";
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
 import { PaneSectionTitle } from "@/components/layout/pane-frame";
-import { useUserStore } from '@/features/auth/model/use-user-store';
+import { useUserStore } from "@/features/auth/model/use-user-store";
 import type { WorkspaceMember } from "@/features/workspace-members/model/workspace-member.types";
 import { useWorkspaceMembersStore } from "@/features/workspace-members/model/use-workspace-members-store";
 
@@ -15,7 +15,7 @@ import {
   TeamInviteModal,
   type TeamInviteFormValues,
 } from "./team-invite-modal";
-import * as S from './team-members-page.styled';
+import * as S from "./team-members-page.styled";
 import { useTeamMembersTableColumns } from "./use-team-members-table-columns";
 
 const { Text } = Typography;
@@ -81,20 +81,20 @@ export const TeamMembersPage = observer(() => {
       <PaneDetailLayout.Root inset>
         <PaneDetailLayout.Header data-qa="layout-team-members-header">
           <Flex justify="space-between" align="center" gap={16} wrap="wrap">
-            <PaneSectionTitle>{t('team.membersTitle')}</PaneSectionTitle>
+            <PaneSectionTitle>{t("team.membersTitle")}</PaneSectionTitle>
             <Button
               type="primary"
               icon={<PlusIcon size={16} />}
               onClick={openInviteModal}
             >
-              {t('team.inviteCta')}
+              {t("team.inviteCta")}
             </Button>
           </Flex>
         </PaneDetailLayout.Header>
         <PaneDetailLayout.Body data-qa="layout-team-members-table-scroll">
           <S.TableSection>
             {store.listError && (
-              <Text type="danger" style={{ display: 'block', marginBottom: 8 }}>
+              <Text type="danger" style={{ display: "block", marginBottom: 8 }}>
                 {store.listError}
               </Text>
             )}
@@ -104,6 +104,7 @@ export const TeamMembersPage = observer(() => {
               dataSource={store.members}
               pagination={false}
               loading={store.listLoading}
+              scroll={{ x: "max-content" }}
             />
           </S.TableSection>
         </PaneDetailLayout.Body>

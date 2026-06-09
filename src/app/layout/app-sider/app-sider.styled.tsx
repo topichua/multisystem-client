@@ -130,9 +130,6 @@ export const MenuSiderPanel = styled.div.attrs(() =>
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  /* transition:
-    width ${siderTransition},
-    box-shadow ${siderTransition}; */
 `;
 
 export const SiderScrollArea = styled.div.attrs(() =>
