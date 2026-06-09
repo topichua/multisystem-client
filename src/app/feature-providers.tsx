@@ -10,6 +10,7 @@ import { MessageTemplatesProvider } from "@/features/message-templates/model/mes
 import { ConversationsProvider } from "@/features/conversations/model/conversations-provider";
 import { OrdersProvider } from "@/features/orders/model/orders-provider";
 import { ProductsProvider } from "@/features/products/model/products-provider";
+import { WorkspaceMembersProvider } from "@/features/workspace-members/model/workspace-members-provider";
 
 export const FeatureProviders = ({ children }: { children: ReactNode }) => (
   <AuthProvider>
@@ -22,7 +23,9 @@ export const FeatureProviders = ({ children }: { children: ReactNode }) => (
                 <OrdersProvider>
                   <ConversationGroupsProvider>
                     <MessageTemplatesProvider>
-                      {children}
+                      <WorkspaceMembersProvider>
+                        {children}
+                      </WorkspaceMembersProvider>
                     </MessageTemplatesProvider>
                   </ConversationGroupsProvider>
                 </OrdersProvider>

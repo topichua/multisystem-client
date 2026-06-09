@@ -13,6 +13,8 @@ export const pagesMap = {
   analytics: "/analytics",
   clients: "/clients",
   team: "/team",
+  teamMembers: "/team/members",
+  teamRoles: "/team/roles",
   clientsWorkspace: "/clients/clients",
   settings: "/settings",
   settingsGroups: "/settings/groups",

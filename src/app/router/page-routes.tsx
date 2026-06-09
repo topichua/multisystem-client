@@ -38,7 +38,9 @@ import { ConversationsPage } from "@/pages/conversation/conversations-page";
 import { EmptyConversation } from "@/pages/conversation/empty-conversation";
 import { ConversationDetails } from "@/pages/conversation/conversation-details/conversation-details";
 import { InstagramPage } from "@/pages/instagram-page/instagram-page";
+import { TeamMembersPage } from "@/pages/team-page/team-members-page";
 import { TeamPage } from "@/pages/team-page/team-page";
+import { TeamRolesPage } from "@/pages/team-page/team-roles-page";
 
 export const PageRoutes = () => {
   return (
@@ -124,7 +126,14 @@ export const PageRoutes = () => {
             />
             <Route path="clients" element={<ClientsListPage />} />
           </Route>
-          <Route path="team" element={<TeamPage />} />
+          <Route path="team" element={<TeamPage />}>
+            <Route
+              index
+              element={<Navigate to={pagesMap.teamMembers} replace />}
+            />
+            <Route path="members" element={<TeamMembersPage />} />
+            <Route path="roles" element={<TeamRolesPage />} />
+          </Route>
         </Route>
       </Route>
 

@@ -213,6 +213,19 @@ export const ordersSectionNavItems: readonly SectionNavItem[] = [
   },
 ] as const;
 
+export const teamSectionNavItems: readonly SectionNavItem[] = [
+  {
+    key: "team-members",
+    path: pagesMap.teamMembers,
+    labelKey: "team.menu.members",
+  },
+  {
+    key: "team-roles",
+    path: pagesMap.teamRoles,
+    labelKey: "team.menu.roles",
+  },
+] as const;
+
 export const clientsSectionNavItems: readonly SectionNavItem[] = [
   {
     key: "clients-workspace",

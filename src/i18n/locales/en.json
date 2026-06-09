@@ -25,7 +25,49 @@
   },
   "team": {
     "pageTitle": "Team",
-    "placeholder": "Team management will appear here."
+    "shellTitle": "Team",
+    "membersTitle": "Team",
+    "rolesTitle": "Roles",
+    "rolesPlaceholder": "Role management will appear here.",
+    "inviteCta": "Invite",
+    "placeholder": "Team management will appear here.",
+    "menu": {
+      "members": "Team",
+      "roles": "Roles"
+    },
+    "table": {
+      "member": "Member",
+      "name": "Name",
+      "email": "Email",
+      "role": "Role",
+      "status": "Status",
+      "joinedAt": "Joined",
+      "you": "You"
+    },
+    "invite": {
+      "title": "Invite to team",
+      "description": "We will send an email with a link to join. Access will appear after confirmation.",
+      "email": "Email",
+      "emailPlaceholder": "name@company.com",
+      "emailRequired": "Enter an email address",
+      "emailInvalid": "Enter a valid email address",
+      "role": "Role",
+      "roleRequired": "Select a role",
+      "cancel": "Cancel",
+      "submit": "Send invitation",
+      "success": "Invitation sent",
+      "error": "Failed to send invitation",
+      "roles": {
+        "manager": {
+          "title": "Manager",
+          "description": "Handles sales: conversations, orders, products, and customers."
+        },
+        "operator": {
+          "title": "Operator",
+          "description": "Communicates with customers, without access to settings."
+        }
+      }
+    }
   },
   "sidebar": {
     "darkTheme": "Dark theme",

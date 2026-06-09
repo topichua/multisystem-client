@@ -25,7 +25,49 @@
   },
   "team": {
     "pageTitle": "Команда",
-    "placeholder": "Тут з'явиться керування командою."
+    "shellTitle": "Команда",
+    "membersTitle": "Команда",
+    "rolesTitle": "Ролі",
+    "rolesPlaceholder": "Тут з'явиться керування ролями.",
+    "inviteCta": "Запросити",
+    "placeholder": "Тут з'явиться керування командою.",
+    "menu": {
+      "members": "Команда",
+      "roles": "Ролі"
+    },
+    "table": {
+      "member": "Учасник",
+      "name": "Ім'я",
+      "email": "Email",
+      "role": "Роль",
+      "status": "Статус",
+      "joinedAt": "Приєднався",
+      "you": "Це ви"
+    },
+    "invite": {
+      "title": "Запросити в команду",
+      "description": "Надішлемо лист із посиланням для приєднання. Доступ з'явиться після підтвердження.",
+      "email": "Email",
+      "emailPlaceholder": "name@company.com",
+      "emailRequired": "Введіть email",
+      "emailInvalid": "Введіть коректний email",
+      "role": "Роль",
+      "roleRequired": "Оберіть роль",
+      "cancel": "Скасувати",
+      "submit": "Надіслати запрошення",
+      "success": "Запрошення надіслано",
+      "error": "Не вдалося надіслати запрошення",
+      "roles": {
+        "manager": {
+          "title": "Менеджер",
+          "description": "Веде продажі: розмови, замовлення, товари та клієнти."
+        },
+        "operator": {
+          "title": "Оператор",
+          "description": "Спілкується з клієнтами, без доступу до налаштувань."
+        }
+      }
+    }
   },
   "sidebar": {
     "darkTheme": "Темна тема",
