@@ -34,10 +34,11 @@ const NavItem = styled.li<{ $selected: boolean; $isDragging: boolean }>`
   align-items: stretch;
   margin: 4px 8px;
   border-radius: 8px;
-  background: ${({ $selected }) =>
+  background: ${({ $selected, theme }) =>
     $selected
-      ? "var(--ant-menu-item-selected-bg, var(--ant-color-primary-bg, #e6f4ff))"
+      ? theme.colors.functional.background.primary
       : "transparent"};
+  color: ${({ theme }) => theme.colors.functional.text.primary};
   opacity: ${({ $isDragging }) => ($isDragging ? 0.65 : 1)};
   box-shadow: ${({ $isDragging }) =>
     $isDragging
@@ -45,10 +46,10 @@ const NavItem = styled.li<{ $selected: boolean; $isDragging: boolean }>`
       : "none"};
 
   &:hover {
-    background: ${({ $selected }) =>
+    background: ${({ $selected, theme }) =>
       $selected
-        ? "var(--ant-menu-item-selected-bg, var(--ant-color-primary-bg, #e6f4ff))"
-        : "var(--ant-color-bg-text-hover, rgba(0, 0, 0, 0.06))"};
+        ? theme.colors.functional.background.primary
+        : theme.colors.functional.background.hover};
   }
 `;
 
@@ -63,7 +64,7 @@ const DragHandle = styled.button`
   border: none;
   border-radius: 8px 0 0 8px;
   background: transparent;
-  color: var(--ant-color-text-tertiary, rgba(0, 0, 0, 0.45));
+  color: ${({ theme }) => theme.colors.functional.text.subdued};
   cursor: grab;
   touch-action: none;
 
