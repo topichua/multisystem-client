@@ -225,7 +225,8 @@ export const AnalyticsCharts = () => {
           barMaxWidth: 18,
           itemStyle: {
             borderRadius: [0, 8, 8, 0],
-            color: (params) => palette[params.dataIndex % palette.length] ?? palette[0],
+            color: (params) =>
+              palette[params.dataIndex % palette.length] ?? palette[0],
           },
           label: {
             show: true,
@@ -312,8 +313,16 @@ export const AnalyticsCharts = () => {
           itemStyle: {
             borderRadius: [8, 8, 0, 0],
             color: (params) => {
-              const channelPalette = [palette[0], palette[4], palette[5], palette[2]];
-              return channelPalette[params.dataIndex % channelPalette.length] ?? palette[0];
+              const channelPalette = [
+                palette[0],
+                palette[4],
+                palette[5],
+                palette[2],
+              ];
+              return (
+                channelPalette[params.dataIndex % channelPalette.length] ??
+                palette[0]
+              );
             },
           },
         },

@@ -35,9 +35,7 @@ const NavItem = styled.li<{ $selected: boolean; $isDragging: boolean }>`
   margin: 4px 8px;
   border-radius: 8px;
   background: ${({ $selected, theme }) =>
-    $selected
-      ? theme.colors.functional.background.primary
-      : "transparent"};
+    $selected ? theme.colors.functional.background.primary : "transparent"};
   color: ${({ theme }) => theme.colors.functional.text.primary};
   opacity: ${({ $isDragging }) => ($isDragging ? 0.65 : 1)};
   box-shadow: ${({ $isDragging }) =>
