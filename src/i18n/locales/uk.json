@@ -21,7 +21,164 @@
   },
   "analytics": {
     "pageTitle": "Аналітика",
-    "placeholder": "Тут з'явиться аналітика."
+    "placeholder": "Тут з'явиться аналітика.",
+    "summary": {
+      "revenue": "Виручка (30 днів)",
+      "orders": "Замовлення",
+      "products": "Активні товари",
+      "conversion": "Конверсія"
+    },
+    "charts": {
+      "revenueTrend": {
+        "title": "Замовлення та виручка",
+        "subtitle": "Денна динаміка за останній тиждень",
+        "ordersAxis": "Замовлення",
+        "revenueAxis": "грн",
+        "ordersSeries": "Замовлення",
+        "revenueSeries": "Виручка"
+      },
+      "salesByCategory": {
+        "title": "Продажі за категоріями",
+        "subtitle": "Частка виручки в каталозі"
+      },
+      "topProducts": {
+        "title": "Топ товарів",
+        "subtitle": "Лідери продажів за кількістю",
+        "unit": "од."
+      },
+      "ordersByStatus": {
+        "title": "Замовлення за статусами",
+        "subtitle": "Розподіл замовлень у воронці"
+      },
+      "conversations": {
+        "title": "Розмови за каналами",
+        "subtitle": "Звідки найчастіше пишуть клієнти"
+      },
+      "characteristics": {
+        "title": "Характеристики товарів",
+        "subtitle": "Наскільки повно заповнений каталог",
+        "series": "Заповненість, %"
+      },
+      "salesFunnel": {
+        "title": "Воронка продажів",
+        "subtitle": "Від переглядів каталогу до оплачених замовлень"
+      },
+      "monthlyClients": {
+        "title": "Нові та повторні клієнти",
+        "subtitle": "Динаміка за останні 6 місяців",
+        "newSeries": "Нові",
+        "returningSeries": "Повторні"
+      },
+      "stockHealth": {
+        "title": "Залишки за категоріями",
+        "subtitle": "Наявність варіантів у каталозі",
+        "inStock": "В наявності",
+        "lowStock": "Закінчується",
+        "outOfStock": "Немає в наявності"
+      },
+      "responseTime": {
+        "title": "Час відповіді команди",
+        "subtitle": "Середній перший відгук за днями тижня",
+        "axis": "Хвилини",
+        "unit": "хв",
+        "average": "Середнє"
+      },
+      "orderSources": {
+        "title": "Джерела замовлень",
+        "subtitle": "Звідки надходять замовлення"
+      },
+      "teamPerformance": {
+        "title": "Ефективність команди",
+        "subtitle": "Оброблені замовлення по учасниках"
+      },
+      "messageHeatmap": {
+        "title": "Активність повідомлень",
+        "subtitle": "Вхідні повідомлення за днями та годинами",
+        "unit": "повідомлень"
+      }
+    },
+    "mock": {
+      "categories": {
+        "clothing": "Одяг",
+        "footwear": "Взуття",
+        "accessories": "Аксесуари",
+        "electronics": "Електроніка",
+        "home": "Дім і декор"
+      },
+      "products": {
+        "linenDress": "Лляна літня сукня",
+        "sneakersUrban": "Міські кросівки",
+        "leatherBag": "Шкіряна сумка через плече",
+        "wirelessEarbuds": "Бездротові навушники",
+        "ceramicVase": "Керамічна ваза"
+      },
+      "orderStatuses": {
+        "new": "Нове",
+        "processing": "В обробці",
+        "shipped": "Відправлено",
+        "completed": "Завершено",
+        "cancelled": "Скасовано"
+      },
+      "channels": {
+        "instagram": "Instagram",
+        "telegram": "Telegram",
+        "viber": "Viber",
+        "direct": "Напряму"
+      },
+      "characteristics": {
+        "size": "Розмір",
+        "color": "Колір",
+        "material": "Матеріал",
+        "brand": "Бренд",
+        "season": "Сезон",
+        "weight": "Вага"
+      },
+      "funnel": {
+        "catalogViews": "Перегляди каталогу",
+        "conversations": "Розмови",
+        "orders": "Замовлення",
+        "paid": "Оплачено"
+      },
+      "months": {
+        "jan": "Січ",
+        "feb": "Лют",
+        "mar": "Бер",
+        "apr": "Кві",
+        "may": "Тра",
+        "jun": "Чер"
+      },
+      "weekdays": {
+        "mon": "Понеділок",
+        "tue": "Вівторок",
+        "wed": "Середа",
+        "thu": "Четвер",
+        "fri": "П'ятниця",
+        "sat": "Субота",
+        "sun": "Неділя"
+      },
+      "weekdaysShort": {
+        "mon": "Пн",
+        "tue": "Вт",
+        "wed": "Ср",
+        "thu": "Чт",
+        "fri": "Пт",
+        "sat": "Сб",
+        "sun": "Нд"
+      },
+      "orderSources": {
+        "instagramStory": "Instagram Stories",
+        "instagramDm": "Instagram DM",
+        "catalogLink": "Посилання на каталог",
+        "telegramBot": "Telegram-бот",
+        "manual": "Вручну"
+      },
+      "teamMembers": {
+        "olena": "Олена К.",
+        "andrii": "Андрій Г.",
+        "maria": "Марія С.",
+        "dmytro": "Дмитро П."
+      }
+    }
   },
   "team": {
     "pageTitle": "Команда",

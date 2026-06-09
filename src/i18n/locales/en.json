@@ -21,7 +21,164 @@
   },
   "analytics": {
     "pageTitle": "Analytics",
-    "placeholder": "Analytics will appear here."
+    "placeholder": "Analytics will appear here.",
+    "summary": {
+      "revenue": "Revenue (30 days)",
+      "orders": "Orders",
+      "products": "Active products",
+      "conversion": "Conversion"
+    },
+    "charts": {
+      "revenueTrend": {
+        "title": "Orders & revenue",
+        "subtitle": "Daily dynamics for the last week",
+        "ordersAxis": "Orders",
+        "revenueAxis": "UAH",
+        "ordersSeries": "Orders",
+        "revenueSeries": "Revenue"
+      },
+      "salesByCategory": {
+        "title": "Sales by category",
+        "subtitle": "Share of revenue across the catalog"
+      },
+      "topProducts": {
+        "title": "Top products",
+        "subtitle": "Best sellers by units sold",
+        "unit": "units"
+      },
+      "ordersByStatus": {
+        "title": "Orders by status",
+        "subtitle": "Current order pipeline distribution"
+      },
+      "conversations": {
+        "title": "Conversations by channel",
+        "subtitle": "Where customers reach out most often"
+      },
+      "characteristics": {
+        "title": "Product characteristics",
+        "subtitle": "How fully the catalog is filled in",
+        "series": "Fill rate, %"
+      },
+      "salesFunnel": {
+        "title": "Sales funnel",
+        "subtitle": "From catalog views to paid orders"
+      },
+      "monthlyClients": {
+        "title": "New vs returning clients",
+        "subtitle": "Client dynamics over the last 6 months",
+        "newSeries": "New",
+        "returningSeries": "Returning"
+      },
+      "stockHealth": {
+        "title": "Stock by category",
+        "subtitle": "Variant availability across the catalog",
+        "inStock": "In stock",
+        "lowStock": "Low stock",
+        "outOfStock": "Out of stock"
+      },
+      "responseTime": {
+        "title": "Team response time",
+        "subtitle": "Average first reply by day of week",
+        "axis": "Minutes",
+        "unit": "min",
+        "average": "Average"
+      },
+      "orderSources": {
+        "title": "Order sources",
+        "subtitle": "Where orders come from"
+      },
+      "teamPerformance": {
+        "title": "Team performance",
+        "subtitle": "Orders handled per team member"
+      },
+      "messageHeatmap": {
+        "title": "Message activity",
+        "subtitle": "Incoming messages by day and hour",
+        "unit": "messages"
+      }
+    },
+    "mock": {
+      "categories": {
+        "clothing": "Clothing",
+        "footwear": "Footwear",
+        "accessories": "Accessories",
+        "electronics": "Electronics",
+        "home": "Home & decor"
+      },
+      "products": {
+        "linenDress": "Linen summer dress",
+        "sneakersUrban": "Urban sneakers",
+        "leatherBag": "Leather crossbody bag",
+        "wirelessEarbuds": "Wireless earbuds",
+        "ceramicVase": "Ceramic vase"
+      },
+      "orderStatuses": {
+        "new": "New",
+        "processing": "Processing",
+        "shipped": "Shipped",
+        "completed": "Completed",
+        "cancelled": "Cancelled"
+      },
+      "channels": {
+        "instagram": "Instagram",
+        "telegram": "Telegram",
+        "viber": "Viber",
+        "direct": "Direct"
+      },
+      "characteristics": {
+        "size": "Size",
+        "color": "Color",
+        "material": "Material",
+        "brand": "Brand",
+        "season": "Season",
+        "weight": "Weight"
+      },
+      "funnel": {
+        "catalogViews": "Catalog views",
+        "conversations": "Conversations",
+        "orders": "Orders",
+        "paid": "Paid"
+      },
+      "months": {
+        "jan": "Jan",
+        "feb": "Feb",
+        "mar": "Mar",
+        "apr": "Apr",
+        "may": "May",
+        "jun": "Jun"
+      },
+      "weekdays": {
+        "mon": "Monday",
+        "tue": "Tuesday",
+        "wed": "Wednesday",
+        "thu": "Thursday",
+        "fri": "Friday",
+        "sat": "Saturday",
+        "sun": "Sunday"
+      },
+      "weekdaysShort": {
+        "mon": "Mon",
+        "tue": "Tue",
+        "wed": "Wed",
+        "thu": "Thu",
+        "fri": "Fri",
+        "sat": "Sat",
+        "sun": "Sun"
+      },
+      "orderSources": {
+        "instagramStory": "Instagram Story",
+        "instagramDm": "Instagram DM",
+        "catalogLink": "Catalog link",
+        "telegramBot": "Telegram bot",
+        "manual": "Manual"
+      },
+      "teamMembers": {
+        "olena": "Olena K.",
+        "andrii": "Andrii H.",
+        "maria": "Maria S.",
+        "dmytro": "Dmytro P."
+      }
+    }
   },
   "team": {
     "pageTitle": "Team",
