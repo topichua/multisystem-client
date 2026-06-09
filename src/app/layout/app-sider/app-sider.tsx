@@ -87,20 +87,17 @@ export const AppSider = observer(() => {
             $showLabel={isDrawerOpen}
             role="button"
             tabIndex={0}
-            aria-label={t("nav.homeAria")}
+            aria-label={t('nav.homeAria')}
             onClick={goHome}
             onKeyDown={(event) => {
-              if (event.key === "Enter" || event.key === " ") {
+              if (event.key === 'Enter' || event.key === ' ') {
                 event.preventDefault();
                 goHome();
               }
             }}
           >
-            <S.BrandLogo
-              src="/logos/only_icon_logo.svg"
-              alt={`${t("brand")} icon`}
-            />
-            {isDrawerOpen && <S.BrandLogoText>{t("brand")}</S.BrandLogoText>}
+            <S.BrandLogo src="/logos/logo.png" alt={`${t('brand')} icon`} />
+            {isDrawerOpen && <S.BrandLogoText>{t('brand')}</S.BrandLogoText>}
           </S.Brand>
           <MenuSiderMain
             showLabel={isDrawerOpen}

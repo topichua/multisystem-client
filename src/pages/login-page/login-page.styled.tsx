@@ -86,6 +86,8 @@ export const Header = styled.div.attrs(() =>
 export const Brand = styled.div`
   display: flex;
   align-items: center;
+  gap: 16px;
+  justify-content: center;
 
   @media (max-width: 767px) {
     justify-content: center;

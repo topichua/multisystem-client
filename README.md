@@ -1,4 +1,4 @@
-# Lantoro
+# Multi-sale
 
 React, TypeScript, Vite application.
 
