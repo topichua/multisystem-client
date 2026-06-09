@@ -1,6 +1,7 @@
 export const pagesMap = {
   home: "/",
   conversations: "/conversations",
+  instagram: "/instagram",
   products: "/products",
   productsList: "/products/list",
   productsListAdd: "/products/list/add",
@@ -9,7 +10,9 @@ export const pagesMap = {
   orders: "/orders",
   ordersList: "/orders/list",
   ordersStatuses: "/orders/statuses",
+  analytics: "/analytics",
   clients: "/clients",
+  team: "/team",
   clientsWorkspace: "/clients/clients",
   settings: "/settings",
   settingsGroups: "/settings/groups",

@@ -8,7 +8,7 @@ export const PageLayout = styled.main.attrs(() => dataQaAttrs("layout-app"))`
   max-height: 100vh;
   overflow: hidden;
   display: grid;
-  grid-template-columns: 70px minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr);
 
   @media (max-width: 767px) {
     grid-template-columns: minmax(0, 1fr);

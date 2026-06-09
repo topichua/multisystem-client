@@ -30,9 +30,12 @@ import { OrderDetailsPage } from "@/pages/orders-page/order-details/order-detail
 import { pagesMap } from "./pages-map";
 import { ProtectedRoute } from "./protected-route";
 import { PublicOnlyRoute } from "./public-only-route";
+import { AnalyticsPage } from "@/pages/analytics-page/analytics-page";
 import { ConversationsPage } from "@/pages/conversation/conversations-page";
 import { EmptyConversation } from "@/pages/conversation/empty-conversation";
 import { ConversationDetails } from "@/pages/conversation/conversation-details/conversation-details";
+import { InstagramPage } from "@/pages/instagram-page/instagram-page";
+import { TeamPage } from "@/pages/team-page/team-page";
 
 export const PageRoutes = () => {
   return (
@@ -48,6 +51,7 @@ export const PageRoutes = () => {
             <Route index element={<EmptyConversation />} />
             <Route path=":conversationId" element={<ConversationDetails />} />
           </Route>
+          <Route path="instagram" element={<InstagramPage />} />
           <Route path="settings" element={<SettingsPage />}>
             <Route
               index
@@ -102,6 +106,7 @@ export const PageRoutes = () => {
               <Route path=":statusId" element={<OrderStatusDetailView />} />
             </Route>
           </Route>
+          <Route path="analytics" element={<AnalyticsPage />} />
           <Route path="clients" element={<ClientsPage />}>
             <Route
               index
@@ -109,6 +114,7 @@ export const PageRoutes = () => {
             />
             <Route path="clients" element={<ClientsListPage />} />
           </Route>
+          <Route path="team" element={<TeamPage />} />
         </Route>
       </Route>
 

@@ -1,14 +1,36 @@
 {
   "nav": {
     "chats": "Чати",
+    "instagram": "Instagram",
     "clients": "Клієнти",
     "products": "Товари",
     "orders": "Замовлення",
+    "analytics": "Аналітика",
+    "team": "Команда",
     "settings": "Налаштування",
     "homeAria": "Головна",
-    "openConversationsAria": "Відкрити розмови"
+    "openConversationsAria": "Відкрити розмови",
+    "toggleSiderAria": "Згорнути або розгорнути меню",
+    "expandSiderAria": "Розгорнути меню",
+    "collapseSiderAria": "Згорнути меню"
   },
   "brand": "Multi-sale",
+  "instagram": {
+    "pageTitle": "Instagram",
+    "placeholder": "Тут з'явиться керування Instagram."
+  },
+  "analytics": {
+    "pageTitle": "Аналітика",
+    "placeholder": "Тут з'явиться аналітика."
+  },
+  "team": {
+    "pageTitle": "Команда",
+    "placeholder": "Тут з'явиться керування командою."
+  },
+  "sidebar": {
+    "darkTheme": "Темна тема",
+    "themeAutoSwitchDisabledTooltip": "Вимкніть автоматичне перемикання теми в налаштуваннях, щоб перемикати тему тут."
+  },
   "errors": {
     "somethingWentWrong": "Щось пішло не так"
   },
@@ -889,7 +911,9 @@
     "invalidCredentials": "Невірна пошта або пароль"
   },
   "profile": {
-    "logOut": "Вийти"
+    "logOut": "Вийти",
+    "myProfile": "Мій профіль",
+    "user": "Користувач"
   },
   "time": {
     "now": "зараз",

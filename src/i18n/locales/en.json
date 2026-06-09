@@ -1,14 +1,36 @@
 {
   "nav": {
     "chats": "Chats",
+    "instagram": "Instagram",
     "clients": "Clients",
     "products": "Products",
     "orders": "Orders",
+    "analytics": "Analytics",
+    "team": "Team",
     "settings": "Settings",
     "homeAria": "Home",
-    "openConversationsAria": "Open conversations"
+    "openConversationsAria": "Open conversations",
+    "toggleSiderAria": "Collapse or expand menu",
+    "expandSiderAria": "Expand menu",
+    "collapseSiderAria": "Collapse menu"
   },
   "brand": "Multi-sale",
+  "instagram": {
+    "pageTitle": "Instagram",
+    "placeholder": "Instagram management will appear here."
+  },
+  "analytics": {
+    "pageTitle": "Analytics",
+    "placeholder": "Analytics will appear here."
+  },
+  "team": {
+    "pageTitle": "Team",
+    "placeholder": "Team management will appear here."
+  },
+  "sidebar": {
+    "darkTheme": "Dark theme",
+    "themeAutoSwitchDisabledTooltip": "Turn off automatic theme switching in settings to switch the theme here."
+  },
   "errors": {
     "somethingWentWrong": "Something went wrong"
   },
@@ -855,7 +877,9 @@
     "invalidCredentials": "Invalid email or password"
   },
   "profile": {
-    "logOut": "Log out"
+    "logOut": "Log out",
+    "myProfile": "My profile",
+    "user": "User"
   },
   "time": {
     "now": "now",

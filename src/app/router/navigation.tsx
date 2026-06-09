@@ -1,10 +1,13 @@
 import type { ReactNode } from "react";
 import {
   ChatsCircleIcon,
+  ChartLineUpIcon,
   GearSixIcon,
   GlobeIcon,
+  InstagramLogoIcon,
   PackageIcon,
   ReceiptIcon,
+  UsersIcon,
   UsersThreeIcon,
 } from "@phosphor-icons/react";
 
@@ -20,7 +23,15 @@ type NavItemBase = {
 };
 
 export type MainNavItem = NavItemBase & {
-  key: "chats" | "products" | "orders" | "clients" | "settings";
+  key:
+    | "chats"
+    | "instagram"
+    | "products"
+    | "orders"
+    | "analytics"
+    | "clients"
+    | "team"
+    | "settings";
   icon: ReactNode;
 };
 
@@ -53,6 +64,12 @@ export const mainNavItems: readonly MainNavItem[] = [
     icon: <ChatsCircleIcon size={24} />,
   },
   {
+    key: "instagram",
+    path: pagesMap.instagram,
+    labelKey: "nav.instagram",
+    icon: <InstagramLogoIcon size={24} />,
+  },
+  {
     key: "products",
     path: pagesMap.products,
     labelKey: "nav.products",
@@ -65,10 +82,22 @@ export const mainNavItems: readonly MainNavItem[] = [
     icon: <ReceiptIcon size={24} />,
   },
   {
+    key: "analytics",
+    path: pagesMap.analytics,
+    labelKey: "nav.analytics",
+    icon: <ChartLineUpIcon size={24} />,
+  },
+  {
     key: "clients",
     path: pagesMap.clients,
     labelKey: "nav.clients",
     icon: <UsersThreeIcon size={24} />,
+  },
+  {
+    key: "team",
+    path: pagesMap.team,
+    labelKey: "nav.team",
+    icon: <UsersIcon size={24} />,
   },
   {
     key: "settings",
