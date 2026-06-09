@@ -1,68 +1,135 @@
-import { Radio, Typography } from "antd";
+import { Alert, Radio, Select, Typography, message } from "antd";
+import { observer } from "mobx-react-lite";
+import { useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
+import { getApiErrorMessage } from "@/api/get-api-error-message";
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
+import {
+  WORKSPACE_CURRENCIES,
+  type WorkspaceCurrency,
+} from "@/features/workspace-settings/model/workspace-settings.types";
+import { useWorkspaceSettingsStore } from "@/features/workspace-settings/model/use-workspace-settings-store";
 import type { ThemePreference } from "@/theme/theme-mode.types";
 import { useThemeMode } from "@/theme/use-theme-mode";
 
 const { Title, Paragraph } = Typography;
 
-export const SettingsSystemView = () => {
+export const SettingsSystemView = observer(() => {
   const { t, i18n } = useTranslation();
   const { preference, setPreference } = useThemeMode();
+  const workspaceSettingsStore = useWorkspaceSettingsStore();
+  const [messageApi, contextHolder] = message.useMessage();
 
   const langValue = i18n.language.startsWith("uk") ? "uk" : "en";
 
-  return (
-    <PaneDetailLayout.Root inset>
-      <PaneDetailLayout.Header>
-        <Title level={4} style={{ marginTop: 0 }}>
-          {t("system.title")}
-        </Title>
-        <Paragraph type="secondary" style={{ marginBottom: 0 }}>
-          {t("system.sectionHint")}
-        </Paragraph>
-      </PaneDetailLayout.Header>
-      <PaneDetailLayout.Body>
-        <div style={{ maxWidth: 520 }}>
-          <div style={{ marginBottom: 24 }}>
-            <Paragraph strong style={{ marginBottom: 8 }}>
-              {t("system.language")}
-            </Paragraph>
-            <Radio.Group
-              value={langValue}
-              onChange={(e) => {
-                void i18n.changeLanguage(e.target.value);
-              }}
-              optionType="button"
-              buttonStyle="solid"
-            >
-              <Radio.Button value="en">{t("system.english")}</Radio.Button>
-              <Radio.Button value="uk">{t("system.ukrainian")}</Radio.Button>
-            </Radio.Group>
-          </div>
+  useEffect(() => {
+    if (
+      !workspaceSettingsStore.initialized &&
+      !workspaceSettingsStore.loadLoading
+    ) {
+      void workspaceSettingsStore.loadSettings();
+    }
+  }, [workspaceSettingsStore]);
 
-          <div>
-            <Paragraph strong style={{ marginBottom: 8 }}>
-              {t("system.theme")}
-            </Paragraph>
-            <Radio.Group
-              value={preference}
-              onChange={(e) => {
-                setPreference(e.target.value as ThemePreference);
-              }}
-              optionType="button"
-              buttonStyle="solid"
-            >
-              <Radio.Button value="light">{t("system.light")}</Radio.Button>
-              <Radio.Button value="dark">{t("system.dark")}</Radio.Button>
-              <Radio.Button value="system">
-                {t("system.themeAuto")}
-              </Radio.Button>
-            </Radio.Group>
-          </div>
-        </div>
-      </PaneDetailLayout.Body>
-    </PaneDetailLayout.Root>
+  const handleCurrencyChange = useCallback(
+    async (currency: WorkspaceCurrency) => {
+      try {
+        await workspaceSettingsStore.updateCurrency(currency);
+      } catch (e) {
+        messageApi.error(getApiErrorMessage(e, t("system.currencySaveError")));
+      }
+    },
+    [messageApi, t, workspaceSettingsStore],
   );
-};
+
+  return (
+    <>
+      {contextHolder}
+      <PaneDetailLayout.Root inset>
+        <PaneDetailLayout.Header>
+          <Title level={4} style={{ marginTop: 0 }}>
+            {t("system.title")}
+          </Title>
+          <Paragraph type="secondary" style={{ marginBottom: 0 }}>
+            {t("system.sectionHint")}
+          </Paragraph>
+        </PaneDetailLayout.Header>
+        <PaneDetailLayout.Body>
+          <div style={{ maxWidth: 520 }}>
+            {workspaceSettingsStore.loadError ? (
+              <Alert
+                type="error"
+                message={t("system.settingsLoadError")}
+                description={workspaceSettingsStore.loadError}
+                showIcon
+                style={{ marginBottom: 24 }}
+              />
+            ) : null}
+
+            <div style={{ marginBottom: 24 }}>
+              <Paragraph strong style={{ marginBottom: 8 }}>
+                {t("system.currency")}
+              </Paragraph>
+              <Select<WorkspaceCurrency>
+                value={workspaceSettingsStore.currency ?? undefined}
+                placeholder={t("system.currencyPlaceholder")}
+                loading={
+                  workspaceSettingsStore.loadLoading ||
+                  workspaceSettingsStore.saveLoading
+                }
+                disabled={
+                  workspaceSettingsStore.loadLoading ||
+                  workspaceSettingsStore.saveLoading
+                }
+                options={WORKSPACE_CURRENCIES.map((currency) => ({
+                  value: currency,
+                  label: t(`system.currencies.${currency}`),
+                }))}
+                style={{ width: 180 }}
+                onChange={(value) => void handleCurrencyChange(value)}
+              />
+            </div>
+
+            <div style={{ marginBottom: 24 }}>
+              <Paragraph strong style={{ marginBottom: 8 }}>
+                {t("system.language")}
+              </Paragraph>
+              <Radio.Group
+                value={langValue}
+                onChange={(e) => {
+                  void i18n.changeLanguage(e.target.value);
+                }}
+                optionType="button"
+                buttonStyle="solid"
+              >
+                <Radio.Button value="en">{t("system.english")}</Radio.Button>
+                <Radio.Button value="uk">{t("system.ukrainian")}</Radio.Button>
+              </Radio.Group>
+            </div>
+
+            <div>
+              <Paragraph strong style={{ marginBottom: 8 }}>
+                {t("system.theme")}
+              </Paragraph>
+              <Radio.Group
+                value={preference}
+                onChange={(e) => {
+                  setPreference(e.target.value as ThemePreference);
+                }}
+                optionType="button"
+                buttonStyle="solid"
+              >
+                <Radio.Button value="light">{t("system.light")}</Radio.Button>
+                <Radio.Button value="dark">{t("system.dark")}</Radio.Button>
+                <Radio.Button value="system">
+                  {t("system.themeAuto")}
+                </Radio.Button>
+              </Radio.Group>
+            </div>
+          </div>
+        </PaneDetailLayout.Body>
+      </PaneDetailLayout.Root>
+    </>
+  );
+});

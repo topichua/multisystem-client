@@ -9,6 +9,11 @@ export const PageLayout = styled.main.attrs(() => dataQaAttrs("layout-app"))`
   overflow: hidden;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+
+  & > * {
+    min-height: 0;
+  }
 
   @media (max-width: 767px) {
     grid-template-columns: minmax(0, 1fr);

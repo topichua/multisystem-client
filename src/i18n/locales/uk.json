@@ -147,7 +147,15 @@
   },
   "system": {
     "title": "Система",
-    "sectionHint": "Мова та тема зберігаються в цьому браузері.",
+    "sectionHint": "Валюта робочого простору зберігається на сервері. Мова та тема зберігаються в цьому браузері.",
+    "currency": "Валюта",
+    "currencyPlaceholder": "Оберіть валюту",
+    "currencySaveError": "Не вдалося оновити валюту",
+    "settingsLoadError": "Не вдалося завантажити налаштування робочого простору",
+    "currencies": {
+      "UAH": "UAH",
+      "USD": "USD"
+    },
     "language": "Мова",
     "theme": "Тема",
     "light": "Світла",
@@ -191,7 +199,20 @@
     "updateConversationGroupError": "Не вдалося оновити групу розмови"
   },
   "userSettings": {
-    "placeholder": "Тут з'являться налаштування користувача."
+    "title": "Користувач",
+    "subtitle": "Особисті дані вашого облікового запису.",
+    "profileSubtitle": "{{role}} · {{company}}",
+    "changePhoto": "Змінити фото",
+    "fullName": "Ім'я та прізвище",
+    "phone": "Телефон",
+    "phonePlaceholder": "+380 …",
+    "email": "Email",
+    "role": "Роль",
+    "saveChanges": "Зберегти зміни",
+    "roles": {
+      "super_admin": "Адміністратор",
+      "account_owner": "Власник акаунта"
+    }
   },
   "conversations": {
     "title": "Розмови",
@@ -912,6 +933,7 @@
   },
   "profile": {
     "logOut": "Вийти",
+    "changeSettings": "Редагувати",
     "myProfile": "Мій профіль",
     "user": "Користувач"
   },

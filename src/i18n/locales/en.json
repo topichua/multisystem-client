@@ -147,7 +147,15 @@
   },
   "system": {
     "title": "System",
-    "sectionHint": "Language and appearance are saved in this browser.",
+    "sectionHint": "Workspace currency is saved on the server. Language and appearance are saved in this browser.",
+    "currency": "Currency",
+    "currencyPlaceholder": "Select currency",
+    "currencySaveError": "Could not update currency",
+    "settingsLoadError": "Could not load workspace settings",
+    "currencies": {
+      "UAH": "UAH",
+      "USD": "USD"
+    },
     "language": "Language",
     "theme": "Theme",
     "light": "Light",
@@ -191,7 +199,20 @@
     "updateConversationGroupError": "Could not update conversation group"
   },
   "userSettings": {
-    "placeholder": "User settings will appear here."
+    "title": "User",
+    "subtitle": "Personal details for your account.",
+    "profileSubtitle": "{{role}} · {{company}}",
+    "changePhoto": "Change photo",
+    "fullName": "Full name",
+    "phone": "Phone",
+    "phonePlaceholder": "+380 …",
+    "email": "Email",
+    "role": "Role",
+    "saveChanges": "Save changes",
+    "roles": {
+      "super_admin": "Administrator",
+      "account_owner": "Account owner"
+    }
   },
   "conversations": {
     "title": "Conversations",
@@ -878,6 +899,7 @@
   },
   "profile": {
     "logOut": "Log out",
+    "changeSettings": "Edit",
     "myProfile": "My profile",
     "user": "User"
   },
