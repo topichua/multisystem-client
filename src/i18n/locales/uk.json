@@ -302,12 +302,13 @@
   },
   "integrations": {
     "title": "Інтеграції",
-    "subtitle": "Керуйте всіма підключеннями до зовнішніх сервісів і акаунтів",
+    "subtitle": "Підключайте зовнішні сервіси та керуйте акаунтами",
     "addIntegration": "Додати інтеграцію",
     "searchPlaceholder": "Пошук інтеграцій...",
     "allIntegrations": "Усі інтеграції",
     "noIntegrationsYet": "Інтеграцій поки немає",
     "noMatchFilters": "Жодна інтеграція не відповідає фільтрам",
+    "noActiveConnections": "Немає активних підключень для {{name}}",
     "connectSuccess": "Інтеграцію підключено",
     "connectFailed": "Не вдалося підключити інтеграцію",
     "notAvailableYet": "Ця інтеграція поки недоступна",
@@ -324,14 +325,14 @@
     "types": {
       "instagram": {
         "label": "Instagram",
-        "description": "Керуйте акаунтами Instagram",
-        "connectLabel": "Підключити акаунт",
+        "description": "Direct-повідомлення з бізнес-акаунтів.",
+        "connectLabel": "Підключити",
         "empty": "Немає інтеграцій Instagram"
       },
       "telegram": {
         "label": "Telegram",
-        "description": "Підключайте ботів і акаунти Telegram",
-        "connectLabel": "Підключити бота",
+        "description": "Звернення через підключених ботів.",
+        "connectLabel": "Підключити",
         "empty": "Немає інтеграцій Telegram"
       }
     },

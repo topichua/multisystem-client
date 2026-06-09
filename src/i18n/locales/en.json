@@ -302,12 +302,13 @@
   },
   "integrations": {
     "title": "Integrations",
-    "subtitle": "Manage all connections to external services and accounts",
+    "subtitle": "Connect external services and manage accounts",
     "addIntegration": "Add integration",
     "searchPlaceholder": "Search integrations...",
     "allIntegrations": "All integrations",
     "noIntegrationsYet": "No integrations yet",
     "noMatchFilters": "No integrations match your filters",
+    "noActiveConnections": "No active connections for {{name}}",
     "connectSuccess": "Integration connected",
     "connectFailed": "Failed to connect integration",
     "notAvailableYet": "This integration is not available yet",
@@ -324,14 +325,14 @@
     "types": {
       "instagram": {
         "label": "Instagram",
-        "description": "Manage Instagram accounts",
-        "connectLabel": "Connect account",
+        "description": "Direct messages from business accounts.",
+        "connectLabel": "Connect",
         "empty": "No Instagram integrations"
       },
       "telegram": {
         "label": "Telegram",
-        "description": "Connect Telegram bots and accounts",
-        "connectLabel": "Connect bot",
+        "description": "Inquiries through connected bots.",
+        "connectLabel": "Connect",
         "empty": "No Telegram integrations"
       }
     },

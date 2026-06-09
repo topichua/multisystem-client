@@ -1,8 +1,6 @@
 import {
-  InstagramLogoIcon,
   PlugsIcon,
   StorefrontIcon,
-  TelegramLogoIcon,
   TiktokLogoIcon,
   TruckIcon,
   WhatsappLogoIcon,
@@ -24,6 +22,8 @@ import {
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { InstagramLogoIcon } from "@/components/icons/instagram/instagram-logo-icon";
+import { TelegramLogoIcon } from "@/components/icons/telegram/telegram-logo-icon";
 import { openIntegrationAuthWindow } from "@/features/integrations/open-integration-auth";
 import { isConnectableIntegrationType } from "@/features/integrations/model/integrations-store";
 
@@ -64,13 +64,13 @@ const INTEGRATION_GROUPS: AddIntegrationGroup[] = [
         type: "instagram",
         titleKey: "integrations.modal.items.instagram.title",
         descriptionKey: "integrations.modal.items.instagram.description",
-        icon: <InstagramLogoIcon />,
+        icon: <InstagramLogoIcon size={24} />,
       },
       {
         type: "telegram",
         titleKey: "integrations.modal.items.telegram.title",
         descriptionKey: "integrations.modal.items.telegram.description",
-        icon: <TelegramLogoIcon />,
+        icon: <TelegramLogoIcon size={24} />,
       },
       {
         type: "whatsapp",

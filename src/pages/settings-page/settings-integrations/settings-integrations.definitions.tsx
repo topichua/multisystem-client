@@ -1,5 +1,5 @@
-import { InstagramLogoIcon, TelegramLogoIcon } from "@phosphor-icons/react";
-
+import { InstagramLogoIcon } from "@/components/icons/instagram/instagram-logo-icon";
+import { TelegramLogoIcon } from "@/components/icons/telegram/telegram-logo-icon";
 import type { IntegrationItem } from "@/features/integrations/model/integration.types";
 
 export const INTEGRATION_TYPES = [
@@ -9,7 +9,7 @@ export const INTEGRATION_TYPES = [
     descriptionKey: "integrations.types.instagram.description",
     connectLabelKey: "integrations.types.instagram.connectLabel",
     emptyKey: "integrations.types.instagram.empty",
-    icon: <InstagramLogoIcon />,
+    icon: <InstagramLogoIcon size={40} />,
   },
   {
     type: "telegram",
@@ -17,7 +17,7 @@ export const INTEGRATION_TYPES = [
     descriptionKey: "integrations.types.telegram.description",
     connectLabelKey: "integrations.types.telegram.connectLabel",
     emptyKey: "integrations.types.telegram.empty",
-    icon: <TelegramLogoIcon />,
+    icon: <TelegramLogoIcon size={40} />,
   },
 ] as const;
 

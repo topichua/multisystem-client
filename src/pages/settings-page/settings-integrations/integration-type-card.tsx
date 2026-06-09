@@ -1,23 +1,15 @@
 import { PlusIcon } from "@phosphor-icons/react";
-import {
-  Avatar,
-  Button,
-  Card,
-  Divider,
-  Empty,
-  Flex,
-  Space,
-  Typography,
-} from "antd";
+import { Button, Flex } from "antd";
 import { useTranslation } from "react-i18next";
 
 import type { IntegrationItem } from "@/features/integrations/model/integration.types";
 
+import { IntegrationAccountCard } from "./integration-account-card";
 import type {
   IntegrationDefinition,
   IntegrationType,
 } from "./settings-integrations.definitions";
-import { IntegrationAccountCard } from "./integration-account-card";
+import * as S from "./settings-integrations.styled";
 
 type IntegrationTypeCardProps = {
   connectLoading: boolean;
@@ -37,43 +29,44 @@ export function IntegrationTypeCard({
   onDisconnect,
 }: IntegrationTypeCardProps) {
   const { t } = useTranslation();
+  const hasConnections = integrations.length > 0;
+  const connectButtonColor =
+    definition.type === "instagram" ? "primary" : "default";
 
   return (
-    <Card key={definition.type}>
-      <Flex align="center" justify="space-between" gap={16}>
-        <Space size={16}>
-          <Avatar size={40} shape="square" icon={definition.icon} />
-          <div>
-            <Typography.Title level={4} style={{ margin: 0 }}>
+    <S.IntegrationCard>
+      <S.IntegrationCardHeader>
+        <S.IntegrationCardIdentity>
+          <S.IntegrationCardIcon>{definition.icon}</S.IntegrationCardIcon>
+          <S.IntegrationCardText>
+            <S.IntegrationCardTitle>
               {t(definition.labelKey)}
-            </Typography.Title>
-            <Typography.Text type="secondary">
+            </S.IntegrationCardTitle>
+            <S.IntegrationCardDescription>
               {t(definition.descriptionKey)}
-            </Typography.Text>
-          </div>
-        </Space>
-        <Button
-          icon={<PlusIcon />}
-          loading={connectLoading}
-          onClick={() => onConnectType(definition.type)}
-        >
-          {t(definition.connectLabelKey)}
-        </Button>
-      </Flex>
+            </S.IntegrationCardDescription>
+          </S.IntegrationCardText>
+        </S.IntegrationCardIdentity>
+        <Flex flex="0 0 auto">
+          <Button
+            color={connectButtonColor}
+            icon={<PlusIcon />}
+            loading={connectLoading}
+            variant="outlined"
+            onClick={() => onConnectType(definition.type)}
+          >
+            {t(definition.connectLabelKey)}
+          </Button>
+        </Flex>
+      </S.IntegrationCardHeader>
 
-      <Divider />
+      <S.IntegrationCardDivider />
 
-      {integrations.length === 0 ? (
-        <Empty
-          image={Empty.PRESENTED_IMAGE_SIMPLE}
-          description={t(definition.emptyKey)}
-        />
-      ) : (
-        <Space direction="vertical" size={8} style={{ width: "100%" }}>
+      {hasConnections ? (
+        <S.IntegrationAccountsList>
           {integrations.map((integration) => (
             <IntegrationAccountCard
               key={`${integration.type}-${integration.id}-${integration.connectedAt}`}
-              icon={definition.icon}
               integration={integration}
               isDisconnecting={isDisconnecting(
                 integration.type,
@@ -82,8 +75,14 @@ export function IntegrationTypeCard({
               onDisconnect={onDisconnect}
             />
           ))}
-        </Space>
+        </S.IntegrationAccountsList>
+      ) : (
+        <S.IntegrationEmptyState>
+          {t("integrations.noActiveConnections", {
+            name: t(definition.labelKey),
+          })}
+        </S.IntegrationEmptyState>
       )}
-    </Card>
+    </S.IntegrationCard>
   );
 }

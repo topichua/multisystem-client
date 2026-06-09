@@ -5,12 +5,25 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import { PaneScrollRegion } from "@/components/layout/pane-frame";
+import { InstagramLogoIcon } from "@/components/icons/instagram/instagram-logo-icon";
+import { TelegramLogoIcon } from "@/components/icons/telegram/telegram-logo-icon";
 
 import type {
   IntegrationDefinition,
   IntegrationFilter,
   IntegrationType,
 } from "./settings-integrations.definitions";
+
+const SIDEBAR_ICON_SIZE = 24;
+
+const getSidebarIcon = (type: IntegrationType) => {
+  switch (type) {
+    case "instagram":
+      return <InstagramLogoIcon size={SIDEBAR_ICON_SIZE} />;
+    case "telegram":
+      return <TelegramLogoIcon size={SIDEBAR_ICON_SIZE} />;
+  }
+};
 
 type IntegrationTypeSidebarProps = {
   integrationsCountByType: Record<IntegrationType, number>;
@@ -36,7 +49,7 @@ export function IntegrationTypeSidebar({
   const menuItems: MenuProps["items"] = useMemo(() => {
     const typeItems = menuIntegrationTypes.map((item) => ({
       key: item.type,
-      icon: item.icon,
+      icon: getSidebarIcon(item.type),
       label: (
         <Flex align="center" justify="space-between" gap={12}>
           <Typography.Text>{t(item.labelKey)}</Typography.Text>
@@ -48,7 +61,7 @@ export function IntegrationTypeSidebar({
     return [
       {
         key: "all",
-        icon: <SquaresFourIcon />,
+        icon: <SquaresFourIcon size={SIDEBAR_ICON_SIZE} />,
         label: (
           <Flex align="center" justify="space-between" gap={12}>
             <Typography.Text>
