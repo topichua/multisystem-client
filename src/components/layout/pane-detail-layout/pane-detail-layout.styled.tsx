@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 
 export const Root = styled.div<{ $inset?: boolean }>`
   box-sizing: border-box;
@@ -7,12 +7,6 @@ export const Root = styled.div<{ $inset?: boolean }>`
   min-width: 0;
   display: flex;
   flex-direction: column;
-
-  ${(props) =>
-    props.$inset &&
-    css`
-      padding: 12px 24px;
-    `}
 `;
 
 export const HeaderSlot = styled.div`
@@ -20,6 +14,8 @@ export const HeaderSlot = styled.div`
   padding-bottom: 16px;
   border-bottom: 1px solid
     ${({ theme }) => theme.colors.functional.border.split};
+  padding: 12px 24px;
+  background: ${({ theme }) => theme.colors.functional.background.elevated};
 `;
 
 export const BodySlot = styled.div`
@@ -28,4 +24,6 @@ export const BodySlot = styled.div`
   min-width: 0;
   overflow: auto;
   padding-top: 16px;
+  padding: 12px 24px;
+  background: ${({ theme }) => theme.colors.functional.background.base};
 `;

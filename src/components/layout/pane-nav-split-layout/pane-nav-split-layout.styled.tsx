@@ -39,7 +39,8 @@ export const SubMain = styled.div`
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  padding: 12px 24px;
+  padding: 0;
+  background: ${(props) => props.theme.colors.functional.background.base};
 
   @media (max-width: 767px) {
     padding-left: 0;
