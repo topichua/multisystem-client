@@ -146,17 +146,18 @@ export function ClientOrderProductsSection({
 
         <Select
           key={productPickerKey}
-          showSearch
+          showSearch={{
+            onSearch: onProductSearch,
+            filterOption: false,
+          }}
           allowClear
           placeholder={t(
             "conversation.clientOrders.drawer.productSearchPlaceholder",
           )}
-          filterOption={false}
           loading={catalogSearchLoading}
           style={{ width: "100%" }}
           listHeight={320}
           options={variantSelectOptions}
-          onSearch={onProductSearch}
           onSelect={onVariantSelect}
           notFoundContent={
             catalogSearchLoading ? (

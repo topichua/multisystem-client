@@ -21,7 +21,7 @@ export const Root = styled.section.attrs(() =>
   background: ${(props) => props.theme.colors.functional.background.elevated};
   box-shadow: ${(props) => props.theme.shadow.xl};
   display: grid;
-  grid-template-columns: 200px minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr);
   overflow: hidden;
 
   @media (max-width: 767px) {
@@ -33,7 +33,9 @@ export const Root = styled.section.attrs(() =>
 
 export const Sidebar = styled.aside.attrs(() =>
   dataQaAttrs("layout-settings-sidebar"),
-)`
+)<{ $customWidth?: number }>`
+  box-sizing: border-box;
+  width: ${({ $customWidth }) => $customWidth ?? 200}px;
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -46,6 +48,7 @@ export const Sidebar = styled.aside.attrs(() =>
     border-bottom: 1px solid
       ${(props) => props.theme.colors.functional.border.cardBase};
     padding: 8px 0 0;
+    width: auto;
   }
 `;
 

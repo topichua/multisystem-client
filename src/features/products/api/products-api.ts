@@ -13,6 +13,7 @@ import type {
   ProductsListResponse,
   ProductsListSort,
 } from "@/features/products/model/product.types";
+import type { CreateProductInstagramReferencePayload } from "@/features/instagram/model/instagram.types";
 import { PRODUCTS_DEFAULT_PAGE_SIZE } from "@/features/products/model/product.constants";
 
 const basePath = "/products";
@@ -160,6 +161,21 @@ export const productsApi = {
     return normalizeCatalogVariantsList(data);
   },
 
+  listVariants: async (
+    params: CatalogVariantsListQueryParams,
+  ): Promise<CatalogVariantsListResponse> => {
+    const keyword = params.keyword.trim();
+    const { data } = await apiClient.get<unknown>(`${basePath}/variants`, {
+      params: {
+        keyword,
+        page: params.page ?? 1,
+        pageSize: params.pageSize ?? 50,
+      },
+    });
+
+    return normalizeCatalogVariantsList(data);
+  },
+
   list: async (
     params: ProductsListQueryParams,
   ): Promise<ProductsListResponse> => {
@@ -214,5 +230,24 @@ export const productsApi = {
     );
 
     return data;
+  },
+
+  createInstagramReference: async (
+    productId: number,
+    payload: CreateProductInstagramReferencePayload,
+  ): Promise<void> => {
+    await apiClient.post(
+      `${basePath}/${productId}/instagram-references`,
+      payload,
+    );
+  },
+
+  deleteInstagramReference: async (
+    productId: number,
+    referenceId: number | string,
+  ): Promise<void> => {
+    await apiClient.delete(
+      `${basePath}/${productId}/instagram-references/${referenceId}`,
+    );
   },
 };

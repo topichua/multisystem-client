@@ -38,6 +38,7 @@ import { ConversationsPage } from "@/pages/conversation/conversations-page";
 import { EmptyConversation } from "@/pages/conversation/empty-conversation";
 import { ConversationDetails } from "@/pages/conversation/conversation-details/conversation-details";
 import { InstagramPage } from "@/pages/instagram-page/instagram-page";
+import { InstagramPostPage } from "@/pages/instagram-page/instagram-post-page";
 import { TeamMembersPage } from "@/pages/team-page/team-members-page";
 import { TeamPage } from "@/pages/team-page/team-page";
 import { TeamRolesPage } from "@/pages/team-page/team-roles-page";
@@ -57,6 +58,7 @@ export const PageRoutes = () => {
             <Route path=":conversationId" element={<ConversationDetails />} />
           </Route>
           <Route path="instagram" element={<InstagramPage />} />
+          <Route path="instagram/:postId" element={<InstagramPostPage />} />
           <Route path="settings" element={<SettingsPage />}>
             <Route
               index

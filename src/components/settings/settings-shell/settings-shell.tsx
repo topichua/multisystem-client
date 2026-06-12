@@ -6,10 +6,16 @@ type SlotProps = {
   children?: ReactNode;
 };
 
+type SidebarProps = SlotProps & {
+  $customWidth?: number;
+};
+
 export const SettingsShell = {
   Root: ({ children }: SlotProps) => <S.Root>{children}</S.Root>,
 
-  Sidebar: ({ children }: SlotProps) => <S.Sidebar>{children}</S.Sidebar>,
+  Sidebar: ({ children, $customWidth }: SidebarProps) => (
+    <S.Sidebar $customWidth={$customWidth}>{children}</S.Sidebar>
+  ),
 
   Title: ({ children }: SlotProps) => <S.Title>{children}</S.Title>,
 

@@ -38,6 +38,9 @@ export const getOrderStatusPath = (statusId: string | number) =>
 export const getOrderDetailsPath = (orderId: string | number): string =>
   `${pagesMap.orders}/${orderId}`;
 
+export const getInstagramPostPath = (postId: string | number): string =>
+  `${pagesMap.instagram}/${postId}`;
+
 export const getProductCategoryPath = (categoryId: string | number) =>
   `${pagesMap.productsCategories}/${categoryId}`;
 

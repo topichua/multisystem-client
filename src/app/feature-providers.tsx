@@ -8,6 +8,7 @@ import { ClientsProvider } from "@/features/clients/model/clients-provider";
 import { ConversationGroupsProvider } from "@/features/conversation-groups/model/conversation-groups-provider";
 import { MessageTemplatesProvider } from "@/features/message-templates/model/message-templates-provider";
 import { ConversationsProvider } from "@/features/conversations/model/conversations-provider";
+import { InstagramProvider } from "@/features/instagram/model/instagram-provider";
 import { OrdersProvider } from "@/features/orders/model/orders-provider";
 import { ProductsProvider } from "@/features/products/model/products-provider";
 import { WorkspaceMembersProvider } from "@/features/workspace-members/model/workspace-members-provider";
@@ -20,15 +21,17 @@ export const FeatureProviders = ({ children }: { children: ReactNode }) => (
           <CharacteristicsProvider>
             <ClientsProvider>
               <ProductsProvider>
-                <OrdersProvider>
-                  <ConversationGroupsProvider>
-                    <MessageTemplatesProvider>
-                      <WorkspaceMembersProvider>
-                        {children}
-                      </WorkspaceMembersProvider>
-                    </MessageTemplatesProvider>
-                  </ConversationGroupsProvider>
-                </OrdersProvider>
+                <InstagramProvider>
+                  <OrdersProvider>
+                    <ConversationGroupsProvider>
+                      <MessageTemplatesProvider>
+                        <WorkspaceMembersProvider>
+                          {children}
+                        </WorkspaceMembersProvider>
+                      </MessageTemplatesProvider>
+                    </ConversationGroupsProvider>
+                  </OrdersProvider>
+                </InstagramProvider>
               </ProductsProvider>
             </ClientsProvider>
           </CharacteristicsProvider>
