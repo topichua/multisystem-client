@@ -51,7 +51,6 @@ export class OrdersStore {
   total = 0;
   page = 1;
   pageSize = defaultPageSize;
-  statusId: number | null = null;
 
   listKeyword = "";
   listStatusIds: number[] = [];
@@ -90,7 +89,6 @@ export class OrdersStore {
   statusesLoading = false;
   statusesError: string | null = null;
   statusSaveLoading = false;
-  updatingOrderStatusId: number | null = null;
 
   constructor() {
     makeAutoObservable(this);
@@ -367,10 +365,6 @@ export class OrdersStore {
     });
   };
 
-  setPage = (page: number): void => {
-    this.page = page;
-  };
-
   loadStatuses = async (options?: { force?: boolean }): Promise<void> => {
     if (this.statuses.length > 0 && options?.force !== true) {
       return;
@@ -508,25 +502,15 @@ export class OrdersStore {
       return;
     }
 
+    const updated = await ordersApi.updateOrderStatus(orderId, statusId);
     runInAction(() => {
-      this.updatingOrderStatusId = orderId;
+      this.replaceOrderInLists(updated);
     });
-
-    try {
-      const updated = await ordersApi.updateOrderStatus(orderId, statusId);
-      runInAction(() => {
-        this.replaceOrderInLists(updated);
-      });
-      if (
-        this.listStatusIds.length > 0 &&
-        !this.listStatusIds.includes(updated.statusId)
-      ) {
-        await this.loadOrders({ silent: true });
-      }
-    } finally {
-      runInAction(() => {
-        this.updatingOrderStatusId = null;
-      });
+    if (
+      this.listStatusIds.length > 0 &&
+      !this.listStatusIds.includes(updated.statusId)
+    ) {
+      await this.loadOrders({ silent: true });
     }
   };
 

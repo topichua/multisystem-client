@@ -16,9 +16,6 @@ export class ClientsStore {
   listLoading = false;
   listError: string | null = null;
 
-  detailLoading = false;
-  detailError: string | null = null;
-
   saveLoading = false;
   deleteLoadingId: number | null = null;
 
@@ -51,28 +48,6 @@ export class ClientsStore {
           this.listLoading = false;
         });
       }
-    }
-  };
-
-  loadClientById = async (id: number): Promise<void> => {
-    runInAction(() => {
-      this.detailLoading = true;
-      this.detailError = null;
-    });
-
-    try {
-      const data = await clientsApi.getById(id);
-      runInAction(() => {
-        this.activeClient = data;
-      });
-    } catch (e) {
-      runInAction(() => {
-        this.detailError = unknownErrorMessage(e);
-      });
-    } finally {
-      runInAction(() => {
-        this.detailLoading = false;
-      });
     }
   };
 

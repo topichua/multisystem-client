@@ -6,7 +6,6 @@ import { unknownErrorMessage } from "@/utils/unknown-error-message";
 import type { WorkspaceCurrency } from "./workspace-settings.types";
 
 export class WorkspaceSettingsStore {
-  workspaceId: number | null = null;
   currency: WorkspaceCurrency | null = null;
 
   initialized = false;
@@ -14,7 +13,6 @@ export class WorkspaceSettingsStore {
   loadError: string | null = null;
 
   saveLoading = false;
-  saveError: string | null = null;
 
   constructor() {
     makeAutoObservable(this);
@@ -34,7 +32,6 @@ export class WorkspaceSettingsStore {
       const data = await workspaceSettingsApi.get();
 
       runInAction(() => {
-        this.workspaceId = data.workspaceId;
         this.currency = data.currency;
         this.initialized = true;
         this.loadError = null;
@@ -62,7 +59,6 @@ export class WorkspaceSettingsStore {
     runInAction(() => {
       this.currency = currency;
       this.saveLoading = true;
-      this.saveError = null;
     });
 
     try {
@@ -70,7 +66,6 @@ export class WorkspaceSettingsStore {
 
       runInAction(() => {
         if (data) {
-          this.workspaceId = data.workspaceId;
           this.currency = data.currency;
         } else {
           this.currency = currency;
@@ -79,7 +74,6 @@ export class WorkspaceSettingsStore {
     } catch (e) {
       runInAction(() => {
         this.currency = previousCurrency;
-        this.saveError = unknownErrorMessage(e);
       });
       throw e;
     } finally {

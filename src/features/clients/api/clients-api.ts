@@ -65,12 +65,6 @@ export const clientsApi = {
       : { associated, status };
   },
 
-  getById: async (id: number): Promise<Client> => {
-    const { data } = await apiClient.get<Client>(`${basePath}/${id}`);
-
-    return data;
-  },
-
   create: async (payload: ClientCreatePayload): Promise<Client> => {
     const { data } = await apiClient.post<Client>(basePath, payload);
 

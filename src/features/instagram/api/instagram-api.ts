@@ -14,7 +14,7 @@ import type {
 } from "@/features/instagram/model/instagram.types";
 
 const basePath = "/api/instagram";
-export const INSTAGRAM_MEDIA_PAGE_SIZE = 5;
+const INSTAGRAM_MEDIA_PAGE_SIZE = 5;
 
 type ListMediaParams = {
   integrationId: InstagramIntegrationId;

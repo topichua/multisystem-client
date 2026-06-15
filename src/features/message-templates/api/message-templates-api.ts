@@ -26,13 +26,6 @@ export const messageTemplatesApi = {
     return Array.isArray(data) ? data : [];
   },
 
-  get: async (templateId: number): Promise<MessageTemplate> => {
-    const { data } = await apiClient.get<MessageTemplate>(
-      `${basePath}/${templateId}`,
-    );
-    return data;
-  },
-
   create: async (
     payload: MessageTemplateWritePayload,
   ): Promise<MessageTemplate | null> => {

@@ -141,5 +141,3 @@ export type SendMessageApiResponse = {
   message_id: string;
   recipient_id?: string;
 };
-
-export type SyncConversationsPayload = Record<string, unknown> | undefined;

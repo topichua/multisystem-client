@@ -51,9 +51,6 @@
     "unlinkProductSuccess": "Product unlinked from post",
     "unlinkProductFailed": "Failed to unlink product from post",
     "unlinkProductAria": "Unlink product from post",
-    "previousPage": "Previous",
-    "nextPage": "Next",
-    "pageLabel": "Page {{page}}",
     "filters": {
       "all": "All posts",
       "withoutProduct": "Without product",

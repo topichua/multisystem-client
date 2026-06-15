@@ -63,12 +63,8 @@ export class ProductsStore {
 
   listLoading = false;
   listError: string | null = null;
-  saveLoading = false;
   deleteLoadingId: number | null = null;
-  variantSaveLoading = false;
-  variantDeleteLoadingId: number | null = null;
   detailLoading = false;
-  detailError: string | null = null;
 
   variantCustomFields: VariantCustomField[] = [];
   variantCustomFieldsLoading = false;
@@ -316,50 +312,25 @@ export class ProductsStore {
   createProduct = async (
     payload: CreateProductPayload,
   ): Promise<ProductDetails> => {
+    const created = await productsApi.createProduct(payload);
     runInAction(() => {
-      this.saveLoading = true;
+      this.activeProduct = created;
     });
-
-    try {
-      const created = await productsApi.createProduct(payload);
-      runInAction(() => {
-        this.activeProduct = created;
-      });
-      await this.loadProducts({ silent: true });
-      return created;
-    } finally {
-      runInAction(() => {
-        this.saveLoading = false;
-      });
-    }
+    await this.loadProducts({ silent: true });
+    return created;
   };
 
   updateProduct = async (
     id: number,
     payload: UpdateProductPayload,
-    options?: { silent?: boolean },
   ): Promise<ProductDetails> => {
-    if (!options?.silent) {
-      runInAction(() => {
-        this.saveLoading = true;
-      });
-    }
+    const updated = await productsApi.updateProduct(id, payload);
+    runInAction(() => {
+      this.activeProduct = updated;
+    });
 
-    try {
-      const updated = await productsApi.updateProduct(id, payload);
-      runInAction(() => {
-        this.activeProduct = updated;
-      });
-
-      await this.loadProducts({ silent: true });
-      return updated;
-    } finally {
-      if (!options?.silent) {
-        runInAction(() => {
-          this.saveLoading = false;
-        });
-      }
-    }
+    await this.loadProducts({ silent: true });
+    return updated;
   };
 
   deleteProduct = async (id: number): Promise<void> => {
@@ -391,7 +362,6 @@ export class ProductsStore {
     if (!options?.silent) {
       runInAction(() => {
         this.detailLoading = true;
-        this.detailError = null;
       });
     }
 
@@ -401,13 +371,6 @@ export class ProductsStore {
         this.activeProduct = data;
       });
       return data;
-    } catch (e) {
-      if (!options?.silent) {
-        runInAction(() => {
-          this.detailError = unknownErrorMessage(e);
-        });
-      }
-      throw e;
     } finally {
       if (!options?.silent) {
         runInAction(() => {
@@ -420,7 +383,6 @@ export class ProductsStore {
   clearActiveProduct = (): void => {
     runInAction(() => {
       this.activeProduct = null;
-      this.detailError = null;
     });
   };
 

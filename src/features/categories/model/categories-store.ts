@@ -7,17 +7,14 @@ import type {
   CategoryCreatePayload,
   CategoryUpdatePayload,
 } from "@/features/categories/model/category.types";
-import { unknownErrorMessage } from "@/utils/unknown-error-message";
 
 export class CategoriesStore {
   categories: Category[] = [];
   activeCategory: Category | null = null;
 
   listLoading = false;
-  listError: string | null = null;
 
   detailLoading = false;
-  detailError: string | null = null;
 
   saveLoading = false;
   deleteLoadingId: number | null = null;
@@ -32,7 +29,6 @@ export class CategoriesStore {
     if (!silent) {
       runInAction(() => {
         this.listLoading = true;
-        this.listError = null;
       });
     }
 
@@ -41,9 +37,9 @@ export class CategoriesStore {
       runInAction(() => {
         this.categories = data;
       });
-    } catch (e) {
+    } catch {
       runInAction(() => {
-        this.listError = unknownErrorMessage(e);
+        this.categories = [];
       });
     } finally {
       if (!silent) {
@@ -63,7 +59,6 @@ export class CategoriesStore {
     if (!silent) {
       runInAction(() => {
         this.detailLoading = true;
-        this.detailError = null;
       });
     }
 
@@ -72,9 +67,9 @@ export class CategoriesStore {
       runInAction(() => {
         this.activeCategory = data;
       });
-    } catch (e) {
+    } catch {
       runInAction(() => {
-        this.detailError = unknownErrorMessage(e);
+        this.activeCategory = null;
       });
     } finally {
       if (!silent) {

@@ -50,7 +50,6 @@ export const useInstagramPageController = () => {
     selectMediaFilter: (filter: InstagramMediaFilter) =>
       store.setMediaFilter(filter),
     openPostDetails,
-    loadPreviousMediaPage: () => void store.loadPreviousMediaPage(),
     loadNextMediaPage: () => void store.loadNextMediaPage(),
   };
 };

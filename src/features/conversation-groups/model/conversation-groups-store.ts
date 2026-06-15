@@ -1,7 +1,6 @@
 import { makeAutoObservable, runInAction } from "mobx";
 
 import { conversationGroupsApi } from "@/features/conversation-groups/api/conversation-groups-api";
-import { unknownErrorMessage } from "@/utils/unknown-error-message";
 
 import type {
   ConversationGroup,
@@ -11,7 +10,6 @@ import type {
 export class ConversationGroupsStore {
   groups: ConversationGroup[] = [];
   listLoading = false;
-  listError: string | null = null;
 
   saveLoading = false;
   deleteLoadingId: number | null = null;
@@ -34,7 +32,6 @@ export class ConversationGroupsStore {
     if (!silent) {
       runInAction(() => {
         this.listLoading = true;
-        this.listError = null;
       });
     }
 
@@ -43,9 +40,9 @@ export class ConversationGroupsStore {
       runInAction(() => {
         this.groups = items;
       });
-    } catch (e) {
+    } catch {
       runInAction(() => {
-        this.listError = unknownErrorMessage(e);
+        this.groups = [];
       });
     } finally {
       if (!silent) {

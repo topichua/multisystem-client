@@ -1,4 +1,4 @@
-import { makeAutoObservable, runInAction } from "mobx";
+import { makeAutoObservable } from "mobx";
 import { io, type Socket } from "socket.io-client";
 
 import type {
@@ -8,8 +8,6 @@ import type {
 } from "@/features/conversations/realtime/conversations-realtime.types";
 
 export class ConversationsSocketStore {
-  connected = false;
-
   private socket: Socket | null = null;
   private currentJwt: string | null = null;
   private connectOptions: ConversationsRealtimeConnectOptions = {};
@@ -18,10 +16,6 @@ export class ConversationsSocketStore {
 
   constructor() {
     makeAutoObservable(this);
-  }
-
-  get subscribedConversationIdsSnapshot(): number[] {
-    return [...this.subscribedConversationIds];
   }
 
   connect = (
@@ -57,10 +51,6 @@ export class ConversationsSocketStore {
     this.currentJwt = null;
     this.connectOptions = {};
     this.disconnectSocketOnly();
-
-    runInAction(() => {
-      this.connected = false;
-    });
   };
 
   subscribe = (conversationId: number): void => {
@@ -121,16 +111,7 @@ export class ConversationsSocketStore {
     this.socket.off("error");
 
     this.socket.on("connect", () => {
-      runInAction(() => {
-        this.connected = true;
-      });
       this.resubscribeAll();
-    });
-
-    this.socket.on("disconnect", () => {
-      runInAction(() => {
-        this.connected = false;
-      });
     });
 
     this.socket.on(

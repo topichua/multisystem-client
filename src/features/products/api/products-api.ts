@@ -161,21 +161,6 @@ export const productsApi = {
     return normalizeCatalogVariantsList(data);
   },
 
-  listVariants: async (
-    params: CatalogVariantsListQueryParams,
-  ): Promise<CatalogVariantsListResponse> => {
-    const keyword = params.keyword.trim();
-    const { data } = await apiClient.get<unknown>(`${basePath}/variants`, {
-      params: {
-        keyword,
-        page: params.page ?? 1,
-        pageSize: params.pageSize ?? 50,
-      },
-    });
-
-    return normalizeCatalogVariantsList(data);
-  },
-
   list: async (
     params: ProductsListQueryParams,
   ): Promise<ProductsListResponse> => {

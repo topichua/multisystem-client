@@ -9,7 +9,6 @@ import type {
   MessagesListResponseBody,
   SendMessageApiResponse,
   SendMessagePayload,
-  SyncConversationsPayload,
 } from "@/features/conversations/model/types";
 
 const basePath = "/conversations";
@@ -117,23 +116,6 @@ export const conversationsApi = {
     });
 
     return data.items;
-  },
-
-  sync: async (payload?: SyncConversationsPayload) => {
-    const { data } = await apiClient.post<unknown>(
-      `${basePath}/sync`,
-      payload ?? {},
-    );
-
-    return data;
-  },
-
-  getById: async (conversationId: string) => {
-    const { data } = await apiClient.get<Conversation>(
-      `${basePath}/${conversationId}`,
-    );
-
-    return data;
   },
 
   update: async (

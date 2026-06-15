@@ -51,9 +51,6 @@
     "unlinkProductSuccess": "Товар відв'язано від допису",
     "unlinkProductFailed": "Не вдалося відв'язати товар від допису",
     "unlinkProductAria": "Відв'язати товар від допису",
-    "previousPage": "Назад",
-    "nextPage": "Далі",
-    "pageLabel": "Сторінка {{page}}",
     "filters": {
       "all": "Усі дописи",
       "withoutProduct": "Без товару",

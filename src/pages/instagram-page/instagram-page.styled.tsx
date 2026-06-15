@@ -376,3 +376,13 @@ export const PaginationRow = styled.div`
   gap: 12px;
   margin-top: 24px;
 `;
+
+export const LoadMoreSentinel = styled.div`
+  width: 100%;
+  min-height: 1px;
+`;
+
+export const LoadMoreState = styled(CenteredState)`
+  min-height: 72px;
+  margin: 48px 0;
+`;

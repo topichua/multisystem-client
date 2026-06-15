@@ -1,14 +1,11 @@
 import { makeAutoObservable, runInAction } from "mobx";
 
 import { authApi } from "@/features/auth/api/auth-api";
-import { unknownErrorMessage } from "@/utils/unknown-error-message";
 
 import type { AuthSessionResponse } from "./auth-session.types";
 
 export class UserStore {
   session: AuthSessionResponse | null = null;
-  sessionLoading = false;
-  sessionError: string | null = null;
 
   constructor() {
     makeAutoObservable(this);
@@ -40,35 +37,22 @@ export class UserStore {
     return full || u.email;
   }
 
-  loadAuth = (): Promise<void> => {
-    runInAction(() => {
-      this.sessionLoading = true;
-      this.sessionError = null;
-    });
-
-    return authApi
+  loadAuth = (): Promise<void> =>
+    authApi
       .getSession()
       .then((data) => {
         runInAction(() => {
           this.session = data;
         });
       })
-      .catch((e) => {
+      .catch(() => {
         runInAction(() => {
-          this.sessionError = unknownErrorMessage(e);
-        });
-      })
-      .finally(() => {
-        runInAction(() => {
-          this.sessionLoading = false;
+          this.session = null;
         });
       })
       .then(() => undefined);
-  };
 
   clearSession() {
     this.session = null;
-    this.sessionError = null;
-    this.sessionLoading = false;
   }
 }

@@ -122,7 +122,6 @@ function replaceOptimisticMessageWithConfirmed(
 export class ConversationStore {
   conversations: Conversation[] = [];
   conversationListGroupFilterIds: number[] = [];
-  activeConversation: Conversation | null = null;
   messagesByConversationId: Record<string, ConversationMessage[]> = {};
   messagesPagingByConversationId: Record<string, MessagesPaging | undefined> =
     {};
@@ -130,15 +129,9 @@ export class ConversationStore {
   listLoading = false;
   listError: string | null = null;
 
-  detailLoading = false;
-  detailError: string | null = null;
-
   messagesLoadingConversationId: string | null = null;
   messagesLoadingMoreConversationId: string | null = null;
   messagesError: string | null = null;
-
-  syncLoading = false;
-  syncError: string | null = null;
 
   _messageListMutationGeneration = new Map<string, number>();
   _messagesRequestIdByConversationId = new Map<string, number>();
@@ -152,16 +145,6 @@ export class ConversationStore {
       _messagesRequestIdByConversationId: false,
       _messagesRequestSeq: false,
     });
-  }
-
-  get messagesForActiveConversation(): ConversationMessage[] {
-    if (!this.activeConversation) {
-      return [];
-    }
-
-    return (
-      this.messagesByConversationId[String(this.activeConversation.id)] ?? []
-    );
   }
 
   get sortedConversations(): Conversation[] {
@@ -570,11 +553,6 @@ export class ConversationStore {
       );
     });
   }
-
-  clearActiveConversation = (): void => {
-    this.activeConversation = null;
-    this.detailError = null;
-  };
 
   private matchesListGroupFilter = (conversation: Conversation): boolean => {
     if (this.conversationListGroupFilterIds.length === 0) {

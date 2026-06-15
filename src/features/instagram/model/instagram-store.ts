@@ -26,16 +26,12 @@ export class InstagramStore {
 
   mediaItems: InstagramMediaItem[] = [];
   mediaPaging: InstagramMediaPaging | null = null;
-  mediaPageIndex = 1;
   mediaLoading = false;
   mediaLoaded = false;
   mediaError: string | null = null;
 
   productReferenceMediaIds: string[] = [];
   productIdsByMediaId = new Map<string, string[]>();
-  productVariantIdsByMediaId = new Map<string, string[]>();
-  productReferencesLoading = false;
-  productReferencesLoaded = false;
   productReferencesError: string | null = null;
 
   selectedPostDetails: InstagramPostDetails | null = null;
@@ -95,24 +91,15 @@ export class InstagramStore {
     }
   }
 
-  get nextMediaCursor(): string | undefined {
-    return getInstagramMediaPagingCursor(this.mediaPaging, "next");
-  }
-
-  get previousMediaCursor(): string | undefined {
-    return getInstagramMediaPagingCursor(this.mediaPaging, "previous");
-  }
-
   get canLoadNextMediaPage(): boolean {
-    return this.mediaPaging?.has_next !== false && this.nextMediaCursor != null;
+    return (
+      this.mediaPaging?.has_next !== false &&
+      getInstagramMediaPagingCursor(this.mediaPaging, "next") != null
+    );
   }
 
-  get canLoadPreviousMediaPage(): boolean {
-    return (
-      this.mediaPaging?.has_previous !== false &&
-      this.previousMediaCursor != null &&
-      this.mediaPageIndex > 1
-    );
+  get mediaLoadingMore(): boolean {
+    return this.mediaLoading && this.mediaLoaded;
   }
 
   isPostReferencesLoading = (postId: string): boolean =>
@@ -173,13 +160,10 @@ export class InstagramStore {
       this.selectedIntegrationId = integration.integration_id;
       this.mediaItems = [];
       this.mediaPaging = null;
-      this.mediaPageIndex = 1;
       this.mediaLoaded = false;
       this.mediaError = null;
       this.productReferenceMediaIds = [];
       this.productIdsByMediaId.clear();
-      this.productVariantIdsByMediaId.clear();
-      this.productReferencesLoaded = false;
       this.productReferencesError = null;
       this.selectedPostDetails = null;
       this.postProductVariantsLoadingId = null;
@@ -248,15 +232,11 @@ export class InstagramStore {
   };
 
   loadNextMediaPage = async (): Promise<void> => {
-    await this.loadSelectedIntegrationMediaPage("next");
-  };
-
-  loadPreviousMediaPage = async (): Promise<void> => {
-    await this.loadSelectedIntegrationMediaPage("previous");
+    await this.loadSelectedIntegrationMediaPage(true);
   };
 
   loadSelectedIntegrationMediaPage = async (
-    direction?: "next" | "previous",
+    loadMore = false,
   ): Promise<void> => {
     const integration = this.selectedIntegration;
 
@@ -264,12 +244,11 @@ export class InstagramStore {
       return;
     }
 
-    const cursor =
-      direction != null
-        ? getInstagramMediaPagingCursor(this.mediaPaging, direction)
-        : undefined;
+    const cursor = loadMore
+      ? getInstagramMediaPagingCursor(this.mediaPaging, "next")
+      : undefined;
 
-    if (direction != null && cursor == null) {
+    if (loadMore && cursor == null) {
       return;
     }
 
@@ -284,8 +263,7 @@ export class InstagramStore {
     try {
       const page = await instagramApi.listMedia({
         integrationId: integration.integration_id,
-        after: direction === "next" ? cursor : undefined,
-        before: direction === "previous" ? cursor : undefined,
+        after: loadMore ? cursor : undefined,
       });
 
       if (
@@ -296,17 +274,19 @@ export class InstagramStore {
       }
 
       runInAction(() => {
-        this.mediaItems = page.posts;
+        if (loadMore) {
+          const existingIds = new Set(this.mediaItems.map((item) => item.id));
+          const nextPosts = page.posts.filter(
+            (item) => !existingIds.has(item.id),
+          );
+
+          this.mediaItems = [...this.mediaItems, ...nextPosts];
+        } else {
+          this.mediaItems = page.posts;
+        }
+
         this.mediaPaging = page.paging;
         this.mediaLoaded = true;
-
-        if (direction === "next") {
-          this.mediaPageIndex += 1;
-        } else if (direction === "previous") {
-          this.mediaPageIndex = Math.max(1, this.mediaPageIndex - 1);
-        } else {
-          this.mediaPageIndex = 1;
-        }
       });
     } catch (e) {
       if (
@@ -318,8 +298,12 @@ export class InstagramStore {
 
       runInAction(() => {
         this.mediaError = unknownErrorMessage(e);
-        this.mediaItems = [];
-        this.mediaPaging = null;
+
+        if (!loadMore) {
+          this.mediaItems = [];
+          this.mediaPaging = null;
+        }
+
         this.mediaLoaded = true;
       });
     } finally {
@@ -342,7 +326,6 @@ export class InstagramStore {
     const selectedIntegrationId = integration.integration_id;
 
     runInAction(() => {
-      this.productReferencesLoading = true;
       this.productReferencesError = null;
     });
 
@@ -363,10 +346,6 @@ export class InstagramStore {
         this.productIdsByMediaId = new Map(
           Object.entries(references.productIdsByMediaId),
         );
-        this.productVariantIdsByMediaId = new Map(
-          Object.entries(references.productVariantIdsByMediaId),
-        );
-        this.productReferencesLoaded = true;
       });
     } catch (e) {
       if (
@@ -380,15 +359,7 @@ export class InstagramStore {
         this.productReferencesError = unknownErrorMessage(e);
         this.productReferenceMediaIds = [];
         this.productIdsByMediaId.clear();
-        this.productVariantIdsByMediaId.clear();
-        this.productReferencesLoaded = true;
       });
-    } finally {
-      if (requestSeq === this.productReferencesRequestSeq) {
-        runInAction(() => {
-          this.productReferencesLoading = false;
-        });
-      }
     }
   };
 

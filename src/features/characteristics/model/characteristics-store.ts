@@ -16,12 +16,10 @@ function sortCharacteristics(items: Characteristic[]): Characteristic[] {
 }
 
 export class CharacteristicsStore {
-  workspaceId: number | null = null;
   items: Characteristic[] = [];
   activeCharacteristic: CharacteristicDetail | null = null;
 
   listLoading = false;
-  listError: string | null = null;
 
   detailLoading = false;
   detailError: string | null = null;
@@ -43,20 +41,16 @@ export class CharacteristicsStore {
     if (!silent) {
       runInAction(() => {
         this.listLoading = true;
-        this.listError = null;
       });
     }
 
     try {
       const result = await characteristicsApi.list();
       runInAction(() => {
-        this.workspaceId = result.workspaceId;
         this.items = sortCharacteristics(result.items ?? []);
-        this.listError = null;
       });
-    } catch (e) {
+    } catch {
       runInAction(() => {
-        this.listError = unknownErrorMessage(e);
         this.items = [];
       });
     } finally {

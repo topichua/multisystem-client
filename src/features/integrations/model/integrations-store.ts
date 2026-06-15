@@ -1,7 +1,6 @@
 import { makeAutoObservable, runInAction } from "mobx";
 
 import { integrationsApi } from "@/features/integrations/api/integrations-api";
-import { unknownErrorMessage } from "@/utils/unknown-error-message";
 
 import type { IntegrationItem, IntegrationType } from "./integration.types";
 
@@ -10,12 +9,12 @@ const INTEGRATION_NOT_AVAILABLE_ERROR = "INTEGRATION_NOT_AVAILABLE";
 export const isIntegrationNotAvailableError = (error: unknown): boolean =>
   error instanceof Error && error.message === INTEGRATION_NOT_AVAILABLE_ERROR;
 
-export const CONNECTABLE_INTEGRATION_TYPES = [
+const CONNECTABLE_INTEGRATION_TYPES = [
   "instagram",
   "telegram",
 ] as const satisfies readonly IntegrationType[];
 
-export type ConnectableIntegrationType =
+type ConnectableIntegrationType =
   (typeof CONNECTABLE_INTEGRATION_TYPES)[number];
 
 export const isConnectableIntegrationType = (
@@ -24,11 +23,9 @@ export const isConnectableIntegrationType = (
   (CONNECTABLE_INTEGRATION_TYPES as readonly string[]).includes(type);
 
 export class IntegrationsStore {
-  workspaceId: number | null = null;
   items: IntegrationItem[] = [];
 
   listLoading = false;
-  listError: string | null = null;
 
   connectLoading = false;
   disconnectLoadingKey: string | null = null;
@@ -51,19 +48,17 @@ export class IntegrationsStore {
     if (!silent) {
       runInAction(() => {
         this.listLoading = true;
-        this.listError = null;
       });
     }
 
     try {
       const data = await integrationsApi.list();
       runInAction(() => {
-        this.workspaceId = data.workspaceId;
         this.items = Array.isArray(data.items) ? data.items : [];
       });
-    } catch (e) {
+    } catch {
       runInAction(() => {
-        this.listError = unknownErrorMessage(e);
+        this.items = [];
       });
     } finally {
       if (!silent) {
