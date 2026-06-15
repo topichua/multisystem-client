@@ -1,23 +1,28 @@
-import { InstagramLogoIcon } from "@phosphor-icons/react";
-import { Drawer, Flex } from "antd";
+import { Drawer, Flex, Tag, Typography } from "antd";
+import { SparkleIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 
-import { InstagramAiPanelConnected } from ".";
+import { InstagramLogoIcon } from "@/components/icons/instagram/instagram-logo-icon";
+import { ProductInstagramAiDrawerContent } from "./product-instagram-ai-drawer-content";
+import type {
+  ProductInstagramAiCategoryOption,
+  ProductInstagramAiFillHandler,
+} from "./product-instagram-ai.types";
 
-type ProductInstagramAiDrawerProps = {
+const { Text, Title } = Typography;
+
+export type ProductInstagramAiDrawerProps = {
   open: boolean;
   onClose: () => void;
-  analyzeBusy: boolean;
-  submitLoading: boolean;
-  onAnalyzeAndFill: () => void | Promise<void>;
+  categoryOptions: readonly ProductInstagramAiCategoryOption[];
+  onFillProductForm?: ProductInstagramAiFillHandler;
 };
 
 export const ProductInstagramAiDrawer = ({
   open,
   onClose,
-  analyzeBusy,
-  submitLoading,
-  onAnalyzeAndFill,
+  categoryOptions,
+  onFillProductForm,
 }: ProductInstagramAiDrawerProps) => {
   const { t } = useTranslation();
 
@@ -25,26 +30,36 @@ export const ProductInstagramAiDrawer = ({
     <Drawer
       title={
         <Flex align="center" gap={12}>
-          <InstagramLogoIcon size={24} />
-          {t("products.instagram.drawerTitle")}
+          <InstagramLogoIcon size={34} />
+          <Flex vertical>
+            <Flex align="center" gap={8}>
+              <Title level={4} style={{ margin: 0 }}>
+                {t("products.instagram.ai.drawerTitle")}
+              </Title>
+              <Tag color="purple" icon={<SparkleIcon size={14} />}>
+                {t("products.instagram.ai.tag")}
+              </Tag>
+            </Flex>
+            <Text type="secondary">
+              {t("products.instagram.ai.drawerSubtitle")}
+            </Text>
+          </Flex>
         </Flex>
       }
       open={open}
       onClose={onClose}
-      size={Math.min(
-        960,
-        typeof window !== "undefined" ? window.innerWidth - 24 : 960,
-      )}
+      size={960}
       destroyOnHidden
       styles={{
-        body: { padding: 16 },
+        body: { padding: "0 24px 36px 24px" },
       }}
     >
-      <InstagramAiPanelConnected
-        analyzeBusy={analyzeBusy}
-        submitLoading={submitLoading}
-        onAnalyzeAndFill={onAnalyzeAndFill}
-      />
+      {open ? (
+        <ProductInstagramAiDrawerContent
+          categoryOptions={categoryOptions}
+          onFillProductForm={onFillProductForm}
+        />
+      ) : null}
     </Drawer>
   );
 };

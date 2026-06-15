@@ -39,4 +39,17 @@ i18n.on("languageChanged", (lng) => {
   }
 });
 
+if (typeof window !== "undefined") {
+  window.addEventListener("storage", (event) => {
+    if (event.key !== LOCALE_STORAGE_KEY || !event.newValue) return;
+
+    const lng = event.newValue === "uk" ? "uk" : "en";
+    const current = i18n.language.startsWith("uk") ? "uk" : "en";
+
+    if (current !== lng) {
+      void i18n.changeLanguage(lng);
+    }
+  });
+}
+
 export default i18n;

@@ -17,7 +17,11 @@ type InstagramIntegrationGateProps = {
 export const InstagramIntegrationGate = observer(
   ({ controller, children }: InstagramIntegrationGateProps) => {
     const { t } = useTranslation();
-    const { store, initialListLoading, selectedIntegration } = controller;
+    const { store } = controller;
+    const selectedIntegration = store.selectedIntegration;
+    const initialListLoading =
+      !store.listLoaded ||
+      (store.listLoading && store.integrations.length === 0);
 
     return (
       <>

@@ -7,6 +7,7 @@ import { useNavigate, useParams } from "react-router";
 import { getApiErrorMessage } from "@/api/get-api-error-message";
 import { pagesMap } from "@/app/router/pages-map";
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
+import * as S from "@/components/layout/form-card.styled";
 import type { OrderStatusUpdatePayload } from "@/features/orders/model/order.types";
 import { useOrdersStore } from "@/features/orders/model/use-orders-store";
 import { formatOrderStatusName } from "@/features/orders/utils/format-order-status-name";
@@ -107,8 +108,8 @@ export const OrderStatusDetailView = observer(() => {
   return (
     <>
       {contextHolder}
-      <PaneDetailLayout.Root>
-        <PaneDetailLayout.Header>
+      <PaneDetailLayout.Root inset data-qa="layout-order-status-detail">
+        <PaneDetailLayout.Header data-qa="layout-order-status-detail-header">
           <Flex justify="space-between" align="flex-start" gap={16} wrap="wrap">
             <Flex vertical gap={4}>
               <Title level={4} style={{ margin: 0 }}>
@@ -130,18 +131,15 @@ export const OrderStatusDetailView = observer(() => {
             </Button>
           </Flex>
         </PaneDetailLayout.Header>
-        <PaneDetailLayout.Body>
-          <Form
-            form={form}
-            layout="vertical"
-            style={{ maxWidth: 480 }}
-            onFinish={handleSave}
-          >
-            <OrderStatusFormFields
-              statuses={store.statuses}
-              editingStatusId={status.id}
-            />
-          </Form>
+        <PaneDetailLayout.Body data-qa="layout-order-status-detail-body">
+          <S.FormCard>
+            <Form form={form} layout="vertical" onFinish={handleSave}>
+              <OrderStatusFormFields
+                statuses={store.statuses}
+                editingStatusId={status.id}
+              />
+            </Form>
+          </S.FormCard>
         </PaneDetailLayout.Body>
       </PaneDetailLayout.Root>
     </>

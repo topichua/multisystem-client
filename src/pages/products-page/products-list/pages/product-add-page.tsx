@@ -41,6 +41,7 @@ export const ProductAddPage = observer(() => {
             variantsProps={controller.variantsProps}
             submitButtonProps={controller.submitButtonProps}
             onSubmit={controller.onSubmit}
+            onInstagramAiFill={controller.onInstagramAiFill}
           />
 
           <ProductVariantImagesModal

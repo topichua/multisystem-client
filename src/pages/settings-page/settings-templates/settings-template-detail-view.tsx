@@ -1,4 +1,4 @@
-import { Alert, Button, Flex, Form, Input, message, Spin } from "antd";
+import { Alert, Button, Form, Input, message, Spin } from "antd";
 import { observer } from "mobx-react-lite";
 import { useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -7,6 +7,7 @@ import { useNavigate, useParams } from "react-router";
 import { getApiErrorMessage } from "@/api/get-api-error-message";
 import { getSettingsTemplatePath, pagesMap } from "@/app/router/pages-map";
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
+import * as S from "@/components/layout/form-card.styled";
 import { useMessageTemplatesStore } from "@/features/message-templates/model/use-message-templates-store";
 
 import { getTemplateCharacterCount } from "./settings-templates.utils";
@@ -127,7 +128,7 @@ export const SettingsTemplateDetailView = observer(() => {
   return (
     <>
       {contextHolder}
-      <PaneDetailLayout.Root data-qa="layout-settings-template-detail">
+      <PaneDetailLayout.Root inset data-qa="layout-settings-template-detail">
         <PaneDetailLayout.Header data-qa="layout-settings-template-detail-header">
           <TemplateDetailHeader
             name={template.name}
@@ -138,10 +139,7 @@ export const SettingsTemplateDetailView = observer(() => {
           />
         </PaneDetailLayout.Header>
         <PaneDetailLayout.Body data-qa="layout-settings-template-detail-body">
-          <Flex
-            vertical
-            style={{ maxWidth: 780, margin: "20px auto", width: "100%" }}
-          >
+          <S.FormCard>
             <Form
               form={form}
               layout="vertical"
@@ -166,7 +164,7 @@ export const SettingsTemplateDetailView = observer(() => {
                 <Input.TextArea rows={8} />
               </Form.Item>
             </Form>
-          </Flex>
+          </S.FormCard>
         </PaneDetailLayout.Body>
       </PaneDetailLayout.Root>
     </>

@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { ThemeModeContext } from "@/theme/theme-mode-context";
 import type { ThemeMode, ThemePreference } from "@/theme/theme-mode.types";
+import { useLocalStorageSync } from "@/utils/use-local-storage-sync";
 
 const STORAGE_KEY = "multisale-theme";
 
@@ -57,6 +58,14 @@ export const ThemeModeProvider = ({ children }: { children: ReactNode }) => {
     () => resolveMode(preference, systemIsDark),
     [preference, systemIsDark],
   );
+
+  const onThemeStorageSync = useCallback((newValue: string | null) => {
+    if (newValue === "light" || newValue === "dark" || newValue === "system") {
+      setPreferenceState(newValue);
+    }
+  }, []);
+
+  useLocalStorageSync(STORAGE_KEY, onThemeStorageSync);
 
   const setPreference = useCallback((next: ThemePreference) => {
     setPreferenceState(next);

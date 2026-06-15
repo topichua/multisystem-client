@@ -2,7 +2,7 @@ import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
 import { ArrowLeftIcon, FloppyDiskIcon, PlusIcon } from "@phosphor-icons/react";
 import { Button, Flex, Form } from "antd";
 import type { FormInstance, FormProps } from "antd";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import {
   ProductTypeSection,
   type ProductType,
@@ -21,7 +21,9 @@ import {
   type ProductVariantsSectionProps,
 } from "./sections/product-variants-section";
 import { ProductFormHeader } from "./sections/product-form-header";
+import { ProductInstagramAiDrawer } from "../instagram-ai-panel";
 import type { ProductAddFormValues } from "./product-form.types";
+import type { InstagramPostAiExtractionResponse } from "@/features/instagram/model/instagram.types";
 
 export type ProductFormProps = {
   form: FormInstance<ProductAddFormValues>;
@@ -70,6 +72,9 @@ export type ProductFormProps = {
 
   // Submit handler
   onSubmit: (values: ProductAddFormValues) => Promise<void>;
+  onInstagramAiFill: (
+    extraction: InstagramPostAiExtractionResponse,
+  ) => Promise<void>;
 };
 
 export const ProductForm = ({
@@ -89,7 +94,26 @@ export const ProductForm = ({
   variantsProps,
   submitButtonProps,
   onSubmit,
+  onInstagramAiFill,
 }: ProductFormProps) => {
+  const [instagramAiDrawerOpen, setInstagramAiDrawerOpen] = useState(false);
+
+  const openInstagramAiDrawer = useCallback(() => {
+    setInstagramAiDrawerOpen(true);
+  }, []);
+
+  const closeInstagramAiDrawer = useCallback(() => {
+    setInstagramAiDrawerOpen(false);
+  }, []);
+
+  const handleInstagramAiFill = useCallback(
+    async (extraction: InstagramPostAiExtractionResponse) => {
+      await onInstagramAiFill(extraction);
+      closeInstagramAiDrawer();
+    },
+    [closeInstagramAiDrawer, onInstagramAiFill],
+  );
+
   const handleFinishFailed = useCallback<
     NonNullable<FormProps<ProductAddFormValues>["onFinishFailed"]>
   >(
@@ -111,109 +135,128 @@ export const ProductForm = ({
   );
 
   return (
-    <PaneDetailLayout.Root inset>
-      <PaneDetailLayout.Header>
-        <Button
-          type="text"
-          icon={<ArrowLeftIcon size={20} />}
-          onClick={onBack}
-          style={{ alignSelf: "flex-start", paddingInlineStart: 0 }}
-        >
-          {backLabel}
-        </Button>
-      </PaneDetailLayout.Header>
+    <>
+      <PaneDetailLayout.Root inset>
+        <PaneDetailLayout.Header>
+          <Button
+            type="text"
+            icon={<ArrowLeftIcon size={20} />}
+            onClick={onBack}
+            style={{ alignSelf: "flex-start", paddingInlineStart: 0 }}
+          >
+            {backLabel}
+          </Button>
+        </PaneDetailLayout.Header>
 
-      <PaneDetailLayout.Body>
-        <Form
-          form={form}
-          layout="vertical"
-          initialValues={initialValues}
-          onFinish={onSubmit}
-          onFinishFailed={handleFinishFailed}
-          style={{ marginBottom: 50 }}
-        >
-          <Flex vertical gap={16} style={{ maxWidth: 1100, margin: "0 auto" }}>
-            <ProductFormHeader title={title} subtitle={subtitle} />
-
-            <Flex vertical gap={16}>
-              <ProductTypeSection
-                value={productType}
-                onChange={onProductTypeChange}
+        <PaneDetailLayout.Body>
+          <Form
+            form={form}
+            layout="vertical"
+            initialValues={initialValues}
+            onFinish={onSubmit}
+            onFinishFailed={handleFinishFailed}
+            style={{ marginBottom: 50 }}
+          >
+            <Flex
+              vertical
+              gap={16}
+              style={{ maxWidth: 1100, margin: "0 auto" }}
+            >
+              <ProductFormHeader
+                title={title}
+                subtitle={subtitle}
+                onInstagramAiClick={openInstagramAiDrawer}
               />
 
-              <ProductMainInfoSection
-                categoryOptions={categoryOptions}
-                requiredMessage={requiredMessage}
-                labels={labels}
-              />
-
-              <ProductMediaSection
-                uploadedProductMedia={mediaProps.uploadedProductMedia}
-                productMediaUploadingCount={
-                  mediaProps.productMediaUploadingCount
-                }
-                deletingProductMediaId={mediaProps.deletingProductMediaId}
-                onBeforeUpload={mediaProps.onBeforeUpload}
-                onUpload={mediaProps.onUpload}
-                onDelete={mediaProps.onDelete}
-                onReorder={mediaProps.onReorder}
-                texts={mediaProps.texts}
-              />
-
-              {productType === "single" ? (
-                <SingleProductCharacteristicsSection
-                  form={form}
-                  watchedSingleCharacteristics={
-                    singleCharacteristicsProps.watchedSingleCharacteristics
-                  }
-                  variantCustomFields={
-                    singleCharacteristicsProps.variantCustomFields
-                  }
-                  isVariantCustomFieldsLoading={
-                    singleCharacteristicsProps.isVariantCustomFieldsLoading
-                  }
-                  getCharacteristicValueOptions={
-                    singleCharacteristicsProps.getCharacteristicValueOptions
-                  }
+              <Flex vertical gap={16}>
+                <ProductTypeSection
+                  value={productType}
+                  onChange={onProductTypeChange}
                 />
-              ) : null}
 
-              {productType === "variants" ? (
-                <ProductVariantsSection
-                  productVariants={variantsProps.productVariants}
-                  variantTableColumns={variantsProps.variantTableColumns}
-                  watchedCharacteristics={variantsProps.watchedCharacteristics}
-                  variantCustomFields={variantsProps.variantCustomFields}
-                  isVariantCustomFieldsLoading={
-                    variantsProps.isVariantCustomFieldsLoading
-                  }
-                  getCharacteristicValueOptions={
-                    variantsProps.getCharacteristicValueOptions
-                  }
-                  onAddManualVariant={variantsProps.onAddManualVariant}
+                <ProductMainInfoSection
+                  categoryOptions={categoryOptions}
+                  requiredMessage={requiredMessage}
+                  labels={labels}
                 />
-              ) : null}
 
-              <Button
-                type="primary"
-                htmlType="submit"
-                loading={submitButtonProps.loading}
-                disabled={submitButtonProps.disabled}
-                icon={
-                  submitButtonProps.icon === "save" ? (
-                    <FloppyDiskIcon size={18} />
-                  ) : (
-                    <PlusIcon size={18} />
-                  )
-                }
-                size="large"
-              >
-                {submitButtonProps.label}
-              </Button>
+                <ProductMediaSection
+                  uploadedProductMedia={mediaProps.uploadedProductMedia}
+                  productMediaUploadingCount={
+                    mediaProps.productMediaUploadingCount
+                  }
+                  deletingProductMediaId={mediaProps.deletingProductMediaId}
+                  onBeforeUpload={mediaProps.onBeforeUpload}
+                  onUpload={mediaProps.onUpload}
+                  onDelete={mediaProps.onDelete}
+                  onReorder={mediaProps.onReorder}
+                  texts={mediaProps.texts}
+                />
+
+                {productType === "single" ? (
+                  <SingleProductCharacteristicsSection
+                    form={form}
+                    watchedSingleCharacteristics={
+                      singleCharacteristicsProps.watchedSingleCharacteristics
+                    }
+                    variantCustomFields={
+                      singleCharacteristicsProps.variantCustomFields
+                    }
+                    isVariantCustomFieldsLoading={
+                      singleCharacteristicsProps.isVariantCustomFieldsLoading
+                    }
+                    getCharacteristicValueOptions={
+                      singleCharacteristicsProps.getCharacteristicValueOptions
+                    }
+                  />
+                ) : null}
+
+                {productType === "variants" ? (
+                  <ProductVariantsSection
+                    productVariants={variantsProps.productVariants}
+                    variantTableColumns={variantsProps.variantTableColumns}
+                    watchedCharacteristics={
+                      variantsProps.watchedCharacteristics
+                    }
+                    variantCustomFields={variantsProps.variantCustomFields}
+                    isVariantCustomFieldsLoading={
+                      variantsProps.isVariantCustomFieldsLoading
+                    }
+                    getCharacteristicValueOptions={
+                      variantsProps.getCharacteristicValueOptions
+                    }
+                    onAddManualVariant={variantsProps.onAddManualVariant}
+                  />
+                ) : null}
+
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  loading={submitButtonProps.loading}
+                  disabled={submitButtonProps.disabled}
+                  icon={
+                    submitButtonProps.icon === "save" ? (
+                      <FloppyDiskIcon size={18} />
+                    ) : (
+                      <PlusIcon size={18} />
+                    )
+                  }
+                  size="large"
+                >
+                  {submitButtonProps.label}
+                </Button>
+              </Flex>
             </Flex>
-          </Flex>
-        </Form>
-      </PaneDetailLayout.Body>
-    </PaneDetailLayout.Root>
+          </Form>
+        </PaneDetailLayout.Body>
+      </PaneDetailLayout.Root>
+
+      <ProductInstagramAiDrawer
+        open={instagramAiDrawerOpen}
+        onClose={closeInstagramAiDrawer}
+        categoryOptions={categoryOptions}
+        onFillProductForm={handleInstagramAiFill}
+      />
+    </>
   );
 };

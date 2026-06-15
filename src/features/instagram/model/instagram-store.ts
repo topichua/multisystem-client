@@ -11,6 +11,7 @@ import type {
   InstagramMediaFilter,
   InstagramMediaItem,
   InstagramMediaPaging,
+  InstagramPostAiExtractionResponse,
   InstagramPostDetails,
   InstagramPostProductVariantsResponse,
 } from "./instagram.types";
@@ -40,6 +41,9 @@ export class InstagramStore {
   selectedPostDetails: InstagramPostDetails | null = null;
   postProductVariantsLoadingId: string | null = null;
   postProductVariantsError: string | null = null;
+  postAiExtractionLoadingId: string | null = null;
+  postAiExtractionError: string | null = null;
+  postAiExtractionResult: InstagramPostAiExtractionResponse | null = null;
   linkProductLoading = false;
   unlinkProductReferenceId: InstagramIntegrationId | null = null;
 
@@ -421,6 +425,55 @@ export class InstagramStore {
       runInAction(() => {
         if (this.postProductVariantsLoadingId === postId) {
           this.postProductVariantsLoadingId = null;
+        }
+      });
+    }
+  };
+
+  extractPostWithAi = async (
+    postId: string,
+  ): Promise<InstagramPostAiExtractionResponse | null> => {
+    const integration = this.selectedIntegration;
+
+    if (!integration) {
+      const error = "Instagram integration is not selected";
+
+      runInAction(() => {
+        this.postAiExtractionError = error;
+      });
+
+      return null;
+    }
+
+    runInAction(() => {
+      this.postAiExtractionLoadingId = postId;
+      this.postAiExtractionError = null;
+      this.postAiExtractionResult = null;
+    });
+
+    try {
+      const response = await instagramApi.getPostAiExtraction({
+        postId,
+        integrationId: integration.integration_id,
+      });
+
+      runInAction(() => {
+        this.postAiExtractionResult = response;
+      });
+
+      return response;
+    } catch (e) {
+      const error = unknownErrorMessage(e);
+
+      runInAction(() => {
+        this.postAiExtractionError = error;
+      });
+
+      return null;
+    } finally {
+      runInAction(() => {
+        if (this.postAiExtractionLoadingId === postId) {
+          this.postAiExtractionLoadingId = null;
         }
       });
     }

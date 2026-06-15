@@ -1,16 +1,6 @@
 import { Avatar as AntdAvatar } from "antd";
 import styled from "styled-components";
 
-export const FormCard = styled.div`
-  box-sizing: border-box;
-  max-width: 960px;
-  padding: 24px;
-  border: 1px solid ${(props) => props.theme.colors.functional.border.cardBase};
-  border-radius: ${(props) => props.theme.radius.semiLarge};
-  background: ${(props) => props.theme.colors.functional.background.elevated};
-  margin: 0 auto;
-`;
-
 export const ProfileRow = styled.div`
   display: flex;
   align-items: center;
@@ -54,12 +44,6 @@ export const ProfileSubtitle = styled.span`
   color: ${(props) => props.theme.colors.functional.text.subdued};
   font-size: ${(props) => props.theme.fontSize.small};
   line-height: 1.35;
-`;
-
-export const FormDivider = styled.hr`
-  margin: 24px 0;
-  border: 0;
-  border-top: 1px solid ${(props) => props.theme.colors.functional.border.split};
 `;
 
 export const FormGrid = styled.div`

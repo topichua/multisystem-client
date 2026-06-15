@@ -4,6 +4,8 @@ import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
 
+import type { InstagramPostAiExtractionResponse } from "@/features/instagram/model/instagram.types";
+
 import {
   defaultCreateValues,
   type ProductAddFormValues,
@@ -25,6 +27,7 @@ import {
   type ProductVariantImagesModalControllerProps,
 } from "./use-product-variant-images-controller";
 import { useProductVariantsController } from "./use-product-variants-controller";
+import { useInstagramAiProductFillController } from "./use-instagram-ai-product-fill-controller";
 
 export type ProductAddPageControllerReturn = {
   contextHolder: React.ReactElement;
@@ -59,6 +62,9 @@ export type ProductAddPageControllerReturn = {
     icon: "create" | "save";
   };
   variantImagesModalProps: ProductVariantImagesModalControllerProps;
+  onInstagramAiFill: (
+    extraction: InstagramPostAiExtractionResponse,
+  ) => Promise<void>;
   onSubmit: (values: ProductAddFormValues) => Promise<void>;
 };
 
@@ -159,6 +165,20 @@ export const useProductAddPageController =
       productsStore,
     });
 
+    const {
+      isApplyingInstagramAiExtraction,
+      onInstagramAiFill: handleInstagramAiFill,
+    } = useInstagramAiProductFillController({
+      categoryOptions,
+      form,
+      loadVariantCustomFields,
+      messageApi,
+      productsStore,
+      setProductMedia,
+      uploadedProductMedia,
+      variantsController,
+    });
+
     useEffect(() => {
       void loadVariantCustomFields();
     }, [loadVariantCustomFields]);
@@ -234,6 +254,7 @@ export const useProductAddPageController =
         loading: isSavingProduct,
         disabled:
           isSavingProduct ||
+          isApplyingInstagramAiExtraction ||
           productMediaUploadingCount > 0 ||
           (isEditMode && productsStore.detailLoading),
         label: t(
@@ -242,6 +263,7 @@ export const useProductAddPageController =
         icon: isEditMode ? "save" : "create",
       },
       variantImagesModalProps,
+      onInstagramAiFill: handleInstagramAiFill,
       onSubmit,
     };
   };

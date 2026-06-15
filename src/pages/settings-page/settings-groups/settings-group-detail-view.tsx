@@ -19,6 +19,7 @@ import type { ConversationGroupWritePayload } from "@/features/conversation-grou
 import { useConversationGroupsStore } from "@/features/conversation-groups/model/use-conversation-groups-store";
 
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
+import * as S from "@/components/layout/form-card.styled";
 
 import { GroupFormFields, type GroupFormValues } from "./group-form-fields";
 
@@ -134,8 +135,8 @@ export const SettingsGroupDetailView = observer(() => {
   return (
     <>
       {contextHolder}
-      <PaneDetailLayout.Root>
-        <PaneDetailLayout.Header>
+      <PaneDetailLayout.Root inset data-qa="layout-settings-group-detail">
+        <PaneDetailLayout.Header data-qa="layout-settings-group-detail-header">
           <Flex justify="space-between" align="flex-start" gap={16} wrap="wrap">
             <Flex vertical gap={4}>
               <Title level={4} style={{ margin: 0 }}>
@@ -164,15 +165,15 @@ export const SettingsGroupDetailView = observer(() => {
             </Flex>
           </Flex>
         </PaneDetailLayout.Header>
-        <PaneDetailLayout.Body>
-          <Form
-            form={form}
-            layout="vertical"
-            style={{ maxWidth: 480 }}
-            onFinish={handleSave}
-          >
-            <GroupFormFields groups={store.groups} editingGroupId={group.id} />
-          </Form>
+        <PaneDetailLayout.Body data-qa="layout-settings-group-detail-body">
+          <S.FormCard>
+            <Form form={form} layout="vertical" onFinish={handleSave}>
+              <GroupFormFields
+                groups={store.groups}
+                editingGroupId={group.id}
+              />
+            </Form>
+          </S.FormCard>
         </PaneDetailLayout.Body>
       </PaneDetailLayout.Root>
     </>

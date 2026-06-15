@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
 
 import { ClientPhoneFormInput } from "@/components/client-phone-form-input";
+import { FormCard, FormDivider } from "@/components/layout/form-card.styled";
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
 import { PaneSectionHint } from "@/components/layout/pane-frame";
 import type { AuthUserRole } from "@/features/auth/model/auth-session.types";
@@ -92,7 +93,7 @@ export const SettingsUserView = observer(() => {
         </PaneSectionHint>
       </PaneDetailLayout.Header>
       <PaneDetailLayout.Body data-qa="layout-settings-user-body">
-        <S.FormCard>
+        <FormCard>
           <S.ProfileRow>
             <S.ProfileIdentity>
               <S.ProfileAvatar
@@ -111,7 +112,7 @@ export const SettingsUserView = observer(() => {
             <Button>{t("userSettings.changePhoto")}</Button>
           </S.ProfileRow>
 
-          <S.FormDivider />
+          <FormDivider />
 
           <Form form={form} layout="vertical" requiredMark={false}>
             <S.FormGrid>
@@ -133,12 +134,12 @@ export const SettingsUserView = observer(() => {
             </S.FormGrid>
           </Form>
 
-          <S.FormDivider />
+          <FormDivider />
 
           <S.FormFooter>
             <Button type="primary">{t("userSettings.saveChanges")}</Button>
           </S.FormFooter>
-        </S.FormCard>
+        </FormCard>
       </PaneDetailLayout.Body>
     </PaneDetailLayout.Root>
   );

@@ -8,6 +8,7 @@ import type {
   InstagramIntegration,
   InstagramIntegrationId,
   InstagramMediaPage,
+  InstagramPostAiExtractionResponse,
   InstagramPostProductVariantsResponse,
   InstagramProductReferences,
 } from "@/features/instagram/model/instagram.types";
@@ -23,6 +24,11 @@ type ListMediaParams = {
 };
 
 type GetPostProductVariantsParams = {
+  postId: string;
+  integrationId: InstagramIntegrationId;
+};
+
+type GetPostAiExtractionParams = {
   postId: string;
   integrationId: InstagramIntegrationId;
 };
@@ -73,6 +79,22 @@ export const instagramApi = {
   }: GetPostProductVariantsParams): Promise<InstagramPostProductVariantsResponse> => {
     const { data } = await apiClient.get<InstagramPostProductVariantsResponse>(
       `${basePath}/posts/${encodeURIComponent(postId)}/product-variants`,
+      {
+        params: {
+          integrationId,
+        },
+      },
+    );
+
+    return data;
+  },
+
+  getPostAiExtraction: async ({
+    postId,
+    integrationId,
+  }: GetPostAiExtractionParams): Promise<InstagramPostAiExtractionResponse> => {
+    const { data } = await apiClient.get<InstagramPostAiExtractionResponse>(
+      `${basePath}/posts/${encodeURIComponent(postId)}/ai-extraction`,
       {
         params: {
           integrationId,

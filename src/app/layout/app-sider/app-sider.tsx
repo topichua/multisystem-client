@@ -19,6 +19,7 @@ import {
   writeStoredAppSiderExpanded,
 } from "./app-sider-expanded-storage";
 import * as S from "./app-sider.styled";
+import { useLocalStorageSync } from "@/utils/use-local-storage-sync";
 
 const { Text } = Typography;
 
@@ -143,6 +144,11 @@ export const AppSider = observer(() => {
 
     openSider();
   };
+
+  useLocalStorageSync("multisale.appSiderExpanded", (newValue) => {
+    if (newValue === "true") setIsExpanded(true);
+    if (newValue === "false") setIsExpanded(false);
+  });
 
   const handleBrandKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key !== "Enter" && event.key !== " ") {

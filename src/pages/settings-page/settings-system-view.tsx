@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 
 import { getApiErrorMessage } from "@/api/get-api-error-message";
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
+import { PaneSectionHint } from "@/components/layout/pane-frame";
 import {
   WORKSPACE_CURRENCIES,
   type WorkspaceCurrency,
@@ -13,7 +14,9 @@ import { useWorkspaceSettingsStore } from "@/features/workspace-settings/model/u
 import type { ThemePreference } from "@/theme/theme-mode.types";
 import { useThemeMode } from "@/theme/use-theme-mode";
 
-const { Title, Paragraph } = Typography;
+import * as S from "@/components/layout/form-card.styled";
+
+const { Title } = Typography;
 
 export const SettingsSystemView = observer(() => {
   const { t, i18n } = useTranslation();
@@ -46,17 +49,17 @@ export const SettingsSystemView = observer(() => {
   return (
     <>
       {contextHolder}
-      <PaneDetailLayout.Root inset>
-        <PaneDetailLayout.Header>
+      <PaneDetailLayout.Root inset data-qa="layout-settings-system">
+        <PaneDetailLayout.Header data-qa="layout-settings-system-header">
           <Title level={4} style={{ marginTop: 0 }}>
             {t("system.title")}
           </Title>
-          <Paragraph type="secondary" style={{ marginBottom: 0 }}>
+          <PaneSectionHint style={{ marginTop: 0 }}>
             {t("system.sectionHint")}
-          </Paragraph>
+          </PaneSectionHint>
         </PaneDetailLayout.Header>
-        <PaneDetailLayout.Body>
-          <div style={{ maxWidth: 520 }}>
+        <PaneDetailLayout.Body data-qa="layout-settings-system-body">
+          <S.FormCard>
             {workspaceSettingsStore.loadError ? (
               <Alert
                 type="error"
@@ -67,10 +70,8 @@ export const SettingsSystemView = observer(() => {
               />
             ) : null}
 
-            <div style={{ marginBottom: 24 }}>
-              <Paragraph strong style={{ marginBottom: 8 }}>
-                {t("system.currency")}
-              </Paragraph>
+            <S.SettingSection>
+              <S.SettingLabel>{t("system.currency")}</S.SettingLabel>
               <Select<WorkspaceCurrency>
                 value={workspaceSettingsStore.currency ?? undefined}
                 placeholder={t("system.currencyPlaceholder")}
@@ -89,12 +90,12 @@ export const SettingsSystemView = observer(() => {
                 style={{ width: 180 }}
                 onChange={(value) => void handleCurrencyChange(value)}
               />
-            </div>
+            </S.SettingSection>
 
-            <div style={{ marginBottom: 24 }}>
-              <Paragraph strong style={{ marginBottom: 8 }}>
-                {t("system.language")}
-              </Paragraph>
+            <S.FormDivider />
+
+            <S.SettingSection>
+              <S.SettingLabel>{t("system.language")}</S.SettingLabel>
               <Radio.Group
                 value={langValue}
                 onChange={(e) => {
@@ -106,12 +107,12 @@ export const SettingsSystemView = observer(() => {
                 <Radio.Button value="en">{t("system.english")}</Radio.Button>
                 <Radio.Button value="uk">{t("system.ukrainian")}</Radio.Button>
               </Radio.Group>
-            </div>
+            </S.SettingSection>
 
-            <div>
-              <Paragraph strong style={{ marginBottom: 8 }}>
-                {t("system.theme")}
-              </Paragraph>
+            <S.FormDivider />
+
+            <S.SettingSection>
+              <S.SettingLabel>{t("system.theme")}</S.SettingLabel>
               <Radio.Group
                 value={preference}
                 onChange={(e) => {
@@ -126,8 +127,8 @@ export const SettingsSystemView = observer(() => {
                   {t("system.themeAuto")}
                 </Radio.Button>
               </Radio.Group>
-            </div>
-          </div>
+            </S.SettingSection>
+          </S.FormCard>
         </PaneDetailLayout.Body>
       </PaneDetailLayout.Root>
     </>

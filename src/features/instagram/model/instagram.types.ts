@@ -103,6 +103,48 @@ export type InstagramPostProductVariantsResponse = {
   items: InstagramPostProduct[];
 };
 
+export type InstagramPostAiExtractionMedia = {
+  mediaId: string;
+  url: string;
+  type: string;
+};
+
+export type InstagramPostAiExtractionAttribute = {
+  name: string;
+  values: string[];
+};
+
+export type InstagramPostAiExtractionMatchedFieldValue = {
+  optionId?: number;
+  optionName: string;
+};
+
+export type InstagramPostAiExtractionMatchedField = {
+  attributeName: string;
+  id?: number;
+  name?: string;
+  type: string;
+  values: InstagramPostAiExtractionMatchedFieldValue[];
+};
+
+export type InstagramPostAiExtractionData = {
+  productName: string;
+  productDescription: string;
+  price: number | null;
+  brandLabel: string | null;
+  matchedCategoryIds: string[];
+  selectedMediaIds: string[];
+  attributes: InstagramPostAiExtractionAttribute[];
+  matchedFields: InstagramPostAiExtractionMatchedField[];
+};
+
+export type InstagramPostAiExtractionResponse = {
+  generatedAt: string;
+  sourceInstagramPostId: string;
+  media: InstagramPostAiExtractionMedia[];
+  data: InstagramPostAiExtractionData;
+};
+
 export type InstagramPostDetails = {
   post: InstagramMediaItem;
   productVariants: InstagramPostProductVariantsResponse | null;
