@@ -354,7 +354,7 @@ The form uses the catalog children of `integration_grants` to render each grant 
 Each grant is stored in form state under:
 
 ```ts
-integrationGrants[`${integrationType}:${integrationId}`]
+integrationGrants[`${integrationType}:${integrationId}`];
 ```
 
 When `conversations.full_access` is enabled, per-integration controls are disabled because full access ignores per-integration grants.
@@ -628,4 +628,3 @@ The next backend-integrated steps should be:
 3. Start applying those helpers in real UI entry points: sidebar items, page routes, action buttons, editable forms, and conversation or Instagram actions.
 4. Decide the app behavior for forbidden actions: hide, disable, or redirect, and keep that behavior consistent across pages.
 5. Add catalog UI support for `permissionOptionLists` when the backend starts using list-based permissions.
-

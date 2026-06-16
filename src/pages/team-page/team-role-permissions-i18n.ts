@@ -21,10 +21,7 @@ const getPermissionTranslationKeys = (key: string): string[] => {
 
   keys.add(key.replace(/\./g, "_"));
 
-  const snakeKey = key
-    .split(".")
-    .map(toSnakeCaseSegment)
-    .join("_");
+  const snakeKey = key.split(".").map(toSnakeCaseSegment).join("_");
 
   keys.add(snakeKey);
 
