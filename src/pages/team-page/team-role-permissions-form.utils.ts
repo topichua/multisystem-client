@@ -78,6 +78,10 @@ const getNestedReadParentKey = (
 
   const parentReadKey = `${parts.slice(0, -1).join(".")}.read`;
 
+  if (parentReadKey === key) {
+    return undefined;
+  }
+
   return permissionKeys.has(parentReadKey) ? parentReadKey : undefined;
 };
 
