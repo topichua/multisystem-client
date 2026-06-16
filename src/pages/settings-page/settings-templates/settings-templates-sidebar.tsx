@@ -37,14 +37,14 @@ export const SettingsTemplatesSidebar = ({
   return (
     <PaneNavSplitLayout.SubSidebar data-qa="layout-settings-templates-sidebar">
       <PaneSectionHeaderStack data-qa="layout-settings-templates-header">
-        <PaneSectionTitle>{t("templates.title")}</PaneSectionTitle>
+        <PaneSectionTitle>{t('templates.title')}</PaneSectionTitle>
         <Button
           type="primary"
           block
           icon={<PlusIcon />}
           onClick={onCreateClick}
         >
-          {t("templates.createTemplate")}
+          {t('templates.createTemplate')}
         </Button>
       </PaneSectionHeaderStack>
 
@@ -52,9 +52,9 @@ export const SettingsTemplatesSidebar = ({
         {listError ? (
           <Alert
             type="error"
-            message={listError}
+            title={listError}
             showIcon
-            style={{ margin: "0 8px 12px" }}
+            style={{ margin: '0 8px 12px' }}
           />
         ) : null}
         {listLoading && templates.length === 0 ? (
@@ -64,7 +64,7 @@ export const SettingsTemplatesSidebar = ({
             {templates.length === 0 ? (
               <Empty
                 image={Empty.PRESENTED_IMAGE_SIMPLE}
-                description={t("templates.emptyState")}
+                description={t('templates.emptyState')}
               />
             ) : (
               templates.map((template) => {
@@ -75,7 +75,7 @@ export const SettingsTemplatesSidebar = ({
                     key={template.id}
                     type="button"
                     $active={isActive}
-                    aria-current={isActive ? "page" : undefined}
+                    aria-current={isActive ? 'page' : undefined}
                     onClick={() => onTemplateClick(template.id)}
                   >
                     <Flex align="flex-start" gap={12}>

@@ -224,6 +224,104 @@
     "membersTitle": "Team",
     "rolesTitle": "Roles",
     "rolesPlaceholder": "Role management will appear here.",
+    "rolesEmpty": "No roles yet",
+    "invalidRole": "Invalid role",
+    "roleNotFoundTitle": "Role not found",
+    "roleNotFoundDescription": "Select another role from the list.",
+    "backToRoles": "Back to roles",
+    "roleName": "Name",
+    "roleNameRequired": "Enter a role name",
+    "roleSlug": "Slug",
+    "createRole": "Create role",
+    "createRoleTitle": "Create role",
+    "createRoleSubmit": "Create",
+    "roleCreated": "Role created",
+    "roleCreateError": "Failed to create role",
+    "roleSlugGenerationError": "Use at least one letter or number in the role name",
+    "saveRole": "Save changes",
+    "deleteRole": "Delete",
+    "roleDeleteConfirmTitle": "Delete this role?",
+    "roleDeleted": "Role deleted",
+    "roleDeleteError": "Failed to delete role",
+    "roleUpdated": "Role updated",
+    "roleUpdateError": "Failed to update role",
+    "rolesCatalogError": "Failed to load permissions catalog",
+    "rolesPermissionsTitle": "Permissions",
+    "rolesPermissionsSubtitle": "What members with this role can do in the system.",
+    "enableAll": "Enable all",
+    "disableAll": "Disable all",
+    "rolesIntegrationGrantsEmpty": "No connected integrations",
+    "rolesIntegrationGrantsError": "Failed to load integration grants",
+    "permissions": {
+      "integrationGrantFallback": "{{type}} #{{id}}",
+      "modules": {
+        "analytics": "Analytics",
+        "clients": "Clients",
+        "conversations": "Conversations",
+        "orders": "Orders",
+        "products": "Products",
+        "workspace": "Workspace"
+      },
+      "items": {
+        "analytics": {
+          "read": "View analytics"
+        },
+        "clients": {
+          "view_list": "View client list"
+        },
+        "conversations": {
+          "full_access": "Full access to conversations"
+        },
+        "orders": {
+          "read": "View orders",
+          "visibility": "Order visibility",
+          "create": "Create orders",
+          "edit_status": "Change order status",
+          "edit": "Edit orders",
+          "scope": "Visibility"
+        },
+        "products": {
+          "read": "View products",
+          "create_and_edit": "Create and edit products",
+          "custom_fields_management": "Manage characteristics",
+          "category_management": "Manage categories",
+          "ai_import": "AI import from Instagram"
+        },
+        "workspace": {
+          "chat_groups_management": "Manage conversation groups",
+          "templates_management": "Manage message templates",
+          "integrations": "Manage integrations",
+          "roles_management": "Manage roles",
+          "roles": "Manage roles",
+          "members": {
+            "view": "View team members",
+            "invite": "Invite team members",
+            "delete": "Remove team members"
+          }
+        },
+        "read": "Read access",
+        "write": "Write access",
+        "assignResponsibility": "Assign responsibility",
+        "instagramCommentsView": "View Instagram comments",
+        "instagramCommentsWrite": "Reply to Instagram comments"
+      },
+      "optionValues": {
+        "orders": {
+          "visibility": {
+            "all": "All",
+            "mine": "Mine"
+          }
+        },
+        "read": {
+          "all": "All",
+          "mine": "Mine"
+        },
+        "write": {
+          "all": "All",
+          "mine": "Mine"
+        }
+      }
+    },
     "inviteCta": "Invite",
     "placeholder": "Team management will appear here.",
     "menu": {

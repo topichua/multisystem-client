@@ -74,7 +74,7 @@ export const OrderStatusDetailView = observer(() => {
 
   if (!Number.isFinite(idNum)) {
     return (
-      <Alert type="error" message={t("orderStatuses.invalidStatus")} showIcon />
+      <Alert type="error" title={t("orderStatuses.invalidStatus")} showIcon />
     );
   }
 
@@ -86,15 +86,15 @@ export const OrderStatusDetailView = observer(() => {
     return (
       <Alert
         type="warning"
-        message={t("orderStatuses.notFoundTitle")}
-        description={t("orderStatuses.notFoundDescription")}
+        title={t('orderStatuses.notFoundTitle')}
+        description={t('orderStatuses.notFoundDescription')}
         showIcon
         action={
           <Button
             size="small"
             onClick={() => navigate(pagesMap.ordersStatuses)}
           >
-            {t("orderStatuses.backToStatuses")}
+            {t('orderStatuses.backToStatuses')}
           </Button>
         }
       />

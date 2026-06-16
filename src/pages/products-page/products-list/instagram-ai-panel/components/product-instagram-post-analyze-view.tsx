@@ -55,9 +55,9 @@ export const ProductInstagramPostAnalyzeView = ({
         type="text"
         icon={<ArrowLeftIcon size={18} />}
         onClick={onBack}
-        style={{ alignSelf: "flex-start", paddingInlineStart: 0 }}
+        style={{ alignSelf: 'flex-start', paddingInlineStart: 0 }}
       >
-        {t("products.instagram.ai.backToPosts")}
+        {t('products.instagram.ai.backToPosts')}
       </Button>
 
       <ProductInstagramPostMediaPreview post={post} />
@@ -67,7 +67,7 @@ export const ProductInstagramPostAnalyzeView = ({
           <HeartIcon size={18} /> {formatCompactNumber(post.like_count)}
         </Text>
         <Text type="secondary">
-          <ChatCircleIcon size={18} />{" "}
+          <ChatCircleIcon size={18} />{' '}
           {formatCompactNumber(post.comments_count)}
         </Text>
       </Space>
@@ -77,11 +77,11 @@ export const ProductInstagramPostAnalyzeView = ({
           <Space>
             <InstagramLogoIcon size={20} />
             <Text type="secondary" strong>
-              {t("products.instagram.ai.postCaptionTitle")}
+              {t('products.instagram.ai.postCaptionTitle')}
             </Text>
           </Space>
 
-          <Text>{caption || t("products.instagram.noCaption")}</Text>
+          <Text>{caption || t('products.instagram.noCaption')}</Text>
         </Flex>
       </Card>
 
@@ -97,15 +97,15 @@ export const ProductInstagramPostAnalyzeView = ({
           <Flex vertical gap={16}>
             <Flex align="center" gap={12}>
               <Tag color="purple" icon={<SparkleIcon size={14} />}>
-                {t("products.instagram.ai.tag")}
+                {t('products.instagram.ai.tag')}
               </Tag>
 
               <Flex vertical>
                 <Text strong>
-                  {t("products.instagram.ai.analyzeCardTitle")}
+                  {t('products.instagram.ai.analyzeCardTitle')}
                 </Text>
                 <Text type="secondary">
-                  {t("products.instagram.ai.analyzeCardSubtitle")}
+                  {t('products.instagram.ai.analyzeCardSubtitle')}
                 </Text>
               </Flex>
             </Flex>
@@ -118,11 +118,11 @@ export const ProductInstagramPostAnalyzeView = ({
               loading={analyzeLoading}
               onClick={() => onAnalyzePost(post)}
             >
-              {t("products.instagram.ai.analyzePostButton")}
+              {t('products.instagram.ai.analyzePostButton')}
             </Button>
 
             {analyzeError ? (
-              <Alert type="error" showIcon message={analyzeError} />
+              <Alert type="error" showIcon title={analyzeError} />
             ) : null}
           </Flex>
         </Card>

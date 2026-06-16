@@ -52,10 +52,10 @@ export const SettingsSystemView = observer(() => {
       <PaneDetailLayout.Root inset data-qa="layout-settings-system">
         <PaneDetailLayout.Header data-qa="layout-settings-system-header">
           <Title level={4} style={{ marginTop: 0 }}>
-            {t("system.title")}
+            {t('system.title')}
           </Title>
           <PaneSectionHint style={{ marginTop: 0 }}>
-            {t("system.sectionHint")}
+            {t('system.sectionHint')}
           </PaneSectionHint>
         </PaneDetailLayout.Header>
         <PaneDetailLayout.Body data-qa="layout-settings-system-body">
@@ -63,7 +63,7 @@ export const SettingsSystemView = observer(() => {
             {workspaceSettingsStore.loadError ? (
               <Alert
                 type="error"
-                message={t("system.settingsLoadError")}
+                title={t('system.settingsLoadError')}
                 description={workspaceSettingsStore.loadError}
                 showIcon
                 style={{ marginBottom: 24 }}
@@ -71,10 +71,10 @@ export const SettingsSystemView = observer(() => {
             ) : null}
 
             <S.SettingSection>
-              <S.SettingLabel>{t("system.currency")}</S.SettingLabel>
+              <S.SettingLabel>{t('system.currency')}</S.SettingLabel>
               <Select<WorkspaceCurrency>
                 value={workspaceSettingsStore.currency ?? undefined}
-                placeholder={t("system.currencyPlaceholder")}
+                placeholder={t('system.currencyPlaceholder')}
                 loading={
                   workspaceSettingsStore.loadLoading ||
                   workspaceSettingsStore.saveLoading
@@ -95,7 +95,7 @@ export const SettingsSystemView = observer(() => {
             <S.FormDivider />
 
             <S.SettingSection>
-              <S.SettingLabel>{t("system.language")}</S.SettingLabel>
+              <S.SettingLabel>{t('system.language')}</S.SettingLabel>
               <Radio.Group
                 value={langValue}
                 onChange={(e) => {
@@ -104,15 +104,15 @@ export const SettingsSystemView = observer(() => {
                 optionType="button"
                 buttonStyle="solid"
               >
-                <Radio.Button value="en">{t("system.english")}</Radio.Button>
-                <Radio.Button value="uk">{t("system.ukrainian")}</Radio.Button>
+                <Radio.Button value="en">{t('system.english')}</Radio.Button>
+                <Radio.Button value="uk">{t('system.ukrainian')}</Radio.Button>
               </Radio.Group>
             </S.SettingSection>
 
             <S.FormDivider />
 
             <S.SettingSection>
-              <S.SettingLabel>{t("system.theme")}</S.SettingLabel>
+              <S.SettingLabel>{t('system.theme')}</S.SettingLabel>
               <Radio.Group
                 value={preference}
                 onChange={(e) => {
@@ -121,10 +121,10 @@ export const SettingsSystemView = observer(() => {
                 optionType="button"
                 buttonStyle="solid"
               >
-                <Radio.Button value="light">{t("system.light")}</Radio.Button>
-                <Radio.Button value="dark">{t("system.dark")}</Radio.Button>
+                <Radio.Button value="light">{t('system.light')}</Radio.Button>
+                <Radio.Button value="dark">{t('system.dark')}</Radio.Button>
                 <Radio.Button value="system">
-                  {t("system.themeAuto")}
+                  {t('system.themeAuto')}
                 </Radio.Button>
               </Radio.Group>
             </S.SettingSection>

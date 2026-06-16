@@ -32,6 +32,9 @@ export const getSettingsGroupPath = (groupId: string | number) =>
 export const getSettingsTemplatePath = (templateId: string | number) =>
   `${pagesMap.settingsTemplates}/${templateId}`;
 
+export const getTeamRolePath = (roleId: string | number) =>
+  `${pagesMap.teamRoles}/${roleId}`;
+
 export const getOrderStatusPath = (statusId: string | number) =>
   `${pagesMap.ordersStatuses}/${statusId}`;
 

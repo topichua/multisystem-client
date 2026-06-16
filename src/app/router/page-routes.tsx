@@ -39,8 +39,10 @@ import { EmptyConversation } from "@/pages/conversation/empty-conversation";
 import { ConversationDetails } from "@/pages/conversation/conversation-details/conversation-details";
 import { InstagramPage } from "@/pages/instagram-page/instagram-page";
 import { InstagramPostPage } from "@/pages/instagram-page/instagram-post-page";
+import { TeamRoleDetailView } from "@/pages/team-page/team-role-detail-view";
 import { TeamMembersPage } from "@/pages/team-page/team-members-page";
 import { TeamPage } from "@/pages/team-page/team-page";
+import { TeamRolesIndex } from "@/pages/team-page/team-roles-index";
 import { TeamRolesPage } from "@/pages/team-page/team-roles-page";
 
 export const PageRoutes = () => {
@@ -134,7 +136,10 @@ export const PageRoutes = () => {
               element={<Navigate to={pagesMap.teamMembers} replace />}
             />
             <Route path="members" element={<TeamMembersPage />} />
-            <Route path="roles" element={<TeamRolesPage />} />
+            <Route path="roles" element={<TeamRolesPage />}>
+              <Route index element={<TeamRolesIndex />} />
+              <Route path=":roleId" element={<TeamRoleDetailView />} />
+            </Route>
           </Route>
         </Route>
       </Route>

@@ -102,7 +102,7 @@ export const SettingsGroupDetailView = observer(() => {
   }, [group, messageApi, pickNavigateAfterDelete, store, t]);
 
   if (!Number.isFinite(idNum)) {
-    return <Alert type="error" message={t("groups.invalidGroup")} showIcon />;
+    return <Alert type="error" title={t('groups.invalidGroup')} showIcon />;
   }
 
   if (store.listLoading && !group) {
@@ -113,15 +113,15 @@ export const SettingsGroupDetailView = observer(() => {
     return (
       <Alert
         type="warning"
-        message={t("groups.notFoundTitle")}
-        description={t("groups.notFoundDescription")}
+        title={t('groups.notFoundTitle')}
+        description={t('groups.notFoundDescription')}
         showIcon
         action={
           <Button
             size="small"
             onClick={() => navigate(pagesMap.settingsGroups)}
           >
-            {t("groups.backToGroups")}
+            {t('groups.backToGroups')}
           </Button>
         }
       />

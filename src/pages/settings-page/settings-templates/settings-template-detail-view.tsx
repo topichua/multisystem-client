@@ -94,7 +94,7 @@ export const SettingsTemplateDetailView = observer(() => {
 
   if (!Number.isFinite(idNum)) {
     return (
-      <Alert type="error" message={t("templates.invalidTemplate")} showIcon />
+      <Alert type="error" title={t('templates.invalidTemplate')} showIcon />
     );
   }
 

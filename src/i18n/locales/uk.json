@@ -224,6 +224,104 @@
     "membersTitle": "Команда",
     "rolesTitle": "Ролі",
     "rolesPlaceholder": "Тут з'явиться керування ролями.",
+    "rolesEmpty": "Ролей ще немає",
+    "invalidRole": "Некоректна роль",
+    "roleNotFoundTitle": "Роль не знайдено",
+    "roleNotFoundDescription": "Оберіть іншу роль зі списку.",
+    "backToRoles": "Назад до ролей",
+    "roleName": "Назва",
+    "roleNameRequired": "Введіть назву ролі",
+    "roleSlug": "Slug",
+    "createRole": "Створити роль",
+    "createRoleTitle": "Створити роль",
+    "createRoleSubmit": "Створити",
+    "roleCreated": "Роль створено",
+    "roleCreateError": "Не вдалося створити роль",
+    "roleSlugGenerationError": "Використайте в назві ролі хоча б одну літеру або цифру",
+    "saveRole": "Зберегти зміни",
+    "deleteRole": "Видалити",
+    "roleDeleteConfirmTitle": "Видалити цю роль?",
+    "roleDeleted": "Роль видалено",
+    "roleDeleteError": "Не вдалося видалити роль",
+    "roleUpdated": "Роль оновлено",
+    "roleUpdateError": "Не вдалося оновити роль",
+    "rolesCatalogError": "Не вдалося завантажити каталог прав",
+    "rolesPermissionsTitle": "Дозволи",
+    "rolesPermissionsSubtitle": "Що учасники з цією роллю можуть робити в системі.",
+    "enableAll": "Увімкнути всі",
+    "disableAll": "Зняти всі",
+    "rolesIntegrationGrantsEmpty": "Немає підключених інтеграцій",
+    "rolesIntegrationGrantsError": "Не вдалося завантажити гранти інтеграцій",
+    "permissions": {
+      "integrationGrantFallback": "{{type}} #{{id}}",
+      "modules": {
+        "analytics": "Аналітика",
+        "clients": "Клієнти",
+        "conversations": "Розмови",
+        "orders": "Замовлення",
+        "products": "Товари",
+        "workspace": "Робочий простір"
+      },
+      "items": {
+        "analytics": {
+          "read": "Перегляд аналітики"
+        },
+        "clients": {
+          "view_list": "Перегляд списку клієнтів"
+        },
+        "conversations": {
+          "full_access": "Повний доступ до розмов"
+        },
+        "orders": {
+          "read": "Перегляд замовлень",
+          "visibility": "Видимість замовлень",
+          "create": "Створення замовлень",
+          "edit_status": "Зміна статусу замовлення",
+          "edit": "Редагування замовлень",
+          "scope": "Видимість"
+        },
+        "products": {
+          "read": "Перегляд товарів",
+          "create_and_edit": "Створення та редагування товарів",
+          "custom_fields_management": "Керування характеристиками",
+          "category_management": "Керування категоріями",
+          "ai_import": "AI-імпорт з Instagram"
+        },
+        "workspace": {
+          "chat_groups_management": "Керування групами розмов",
+          "templates_management": "Керування шаблонами повідомлень",
+          "integrations": "Керування інтеграціями",
+          "roles_management": "Керування ролями",
+          "roles": "Керування ролями",
+          "members": {
+            "view": "Перегляд учасників команди",
+            "invite": "Запрошення учасників",
+            "delete": "Видалення учасників"
+          }
+        },
+        "read": "Доступ на читання",
+        "write": "Доступ на запис",
+        "assignResponsibility": "Призначати відповідального",
+        "instagramCommentsView": "Перегляд коментарів Instagram",
+        "instagramCommentsWrite": "Відповіді на коментарі Instagram"
+      },
+      "optionValues": {
+        "orders": {
+          "visibility": {
+            "all": "Усі",
+            "mine": "Мої"
+          }
+        },
+        "read": {
+          "all": "Усі",
+          "mine": "Мої"
+        },
+        "write": {
+          "all": "Усі",
+          "mine": "Мої"
+        }
+      }
+    },
     "inviteCta": "Запросити",
     "placeholder": "Тут з'явиться керування командою.",
     "menu": {
