@@ -578,6 +578,47 @@ canReadIntegration(type, id);
 
 Components should use those helpers instead of reading nested permission objects directly.
 
+### Planned Usage Pattern
+
+The intended frontend usage later should look like this:
+
+1. Load `GET /workspace/permissions/me` once at workspace level.
+2. Store the typed response in a dedicated permissions store, separate from role-editing state.
+3. Expose small semantic helpers instead of leaking raw nested objects into page code.
+4. Use those helpers in routing, navigation, page entry checks, and action buttons.
+
+Suggested store surface:
+
+```ts
+type WorkspacePermissionsStore = {
+  permissions: WorkspacePermissionsMe | null;
+  loadMyPermissions(): Promise<void>;
+  canViewProducts(): boolean;
+  canCreateOrders(): boolean;
+  canManageRoles(): boolean;
+  canInviteMembers(): boolean;
+  canReadIntegration(type: string, id: number): boolean;
+};
+```
+
+Component usage should stay simple:
+
+```ts
+const permissions = useWorkspacePermissionsStore();
+
+if (!permissions.canManageRoles()) {
+  return <Navigate to={pagesMap.teamMembers} replace />;
+}
+```
+
+```ts
+<Button disabled={!permissions.canCreateOrders()}>
+  {t("orders.create")}
+</Button>
+```
+
+This keeps permission logic in one place. If the backend response changes, the adaptation happens in the permissions store and helper layer, not across dozens of UI components.
+
 ## Next Steps
 
 The next backend-integrated steps should be:
@@ -587,4 +628,4 @@ The next backend-integrated steps should be:
 3. Start applying those helpers in real UI entry points: sidebar items, page routes, action buttons, editable forms, and conversation or Instagram actions.
 4. Decide the app behavior for forbidden actions: hide, disable, or redirect, and keep that behavior consistent across pages.
 5. Add catalog UI support for `permissionOptionLists` when the backend starts using list-based permissions.
-6. Add focused tests for role payload builders and permission helpers, because most of the risk is in mapping catalog data to API payloads and UI checks.
+
