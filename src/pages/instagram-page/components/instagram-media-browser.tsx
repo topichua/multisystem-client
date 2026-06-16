@@ -103,8 +103,8 @@ export const InstagramMediaBrowser = observer(
                   image={Empty.PRESENTED_IMAGE_SIMPLE}
                   description={
                     store.mediaItems.length === 0
-                      ? t('instagram.noPosts')
-                      : t('instagram.noPostsForFilter')
+                      ? t("instagram.noPosts")
+                      : t("instagram.noPostsForFilter")
                   }
                   style={{ marginTop: 48 }}
                 />

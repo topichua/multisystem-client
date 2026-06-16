@@ -1,5 +1,5 @@
-import { PlusIcon } from '@phosphor-icons/react';
-import type { MenuProps } from 'antd';
+import { PlusIcon } from "@phosphor-icons/react";
+import type { MenuProps } from "antd";
 import {
   Button,
   Empty,
@@ -10,22 +10,22 @@ import {
   Spin,
   Typography,
   message,
-} from 'antd';
-import { observer } from 'mobx-react-lite';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Outlet, useLocation, useNavigate } from 'react-router';
+} from "antd";
+import { observer } from "mobx-react-lite";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Outlet, useLocation, useNavigate } from "react-router";
 
-import { getApiErrorMessage } from '@/api/get-api-error-message';
-import { getTeamRolePath } from '@/app/router/pages-map';
+import { getApiErrorMessage } from "@/api/get-api-error-message";
+import { getTeamRolePath } from "@/app/router/pages-map";
 import {
   PaneScrollRegion,
   PaneSectionHeaderStack,
   PaneSectionTitle,
-} from '@/components/layout/pane-frame';
-import { PaneNavSplitLayout } from '@/components/layout/pane-nav-split-layout';
-import { useWorkspaceRolesStore } from '@/features/workspace-roles/model/use-workspace-roles-store';
-import { slugifyAscii } from '@/utils/slugify';
+} from "@/components/layout/pane-frame";
+import { PaneNavSplitLayout } from "@/components/layout/pane-nav-split-layout";
+import { useWorkspaceRolesStore } from "@/features/workspace-roles/model/use-workspace-roles-store";
+import { slugifyAscii } from "@/utils/slugify";
 
 const { Text } = Typography;
 
@@ -46,7 +46,7 @@ export const TeamRolesPage = observer(() => {
     void store.loadInitialData();
   }, [store]);
 
-  const menuItems: MenuProps['items'] = useMemo(
+  const menuItems: MenuProps["items"] = useMemo(
     () =>
       store.sortedRoles.map((role) => ({
         key: getTeamRolePath(role.id),
@@ -59,14 +59,14 @@ export const TeamRolesPage = observer(() => {
     () =>
       store.roles.some((role) => location.pathname === getTeamRolePath(role.id))
         ? location.pathname
-        : '',
+        : "",
     [location.pathname, store.roles],
   );
 
   const showInitialLoader = store.listLoading && store.roles.length === 0;
 
   const openCreateModal = useCallback(() => {
-    createForm.setFieldsValue({ name: '' });
+    createForm.setFieldsValue({ name: "" });
     setCreateModalOpen(true);
   }, [createForm]);
 
@@ -87,7 +87,7 @@ export const TeamRolesPage = observer(() => {
     const slug = slugifyAscii(name);
 
     if (!slug) {
-      messageApi.error(t('team.roleSlugGenerationError'));
+      messageApi.error(t("team.roleSlugGenerationError"));
       return;
     }
 
@@ -95,12 +95,12 @@ export const TeamRolesPage = observer(() => {
       await store.createRole({
         name,
         slug,
-        permissions: ['orders.read'],
+        permissions: ["orders.read"],
         permissionOptions: {
-          'orders.visibility': 'mine',
+          "orders.visibility": "mine",
         },
       });
-      messageApi.success(t('team.roleCreated'));
+      messageApi.success(t("team.roleCreated"));
       closeCreateModal();
 
       const created = store.roles.find((role) => role.slug === slug);
@@ -108,7 +108,7 @@ export const TeamRolesPage = observer(() => {
         navigate(getTeamRolePath(created.id));
       }
     } catch (e) {
-      messageApi.error(getApiErrorMessage(e, t('team.roleCreateError')));
+      messageApi.error(getApiErrorMessage(e, t("team.roleCreateError")));
     }
   }, [closeCreateModal, createForm, messageApi, navigate, store, t]);
 
@@ -118,18 +118,18 @@ export const TeamRolesPage = observer(() => {
       <PaneNavSplitLayout.Root data-qa="layout-team-roles-shell">
         <PaneNavSplitLayout.SubSidebar data-qa="layout-team-roles-sidebar">
           <PaneSectionHeaderStack data-qa="layout-team-roles-header">
-            <PaneSectionTitle>{t('team.rolesTitle')}</PaneSectionTitle>
+            <PaneSectionTitle>{t("team.rolesTitle")}</PaneSectionTitle>
             <Button
               type="primary"
               icon={<PlusIcon size={16} />}
               onClick={openCreateModal}
             >
-              {t('team.createRole')}
+              {t("team.createRole")}
             </Button>
           </PaneSectionHeaderStack>
           <PaneScrollRegion data-qa="layout-team-roles-nav-scroll">
             {store.listError && (
-              <Text type="danger" style={{ display: 'block', margin: 8 }}>
+              <Text type="danger" style={{ display: "block", margin: 8 }}>
                 {store.listError}
               </Text>
             )}
@@ -142,13 +142,13 @@ export const TeamRolesPage = observer(() => {
                   selectedKeys={selectedKey ? [selectedKey] : []}
                   items={menuItems}
                   onClick={({ key }) => navigate(String(key))}
-                  style={{ borderInlineEnd: 'none' }}
+                  style={{ borderInlineEnd: "none" }}
                 />
               </div>
             ) : (
               <Empty
                 image={Empty.PRESENTED_IMAGE_SIMPLE}
-                description={t('team.rolesEmpty')}
+                description={t("team.rolesEmpty")}
                 style={{ marginTop: 24 }}
               />
             )}
@@ -160,23 +160,23 @@ export const TeamRolesPage = observer(() => {
       </PaneNavSplitLayout.Root>
 
       <Modal
-        title={t('team.createRoleTitle')}
+        title={t("team.createRoleTitle")}
         open={createModalOpen}
         onCancel={closeCreateModal}
         onOk={() => void handleCreateRole()}
         confirmLoading={store.saveLoading}
-        okText={t('team.createRoleSubmit')}
+        okText={t("team.createRoleSubmit")}
         destroyOnHidden
       >
         <Form form={createForm} layout="vertical" style={{ marginTop: 8 }}>
           <Form.Item
             name="name"
-            label={t('team.roleName')}
+            label={t("team.roleName")}
             rules={[
               {
                 required: true,
                 whitespace: true,
-                message: t('team.roleNameRequired'),
+                message: t("team.roleNameRequired"),
               },
             ]}
           >

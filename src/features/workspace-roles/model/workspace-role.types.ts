@@ -1,8 +1,4 @@
-export type WorkspacePermissionOptionValue =
-  | string
-  | number
-  | boolean
-  | null;
+export type WorkspacePermissionOptionValue = string | number | boolean | null;
 
 export type WorkspaceRolePermissionOptions = Record<
   string,
@@ -136,12 +132,7 @@ export type WorkspacePermissionsCatalogOption = {
 };
 
 export type WorkspacePermissionsCatalogItem = {
-  type:
-    | "boolean"
-    | "option"
-    | "group"
-    | "integration_grants"
-    | (string & {});
+  type: "boolean" | "option" | "group" | "integration_grants" | (string & {});
   key: string;
   label?: string;
   description?: string;

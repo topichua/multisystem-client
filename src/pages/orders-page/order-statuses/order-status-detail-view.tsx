@@ -86,15 +86,15 @@ export const OrderStatusDetailView = observer(() => {
     return (
       <Alert
         type="warning"
-        title={t('orderStatuses.notFoundTitle')}
-        description={t('orderStatuses.notFoundDescription')}
+        title={t("orderStatuses.notFoundTitle")}
+        description={t("orderStatuses.notFoundDescription")}
         showIcon
         action={
           <Button
             size="small"
             onClick={() => navigate(pagesMap.ordersStatuses)}
           >
-            {t('orderStatuses.backToStatuses')}
+            {t("orderStatuses.backToStatuses")}
           </Button>
         }
       />

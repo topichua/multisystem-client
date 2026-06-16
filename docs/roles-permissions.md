@@ -44,7 +44,7 @@ The initial role is created with the minimal baseline access:
 ```
 
 ```ts
-workspaceRolesApi.create(payload)
+workspaceRolesApi.create(payload);
 ```
 
 ### `PATCH /workspace/roles/:roleId`
@@ -53,10 +53,7 @@ Updates editable role fields:
 
 ```ts
 {
-  name,
-  permissions,
-  permissionOptions,
-  permissionOptionLists
+  (name, permissions, permissionOptions, permissionOptionLists);
 }
 ```
 
@@ -69,7 +66,7 @@ Deletes a role.
 The role detail header exposes delete UI and then navigates to a neighbor role or back to `/team/roles`:
 
 ```ts
-workspaceRolesApi.delete(roleId)
+workspaceRolesApi.delete(roleId);
 ```
 
 ### `GET /permissions/catalog`
@@ -232,7 +229,7 @@ The `PUT` request body is the grants array itself, not an object wrapper:
       instagramCommentsWrite: true,
     },
   },
-]
+];
 ```
 
 The form uses the catalog children of `integration_grants` to render each grant permission:
@@ -248,12 +245,12 @@ When `conversations.full_access` is enabled, per-integration controls are disabl
 The current implementation uses helper functions in:
 
 ```txt
-src/pages/team-page/team-role-form-utils.ts
+src/features/workspace-roles/utils/workspace-role-form.ts
 ```
 
 ### Initial Form Values
 
-`toTeamRoleFormValues(role, schema)`:
+`toWorkspaceRoleFormValues(role, schema)`:
 
 1. Collects known permission keys from catalog boolean items stored in `permissions`.
 2. Sets checkbox values from `role.permissions`.
@@ -274,10 +271,7 @@ src/pages/team-page/team-role-form-utils.ts
 
 ```ts
 {
-  name,
-  permissions,
-  permissionOptions,
-  permissionOptionLists
+  (name, permissions, permissionOptions, permissionOptionLists);
 }
 ```
 
@@ -293,15 +287,18 @@ src/features/workspace-roles/model/workspace-role.types.ts
 src/features/workspace-roles/model/workspace-roles-store.ts
 src/features/workspace-roles/model/workspace-roles-provider.tsx
 src/features/workspace-roles/model/use-workspace-roles-store.ts
+src/features/workspace-roles/utils/workspace-role-form.ts
 ```
 
 Role page:
 
 ```txt
 src/pages/team-page/team-roles-page.tsx
+src/pages/team-page/team-roles-index.tsx
 src/pages/team-page/team-role-detail-view.tsx
 src/pages/team-page/team-role-permissions-form.tsx
-src/pages/team-page/team-role-form-utils.ts
+src/pages/team-page/team-role-permissions-module-card.tsx
+src/pages/team-page/team-role-permissions-form.utils.ts
 src/pages/team-page/team-role-permissions-i18n.ts
 ```
 
@@ -337,11 +334,11 @@ GET /workspace/permissions/me
 That store should expose typed helpers, for example:
 
 ```ts
-canViewProducts
-canCreateOrders
-canManageRoles
-canInviteMembers
-canReadIntegration(type, id)
+canViewProducts;
+canCreateOrders;
+canManageRoles;
+canInviteMembers;
+canReadIntegration(type, id);
 ```
 
 Components should use those helpers instead of reading nested permission objects directly.

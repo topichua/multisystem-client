@@ -17,7 +17,10 @@ const EMPTY_INTEGRATION_GRANTS: WorkspaceRoleIntegrationGrant[] = [];
 export class WorkspaceRolesStore {
   roles: WorkspaceRole[] = [];
   catalog: WorkspacePermissionsCatalogSchema | null = null;
-  integrationGrantsByRoleId = new Map<number, WorkspaceRoleIntegrationGrant[]>();
+  integrationGrantsByRoleId = new Map<
+    number,
+    WorkspaceRoleIntegrationGrant[]
+  >();
   integrationGrantsErrorByRoleId = new Map<number, string>();
 
   listLoading = false;

@@ -6,7 +6,7 @@ type DivProps = {
   children?: ReactNode;
   customWidth?: number;
   $customWidth?: number;
-} & Omit<HTMLAttributes<HTMLDivElement>, 'children'>;
+} & Omit<HTMLAttributes<HTMLDivElement>, "children">;
 
 type AsideProps = {
   children?: ReactNode;
