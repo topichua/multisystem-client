@@ -39,11 +39,11 @@ import { EmptyConversation } from "@/pages/conversation/empty-conversation";
 import { ConversationDetails } from "@/pages/conversation/conversation-details/conversation-details";
 import { InstagramPage } from "@/pages/instagram-page/instagram-page";
 import { InstagramPostPage } from "@/pages/instagram-page/instagram-post-page";
-import { TeamRoleDetailView } from "@/pages/team-page/team-role-detail-view";
-import { TeamMembersPage } from "@/pages/team-page/team-members-page";
+import { TeamMembersPage } from "@/pages/team-page/team-members/team-members-page";
 import { TeamPage } from "@/pages/team-page/team-page";
-import { TeamRolesIndex } from "@/pages/team-page/team-roles-index";
-import { TeamRolesPage } from "@/pages/team-page/team-roles-page";
+import { TeamRoleDetailView } from "@/pages/team-page/team-roles/team-role-detail-view";
+import { TeamRolesIndex } from "@/pages/team-page/team-roles/team-roles-index";
+import { TeamRolesPage } from "@/pages/team-page/team-roles/team-roles-page";
 
 export const PageRoutes = () => {
   return (

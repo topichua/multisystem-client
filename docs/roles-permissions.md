@@ -468,7 +468,7 @@ Store methods used by the roles page:
 
 ## Localization
 
-Catalog labels are translated in `src/pages/team-page/team-role-permissions-i18n.ts`.
+Catalog labels are translated in `src/pages/team-page/team-roles/team-role-permissions-i18n.ts`.
 
 Translation key patterns:
 
@@ -510,13 +510,13 @@ src/features/workspace-roles/utils/workspace-role-form.ts
 Role page:
 
 ```txt
-src/pages/team-page/team-roles-page.tsx
-src/pages/team-page/team-roles-index.tsx
-src/pages/team-page/team-role-detail-view.tsx
-src/pages/team-page/team-role-permissions-form.tsx
-src/pages/team-page/team-role-permissions-module-card.tsx
-src/pages/team-page/team-role-permissions-form.utils.ts
-src/pages/team-page/team-role-permissions-i18n.ts
+src/pages/team-page/team-roles/team-roles-page.tsx
+src/pages/team-page/team-roles/team-roles-index.tsx
+src/pages/team-page/team-roles/team-role-detail-view.tsx
+src/pages/team-page/team-roles/team-role-permissions-form.tsx
+src/pages/team-page/team-roles/team-role-permissions-module-card.tsx
+src/pages/team-page/team-roles/team-role-permissions-form.utils.ts
+src/pages/team-page/team-roles/team-role-permissions-i18n.ts
 ```
 
 App wiring:
