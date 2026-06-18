@@ -19,6 +19,8 @@ export type WorkspaceRoleIntegrationGrantFormValue = {
 
 export type WorkspaceRoleFormValues = {
   name: string;
+  description?: string | null;
+  color?: string | null;
   permissions?: Record<string, boolean>;
   permissionOptions?: WorkspaceRolePermissionOptions;
   permissionOptionLists?: WorkspaceRolePermissionOptionLists;
@@ -40,6 +42,16 @@ const isPermissionOptionValue = (
   typeof value === "number" ||
   typeof value === "boolean" ||
   value === null;
+
+const toNullableTrimmedString = (value: unknown): string | null => {
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  const trimmed = value.trim();
+
+  return trimmed === "" ? null : trimmed;
+};
 
 const visitCatalogItem = (
   item: WorkspacePermissionsCatalogItem,
@@ -197,6 +209,8 @@ export const toWorkspaceRoleFormValues = (
 
   return {
     name: role.name,
+    description: role.description ?? "",
+    color: role.color,
     permissions,
     permissionOptions,
     permissionOptionLists,
@@ -256,6 +270,8 @@ export const buildWorkspaceRoleUpdatePayload = (
 
   return {
     name: values.name.trim(),
+    description: toNullableTrimmedString(values.description),
+    color: toNullableTrimmedString(values.color),
     permissions: Array.from(
       new Set([...knownPermissions, ...hiddenExistingPermissions]),
     ),
@@ -301,5 +317,5 @@ export const buildWorkspaceRoleIntegrationGrantsPayload = (
     };
   });
 
-  return grants;
+  return { grants };
 };

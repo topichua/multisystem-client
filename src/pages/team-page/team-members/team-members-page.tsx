@@ -1,15 +1,28 @@
 import { PlusIcon } from "@phosphor-icons/react";
-import { Button, Flex, Form, message, Spin, Table, Typography } from "antd";
+import {
+  Button,
+  Flex,
+  Form,
+  message,
+  Space,
+  Spin,
+  Table,
+  Typography,
+} from "antd";
 import { observer } from "mobx-react-lite";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { getApiErrorMessage } from "@/api/get-api-error-message";
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
 import { PaneSectionTitle } from "@/components/layout/pane-frame";
 import { useUserStore } from "@/features/auth/model/use-user-store";
-import type { WorkspaceMember } from "@/features/workspace-members/model/workspace-member.types";
+import type {
+  WorkspaceMember,
+  WorkspaceMemberUpdatePayload,
+} from "@/features/workspace-members/model/workspace-member.types";
 import { useWorkspaceMembersStore } from "@/features/workspace-members/model/use-workspace-members-store";
+import { useWorkspaceRolesStore } from "@/features/workspace-roles/model/use-workspace-roles-store";
 
 import {
   TeamInviteModal,
@@ -23,22 +36,53 @@ const { Text } = Typography;
 export const TeamMembersPage = observer(() => {
   const { t } = useTranslation();
   const store = useWorkspaceMembersStore();
+  const rolesStore = useWorkspaceRolesStore();
   const userStore = useUserStore();
   const [messageApi, contextHolder] = message.useMessage();
   const [form] = Form.useForm<TeamInviteFormValues>();
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
-  const columns = useTeamMembersTableColumns({
-    currentUserId: userStore.user?.id ?? null,
-  });
+  const inviteDefaultRoleId = useMemo(
+    () => [...rolesStore.roles].sort((a, b) => a.id - b.id)[0]?.id,
+    [rolesStore.roles],
+  );
 
   useEffect(() => {
     void store.loadMembers();
   }, [store]);
 
+  useEffect(() => {
+    if (rolesStore.roles.length === 0) {
+      void rolesStore.loadRoles();
+    }
+  }, [rolesStore, rolesStore.roles.length]);
+
+  const handleMemberUpdate = useCallback(
+    async (
+      memberId: number,
+      payload: WorkspaceMemberUpdatePayload,
+    ): Promise<void> => {
+      try {
+        await store.updateMember(memberId, payload);
+      } catch (e) {
+        messageApi.error(getApiErrorMessage(e, t("team.memberUpdateError")));
+        throw e;
+      }
+    },
+    [messageApi, store, t],
+  );
+
+  const columns = useTeamMembersTableColumns({
+    currentUserId: userStore.user?.id ?? null,
+    roles: rolesStore.roles,
+    rolesLoading: rolesStore.listLoading,
+    updatingMemberIds: store.updatingMemberIds,
+    onUpdateMember: handleMemberUpdate,
+  });
+
   const openInviteModal = useCallback(() => {
-    form.setFieldsValue({ email: "", roleSlug: "manager" });
+    form.setFieldsValue({ email: "", roleId: inviteDefaultRoleId });
     setInviteModalOpen(true);
-  }, [form]);
+  }, [form, inviteDefaultRoleId]);
 
   const closeInviteModal = useCallback(() => {
     setInviteModalOpen(false);
@@ -56,7 +100,7 @@ export const TeamMembersPage = observer(() => {
     try {
       await store.inviteMember({
         email: values.email.trim(),
-        role_id: store.resolveRoleId(values.roleSlug),
+        role_id: values.roleId,
         skipConfirmation: false,
       });
       messageApi.success(t("team.invite.success"));
@@ -81,7 +125,21 @@ export const TeamMembersPage = observer(() => {
       <PaneDetailLayout.Root inset>
         <PaneDetailLayout.Header data-qa="layout-team-members-header">
           <Flex justify="space-between" align="center" gap={16} wrap="wrap">
-            <PaneSectionTitle>{t("team.membersTitle")}</PaneSectionTitle>
+            <Flex gap={4} vertical>
+              <PaneSectionTitle>{t("team.membersTitle")}</PaneSectionTitle>
+              <Space align="center" size="small" separator="·">
+                <Text type="secondary">
+                  {t("team.membersActiveCount", {
+                    count: store.activeMembersCount,
+                  })}
+                </Text>
+                <Text type="secondary">
+                  {t("team.membersInactiveCount", {
+                    count: store.inactiveMembersCount,
+                  })}
+                </Text>
+              </Space>
+            </Flex>
             <Button
               type="primary"
               icon={<PlusIcon size={16} />}
@@ -104,7 +162,6 @@ export const TeamMembersPage = observer(() => {
               dataSource={store.members}
               pagination={false}
               loading={store.listLoading}
-              scroll={{ x: "max-content" }}
             />
           </S.TableSection>
         </PaneDetailLayout.Body>
@@ -114,6 +171,8 @@ export const TeamMembersPage = observer(() => {
         open={inviteModalOpen}
         form={form}
         inviteLoading={store.inviteLoading}
+        roles={rolesStore.roles}
+        rolesLoading={rolesStore.listLoading}
         onCancel={closeInviteModal}
         onSubmit={handleInviteSubmit}
       />

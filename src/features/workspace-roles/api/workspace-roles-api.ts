@@ -24,7 +24,11 @@ export const workspaceRolesApi = {
     },
 
   list: async (): Promise<WorkspaceRole[]> => {
-    const { data } = await apiClient.get<WorkspaceRolesListResponse>(basePath);
+    const { data } = await apiClient.get<WorkspaceRolesListResponse>(basePath, {
+      params: {
+        include_members_count: true,
+      },
+    });
 
     return data.items;
   },

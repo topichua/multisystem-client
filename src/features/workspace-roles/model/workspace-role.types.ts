@@ -61,6 +61,9 @@ export type WorkspaceRole = {
   workspaceId: number;
   slug: string;
   name: string;
+  description: string | null;
+  color: string | null;
+  membersCount?: number;
   permissions: string[];
   permissionOptions: WorkspaceRolePermissionOptions;
   permissionOptionLists: WorkspaceRolePermissionOptionLists;
@@ -76,6 +79,8 @@ export type WorkspaceRolesListResponse = {
 export type WorkspaceRoleCreatePayload = {
   slug: string;
   name: string;
+  description?: string | null;
+  color?: string | null;
   permissions: string[];
   permissionOptions?: WorkspaceRolePermissionOptions;
   permissionOptionLists?: WorkspaceRolePermissionOptionLists;
@@ -83,6 +88,8 @@ export type WorkspaceRoleCreatePayload = {
 
 export type WorkspaceRoleUpdatePayload = {
   name?: string;
+  description?: string | null;
+  color?: string | null;
   permissions?: string[];
   permissionOptions?: WorkspaceRolePermissionOptions;
   permissionOptionLists?: WorkspaceRolePermissionOptionLists;
@@ -111,8 +118,9 @@ export type WorkspaceRoleIntegrationGrantWriteItem = {
   permissions: WorkspaceRoleIntegrationGrantPermissions;
 };
 
-export type WorkspaceRoleIntegrationGrantsUpdatePayload =
-  WorkspaceRoleIntegrationGrantWriteItem[];
+export type WorkspaceRoleIntegrationGrantsUpdatePayload = {
+  grants: WorkspaceRoleIntegrationGrantWriteItem[];
+};
 
 export type WorkspacePermissionsCatalogStorageKey =
   | "permissions"

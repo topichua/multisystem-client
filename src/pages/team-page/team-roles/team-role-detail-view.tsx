@@ -27,6 +27,9 @@ import {
   toWorkspaceRoleFormValues,
   type WorkspaceRoleFormValues,
 } from "@/features/workspace-roles/utils/workspace-role-form";
+import { DEFAULT_COLOR_PRESET } from "@/shared/components/preset-color-picker/color-presets";
+import { PresetColorPicker } from "@/shared/components/preset-color-picker/preset-color-picker";
+import { RoleDot } from "@/shared/components/role-dot/role-dot";
 
 import { TeamRolePermissionsForm } from "./team-role-permissions-form";
 
@@ -187,12 +190,12 @@ export const TeamRoleDetailView = observer(() => {
       {contextHolder}
       <PaneDetailLayout.Root inset data-qa="layout-team-role-detail">
         <PaneDetailLayout.Header data-qa="layout-team-role-detail-header">
-          <Flex justify="space-between" align="flex-start" gap={16} wrap="wrap">
-            <Flex vertical gap={4}>
+          <Flex justify="space-between" align="center" gap={16} wrap="wrap">
+            <Flex align="center" gap={8}>
+              <RoleDot color={role.color ?? DEFAULT_COLOR_PRESET} size={15} />
               <Title level={4} style={{ margin: 0 }}>
                 {role.name}
               </Title>
-              <Text type="secondary">{role.slug}</Text>
             </Flex>
             <Flex gap={8} align="center" wrap="wrap" style={{ flexShrink: 0 }}>
               <Button
@@ -253,6 +256,22 @@ export const TeamRoleDetailView = observer(() => {
                   style={{ marginBottom: 0 }}
                 >
                   <Input />
+                </Form.Item>
+                <Form.Item
+                  name="description"
+                  label={t("team.roleDescription")}
+                  style={{ marginBottom: 0 }}
+                >
+                  <Input.TextArea rows={3} />
+                </Form.Item>
+                <Form.Item
+                  name="color"
+                  label={t("team.roleColor")}
+                  style={{ marginBottom: 0 }}
+                >
+                  <PresetColorPicker
+                    ariaLabel={t("team.roleColorPickerAria")}
+                  />
                 </Form.Item>
                 <Flex vertical gap={4}>
                   <Title level={4} style={{ margin: 0 }}>

@@ -2,42 +2,46 @@ import { CheckIcon } from "@phosphor-icons/react";
 import { Tooltip } from "antd";
 import { useMemo } from "react";
 
-import { useTranslation } from "react-i18next";
+import { COLOR_PRESETS } from "./color-presets";
 
-import { GROUP_COLOR_PRESETS } from "./group-color-presets";
+const normalizeColor = (color: string): string => color.trim().toLowerCase();
 
-const norm = (c: string) => c.trim().toLowerCase();
-
-type GroupPresetColorPickerProps = {
-  value?: string;
+export type PresetColorPickerProps = {
+  value?: string | null;
   onChange?: (color: string) => void;
+  presets?: readonly string[];
+  ariaLabel: string;
 };
 
-export const GroupPresetColorPicker = ({
+export const PresetColorPicker = ({
   value,
   onChange,
-}: GroupPresetColorPickerProps) => {
-  const { t } = useTranslation();
+  presets: presetValues = COLOR_PRESETS,
+  ariaLabel,
+}: PresetColorPickerProps) => {
   const presets = useMemo(() => {
-    const base = [...GROUP_COLOR_PRESETS];
+    const base = [...presetValues];
+
     if (
       value != null &&
       value !== "" &&
-      !base.some((c) => norm(c) === norm(value))
+      !base.some((color) => normalizeColor(color) === normalizeColor(value))
     ) {
       return [value, ...base];
     }
+
     return base;
-  }, [value]);
+  }, [presetValues, value]);
 
   return (
     <div
       role="listbox"
-      aria-label={t("groups.colorPickerAria")}
+      aria-label={ariaLabel}
       style={{ display: "flex", flexWrap: "wrap", gap: 10 }}
     >
       {presets.map((hex) => {
-        const selected = value != null && norm(value) === norm(hex);
+        const selected =
+          value != null && normalizeColor(value) === normalizeColor(hex);
 
         return (
           <Tooltip key={hex} title={hex}>

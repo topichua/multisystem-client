@@ -1,4 +1,4 @@
-export const GROUP_COLOR_PRESETS = [
+export const COLOR_PRESETS = [
   "#1677FF",
   "#08979C",
   "#389E0D",
@@ -11,4 +11,4 @@ export const GROUP_COLOR_PRESETS = [
   "#AD4E00",
 ] as const;
 
-export const DEFAULT_GROUP_COLOR = GROUP_COLOR_PRESETS[0];
+export const DEFAULT_COLOR_PRESET = COLOR_PRESETS[0];

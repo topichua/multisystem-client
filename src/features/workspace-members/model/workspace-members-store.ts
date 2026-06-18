@@ -4,15 +4,10 @@ import { workspaceMembersApi } from "@/features/workspace-members/api/workspace-
 import { unknownErrorMessage } from "@/utils/unknown-error-message";
 
 import type {
-  InviteRoleSlug,
   WorkspaceMember,
   WorkspaceMemberInvitePayload,
+  WorkspaceMemberUpdatePayload,
 } from "./workspace-member.types";
-
-const DEFAULT_ROLE_IDS: Record<InviteRoleSlug, number> = {
-  manager: 1,
-  operator: 2,
-};
 
 export class WorkspaceMembersStore {
   members: WorkspaceMember[] = [];
@@ -21,15 +16,23 @@ export class WorkspaceMembersStore {
   listError: string | null = null;
 
   inviteLoading = false;
+  updateLoadingMemberIds = new Set<number>();
 
   constructor() {
     makeAutoObservable(this);
   }
 
-  resolveRoleId = (slug: InviteRoleSlug): number => {
-    const fromMember = this.members.find((member) => member.roleSlug === slug);
-    return fromMember?.roleId ?? DEFAULT_ROLE_IDS[slug];
-  };
+  get updatingMemberIds(): number[] {
+    return Array.from(this.updateLoadingMemberIds);
+  }
+
+  get activeMembersCount(): number {
+    return this.members.filter((member) => member.status === "active").length;
+  }
+
+  get inactiveMembersCount(): number {
+    return this.members.filter((member) => member.status === "inactive").length;
+  }
 
   loadMembers = async (options?: { silent?: boolean }): Promise<void> => {
     const silent = options?.silent === true;
@@ -74,6 +77,25 @@ export class WorkspaceMembersStore {
     } finally {
       runInAction(() => {
         this.inviteLoading = false;
+      });
+    }
+  };
+
+  updateMember = async (
+    memberId: number,
+    payload: WorkspaceMemberUpdatePayload,
+  ): Promise<WorkspaceMember | null> => {
+    runInAction(() => {
+      this.updateLoadingMemberIds.add(memberId);
+    });
+
+    try {
+      const member = await workspaceMembersApi.update(memberId, payload);
+      await this.loadMembers({ silent: true });
+      return member;
+    } finally {
+      runInAction(() => {
+        this.updateLoadingMemberIds.delete(memberId);
       });
     }
   };

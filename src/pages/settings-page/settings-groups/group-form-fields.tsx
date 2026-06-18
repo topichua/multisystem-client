@@ -5,8 +5,8 @@ import type {
   ConversationGroup,
   ConversationGroupWritePayload,
 } from "@/features/conversation-groups/model/conversation-group.types";
+import { PresetColorPicker } from "@/shared/components/preset-color-picker/preset-color-picker";
 
-import { GroupPresetColorPicker } from "./group-preset-color-picker";
 import { isDuplicateGroupName } from "./group-name-validation";
 
 export type GroupFormValues = Pick<
@@ -61,7 +61,7 @@ export const GroupFormFields = ({
         label={t("groups.fieldColor")}
         rules={[{ required: true, message: t("groups.pickColor") }]}
       >
-        <GroupPresetColorPicker />
+        <PresetColorPicker ariaLabel={t("groups.colorPickerAria")} />
       </Form.Item>
     </>
   );

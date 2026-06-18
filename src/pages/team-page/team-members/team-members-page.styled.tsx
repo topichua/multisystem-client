@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 export const TableSection = styled.div`
   width: 100%;
-  max-width: 860px;
+  max-width: 1160px;
   margin: 0 auto;
 `;
 

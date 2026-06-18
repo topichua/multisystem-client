@@ -12,6 +12,7 @@ export type WorkspaceMember = {
   roleId: number;
   roleSlug: string;
   roleName: string;
+  can_be_assigned_to_chat: boolean;
   status: string;
   joinedAt: string;
   user: WorkspaceMemberUser;
@@ -29,16 +30,14 @@ export type WorkspaceMemberInvitePayload = {
   last_name?: string;
 };
 
+export type WorkspaceMemberUpdatePayload = {
+  role_id: number;
+  can_be_assigned_to_chat: boolean;
+};
+
 export type WorkspaceMemberInviteResponse = {
   kind: string;
   member: WorkspaceMember;
   invitationId: number;
   invitationToken: string;
 };
-
-export type InviteRoleSlug = "manager" | "operator";
-
-export const INVITE_ROLE_SLUGS: readonly InviteRoleSlug[] = [
-  "manager",
-  "operator",
-] as const;

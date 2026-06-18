@@ -4,7 +4,7 @@ This document describes how the frontend uses workspace roles, the permissions c
 
 ## Endpoints
 
-### `GET /workspace/roles`
+### `GET /workspace/roles?include_members_count=true`
 
 Returns existing workspace roles.
 
@@ -21,12 +21,15 @@ The role editor uses these fields:
 - `id` - route id and PATCH target.
 - `slug` - stable backend identifier. It is displayed but not edited in the current form.
 - `name` - editable role name.
+- `description` - editable role description, or `null`.
+- `color` - editable role color hex value, or `null`.
+- `membersCount` - number of workspace members assigned to the role, shown under the role name in the left menu.
 - `permissions` - enabled boolean permission keys.
 - `permissionOptions` - scalar option values keyed by permission option key, for example `orders.visibility`.
 - `permissionOptionLists` - list option values keyed by option-list key.
 - `resolved` - backend-computed typed permissions. The editor does not save or display this object today.
 
-The API also returns `workspaceId`, `createdAt`, and `updatedAt`. The current role UI does not use them.
+The API also returns `workspaceId`, `createdAt`, and `updatedAt`. The current role UI does not edit them.
 
 ### `POST /workspace/roles`
 
@@ -68,6 +71,8 @@ Updates editable role fields:
 ```ts
 {
   name,
+  description,
+  color,
   permissions,
   permissionOptions,
   permissionOptionLists,
@@ -124,7 +129,7 @@ The UI uses `integrationName` when present and falls back to a translated `integ
 
 Updates integration grants for a role.
 
-The request body is the grants array itself, not an object wrapper. See the Integration Grants section below.
+The request body is an object with a `grants` array. See the Integration Grants section below.
 
 ### `GET /workspace/permissions/me`
 
@@ -327,22 +332,24 @@ Reason:
 - The catalog declares a separate management endpoint.
 - Backend stores per-integration access separately from role `permissions` and `permissionOptions`.
 
-The `PUT` request body is the grants array itself, not an object wrapper:
+The `PUT` request body is an object with a `grants` array:
 
 ```ts
-[
-  {
-    integrationType: "instagram",
-    integrationId: 1,
-    permissions: {
-      read: "mine",
-      write: "mine",
-      assignResponsibility: true,
-      instagramCommentsView: true,
-      instagramCommentsWrite: true,
+{
+  grants: [
+    {
+      integrationType: "instagram",
+      integrationId: 1,
+      permissions: {
+        read: "mine",
+        write: "mine",
+        assignResponsibility: true,
+        instagramCommentsView: true,
+        instagramCommentsWrite: true,
+      },
     },
-  },
-];
+  ],
+}
 ```
 
 The form uses the catalog children of `integration_grants` to render each grant permission:
@@ -383,6 +390,8 @@ src/features/workspace-roles/utils/workspace-role-form.ts
 ```ts
 type WorkspaceRoleFormValues = {
   name: string;
+  description?: string | null;
+  color?: string | null;
   permissions?: Record<string, boolean>;
   permissionOptions?: Record<string, string | number | boolean | null>;
   permissionOptionLists?: Record<string, string[]>;
@@ -402,11 +411,12 @@ type WorkspaceRoleFormValues = {
 `toWorkspaceRoleFormValues(role, schema, integrationGrants = [])`:
 
 1. Collects known permission keys from catalog boolean items stored in `permissions`.
-2. Sets checkbox values from `role.permissions`.
-3. Copies `role.permissionOptions`.
-4. Applies catalog option defaults when the role has no value.
-5. Copies `role.permissionOptionLists` and applies catalog list defaults when missing.
-6. Builds `integrationGrants` from the loaded grants list, merged with catalog defaults per `integrationType`.
+2. Copies `name`, `description`, and `color` from the role.
+3. Sets checkbox values from `role.permissions`.
+4. Copies `role.permissionOptions`.
+5. Applies catalog option defaults when the role has no value.
+6. Copies `role.permissionOptionLists` and applies catalog list defaults when missing.
+7. Builds `integrationGrants` from the loaded grants list, merged with catalog defaults per `integrationType`.
 
 The detail view resets form values when `role`, `catalog`, or loaded `integrationGrants` change.
 
@@ -414,16 +424,20 @@ The detail view resets form values when `role`, `catalog`, or loaded `integratio
 
 `buildWorkspaceRoleUpdatePayload(role, schema, values)`:
 
-1. Collects checked known permissions from the form.
-2. Preserves existing role permission keys that are not present in the current catalog.
-3. Writes visible option fields into `permissionOptions`.
-4. Preserves unknown existing `permissionOptions`.
-5. Writes known option-list fields if catalog provides any.
-6. Sends:
+1. Trims `name`.
+2. Sends empty `description` and `color` as `null`.
+3. Collects checked known permissions from the form.
+4. Preserves existing role permission keys that are not present in the current catalog.
+5. Writes visible option fields into `permissionOptions`.
+6. Preserves unknown existing `permissionOptions`.
+7. Writes known option-list fields if catalog provides any.
+8. Sends:
 
 ```ts
 {
   name,
+  description,
+  color,
   permissions,
   permissionOptions,
   permissionOptionLists,
@@ -517,6 +531,13 @@ src/pages/team-page/team-roles/team-role-permissions-form.tsx
 src/pages/team-page/team-roles/team-role-permissions-module-card.tsx
 src/pages/team-page/team-roles/team-role-permissions-form.utils.ts
 src/pages/team-page/team-roles/team-role-permissions-i18n.ts
+```
+
+Shared UI used by the role form:
+
+```txt
+src/shared/components/preset-color-picker/color-presets.ts
+src/shared/components/preset-color-picker/preset-color-picker.tsx
 ```
 
 App wiring:

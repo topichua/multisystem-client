@@ -1,23 +1,23 @@
-import { Flex, Form, Segmented, Spin, Switch, Tag, Typography } from 'antd';
-import type { ReactNode } from 'react';
-import type { TFunction } from 'i18next';
-import { useTranslation } from 'react-i18next';
+import { Flex, Form, Segmented, Spin, Switch, Tag, Typography } from "antd";
+import type { ReactNode } from "react";
+import type { TFunction } from "i18next";
+import { useTranslation } from "react-i18next";
 
-import type { WorkspacePermissionsCatalogItem } from '@/features/workspace-roles/model/workspace-role.types';
-import type { WorkspaceRoleIntegrationGrant } from '@/features/workspace-roles/model/workspace-role.types';
-import { getIntegrationGrantFormKey } from '@/features/workspace-roles/utils/workspace-role-form';
+import type { WorkspacePermissionsCatalogItem } from "@/features/workspace-roles/model/workspace-role.types";
+import type { WorkspaceRoleIntegrationGrant } from "@/features/workspace-roles/model/workspace-role.types";
+import { getIntegrationGrantFormKey } from "@/features/workspace-roles/utils/workspace-role-form";
 
 import {
   getCatalogItemLabel,
   getIntegrationGrantFallbackName,
   getIntegrationTypeLabel,
-} from './team-role-permissions-i18n';
+} from "./team-role-permissions-i18n";
 import {
   isGrantItemVisibleForIntegration,
   isPermissionDisabled,
   toSelectOptions,
   type PermissionFormRow,
-} from './team-role-permissions-form.utils';
+} from "./team-role-permissions-form.utils";
 
 const { Text } = Typography;
 
@@ -31,7 +31,7 @@ type TeamRolePermissionFormRowProps = {
   integrationGrantsLoading: boolean;
   integrationGrantsError?: string | null;
   setBooleanPermission: (
-    row: Extract<PermissionFormRow, { kind: 'boolean' }>,
+    row: Extract<PermissionFormRow, { kind: "boolean" }>,
     checked: boolean,
   ) => void;
 };
@@ -48,7 +48,7 @@ const renderRowLabel = (
         -
       </Text>
     )}
-    <Text type={disabled ? 'secondary' : undefined}>
+    <Text type={disabled ? "secondary" : undefined}>
       {getCatalogItemLabel(t, item)}
     </Text>
   </Flex>
@@ -70,35 +70,32 @@ export const TeamRolePermissionFormRow = ({
   const borderTop = index === 0 ? undefined : `1px solid ${borderColor}`;
   const rowStyle = {
     borderTop,
-    padding: '16px 24px',
+    padding: "16px 24px",
   };
 
-  if (row.kind === 'integration_grants') {
+  if (row.kind === "integration_grants") {
     const fullAccessEnabled =
-      permissionValues['conversations.full_access'] === true;
+      permissionValues["conversations.full_access"] === true;
 
     return (
       <div key={row.item.key} style={rowStyle}>
         <Flex vertical gap={16}>
           {integrationGrantsError ? (
             <Text type="danger">
-              {t('team.rolesIntegrationGrantsError')}: {integrationGrantsError}
+              {t("team.rolesIntegrationGrantsError")}: {integrationGrantsError}
             </Text>
           ) : null}
           {integrationGrantsLoading ? (
             <Spin />
           ) : integrationGrants.length === 0 ? (
             <Text type="secondary">
-              {t('team.rolesIntegrationGrantsEmpty')}
+              {t("team.rolesIntegrationGrantsEmpty")}
             </Text>
           ) : (
             integrationGrants.map((grant) => {
               const visibleItems =
                 row.item.items?.filter((item) =>
-                  isGrantItemVisibleForIntegration(
-                    item,
-                    grant.integrationType,
-                  ),
+                  isGrantItemVisibleForIntegration(item, grant.integrationType),
                 ) ?? [];
               const grantKey = getIntegrationGrantFormKey(grant);
 
@@ -134,29 +131,25 @@ export const TeamRolePermissionFormRow = ({
                       gap={16}
                       wrap="wrap"
                     >
-                      <Text type={fullAccessEnabled ? 'secondary' : undefined}>
+                      <Text type={fullAccessEnabled ? "secondary" : undefined}>
                         {getCatalogItemLabel(t, item)}
                       </Text>
                       <Form.Item
                         name={[
-                          'integrationGrants',
+                          "integrationGrants",
                           grantKey,
-                          'permissions',
+                          "permissions",
                           item.key,
                         ]}
                         valuePropName={
-                          item.type === 'boolean' ? 'checked' : undefined
+                          item.type === "boolean" ? "checked" : undefined
                         }
                         noStyle
                       >
-                        {item.type === 'option' ? (
+                        {item.type === "option" ? (
                           <Segmented
                             disabled={fullAccessEnabled}
-                            options={toSelectOptions(
-                              t,
-                              item.key,
-                              item.options,
-                            )}
+                            options={toSelectOptions(t, item.key, item.options)}
                           />
                         ) : (
                           <Switch disabled={fullAccessEnabled} />
@@ -175,7 +168,7 @@ export const TeamRolePermissionFormRow = ({
 
   const disabled = isPermissionDisabled(permissionValues, row.disabledBy);
 
-  if (row.kind === 'option') {
+  if (row.kind === "option") {
     return (
       <Flex
         key={row.item.key}
@@ -186,7 +179,7 @@ export const TeamRolePermissionFormRow = ({
         style={rowStyle}
       >
         {renderRowLabel(t, row.item, row.nested, disabled)}
-        <Form.Item name={['permissionOptions', row.item.key]} noStyle>
+        <Form.Item name={["permissionOptions", row.item.key]} noStyle>
           <Segmented
             disabled={disabled}
             options={toSelectOptions(t, row.item.key, row.item.options)}
@@ -206,7 +199,7 @@ export const TeamRolePermissionFormRow = ({
     >
       {renderRowLabel(t, row.item, row.nested, disabled)}
       <Form.Item
-        name={['permissions', row.item.key]}
+        name={["permissions", row.item.key]}
         valuePropName="checked"
         noStyle
       >

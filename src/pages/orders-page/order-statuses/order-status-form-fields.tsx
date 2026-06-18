@@ -2,7 +2,7 @@ import { Checkbox, Form, Input, Typography } from "antd";
 import { useTranslation } from "react-i18next";
 
 import type { OrderStatus } from "@/features/orders/model/order.types";
-import { GroupPresetColorPicker } from "@/pages/settings-page/settings-groups/group-preset-color-picker";
+import { PresetColorPicker } from "@/shared/components/preset-color-picker/preset-color-picker";
 
 import { isDuplicateOrderStatusName } from "./order-status-name-validation";
 
@@ -58,7 +58,7 @@ export const OrderStatusFormFields = ({
         label={t("orderStatuses.fieldColor")}
         rules={[{ required: true, message: t("orderStatuses.pickColor") }]}
       >
-        <GroupPresetColorPicker />
+        <PresetColorPicker ariaLabel={t("orderStatuses.colorPickerAria")} />
       </Form.Item>
       <Form.Item name="isDefault" valuePropName="checked">
         <Checkbox>

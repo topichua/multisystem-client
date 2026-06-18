@@ -4,6 +4,7 @@ import type {
   WorkspaceMember,
   WorkspaceMemberInvitePayload,
   WorkspaceMemberInviteResponse,
+  WorkspaceMemberUpdatePayload,
 } from "../model/workspace-member.types";
 
 const basePath = "/workspaces/members";
@@ -59,5 +60,17 @@ export const workspaceMembersApi = {
     }
 
     return null;
+  },
+
+  update: async (
+    memberId: number,
+    payload: WorkspaceMemberUpdatePayload,
+  ): Promise<WorkspaceMember | null> => {
+    const { data } = await apiClient.put<unknown>(
+      `${basePath}/${memberId}`,
+      payload,
+    );
+
+    return isWorkspaceMember(data) ? data : null;
   },
 };

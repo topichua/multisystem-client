@@ -16,9 +16,9 @@ import { PaneNavSplitLayout } from "@/components/layout/pane-nav-split-layout";
 import type { ConversationGroupWritePayload } from "@/features/conversation-groups/model/conversation-group.types";
 import { useConversationGroupsStore } from "@/features/conversation-groups/model/use-conversation-groups-store";
 import { ColorLabelRow } from "@/shared/components/color-label-row/color-label-row";
+import { DEFAULT_COLOR_PRESET } from "@/shared/components/preset-color-picker/color-presets";
 
 import { GroupFormModal, type GroupFormValues } from "./group-form-modal";
-import { DEFAULT_GROUP_COLOR } from "./group-color-presets";
 
 export const SettingsGroupsLayout = observer(() => {
   const { t } = useTranslation();
@@ -51,7 +51,7 @@ export const SettingsGroupsLayout = observer(() => {
     form.setFieldsValue({
       name: "",
       description: "",
-      color: DEFAULT_GROUP_COLOR,
+      color: DEFAULT_COLOR_PRESET,
     });
     setModalOpen(true);
   }, [form]);

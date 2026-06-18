@@ -3,6 +3,7 @@ import type { MenuProps } from "antd";
 import {
   Button,
   Empty,
+  Flex,
   Form,
   Input,
   Menu,
@@ -25,12 +26,15 @@ import {
 } from "@/components/layout/pane-frame";
 import { PaneNavSplitLayout } from "@/components/layout/pane-nav-split-layout";
 import { useWorkspaceRolesStore } from "@/features/workspace-roles/model/use-workspace-roles-store";
+import { DEFAULT_COLOR_PRESET } from "@/shared/components/preset-color-picker/color-presets";
+import { RoleDot } from "@/shared/components/role-dot/role-dot";
 import { slugifyAscii } from "@/utils/slugify";
 
 const { Text } = Typography;
 
 type TeamCreateRoleFormValues = {
   name: string;
+  description?: string | null;
 };
 
 export const TeamRolesPage = observer(() => {
@@ -50,9 +54,31 @@ export const TeamRolesPage = observer(() => {
     () =>
       store.sortedRoles.map((role) => ({
         key: getTeamRolePath(role.id),
-        label: role.name,
+        label: (
+          <Flex align="flex-start" gap={8} style={{ minWidth: 0 }}>
+            <RoleDot
+              color={role.color ?? DEFAULT_COLOR_PRESET}
+              style={{ marginTop: 5 }}
+            />
+            <Flex vertical gap={0} style={{ minWidth: 0 }}>
+              <Text ellipsis style={{ lineHeight: 1.3 }}>
+                {role.name}
+              </Text>
+              {role.membersCount != null ? (
+                <Text
+                  type="secondary"
+                  style={{ fontSize: 12, lineHeight: 1.2 }}
+                >
+                  {t("team.roleMembersCount", {
+                    count: role.membersCount,
+                  })}
+                </Text>
+              ) : null}
+            </Flex>
+          </Flex>
+        ),
       })),
-    [store.sortedRoles],
+    [store.sortedRoles, t],
   );
 
   const selectedKey = useMemo(
@@ -66,7 +92,7 @@ export const TeamRolesPage = observer(() => {
   const showInitialLoader = store.listLoading && store.roles.length === 0;
 
   const openCreateModal = useCallback(() => {
-    createForm.setFieldsValue({ name: "" });
+    createForm.setFieldsValue({ name: "", description: "" });
     setCreateModalOpen(true);
   }, [createForm]);
 
@@ -84,6 +110,7 @@ export const TeamRolesPage = observer(() => {
     }
 
     const name = values.name.trim();
+    const description = values.description?.trim() || null;
     const slug = slugifyAscii(name);
 
     if (!slug) {
@@ -94,6 +121,7 @@ export const TeamRolesPage = observer(() => {
     try {
       await store.createRole({
         name,
+        description,
         slug,
         permissions: ["orders.read"],
         permissionOptions: {
@@ -181,6 +209,9 @@ export const TeamRolesPage = observer(() => {
             ]}
           >
             <Input autoFocus />
+          </Form.Item>
+          <Form.Item name="description" label={t("team.roleDescription")}>
+            <Input.TextArea rows={3} />
           </Form.Item>
         </Form>
       </Modal>

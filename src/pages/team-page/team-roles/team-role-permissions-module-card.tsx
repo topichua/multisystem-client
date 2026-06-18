@@ -1,11 +1,4 @@
-import {
-  Button,
-  Card,
-  Flex,
-  Form,
-  Tag,
-  theme,
-} from 'antd';
+import { Button, Card, Flex, Form, Tag, theme } from "antd";
 import {
   ChartLineUpIcon,
   ChatsCircleIcon,
@@ -13,23 +6,23 @@ import {
   PackageIcon,
   ReceiptIcon,
   UsersIcon,
-} from '@phosphor-icons/react';
-import type { ComponentType } from 'react';
-import { useTranslation } from 'react-i18next';
+} from "@phosphor-icons/react";
+import type { ComponentType } from "react";
+import { useTranslation } from "react-i18next";
 
 import type {
   WorkspacePermissionsCatalogModule,
   WorkspaceRoleIntegrationGrant,
-} from '@/features/workspace-roles/model/workspace-role.types';
+} from "@/features/workspace-roles/model/workspace-role.types";
 
-import { TeamRolePermissionFormRow } from './team-role-permission-form-row';
-import { getCatalogModuleLabel } from './team-role-permissions-i18n';
+import { TeamRolePermissionFormRow } from "./team-role-permission-form-row";
+import { getCatalogModuleLabel } from "./team-role-permissions-i18n";
 import {
   getPermissionsValues,
   isPermissionDisabled,
   setPermissionValues,
   type PermissionFormRow,
-} from './team-role-permissions-form.utils';
+} from "./team-role-permissions-form.utils";
 
 type ModuleCardProps = {
   integrationGrants: WorkspaceRoleIntegrationGrant[];
@@ -58,10 +51,10 @@ export const TeamRolePermissionsModuleCard = ({
   const { t } = useTranslation();
   const form = Form.useFormInstance();
   const { token } = theme.useToken();
-  const watchedPermissions = Form.useWatch('permissions', form);
+  const watchedPermissions = Form.useWatch("permissions", form);
 
   const permissionValues = watchedPermissions ?? getPermissionsValues(form);
-  const booleanRows = rows.filter((row) => row.kind === 'boolean');
+  const booleanRows = rows.filter((row) => row.kind === "boolean");
   const selectedCount = booleanRows.filter(
     (row) =>
       permissionValues[row.item.key] === true &&
@@ -81,7 +74,7 @@ export const TeamRolePermissionsModuleCard = ({
   };
 
   const setBooleanPermission = (
-    row: Extract<PermissionFormRow, { kind: 'boolean' }>,
+    row: Extract<PermissionFormRow, { kind: "boolean" }>,
     checked: boolean,
   ): void => {
     const dependents = checked
@@ -105,8 +98,8 @@ export const TeamRolePermissionsModuleCard = ({
         body: { padding: 0 },
         header: {
           minHeight: 50,
-          padding: '12px 24px',
-          background: '#f1eeff',
+          padding: "12px 24px",
+          background: "#f1eeff",
           fontWeight: 700,
         },
       }}
@@ -125,7 +118,7 @@ export const TeamRolePermissionsModuleCard = ({
             type="link"
             onClick={() => setModulePermissions(!allSelected)}
           >
-            {allSelected ? t('team.disableAll') : t('team.enableAll')}
+            {allSelected ? t("team.disableAll") : t("team.enableAll")}
           </Button>
         ) : null
       }

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import { base } from "@/styled/definitions/colors";
+import { RoleDot } from "@/shared/components/role-dot/role-dot";
 
 export const RoleOptionList = styled.div`
   display: flex;
@@ -38,13 +38,8 @@ export const RoleOptionCard = styled.button<{ $selected: boolean }>`
   }
 `;
 
-export const RoleDot = styled.span<{ $color: string }>`
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  flex: 0 0 auto;
+export const RoleOptionDot = styled(RoleDot)`
   margin-top: 6px;
-  background: ${({ $color }) => $color};
 `;
 
 export const RoleOptionContent = styled.div`
@@ -83,8 +78,3 @@ export const ModalFooter = styled.div`
   gap: 12px;
   margin-top: 24px;
 `;
-
-export const ROLE_DOT_COLORS = {
-  manager: base.blue[6],
-  operator: base.cyan[6],
-} as const;
