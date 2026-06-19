@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 import { RoleDot } from "@/shared/components/role-dot/role-dot";
 
-const MODAL_SCROLLABLE_LIST_MAX_HEIGHT = 'clamp(220px, 34dvh, 360px)';
+const MODAL_SCROLLABLE_LIST_MAX_HEIGHT = "clamp(220px, 34dvh, 360px)";
 
 export const RoleOptionList = styled.div`
   display: flex;
@@ -77,6 +77,17 @@ export const ModalDescription = styled.p`
   color: ${({ theme }) => theme.colors.functional.text.subdued};
   font-size: 14px;
   line-height: 1.5;
+`;
+
+export const NameFields = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+
+  @media (max-width: 575px) {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
 `;
 
 export const ModalFooter = styled.div`

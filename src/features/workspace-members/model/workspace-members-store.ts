@@ -17,6 +17,7 @@ export class WorkspaceMembersStore {
 
   inviteLoading = false;
   updateLoadingMemberIds = new Set<number>();
+  actionLoadingMemberIds = new Set<number>();
 
   constructor() {
     makeAutoObservable(this);
@@ -24,6 +25,10 @@ export class WorkspaceMembersStore {
 
   get updatingMemberIds(): number[] {
     return Array.from(this.updateLoadingMemberIds);
+  }
+
+  get memberActionLoadingIds(): number[] {
+    return Array.from(this.actionLoadingMemberIds);
   }
 
   get activeMembersCount(): number {
@@ -98,5 +103,41 @@ export class WorkspaceMembersStore {
         this.updateLoadingMemberIds.delete(memberId);
       });
     }
+  };
+
+  runMemberAction = async (
+    memberId: number,
+    action: () => Promise<void>,
+  ): Promise<void> => {
+    runInAction(() => {
+      this.actionLoadingMemberIds.add(memberId);
+    });
+
+    try {
+      await action();
+      await this.loadMembers({ silent: true });
+    } finally {
+      runInAction(() => {
+        this.actionLoadingMemberIds.delete(memberId);
+      });
+    }
+  };
+
+  removeInvite = async (memberId: number): Promise<void> => {
+    await this.runMemberAction(memberId, () =>
+      workspaceMembersApi.removeInvite(memberId),
+    );
+  };
+
+  deactivateMember = async (memberId: number): Promise<void> => {
+    await this.runMemberAction(memberId, () =>
+      workspaceMembersApi.deactivate(memberId),
+    );
+  };
+
+  resendInvite = async (memberId: number): Promise<void> => {
+    await this.runMemberAction(memberId, () =>
+      workspaceMembersApi.resend(memberId),
+    );
   };
 }

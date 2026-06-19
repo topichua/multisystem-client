@@ -3,6 +3,7 @@ export type WorkspaceMemberUser = {
   email: string;
   firstName: string;
   lastName: string;
+  avatar_src?: string;
 };
 
 export type WorkspaceMember = {
@@ -15,7 +16,9 @@ export type WorkspaceMember = {
   can_be_assigned_to_chat: boolean;
   status: string;
   joinedAt: string;
+  updated_at?: string;
   user: WorkspaceMemberUser;
+  color?: string;
 };
 
 export type WorkspaceMembersListResponse = {
@@ -26,8 +29,8 @@ export type WorkspaceMemberInvitePayload = {
   email: string;
   role_id: number;
   skipConfirmation?: boolean;
-  first_name?: string;
-  last_name?: string;
+  first_name: string;
+  last_name: string;
 };
 
 export type WorkspaceMemberUpdatePayload = {
@@ -40,4 +43,26 @@ export type WorkspaceMemberInviteResponse = {
   member: WorkspaceMember;
   invitationId: number;
   invitationToken: string;
+};
+
+export type WorkspaceMemberRegisterInfo = {
+  email: string;
+  first_name?: string;
+  last_name?: string;
+  firstName?: string;
+  lastName?: string;
+  workspaceName?: string;
+  workspace_name?: string;
+};
+
+export type WorkspaceMemberRegisterPayload = {
+  first_name: string;
+  last_name: string;
+  password: string;
+};
+
+export type WorkspaceMemberRegisterResponse = {
+  registered: boolean;
+  access_token: string;
+  member: WorkspaceMember;
 };

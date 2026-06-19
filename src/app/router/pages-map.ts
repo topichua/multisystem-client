@@ -23,6 +23,7 @@ export const pagesMap = {
   settingsIntegrations: "/settings/integrations",
   settingsTemplates: "/settings/templates",
   login: "/login",
+  invitation: "/invitation",
   fallback: "*",
 } as const;
 

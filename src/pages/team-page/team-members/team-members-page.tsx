@@ -71,16 +71,56 @@ export const TeamMembersPage = observer(() => {
     [messageApi, store, t],
   );
 
+  const handleDeleteMember = useCallback(
+    async (member: WorkspaceMember): Promise<void> => {
+      try {
+        if (member.status === "inactive") {
+          await store.removeInvite(member.id);
+          messageApi.success(t("team.actions.removeInviteSuccess"));
+          return;
+        }
+
+        await store.deactivateMember(member.id);
+        messageApi.success(t("team.actions.deactivateSuccess"));
+      } catch (e) {
+        messageApi.error(getApiErrorMessage(e, t("team.actions.deleteError")));
+      }
+    },
+    [messageApi, store, t],
+  );
+
+  const handleResendInvite = useCallback(
+    async (member: WorkspaceMember): Promise<void> => {
+      try {
+        await store.resendInvite(member.id);
+        messageApi.success(t("team.actions.resendInviteSuccess"));
+      } catch (e) {
+        messageApi.error(
+          getApiErrorMessage(e, t("team.actions.resendInviteError")),
+        );
+      }
+    },
+    [messageApi, store, t],
+  );
+
   const columns = useTeamMembersTableColumns({
     currentUserId: userStore.user?.id ?? null,
     roles: rolesStore.roles,
     rolesLoading: rolesStore.listLoading,
     updatingMemberIds: store.updatingMemberIds,
+    actionLoadingMemberIds: store.memberActionLoadingIds,
     onUpdateMember: handleMemberUpdate,
+    onDeleteMember: handleDeleteMember,
+    onResendInvite: handleResendInvite,
   });
 
   const openInviteModal = useCallback(() => {
-    form.setFieldsValue({ email: "", roleId: inviteDefaultRoleId });
+    form.setFieldsValue({
+      firstName: "",
+      lastName: "",
+      email: "",
+      roleId: inviteDefaultRoleId,
+    });
     setInviteModalOpen(true);
   }, [form, inviteDefaultRoleId]);
 
@@ -99,6 +139,8 @@ export const TeamMembersPage = observer(() => {
 
     try {
       await store.inviteMember({
+        first_name: values.firstName.trim(),
+        last_name: values.lastName.trim(),
         email: values.email.trim(),
         role_id: values.roleId,
         skipConfirmation: false,

@@ -12,6 +12,7 @@ import { DEFAULT_COLOR_PRESET } from "@/shared/components/preset-color-picker/co
 import { RoleDot } from "@/shared/components/role-dot/role-dot";
 import { fromNow } from "@/utils/date-time";
 
+import { TeamMemberActions } from "./team-member-actions";
 import { TeamMemberCell } from "./team-member-cell";
 
 const { Text } = Typography;
@@ -32,6 +33,10 @@ function getMemberStatus(status: string | null | undefined): {
 
   if (status === "inactive") {
     return { color: "error", labelKey: "team.table.statuses.inactive" };
+  }
+
+  if (status === "deactivated") {
+    return { color: "default", labelKey: "team.table.statuses.deactivated" };
   }
 
   return { color: "default", labelKey: "team.table.statuses.unknown" };
@@ -76,10 +81,13 @@ type UseTeamMembersTableColumnsParams = {
   roles: WorkspaceRole[];
   rolesLoading: boolean;
   updatingMemberIds: readonly number[];
+  actionLoadingMemberIds: readonly number[];
   onUpdateMember: (
     memberId: number,
     payload: WorkspaceMemberUpdatePayload,
   ) => Promise<void>;
+  onDeleteMember: (member: WorkspaceMember) => Promise<void>;
+  onResendInvite: (member: WorkspaceMember) => Promise<void>;
 };
 
 export function useTeamMembersTableColumns({
@@ -87,12 +95,16 @@ export function useTeamMembersTableColumns({
   roles,
   rolesLoading,
   updatingMemberIds,
+  actionLoadingMemberIds,
   onUpdateMember,
+  onDeleteMember,
+  onResendInvite,
 }: UseTeamMembersTableColumnsParams): TableColumnsType<WorkspaceMember> {
   const { t } = useTranslation();
 
   return useMemo(() => {
     const updatingMemberIdSet = new Set(updatingMemberIds);
+    const actionLoadingMemberIdSet = new Set(actionLoadingMemberIds);
     const roleOptions = toRoleOptions(roles);
 
     return [
@@ -197,12 +209,33 @@ export function useTeamMembersTableColumns({
         title: t("team.table.joinedAt"),
         dataIndex: "joinedAt",
         key: "joinedAt",
-        width: 250,
+        width: 150,
         render: (value: string) => (value ? fromNow(value) : "-"),
+      },
+      {
+        title: t("team.table.actions"),
+        key: "actions",
+        width: 64,
+        align: "center",
+        render: (_, record) => {
+          const isActionLoading = actionLoadingMemberIdSet.has(record.id);
+
+          return (
+            <TeamMemberActions
+              member={record}
+              loading={isActionLoading}
+              onDeleteMember={onDeleteMember}
+              onResendInvite={onResendInvite}
+            />
+          );
+        },
       },
     ];
   }, [
+    actionLoadingMemberIds,
     currentUserId,
+    onDeleteMember,
+    onResendInvite,
     onUpdateMember,
     roles,
     rolesLoading,

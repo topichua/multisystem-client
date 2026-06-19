@@ -4,6 +4,9 @@ import type {
   WorkspaceMember,
   WorkspaceMemberInvitePayload,
   WorkspaceMemberInviteResponse,
+  WorkspaceMemberRegisterInfo,
+  WorkspaceMemberRegisterPayload,
+  WorkspaceMemberRegisterResponse,
   WorkspaceMemberUpdatePayload,
 } from "../model/workspace-member.types";
 
@@ -72,5 +75,41 @@ export const workspaceMembersApi = {
     );
 
     return isWorkspaceMember(data) ? data : null;
+  },
+
+  removeInvite: async (memberId: number): Promise<void> => {
+    await apiClient.delete(`${basePath}/${memberId}/remove-invite`);
+  },
+
+  deactivate: async (memberId: number): Promise<void> => {
+    await apiClient.post(`${basePath}/${memberId}/deactivate`);
+  },
+
+  resend: async (memberId: number): Promise<void> => {
+    await apiClient.post(`${basePath}/${memberId}/resend`);
+  },
+
+  getRegisterInfo: async (
+    hash: string,
+  ): Promise<WorkspaceMemberRegisterInfo> => {
+    const { data } = await apiClient.get<WorkspaceMemberRegisterInfo>(
+      `${basePath}/register`,
+      { params: { hash } },
+    );
+
+    return data;
+  },
+
+  register: async (
+    hash: string,
+    payload: WorkspaceMemberRegisterPayload,
+  ): Promise<WorkspaceMemberRegisterResponse> => {
+    const { data } = await apiClient.post<WorkspaceMemberRegisterResponse>(
+      `${basePath}/register`,
+      payload,
+      { params: { hash } },
+    );
+
+    return data;
   },
 };
