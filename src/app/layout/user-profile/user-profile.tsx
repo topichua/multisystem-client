@@ -1,4 +1,3 @@
-import { UserIcon } from "@phosphor-icons/react";
 import type { MenuProps } from "antd";
 import { Menu, Popover } from "antd";
 import { observer } from "mobx-react-lite";
@@ -17,21 +16,6 @@ type UserProfileProps = {
   collapsed?: boolean;
 };
 
-function getInitials(value: string | null): string | undefined {
-  const source = value?.trim();
-  if (!source) {
-    return undefined;
-  }
-
-  const parts = source.split(/\s+/).filter(Boolean);
-  const letters =
-    parts.length > 1
-      ? `${parts[0]?.[0] ?? ""}${parts[1]?.[0] ?? ""}`
-      : source.slice(0, 2);
-
-  return letters.toUpperCase();
-}
-
 export const UserProfile = observer(
   ({ menuPlacement = "rightTop", collapsed = true }: UserProfileProps) => {
     const { t } = useTranslation();
@@ -39,7 +23,7 @@ export const UserProfile = observer(
     const { logout } = useAuth();
     const userStore = useUserStore();
     const displayName = userStore.displayName ?? t("profile.user");
-    const initials = getInitials(displayName);
+    const avatarSrc = userStore.user?.avatar_src ?? undefined;
 
     const items: MenuProps["items"] = useMemo(
       () => [
@@ -74,9 +58,12 @@ export const UserProfile = observer(
       >
         <S.ProfileTrigger>
           <S.ProfileAvatarSlot>
-            <S.Avatar size={32} icon={initials ? undefined : <UserIcon />}>
-              {initials}
-            </S.Avatar>
+            <S.Avatar
+              data-qa="layout-app-user-menu-trigger"
+              name={displayName}
+              size={32}
+              src={avatarSrc}
+            />
           </S.ProfileAvatarSlot>
           <S.ProfileText $collapsed={collapsed}>
             <S.ProfileName>{displayName}</S.ProfileName>

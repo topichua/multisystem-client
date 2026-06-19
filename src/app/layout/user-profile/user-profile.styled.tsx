@@ -1,7 +1,6 @@
-import { Avatar as AntdAvatar } from "antd";
 import styled from "styled-components";
 
-import { dataQaAttrs } from "@/styled/data-qa-attrs";
+import { UserAvatar } from "@/components/user-avatar";
 
 const collapsedSiderWidth = "72px";
 const panelPadding = "8px";
@@ -10,15 +9,9 @@ const profileItemHeight = "40px";
 const profileTransition = "0.22s ease";
 const profileTextMaxWidth = "160px";
 
-export const Avatar = styled(AntdAvatar).attrs(() =>
-  dataQaAttrs("layout-app-user-menu-trigger"),
-)`
+export const Avatar = styled(UserAvatar)`
   && {
-    flex: 0 0 auto;
-    background: ${(props) => props.theme.colors.brandPalette[6]};
-    color: ${(props) => props.theme.colors.base.white};
     font-size: 12px;
-    font-weight: 700;
   }
 
   &:hover {

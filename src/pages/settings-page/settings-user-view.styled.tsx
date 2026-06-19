@@ -1,5 +1,6 @@
-import { Avatar as AntdAvatar } from "antd";
 import styled from "styled-components";
+
+import { UserAvatar } from "@/components/user-avatar";
 
 export const ProfileRow = styled.div`
   display: flex;
@@ -16,13 +17,9 @@ export const ProfileIdentity = styled.div`
   min-width: 0;
 `;
 
-export const ProfileAvatar = styled(AntdAvatar)`
+export const ProfileAvatar = styled(UserAvatar)`
   && {
-    flex: 0 0 auto;
-    background: ${(props) => props.theme.colors.brandPalette[6]};
-    color: ${(props) => props.theme.colors.base.white};
     font-size: 18px;
-    font-weight: 700;
   }
 `;
 
