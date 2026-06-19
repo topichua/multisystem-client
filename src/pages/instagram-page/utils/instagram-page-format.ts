@@ -1,7 +1,10 @@
 import dayjs from "dayjs";
 
 import type { InstagramMediaFilter } from "@/features/instagram/model/instagram.types";
-import type { InstagramMediaItem } from "@/features/instagram/model/instagram.types";
+export {
+  getPostCoverUrl,
+  getPostMediaDisplaySource,
+} from "@/features/products/utils/instagram-media-display";
 
 export const mediaFilters: readonly InstagramMediaFilter[] = [
   "all",
@@ -31,11 +34,6 @@ export const formatPostDate = (value: string | undefined): string => {
   const parsed = dayjs(value);
   return parsed.isValid() ? parsed.format("D MMM YYYY") : "—";
 };
-
-export const getPostCoverUrl = (post: InstagramMediaItem): string | undefined =>
-  post.thumbnail_url ??
-  post.media_url ??
-  post.children?.find((child) => child.media_url)?.media_url;
 
 export const getFilterLabelKey = (filter: InstagramMediaFilter): string => {
   switch (filter) {

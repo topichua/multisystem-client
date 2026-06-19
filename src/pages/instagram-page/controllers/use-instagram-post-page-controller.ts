@@ -3,7 +3,6 @@ import { useNavigate, useParams } from "react-router";
 
 import { pagesMap } from "@/app/router/pages-map";
 
-import { getPostCoverUrl } from "../utils/instagram-page-format";
 import { useInstagramPageController } from "./use-instagram-page-controller";
 
 export const useInstagramPostPageController = () => {
@@ -20,8 +19,6 @@ export const useInstagramPostPageController = () => {
   const productVariants = details?.productVariants ?? null;
   const linkedProducts = productVariants?.items ?? [];
   const productCount = linkedProducts.length;
-  const coverUrl = post ? getPostCoverUrl(post) : undefined;
-  const carouselCount = post?.children?.length ?? 0;
   const productVariantsLoading =
     post != null &&
     productVariants == null &&
@@ -65,8 +62,6 @@ export const useInstagramPostPageController = () => {
     productVariants,
     linkedProducts,
     productCount,
-    coverUrl,
-    carouselCount,
     productVariantsLoading,
     linkedProductsSectionLoading,
     handleSelectIntegration,

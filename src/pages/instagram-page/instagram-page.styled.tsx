@@ -167,7 +167,6 @@ export const PostCard = styled(Card)`
   }
 
   &:hover {
-    /* transform: translateY(-3px); */
     border-color: ${({ theme }) => theme.colors.functional.border.selected};
     box-shadow: ${({ theme }) => theme.shadow.large};
   }
@@ -194,10 +193,22 @@ export const PostMedia = styled.div`
   }
 
   ${PostCard}:hover & {
-    img,
-    video {
+    img {
       transform: scale(1.025);
     }
+  }
+
+  .ant-carousel,
+  .slick-slider,
+  .slick-list,
+  .slick-track,
+  .slick-slide,
+  .slick-slide > div {
+    height: 100%;
+  }
+
+  .slick-dots {
+    z-index: 2;
   }
 `;
 
@@ -242,6 +253,33 @@ export const MediaTypeBadge = styled.span`
   background: rgba(15, 17, 23, 0.76);
   font-size: ${({ theme }) => theme.fontSize.small};
   font-weight: 700;
+`;
+
+export const MediaCarouselButton = styled.button<{ $side: 'left' | 'right' }>`
+  position: absolute;
+  top: 50%;
+  ${({ $side }) => $side}: 10px;
+  z-index: 2;
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 999px;
+  color: ${({ theme }) => theme.colors.functional.text.inverted};
+  background: rgba(15, 17, 23, 0.68);
+  box-shadow: ${({ theme }) => theme.shadow.small};
+  transform: translateY(-50%);
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+
+  &:hover {
+    background: rgba(15, 17, 23, 0.84);
+    transform: translateY(-50%) scale(1.04);
+  }
 `;
 
 export const PostBody = styled.div`
@@ -314,8 +352,8 @@ export const PostDetailSummary = styled.div`
 
 export const PostDetailMediaPreview = styled.div`
   position: relative;
-  width: 156px;
-  height: 156px;
+  width: 300px;
+  height: auto;
   flex: 0 0 auto;
   overflow: hidden;
   border-radius: ${({ theme }) => theme.radius.semiLarge};
@@ -327,6 +365,19 @@ export const PostDetailMediaPreview = styled.div`
     height: 100%;
     object-fit: cover;
     display: block;
+  }
+
+  .ant-carousel,
+  .slick-slider,
+  .slick-list,
+  .slick-track,
+  .slick-slide,
+  .slick-slide > div {
+    height: 100%;
+  }
+
+  .slick-dots {
+    z-index: 2;
   }
 `;
 

@@ -2,7 +2,6 @@ import {
   ArrowSquareOutIcon,
   ChatCircleIcon,
   HeartIcon,
-  ImagesIcon,
   MagicWandIcon,
   TagIcon,
 } from "@phosphor-icons/react";
@@ -23,6 +22,7 @@ import {
   formatPostDate,
 } from "../utils/instagram-page-format";
 import { InstagramLinkProductPicker } from "./instagram-link-product-picker";
+import { InstagramPostMediaPreview } from "./instagram-post-media-preview";
 import { InstagramPostProductsTable } from "./instagram-post-products-table";
 
 const { Paragraph, Text, Title } = Typography;
@@ -43,8 +43,6 @@ export const InstagramPostDetailContent = ({
     store,
     linkedProducts,
     productCount,
-    coverUrl,
-    carouselCount,
     productVariantsLoading,
     linkedProductsSectionLoading,
   } = controller;
@@ -81,7 +79,7 @@ export const InstagramPostDetailContent = ({
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {t("instagram.openOnInstagram")}
+                {t('instagram.openOnInstagram')}
                 <ArrowSquareOutIcon size={18} />
               </Button>
             ) : null}
@@ -89,24 +87,7 @@ export const InstagramPostDetailContent = ({
 
           <S.PostDetailSummary>
             <S.PostDetailMediaPreview>
-              {carouselCount > 1 ? (
-                <S.MediaTypeBadge>
-                  <ImagesIcon size={15} />
-                  {carouselCount}
-                </S.MediaTypeBadge>
-              ) : null}
-
-              {coverUrl ? (
-                post.media_type === "VIDEO" ? (
-                  <video src={coverUrl} muted playsInline />
-                ) : (
-                  <img src={coverUrl} alt="" />
-                )
-              ) : (
-                <S.PostMediaPlaceholder>
-                  <ImagesIcon size={36} />
-                </S.PostMediaPlaceholder>
-              )}
+              <InstagramPostMediaPreview post={post} />
             </S.PostDetailMediaPreview>
 
             <Flex vertical gap={12}>
@@ -128,27 +109,27 @@ export const InstagramPostDetailContent = ({
           <Flex vertical gap={10}>
             <Flex align="center" justify="space-between" gap={16}>
               <S.PostDetailSectionTitle>
-                {t("instagram.postDescription")}
+                {t('instagram.postDescription')}
               </S.PostDetailSectionTitle>
               <Button icon={<MagicWandIcon size={16} />}>
-                {t("instagram.composeWithAi")}
+                {t('instagram.composeWithAi')}
               </Button>
             </Flex>
 
             <S.PostDescriptionBox>
               <Paragraph style={{ margin: 0 }}>
-                {post.caption?.trim() || t("instagram.noCaption")}
+                {post.caption?.trim() || t('instagram.noCaption')}
               </Paragraph>
             </S.PostDescriptionBox>
 
-            <Text type="secondary">{t("instagram.aiDescriptionHint")}</Text>
+            <Text type="secondary">{t('instagram.aiDescriptionHint')}</Text>
           </Flex>
 
           <Flex vertical gap={10}>
             <Flex align="center" justify="space-between" gap={16}>
               <S.PostDetailSectionTitle>
                 <TagIcon size={16} />
-                {t("instagram.linkedProducts")}
+                {t('instagram.linkedProducts')}
                 <S.FilterCount>{productCount}</S.FilterCount>
               </S.PostDetailSectionTitle>
               <InstagramLinkProductPicker
@@ -160,7 +141,7 @@ export const InstagramPostDetailContent = ({
 
             <Spin
               spinning={linkedProductsSectionLoading}
-              tip={t("instagram.updatingLinkedProducts")}
+              tip={t('instagram.updatingLinkedProducts')}
             >
               <div style={{ minHeight: 120 }}>
                 <InstagramPostProductsTable

@@ -3,19 +3,18 @@ import {
   CaretRightIcon,
   CheckIcon,
   HeartIcon,
-  ImagesIcon,
-} from "@phosphor-icons/react";
-import type { KeyboardEvent, MouseEvent } from "react";
-import { useTranslation } from "react-i18next";
+} from '@phosphor-icons/react';
+import type { KeyboardEvent, MouseEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 
-import type { InstagramMediaItem } from "@/features/instagram/model/instagram.types";
+import type { InstagramMediaItem } from '@/features/instagram/model/instagram.types';
 
-import * as S from "../instagram-page.styled";
+import * as S from '../instagram-page.styled';
 import {
   formatCompactNumber,
   formatPostDate,
-  getPostCoverUrl,
-} from "../utils/instagram-page-format";
+} from '../utils/instagram-page-format';
+import { InstagramPostMediaPreview } from './instagram-post-media-preview';
 
 type InstagramMediaCardProps = {
   post: InstagramMediaItem;
@@ -31,15 +30,13 @@ export const InstagramMediaCard = ({
   onPostClick,
 }: InstagramMediaCardProps) => {
   const { t } = useTranslation();
-  const coverUrl = getPostCoverUrl(post);
-  const carouselCount = post.children?.length ?? 0;
 
   const handlePostClick = () => {
     onPostClick(post);
   };
 
   const handlePostKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === "Enter" || event.key === " ") {
+    if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       handlePostClick();
     }
@@ -62,33 +59,21 @@ export const InstagramMediaCard = ({
         {linkedToProduct ? (
           <S.ProductBadge>
             <CheckIcon size={14} />
-            {t("instagram.productBadge")}
+            {t('instagram.productBadge')}
           </S.ProductBadge>
         ) : null}
 
-        {carouselCount > 1 ? (
-          <S.MediaTypeBadge>
-            <ImagesIcon size={15} />
-            {carouselCount}
-          </S.MediaTypeBadge>
-        ) : null}
-
-        {coverUrl ? (
-          post.media_type === "VIDEO" ? (
-            <video src={coverUrl} muted playsInline />
-          ) : (
-            <img src={coverUrl} alt="" />
-          )
-        ) : (
-          <S.PostMediaPlaceholder>
-            <ImagesIcon size={36} />
-          </S.PostMediaPlaceholder>
-        )}
+        <InstagramPostMediaPreview
+          post={post}
+          showVideoBadge
+          stopCarouselControlPropagation
+          videoDisplay="poster"
+        />
       </S.PostMedia>
 
       <S.PostBody>
         <S.PostCaption>
-          {post.caption?.trim() || t("instagram.noCaption")}
+          {post.caption?.trim() || t('instagram.noCaption')}
         </S.PostCaption>
 
         <S.PostMetaRow>
@@ -101,7 +86,7 @@ export const InstagramMediaCard = ({
             <S.FilterCount $active>{productIds.length}</S.FilterCount>
           ) : null}
           <S.SelectPostButton type="button" onClick={handleSelectClick}>
-            {t("instagram.choosePost")}
+            {t('instagram.choosePost')}
             <CaretRightIcon size={14} />
           </S.SelectPostButton>
         </S.PostMetaRow>
@@ -113,7 +98,7 @@ export const InstagramMediaCard = ({
               href={post.permalink}
               onClick={(event) => event.stopPropagation()}
             >
-              {t("instagram.openOnInstagram")}
+              {t('instagram.openOnInstagram')}
               <ArrowSquareOutIcon size={14} />
             </S.ExternalPostLink>
           ) : null}

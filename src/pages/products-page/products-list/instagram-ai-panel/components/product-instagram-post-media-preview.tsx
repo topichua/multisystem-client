@@ -5,10 +5,12 @@ import {
   CaretRightIcon,
   ImageIcon,
 } from "@phosphor-icons/react";
+import type { CSSProperties } from "react";
 import { useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import type { InstagramMediaItem } from "@/features/instagram/model/instagram.types";
+import { isInstagramVideoMediaType } from "@/features/products/utils/instagram-media-display";
 
 import {
   getPostMediaItems,
@@ -26,27 +28,28 @@ type MediaPreviewProps = {
   controls?: boolean;
 };
 
-const MediaPreview = ({ media, controls = false }: MediaPreviewProps) =>
-  media.mediaType === "VIDEO" ? (
+const mediaPreviewStyle: CSSProperties = {
+  width: "100%",
+  height: "100%",
+  objectFit: "cover",
+  display: "block",
+};
+
+const MediaPreview = ({ media, controls = false }: MediaPreviewProps) => {
+  const isVideo = isInstagramVideoMediaType(media.mediaType);
+
+  return isVideo ? (
     <video
       src={media.url}
       muted
       playsInline
       controls={controls}
-      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+      style={mediaPreviewStyle}
     />
   ) : (
-    <img
-      src={media.url}
-      alt=""
-      style={{
-        width: "100%",
-        height: "100%",
-        objectFit: "cover",
-        display: "block",
-      }}
-    />
+    <img src={media.url} alt="" style={mediaPreviewStyle} />
   );
+};
 
 export const ProductInstagramPostMediaPreview = ({
   post,

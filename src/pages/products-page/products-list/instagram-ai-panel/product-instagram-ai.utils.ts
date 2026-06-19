@@ -3,7 +3,7 @@ import type {
   InstagramPostAiExtractionMedia,
   InstagramPostAiExtractionResponse,
 } from "@/features/instagram/model/instagram.types";
-import { getPostCoverUrl } from "@/pages/instagram-page/utils/instagram-page-format";
+import { getPostMediaDisplaySource } from "@/pages/instagram-page/utils/instagram-page-format";
 
 import type { ProductInstagramAiCategoryOption } from "./product-instagram-ai.types";
 
@@ -34,10 +34,10 @@ export const getPostMediaItems = (
     return childMedia;
   }
 
-  const coverUrl = getPostCoverUrl(post);
+  const mediaSource = getPostMediaDisplaySource(post);
 
-  return coverUrl
-    ? [{ key: post.id, mediaType: post.media_type, url: coverUrl }]
+  return mediaSource
+    ? [{ key: post.id, mediaType: post.media_type, url: mediaSource.url }]
     : [];
 };
 
