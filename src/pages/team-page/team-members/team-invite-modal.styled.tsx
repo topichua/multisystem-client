@@ -2,10 +2,17 @@ import styled from "styled-components";
 
 import { RoleDot } from "@/shared/components/role-dot/role-dot";
 
+const MODAL_SCROLLABLE_LIST_MAX_HEIGHT = 'clamp(220px, 34dvh, 360px)';
+
 export const RoleOptionList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
+
+  max-height: ${MODAL_SCROLLABLE_LIST_MAX_HEIGHT};
+  overflow-y: auto;
+  padding-right: 4px;
+  overscroll-behavior: contain;
 `;
 
 export const RoleOptionCard = styled.button<{ $selected: boolean }>`
