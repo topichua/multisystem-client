@@ -2,7 +2,6 @@ import styled from "styled-components";
 
 export const Content = styled.div`
   width: 100%;
-  max-width: 1500px;
   height: 100%;
   min-height: 0;
   margin: 0 auto;

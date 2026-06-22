@@ -6,9 +6,10 @@ import { dataQaAttrs } from "@/styled/data-qa-attrs";
 const collapsedSiderWidth = "72px";
 const expandedSiderWidth = "222px";
 
-const panelPadding = "8px";
+// const panelPadding = "8px";
 const navItemSize = "40px";
-const siderRailWidth = `calc(${collapsedSiderWidth} - (${panelPadding} * 2))`;
+// const siderRailWidth = `calc(${collapsedSiderWidth} - (${panelPadding} * 2))`;
+const siderRailWidth = "50px";
 
 const siderTransition = "0.22s ease";
 
