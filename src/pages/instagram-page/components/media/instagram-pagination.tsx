@@ -1,7 +1,7 @@
 import { Button, Typography } from "antd";
 import { useTranslation } from "react-i18next";
 
-import * as S from "../instagram-page.styled";
+import * as S from "../../instagram-page.styled";
 
 const { Text } = Typography;
 

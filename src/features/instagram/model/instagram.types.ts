@@ -6,6 +6,7 @@ export type InstagramIntegration = {
   integration_id: InstagramIntegrationId;
   business_account_id: string;
   name: string;
+  username?: string;
   media_count?: number;
   followers_count?: number;
 };
@@ -48,6 +49,30 @@ export type InstagramMediaPaging = {
 
 export type InstagramMediaPage = {
   posts: InstagramMediaItem[];
+  paging: InstagramMediaPaging | null;
+};
+
+export type InstagramCommentAuthor = {
+  id?: string;
+  username?: string;
+};
+
+export type InstagramComment = {
+  id: string;
+  text: string;
+  timestamp?: string;
+  username?: string;
+  like_count?: number;
+  hidden?: boolean;
+  from?: InstagramCommentAuthor;
+  reply_count?: number;
+  has_replies?: boolean;
+  replies?: InstagramComment[];
+  optimistic?: boolean;
+};
+
+export type InstagramCommentsPage = {
+  comments: InstagramComment[];
   paging: InstagramMediaPaging | null;
 };
 

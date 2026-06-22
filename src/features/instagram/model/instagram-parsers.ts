@@ -1,6 +1,8 @@
 import type {
   InstagramIntegration,
-  InstagramIntegrationId,
+  InstagramComment,
+  InstagramCommentAuthor,
+  InstagramCommentsPage,
   InstagramMediaChild,
   InstagramMediaItem,
   InstagramMediaPage,
@@ -8,10 +10,12 @@ import type {
   InstagramProductReferences,
 } from "./instagram.types";
 
+type ParsedId = string | number;
+
 const isRecord = (v: unknown): v is Record<string, unknown> =>
   typeof v === "object" && v !== null && !Array.isArray(v);
 
-const readId = (v: unknown): InstagramIntegrationId | null => {
+const readId = (v: unknown): ParsedId | null => {
   if (typeof v === "string" && v.trim() !== "") {
     return v;
   }
@@ -93,6 +97,8 @@ const parseInstagramIntegration = (
     integration_id: integrationId,
     business_account_id: String(businessAccountId),
     name,
+    username:
+      readString(raw.username ?? raw.business_account_username) ?? undefined,
     media_count: readNumber(raw.media_count ?? raw.mediaCount),
     followers_count: readNumber(raw.followers_count ?? raw.followersCount),
   };
@@ -247,6 +253,102 @@ const parsePaging = (raw: unknown): InstagramMediaPaging | null => {
   };
 };
 
+const parseCommentAuthor = (
+  raw: unknown,
+): InstagramCommentAuthor | undefined => {
+  if (!isRecord(raw)) {
+    return undefined;
+  }
+
+  const id = readId(raw.id);
+  const username = readString(raw.username);
+
+  if (id == null && username == null) {
+    return undefined;
+  }
+
+  return {
+    id: id != null ? String(id) : undefined,
+    username: username ?? undefined,
+  };
+};
+
+const parseCommentReplies = (raw: unknown): InstagramComment[] | undefined => {
+  const value =
+    isRecord(raw) && Array.isArray(raw.data)
+      ? raw.data
+      : Array.isArray(raw)
+        ? raw
+        : null;
+
+  if (!value) {
+    return undefined;
+  }
+
+  const replies = value.reduce<InstagramComment[]>((acc, item) => {
+    const parsed = parseInstagramComment(item);
+
+    if (parsed) {
+      acc.push(parsed);
+    }
+
+    return acc;
+  }, []);
+
+  return replies.length > 0 ? replies : undefined;
+};
+
+const parseInstagramComment = (raw: unknown): InstagramComment | null => {
+  if (!isRecord(raw)) {
+    return null;
+  }
+
+  const id = readId(raw.id);
+  const text = readString(raw.text ?? raw.message);
+
+  if (id == null) {
+    return null;
+  }
+
+  return {
+    id: String(id),
+    text: text ?? "",
+    timestamp: readString(raw.timestamp ?? raw.created_time) ?? undefined,
+    username: readString(raw.username) ?? undefined,
+    like_count: readNumber(raw.like_count ?? raw.likeCount),
+    hidden:
+      typeof raw.hidden === "boolean"
+        ? raw.hidden
+        : typeof raw.is_hidden === "boolean"
+          ? raw.is_hidden
+          : undefined,
+    from: parseCommentAuthor(raw.from),
+    reply_count: readNumber(raw.reply_count ?? raw.replyCount),
+    has_replies:
+      typeof raw.has_replies === "boolean"
+        ? raw.has_replies
+        : typeof raw.hasReplies === "boolean"
+          ? raw.hasReplies
+          : undefined,
+    replies: parseCommentReplies(raw.replies),
+  };
+};
+
+export const parseInstagramCommentsPageResponse = (
+  payload: unknown,
+): InstagramCommentsPage => ({
+  comments: unwrapPayload(payload).reduce<InstagramComment[]>((acc, item) => {
+    const parsed = parseInstagramComment(item);
+
+    if (parsed) {
+      acc.push(parsed);
+    }
+
+    return acc;
+  }, []),
+  paging: isRecord(payload) ? parsePaging(payload.paging) : null,
+});
+
 const extractMediaPaging = (payload: unknown): InstagramMediaPaging | null => {
   if (!isRecord(payload)) {
     return null;
@@ -309,17 +411,18 @@ const addProductReference = (
   }
 
   if (productId) {
-    refs.productIdsByMediaId[mediaId] = [
-      ...(refs.productIdsByMediaId[mediaId] ?? []),
-      productId,
-    ];
+    refs.productIdsByMediaId[mediaId] = Array.from(
+      new Set([...(refs.productIdsByMediaId[mediaId] ?? []), productId]),
+    );
   }
 
   if (productVariantId) {
-    refs.productVariantIdsByMediaId[mediaId] = [
-      ...(refs.productVariantIdsByMediaId[mediaId] ?? []),
-      productVariantId,
-    ];
+    refs.productVariantIdsByMediaId[mediaId] = Array.from(
+      new Set([
+        ...(refs.productVariantIdsByMediaId[mediaId] ?? []),
+        productVariantId,
+      ]),
+    );
   }
 };
 
@@ -336,11 +439,11 @@ const parseProductIdsMap = (raw: unknown, refs: InstagramProductReferences) => {
     if (Array.isArray(productIds)) {
       const ids = productIds
         .map((item) => readId(item))
-        .filter((item): item is InstagramIntegrationId => item != null)
+        .filter((item): item is ParsedId => item != null)
         .map(String);
 
       addProductReference(refs, mediaId);
-      refs.productIdsByMediaId[mediaId] = ids;
+      refs.productIdsByMediaId[mediaId] = Array.from(new Set(ids));
       return;
     }
 

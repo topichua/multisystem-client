@@ -5,8 +5,8 @@ import type { InstagramMediaFilter } from "@/features/instagram/model/instagram.
 import {
   getFilterLabelKey,
   mediaFilters,
-} from "../utils/instagram-page-format";
-import * as S from "../instagram-page.styled";
+} from "../../utils/instagram-page-format";
+import * as S from "../../instagram-page.styled";
 
 type InstagramMediaFiltersProps = {
   activeFilter: InstagramMediaFilter;

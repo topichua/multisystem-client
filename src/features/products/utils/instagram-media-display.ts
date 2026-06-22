@@ -29,7 +29,9 @@ export function isVideoFileUrl(url: string): boolean {
   return /\.(mp4|webm|mov)(\?|$)/i.test(url) || url.includes("/v/t2/");
 }
 
-export function isInstagramVideoMediaType(mediaType: string | undefined): boolean {
+export function isInstagramVideoMediaType(
+  mediaType: string | undefined,
+): boolean {
   return mediaType === "VIDEO";
 }
 

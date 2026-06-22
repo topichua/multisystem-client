@@ -2,8 +2,8 @@ import { observer } from "mobx-react-lite";
 
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
 
-import { InstagramMediaBrowser } from "./components/instagram-media-browser";
-import { InstagramPageShell } from "./components/instagram-page-shell";
+import { InstagramMediaBrowser } from "./components/media/instagram-media-browser";
+import { InstagramPageShell } from "./components/shared/instagram-page-shell";
 import { useInstagramPageController } from "./controllers/use-instagram-page-controller";
 
 export const InstagramPage = observer(() => {

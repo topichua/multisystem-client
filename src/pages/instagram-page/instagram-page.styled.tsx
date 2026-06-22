@@ -255,7 +255,7 @@ export const MediaTypeBadge = styled.span`
   font-weight: 700;
 `;
 
-export const MediaCarouselButton = styled.button<{ $side: 'left' | 'right' }>`
+export const MediaCarouselButton = styled.button<{ $side: "left" | "right" }>`
   position: absolute;
   top: 50%;
   ${({ $side }) => $side}: 10px;
@@ -330,82 +330,6 @@ export const ExternalPostLink = styled.a`
   align-items: center;
   gap: 6px;
   font-weight: 600;
-`;
-
-export const PostDetailContent = styled.div`
-  width: 100%;
-  max-width: 1060px;
-  margin: 0 auto;
-  padding: 20px 0 40px;
-`;
-
-export const PostDetailSummary = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 20px;
-
-  @media (max-width: 640px) {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-`;
-
-export const PostDetailMediaPreview = styled.div`
-  position: relative;
-  width: 300px;
-  height: auto;
-  flex: 0 0 auto;
-  overflow: hidden;
-  border-radius: ${({ theme }) => theme.radius.semiLarge};
-  background: ${({ theme }) => theme.colors.functional.background.natural};
-
-  img,
-  video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-
-  .ant-carousel,
-  .slick-slider,
-  .slick-list,
-  .slick-track,
-  .slick-slide,
-  .slick-slide > div {
-    height: 100%;
-  }
-
-  .slick-dots {
-    z-index: 2;
-  }
-`;
-
-export const PostDetailMetric = styled.span`
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: ${({ theme }) => theme.colors.functional.text.primary};
-`;
-
-export const PostDetailSectionTitle = styled.div`
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: ${({ theme }) => theme.colors.functional.text.subdued};
-  font-size: ${({ theme }) => theme.fontSize.small};
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-`;
-
-export const PostDescriptionBox = styled.div`
-  min-height: 90px;
-  padding: 14px;
-  border: 1px solid ${({ theme }) => theme.colors.functional.border.cardBase};
-  border-radius: ${({ theme }) => theme.radius.large};
-  background: ${({ theme }) => theme.colors.functional.background.elevated};
-  color: ${({ theme }) => theme.colors.functional.text.primary};
 `;
 
 export const PostProductsTableWrapper = styled.div`

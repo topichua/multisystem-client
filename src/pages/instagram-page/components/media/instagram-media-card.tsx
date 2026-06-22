@@ -3,18 +3,18 @@ import {
   CaretRightIcon,
   CheckIcon,
   HeartIcon,
-} from '@phosphor-icons/react';
-import type { KeyboardEvent, MouseEvent } from 'react';
-import { useTranslation } from 'react-i18next';
+} from "@phosphor-icons/react";
+import type { KeyboardEvent, MouseEvent } from "react";
+import { useTranslation } from "react-i18next";
 
-import type { InstagramMediaItem } from '@/features/instagram/model/instagram.types';
+import type { InstagramMediaItem } from "@/features/instagram/model/instagram.types";
 
-import * as S from '../instagram-page.styled';
+import * as S from "../../instagram-page.styled";
 import {
   formatCompactNumber,
   formatPostDate,
-} from '../utils/instagram-page-format';
-import { InstagramPostMediaPreview } from './instagram-post-media-preview';
+} from "../../utils/instagram-page-format";
+import { InstagramPostMediaPreview } from "./instagram-post-media-preview";
 
 type InstagramMediaCardProps = {
   post: InstagramMediaItem;
@@ -36,7 +36,7 @@ export const InstagramMediaCard = ({
   };
 
   const handlePostKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === 'Enter' || event.key === ' ') {
+    if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
       handlePostClick();
     }
@@ -59,7 +59,7 @@ export const InstagramMediaCard = ({
         {linkedToProduct ? (
           <S.ProductBadge>
             <CheckIcon size={14} />
-            {t('instagram.productBadge')}
+            {t("instagram.productBadge")}
           </S.ProductBadge>
         ) : null}
 
@@ -73,7 +73,7 @@ export const InstagramMediaCard = ({
 
       <S.PostBody>
         <S.PostCaption>
-          {post.caption?.trim() || t('instagram.noCaption')}
+          {post.caption?.trim() || t("instagram.noCaption")}
         </S.PostCaption>
 
         <S.PostMetaRow>
@@ -86,7 +86,7 @@ export const InstagramMediaCard = ({
             <S.FilterCount $active>{productIds.length}</S.FilterCount>
           ) : null}
           <S.SelectPostButton type="button" onClick={handleSelectClick}>
-            {t('instagram.choosePost')}
+            {t("instagram.choosePost")}
             <CaretRightIcon size={14} />
           </S.SelectPostButton>
         </S.PostMetaRow>
@@ -98,7 +98,7 @@ export const InstagramMediaCard = ({
               href={post.permalink}
               onClick={(event) => event.stopPropagation()}
             >
-              {t('instagram.openOnInstagram')}
+              {t("instagram.openOnInstagram")}
               <ArrowSquareOutIcon size={14} />
             </S.ExternalPostLink>
           ) : null}

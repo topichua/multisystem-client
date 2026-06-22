@@ -15,7 +15,7 @@ import {
   type InstagramMediaSlide,
 } from "@/features/products/utils/instagram-media-display";
 
-import * as S from "../instagram-page.styled";
+import * as S from "../../instagram-page.styled";
 
 type InstagramPostMediaPreviewProps = {
   post: InstagramMediaItem;
@@ -28,10 +28,11 @@ const renderSlide = (
   slide: InstagramMediaSlide,
   videoDisplay: InstagramPostMediaPreviewProps["videoDisplay"],
 ) => {
-  if (slide.type === "video" && (videoDisplay === "video" || !slide.posterUrl)) {
-    return (
-      <video src={slide.url} poster={slide.posterUrl} muted playsInline />
-    );
+  if (
+    slide.type === "video" &&
+    (videoDisplay === "video" || !slide.posterUrl)
+  ) {
+    return <video src={slide.url} poster={slide.posterUrl} muted playsInline />;
   }
 
   return <img src={slide.posterUrl ?? slide.url} alt="" />;

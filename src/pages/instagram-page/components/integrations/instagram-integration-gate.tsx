@@ -6,8 +6,8 @@ import { Link as RouterLink } from "react-router";
 
 import { pagesMap } from "@/app/router/pages-map";
 
-import type { InstagramPageController } from "../controllers/use-instagram-page-controller";
-import * as S from "../instagram-page.styled";
+import type { InstagramPageController } from "../../controllers/use-instagram-page-controller";
+import * as S from "../../instagram-page.styled";
 
 type InstagramIntegrationGateProps = {
   controller: InstagramPageController;

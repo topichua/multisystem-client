@@ -28,7 +28,7 @@ import {
   variantStatusToColor,
 } from "@/features/products/utils/product-display";
 
-import * as S from "../instagram-page.styled";
+import * as S from "../../instagram-page.styled";
 
 const { Text } = Typography;
 

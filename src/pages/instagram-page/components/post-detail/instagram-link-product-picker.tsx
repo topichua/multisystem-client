@@ -10,7 +10,7 @@ import { productsApi } from "@/features/products/api/products-api";
 import { CatalogVariantSearchItem } from "@/features/products/components/catalog-variant-search-item";
 import type { CatalogVariant } from "@/features/products/model/product.types";
 
-import * as S from "../instagram-page.styled";
+import * as S from "../../instagram-page.styled";
 
 const { Text } = Typography;
 

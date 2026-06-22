@@ -6,13 +6,13 @@ import { useTranslation } from "react-i18next";
 import type { InstagramMediaItem } from "@/features/instagram/model/instagram.types";
 import { useIntersectionLoadMore } from "@/utils/use-intersection-load-more";
 
-import type { InstagramPageController } from "../controllers/use-instagram-page-controller";
-import * as S from "../instagram-page.styled";
-import { InstagramIntegrationGate } from "./instagram-integration-gate";
+import type { InstagramPageController } from "../../controllers/use-instagram-page-controller";
+import * as S from "../../instagram-page.styled";
+import { InstagramIntegrationGate } from "../integrations/instagram-integration-gate";
+import { InstagramProfileHeader } from "../shared/instagram-profile-header";
 import { InstagramMediaFilters } from "./instagram-media-filters";
 import { InstagramMediaGrid } from "./instagram-media-grid";
 // import { InstagramPagination } from "./instagram-pagination";
-import { InstagramProfileHeader } from "./instagram-profile-header";
 
 export type InstagramMediaBrowserProps = {
   controller: InstagramPageController;

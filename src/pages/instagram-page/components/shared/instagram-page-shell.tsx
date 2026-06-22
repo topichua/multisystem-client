@@ -3,8 +3,8 @@ import { useTranslation } from "react-i18next";
 
 import { SettingsShell } from "@/components/settings/settings-shell/settings-shell";
 
-import type { InstagramPageController } from "../controllers/use-instagram-page-controller";
-import { InstagramIntegrationsSidebar } from "./instagram-integrations-sidebar";
+import type { InstagramPageController } from "../../controllers/use-instagram-page-controller";
+import { InstagramIntegrationsSidebar } from "../integrations/instagram-integrations-sidebar";
 
 type InstagramPageShellProps = {
   controller: InstagramPageController;

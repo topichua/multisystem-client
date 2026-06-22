@@ -8,8 +8,8 @@ import type {
 import {
   formatCompactNumber,
   formatHandle,
-} from "../utils/instagram-page-format";
-import * as S from "../instagram-page.styled";
+} from "../../utils/instagram-page-format";
+import * as S from "../../instagram-page.styled";
 
 type InstagramProfileHeaderProps = {
   integration: InstagramIntegration;

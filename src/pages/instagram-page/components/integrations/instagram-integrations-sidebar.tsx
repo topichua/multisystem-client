@@ -8,8 +8,8 @@ import type { InstagramIntegration } from "@/features/instagram/model/instagram.
 import {
   formatCompactNumber,
   formatHandle,
-} from "../utils/instagram-page-format";
-import * as S from "../instagram-page.styled";
+} from "../../utils/instagram-page-format";
+import * as S from "../../instagram-page.styled";
 
 const { Text } = Typography;
 

@@ -1,7 +1,7 @@
 import type { InstagramMediaItem } from "@/features/instagram/model/instagram.types";
 
 import { InstagramMediaCard } from "./instagram-media-card";
-import * as S from "../instagram-page.styled";
+import * as S from "../../instagram-page.styled";
 
 type InstagramMediaGridProps = {
   posts: InstagramMediaItem[];

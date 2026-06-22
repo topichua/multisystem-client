@@ -1,10 +1,13 @@
 import { apiClient } from "@/api/api-client";
 import {
+  parseInstagramCommentsPageResponse,
   parseInstagramMediaPageResponse,
   parseInstagramIntegrationsResponse,
   parseInstagramProductReferencesResponse,
 } from "@/features/instagram/model/instagram-parsers";
 import type {
+  InstagramComment,
+  InstagramCommentsPage,
   InstagramIntegration,
   InstagramIntegrationId,
   InstagramMediaPage,
@@ -31,6 +34,31 @@ type GetPostProductVariantsParams = {
 type GetPostAiExtractionParams = {
   postId: string;
   integrationId: InstagramIntegrationId;
+};
+
+type ListPostCommentsParams = {
+  postId: string;
+  integrationId: InstagramIntegrationId;
+  limit?: number;
+  after?: string;
+  before?: string;
+  includeReplies?: boolean;
+};
+
+type ListCommentRepliesParams = {
+  postId: string;
+  commentId: string;
+  integrationId: InstagramIntegrationId;
+  limit?: number;
+  after?: string;
+  before?: string;
+};
+
+type ReplyToCommentParams = {
+  postId: string;
+  commentId: string;
+  integrationId: InstagramIntegrationId;
+  message: string;
 };
 
 export const instagramApi = {
@@ -103,5 +131,75 @@ export const instagramApi = {
     );
 
     return data;
+  },
+
+  listPostComments: async ({
+    postId,
+    integrationId,
+    limit,
+    after,
+    before,
+    includeReplies,
+  }: ListPostCommentsParams): Promise<InstagramCommentsPage> => {
+    const { data } = await apiClient.get<unknown>(
+      `${basePath}/posts/${encodeURIComponent(postId)}/comments`,
+      {
+        params: {
+          integrationId,
+          limit,
+          after,
+          before,
+          include_replies: includeReplies,
+        },
+      },
+    );
+
+    return parseInstagramCommentsPageResponse(data);
+  },
+
+  listCommentReplies: async ({
+    postId,
+    commentId,
+    integrationId,
+    limit,
+    after,
+    before,
+  }: ListCommentRepliesParams): Promise<InstagramCommentsPage> => {
+    const { data } = await apiClient.get<unknown>(
+      `${basePath}/posts/${encodeURIComponent(postId)}/comments/${encodeURIComponent(commentId)}/replies`,
+      {
+        params: {
+          integrationId,
+          limit,
+          after,
+          before,
+        },
+      },
+    );
+
+    return parseInstagramCommentsPageResponse(data);
+  },
+
+  replyToComment: async ({
+    postId,
+    commentId,
+    integrationId,
+    message,
+  }: ReplyToCommentParams): Promise<InstagramComment | null> => {
+    const { data } = await apiClient.post<unknown>(
+      `${basePath}/posts/${encodeURIComponent(postId)}/comments/${encodeURIComponent(commentId)}/reply`,
+      { message },
+      {
+        params: {
+          integrationId,
+        },
+      },
+    );
+
+    return (
+      parseInstagramCommentsPageResponse(data).comments[0] ??
+      parseInstagramCommentsPageResponse({ data: [data] }).comments[0] ??
+      null
+    );
   },
 };

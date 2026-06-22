@@ -5,7 +5,7 @@ import type {
   InstagramMediaItem,
   InstagramPostAiExtractionResponse,
 } from "@/features/instagram/model/instagram.types";
-import { InstagramMediaBrowser } from "@/pages/instagram-page/components/instagram-media-browser";
+import { InstagramMediaBrowser } from "@/pages/instagram-page/components/media/instagram-media-browser";
 import { useInstagramPageController } from "@/pages/instagram-page/controllers/use-instagram-page-controller";
 
 import { ProductInstagramPostAnalyzeView } from "./components/product-instagram-post-analyze-view";

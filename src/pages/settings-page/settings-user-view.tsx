@@ -138,11 +138,7 @@ export const SettingsUserView = observer(() => {
           <FormCard>
             <S.ProfileRow>
               <S.ProfileIdentity>
-                <S.ProfileAvatar
-                  size={56}
-                  name={displayName}
-                  src={avatarSrc}
-                />
+                <S.ProfileAvatar size={56} name={displayName} src={avatarSrc} />
                 <S.ProfileText>
                   <S.ProfileName>{displayName}</S.ProfileName>
                   {profileSubtitle ? (
