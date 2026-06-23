@@ -1,3 +1,7 @@
+/**
+ * @deprecated Not used anymore, will be removed in the future
+ */
+
 import { Button, Typography } from "antd";
 import { useTranslation } from "react-i18next";
 

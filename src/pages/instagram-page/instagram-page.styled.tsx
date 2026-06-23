@@ -310,7 +310,7 @@ export const PostMetaRow = styled.div`
 export const PostMetric = styled.span`
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 12px;
 `;
 
 export const SelectPostButton = styled.button`

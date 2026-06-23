@@ -3,6 +3,7 @@ import {
   CaretRightIcon,
   CheckIcon,
   HeartIcon,
+  ChatCircleIcon,
 } from "@phosphor-icons/react";
 import type { KeyboardEvent, MouseEvent } from "react";
 import { useTranslation } from "react-i18next";
@@ -15,6 +16,7 @@ import {
   formatPostDate,
 } from "../../utils/instagram-page-format";
 import { InstagramPostMediaPreview } from "./instagram-post-media-preview";
+import { Flex } from "antd";
 
 type InstagramMediaCardProps = {
   post: InstagramMediaItem;
@@ -78,10 +80,15 @@ export const InstagramMediaCard = ({
 
         <S.PostMetaRow>
           <S.PostMetric>
-            <HeartIcon size={16} />
-            {formatCompactNumber(post.like_count)}
+            <Flex gap={4} align="center">
+              <HeartIcon size={16} />
+              {formatCompactNumber(post.like_count)}
+            </Flex>
+            <Flex gap={4}>
+              <ChatCircleIcon size={16} />
+              {formatCompactNumber(post.comments_count)}
+            </Flex>
           </S.PostMetric>
-          <span>{formatPostDate(post.timestamp)}</span>
           {productIds.length > 0 ? (
             <S.FilterCount $active>{productIds.length}</S.FilterCount>
           ) : null}
@@ -89,6 +96,9 @@ export const InstagramMediaCard = ({
             {t("instagram.choosePost")}
             <CaretRightIcon size={14} />
           </S.SelectPostButton>
+        </S.PostMetaRow>
+        <S.PostMetaRow style={{ marginTop: 6 }}>
+          <span>{formatPostDate(post.timestamp)}</span>
         </S.PostMetaRow>
         <S.PostMetaRow style={{ marginTop: 20 }}>
           {post.permalink ? (

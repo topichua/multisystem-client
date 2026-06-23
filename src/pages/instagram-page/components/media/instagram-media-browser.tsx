@@ -12,7 +12,6 @@ import { InstagramIntegrationGate } from "../integrations/instagram-integration-
 import { InstagramProfileHeader } from "../shared/instagram-profile-header";
 import { InstagramMediaFilters } from "./instagram-media-filters";
 import { InstagramMediaGrid } from "./instagram-media-grid";
-// import { InstagramPagination } from "./instagram-pagination";
 
 export type InstagramMediaBrowserProps = {
   controller: InstagramPageController;
@@ -131,15 +130,6 @@ export const InstagramMediaBrowser = observer(
                 ) : null}
               </>
             )}
-
-            {/* <InstagramPagination
-              page={store.mediaPageIndex}
-              loading={store.mediaLoading}
-              canLoadPrevious={store.canLoadPreviousMediaPage}
-              canLoadNext={store.canLoadNextMediaPage}
-              onPrevious={controller.loadPreviousMediaPage}
-              onNext={controller.loadNextMediaPage}
-            /> */}
           </S.Content>
         ) : null}
       </InstagramIntegrationGate>
