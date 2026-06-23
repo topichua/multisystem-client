@@ -115,7 +115,7 @@ export const IntegrationConnectedStatus = styled.span`
   color: ${({ theme }) => theme.colors.semantic.success};
 
   &::before {
-    content: '';
+    content: "";
     width: 6px;
     height: 6px;
     border-radius: 50%;

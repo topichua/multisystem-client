@@ -9,7 +9,7 @@ export const PaneScrollRegion = styled.div`
 
 export const PaneSectionTitle = styled.h2`
   margin: 0;
-  font-size: ${(p) => p.theme.fontSize.extraLarge};
+  font-size: ${(p) => p.theme.fontSize.ultraLarge};
   font-weight: 600;
   line-height: 1.3;
   color: ${(p) => p.theme.colors.functional.text.heading};
@@ -24,7 +24,7 @@ export const PaneSectionHint = styled.p`
 
 export const PaneSectionHeader = styled.div`
   flex-shrink: 0;
-  padding: 12px;
+  padding: 0 4px 12px 4px;
 `;
 
 export const PaneSectionHeaderStack = styled(PaneSectionHeader)`

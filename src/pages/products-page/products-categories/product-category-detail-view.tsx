@@ -1,4 +1,4 @@
-import { Alert, Button, Divider, Flex, Spin } from "antd";
+import { Alert, Button, Flex, Spin } from "antd";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
@@ -76,8 +76,6 @@ const ProductCategoryDetailContent = observer(() => {
               deleteLoadingId={controller.deleteLoadingId}
               onDeleteSubcategory={controller.onDeleteSubcategory}
             />
-
-            <Divider style={{ margin: 0 }} />
 
             <CategoryDangerZone
               deleteBlockedByApi={controller.deleteBlockedByApi}

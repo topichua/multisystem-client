@@ -2,6 +2,7 @@ import {
   Alert,
   Badge,
   Button,
+  Card,
   Divider,
   Empty,
   Flex,
@@ -109,7 +110,7 @@ const TextDetailRenderer = ({
   const { t } = useTranslation();
 
   return (
-    <>
+    <Card>
       <DetailSectionHeader
         title={t("characteristics.topTextValues", {
           defaultValue: "Top text values",
@@ -149,7 +150,7 @@ const TextDetailRenderer = ({
           })}
         />
       )}
-    </>
+    </Card>
   );
 };
 
@@ -238,8 +239,6 @@ const ProductCharacteristicDetailContent = observer(() => {
                 totalProducts={controller.totalProducts}
               />
             )}
-
-            <Divider style={{ margin: 0 }} />
 
             <CharacteristicDangerZone
               deleteLoading={

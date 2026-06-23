@@ -1,11 +1,11 @@
-import { Avatar, Button, Flex, Typography } from 'antd';
-import { useTranslation } from 'react-i18next';
+import { Avatar, Button, Flex, Typography } from "antd";
+import { useTranslation } from "react-i18next";
 
-import type { IntegrationItem } from '@/features/integrations/model/integration.types';
+import type { IntegrationItem } from "@/features/integrations/model/integration.types";
 
-import * as S from './settings-integrations.styled';
-import { ClockIcon, PlugsIcon } from '@phosphor-icons/react';
-import { formatDateTime } from '@/utils/date-time';
+import * as S from "./settings-integrations.styled";
+import { ClockIcon, PlugsIcon } from "@phosphor-icons/react";
+import { formatDateTime } from "@/utils/date-time";
 
 const { Text, Title } = Typography;
 
@@ -35,7 +35,7 @@ export function IntegrationAccountCard({
             </Title>
             {integration.businessAccountId && (
               <Text>
-                <Text type="secondary">Instagram Business ID:</Text>{' '}
+                <Text type="secondary">Instagram Business ID:</Text>{" "}
                 {integration.businessAccountId}
               </Text>
             )}
@@ -47,7 +47,7 @@ export function IntegrationAccountCard({
           </Flex>
           <Flex align="center" gap={16}>
             <S.IntegrationConnectedStatus>
-              {t('integrations.connectedTag')}
+              {t("integrations.connectedTag")}
             </S.IntegrationConnectedStatus>
             <Flex align="center" gap={4}>
               <ClockIcon />
@@ -66,7 +66,7 @@ export function IntegrationAccountCard({
         icon={<PlugsIcon />}
         onClick={() => onDisconnect(integration)}
       >
-        {t('integrations.disconnectAction')}
+        {t("integrations.disconnectAction")}
       </Button>
     </S.IntegrationAccountRow>
   );
