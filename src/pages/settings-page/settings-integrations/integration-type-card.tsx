@@ -20,18 +20,16 @@ type IntegrationTypeCardProps = {
   onDisconnect: (integration: IntegrationItem) => void;
 };
 
-export function IntegrationTypeCard({
+export const IntegrationTypeCard = ({
   connectLoading,
   definition,
   integrations,
   isDisconnecting,
   onConnectType,
   onDisconnect,
-}: IntegrationTypeCardProps) {
+}: IntegrationTypeCardProps) => {
   const { t } = useTranslation();
   const hasConnections = integrations.length > 0;
-  const connectButtonColor =
-    definition.type === "instagram" ? "primary" : "default";
 
   return (
     <S.IntegrationCard>
@@ -49,10 +47,9 @@ export function IntegrationTypeCard({
         </S.IntegrationCardIdentity>
         <Flex flex="0 0 auto">
           <Button
-            color={connectButtonColor}
             icon={<PlusIcon />}
             loading={connectLoading}
-            variant="outlined"
+            type="text"
             onClick={() => onConnectType(definition.type)}
           >
             {t(definition.connectLabelKey)}
@@ -78,11 +75,11 @@ export function IntegrationTypeCard({
         </S.IntegrationAccountsList>
       ) : (
         <S.IntegrationEmptyState>
-          {t("integrations.noActiveConnections", {
+          {t('integrations.noActiveConnections', {
             name: t(definition.labelKey),
           })}
         </S.IntegrationEmptyState>
       )}
     </S.IntegrationCard>
   );
-}
+};

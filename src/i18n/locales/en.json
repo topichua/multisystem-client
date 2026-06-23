@@ -561,15 +561,21 @@
     "types": {
       "instagram": {
         "label": "Instagram",
-        "description": "Direct messages from business accounts.",
-        "connectLabel": "Connect",
+        "description": "Direct messages from business accounts. Сan connect multiple accounts.",
+        "connectLabel": "Add account",
         "empty": "No Instagram integrations"
       },
       "telegram": {
         "label": "Telegram",
-        "description": "Inquiries through connected bots.",
-        "connectLabel": "Connect",
+        "description": "Inquiries through connected bots. Сan connect multiple bots.",
+        "connectLabel": "Add account",
         "empty": "No Telegram integrations"
+      },
+      "novaposhta": {
+        "label": "Nova Poshta",
+        "description": "Warehouse and delivery settings.",
+        "connectLabel": "Connect",
+        "empty": "No Nova Poshta integrations"
       }
     },
     "modal": {

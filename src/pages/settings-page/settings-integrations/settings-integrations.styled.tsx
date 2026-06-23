@@ -112,12 +112,10 @@ export const IntegrationConnectedStatus = styled.span`
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: ${({ theme }) => theme.fontSize.small};
   color: ${({ theme }) => theme.colors.semantic.success};
-  line-height: 1.35;
 
   &::before {
-    content: "";
+    content: '';
     width: 6px;
     height: 6px;
     border-radius: 50%;

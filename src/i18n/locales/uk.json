@@ -567,15 +567,21 @@
     "types": {
       "instagram": {
         "label": "Instagram",
-        "description": "Direct-повідомлення з бізнес-акаунтів.",
-        "connectLabel": "Підключити",
+        "description": "Direct-повідомлення з бізнес-акаунтів. Можна підключити кілька акаунтів.",
+        "connectLabel": "Додати акаунт",
         "empty": "Немає інтеграцій Instagram"
       },
       "telegram": {
         "label": "Telegram",
-        "description": "Звернення через підключених ботів.",
-        "connectLabel": "Підключити",
+        "description": "Звернення через підключених ботів. Можна підключити кілька акаунтів.",
+        "connectLabel": "Додати акаунт",
         "empty": "Немає інтеграцій Telegram"
+      },
+      "novaposhta": {
+        "label": "Нова Пошта",
+        "description": "Налаштування відділень і доставки.",
+        "connectLabel": "Підключити",
+        "empty": "Немає інтеграцій Нової Пошти"
       }
     },
     "modal": {

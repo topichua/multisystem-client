@@ -5,6 +5,9 @@ export type IntegrationItem = {
   id: number;
   name: string;
   connectedAt: string;
+  avatar?: string;
+  businessAccountId?: string;
+  page?: string;
   url?: string;
 };
 

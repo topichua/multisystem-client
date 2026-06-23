@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 
 import { PaneScrollRegion } from "@/components/layout/pane-frame";
 import { InstagramLogoIcon } from "@/components/icons/instagram/instagram-logo-icon";
+import { NovaPostIcon } from "@/components/icons/nova-post/nova-post-icon";
 import { TelegramLogoIcon } from "@/components/icons/telegram/telegram-logo-icon";
 
 import type {
@@ -22,6 +23,8 @@ const getSidebarIcon = (type: IntegrationType) => {
       return <InstagramLogoIcon size={SIDEBAR_ICON_SIZE} />;
     case "telegram":
       return <TelegramLogoIcon size={SIDEBAR_ICON_SIZE} />;
+    case "novaposhta":
+      return <NovaPostIcon size={SIDEBAR_ICON_SIZE} />;
   }
 };
 
@@ -35,7 +38,7 @@ type IntegrationTypeSidebarProps = {
   onFilterChange: (filter: IntegrationFilter) => void;
 };
 
-export function IntegrationTypeSidebar({
+export const IntegrationTypeSidebar = ({
   integrationsCountByType,
   menuIntegrationTypes,
   query,
@@ -43,7 +46,7 @@ export function IntegrationTypeSidebar({
   totalCount,
   onQueryChange,
   onFilterChange,
-}: IntegrationTypeSidebarProps) {
+}: IntegrationTypeSidebarProps) => {
   const { t } = useTranslation();
 
   const menuItems: MenuProps["items"] = useMemo(() => {
@@ -99,4 +102,4 @@ export function IntegrationTypeSidebar({
       </PaneScrollRegion>
     </>
   );
-}
+};
