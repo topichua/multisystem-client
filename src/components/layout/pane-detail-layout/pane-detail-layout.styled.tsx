@@ -16,6 +16,14 @@ export const HeaderSlot = styled.div`
     ${({ theme }) => theme.colors.functional.border.split};
   padding: 12px 24px;
   background: ${({ theme }) => theme.colors.functional.background.elevated};
+
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-size: ${({ theme }) => theme.fontSize.ultraLarge};
+  }
 `;
 
 export const BodySlot = styled.div`

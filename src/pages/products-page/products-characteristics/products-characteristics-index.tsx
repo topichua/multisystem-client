@@ -1,11 +1,13 @@
 import { Button, Empty, Spin } from "antd";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
-import { useOutletContext } from "react-router";
+import { Navigate, useOutletContext } from "react-router";
 
+import { getProductCharacteristicPath } from "@/app/router/pages-map";
 import { useCharacteristicsStore } from "@/features/characteristics/model/use-characteristics-store";
 
 import type { ProductsCharacteristicsOutletContext } from "./products-characteristics-layout";
+import { sortCharacteristicsByOrder } from "./products-characteristics.utils";
 
 export const ProductsCharacteristicsIndex = observer(() => {
   const { t } = useTranslation();
@@ -18,10 +20,12 @@ export const ProductsCharacteristicsIndex = observer(() => {
   }
 
   if (store.items.length > 0) {
+    const [firstCharacteristic] = sortCharacteristicsByOrder(store.items);
+
     return (
-      <Empty
-        description={t("characteristics.selectCharacteristic")}
-        style={{ marginTop: 48 }}
+      <Navigate
+        to={getProductCharacteristicPath(firstCharacteristic.id)}
+        replace
       />
     );
   }

@@ -25,18 +25,18 @@ export const SettingsIntegrationsPage = observer(() => {
       {controller.contextHolder}
       <PaneDetailLayout.Root inset data-qa="layout-settings-integrations">
         <PaneDetailLayout.Header data-qa="layout-settings-integrations-header">
-          <PaneSectionTitle>{t('integrations.title')}</PaneSectionTitle>
+          <PaneSectionTitle>{t("integrations.title")}</PaneSectionTitle>
           <PaneSectionHint style={{ marginTop: 0 }}>
-            {t('integrations.subtitle')}
+            {t("integrations.subtitle")}
           </PaneSectionHint>
         </PaneDetailLayout.Header>
 
         <PaneDetailLayout.Body
           data-qa="layout-settings-integrations-body"
           style={{
-            overflow: 'hidden',
-            display: 'flex',
-            flexDirection: 'column',
+            overflow: "hidden",
+            display: "flex",
+            flexDirection: "column",
             paddingTop: 0,
           }}
         >
@@ -51,8 +51,7 @@ export const SettingsIntegrationsPage = observer(() => {
                   integrationsCountByType={{
                     instagram: controller.integrationsByType.instagram.length,
                     telegram: controller.integrationsByType.telegram.length,
-                    novaposhta:
-                      controller.integrationsByType.novaposhta.length,
+                    novaposhta: controller.integrationsByType.novaposhta.length,
                   }}
                   menuIntegrationTypes={controller.menuIntegrationTypes}
                   query={controller.query}
@@ -67,7 +66,7 @@ export const SettingsIntegrationsPage = observer(() => {
                 <PaneScrollRegion data-qa="layout-settings-integrations-content-scroll">
                   <S.IntegrationsStack>
                     {controller.visibleIntegrationTypes.length === 0 ? (
-                      <Empty description={t('integrations.noMatchFilters')} />
+                      <Empty description={t("integrations.noMatchFilters")} />
                     ) : (
                       controller.visibleIntegrationTypes.map((definition) => (
                         <IntegrationTypeCard

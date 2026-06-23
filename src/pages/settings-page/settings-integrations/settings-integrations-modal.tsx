@@ -140,11 +140,11 @@ export const AddIntegrationModal = ({
       title={
         <div>
           <Typography.Title level={3} style={{ margin: 0 }}>
-            {t('integrations.modal.title')}
+            {t("integrations.modal.title")}
           </Typography.Title>
 
           <Typography.Text type="secondary">
-            {t('integrations.modal.subtitle')}
+            {t("integrations.modal.subtitle")}
           </Typography.Text>
         </div>
       }
@@ -158,14 +158,14 @@ export const AddIntegrationModal = ({
       <Space
         orientation="vertical"
         size={32}
-        style={{ width: '100%', marginTop: 24 }}
+        style={{ width: "100%", marginTop: 24 }}
       >
         {INTEGRATION_GROUPS.map((group) => (
           <Space
             key={group.titleKey}
             orientation="vertical"
             size={12}
-            style={{ width: '100%' }}
+            style={{ width: "100%" }}
           >
             <Typography.Title level={5} style={{ margin: 0 }}>
               {t(group.titleKey)}
@@ -184,7 +184,7 @@ export const AddIntegrationModal = ({
                         size="small"
                         aria-disabled={!isConnectable}
                         style={{
-                          cursor: isDisabled ? 'not-allowed' : 'pointer',
+                          cursor: isDisabled ? "not-allowed" : "pointer",
                           opacity: isConnectable ? 1 : 0.62,
                         }}
                         onClick={() => {
@@ -207,7 +207,7 @@ export const AddIntegrationModal = ({
                                   color="default"
                                   style={{ marginInlineEnd: 0 }}
                                 >
-                                  {t('integrations.modal.comingSoon')}
+                                  {t("integrations.modal.comingSoon")}
                                 </Tag>
                               ) : null}
                             </Space>
@@ -230,14 +230,14 @@ export const AddIntegrationModal = ({
         ))}
 
         <Typography.Text type="secondary">
-          {t('integrations.modal.suggestPrefix')}{' '}
+          {t("integrations.modal.suggestPrefix")}{" "}
           <Button
             type="link"
             size="small"
             icon={<PlugsIcon />}
             style={{ padding: 0 }}
           >
-            {t('integrations.modal.suggestCta')}
+            {t("integrations.modal.suggestCta")}
           </Button>
         </Typography.Text>
       </Space>

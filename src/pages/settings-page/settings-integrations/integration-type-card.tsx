@@ -75,7 +75,7 @@ export const IntegrationTypeCard = ({
         </S.IntegrationAccountsList>
       ) : (
         <S.IntegrationEmptyState>
-          {t('integrations.noActiveConnections', {
+          {t("integrations.noActiveConnections", {
             name: t(definition.labelKey),
           })}
         </S.IntegrationEmptyState>

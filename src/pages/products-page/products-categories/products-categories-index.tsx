@@ -1,8 +1,9 @@
 import { Button, Empty, Spin } from "antd";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
-import { useOutletContext } from "react-router";
+import { Navigate, useOutletContext } from "react-router";
 
+import { getProductCategoryPath } from "@/app/router/pages-map";
 import { useCategoriesStore } from "@/features/categories/model/use-categories-store";
 
 import type { ProductsCategoriesOutletContext } from "./products-categories-layout";
@@ -21,10 +22,7 @@ export const ProductsCategoriesIndex = observer(() => {
 
   if (rootCategories.length > 0) {
     return (
-      <Empty
-        description={t("categories.selectCategory")}
-        style={{ marginTop: 48 }}
-      />
+      <Navigate to={getProductCategoryPath(rootCategories[0].id)} replace />
     );
   }
 

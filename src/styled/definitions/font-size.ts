@@ -4,6 +4,7 @@ export const text = {
   medium: "14px",
   large: "16px",
   extraLarge: "18px",
+  ultraLarge: "20px",
 } as const;
 
 export const bigText = {
