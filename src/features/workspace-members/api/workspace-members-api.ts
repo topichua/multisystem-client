@@ -82,7 +82,7 @@ export const workspaceMembersApi = {
   },
 
   deactivate: async (memberId: number): Promise<void> => {
-    await apiClient.post(`${basePath}/${memberId}/deactivate`);
+    await apiClient.delete(`${basePath}/${memberId}/deactivate`);
   },
 
   resend: async (memberId: number): Promise<void> => {

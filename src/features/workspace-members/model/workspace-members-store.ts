@@ -39,6 +39,12 @@ export class WorkspaceMembersStore {
     return this.members.filter((member) => member.status === "inactive").length;
   }
 
+  get visibleMembers(): WorkspaceMember[] {
+    return this.members.filter(
+      (member) => member.status === "active" || member.status === "inactive",
+    );
+  }
+
   loadMembers = async (options?: { silent?: boolean }): Promise<void> => {
     const silent = options?.silent === true;
 

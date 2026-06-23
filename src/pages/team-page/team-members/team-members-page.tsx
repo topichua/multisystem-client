@@ -201,7 +201,7 @@ export const TeamMembersPage = observer(() => {
             <Table<WorkspaceMember>
               rowKey="id"
               columns={columns}
-              dataSource={store.members}
+              dataSource={store.visibleMembers}
               pagination={false}
               loading={store.listLoading}
             />
