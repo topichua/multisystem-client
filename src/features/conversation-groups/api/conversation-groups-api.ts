@@ -13,7 +13,10 @@ export const conversationGroupsApi = {
     const { data } =
       await apiClient.get<ConversationGroupsListResponse>(basePath);
 
-    return data.items;
+    return data.items.map((group) => ({
+      ...group,
+      counter: group.counter ?? 0,
+    }));
   },
 
   create: async (payload: ConversationGroupWritePayload): Promise<void> => {

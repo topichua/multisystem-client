@@ -175,6 +175,9 @@ export const lightTheme: ThemeConfig = {
       defaultBg: lightColors.bgFill,
       defaultColor: lightColors.textSecondary,
     },
+    Segmented: {
+      itemSelectedBg: lightColors.bgBase,
+    },
   },
 };
 

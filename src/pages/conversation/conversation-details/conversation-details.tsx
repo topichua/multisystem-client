@@ -70,7 +70,10 @@ export const ConversationDetails = observer(() => {
     [conversations, conversationId],
   );
 
-  const participantInstagramId = activeConversation?.participant.id;
+  const participantInstagramId =
+    activeConversation?.participant.id != null
+      ? String(activeConversation.participant.id)
+      : undefined;
 
   const linkedClient = useMemo(() => {
     if (!instagramAssociation?.associated) {

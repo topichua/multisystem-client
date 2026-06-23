@@ -1,18 +1,18 @@
-import { Avatar, Badge, Button, Dropdown, Flex, Typography } from "antd";
+import { Flex, theme } from "antd";
 import { observer } from "mobx-react-lite";
-import type { MouseEvent } from "react";
-import { useRef, useState } from "react";
-
-import type { Conversation as ConversationModel } from "@/features/conversations/model/types";
-
-import { useConversationCardMenuItems } from "./conversation-card-menu";
-import * as S from "./conversation.styled";
-import ThreeDots from "./ThreeDotsIcon.svg?react";
+import type { KeyboardEvent, SyntheticEvent } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import type { Conversation as ConversationModel } from "@/features/conversations/model/types";
 import { formatRelativeTimeShort } from "@/utils/date-time";
 
-const { Title, Text } = Typography;
+import { ConversationRowActions } from "./components/conversation-row-actions";
+import { ConversationRowAvatar } from "./components/conversation-row-avatar";
+import { ConversationRowHeader } from "./components/conversation-row-header";
+import { ConversationRowMeta } from "./components/conversation-row-meta";
+import { ConversationRowPreview } from "./components/conversation-row-preview";
+import * as S from "./conversation.styled";
 
 type ConversationRowProps = {
   conversation: ConversationModel;
@@ -28,131 +28,94 @@ export const ConversationRow = observer(
     onNavigate,
     onSelect,
   }: ConversationRowProps) => {
-    const { t } = useTranslation();
-    const conversationCardMenuItems = useConversationCardMenuItems();
     const [isHovered, setIsHovered] = useState(false);
-    const [menuOpen, setMenuOpen] = useState(false);
-    const showActions = isHovered || menuOpen;
-    const actionsRef = useRef<HTMLSpanElement>(null);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-    const handleRowActivate = (e: MouseEvent) => {
-      const target = e.target;
-      if (!(target instanceof Node)) {
-        return;
-      }
-      if (actionsRef.current?.contains(target)) {
-        return;
-      }
+    const { t } = useTranslation();
+    const { token } = theme.useToken();
+
+    const conversationCardMenuItems = [
+      { key: "mute", label: t("conversations.markRead") },
+      { key: "delete", label: t("conversations.delete"), danger: true },
+    ];
+
+    const hasUnreadMessages = conversation.unreadCount > 0;
+    const showActions = isHovered || isMenuOpen;
+    const messagePreview = conversation.lastMessage
+      ? `${conversation.isLastMessageFromMe ? `${t("conversations.youPrefix")} ` : ""}${conversation.lastMessage}`
+      : "";
+
+    const handleNavigate = (): void => {
       onNavigate(conversation.id);
       onSelect?.();
     };
 
+    const handleRowKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
+      if (event.key !== "Enter" && event.key !== " ") {
+        return;
+      }
+
+      event.preventDefault();
+      handleNavigate();
+    };
+
+    const stopRowActivation = (event: SyntheticEvent): void => {
+      event.stopPropagation();
+    };
+
     return (
-      <S.ConversationCardOuter
+      <S.ConversationRow
+        role="button"
+        tabIndex={0}
+        $isSelected={conversationId === String(conversation.id)}
+        $selectionColor={token.colorPrimary}
+        onClick={handleNavigate}
+        onKeyDown={handleRowKeyDown}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        onClick={handleRowActivate}
       >
-        <S.ConversationCard
-          size="small"
-          hoverable
-          $isSelected={conversationId === String(conversation.id)}
-        >
-          <Flex
-            justify="space-between"
-            align="center"
-            gap={12}
-            style={{ minWidth: 0 }}
-          >
-            <Flex align="center" gap={12} style={{ flex: 1, minWidth: 0 }}>
-              <Avatar
-                size={56}
-                src={conversation.participant.profilePic || undefined}
-                style={{ flexShrink: 0 }}
-              />
-              <Flex vertical gap={0} style={{ flex: 1, minWidth: 0 }}>
-                <Title
-                  level={5}
-                  style={{
-                    marginTop: 0,
-                    marginBottom: 0,
-                    fontWeight: conversation.isUnread ? 900 : 500,
-                  }}
-                >
-                  {conversation.participant.name}
-                </Title>
-                <Flex
-                  align="center"
-                  gap={4}
-                  style={{ width: "100%", minWidth: 0 }}
-                >
-                  {conversation.lastMessage ? (
-                    <>
-                      <Text
-                        ellipsis
-                        type="secondary"
-                        style={{
-                          flex: 1,
-                          minWidth: 0,
-                          fontWeight: conversation.isUnread ? 600 : 400,
-                        }}
-                      >
-                        {conversation.isLastMessageFromMe
-                          ? `${t("conversations.youPrefix")} `
-                          : ""}
-                        {conversation.lastMessage}
-                      </Text>
-                      <Text
-                        type="secondary"
-                        style={{
-                          flexShrink: 0,
-                          fontWeight: conversation.isUnread ? 600 : 400,
-                        }}
-                      >
-                        ·
-                      </Text>
-                    </>
-                  ) : null}
-                  <Text
-                    type="secondary"
-                    style={{
-                      flexShrink: 0,
-                      fontWeight: conversation.isUnread ? 600 : 400,
-                    }}
-                  >
-                    {formatRelativeTimeShort(conversation.instUpdatedAt)}
-                  </Text>
-                </Flex>
-              </Flex>
-            </Flex>
+        <Flex align="flex-start" gap={12}>
+          <ConversationRowAvatar
+            participant={conversation.participant}
+            channel={conversation.channel}
+          />
 
-            <S.ConversationActionsHitbox
-              ref={actionsRef}
-              data-conversation-actions
-              onMouseDown={(e) => e.stopPropagation()}
-              onClick={(e) => e.stopPropagation()}
-              onPointerDown={(e) => e.stopPropagation()}
-            >
-              {conversation.isUnread && <Badge status="processing" />}
-              {showActions && (
-                <Dropdown
-                  menu={{ items: conversationCardMenuItems }}
-                  trigger={["click"]}
-                  onOpenChange={setMenuOpen}
-                >
-                  <Button
-                    type="text"
-                    size="small"
-                    aria-label={t("conversations.rowActionsAria")}
-                    aria-expanded={menuOpen}
-                    icon={<ThreeDots width={24} height={24} aria-hidden />}
-                  />
-                </Dropdown>
-              )}
-            </S.ConversationActionsHitbox>
+          <Flex
+            vertical
+            gap={0}
+            style={{
+              flex: 1,
+              minWidth: 0,
+            }}
+          >
+            <ConversationRowHeader
+              participantName={conversation.participant.name}
+              timestamp={formatRelativeTimeShort(conversation.instUpdatedAt)}
+              hasUnreadMessages={hasUnreadMessages}
+            />
+            <ConversationRowPreview
+              messagePreview={messagePreview}
+              unreadCount={conversation.unreadCount}
+              hasUnreadMessages={hasUnreadMessages}
+              badgeColor={token.colorPrimary}
+            />
+            <ConversationRowMeta
+              status={conversation.status}
+              assignee={conversation.assignee}
+              emptyAssigneeColor={token.colorTextTertiary}
+            />
           </Flex>
-        </S.ConversationCard>
-      </S.ConversationCardOuter>
+        </Flex>
+
+        {showActions && (
+          <ConversationRowActions
+            menuItems={conversationCardMenuItems}
+            menuOpen={isMenuOpen}
+            onMenuOpenChange={setIsMenuOpen}
+            onStopRowActivation={stopRowActivation}
+          />
+        )}
+      </S.ConversationRow>
     );
   },
 );

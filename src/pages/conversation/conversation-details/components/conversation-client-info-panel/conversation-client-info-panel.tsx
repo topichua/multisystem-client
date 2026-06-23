@@ -148,7 +148,7 @@ export const ConversationClientInfoPanel = observer(
           last_name: values.last_name,
           phone: values.phone,
           delivery_info: values.delivery_info ?? "",
-          instagramId: conversation.participant.id,
+          instagramId: String(conversation.participant.id),
         });
         const created = clientsStore.activeClient;
         if (created) {
@@ -332,7 +332,7 @@ export const ConversationClientInfoPanel = observer(
               conversationId={conversation.id}
               onClose={closeCreateOrderDrawer}
               onOpen={createOrderDrawerOpen}
-              clientPic={conversation.participant.profilePic}
+              clientPic={conversation.participant.profilePic ?? undefined}
               onOrderCreated={() => {
                 void ordersStore.loadOrders({ silent: true });
                 if (ordersStore.clientStatsClientId != null) {
