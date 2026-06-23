@@ -1,4 +1,5 @@
-import { Select, Tag } from "antd";
+import { Select } from "antd";
+import { Tag } from "@/components/tag/tag";
 import type { SelectProps } from "antd";
 import { observer } from "mobx-react-lite";
 import { useMemo } from "react";

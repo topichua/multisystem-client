@@ -1,4 +1,5 @@
-import { Drawer, Flex, Tag, Typography } from "antd";
+import { Drawer, Flex, Typography } from "antd";
+import { Tag } from "@/components/tag/tag";
 import { SparkleIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 

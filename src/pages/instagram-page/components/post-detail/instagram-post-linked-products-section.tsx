@@ -6,7 +6,7 @@ import type { InstagramMediaItem } from "@/features/instagram/model/instagram.ty
 
 import type { InstagramPostPageController } from "../../controllers/use-instagram-post-page-controller";
 import { InstagramLinkProductPicker } from "./instagram-link-product-picker";
-import { InstagramPostProductsTable } from "./instagram-post-products-table";
+import { InstagramPostProductsDetailedCard } from "./instagram-post-products-detailed-card";
 import * as S from "./instagram-post-detail-content.styled";
 
 type InstagramPostLinkedProductsSectionProps = {
@@ -42,7 +42,7 @@ export const InstagramPostLinkedProductsSection = ({
         description={t("instagram.updatingLinkedProducts")}
       >
         <S.ProductsBody>
-          <InstagramPostProductsTable
+          <InstagramPostProductsDetailedCard
             postId={post.id}
             products={linkedProducts}
           />

@@ -1,4 +1,5 @@
-import { Button, Card, Flex, Table, Tag, Typography } from "antd";
+import { Button, Card, Flex, Table, Typography } from "antd";
+import { Tag } from "@/components/tag/tag";
 import { observer } from "mobx-react-lite";
 import { useCallback, useState, type Key, type MouseEvent } from "react";
 import { useTranslation } from "react-i18next";

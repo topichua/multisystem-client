@@ -10,10 +10,10 @@ import {
   Popconfirm,
   Row,
   Spin,
-  Tag,
   Typography,
   theme,
 } from "antd";
+import { Tag } from "@/components/tag/tag";
 import { useTranslation } from "react-i18next";
 
 import type { Product } from "@/features/products/model/product.types";

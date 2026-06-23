@@ -16,12 +16,11 @@ import {
   Row,
   Space,
   Spin,
-  Tag,
   Typography,
 } from "antd";
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-
+import { Tag } from "@/components/tag/tag";
 import { InstagramLogoIcon } from "@/components/icons/instagram/instagram-logo-icon";
 import { TelegramLogoIcon } from "@/components/icons/telegram/telegram-logo-icon";
 import { openIntegrationAuthWindow } from "@/features/integrations/open-integration-auth";

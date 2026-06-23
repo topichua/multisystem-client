@@ -1,4 +1,5 @@
-import { Button, Card, Flex, Form, Tag, theme } from "antd";
+import { Button, Card, Flex, Form, theme } from "antd";
+import { Tag } from "@/components/tag/tag";
 import {
   ChartLineUpIcon,
   ChatsCircleIcon,

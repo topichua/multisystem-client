@@ -172,7 +172,7 @@ export const functional = {
     disabled: base.grey[5],
     warning: base.yellow[8],
     error: base.red[7],
-    success: base.green[8],
+    success: base.green[7],
   },
 
   link: { hover: brandPalette[5] },

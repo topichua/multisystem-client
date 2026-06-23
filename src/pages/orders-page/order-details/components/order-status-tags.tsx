@@ -1,6 +1,6 @@
-import { Tag, Typography } from "antd";
+import { Typography } from "antd";
 import { useTranslation } from "react-i18next";
-
+import { Tag } from "@/components/tag/tag";
 import { EMPTY_VALUE } from "../utils/order-details.utils";
 
 const PAYMENT_STATUS_COLORS: Record<string, string> = {

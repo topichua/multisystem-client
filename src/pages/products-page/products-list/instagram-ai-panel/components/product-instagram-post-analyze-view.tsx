@@ -1,4 +1,5 @@
-import { Alert, Button, Card, Flex, Space, Tag, Typography } from "antd";
+import { Alert, Button, Card, Flex, Space, Typography } from "antd";
+import { Tag } from "@/components/tag/tag";
 import {
   ArrowLeftIcon,
   ChatCircleIcon,

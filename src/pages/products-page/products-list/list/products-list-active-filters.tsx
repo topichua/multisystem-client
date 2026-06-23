@@ -1,4 +1,5 @@
-import { Button, Flex, Tag, Typography } from "antd";
+import { Button, Flex, Typography } from "antd";
+import { Tag } from "@/components/tag/tag";
 import type { TFunction } from "i18next";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";

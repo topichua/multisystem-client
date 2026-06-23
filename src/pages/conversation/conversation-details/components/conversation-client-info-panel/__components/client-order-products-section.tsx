@@ -1,16 +1,7 @@
 import type { ReactNode } from "react";
-import {
-  Alert,
-  Card,
-  Divider,
-  Flex,
-  Select,
-  Spin,
-  Tag,
-  Typography,
-} from "antd";
+import { Alert, Card, Divider, Flex, Select, Spin, Typography } from "antd";
 import { useTranslation } from "react-i18next";
-
+import { Tag } from "@/components/tag/tag";
 import type { OrderDraftLine } from "@/features/orders/model/order.types";
 import type { CatalogVariant } from "@/features/products/model/product.types";
 

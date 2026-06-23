@@ -27,7 +27,7 @@ export const AnalyticsChartCard = ({
   height = 280,
   footer,
 }: AnalyticsChartCardProps) => (
-  <ChartCard $span={span} bordered={false}>
+  <ChartCard $span={span}>
     <ChartCardHeader>
       <ChartCardTitle>{title}</ChartCardTitle>
       <ChartCardSubtitle>{subtitle}</ChartCardSubtitle>

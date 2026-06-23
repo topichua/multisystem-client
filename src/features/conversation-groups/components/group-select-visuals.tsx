@@ -1,8 +1,9 @@
-import { Space, Tag } from "antd";
+import { Space } from "antd";
 import type { TagProps } from "antd";
 import type { CSSProperties } from "react";
 
 import { GROUP_TAG_ON_COLOR } from "@/features/conversation-groups/group-select-options";
+import { Tag } from "@/components/tag/tag";
 
 type SwatchProps = {
   color: string;

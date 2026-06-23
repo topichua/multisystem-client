@@ -19,7 +19,8 @@ import {
   DotsSixVerticalIcon,
   TrashIcon,
 } from "@phosphor-icons/react";
-import { Button, Flex, Modal, Spin, Tag, Typography, Upload } from "antd";
+import { Button, Flex, Modal, Spin, Typography, Upload } from "antd";
+import { Tag } from "@/components/tag/tag";
 import type { UploadProps } from "antd";
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";

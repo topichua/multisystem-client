@@ -5,7 +5,8 @@ import {
   TrashIcon,
 } from "@phosphor-icons/react";
 import type { TableColumnsType } from "antd";
-import { Button, Dropdown, Flex, Modal, Tag, Typography, theme } from "antd";
+import { Button, Dropdown, Flex, Modal, Typography, theme } from "antd";
+import { Tag } from "@/components/tag/tag";
 import { useMemo, type Key } from "react";
 import { useTranslation } from "react-i18next";
 

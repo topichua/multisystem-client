@@ -3,6 +3,26 @@ import type {
   ProductVariant,
 } from "@/features/products/model/product.types";
 
+type ProductReferenceId = string | number;
+
+type ProductVariantTitleSource = {
+  customFields?: unknown[] | null;
+};
+
+type ProductLinkedVariant<TReferenceId extends ProductReferenceId> = {
+  referenceId?: TReferenceId | null;
+};
+
+type ProductPriceVariant = {
+  price?: number | null;
+};
+
+type ProductPriceSource = {
+  variants?: ProductPriceVariant[] | null;
+  price?: number | null;
+  currency?: string | null;
+};
+
 export type ProductStatusColor =
   | "default"
   | "processing"
@@ -22,12 +42,48 @@ export const productStatusToColor = (
 
 export const variantStatusToColor = productStatusToColor;
 
-export const getVariantTitle = (variant: ProductVariant): string =>
+export const getProductVariantTitle = (
+  variant: ProductVariantTitleSource,
+): string =>
   [...(variant.customFields ?? [])]
-    .sort((a, b) => a.order - b.order)
-    .map((field) => field.value)
+    .filter(
+      (field): field is { value?: unknown; order?: unknown } =>
+        typeof field === "object" && field !== null,
+    )
+    .sort((a, b) => Number(a.order ?? 0) - Number(b.order ?? 0))
+    .map((field) => (typeof field.value === "string" ? field.value : null))
     .filter(Boolean)
     .join(" / ");
+
+export const getVariantTitle = (variant: ProductVariant): string =>
+  getProductVariantTitle(variant);
+
+export const getLinkedProductVariants = <
+  TReferenceId extends ProductReferenceId,
+  TVariant extends ProductLinkedVariant<TReferenceId>,
+>(product: {
+  variants?: TVariant[] | null;
+}): TVariant[] =>
+  (product.variants ?? []).filter((variant) => variant.referenceId != null);
+
+export const getProductRowUnlinkReferenceId = <
+  TReferenceId extends ProductReferenceId,
+>(product: {
+  variants?: ProductLinkedVariant<TReferenceId>[] | null;
+  referenceId?: TReferenceId | null;
+}): TReferenceId | null => {
+  const linkedVariants = getLinkedProductVariants(product);
+
+  if (linkedVariants.length === 1) {
+    return linkedVariants[0].referenceId ?? null;
+  }
+
+  if (linkedVariants.length === 0 && product.referenceId != null) {
+    return product.referenceId;
+  }
+
+  return null;
+};
 
 export const formatProductPrice = (
   price: number | null | undefined,
@@ -39,4 +95,27 @@ export const formatProductPrice = (
   }
 
   return `${price.toLocaleString()} ${currency ?? ""}`.trim();
+};
+
+export const getProductPriceRange = (
+  product: ProductPriceSource,
+): string | null => {
+  const variantPrices = (product.variants ?? [])
+    .map((variant) => variant.price)
+    .filter((price): price is number => typeof price === "number");
+
+  if (variantPrices.length === 0) {
+    return product.price != null
+      ? formatProductPrice(product.price, product.currency)
+      : null;
+  }
+
+  const minPrice = Math.min(...variantPrices);
+  const maxPrice = Math.max(...variantPrices);
+
+  if (minPrice === maxPrice) {
+    return formatProductPrice(minPrice, product.currency);
+  }
+
+  return `${formatProductPrice(minPrice, product.currency)} - ${formatProductPrice(maxPrice, product.currency)}`;
 };

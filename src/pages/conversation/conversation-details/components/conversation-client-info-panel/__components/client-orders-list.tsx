@@ -1,9 +1,9 @@
-import { Button, Card, Empty, Flex, Skeleton, Tag, Typography } from "antd";
+import { Button, Card, Empty, Flex, Skeleton, Typography } from "antd";
 import dayjs from "dayjs";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-
+import { Tag } from "@/components/tag/tag";
 import { useOrdersStore } from "@/features/orders/model/use-orders-store";
 
 const { Text } = Typography;

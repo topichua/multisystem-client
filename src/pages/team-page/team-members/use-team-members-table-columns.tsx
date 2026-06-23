@@ -1,5 +1,6 @@
 import type { TableColumnsType } from "antd";
-import { Flex, Select, Switch, Tag, Typography } from "antd";
+import { Flex, Select, Switch, Typography } from "antd";
+import { Tag } from "@/components/tag/tag";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 

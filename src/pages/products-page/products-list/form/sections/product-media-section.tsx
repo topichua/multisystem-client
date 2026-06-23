@@ -1,3 +1,5 @@
+import { Tag } from "@/components/tag/tag";
+import { PRODUCT_MEDIA_UPLOAD_FIELD_NAME } from "@/features/products/api/products-api";
 import {
   DndContext,
   type DragEndEvent,
@@ -19,11 +21,10 @@ import {
   DotsSixVerticalIcon,
   TrashIcon,
 } from "@phosphor-icons/react";
-import { Button, Card, Flex, Spin, Tag, Typography, Upload } from "antd";
 import type { UploadProps } from "antd";
-import { PRODUCT_MEDIA_UPLOAD_FIELD_NAME } from "@/features/products/api/products-api";
-import type { UploadedProductMedia } from "../variants/product-add-variant.types";
+import { Button, Card, Flex, Spin, Typography, Upload } from "antd";
 import { UploadedMediaPreview } from "../product-form.styled";
+import type { UploadedProductMedia } from "../variants/product-add-variant.types";
 
 const { Title, Text } = Typography;
 const { Dragger } = Upload;

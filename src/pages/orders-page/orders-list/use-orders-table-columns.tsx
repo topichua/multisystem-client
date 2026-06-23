@@ -1,5 +1,6 @@
 import type { TableColumnsType } from "antd";
-import { Tag, Typography } from "antd";
+import { Typography } from "antd";
+import { Tag } from "@/components/tag/tag";
 import dayjs from "dayjs";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";

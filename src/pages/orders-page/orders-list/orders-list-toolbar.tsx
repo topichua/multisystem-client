@@ -1,5 +1,6 @@
 import { FunnelSimpleIcon, MagnifyingGlassIcon } from "@phosphor-icons/react";
-import { Button, Flex, Input, Tag, theme } from "antd";
+import { Button, Flex, Input, theme } from "antd";
+import { Tag } from "@/components/tag/tag";
 import { observer } from "mobx-react-lite";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";

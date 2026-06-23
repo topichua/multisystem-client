@@ -1,4 +1,5 @@
-import { Flex, Form, Segmented, Spin, Switch, Tag, Typography } from "antd";
+import { Flex, Form, Segmented, Spin, Switch, Typography } from "antd";
+import { Tag } from "@/components/tag/tag";
 import type { ReactNode } from "react";
 import type { TFunction } from "i18next";
 import { useTranslation } from "react-i18next";

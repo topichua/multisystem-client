@@ -1,4 +1,5 @@
-import { Button, Card, Divider, Flex, Space, Tag, Typography } from "antd";
+import { Button, Card, Divider, Flex, Space, Typography } from "antd";
+import { Tag } from "@/components/tag/tag";
 import { SparkleIcon } from "@phosphor-icons/react";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";

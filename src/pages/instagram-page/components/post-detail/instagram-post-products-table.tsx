@@ -1,3 +1,7 @@
+/**
+ * @deprecated use InstagramPostProductsDetailedCard instead
+ */
+
 import { CaretRightIcon, TrashIcon } from "@phosphor-icons/react";
 import type { TableColumnsType } from "antd";
 import {
@@ -6,7 +10,6 @@ import {
   Empty,
   Flex,
   Table,
-  Tag,
   Typography,
   message,
   theme,
@@ -14,7 +17,7 @@ import {
 import { observer } from "mobx-react-lite";
 import { useCallback, useMemo, useState, type Key } from "react";
 import { useTranslation } from "react-i18next";
-
+import { Tag } from "@/components/tag/tag";
 import { getApiErrorMessage } from "@/api/get-api-error-message";
 import type {
   InstagramIntegrationId,

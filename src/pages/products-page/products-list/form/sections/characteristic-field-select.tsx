@@ -5,7 +5,8 @@ import {
   TagIcon,
   TextTIcon,
 } from "@phosphor-icons/react";
-import { Button, Flex, Select, Tag, Typography } from "antd";
+import { Button, Flex, Select, Typography } from "antd";
+import { Tag } from "@/components/tag/tag";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
