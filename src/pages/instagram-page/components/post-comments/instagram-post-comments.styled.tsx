@@ -92,6 +92,14 @@ export const Avatar = styled.div`
   background: ${({ theme }) => theme.colors.semantic.primary};
   font-size: ${({ theme }) => theme.fontSize.base};
   font-weight: 700;
+  overflow: hidden;
+`;
+
+export const AvatarImage = styled.img`
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
 `;
 
 export const Content = styled.div`
@@ -136,12 +144,26 @@ export const Replies = styled.div`
 `;
 
 export const ReplyItem = styled.div<{ $optimistic?: boolean }>`
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
   min-width: 0;
   color: ${({ theme }) => theme.colors.functional.text.primary};
   font-size: ${({ theme }) => theme.fontSize.small};
   line-height: 1.45;
   overflow-wrap: anywhere;
   opacity: ${({ $optimistic }) => ($optimistic ? 0.68 : 1)};
+`;
+
+export const ReplyAvatar = styled(Avatar)`
+  width: 26px;
+  height: 26px;
+  font-size: ${({ theme }) => theme.fontSize.extraSmall};
+`;
+
+export const ReplyContent = styled.div`
+  min-width: 0;
+  flex: 1;
 `;
 
 export const ReplyText = styled.span`

@@ -123,6 +123,7 @@ export const Conversation = observer(
           >
             <CaretDoubleRightIcon size={16} weight="bold" />
           </S.ExpandButton>
+          <S.CollapsedLabel>{t("conversations.title")}</S.CollapsedLabel>
         </S.CollapsedColumn>
       );
     }

@@ -1,4 +1,4 @@
-import { Flex, Spin, Typography } from "antd";
+import { Drawer, Flex, Spin, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -217,7 +217,7 @@ export const ConversationDetails = observer(() => {
       <S.ThreadColumn>
         <Header
           clientInfoOpen={clientInfoOpen}
-          onClientInfoToggle={() => setClientInfoOpen((v) => !v)}
+          onClientInfoOpen={() => setClientInfoOpen(true)}
         />
 
         <S.MessagesScroll
@@ -266,16 +266,24 @@ export const ConversationDetails = observer(() => {
         />
       </S.ThreadColumn>
 
-      {clientInfoOpen ? (
+      <Drawer
+        title={t("conversation.clientPanelTitle")}
+        closable={{
+          "aria-label": t("conversation.closeClientPanelAria"),
+        }}
+        onClose={() => setClientInfoOpen(false)}
+        open={clientInfoOpen}
+        size={380}
+        destroyOnHidden
+      >
         <ConversationClientInfoPanel
           conversation={activeConversation}
           instagramAssociation={instagramAssociation}
           linkedClient={linkedClient}
           linkedClientLoading={linkedClientLoading}
           onClientCreated={handleClientCreated}
-          onClose={() => setClientInfoOpen(false)}
         />
-      ) : null}
+      </Drawer>
     </S.Root>
   );
 });

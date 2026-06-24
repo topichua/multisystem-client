@@ -56,6 +56,8 @@ export type InstagramMediaPage = {
 
 export type InstagramCommentAuthor = {
   id?: string;
+  name?: string;
+  profilePic?: string;
   username?: string;
 };
 

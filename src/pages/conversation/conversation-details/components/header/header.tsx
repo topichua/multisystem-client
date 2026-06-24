@@ -1,7 +1,6 @@
 import { CaretRightIcon, UserIcon } from "@phosphor-icons/react";
 import { Button, Skeleton, Typography } from "antd";
 import { observer } from "mobx-react-lite";
-import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
 
@@ -16,92 +15,95 @@ const { Text } = Typography;
 
 type HeaderProps = {
   clientInfoOpen?: boolean;
-  onClientInfoToggle?: () => void;
+  onClientInfoOpen?: () => void;
 };
 
 export const Header = observer(
-  ({ clientInfoOpen, onClientInfoToggle }: HeaderProps) => {
+  ({ clientInfoOpen, onClientInfoOpen }: HeaderProps) => {
     const { t } = useTranslation();
     const { conversationId } = useParams();
     const { conversations } = useConversationsStore();
 
-    const peer = useMemo(
-      () => conversations.find((c) => String(c.id) === conversationId),
-      [conversations, conversationId],
+    const conversation = conversations.find(
+      ({ id }) => String(id) === conversationId,
     );
 
-    const titleName = peer?.participant.name ?? t("conversation.fallbackTitle");
-    const subtitle = peer?.participant.username
-      ? `@${peer.participant.username}`
-      : null;
+    const participant = conversation?.participant;
+    const title = participant?.name || t("conversation.fallbackTitle");
+    const username = participant?.username ? `@${participant.username}` : null;
+
+    const participantAvatar = conversation ? (
+      <ConversationParticipantAvatar
+        participant={conversation.participant}
+        source={conversation.source}
+        size={40}
+      />
+    ) : (
+      <Skeleton.Avatar active size={40} />
+    );
+
+    const participantInfo = participant ? (
+      <>
+        <Text strong ellipsis style={{ fontSize: 16, lineHeight: 1.3 }}>
+          {title}
+        </Text>
+
+        {username && (
+          <Text type="secondary" ellipsis style={{ fontSize: 13 }}>
+            {username}
+          </Text>
+        )}
+      </>
+    ) : (
+      <>
+        <Skeleton.Input
+          active
+          size="small"
+          style={{ width: 160, height: 18 }}
+        />
+
+        <Skeleton.Input
+          active
+          size="small"
+          style={{ width: 120, height: 14 }}
+        />
+      </>
+    );
 
     return (
       <S.Header>
-        {peer ? (
-          <ConversationParticipantAvatar
-            participant={peer.participant}
-            source={peer.source}
-            size={40}
+        {participantAvatar}
+
+        <S.HeaderText>{participantInfo}</S.HeaderText>
+
+        <S.HeaderAside>
+          <ConversationGroupSelect
+            conversationId={conversationId}
+            groupId={conversation?.groupId ?? null}
+            disabled={!conversation}
+            showPlainLabels
           />
-        ) : (
-          <Skeleton.Avatar active size={40} />
-        )}
-        <S.HeaderText>
-          {peer ? (
-            <>
-              <Text strong ellipsis style={{ fontSize: 16, lineHeight: 1.3 }}>
-                {titleName}
-              </Text>
-              {subtitle && (
-                <Text type="secondary" ellipsis style={{ fontSize: 13 }}>
-                  {subtitle}
-                </Text>
-              )}
-            </>
-          ) : (
-            <>
-              <Skeleton.Input
-                active
-                size="small"
-                style={{ width: 160, height: 18 }}
-              />
-              <Skeleton.Input
-                active
-                size="small"
-                style={{ width: 120, height: 14 }}
-              />
-            </>
-          )}
-        </S.HeaderText>
-        {conversationId ? (
-          <S.HeaderAside>
-            <ConversationGroupSelect
-              conversationId={conversationId}
-              groupId={peer?.groupId ?? null}
-              disabled={!peer}
-              showPlainLabels={true}
-            />
-            <ConversationAssigneeSelect
-              conversationId={conversationId}
-              responsibleMemberId={peer?.responsibleMemberId ?? null}
-              assignee={peer?.assignee ?? null}
-              disabled={!peer}
-            />
-            {onClientInfoToggle ? (
-              <Button
-                color="default"
-                variant="link"
-                icon={<UserIcon />}
-                aria-label={t("conversation.clientInfoAria")}
-                aria-pressed={clientInfoOpen}
-                data-qa="layout-conversation-details-client-info-toggle"
-                onClick={onClientInfoToggle}
-              >
-                {t("conversation.clientInfoTooltip")} <CaretRightIcon />
-              </Button>
-            ) : null}
-          </S.HeaderAside>
-        ) : null}
+
+          <ConversationAssigneeSelect
+            conversationId={conversationId}
+            responsibleMemberId={conversation?.responsibleMemberId ?? null}
+            assignee={conversation?.assignee ?? null}
+            disabled={!conversation}
+          />
+
+          <Button
+            color="default"
+            variant="link"
+            icon={<UserIcon />}
+            aria-label={t("conversation.clientInfoAria")}
+            aria-pressed={clientInfoOpen}
+            data-qa="layout-conversation-details-client-info-toggle"
+            onClick={onClientInfoOpen}
+          >
+            {t("conversation.clientInfoTooltip")}
+            <CaretRightIcon />
+          </Button>
+        </S.HeaderAside>
       </S.Header>
     );
   },

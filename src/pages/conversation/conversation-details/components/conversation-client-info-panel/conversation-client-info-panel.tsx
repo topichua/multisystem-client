@@ -1,4 +1,3 @@
-import { XIcon } from "@phosphor-icons/react";
 import {
   Avatar,
   Button,
@@ -76,7 +75,6 @@ type ConversationClientInfoPanelProps = {
   linkedClient: Client | undefined;
   linkedClientLoading: boolean;
   onClientCreated: (client: Client) => void;
-  onClose: () => void;
 };
 
 export const ConversationClientInfoPanel = observer(
@@ -86,7 +84,6 @@ export const ConversationClientInfoPanel = observer(
     linkedClient,
     linkedClientLoading,
     onClientCreated,
-    onClose,
   }: ConversationClientInfoPanelProps) => {
     const { t } = useTranslation();
     const [messageApi, contextHolder] = message.useMessage();
@@ -195,24 +192,11 @@ export const ConversationClientInfoPanel = observer(
     return (
       <S.Root aria-label={t("conversation.clientPanelAria")}>
         {contextHolder}
-        <S.PanelHeader>
-          <Flex vertical gap={0}>
-            <Text strong style={{ fontSize: 15 }}>
-              {t("conversation.clientPanelTitle")}
-            </Text>
-            {instagramAssociation && !instagramAssociation.associated ? (
-              <Text type="secondary" style={{ fontSize: 12 }}>
-                {t("conversation.clientNotLinked")}
-              </Text>
-            ) : null}
-          </Flex>
-          <Button
-            type="text"
-            icon={<XIcon size={20} />}
-            aria-label={t("conversation.closeClientPanelAria")}
-            onClick={onClose}
-          />
-        </S.PanelHeader>
+        {instagramAssociation && !instagramAssociation.associated ? (
+          <Text type="secondary" style={{ fontSize: 12, marginBottom: 12 }}>
+            {t("conversation.clientNotLinked")}
+          </Text>
+        ) : null}
         <S.PanelScroll>
           {!conversation ? (
             <Skeleton active paragraph={{ rows: 6 }} />

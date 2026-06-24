@@ -7,14 +7,34 @@ export type OwnInstagramIdentity = {
   username?: string;
 };
 
+export const getCommentUsername = (comment: InstagramComment): string =>
+  comment.username || comment.from?.username || "";
+
 export const getCommentAuthor = (comment: InstagramComment): string =>
-  comment.username || comment.from?.username || "Instagram";
+  comment.from?.name || getCommentUsername(comment) || "Instagram";
 
 export const normalizeHandle = (value: string | undefined): string =>
   (value ?? "").trim().replace(/^@/, "").toLowerCase();
 
 export const getCommentHandle = (comment: InstagramComment): string =>
-  formatHandle(getCommentAuthor(comment));
+  formatHandle(getCommentUsername(comment) || getCommentAuthor(comment));
+
+export const getCommentAuthorLabel = (comment: InstagramComment): string => {
+  const author = getCommentAuthor(comment);
+  const handle = getCommentHandle(comment);
+  const normalizedAuthor = normalizeHandle(author);
+  const normalizedHandle = normalizeHandle(handle);
+
+  if (!handle || normalizedAuthor === normalizedHandle) {
+    return author;
+  }
+
+  return `${author} (${handle})`;
+};
+
+export const getCommentAvatarUrl = (
+  comment: InstagramComment,
+): string | undefined => comment.from?.profilePic;
 
 export const getAvatarLabel = (value: string): string =>
   normalizeHandle(value).charAt(0).toUpperCase() || "?";
@@ -39,7 +59,7 @@ export const getReplyAuthorLabel = (
   ownIdentity: OwnInstagramIdentity,
   ownLabel: string,
 ): string =>
-  isOwnReply(reply, ownIdentity) ? ownLabel : getCommentHandle(reply);
+  isOwnReply(reply, ownIdentity) ? ownLabel : getCommentAuthorLabel(reply);
 
 export const hasSentReply = (
   replies: InstagramComment[],

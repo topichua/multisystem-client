@@ -6,13 +6,13 @@ import { Empty, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
 
-import { useEnsureConversationGroupsLoaded } from "@/features/conversation-groups/model/use-ensure-conversation-groups-loaded";
 import { useConversationGroupsStore } from "@/features/conversation-groups/model/use-conversation-groups-store";
+import { useEnsureConversationGroupsLoaded } from "@/features/conversation-groups/model/use-ensure-conversation-groups-loaded";
 import { useConversationsStore } from "@/features/conversations/model/use-conversations-store";
 import { BRAND_PRIMARY } from "@/styled/brand";
 
-import * as S from "./conversation-groups-pane.styled";
 import { ConversationGroupFilterRow } from "./conversation-group-filter-row";
+import * as S from "./conversation-groups-pane.styled";
 
 const { Text, Title } = Typography;
 
@@ -62,6 +62,7 @@ export const ConversationGroupsPane = observer(
           >
             <CaretDoubleRightIcon size={16} weight="bold" />
           </S.ExpandButton>
+          <S.CollapsedLabel>{t("groups.groupsPaneTitle")}</S.CollapsedLabel>
         </S.CollapsedAside>
       );
     }

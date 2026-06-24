@@ -265,14 +265,23 @@ const parseCommentAuthor = (
   }
 
   const id = readId(raw.id);
+  const name = readString(raw.name);
+  const profilePic =
+    readString(raw.profilePic) ??
+    readString(raw.profile_pic) ??
+    readString(raw.profilePicture) ??
+    readString(raw.profile_picture) ??
+    readString(raw.avatar);
   const username = readString(raw.username);
 
-  if (id == null && username == null) {
+  if (id == null && name == null && profilePic == null && username == null) {
     return undefined;
   }
 
   return {
     id: id != null ? String(id) : undefined,
+    name: name ?? undefined,
+    profilePic: profilePic ?? undefined,
     username: username ?? undefined,
   };
 };

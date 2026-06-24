@@ -23,7 +23,9 @@ export const CollapsedColumn = styled.div.attrs(() =>
   flex: 1;
   min-height: 0;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
   padding: 12px;
   background: ${(props) => props.theme.colors.functional.background.base};
 `;
@@ -57,6 +59,17 @@ export const CollapseButton = styled.button`
 
 export const ExpandButton = styled(CollapseButton)`
   margin-top: 0;
+`;
+
+export const CollapsedLabel = styled.span`
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0;
+  color: ${(props) => props.theme.colors.functional.text.subdued};
+  user-select: none;
 `;
 
 export const ListItemPlaceholder = styled.div.attrs(() =>

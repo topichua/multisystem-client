@@ -6,7 +6,11 @@ import type { InstagramComment } from "@/features/instagram/model/instagram.type
 
 import type { InstagramPostPageController } from "../../controllers/use-instagram-post-page-controller";
 import {
+  getAvatarLabel,
+  getCommentAuthor,
+  getCommentAvatarUrl,
   getReplyAuthorLabel,
+  isOwnReply,
   type OwnInstagramIdentity,
 } from "../../utils/instagram-comment.utils";
 import * as S from "./instagram-post-comments.styled";
@@ -62,14 +66,36 @@ export const InstagramPostCommentRepliesSection = ({
               <Alert type="error" showIcon message={repliesError} />
             ) : null}
 
-            {replies.map((reply) => (
-              <S.ReplyItem $optimistic={reply.optimistic} key={reply.id}>
-                <Text strong>
-                  {getReplyAuthorLabel(reply, ownIdentity, t("instagram.you"))}
-                </Text>{" "}
-                <S.ReplyText>{reply.text}</S.ReplyText>
-              </S.ReplyItem>
-            ))}
+            {replies.map((reply) => {
+              const ownReply = isOwnReply(reply, ownIdentity);
+
+              return (
+                <S.ReplyItem $optimistic={reply.optimistic} key={reply.id}>
+                  {!ownReply ? (
+                    <S.ReplyAvatar>
+                      {getCommentAvatarUrl(reply) ? (
+                        <S.AvatarImage
+                          src={getCommentAvatarUrl(reply)}
+                          alt={getCommentAuthor(reply)}
+                        />
+                      ) : (
+                        getAvatarLabel(getCommentAuthor(reply))
+                      )}
+                    </S.ReplyAvatar>
+                  ) : null}
+                  <S.ReplyContent>
+                    <Text strong>
+                      {getReplyAuthorLabel(
+                        reply,
+                        ownIdentity,
+                        t("instagram.you"),
+                      )}
+                    </Text>{" "}
+                    <S.ReplyText>{reply.text}</S.ReplyText>
+                  </S.ReplyContent>
+                </S.ReplyItem>
+              );
+            })}
 
             {canLoadMoreReplies ? (
               <Button

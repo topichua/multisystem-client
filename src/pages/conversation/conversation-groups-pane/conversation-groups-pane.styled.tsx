@@ -22,7 +22,9 @@ export const CollapsedAside = styled.aside.attrs(() =>
   dataQaAttrs("layout-conversations-groups-collapsed"),
 )`
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
   min-height: 0;
   padding: 12px;
   background: ${(props) => props.theme.colors.functional.background.base};
@@ -69,6 +71,17 @@ export const CollapseButton = styled.button`
 
 export const ExpandButton = styled(CollapseButton)`
   margin-top: 0;
+`;
+
+export const CollapsedLabel = styled.span`
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0;
+  color: ${(props) => props.theme.colors.functional.text.subdued};
+  user-select: none;
 `;
 
 export const GroupsScroll = styled.div`

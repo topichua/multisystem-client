@@ -7,9 +7,10 @@ import { formatRelativeTimeShort } from "@/utils/date-time";
 
 import type { InstagramPostPageController } from "../../controllers/use-instagram-post-page-controller";
 import {
+  getCommentAuthorLabel,
   getAvatarLabel,
   getCommentAuthor,
-  getCommentHandle,
+  getCommentAvatarUrl,
   type OwnInstagramIdentity,
 } from "../../utils/instagram-comment.utils";
 import { InstagramPostCommentRepliesSection } from "./instagram-post-comment-replies-section";
@@ -38,14 +39,21 @@ export const InstagramPostCommentItem = ({
 }: InstagramPostCommentItemProps) => {
   const { t } = useTranslation();
   const author = getCommentAuthor(comment);
+  const avatarUrl = getCommentAvatarUrl(comment);
 
   return (
     <S.Item $active={active}>
       <S.Row>
-        <S.Avatar>{getAvatarLabel(author)}</S.Avatar>
+        <S.Avatar>
+          {avatarUrl ? (
+            <S.AvatarImage src={avatarUrl} alt={author} />
+          ) : (
+            getAvatarLabel(author)
+          )}
+        </S.Avatar>
         <S.Content>
           <S.Line>
-            <Text strong>{getCommentHandle(comment)}</Text>{" "}
+            <Text strong>{getCommentAuthorLabel(comment)}</Text>{" "}
             <S.InlineText>{comment.text}</S.InlineText>
           </S.Line>
           <S.ActionRow>

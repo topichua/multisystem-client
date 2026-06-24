@@ -103,6 +103,7 @@ const ConversationGroupLabel = ({ group }: ConversationGroupLabelProps) => (
           ellipsis
           style={{
             fontSize: 12,
+            color: group.color,
           }}
         >
           {group.name}
