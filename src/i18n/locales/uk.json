@@ -731,6 +731,10 @@
     "clientPanelTitle": "Клієнт",
     "noGroup": "Без групи",
     "groupSelectPlaceholder": "Без групи",
+    "noAssignee": "Без відповідального",
+    "assigneeSelectPlaceholder": "Призначити учасника",
+    "assigneeSelectTitle": "Відповідальний за чат",
+    "updateAssigneeError": "Не вдалося оновити відповідального за розмову",
     "clientNotLinked": "Ще не збережено як клієнта.",
     "addClient": "Додати клієнта",
     "backFromCreate": "Назад",
@@ -1429,10 +1433,16 @@
     "emptyState": "Поки немає характеристик"
   },
   "composer": {
-    "placeholder": "Повідомлення…",
+    "placeholder": "Напишіть повідомлення... (Enter — надіслати, Shift+Enter — новий рядок)",
     "send": "Надіслати",
+    "templates": "Шаблони",
+    "aiReply": "AI-відповідь",
+    "loadingTemplates": "Завантаження шаблонів...",
     "cancelReplyAria": "Скасувати відповідь",
-    "openEmojiPickerAria": "Емодзі"
+    "openEmojiPickerAria": "Емодзі",
+    "attachFileAria": "Додати файл",
+    "attachImageAria": "Додати зображення",
+    "quickActionAria": "Швидка дія"
   },
   "messages": {
     "replyTooltip": "Відповісти",

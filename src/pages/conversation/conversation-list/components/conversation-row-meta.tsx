@@ -3,17 +3,15 @@ import { Badge, Flex, Tooltip, Typography } from "antd";
 import { useTranslation } from "react-i18next";
 
 import { UserAvatar } from "@/components/user-avatar";
-import type {
-  ConversationAssignee,
-  ConversationStatus,
-} from "@/features/conversations/model/types";
+import type { ConversationGroup } from "@/features/conversation-groups/model/conversation-group.types";
+import type { ConversationAssignee } from "@/features/conversations/model/types";
 
 import { ConversationRowRightColumn } from "./conversation-row-layout";
 
 const { Text } = Typography;
 
-type ConversationStatusLabelProps = {
-  status: ConversationStatus | null;
+type ConversationGroupLabelProps = {
+  group: Pick<ConversationGroup, "name" | "color"> | null;
 };
 
 type ConversationAssigneeBadgeProps = {
@@ -22,22 +20,22 @@ type ConversationAssigneeBadgeProps = {
 };
 
 type ConversationRowMetaProps = {
-  status: ConversationStatus | null;
+  group: Pick<ConversationGroup, "name" | "color"> | null;
   assignee: ConversationAssignee | null;
   emptyAssigneeColor: string;
 };
 
 export const ConversationRowMeta = ({
-  status,
+  group,
   assignee,
   emptyAssigneeColor,
 }: ConversationRowMetaProps) => (
   <Flex
     align="center"
-    justify={status !== null ? "space-between" : "flex-end"}
+    justify={group !== null ? "space-between" : "flex-end"}
     gap={8}
   >
-    <ConversationStatusLabel status={status} />
+    <ConversationGroupLabel group={group} />
 
     <ConversationRowRightColumn align="flex-end">
       <ConversationAssigneeBadge
@@ -89,7 +87,7 @@ const ConversationAssigneeBadge = ({
   );
 };
 
-const ConversationStatusLabel = ({ status }: ConversationStatusLabelProps) => (
+const ConversationGroupLabel = ({ group }: ConversationGroupLabelProps) => (
   <Flex
     align="center"
     gap={4}
@@ -98,17 +96,16 @@ const ConversationStatusLabel = ({ status }: ConversationStatusLabelProps) => (
       minWidth: 0,
     }}
   >
-    {status && (
+    {group && (
       <>
-        <Badge color={status.color} />
+        <Badge color={group.color} />
         <Text
           ellipsis
           style={{
-            color: status.color,
             fontSize: 12,
           }}
         >
-          {status.name}
+          {group.name}
         </Text>
       </>
     )}

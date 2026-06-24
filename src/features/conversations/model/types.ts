@@ -1,4 +1,5 @@
 export type ConversationChannel = "instagram" | "telegram";
+export type ConversationSource = 1 | 2;
 
 export type ConversationStatus = {
   id: number;
@@ -23,11 +24,31 @@ export type ConversationParticipant = {
   avatarColor?: string;
 };
 
+export type ConversationListItemResponse = {
+  id: number;
+  instUpdatedAt: string;
+  isUnread: boolean;
+  source: ConversationSource;
+  groupId: number | null;
+  responsibleMemberId: number | null;
+  responsibleMemberSetAt: string | null;
+  lastMessage: string | null;
+  isLastMessageFromMe: boolean;
+  participant: {
+    id: string | number;
+    name: string;
+    username: string;
+    profilePic: string | null;
+  };
+};
+
 export type Conversation = {
   id: number;
   participant: ConversationParticipant;
   channel: ConversationChannel;
+  source: ConversationSource;
   groupId: number | null;
+  responsibleMemberId: number | null;
   lastMessage?: string | null;
   isLastMessageFromMe: boolean;
   unreadCount: number;
@@ -37,12 +58,11 @@ export type Conversation = {
 };
 
 export type ConversationUpdatePayload = {
-  groupId: number | null;
+  groupId?: number | null;
+  responsible_member_id?: number | null;
 };
 
-export type ConversationsListResponse = {
-  items: Conversation[];
-};
+export type ConversationsListResponse = ConversationListItemResponse[];
 
 export type MessageParticipant = {
   id: string;

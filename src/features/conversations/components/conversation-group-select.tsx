@@ -24,6 +24,7 @@ type ConversationGroupSelectProps = {
   disabled?: boolean;
   className?: string;
   style?: CSSProperties;
+  showPlainLabels?: boolean;
 };
 
 export const ConversationGroupSelect = observer(
@@ -33,6 +34,7 @@ export const ConversationGroupSelect = observer(
     disabled,
     className,
     style,
+    showPlainLabels = false,
   }: ConversationGroupSelectProps) => {
     const { t } = useTranslation();
     useEnsureConversationGroupsLoaded();
@@ -80,7 +82,7 @@ export const ConversationGroupSelect = observer(
         <Select
           data-qa="layout-conversation-details-group-select"
           className={className}
-          style={{ minWidth: 200, ...style }}
+          style={{ minWidth: 200, height: 35, ...style }}
           allowClear
           placeholder={t("conversation.groupSelectPlaceholder")}
           loading={loading}
@@ -91,7 +93,11 @@ export const ConversationGroupSelect = observer(
             const data = option.data as GroupSelectOptionData;
 
             return (
-              <GroupOptionWithSwatch label={data.label} color={data.color} />
+              <GroupOptionWithSwatch
+                label={data.label}
+                color={data.color}
+                showPlainLabels={showPlainLabels}
+              />
             );
           }}
           labelRender={(props) => {
@@ -114,7 +120,11 @@ export const ConversationGroupSelect = observer(
             return (
               <Space size={8} align="center">
                 <GroupColorSwatch color={g.color} />
-                <GroupColoredNameTag name={g.name} color={g.color} />
+                {showPlainLabels ? (
+                  g.name
+                ) : (
+                  <GroupColoredNameTag name={g.name} color={g.color} />
+                )}
               </Space>
             );
           }}

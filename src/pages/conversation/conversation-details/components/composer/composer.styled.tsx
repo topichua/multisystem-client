@@ -6,9 +6,10 @@ export const Composer = styled.footer.attrs(() =>
   dataQaAttrs("layout-conversation-details-composer"),
 )`
   flex-shrink: 0;
-  padding: 12px 16px;
-  border-top: 1px solid ${({ theme }) => theme.colors.functional.border.split};
-  background: ${({ theme }) => theme.colors.functional.background.natural};
+  padding: 16px 24px;
+  border-top: 1px solid
+    ${({ theme }) => theme.colors.functional.border.cardBase};
+  background: ${({ theme }) => theme.colors.functional.background.base};
 `;
 
 export const ReplyBanner = styled.div`
@@ -21,7 +22,7 @@ export const ReplyBanner = styled.div`
   border-left: 3px solid ${({ theme }) => theme.colors.semantic.primary};
   background: ${({ theme }) => theme.colors.functional.background.natural};
   box-shadow: inset 0 0 0 1px
-    ${({ theme }) => theme.colors.functional.border.split};
+    ${({ theme }) => theme.colors.functional.border.cardBase};
 `;
 
 export const ReplyBannerBody = styled.div`
@@ -47,10 +48,11 @@ export const ReplyBannerSnippet = styled.div`
   overflow: hidden;
 `;
 
-export const ComposerRow = styled.div`
-  display: flex;
-  gap: 10px;
-  align-items: flex-end;
+export const EditorShell = styled.div`
+  padding: 10px;
+  border: 1px solid ${({ theme }) => theme.colors.functional.border.cardBase};
+  border-radius: ${({ theme }) => theme.radius.semiLarge};
+  background: ${({ theme }) => theme.colors.functional.background.elevated};
 `;
 
 export const EmojiPickerPopoverBody = styled.div`

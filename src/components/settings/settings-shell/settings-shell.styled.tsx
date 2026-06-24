@@ -6,7 +6,9 @@ import {
 } from "@/components/layout/pane-frame";
 import { dataQaAttrs } from "@/styled/data-qa-attrs";
 
-export const Root = styled.section.attrs(() => dataQaAttrs('layout-settings-shell'))`
+export const Root = styled.section.attrs(() =>
+  dataQaAttrs("layout-settings-shell"),
+)`
   box-sizing: border-box;
   min-height: 0;
   min-width: 0;

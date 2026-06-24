@@ -1,4 +1,4 @@
-import { Badge, theme } from 'antd';
+import { Badge, theme } from "antd";
 
 export const FilterLabel = ({
   label,
@@ -10,7 +10,7 @@ export const FilterLabel = ({
   const { token } = theme.useToken();
 
   return (
-    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+    <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
       {label}
       <Badge count={count} size="medium" color={token.colorPrimary} showZero />
     </span>

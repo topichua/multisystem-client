@@ -245,6 +245,7 @@ export const ConversationDetails = observer(() => {
           ) : (
             <ConversationMessagesList
               chronologicalMessages={thread.chronologicalMessages}
+              channel={activeConversation?.channel}
               selfInstagramId={selfInstagramId}
               loadingOlderMessages={thread.loadingOlderMessages}
               lastOwnMessageIndex={thread.lastOwnMessageIndex}

@@ -1,29 +1,29 @@
-import { Space } from "antd";
-import type { TagProps } from "antd";
-import type { CSSProperties } from "react";
+import { Space } from 'antd';
+import type { TagProps } from 'antd';
+import type { CSSProperties } from 'react';
 
-import { GROUP_TAG_ON_COLOR } from "@/features/conversation-groups/group-select-options";
-import { Tag } from "@/components/tag/tag";
+import { GROUP_TAG_ON_COLOR } from '@/features/conversation-groups/group-select-options';
+import { Tag } from '@/components/tag/tag';
 
 type SwatchProps = {
   color: string;
   size?: number;
-  shape?: "square" | "circle";
+  shape?: 'square' | 'circle';
 };
 
 export const GroupColorSwatch = ({
   color,
   size = 10,
-  shape = "square",
+  shape = 'square',
 }: SwatchProps) => (
   <span
     style={{
-      display: "inline-block",
+      display: 'inline-block',
       width: size,
       height: size,
-      borderRadius: shape === "circle" ? "50%" : size > 12 ? 4 : 2,
+      borderRadius: shape === 'circle' ? '50%' : size > 12 ? 4 : 2,
       background: color,
-      border: "1px solid rgba(0,0,0,0.12)",
+      border: '1px solid rgba(0,0,0,0.12)',
       flexShrink: 0,
     }}
   />
@@ -34,7 +34,7 @@ type ColoredNameTagProps = {
   color: string;
   style?: CSSProperties;
   closable?: boolean;
-  onClose?: TagProps["onClose"];
+  onClose?: TagProps['onClose'];
 };
 
 export const GroupColoredNameTag = ({
@@ -63,12 +63,18 @@ export const GroupColoredNameTag = ({
 export const GroupOptionWithSwatch = ({
   label,
   color,
+  showPlainLabels = false,
 }: {
   label: string;
   color: string;
+  showPlainLabels?: boolean;
 }) => (
   <Space size={8} align="center">
     <GroupColorSwatch color={color} />
-    <GroupColoredNameTag name={label} color={color} />
+    {showPlainLabels ? (
+      label
+    ) : (
+      <GroupColoredNameTag name={label} color={color} />
+    )}
   </Space>
 );

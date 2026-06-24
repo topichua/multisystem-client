@@ -129,22 +129,3 @@ export const ConversationRowActions = styled.span`
   display: inline-flex;
   align-items: center;
 `;
-
-export const AvatarWithChannel = styled.span`
-  position: relative;
-  display: inline-flex;
-  flex: 0 0 auto;
-`;
-
-export const ChannelBadge = styled.span`
-  position: absolute;
-  right: -5px;
-  bottom: -5px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2px;
-  border-radius: 50%;
-  background: ${({ theme }) => theme.colors.functional.background.base};
-  pointer-events: none;
-`;

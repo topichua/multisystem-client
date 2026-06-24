@@ -11,8 +11,10 @@ import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router";
 
 import { pagesMap } from "@/app/router/pages-map";
+import { useEnsureConversationGroupsLoaded } from "@/features/conversation-groups/model/use-ensure-conversation-groups-loaded";
 import type { Conversation as ConversationModel } from "@/features/conversations/model/types";
 import { useConversationsStore } from "@/features/conversations/model/use-conversations-store";
+import { useEnsureWorkspaceMembersLoaded } from "@/features/workspace-members/model/use-ensure-workspace-members-loaded";
 
 import { ConversationRowSkeleton } from "./components/conversation-row-skeleton";
 import type { ConversationPanelProps } from "./conversation-panel.types";
@@ -54,6 +56,9 @@ export const Conversation = observer(
     const { t } = useTranslation();
     const navigate = useNavigate();
     const { conversationId } = useParams();
+    useEnsureConversationGroupsLoaded();
+    useEnsureWorkspaceMembersLoaded();
+
     const { loadConversations, sortedConversations, listLoading } =
       useConversationsStore();
     const [searchQuery, setSearchQuery] = useState("");

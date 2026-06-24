@@ -725,6 +725,10 @@
     "clientPanelTitle": "Client",
     "noGroup": "No group",
     "groupSelectPlaceholder": "No group",
+    "noAssignee": "No assignee",
+    "assigneeSelectPlaceholder": "Assign member",
+    "assigneeSelectTitle": "Responsible for chat",
+    "updateAssigneeError": "Could not update conversation assignee",
     "clientNotLinked": "Not saved as a client yet.",
     "addClient": "Add client",
     "backFromCreate": "Back",
@@ -1389,10 +1393,16 @@
     "emptyState": "No characteristics yet"
   },
   "composer": {
-    "placeholder": "Message…",
+    "placeholder": "Write a message... (Enter — send, Shift+Enter — new line)",
     "send": "Send",
+    "templates": "Templates",
+    "aiReply": "AI reply",
+    "loadingTemplates": "Loading templates...",
     "cancelReplyAria": "Cancel reply",
-    "openEmojiPickerAria": "Emoji"
+    "openEmojiPickerAria": "Emoji",
+    "attachFileAria": "Attach file",
+    "attachImageAria": "Attach image",
+    "quickActionAria": "Quick action"
   },
   "messages": {
     "replyTooltip": "Reply",

@@ -3,19 +3,19 @@ import styled from "styled-components";
 import { dataQaAttrs } from "@/styled/data-qa-attrs";
 
 export const Root = styled.section.attrs(() =>
-  dataQaAttrs('layout-conversations-shell'),
+  dataQaAttrs("layout-conversations-shell"),
 )<{ $groupsCollapsed?: boolean; $listCollapsed?: boolean }>`
   background: transparent;
   display: grid;
   grid-template-columns: ${(props) =>
-    `${props.$groupsCollapsed ? '48px' : '240px'} ${
-      props.$listCollapsed ? '48px' : '320px'
+    `${props.$groupsCollapsed ? "48px" : "240px"} ${
+      props.$listCollapsed ? "48px" : "320px"
     } minmax(0, 1fr)`};
   height: 100%;
   min-height: 0;
   min-width: 0;
   overflow: hidden;
-  margin: 0 12px 0 0;
+  /* margin: 0 12px 0 0; */
   transition: grid-template-columns 0.16s ease;
 
   & > * {

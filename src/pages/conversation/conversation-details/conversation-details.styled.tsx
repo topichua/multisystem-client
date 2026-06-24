@@ -30,7 +30,7 @@ export const MessagesScroll = styled.div.attrs(() =>
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 16px;
+  padding: 16px 24px;
 `;
 
 export const MessagesInner = styled.div.attrs(() =>
@@ -39,7 +39,7 @@ export const MessagesInner = styled.div.attrs(() =>
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  gap: 10px;
+  gap: 4px;
   min-height: 100%;
 `;
 

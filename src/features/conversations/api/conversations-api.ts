@@ -3,6 +3,7 @@ import { apiClient } from "@/api/api-client";
 import type {
   Conversation,
   ConversationChannel,
+  ConversationSource,
   ConversationsListResponse,
   ConversationMessage,
   ConversationUpdatePayload,
@@ -50,6 +51,17 @@ export const createOptimisticOutboundMessage = (
 const isConversationChannel = (value: unknown): value is ConversationChannel =>
   value === "instagram" || value === "telegram";
 
+const isConversationSource = (value: unknown): value is ConversationSource =>
+  value === 1 || value === 2;
+
+const getConversationChannelBySource = (
+  source: ConversationSource,
+): ConversationChannel => (source === 2 ? "telegram" : "instagram");
+
+const getConversationSourceByChannel = (
+  channel: ConversationChannel,
+): ConversationSource => (channel === "telegram" ? 2 : 1);
+
 const getRecord = (value: unknown): Record<string, unknown> =>
   value && typeof value === "object" ? (value as Record<string, unknown>) : {};
 
@@ -62,15 +74,30 @@ const getNumber = (value: unknown, fallback = 0): number =>
 const getOptionalNumber = (value: unknown): number | null =>
   typeof value === "number" && Number.isFinite(value) ? value : null;
 
+const getConversationListItems = (data: unknown): unknown[] => {
+  if (Array.isArray(data)) {
+    return data;
+  }
+
+  const record = getRecord(data);
+  return Array.isArray(record.items) ? record.items : [];
+};
+
 const normalizeConversation = (raw: unknown): Conversation => {
   const record = getRecord(raw);
   const participant = getRecord(record.participant);
   const status = getRecord(record.status);
   const assignee = getRecord(record.assignee);
+  const channel = isConversationChannel(record.channel)
+    ? record.channel
+    : "instagram";
+  const source = isConversationSource(record.source)
+    ? record.source
+    : getConversationSourceByChannel(channel);
   const unreadCount =
     "unreadCount" in record
       ? getNumber(record.unreadCount)
-      : Boolean(record.isUnread)
+      : record.isUnread
         ? 1
         : 0;
 
@@ -99,10 +126,10 @@ const normalizeConversation = (raw: unknown): Conversation => {
           ? participant.avatarColor
           : undefined,
     },
-    channel: isConversationChannel(record.channel)
-      ? record.channel
-      : "instagram",
+    channel: getConversationChannelBySource(source),
+    source,
     groupId: getOptionalNumber(record.groupId),
+    responsibleMemberId: getOptionalNumber(record.responsibleMemberId),
     lastMessage:
       typeof record.lastMessage === "string" ? record.lastMessage : null,
     isLastMessageFromMe: Boolean(record.isLastMessageFromMe),
@@ -207,7 +234,7 @@ export const conversationsApi = {
       params: query,
     });
 
-    return data.items.map(normalizeConversation);
+    return getConversationListItems(data).map(normalizeConversation);
   },
 
   update: async (
