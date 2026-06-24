@@ -1,5 +1,11 @@
 export function openIntegrationAuthWindow(): Window | null {
-  return window.open("about:blank", "_blank", "noopener,noreferrer");
+  const authWindow = window.open("about:blank", "_blank");
+
+  if (authWindow) {
+    authWindow.opener = null;
+  }
+
+  return authWindow;
 }
 
 export function navigateIntegrationAuthUrl(
