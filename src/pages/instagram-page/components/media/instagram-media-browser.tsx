@@ -1,17 +1,12 @@
-import { Alert, Empty, Spin } from "antd";
 import { observer } from "mobx-react-lite";
-import { useEffect } from "react";
-import { useTranslation } from "react-i18next";
 
+import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
 import type { InstagramMediaItem } from "@/features/instagram/model/instagram.types";
-import { useIntersectionLoadMore } from "@/utils/use-intersection-load-more";
 
 import type { InstagramPageController } from "../../controllers/use-instagram-page-controller";
-import * as S from "../../instagram-page.styled";
 import { InstagramIntegrationGate } from "../integrations/instagram-integration-gate";
 import { InstagramProfileHeader } from "../shared/instagram-profile-header";
-import { InstagramMediaFilters } from "./instagram-media-filters";
-import { InstagramMediaGrid } from "./instagram-media-grid";
+import { InstagramMediaContent } from "./instagram-media-content";
 
 export type InstagramMediaBrowserProps = {
   controller: InstagramPageController;
@@ -20,118 +15,34 @@ export type InstagramMediaBrowserProps = {
 
 export const InstagramMediaBrowser = observer(
   ({ controller, onPostClick }: InstagramMediaBrowserProps) => {
-    const { t } = useTranslation();
     const { store } = controller;
-    const selectedIntegration = store.selectedIntegration;
-    const initialMediaLoading =
-      selectedIntegration != null && !store.mediaLoaded && store.mediaLoading;
-    const canLoadMore = store.canLoadNextMediaPage;
-    const loadMoreSentinelRef = useIntersectionLoadMore({
-      enabled: selectedIntegration != null && store.mediaLoaded,
-      hasMore: canLoadMore,
-      loading: store.mediaLoading,
-      onLoadMore: controller.loadNextMediaPage,
-    });
-
-    useEffect(() => {
-      if (
-        !initialMediaLoading &&
-        store.mediaLoaded &&
-        !store.mediaLoading &&
-        !store.mediaError &&
-        canLoadMore &&
-        store.visibleMediaItems.length === 0
-      ) {
-        controller.loadNextMediaPage();
-      }
-    }, [
-      canLoadMore,
-      controller,
-      initialMediaLoading,
-      store.mediaError,
-      store.mediaFilter,
-      store.mediaLoaded,
-      store.mediaLoading,
-      store.visibleMediaItems.length,
-    ]);
+    const { selectedIntegration } = store;
 
     return (
       <InstagramIntegrationGate controller={controller}>
-        {selectedIntegration ? (
-          <S.Content>
-            <InstagramProfileHeader
-              integration={selectedIntegration}
-              mediaPaging={store.mediaPaging}
-            />
-
-            <InstagramMediaFilters
-              activeFilter={store.mediaFilter}
-              getFilterCount={controller.getFilterCount}
-              onChange={controller.selectMediaFilter}
-            />
-
-            {store.mediaError ? (
-              <Alert
-                type="error"
-                showIcon
-                title={store.mediaError}
-                style={{ marginBottom: 16 }}
+        {selectedIntegration && (
+          <PaneDetailLayout.Root>
+            <PaneDetailLayout.Header data-qa="layout-instagram-media-header">
+              <InstagramProfileHeader
+                integration={selectedIntegration}
+                mediaPaging={store.mediaPaging}
               />
-            ) : null}
+            </PaneDetailLayout.Header>
 
-            {store.productReferencesError ? (
-              <Alert
-                type="warning"
-                showIcon
-                title={store.productReferencesError}
-                style={{ marginBottom: 16 }}
+            <PaneDetailLayout.Body
+              data-qa="layout-instagram-content"
+              style={{
+                overflow: "hidden",
+                padding: 0,
+              }}
+            >
+              <InstagramMediaContent
+                controller={controller}
+                onPostClick={onPostClick}
               />
-            ) : null}
-
-            {initialMediaLoading ? (
-              <S.CenteredState>
-                <Spin />
-              </S.CenteredState>
-            ) : store.visibleMediaItems.length === 0 ? (
-              store.mediaLoadingMore ? (
-                <S.LoadMoreState>
-                  <Spin />
-                </S.LoadMoreState>
-              ) : (
-                <Empty
-                  image={Empty.PRESENTED_IMAGE_SIMPLE}
-                  description={
-                    store.mediaItems.length === 0
-                      ? t("instagram.noPosts")
-                      : t("instagram.noPostsForFilter")
-                  }
-                  style={{ marginTop: 48 }}
-                />
-              )
-            ) : (
-              <>
-                <InstagramMediaGrid
-                  posts={store.visibleMediaItems}
-                  hasProductReference={(mediaId) =>
-                    store.hasProductReference(mediaId)
-                  }
-                  productIdsByMediaId={store.productIdsByMediaId}
-                  onPostClick={onPostClick}
-                />
-
-                {canLoadMore ? (
-                  <S.LoadMoreSentinel ref={loadMoreSentinelRef} />
-                ) : null}
-
-                {store.mediaLoadingMore ? (
-                  <S.LoadMoreState>
-                    <Spin />
-                  </S.LoadMoreState>
-                ) : null}
-              </>
-            )}
-          </S.Content>
-        ) : null}
+            </PaneDetailLayout.Body>
+          </PaneDetailLayout.Root>
+        )}
       </InstagramIntegrationGate>
     );
   },

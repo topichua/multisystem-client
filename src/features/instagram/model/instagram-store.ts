@@ -172,9 +172,9 @@ export class InstagramStore {
     this.unlinkProductReferenceId != null ||
     this.postProductVariantsLoadingId === postId;
 
-  hasProductReference(mediaId: string): boolean {
+  hasProductReference = (mediaId: string): boolean => {
     return this.productReferenceMediaIdSet.has(mediaId);
-  }
+  };
 
   getSelectedPostDetails = (postId: string): InstagramPostDetails | null => {
     if (this.selectedPostDetails?.post.id === postId) {

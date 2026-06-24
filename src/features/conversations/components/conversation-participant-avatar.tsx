@@ -50,11 +50,11 @@ const SOURCE_CONFIG: Record<
 > = {
   1: {
     Icon: InstagramLogoIcon,
-    backgroundColor: '#e54085',
+    backgroundColor: "#e54085",
   },
   2: {
     Icon: TelegramLogoIcon,
-    backgroundColor: '#229ED9',
+    backgroundColor: "#229ED9",
   },
 };
 
