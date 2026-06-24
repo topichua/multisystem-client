@@ -554,6 +554,32 @@ export class ConversationStore {
     });
   }
 
+  async updateConversationAssignee(
+    conversationId: string,
+    responsibleMemberId: number | null,
+    assignee: Conversation["assignee"],
+  ): Promise<void> {
+    const raw = await conversationsApi.update(conversationId, {
+      responsible_member_id: responsibleMemberId,
+    });
+
+    runInAction(() => {
+      this.conversations = sortConversationsByInstUpdatedAt(
+        this.conversations.map((c) => {
+          if (String(c.id) !== conversationId) {
+            return c;
+          }
+
+          if (raw && typeof raw === "object" && "id" in raw) {
+            return raw;
+          }
+
+          return { ...c, responsibleMemberId, assignee };
+        }),
+      );
+    });
+  }
+
   private matchesListGroupFilter = (conversation: Conversation): boolean => {
     if (this.conversationListGroupFilterIds.length === 0) {
       return true;

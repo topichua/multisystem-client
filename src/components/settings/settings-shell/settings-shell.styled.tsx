@@ -14,12 +14,13 @@ export const Root = styled.section.attrs(() =>
   min-width: 0;
   height: 100%;
   max-height: 100%;
-  margin: 0 12px 0 0;
+  /* margin: 0 12px 0 0; */
   padding: 0;
-  border: 1px solid ${(props) => props.theme.colors.functional.border.cardBase};
-  border-radius: ${(props) => props.theme.radius.semiLarge};
+  /* border: 1px solid ${(props) =>
+    props.theme.colors.functional.border.cardBase}; */
+  /* border-radius: ${(props) => props.theme.radius.semiLarge}; */
   background: ${(props) => props.theme.colors.functional.background.elevated};
-  box-shadow: ${(props) => props.theme.shadow.xl};
+  /* box-shadow: ${(props) => props.theme.shadow.xl}; */
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   overflow: hidden;

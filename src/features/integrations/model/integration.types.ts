@@ -7,6 +7,9 @@ export type IntegrationItem = {
   connectedAt: string;
   avatar?: string;
   businessAccountId?: string;
+  userName?: string;
+  followersCount?: number;
+  postsCount?: number;
   page?: string;
   url?: string;
 };

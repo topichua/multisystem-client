@@ -1,28 +1,68 @@
-export type ConversationParticipant = {
-  id: string;
+export type ConversationChannel = "instagram" | "telegram";
+export type ConversationSource = 1 | 2;
+
+export type ConversationStatus = {
+  id: number;
   name: string;
-  username: string;
-  profilePic: string;
+  color: string;
+};
+
+export type ConversationAssignee = {
+  id: number;
+  name: string;
+  profilePic?: string | null;
+  initials?: string;
+  avatarColor?: string;
+};
+
+export type ConversationParticipant = {
+  id: string | number;
+  name: string;
+  username?: string;
+  profilePic?: string | null;
+  initials?: string;
+  avatarColor?: string;
+};
+
+export type ConversationListItemResponse = {
+  id: number;
+  instUpdatedAt: string;
+  isUnread: boolean;
+  source: ConversationSource;
+  groupId: number | null;
+  responsibleMemberId: number | null;
+  responsibleMemberSetAt: string | null;
+  lastMessage: string | null;
+  isLastMessageFromMe: boolean;
+  participant: {
+    id: string | number;
+    name: string;
+    username: string;
+    profilePic: string | null;
+  };
 };
 
 export type Conversation = {
   id: number;
-  instUpdatedAt: string;
-  isUnread: boolean;
-  source: number;
-  groupId: number | null;
-  lastMessage: string;
-  isLastMessageFromMe: boolean;
   participant: ConversationParticipant;
+  channel: ConversationChannel;
+  source: ConversationSource;
+  groupId: number | null;
+  responsibleMemberId: number | null;
+  lastMessage?: string | null;
+  isLastMessageFromMe: boolean;
+  unreadCount: number;
+  status: ConversationStatus | null;
+  assignee: ConversationAssignee | null;
+  instUpdatedAt: string;
 };
 
 export type ConversationUpdatePayload = {
-  groupId: number | null;
+  groupId?: number | null;
+  responsible_member_id?: number | null;
 };
 
-export type ConversationsListResponse = {
-  items: Conversation[];
-};
+export type ConversationsListResponse = ConversationListItemResponse[];
 
 export type MessageParticipant = {
   id: string;

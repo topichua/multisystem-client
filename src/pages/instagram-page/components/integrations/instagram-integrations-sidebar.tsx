@@ -46,44 +46,56 @@ export const InstagramIntegrationsSidebar = ({
           </Text>
         ),
         style: { padding: 0 },
-        children: integrations.map((integration) => ({
-          key: String(integration.integration_id),
-          label: (
-            <Flex align="center" gap={12}>
-              <Avatar size={40} />
+        children: integrations.map((integration) => {
+          const postsCount = integration.posts_count ?? integration.media_count;
 
-              <Flex vertical gap={0}>
-                <Text strong>{formatHandle(integration.name)}</Text>
+          return {
+            key: String(integration.integration_id),
+            label: (
+              <Flex align="center" gap={12}>
+                <Avatar
+                  size={40}
+                  src={integration.avatar}
+                  alt={integration.name}
+                >
+                  {integration.name.charAt(0).toUpperCase()}
+                </Avatar>
 
-                {(integration.media_count != null ||
-                  integration.followers_count != null) && (
-                  <Flex gap={6} align="center">
-                    {integration.media_count != null ? (
-                      <Text type="secondary">
-                        {formatCompactNumber(integration.media_count)}{" "}
-                        {t("instagram.postsLabel")}
-                      </Text>
-                    ) : null}
-                    {integration.media_count != null &&
-                    integration.followers_count != null ? (
-                      <Text>·</Text>
-                    ) : null}
-                    {integration.followers_count != null ? (
-                      <Text type="secondary">
-                        {formatCompactNumber(integration.followers_count)}{" "}
-                        {t("instagram.followersLabel")}
-                      </Text>
-                    ) : null}
-                  </Flex>
-                )}
+                <Flex vertical gap={0}>
+                  <Text strong>
+                    {formatHandle(integration.username ?? integration.name)}
+                  </Text>
+
+                  {(postsCount != null ||
+                    integration.followers_count != null) && (
+                    <Flex gap={6} align="center">
+                      {postsCount != null ? (
+                        <Text type="secondary">
+                          {formatCompactNumber(postsCount)}{" "}
+                          {t("instagram.postsLabel")}
+                        </Text>
+                      ) : null}
+                      {postsCount != null &&
+                      integration.followers_count != null ? (
+                        <Text>·</Text>
+                      ) : null}
+                      {integration.followers_count != null ? (
+                        <Text type="secondary">
+                          {formatCompactNumber(integration.followers_count)}{" "}
+                          {t("instagram.followersLabel")}
+                        </Text>
+                      ) : null}
+                    </Flex>
+                  )}
+                </Flex>
               </Flex>
-            </Flex>
-          ),
-          style: {
-            padding: "12px",
-            height: "auto",
-          },
-        })),
+            ),
+            style: {
+              padding: "12px",
+              height: "auto",
+            },
+          };
+        }),
       },
     ],
     [integrations, t],

@@ -63,12 +63,18 @@ export const GroupColoredNameTag = ({
 export const GroupOptionWithSwatch = ({
   label,
   color,
+  showPlainLabels = false,
 }: {
   label: string;
   color: string;
+  showPlainLabels?: boolean;
 }) => (
   <Space size={8} align="center">
     <GroupColorSwatch color={color} />
-    <GroupColoredNameTag name={label} color={color} />
+    {showPlainLabels ? (
+      label
+    ) : (
+      <GroupColoredNameTag name={label} color={color} />
+    )}
   </Space>
 );

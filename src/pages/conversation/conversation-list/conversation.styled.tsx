@@ -1,11 +1,11 @@
-import { Card, Typography } from "antd";
-import styled, { css } from "styled-components";
+import { Typography } from "antd";
+import styled from "styled-components";
 
 import { dataQaAttrs } from "@/styled/data-qa-attrs";
 
 const { Title: AntdTitle } = Typography;
 
-export const Column = styled.div.attrs(() =>
+export const Conversation = styled.div.attrs(() =>
   dataQaAttrs("layout-conversations-list-body"),
 )`
   flex: 1;
@@ -13,13 +13,60 @@ export const Column = styled.div.attrs(() =>
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  padding: 12px;
+  gap: 12px;
 `;
 
-export const ListHeader = styled.div.attrs(() =>
-  dataQaAttrs("layout-conversations-list-header"),
+export const CollapsedColumn = styled.div.attrs(() =>
+  dataQaAttrs("layout-conversations-list-collapsed"),
 )`
-  flex-shrink: 0;
-  padding-top: 16px;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  justify-content: center;
+  padding: 12px;
+  background: ${(props) => props.theme.colors.functional.background.base};
+`;
+
+export const HeaderActions = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+export const CollapseButton = styled.button`
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  border-radius: ${(props) => props.theme.radius.medium};
+  color: ${(props) => props.theme.colors.functional.text.subdued};
+  background: transparent;
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    background: ${(props) => props.theme.colors.functional.background.hover};
+    color: ${(props) => props.theme.colors.functional.text.primary};
+    outline: none;
+  }
+`;
+
+export const ExpandButton = styled(CollapseButton)`
+  margin-top: 0;
+`;
+
+export const ListItemPlaceholder = styled.div.attrs(() =>
+  dataQaAttrs("layout-conversations-list-item-placeholder"),
+)`
+  flex: 1;
+  min-height: 0;
+  margin: 0 12px 12px;
+  border-radius: 8px;
+  background: transparent;
 `;
 
 export const ListScroll = styled.div.attrs(() =>
@@ -40,58 +87,45 @@ export const FilterRow = styled.div`
   padding: 0 12px 10px;
 `;
 
-export const MobileOnlyFilterRow = styled(FilterRow)`
-  display: none;
+export const ConversationRow = styled.div<{
+  $isSelected: boolean;
+  $selectionColor: string;
+}>`
+  position: relative;
+  box-sizing: border-box;
+  border-radius: ${({ theme }) => theme.radius.semiLarge};
+  padding: 8px 10px 8px 12px;
+  background: ${({ $isSelected, theme }) =>
+    $isSelected ? theme.colors.functional.background.hover : "transparent"};
+  cursor: pointer;
+  outline: none;
+  transition: background 0.12s ease;
 
-  @media (max-width: 767px) {
-    display: block;
+  &::before {
+    content: "";
+    position: absolute;
+    inset-block: 8px;
+    inset-inline-start: 0;
+    width: 2px;
+    background: ${({ $isSelected, $selectionColor }) =>
+      $isSelected ? $selectionColor : "transparent"};
   }
-`;
-
-export const ConversationCard = styled(Card)<{ $isSelected: boolean }>`
-  border-color: transparent;
-  pointer-events: none;
-  transition:
-    box-shadow 0.12s ease,
-    background 0.12s ease;
-
-  background: ${(props) =>
-    props.$isSelected
-      ? props.theme.colors.functional.background.hover
-      : "transparent"};
 
   &:hover {
-    box-shadow: none;
+    background: ${({ theme }) => theme.colors.functional.background.hover};
   }
 
-  .ant-card-body {
-    padding: 8px 12px;
+  &:focus-visible {
+    outline: 2px solid ${({ $selectionColor }) => $selectionColor};
+    outline-offset: 2px;
   }
 `;
 
-export const ConversationCardOuter = styled.div<{ $interactive?: boolean }>`
-  padding: 0;
-  border-radius: ${({ theme }) => theme.radius.semiLarge};
-  cursor: ${({ $interactive }) =>
-    $interactive === false ? "default" : "pointer"};
-  user-select: none;
-
-  ${(p) =>
-    p.$interactive !== false &&
-    css`
-      &:hover ${ConversationCard} {
-        background: ${p.theme.colors.functional.background.hover};
-      }
-
-      &:active {
-        padding: 0 4px;
-      }
-    `}
-`;
-
-export const ConversationActionsHitbox = styled.span`
+export const ConversationRowActions = styled.span`
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  z-index: 1;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  pointer-events: auto;
 `;

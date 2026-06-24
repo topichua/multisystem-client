@@ -1,86 +1,122 @@
-import { Checkbox, Empty } from "antd";
+import {
+  CaretDoubleLeftIcon,
+  CaretDoubleRightIcon,
+} from "@phosphor-icons/react";
+import { Empty, Typography } from "antd";
 import { observer } from "mobx-react-lite";
-import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
-import {
-  PaneScrollRegion,
-  PaneSectionHeader,
-  PaneSectionHint,
-  PaneSectionTitle,
-} from "@/components/layout/pane-frame";
 import { useEnsureConversationGroupsLoaded } from "@/features/conversation-groups/model/use-ensure-conversation-groups-loaded";
 import { useConversationGroupsStore } from "@/features/conversation-groups/model/use-conversation-groups-store";
 import { useConversationsStore } from "@/features/conversations/model/use-conversations-store";
-import { ColorLabelRow } from "@/shared/components/color-label-row/color-label-row";
+import { BRAND_PRIMARY } from "@/styled/brand";
 
-import {
-  isClickInsideAntCheckboxWrapper,
-  toggleIdInNumberList,
-} from "./group-filter-row";
 import * as S from "./conversation-groups-pane.styled";
+import { ConversationGroupFilterRow } from "./conversation-group-filter-row";
 
-export const ConversationGroupsPane = observer(() => {
-  const { t } = useTranslation();
-  useEnsureConversationGroupsLoaded();
+const { Text, Title } = Typography;
 
-  const groupsStore = useConversationGroupsStore();
-  const conversationsStore = useConversationsStore();
+type ConversationGroupsPaneProps = {
+  collapsed: boolean;
+  onCollapse: () => void;
+  onExpand: () => void;
+};
 
-  const sortedGroups = useMemo(
-    () => [...groupsStore.groups].sort((a, b) => a.sortOrder - b.sortOrder),
-    [groupsStore.groups],
-  );
+export const ConversationGroupsPane = observer(
+  ({ collapsed, onCollapse, onExpand }: ConversationGroupsPaneProps) => {
+    const { t } = useTranslation();
 
-  const filterIds = conversationsStore.conversationListGroupFilterIds;
+    useEnsureConversationGroupsLoaded();
 
-  const loading = groupsStore.listLoading && sortedGroups.length === 0;
+    const groupsStore = useConversationGroupsStore();
+    const conversationsStore = useConversationsStore();
 
-  return (
-    <S.Aside aria-label={t("groups.conversationGroupsFilterAria")}>
-      <PaneSectionHeader data-qa="layout-conversations-groups-header">
-        <PaneSectionTitle>{t("groups.groupsPaneTitle")}</PaneSectionTitle>
-        <PaneSectionHint>{t("groups.groupsPaneHint")}</PaneSectionHint>
-      </PaneSectionHeader>
-      <PaneScrollRegion data-qa="layout-conversations-groups-scroll">
-        {loading ? null : sortedGroups.length === 0 ? (
-          <Empty
-            image={Empty.PRESENTED_IMAGE_SIMPLE}
-            description={t("groups.noGroupsEmpty")}
-            style={{ marginTop: 16 }}
-          />
-        ) : (
-          <Checkbox.Group
-            value={filterIds}
-            onChange={(vals) => {
-              conversationsStore.setConversationListGroupFilterIds(
-                vals as number[],
-              );
-            }}
-            style={{ display: "flex", flexDirection: "column", width: "100%" }}
+    const sortedGroups = [...groupsStore.groups].sort(
+      (firstGroup, secondGroup) => firstGroup.sortOrder - secondGroup.sortOrder,
+    );
+
+    const selectedGroupId =
+      conversationsStore.conversationListGroupFilterIds[0] ?? null;
+
+    const totalGroupsCounter = sortedGroups.reduce(
+      (total, group) => total + group.counter,
+      0,
+    );
+
+    const isInitialLoading =
+      groupsStore.listLoading && sortedGroups.length === 0;
+
+    const handleSelectGroup = (groupId: number | null): void => {
+      conversationsStore.setConversationListGroupFilterIds(
+        groupId === null ? [] : [groupId],
+      );
+    };
+
+    if (collapsed) {
+      return (
+        <S.CollapsedAside aria-label={t("groups.conversationGroupsFilterAria")}>
+          <S.ExpandButton
+            type="button"
+            aria-label={t("groups.expandGroupsPaneAria")}
+            onClick={onExpand}
           >
-            {sortedGroups.map((g) => (
-              <S.GroupFilterCheckboxRow
-                key={g.id}
-                $selected={filterIds.includes(g.id)}
-                onClick={(e) => {
-                  if (isClickInsideAntCheckboxWrapper(e)) return;
-                  conversationsStore.setConversationListGroupFilterIds(
-                    toggleIdInNumberList(
-                      conversationsStore.conversationListGroupFilterIds,
-                      g.id,
-                    ),
-                  );
-                }}
-              >
-                <Checkbox value={g.id}>
-                  <ColorLabelRow name={g.name} color={g.color} />
-                </Checkbox>
-              </S.GroupFilterCheckboxRow>
-            ))}
-          </Checkbox.Group>
-        )}
-      </PaneScrollRegion>
-    </S.Aside>
-  );
-});
+            <CaretDoubleRightIcon size={16} weight="bold" />
+          </S.ExpandButton>
+        </S.CollapsedAside>
+      );
+    }
+
+    return (
+      <S.Aside aria-label={t("groups.conversationGroupsFilterAria")}>
+        <S.Header data-qa="layout-conversations-groups-header">
+          <S.HeaderTop>
+            <Title level={4}>{t("groups.groupsPaneTitle")}</Title>
+
+            <S.CollapseButton
+              type="button"
+              aria-label={t("groups.collapseGroupsPaneAria")}
+              onClick={onCollapse}
+            >
+              <CaretDoubleLeftIcon size={16} weight="bold" />
+            </S.CollapseButton>
+          </S.HeaderTop>
+
+          <Text type="secondary">{t("groups.groupsPaneHint")}</Text>
+        </S.Header>
+
+        <S.GroupsScroll data-qa="layout-conversations-groups-scroll">
+          {!isInitialLoading && (
+            <S.GroupList>
+              <ConversationGroupFilterRow
+                color={BRAND_PRIMARY}
+                count={totalGroupsCounter}
+                name={t("groups.allConversations")}
+                selected={selectedGroupId === null}
+                onClick={() => handleSelectGroup(null)}
+              />
+
+              {sortedGroups.length === 0 ? (
+                <Empty
+                  image={Empty.PRESENTED_IMAGE_SIMPLE}
+                  description={t("groups.noGroupsEmpty")}
+                  style={{ marginTop: 16 }}
+                />
+              ) : (
+                sortedGroups.map((group) => (
+                  <ConversationGroupFilterRow
+                    key={group.id}
+                    color={group.color}
+                    count={group.counter}
+                    name={group.name}
+                    selected={selectedGroupId === group.id}
+                    onClick={() => handleSelectGroup(group.id)}
+                  />
+                ))
+              )}
+            </S.GroupList>
+          )}
+        </S.GroupsScroll>
+      </S.Aside>
+    );
+  },
+);

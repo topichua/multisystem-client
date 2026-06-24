@@ -9,7 +9,9 @@ import {
   formatCompactNumber,
   formatHandle,
 } from "../../utils/instagram-page-format";
-import * as S from "../../instagram-page.styled";
+import { Avatar, Flex, Typography } from "antd";
+
+const { Text, Title } = Typography;
 
 type InstagramProfileHeaderProps = {
   integration: InstagramIntegration;
@@ -21,28 +23,37 @@ export const InstagramProfileHeader = ({
   mediaPaging,
 }: InstagramProfileHeaderProps) => {
   const { t } = useTranslation();
+  const postsCount = integration.posts_count ?? integration.media_count;
 
   return (
-    <S.ProfileHeader>
-      <S.ProfileAvatar />
-      <S.ProfileMeta>
-        <S.ProfileName>{formatHandle(integration.name)}</S.ProfileName>
-        <S.ProfileDisplayName>{integration.name}</S.ProfileDisplayName>
-        <S.ProfileStats>
-          <span>
-            <strong>
-              {formatCompactNumber(
-                integration.media_count ?? mediaPaging?.total,
-              )}
-            </strong>{" "}
+    <Flex gap={16} align="center">
+      <Avatar size={50} src={integration.avatar} alt={integration.name}>
+        {integration.name.charAt(0).toUpperCase()}
+      </Avatar>
+
+      <Flex vertical gap={4}>
+        <Title level={5} style={{ margin: 0 }}>
+          {integration.name}
+          <Text type="secondary">
+            &nbsp;&nbsp;(
+            {formatHandle(integration.username ?? integration.name)})
+          </Text>
+        </Title>
+        <Flex gap={16} align="center">
+          <Text>
+            <Text strong>
+              {formatCompactNumber(postsCount ?? mediaPaging?.total)}{" "}
+            </Text>
             {t("instagram.postsLabel")}
-          </span>
-          <span>
-            <strong>{formatCompactNumber(integration.followers_count)}</strong>{" "}
+          </Text>
+          <Text>
+            <Text strong>
+              {formatCompactNumber(integration.followers_count)}{" "}
+            </Text>
             {t("instagram.followersLabel")}
-          </span>
-        </S.ProfileStats>
-      </S.ProfileMeta>
-    </S.ProfileHeader>
+          </Text>
+        </Flex>
+      </Flex>
+    </Flex>
   );
 };

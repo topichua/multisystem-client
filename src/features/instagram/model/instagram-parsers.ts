@@ -97,8 +97,12 @@ const parseInstagramIntegration = (
     integration_id: integrationId,
     business_account_id: String(businessAccountId),
     name,
+    avatar: readString(raw.avatar) ?? undefined,
     username:
-      readString(raw.username ?? raw.business_account_username) ?? undefined,
+      readString(
+        raw.username ?? raw.userName ?? raw.business_account_username,
+      ) ?? undefined,
+    posts_count: readNumber(raw.posts_count ?? raw.postsCount),
     media_count: readNumber(raw.media_count ?? raw.mediaCount),
     followers_count: readNumber(raw.followers_count ?? raw.followersCount),
   };

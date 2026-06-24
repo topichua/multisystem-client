@@ -16,75 +16,50 @@ export const Content = styled.div`
   width: 100%;
   max-width: 1060px;
   margin: 0 auto;
-  padding: 20px 12px 32px;
+  padding: 8px 12px 32px;
 `;
 
-export const ProfileHeader = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  margin-bottom: 22px;
-
-  @media (max-width: 767px) {
-    align-items: flex-start;
-  }
-`;
-
-export const ProfileAvatar = styled.div`
-  width: 96px;
-  height: 96px;
-  border-radius: 50%;
-  flex: 0 0 auto;
-  border: 3px solid
-    ${({ theme }) => theme.colors.functional.background.elevated};
-  box-shadow: 0 0 0 1px
-    ${({ theme }) => theme.colors.functional.border.cardBase};
-  background:
-    radial-gradient(circle at 30% 25%, #ffd96a 0 14%, transparent 28%),
-    linear-gradient(135deg, #f35f51 0%, #df2a8b 45%, #7556e8 100%);
-`;
-
-export const ProfileMeta = styled.div`
+export const MediaContentRoot = styled.div`
+  height: 100%;
+  min-height: 0;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
 `;
 
-export const ProfileName = styled.h2`
-  margin: 0;
-  color: ${({ theme }) => theme.colors.functional.text.heading};
-  font-size: 24px;
-  line-height: 1.2;
-  font-weight: 700;
+export const MediaFiltersSlot = styled.div`
+  flex-shrink: 0;
+  background: ${({ theme }) => theme.colors.functional.background.base};
 `;
 
-export const ProfileDisplayName = styled.div`
-  color: ${({ theme }) => theme.colors.functional.text.subdued};
-  font-size: ${({ theme }) => theme.fontSize.base};
-  line-height: 1.35;
+export const MediaScroll = styled.div`
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  overflow: auto;
 `;
 
-export const ProfileStats = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  flex-wrap: wrap;
-  color: ${({ theme }) => theme.colors.functional.text.primary};
-  font-size: ${({ theme }) => theme.fontSize.small};
-  line-height: 1.35;
+export const MediaFiltersInner = styled.div`
+  width: 100%;
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 8px 12px 0;
+`;
 
-  strong {
-    font-weight: 700;
-  }
+export const MediaContentInner = styled.div`
+  width: 100%;
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 0 12px 32px;
 `;
 
 export const FilterRow = styled.div`
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 12px;
   flex-wrap: wrap;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 `;
 
 export const FilterPill = styled.button<{ $active?: boolean }>`
@@ -101,6 +76,11 @@ export const FilterPill = styled.button<{ $active?: boolean }>`
   font-weight: 600;
   cursor: pointer;
   box-shadow: ${({ theme }) => theme.shadow.cardShadow};
+  transition:
+    background 0.16s ease,
+    border-color 0.16s ease,
+    box-shadow 0.16s ease,
+    color 0.16s ease;
 
   ${({ $active, theme }) =>
     $active &&
@@ -109,6 +89,11 @@ export const FilterPill = styled.button<{ $active?: boolean }>`
       border-color: ${theme.colors.functional.border.selected};
       background: ${theme.colors.functional.background.primary};
     `}
+
+  &:hover {
+    border-color: ${({ theme }) => theme.colors.functional.border.selected};
+    box-shadow: ${({ theme }) => theme.shadow.large};
+  }
 
   &:focus-visible {
     outline: 2px solid ${({ theme }) => theme.colors.functional.border.selected};

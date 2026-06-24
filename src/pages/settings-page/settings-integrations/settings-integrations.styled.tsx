@@ -94,20 +94,6 @@ export const IntegrationAccountRow = styled.div`
   }
 `;
 
-export const IntegrationAccountInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  min-width: 0;
-`;
-
-export const IntegrationAccountName = styled.span`
-  font-size: ${({ theme }) => theme.fontSize.base};
-  font-weight: 600;
-  color: ${({ theme }) => theme.colors.functional.text.heading};
-  line-height: 1.35;
-`;
-
 export const IntegrationConnectedStatus = styled.span`
   display: inline-flex;
   align-items: center;

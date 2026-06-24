@@ -6,7 +6,9 @@ export type InstagramIntegration = {
   integration_id: InstagramIntegrationId;
   business_account_id: string;
   name: string;
+  avatar?: string;
   username?: string;
+  posts_count?: number;
   media_count?: number;
   followers_count?: number;
 };

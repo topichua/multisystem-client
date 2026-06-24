@@ -664,7 +664,10 @@
     "colorPickerAria": "Group color",
     "conversationGroupsFilterAria": "Conversation groups filter",
     "groupsPaneTitle": "Groups",
-    "groupsPaneHint": "No selection — all conversations. Pick one or more to narrow the list.",
+    "groupsPaneHint": "Segment conversations by status",
+    "allConversations": "All conversations",
+    "collapseGroupsPaneAria": "Collapse groups pane",
+    "expandGroupsPaneAria": "Expand groups pane",
     "noGroupsEmpty": "No groups",
     "updateConversationGroupError": "Could not update conversation group"
   },
@@ -701,6 +704,14 @@
     "noMessages": "No messages yet.",
     "youPrefix": "You:",
     "filterAllGroups": "All groups",
+    "searchPlaceholder": "Search by name or @handle",
+    "all": "All",
+    "unread": "Unread",
+    "filtersAria": "Conversation filters",
+    "bookmarksAria": "Conversation bookmarks",
+    "listViewModeAria": "Conversation list view mode",
+    "collapseListPaneAria": "Collapse conversations list",
+    "expandListPaneAria": "Expand conversations list",
     "markRead": "Mark read",
     "delete": "Delete",
     "rowActionsAria": "Conversation actions"
@@ -714,6 +725,10 @@
     "clientPanelTitle": "Client",
     "noGroup": "No group",
     "groupSelectPlaceholder": "No group",
+    "noAssignee": "No assignee",
+    "assigneeSelectPlaceholder": "Assign member",
+    "assigneeSelectTitle": "Responsible for chat",
+    "updateAssigneeError": "Could not update conversation assignee",
     "clientNotLinked": "Not saved as a client yet.",
     "addClient": "Add client",
     "backFromCreate": "Back",
@@ -1378,10 +1393,16 @@
     "emptyState": "No characteristics yet"
   },
   "composer": {
-    "placeholder": "Message…",
+    "placeholder": "Write a message... (Enter — send, Shift+Enter — new line)",
     "send": "Send",
+    "templates": "Templates",
+    "aiReply": "AI reply",
+    "loadingTemplates": "Loading templates...",
     "cancelReplyAria": "Cancel reply",
-    "openEmojiPickerAria": "Emoji"
+    "openEmojiPickerAria": "Emoji",
+    "attachFileAria": "Attach file",
+    "attachImageAria": "Attach image",
+    "quickActionAria": "Quick action"
   },
   "messages": {
     "replyTooltip": "Reply",

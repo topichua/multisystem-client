@@ -1,4 +1,5 @@
 import { Outlet } from "react-router";
+import { useState } from "react";
 
 import { ConversationsShell } from "@/components/layout/conversations-shell";
 
@@ -6,11 +7,25 @@ import { ConversationGroupsPane } from "./conversation-groups-pane/conversation-
 import { Conversation } from "./conversation-list";
 
 export const ConversationsPage = () => {
+  const [groupsCollapsed, setGroupsCollapsed] = useState(false);
+  const [listCollapsed, setListCollapsed] = useState(false);
+
   return (
-    <ConversationsShell.Root>
-      <ConversationGroupsPane />
+    <ConversationsShell.Root
+      $groupsCollapsed={groupsCollapsed}
+      $listCollapsed={listCollapsed}
+    >
+      <ConversationGroupsPane
+        collapsed={groupsCollapsed}
+        onCollapse={() => setGroupsCollapsed(true)}
+        onExpand={() => setGroupsCollapsed(false)}
+      />
       <ConversationsShell.ListPane>
-        <Conversation />
+        <Conversation
+          collapsed={listCollapsed}
+          onCollapse={() => setListCollapsed(true)}
+          onExpand={() => setListCollapsed(false)}
+        />
       </ConversationsShell.ListPane>
       <ConversationsShell.ThreadPane>
         <Outlet />

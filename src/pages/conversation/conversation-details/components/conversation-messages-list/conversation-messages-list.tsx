@@ -1,7 +1,10 @@
 import { Flex, Spin } from "antd";
 import { Fragment, memo } from "react";
 
-import type { ConversationMessage } from "@/features/conversations/model/types";
+import type {
+  ConversationChannel,
+  ConversationMessage,
+} from "@/features/conversations/model/types";
 
 import * as S from "../../conversation-details.styled";
 import type { ReplyComposeTarget } from "../../reply-compose-target";
@@ -13,6 +16,7 @@ import {
 
 type ConversationMessagesListProps = {
   chronologicalMessages: ConversationMessage[];
+  channel?: ConversationChannel;
   selfInstagramId: string | number | null;
   loadingOlderMessages: boolean;
   lastOwnMessageIndex: number;
@@ -23,6 +27,7 @@ type ConversationMessagesListProps = {
 
 export const ConversationMessagesList = memo(function ConversationMessagesList({
   chronologicalMessages,
+  channel,
   selfInstagramId,
   loadingOlderMessages,
   lastOwnMessageIndex,
@@ -59,6 +64,7 @@ export const ConversationMessagesList = memo(function ConversationMessagesList({
             )}
             <MessageItem
               message={message}
+              channel={channel}
               index={index}
               selfInstagramId={selfInstagramId}
               showReadReceipt={

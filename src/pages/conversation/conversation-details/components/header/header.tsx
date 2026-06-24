@@ -1,11 +1,13 @@
-import { InfoIcon } from "@phosphor-icons/react";
-import { Avatar, Button, Skeleton, Tooltip, Typography } from "antd";
+import { CaretRightIcon, UserIcon } from "@phosphor-icons/react";
+import { Button, Skeleton, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
 
+import { ConversationAssigneeSelect } from "@/features/conversations/components/conversation-assignee-select";
 import { ConversationGroupSelect } from "@/features/conversations/components/conversation-group-select";
+import { ConversationParticipantAvatar } from "@/features/conversations/components/conversation-participant-avatar";
 import { useConversationsStore } from "@/features/conversations/model/use-conversations-store";
 
 import * as S from "./header.styled";
@@ -36,9 +38,11 @@ export const Header = observer(
     return (
       <S.Header>
         {peer ? (
-          <Avatar size={40} src={peer.participant.profilePic || undefined}>
-            {titleName.slice(0, 1).toUpperCase()}
-          </Avatar>
+          <ConversationParticipantAvatar
+            participant={peer.participant}
+            source={peer.source}
+            size={40}
+          />
         ) : (
           <Skeleton.Avatar active size={40} />
         )}
@@ -75,18 +79,26 @@ export const Header = observer(
               conversationId={conversationId}
               groupId={peer?.groupId ?? null}
               disabled={!peer}
+              showPlainLabels={true}
+            />
+            <ConversationAssigneeSelect
+              conversationId={conversationId}
+              responsibleMemberId={peer?.responsibleMemberId ?? null}
+              assignee={peer?.assignee ?? null}
+              disabled={!peer}
             />
             {onClientInfoToggle ? (
-              <Tooltip title={t("conversation.clientInfoTooltip")}>
-                <Button
-                  type="text"
-                  icon={<InfoIcon size={22} />}
-                  aria-label={t("conversation.clientInfoAria")}
-                  aria-pressed={clientInfoOpen}
-                  data-qa="layout-conversation-details-client-info-toggle"
-                  onClick={onClientInfoToggle}
-                />
-              </Tooltip>
+              <Button
+                color="default"
+                variant="link"
+                icon={<UserIcon />}
+                aria-label={t("conversation.clientInfoAria")}
+                aria-pressed={clientInfoOpen}
+                data-qa="layout-conversation-details-client-info-toggle"
+                onClick={onClientInfoToggle}
+              >
+                {t("conversation.clientInfoTooltip")} <CaretRightIcon />
+              </Button>
             ) : null}
           </S.HeaderAside>
         ) : null}

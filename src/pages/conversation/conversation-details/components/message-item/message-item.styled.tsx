@@ -1,6 +1,13 @@
 import styled, { css, keyframes } from "styled-components";
 
 import { MESSAGE_SCROLL_HIGHLIGHT_CLASS } from "../../scroll-to-message-anchor";
+import type { ConversationChannel } from "@/features/conversations/model/types";
+import { BRAND_PRIMARY } from "@/styled/brand";
+
+const TELEGRAM_OUTGOING_BUBBLE_COLOR = "#4a5df9";
+
+const getOutgoingBubbleColor = (channel?: ConversationChannel): string =>
+  channel === "instagram" ? BRAND_PRIMARY : TELEGRAM_OUTGOING_BUBBLE_COLOR;
 
 const messageScrollHighlightBg = keyframes`
   0% {
@@ -160,6 +167,7 @@ export const ReplyQuoteText = styled.div<{ $isOwn?: boolean }>`
 
 export const MessageBubble = styled.div<{
   $isOwn?: boolean;
+  $channel?: ConversationChannel;
   $muted?: boolean;
   $hasReaction?: boolean;
 }>`
@@ -167,17 +175,20 @@ export const MessageBubble = styled.div<{
   max-width: 100%;
   width: fit-content;
   padding: 6px 12px;
-  border-radius: ${({ theme }) => theme.radius.extraLarge};
+  border-radius: ${({ theme, $isOwn }) =>
+    $isOwn
+      ? `${theme.radius.extraLarge} ${theme.radius.extraLarge} 4px ${theme.radius.extraLarge}`
+      : `${theme.radius.extraLarge} ${theme.radius.extraLarge} ${theme.radius.extraLarge} 4px`};
   border: 1px solid ${({ theme }) => theme.colors.functional.border.split};
   background: ${({ theme }) => theme.colors.functional.background.natural};
   opacity: ${({ $muted }) => ($muted ? 0.75 : 1)};
   margin-bottom: ${({ $hasReaction }) => ($hasReaction ? "14px" : "0")};
 
-  ${({ theme, $isOwn }) =>
+  ${({ theme, $isOwn, $channel }) =>
     $isOwn &&
     css`
-      background: #4a5df9;
-      border-color: #4a5df9;
+      background: ${getOutgoingBubbleColor($channel)};
+      border-color: ${getOutgoingBubbleColor($channel)};
       color: ${theme.colors.base.white};
 
       .conversation-message-body {

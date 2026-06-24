@@ -30,7 +30,6 @@ export const WorkspaceLayout = styled.section.attrs(() =>
   min-height: 0;
   min-width: 0;
   height: 100%;
-  padding: 12px;
   overflow: hidden;
 
   & > * {

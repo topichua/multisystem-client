@@ -1,38 +1,33 @@
-import {
-  ArrowBendDoubleUpLeftIcon,
-  CopySimpleIcon,
-  DotsThreeVerticalIcon,
-  TrashIcon,
-} from "@phosphor-icons/react";
-import {
-  Button,
-  Dropdown,
-  Flex,
-  message as antdMessage,
-  Tooltip,
-  Typography,
-} from "antd";
+import { CopySimpleIcon, TrashIcon } from "@phosphor-icons/react";
+import { message as antdMessage, Typography } from "antd";
 import type { MenuProps } from "antd";
 import { memo, useCallback, useMemo, useRef, useState } from "react";
 import type { FocusEvent, MouseEvent } from "react";
 import { useTranslation } from "react-i18next";
 
-import type { ConversationMessage } from "@/features/conversations/model/types";
+import type {
+  ConversationChannel,
+  ConversationMessage,
+} from "@/features/conversations/model/types";
 import type { ReplyComposeTarget } from "../../reply-compose-target";
 import { MessageAttachments } from "../message-attachments/message-attachments";
 import {
   copyTextToClipboard,
   getMessageClipboardText,
 } from "./copy-message-to-clipboard";
+import { MessageFailureActions } from "./message-failure-actions";
+import { MessageInlineActions } from "./message-inline-actions";
 import * as S from "./message-item.styled";
+import { MessageReplyQuote } from "./message-reply-quote";
 import { normalizeWebhookReactionEmoji } from "./normalize-webhook-reaction-emoji";
 import { replyQuoteAuthorLabel } from "./reply-quote-author-label";
 import { formatMessageTime } from "@/utils/date-time";
 
-const { Text, Paragraph } = Typography;
+const { Paragraph } = Typography;
 
 type MessageItemProps = {
   message: ConversationMessage;
+  channel?: ConversationChannel;
   index: number;
   selfInstagramId: string | number | null;
   showReadReceipt?: boolean;
@@ -44,6 +39,7 @@ type MessageItemProps = {
 export const MessageItem = memo(
   ({
     message,
+    channel,
     index,
     selfInstagramId,
     showReadReceipt = false,
@@ -213,73 +209,31 @@ export const MessageItem = memo(
             onFocusCapture={() => setRowHovered(true)}
             onBlurCapture={handleMessageBubbleRowBlur}
           >
-            <S.MessageInlineActions
-              $visible={actionsVisible}
-              onMouseDown={(event) => event.stopPropagation()}
-              onClick={(event) => event.stopPropagation()}
-            >
-              {canStartReply && (
-                <Tooltip
-                  title={t("messages.replyTooltip")}
-                  mouseEnterDelay={0.35}
-                >
-                  <S.IconHitButton
-                    type="button"
-                    onClick={handleReplyClick}
-                    aria-label={t("messages.replyAria")}
-                  >
-                    <ArrowBendDoubleUpLeftIcon size={20} weight="regular" />
-                  </S.IconHitButton>
-                </Tooltip>
-              )}
-              <Dropdown
-                menu={{ items: menuItems }}
-                trigger={["click"]}
-                placement={isOwn ? "bottomLeft" : "bottomRight"}
-                onOpenChange={handleDropdownOpenChange}
-              >
-                <S.IconHitButton
-                  type="button"
-                  aria-label={t("messages.actionsAria")}
-                  aria-expanded={menuOpen}
-                  aria-haspopup="menu"
-                >
-                  <DotsThreeVerticalIcon size={20} weight="regular" />
-                </S.IconHitButton>
-              </Dropdown>
-            </S.MessageInlineActions>
+            <MessageInlineActions
+              visible={actionsVisible}
+              canReply={canStartReply}
+              menuOpen={menuOpen}
+              menuItems={menuItems}
+              placement={isOwn ? "bottomLeft" : "bottomRight"}
+              replyTooltip={t("messages.replyTooltip")}
+              replyAria={t("messages.replyAria")}
+              actionsAria={t("messages.actionsAria")}
+              onReply={handleReplyClick}
+              onDropdownOpenChange={handleDropdownOpenChange}
+            />
             <S.MessageBubble
               $isOwn={isOwn}
+              $channel={channel}
               $muted={pendingOutbound}
               $hasReaction={showReactionBadge}
             >
               {hasReplyQuote && repliedTo != null && (
-                <S.ReplyQuote
-                  $isOwn={isOwn}
-                  $interactive={replyQuoteScrollable}
-                  role={replyQuoteScrollable ? "button" : undefined}
-                  tabIndex={replyQuoteScrollable ? 0 : undefined}
-                  onClick={
-                    replyQuoteScrollable ? handleReplyQuoteActivate : undefined
-                  }
-                  onKeyDown={
-                    replyQuoteScrollable
-                      ? (event) => {
-                          if (event.key === "Enter" || event.key === " ") {
-                            event.preventDefault();
-                            handleReplyQuoteActivate();
-                          }
-                        }
-                      : undefined
-                  }
-                >
-                  <S.ReplyQuoteAuthor $isOwn={isOwn}>
-                    {replyQuoteAuthorLabel(repliedTo.from)}
-                  </S.ReplyQuoteAuthor>
-                  <S.ReplyQuoteText $isOwn={isOwn}>
-                    {repliedTo.message}
-                  </S.ReplyQuoteText>
-                </S.ReplyQuote>
+                <MessageReplyQuote
+                  message={repliedTo}
+                  isOwn={isOwn}
+                  scrollable={replyQuoteScrollable}
+                  onActivate={handleReplyQuoteActivate}
+                />
               )}
 
               <MessageAttachments
@@ -309,26 +263,11 @@ export const MessageItem = memo(
               )}
 
               {isOwn && failedOutbound && clientTempId != null && (
-                <Flex
-                  align="center"
-                  gap={8}
-                  wrap="wrap"
-                  style={{ marginTop: 8 }}
-                >
-                  {message.sendError != null && message.sendError !== "" && (
-                    <Text type="danger" style={{ fontSize: 12 }}>
-                      {message.sendError}
-                    </Text>
-                  )}
-
-                  <Button
-                    type="link"
-                    size="small"
-                    onClick={() => onResend(clientTempId)}
-                  >
-                    {t("messages.resend")}
-                  </Button>
-                </Flex>
+                <MessageFailureActions
+                  error={message.sendError}
+                  resendLabel={t("messages.resend")}
+                  onResend={() => onResend(clientTempId)}
+                />
               )}
 
               {showReactionBadge && (

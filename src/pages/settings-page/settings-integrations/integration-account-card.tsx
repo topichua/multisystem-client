@@ -25,23 +25,22 @@ export function IntegrationAccountCard({
   return (
     <S.IntegrationAccountRow>
       <Flex gap={16} align="center" flex={1}>
-        {integration.avatar && (
-          <Avatar size={40} src={integration.avatar} alt={integration.name} />
-        )}
+        <Avatar size={40} src={integration.avatar} alt={integration.name}>
+          {integration.name.charAt(0).toUpperCase()}
+        </Avatar>
         <Flex vertical gap={12} flex={1}>
           <Flex vertical gap={0} flex={1}>
             <Title level={5} style={{ margin: 0 }}>
               {integration.name}
             </Title>
-            {integration.businessAccountId && (
-              <Text>
-                <Text type="secondary">Instagram Business ID:</Text>{" "}
-                {integration.businessAccountId}
-              </Text>
+            {integration.userName && (
+              <Text type="secondary">@{integration.userName}</Text>
             )}
-            {integration.page && (
-              <Text>
-                <Text type="secondary">Page:</Text> {integration.page}
+            {integration.postsCount != null && (
+              <Text type="secondary">
+                {t("instagram.postsCount", {
+                  count: integration.postsCount,
+                })}
               </Text>
             )}
           </Flex>

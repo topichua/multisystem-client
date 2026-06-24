@@ -4,13 +4,18 @@ export type ConversationGroup = {
   name: string;
   description: string;
   color: string;
+  counter: number;
   createdAt: string;
   createdById: number;
   sortOrder: number;
 };
 
+export type ConversationGroupResponse = Omit<ConversationGroup, "counter"> & {
+  counter?: number | null;
+};
+
 export type ConversationGroupsListResponse = {
-  items: ConversationGroup[];
+  items: ConversationGroupResponse[];
 };
 
 export type ConversationGroupWritePayload = {
