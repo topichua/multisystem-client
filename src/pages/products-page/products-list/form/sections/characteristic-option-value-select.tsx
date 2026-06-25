@@ -1,10 +1,13 @@
 import { PlusIcon } from "@phosphor-icons/react";
-import { Flex, Select, Typography } from "antd";
+import { Flex, Select, Tag, Tooltip, Typography } from "antd";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 
-import { normalizeCharacteristicName } from "../variants/product-add-variant.utils";
+import {
+  mergeLockedOptionValues,
+  normalizeCharacteristicOptionValue,
+} from "../variants/product-option-baseline";
 
 const { Text } = Typography;
 
@@ -39,6 +42,8 @@ type CharacteristicOptionValueSelectProps = {
   disabled: boolean;
   options: Array<{ value: string; label: string }>;
   maxCount?: number;
+  lockedValues?: readonly string[];
+  lockedValueTooltip?: string;
   onChange?: (value: string[] | undefined) => void;
 };
 
@@ -50,26 +55,12 @@ type SingleCharacteristicOptionValueSelectProps = {
   onChange?: (value: string | undefined) => void;
 };
 
-function normalizeValues(values: string[], maxCount?: number): string[] {
-  const seen = new Set<string>();
-  const normalized: string[] = [];
-
-  for (const rawValue of values) {
-    const value = rawValue.trim();
-    const normalizedValue = normalizeCharacteristicName(value);
-    if (!value || seen.has(normalizedValue)) {
-      continue;
-    }
-
-    seen.add(normalizedValue);
-    normalized.push(value);
-  }
-
-  if (maxCount === 1 && normalized.length > 1) {
-    return normalized.slice(-1);
-  }
-
-  return normalized;
+function normalizeValues(
+  values: string[],
+  maxCount?: number,
+  lockedValues: readonly string[] = [],
+): string[] {
+  return mergeLockedOptionValues(values, lockedValues, maxCount);
 }
 
 export function CharacteristicOptionValueSelect({
@@ -78,6 +69,8 @@ export function CharacteristicOptionValueSelect({
   disabled,
   options,
   maxCount,
+  lockedValues = [],
+  lockedValueTooltip,
   onChange,
 }: CharacteristicOptionValueSelectProps) {
   const { t } = useTranslation();
@@ -85,12 +78,21 @@ export function CharacteristicOptionValueSelect({
   const [open, setOpen] = useState(false);
   const selectedValues = value ?? [];
 
-  const normalizedSearch = normalizeCharacteristicName(searchValue);
+  const lockedNormalizedValues = useMemo(
+    () =>
+      new Set(
+        lockedValues
+          .map(normalizeCharacteristicOptionValue)
+          .filter(Boolean),
+      ),
+    [lockedValues],
+  );
+  const normalizedSearch = normalizeCharacteristicOptionValue(searchValue);
   const hasMatchingOption = useMemo(
     () =>
       normalizedSearch.length > 0 &&
       options.some((option) =>
-        normalizeCharacteristicName(`${option.label} ${option.value}`).includes(
+        normalizeCharacteristicOptionValue(`${option.label} ${option.value}`).includes(
           normalizedSearch,
         ),
       ),
@@ -98,13 +100,17 @@ export function CharacteristicOptionValueSelect({
   );
   const hasSelectedValue = selectedValues.some(
     (selectedValue) =>
-      normalizeCharacteristicName(selectedValue) === normalizedSearch,
+      normalizeCharacteristicOptionValue(selectedValue) === normalizedSearch,
   );
   const canAdd =
     normalizedSearch.length > 0 && !hasMatchingOption && !hasSelectedValue;
 
   const commitValues = (nextValues: string[]) => {
-    const normalizedValues = normalizeValues(nextValues, maxCount);
+    const normalizedValues = normalizeValues(
+      nextValues,
+      maxCount,
+      lockedValues,
+    );
     onChange?.(normalizedValues.length > 0 ? normalizedValues : undefined);
   };
 
@@ -140,6 +146,36 @@ export function CharacteristicOptionValueSelect({
             .includes(input.toLocaleLowerCase()),
       }}
       onChange={(values) => commitValues(values)}
+      {...(lockedValues.length > 0
+        ? {
+            tagRender: (tagProps) => {
+              const tagValue =
+                typeof tagProps.value === "string" ? tagProps.value : "";
+              const locked = lockedNormalizedValues.has(
+                normalizeCharacteristicOptionValue(tagValue),
+              );
+              const tag = (
+                <Tag
+                  closable={tagProps.closable && !locked}
+                  onClose={tagProps.onClose}
+                  onMouseDown={(event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                  }}
+                  style={{ marginInlineEnd: 4 }}
+                >
+                  {tagProps.label}
+                </Tag>
+              );
+
+              return locked && lockedValueTooltip ? (
+                <Tooltip title={lockedValueTooltip}>{tag}</Tooltip>
+              ) : (
+                tag
+              );
+            },
+          }
+        : {})}
       popupRender={(menu) =>
         canAdd ? (
           <AddValueRow

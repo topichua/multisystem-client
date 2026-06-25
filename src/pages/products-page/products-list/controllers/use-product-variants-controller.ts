@@ -14,6 +14,11 @@ import type {
 import { generateProductVariantsFromCharacteristics } from "../form/variants/generate-product-variants";
 import type { ProductVariantUi } from "../form/variants/product-add-variant.types";
 import {
+  EMPTY_PRODUCT_OPTION_BASELINE,
+  isProductOptionBaselineActiveForProduct,
+  type ProductOptionCharacteristicsBaseline,
+} from "../form/variants/product-option-baseline";
+import {
   createManualVariant,
   filterManualVariants,
   getCharacteristicValueOptions as buildCharacteristicValueOptions,
@@ -32,6 +37,7 @@ type ProductVariantsMessageApi = {
 
 export type ProductVariantsControllerParams = {
   form: FormInstance<ProductAddFormValues>;
+  editingProductId: number | null;
   isEditMode: boolean;
   notification: ProductVariantsMessageApi;
   variantCustomFields: VariantCustomField[];
@@ -40,6 +46,7 @@ export type ProductVariantsControllerParams = {
 
 export function useProductVariantsController({
   form,
+  editingProductId,
   isEditMode,
   notification,
   variantCustomFields,
@@ -56,6 +63,10 @@ export function useProductVariantsController({
   const [deletingVariantKey, setDeletingVariantKey] = useState<string | null>(
     null,
   );
+  const [optionBaseline, setOptionBaseline] =
+    useState<ProductOptionCharacteristicsBaseline>(
+      EMPTY_PRODUCT_OPTION_BASELINE,
+    );
 
   const productVariantsRef = useRef(productVariants);
   const excludedVariantKeysRef = useRef(excludedVariantKeys);
@@ -92,6 +103,17 @@ export function useProductVariantsController({
 
   const setApplyingInitialEditValues = useCallback(() => {
     applyingInitialEditValuesRef.current = true;
+  }, []);
+
+  const setLoadedOptionBaseline = useCallback(
+    (baseline: ProductOptionCharacteristicsBaseline) => {
+      setOptionBaseline(baseline);
+    },
+    [],
+  );
+
+  const resetLoadedOptionBaseline = useCallback(() => {
+    setOptionBaseline(EMPTY_PRODUCT_OPTION_BASELINE);
   }, []);
 
   const watchedCharacteristics = Form.useWatch("characteristics", form) as
@@ -355,12 +377,22 @@ export function useProductVariantsController({
     setProductVariants,
     setExcludedVariantKeys,
     setApplyingInitialEditValues,
+    setLoadedOptionBaseline,
+    resetLoadedOptionBaseline,
     mergeVariantsWithFormValues,
     getProductVariantsWithFormValues,
     syncVariantsToForm,
     watchedCharacteristics,
     watchedSingleCharacteristics,
     selectedCharacteristics,
+    optionBaseline,
+    optionEditRestrictionsActive:
+      productType === "variants" &&
+      isEditMode &&
+      isProductOptionBaselineActiveForProduct(
+        optionBaseline,
+        editingProductId,
+      ),
     isVariantCustomFieldsLoading,
     getCharacteristicValueOptions,
     deletingVariantKey,

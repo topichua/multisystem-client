@@ -4,7 +4,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { PlusIcon, TrashIcon } from "@phosphor-icons/react";
-import { Button, Card, Flex, Form, Input } from "antd";
+import { Button, Card, Flex, Form, Input, Tooltip } from "antd";
 import { useTranslation } from "react-i18next";
 
 import type { VariantCustomField } from "@/features/products/model/product-create-api.types";
@@ -16,6 +16,11 @@ import {
 import { CharacteristicFieldSelect } from "./characteristic-field-select";
 import { CharacteristicOptionValueSelect } from "./characteristic-option-value-select";
 import { SortableCharacteristicRow } from "./sortable-characteristic-row";
+import type { ProductOptionCharacteristicsBaseline } from "../variants/product-option-baseline";
+import {
+  getBaselineOptionValues,
+  isBaselineOptionCharacteristic,
+} from "../variants/product-option-baseline";
 import {
   moveSortableFormListItem,
   useSortableFormListSensors,
@@ -32,6 +37,8 @@ type ProductCharacteristicsBuilderProps = {
   watchedCharacteristics: ProductCharacteristicBuilderRow[] | undefined;
   variantCustomFields: VariantCustomField[];
   isVariantCustomFieldsLoading: boolean;
+  optionBaseline: ProductOptionCharacteristicsBaseline;
+  optionEditRestrictionsActive: boolean;
   getCharacteristicValueOptions: (
     attributeId?: number,
   ) => Array<{ value: string; label: string }>;
@@ -41,6 +48,8 @@ export function ProductCharacteristicsBuilder({
   watchedCharacteristics,
   variantCustomFields,
   isVariantCustomFieldsLoading,
+  optionBaseline,
+  optionEditRestrictionsActive,
   getCharacteristicValueOptions,
 }: ProductCharacteristicsBuilderProps) {
   const { t } = useTranslation();
@@ -97,6 +106,22 @@ export function ProductCharacteristicsBuilder({
                         : fieldType === "OPTION"
                           ? t("products.characteristics.addValues")
                           : t("products.characteristics.addCustomValues");
+                      const lockedOptionCharacteristic =
+                        optionEditRestrictionsActive &&
+                        fieldType === "OPTION" &&
+                        isBaselineOptionCharacteristic(
+                          optionBaseline,
+                          rowField,
+                        );
+                      const lockedOptionValues = lockedOptionCharacteristic
+                        ? getBaselineOptionValues(optionBaseline, rowField)
+                        : [];
+                      const lockedCharacteristicReason = t(
+                        "products.characteristics.lockedOptionCharacteristic",
+                      );
+                      const newOptionCharacteristicDisabledReason = t(
+                        "products.characteristics.newOptionDisabledInEdit",
+                      );
 
                       return (
                         <SortableCharacteristicRow
@@ -156,6 +181,14 @@ export function ProductCharacteristicsBuilder({
                               selectedFields={selectedFields}
                               loading={isVariantCustomFieldsLoading}
                               disabled={isVariantCustomFieldsLoading}
+                              locked={lockedOptionCharacteristic}
+                              lockedReason={lockedCharacteristicReason}
+                              disableOptionCharacteristics={
+                                optionEditRestrictionsActive
+                              }
+                              disableOptionCharacteristicsReason={
+                                newOptionCharacteristicDisabledReason
+                              }
                             />
                           </Form.Item>
 
@@ -195,16 +228,35 @@ export function ProductCharacteristicsBuilder({
                                   rowAttributeId,
                                 )}
                                 disabled={!hasSelectedCharacteristic}
+                                lockedValues={lockedOptionValues}
+                                lockedValueTooltip={lockedCharacteristicReason}
                                 placeholder={valuesPlaceholder}
                               />
                             </Form.Item>
                           )}
 
-                          <Button
-                            danger
-                            icon={<TrashIcon />}
-                            onClick={() => remove(field.name)}
-                          />
+                          <Tooltip
+                            title={
+                              lockedOptionCharacteristic
+                                ? lockedCharacteristicReason
+                                : undefined
+                            }
+                          >
+                            <span>
+                              <Button
+                                danger
+                                disabled={lockedOptionCharacteristic}
+                                icon={<TrashIcon />}
+                                onClick={() => {
+                                  if (lockedOptionCharacteristic) {
+                                    return;
+                                  }
+
+                                  remove(field.name);
+                                }}
+                              />
+                            </span>
+                          </Tooltip>
                         </SortableCharacteristicRow>
                       );
                     })}

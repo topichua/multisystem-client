@@ -4,7 +4,10 @@ import { useTranslation } from "react-i18next";
 
 import { getApiErrorMessage } from "@/api/get-api-error-message";
 import type { ProductsStore } from "@/features/products/model/products-store";
-import type { ProductType as ApiProductType } from "@/features/products/model/product-create-api.types";
+import type {
+  ProductType as ApiProductType,
+  VariantCustomField,
+} from "@/features/products/model/product-create-api.types";
 import type { ProductAddFormValues } from "../form/product-form.types";
 import {
   normalizeCreateProductPayload,
@@ -16,6 +19,10 @@ import type {
   UploadedProductMedia,
 } from "../form/variants/product-add-variant.types";
 import { findDuplicateVariantKeys } from "../form/variants/product-add-variant.utils";
+import {
+  validateProductOptionBaselinePreserved,
+  type ProductOptionCharacteristicsBaseline,
+} from "../form/variants/product-option-baseline";
 import type { ProductType } from "../form/sections/product-type-section";
 
 type ProductSubmitMessageApi = {
@@ -32,6 +39,8 @@ type UseProductFormSubmitControllerParams = {
   productMedia: UploadedProductMedia[];
   productType: ProductType;
   productsStore: ProductsStore;
+  optionBaseline: ProductOptionCharacteristicsBaseline;
+  variantCustomFields: VariantCustomField[];
 };
 
 export function useProductFormSubmitController({
@@ -43,6 +52,8 @@ export function useProductFormSubmitController({
   productMedia,
   productType,
   productsStore,
+  optionBaseline,
+  variantCustomFields,
 }: UseProductFormSubmitControllerParams) {
   const { t } = useTranslation();
   const [isSavingProduct, setIsSavingProduct] = useState(false);
@@ -130,6 +141,23 @@ export function useProductFormSubmitController({
           return;
         }
 
+        if (submitProductType === "variants") {
+          const baselineValidation = validateProductOptionBaselinePreserved(
+            optionBaseline,
+            editingProductId,
+            values.characteristics,
+            variantsForSubmit,
+            variantCustomFields,
+          );
+
+          if (!baselineValidation.valid) {
+            notification.error({
+              title: t("products.variantsForm.lockedOptionsChanged"),
+            });
+            return;
+          }
+        }
+
         await productsStore.updateProduct(editingProductId, payload);
         notification.success({ title: t("products.updateSuccess") });
         navigateToProductsList();
@@ -149,9 +177,11 @@ export function useProductFormSubmitController({
       getProductSubmitErrorMessage,
       notification,
       navigateToProductsList,
+      optionBaseline,
       productMedia,
       productsStore,
       t,
+      variantCustomFields,
     ],
   );
 

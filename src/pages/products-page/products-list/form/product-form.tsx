@@ -222,6 +222,10 @@ export const ProductForm = ({
                     isVariantCustomFieldsLoading={
                       variantsProps.isVariantCustomFieldsLoading
                     }
+                    optionBaseline={variantsProps.optionBaseline}
+                    optionEditRestrictionsActive={
+                      variantsProps.optionEditRestrictionsActive
+                    }
                     getCharacteristicValueOptions={
                       variantsProps.getCharacteristicValueOptions
                     }

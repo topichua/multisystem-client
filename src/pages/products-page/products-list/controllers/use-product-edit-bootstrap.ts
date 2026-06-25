@@ -12,6 +12,11 @@ import type {
   ProductVariantUi,
   UploadedProductMedia,
 } from "../form/variants/product-add-variant.types";
+import {
+  buildProductOptionCharacteristicsBaseline,
+  EMPTY_PRODUCT_OPTION_BASELINE,
+  type ProductOptionCharacteristicsBaseline,
+} from "../form/variants/product-option-baseline";
 import { syncProductVariantsToForm } from "../form/variants/product-add-variant.utils";
 
 type ProductEditBootstrapMessageApi = {
@@ -29,6 +34,10 @@ type UseProductEditBootstrapParams = {
   setProductVariants: (variants: ProductVariantUi[]) => void;
   setExcludedVariantKeys: (keys: Set<string>) => void;
   setApplyingInitialEditValues: () => void;
+  setLoadedOptionBaseline: (
+    baseline: ProductOptionCharacteristicsBaseline,
+  ) => void;
+  resetLoadedOptionBaseline: () => void;
 };
 
 export function useProductEditBootstrap({
@@ -42,6 +51,8 @@ export function useProductEditBootstrap({
   setProductVariants,
   setExcludedVariantKeys,
   setApplyingInitialEditValues,
+  setLoadedOptionBaseline,
+  resetLoadedOptionBaseline,
 }: UseProductEditBootstrapParams): boolean {
   const { t } = useTranslation();
   const [isInitialEditLoading, setIsInitialEditLoading] = useState(
@@ -51,6 +62,7 @@ export function useProductEditBootstrap({
   useEffect(() => {
     if (!editingProductId) {
       productsStore.clearActiveProduct();
+      resetLoadedOptionBaseline();
       return;
     }
 
@@ -58,6 +70,7 @@ export function useProductEditBootstrap({
 
     void (async () => {
       setIsInitialEditLoading(true);
+      resetLoadedOptionBaseline();
 
       try {
         const product = await productsStore.loadProductById(editingProductId);
@@ -67,15 +80,28 @@ export function useProductEditBootstrap({
         }
 
         const detailFormState = productDetailToProductForm(product);
+        const optionBaseline =
+          detailFormState.productType === "variants"
+            ? buildProductOptionCharacteristicsBaseline(
+                editingProductId,
+                detailFormState.variants,
+              )
+            : EMPTY_PRODUCT_OPTION_BASELINE;
 
         setApplyingInitialEditValues();
         setProductType(detailFormState.productType);
         setProductMedia(detailFormState.productMedia);
         setProductVariants(detailFormState.variants);
         setExcludedVariantKeys(new Set(detailFormState.excludedVariantKeys));
+        setLoadedOptionBaseline(optionBaseline);
         form.setFieldsValue(detailFormState.formValues);
         syncProductVariantsToForm(form, detailFormState.variants);
       } catch (error) {
+        if (!alive) {
+          return;
+        }
+
+        resetLoadedOptionBaseline();
         notification.error({
           title: getApiErrorMessage(error, t("products.detailLoadFailed")),
         });
@@ -102,6 +128,8 @@ export function useProductEditBootstrap({
     setProductMedia,
     setProductType,
     setProductVariants,
+    setLoadedOptionBaseline,
+    resetLoadedOptionBaseline,
     t,
   ]);
 

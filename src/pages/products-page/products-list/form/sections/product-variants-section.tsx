@@ -3,6 +3,7 @@ import type { ColumnsType } from "antd/es/table";
 import { useTranslation } from "react-i18next";
 import type { VariantCustomField } from "@/features/products/model/product-create-api.types";
 import type { ProductVariantUi } from "../variants/product-add-variant.types";
+import type { ProductOptionCharacteristicsBaseline } from "../variants/product-option-baseline";
 import {
   ProductCharacteristicsBuilder,
   type ProductCharacteristicBuilderRow,
@@ -17,6 +18,8 @@ export type ProductVariantsSectionProps = {
   watchedCharacteristics: ProductCharacteristicBuilderRow[] | undefined;
   variantCustomFields: VariantCustomField[];
   isVariantCustomFieldsLoading: boolean;
+  optionBaseline: ProductOptionCharacteristicsBaseline;
+  optionEditRestrictionsActive: boolean;
   getCharacteristicValueOptions: (
     attributeId?: number,
   ) => Array<{ value: string; label: string }>;
@@ -29,6 +32,8 @@ export const ProductVariantsSection = ({
   watchedCharacteristics,
   variantCustomFields,
   isVariantCustomFieldsLoading,
+  optionBaseline,
+  optionEditRestrictionsActive,
   getCharacteristicValueOptions,
   onAddManualVariant,
 }: ProductVariantsSectionProps) => {
@@ -49,6 +54,8 @@ export const ProductVariantsSection = ({
           watchedCharacteristics={watchedCharacteristics}
           variantCustomFields={variantCustomFields}
           isVariantCustomFieldsLoading={isVariantCustomFieldsLoading}
+          optionBaseline={optionBaseline}
+          optionEditRestrictionsActive={optionEditRestrictionsActive}
           getCharacteristicValueOptions={getCharacteristicValueOptions}
         />
 

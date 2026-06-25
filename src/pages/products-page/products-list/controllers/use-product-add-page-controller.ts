@@ -91,6 +91,7 @@ export const useProductAddPageController =
 
     const variantsController = useProductVariantsController({
       form,
+      editingProductId,
       isEditMode,
       notification,
       variantCustomFields,
@@ -151,6 +152,8 @@ export const useProductAddPageController =
       setExcludedVariantKeys: variantsController.setExcludedVariantKeys,
       setApplyingInitialEditValues:
         variantsController.setApplyingInitialEditValues,
+      setLoadedOptionBaseline: variantsController.setLoadedOptionBaseline,
+      resetLoadedOptionBaseline: variantsController.resetLoadedOptionBaseline,
     });
 
     const { isSavingProduct, onSubmit } = useProductFormSubmitController({
@@ -163,6 +166,8 @@ export const useProductAddPageController =
       productMedia: uploadedProductMedia,
       productType: variantsController.productType,
       productsStore,
+      optionBaseline: variantsController.optionBaseline,
+      variantCustomFields,
     });
 
     const {
@@ -245,6 +250,9 @@ export const useProductAddPageController =
         watchedCharacteristics: variantsController.watchedCharacteristics,
         variantCustomFields,
         isVariantCustomFieldsLoading,
+        optionBaseline: variantsController.optionBaseline,
+        optionEditRestrictionsActive:
+          variantsController.optionEditRestrictionsActive,
         getCharacteristicValueOptions:
           variantsController.getCharacteristicValueOptions,
         onAddManualVariant: variantsController.onAddManualVariant,

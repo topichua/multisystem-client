@@ -2,11 +2,26 @@ import { PlusIcon } from "@phosphor-icons/react";
 import { Button, Flex, Table, Typography } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useTranslation } from "react-i18next";
+import styled from "styled-components";
 
 import type { ProductVariantUi } from "../variants/product-add-variant.types";
 import { EmptyVariantsState } from "./empty-variants-state";
 
 const { Title, Text } = Typography;
+
+const VariantsTableValidationScope = styled.div`
+  .ant-table-cell .ant-form-item {
+    position: relative;
+  }
+
+  .ant-table-cell .ant-form-item-additional {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-height: 0;
+    z-index: 1;
+  }
+`;
 
 type ProductVariantsTableProps = {
   productVariants: ProductVariantUi[];
@@ -34,13 +49,15 @@ export function ProductVariantsTable({
         <EmptyVariantsState onAddManualVariant={onAddManualVariant} />
       ) : (
         <>
-          <Table<ProductVariantUi>
-            rowKey="key"
-            dataSource={productVariants}
-            pagination={false}
-            scroll={{ x: 1000 }}
-            columns={variantTableColumns}
-          />
+          <VariantsTableValidationScope>
+            <Table<ProductVariantUi>
+              rowKey="key"
+              dataSource={productVariants}
+              pagination={false}
+              scroll={{ x: 1000 }}
+              columns={variantTableColumns}
+            />
+          </VariantsTableValidationScope>
 
           <Button
             icon={<PlusIcon />}

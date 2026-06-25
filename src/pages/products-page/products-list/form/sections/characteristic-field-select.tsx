@@ -5,7 +5,7 @@ import {
   TagIcon,
   TextTIcon,
 } from "@phosphor-icons/react";
-import { Button, Flex, Select, Typography } from "antd";
+import { Button, Flex, Select, Tooltip, Typography } from "antd";
 import { Tag } from "@/components/tag/tag";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -51,6 +51,10 @@ type CharacteristicFieldSelectProps = {
   selectedFields: CharacteristicFieldRef[];
   loading?: boolean;
   disabled?: boolean;
+  locked?: boolean;
+  lockedReason?: string;
+  disableOptionCharacteristics?: boolean;
+  disableOptionCharacteristicsReason?: string;
   placeholder: string;
   onChange?: (value: CharacteristicFieldRef | undefined) => void;
 };
@@ -76,6 +80,10 @@ export function CharacteristicFieldSelect({
   selectedFields,
   loading,
   disabled,
+  locked,
+  lockedReason,
+  disableOptionCharacteristics,
+  disableOptionCharacteristicsReason,
   placeholder,
   onChange,
 }: CharacteristicFieldSelectProps) {
@@ -130,7 +138,9 @@ export function CharacteristicFieldSelect({
       return {
         value: getExistingOptionValue(field),
         label: field.label,
-        disabled: selectedExistingIds.has(field.id),
+        disabled:
+          selectedExistingIds.has(field.id) ||
+          (disableOptionCharacteristics && createType === "OPTION"),
         field,
         createType,
         optionCount,
@@ -151,6 +161,10 @@ export function CharacteristicFieldSelect({
   ];
 
   const handleCreate = (type: "OPTION" | "TEXT") => {
+    if (type === "OPTION" && disableOptionCharacteristics) {
+      return;
+    }
+
     const name = searchValue.trim();
     if (!name) {
       return;
@@ -166,7 +180,7 @@ export function CharacteristicFieldSelect({
     setOpen(false);
   };
 
-  return (
+  const select = (
     <Select
       open={open}
       onOpenChange={setOpen}
@@ -182,11 +196,21 @@ export function CharacteristicFieldSelect({
       value={value ? getFieldValue(value) : undefined}
       placeholder={placeholder}
       loading={loading}
-      disabled={disabled}
+      disabled={disabled || locked}
       suffixIcon={<MagnifyingGlassIcon />}
       optionLabelProp="label"
-      onClear={() => onChange?.(undefined)}
+      onClear={() => {
+        if (locked) {
+          return;
+        }
+
+        onChange?.(undefined);
+      }}
       onChange={(nextValue) => {
+        if (locked) {
+          return;
+        }
+
         const existingField = availableFields.find(
           (field) => getExistingOptionValue(field) === nextValue,
         );
@@ -231,18 +255,31 @@ export function CharacteristicFieldSelect({
                       </Text>
                     </Flex>
                   </CreateTypeButton>
-                  <CreateTypeButton
-                    block
-                    icon={<ListBulletsIcon size={20} />}
-                    onClick={() => handleCreate("OPTION")}
+                  <Tooltip
+                    title={
+                      disableOptionCharacteristics
+                        ? disableOptionCharacteristicsReason
+                        : undefined
+                    }
                   >
-                    <Flex vertical align="flex-start">
-                      <Text strong>{t("products.characteristics.option")}</Text>
-                      <Text type="secondary">
-                        {t("products.characteristics.optionValues")}
-                      </Text>
-                    </Flex>
-                  </CreateTypeButton>
+                    <span style={{ flex: 1 }}>
+                      <CreateTypeButton
+                        block
+                        icon={<ListBulletsIcon size={20} />}
+                        disabled={disableOptionCharacteristics}
+                        onClick={() => handleCreate("OPTION")}
+                      >
+                        <Flex vertical align="flex-start">
+                          <Text strong>
+                            {t("products.characteristics.option")}
+                          </Text>
+                          <Text type="secondary">
+                            {t("products.characteristics.optionValues")}
+                          </Text>
+                        </Flex>
+                      </CreateTypeButton>
+                    </span>
+                  </Tooltip>
                 </Flex>
               </Flex>
             ) : (
@@ -267,11 +304,19 @@ export function CharacteristicFieldSelect({
             </Flex>
             <Flex align="center" gap={8}>
               {data.createType === "OPTION" ? (
-                <Text type="secondary" style={{ fontSize: 12 }}>
-                  {t("products.characteristics.optionCount", {
-                    count: data.optionCount,
-                  })}
-                </Text>
+                <Tooltip
+                  title={
+                    data.disabled && disableOptionCharacteristics
+                      ? disableOptionCharacteristicsReason
+                      : undefined
+                  }
+                >
+                  <Text type="secondary" style={{ fontSize: 12 }}>
+                    {t("products.characteristics.optionCount", {
+                      count: data.optionCount,
+                    })}
+                  </Text>
+                </Tooltip>
               ) : null}
               <Tag color="volcano">
                 <Flex align="center" gap={4} style={{ width: "40px" }}>
@@ -290,5 +335,13 @@ export function CharacteristicFieldSelect({
         );
       }}
     />
+  );
+
+  return locked && lockedReason ? (
+    <Tooltip title={lockedReason}>
+      <span>{select}</span>
+    </Tooltip>
+  ) : (
+    select
   );
 }

@@ -963,7 +963,9 @@
       "enterName": "Enter characteristic name",
       "addOptionValue": "Add \"{{value}}\"",
       "savedToList": "— saved to list",
-      "dragRow": "Drag characteristic"
+      "dragRow": "Drag characteristic",
+      "lockedOptionCharacteristic": "This characteristic cannot be removed after the product has been created because it is used by existing variants.",
+      "newOptionDisabledInEdit": "New option characteristics cannot be added after the product has been created because they would rebuild existing variants."
     },
     "variantsForm": {
       "title": "Product variants",
@@ -974,7 +976,8 @@
       "duplicate": "Variant with the same characteristics already exists.",
       "manualMissingFields": "Manual variants must have all characteristic values filled.",
       "singleConfirm": "Product will be created as a single product.",
-      "singleUpdateConfirm": "Product will be saved as a single product. Extra variant data may be lost."
+      "singleUpdateConfirm": "Product will be saved as a single product. Extra variant data may be lost.",
+      "lockedOptionsChanged": "Saved option characteristics and values cannot be removed from an existing variants product."
     },
     "form": {
       "name": "Name",
