@@ -17,6 +17,7 @@ import {
   isNewConversationMessage,
   upsertConversationMessage,
 } from "@/features/conversations/realtime/upsert-conversation-message";
+import { throwLoadError } from "@/utils/throw-load-error";
 import { unknownErrorMessage } from "@/utils/unknown-error-message";
 
 import { sortConversationsByInstUpdatedAt } from "./sort-conversations";
@@ -235,6 +236,7 @@ export class ConversationStore {
       runInAction(() => {
         this.listError = unknownErrorMessage(e);
       });
+      throwLoadError("Failed to load conversations", e);
     } finally {
       runInAction(() => {
         this.listLoading = false;
@@ -293,6 +295,7 @@ export class ConversationStore {
         runInAction(() => {
           this.messagesError = unknownErrorMessage(e);
         });
+        throwLoadError(`Failed to load messages for conversation ${conversationId}`, e);
       })
       .finally(() => {
         runInAction(() => {
@@ -357,6 +360,10 @@ export class ConversationStore {
         runInAction(() => {
           this.messagesError = unknownErrorMessage(e);
         });
+        throwLoadError(
+          `Failed to load older messages for conversation ${conversationId}`,
+          e,
+        );
       })
       .finally(() => {
         runInAction(() => {

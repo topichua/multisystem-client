@@ -7,7 +7,6 @@ import {
   Empty,
   Flex,
   Space,
-  Spin,
   Typography,
 } from "antd";
 import { observer } from "mobx-react-lite";
@@ -15,6 +14,7 @@ import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
 
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
+import { CenteredSpinner } from "@/components/loading/centered-spinner";
 import type { CharacteristicTopTextValue } from "@/features/characteristics/model/characteristic.types";
 
 import { CharacteristicDangerZone } from "./components/characteristic-danger-zone";
@@ -165,7 +165,7 @@ const ProductCharacteristicDetailContent = observer(() => {
   }
 
   if (controller.isPageLoading) {
-    return <Spin style={{ marginTop: 24 }} />;
+    return <CenteredSpinner />;
   }
 
   if (controller.isDetailUnavailable) {

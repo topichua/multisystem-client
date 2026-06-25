@@ -10,6 +10,7 @@ import type {
   CharacteristicUpdatePayload,
 } from "@/features/characteristics/model/characteristic.types";
 import { unknownErrorMessage } from "@/utils/unknown-error-message";
+import { throwLoadError } from "@/utils/throw-load-error";
 
 function sortCharacteristics(items: Characteristic[]): Characteristic[] {
   return [...items].sort((left, right) => left.sortOrder - right.sortOrder);
@@ -49,10 +50,11 @@ export class CharacteristicsStore {
       runInAction(() => {
         this.items = sortCharacteristics(result.items ?? []);
       });
-    } catch {
+    } catch (e) {
       runInAction(() => {
         this.items = [];
       });
+      throwLoadError("Failed to load characteristics", e);
     } finally {
       if (!silent) {
         runInAction(() => {
@@ -88,13 +90,20 @@ export class CharacteristicsStore {
         this.detailError = null;
       });
     } catch (e) {
+      let stale = false;
+
       runInAction(() => {
         if (requestId !== this.detailRequestId) {
+          stale = true;
           return;
         }
 
         this.detailError = unknownErrorMessage(e);
       });
+
+      if (!stale) {
+        throwLoadError(`Failed to load characteristic ${id}`, e);
+      }
     } finally {
       runInAction(() => {
         if (requestId !== this.detailRequestId) {

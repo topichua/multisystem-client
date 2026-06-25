@@ -4,8 +4,6 @@ import {
   Flex,
   Form,
   Input,
-  Skeleton,
-  Spin,
   Typography,
   message,
 } from "antd";
@@ -15,6 +13,7 @@ import { useTranslation } from "react-i18next";
 
 import { getApiErrorMessage } from "@/api/get-api-error-message";
 import { ClientPhoneFormInput } from "@/components/client-phone-form-input";
+import { CenteredSpinner } from "@/components/loading/centered-spinner";
 import type {
   Client,
   ClientInstagramAssociationResponse,
@@ -199,11 +198,9 @@ export const ConversationClientInfoPanel = observer(
         ) : null}
         <S.PanelScroll>
           {!conversation ? (
-            <Skeleton active paragraph={{ rows: 6 }} />
+            <CenteredSpinner minHeight={200} />
           ) : associationPending ? (
-            <Flex justify="center" align="center" style={{ minHeight: 200 }}>
-              <Spin />
-            </Flex>
+            <CenteredSpinner minHeight={200} />
           ) : instagramAssociation && !instagramAssociation.associated ? (
             showCreateForm ? (
               <Form
@@ -289,9 +286,7 @@ export const ConversationClientInfoPanel = observer(
               </S.EmptyCenter>
             )
           ) : linkedClientLoading ? (
-            <Flex justify="center" align="center" style={{ minHeight: 200 }}>
-              <Spin />
-            </Flex>
+            <CenteredSpinner minHeight={200} />
           ) : linkedClient ? (
             <Flex gap={24} vertical>
               <ClientOrdersInfoBlock

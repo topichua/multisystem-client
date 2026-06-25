@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 
 import type { InstagramPostAiExtractionResponse } from "@/features/instagram/model/instagram.types";
+import { formatDateTime } from "@/utils/date-time";
 
 import type {
   ProductInstagramAiCategoryOption,
@@ -75,9 +76,7 @@ export const ProductInstagramExtractionResult = ({
           </Flex>
         </Flex>
 
-        <Text type="secondary">
-          {new Date(extraction.generatedAt).toLocaleString()}
-        </Text>
+        <Text type="secondary">{formatDateTime(extraction.generatedAt)}</Text>
       </Flex>
 
       <Flex gap={16} wrap="wrap">

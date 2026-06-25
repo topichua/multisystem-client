@@ -1,6 +1,7 @@
 import { makeAutoObservable, runInAction } from "mobx";
 
 import { workspaceSettingsApi } from "@/features/workspace-settings/api/workspace-settings-api";
+import { throwLoadError } from "@/utils/throw-load-error";
 import { unknownErrorMessage } from "@/utils/unknown-error-message";
 
 import type { WorkspaceCurrency } from "./workspace-settings.types";
@@ -40,6 +41,7 @@ export class WorkspaceSettingsStore {
       runInAction(() => {
         this.loadError = unknownErrorMessage(e);
       });
+      throwLoadError("Failed to load workspace settings", e);
     } finally {
       if (!silent) {
         runInAction(() => {

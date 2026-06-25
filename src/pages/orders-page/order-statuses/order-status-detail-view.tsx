@@ -1,4 +1,4 @@
-import { Alert, Button, Flex, Form, message, Spin, Typography } from "antd";
+import { Alert, Button, Flex, Form, message, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -7,6 +7,7 @@ import { useNavigate, useParams } from "react-router";
 import { getApiErrorMessage } from "@/api/get-api-error-message";
 import { pagesMap } from "@/app/router/pages-map";
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
+import { CenteredSpinner } from "@/components/loading/centered-spinner";
 import * as S from "@/components/layout/form-card.styled";
 import type { OrderStatusUpdatePayload } from "@/features/orders/model/order.types";
 import { useOrdersStore } from "@/features/orders/model/use-orders-store";
@@ -79,7 +80,7 @@ export const OrderStatusDetailView = observer(() => {
   }
 
   if (store.statusesLoading && !status) {
-    return <Spin style={{ marginTop: 24 }} />;
+    return <CenteredSpinner />;
   }
 
   if (!store.statusesLoading && !status) {

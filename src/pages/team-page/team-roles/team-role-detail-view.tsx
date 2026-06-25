@@ -7,7 +7,6 @@ import {
   Input,
   message,
   Popconfirm,
-  Spin,
   Typography,
 } from "antd";
 import { observer } from "mobx-react-lite";
@@ -18,6 +17,7 @@ import { useNavigate, useParams } from "react-router";
 import { getApiErrorMessage } from "@/api/get-api-error-message";
 import { getTeamRolePath, pagesMap } from "@/app/router/pages-map";
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
+import { CenteredSpinner } from "@/components/loading/centered-spinner";
 import type { WorkspaceRoleIntegrationGrant } from "@/features/workspace-roles/model/workspace-role.types";
 import { useWorkspaceRolesStore } from "@/features/workspace-roles/model/use-workspace-roles-store";
 import {
@@ -160,7 +160,7 @@ export const TeamRoleDetailView = observer(() => {
   }
 
   if (store.listLoading && !role) {
-    return <Spin style={{ marginTop: 24 }} />;
+    return <CenteredSpinner />;
   }
 
   if (!store.listLoading && !role) {
@@ -224,7 +224,7 @@ export const TeamRoleDetailView = observer(() => {
         </PaneDetailLayout.Header>
         <PaneDetailLayout.Body data-qa="layout-team-role-detail-body">
           {showCatalogLoader ? (
-            <Spin style={{ marginTop: 24 }} />
+            <CenteredSpinner />
           ) : store.catalogError && !store.catalog ? (
             <Alert
               type="error"

@@ -1,10 +1,11 @@
-import { Card, Flex, Skeleton, Typography } from "antd";
-import dayjs from "dayjs";
+import { Card, Flex, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
+import { CenteredSpinner } from "@/components/loading/centered-spinner";
 import { useOrdersStore } from "@/features/orders/model/use-orders-store";
+import { formatDate } from "@/utils/date-time";
 
 const { Text } = Typography;
 
@@ -42,10 +43,7 @@ export const ClientOrdersSummary = observer(
         {
           key: "lastOrder",
           label: t("conversation.clientOrders.lastOrder"),
-          value:
-            data?.lastOrderAt && dayjs(data.lastOrderAt).isValid()
-              ? dayjs(data.lastOrderAt).format("DD.MM.YYYY")
-              : emptyValue,
+          value: data?.lastOrderAt ? formatDate(data.lastOrderAt) : emptyValue,
         },
         {
           key: "spent",
@@ -64,7 +62,7 @@ export const ClientOrdersSummary = observer(
       return (
         <Flex vertical gap={4}>
           <Text strong>{t("conversation.clientOrders.summaryTitle")}</Text>
-          <Skeleton active paragraph={{ rows: 2 }} />
+          <CenteredSpinner minHeight={96} />
         </Flex>
       );
     }

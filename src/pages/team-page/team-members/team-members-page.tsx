@@ -5,7 +5,6 @@ import {
   Form,
   message,
   Space,
-  Spin,
   Table,
   Typography,
 } from "antd";
@@ -16,6 +15,7 @@ import { useTranslation } from "react-i18next";
 import { getApiErrorMessage } from "@/api/get-api-error-message";
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
 import { PaneSectionTitle } from "@/components/layout/pane-frame";
+import { CenteredSpinner } from "@/components/loading/centered-spinner";
 import { useUserStore } from "@/features/auth/model/use-user-store";
 import type {
   WorkspaceMember,
@@ -156,7 +156,7 @@ export const TeamMembersPage = observer(() => {
     return (
       <>
         {contextHolder}
-        <Spin style={{ marginTop: 24 }} />
+        <CenteredSpinner />
       </>
     );
   }

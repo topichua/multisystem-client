@@ -1,9 +1,10 @@
-import { Button, Empty, Spin } from "antd";
+import { Button, Empty } from "antd";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
 import { Navigate, useOutletContext } from "react-router";
 
 import { getProductCharacteristicPath } from "@/app/router/pages-map";
+import { CenteredSpinner } from "@/components/loading/centered-spinner";
 import { useCharacteristicsStore } from "@/features/characteristics/model/use-characteristics-store";
 
 import type { ProductsCharacteristicsOutletContext } from "./products-characteristics-layout";
@@ -16,7 +17,7 @@ export const ProductsCharacteristicsIndex = observer(() => {
   const store = useCharacteristicsStore();
 
   if (store.listLoading && store.items.length === 0) {
-    return <Spin style={{ marginTop: 24 }} />;
+    return <CenteredSpinner />;
   }
 
   if (store.items.length > 0) {

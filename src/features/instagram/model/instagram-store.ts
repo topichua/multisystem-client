@@ -2,6 +2,7 @@ import { makeAutoObservable, runInAction } from "mobx";
 
 import { instagramApi } from "@/features/instagram/api/instagram-api";
 import { productsApi } from "@/features/products/api/products-api";
+import { throwLoadError } from "@/utils/throw-load-error";
 import { unknownErrorMessage } from "@/utils/unknown-error-message";
 
 import { getInstagramMediaPagingCursor } from "./instagram-parsers";
@@ -302,6 +303,7 @@ export class InstagramStore {
         this.listError = unknownErrorMessage(e);
         this.listLoaded = true;
       });
+      throwLoadError("Failed to load Instagram integrations", e);
     } finally {
       runInAction(() => {
         this.listLoading = false;
@@ -384,6 +386,7 @@ export class InstagramStore {
 
         this.mediaLoaded = true;
       });
+      throwLoadError("Failed to load Instagram media", e);
     } finally {
       if (requestSeq === this.mediaRequestSeq) {
         runInAction(() => {
@@ -440,6 +443,7 @@ export class InstagramStore {
         this.productReferenceMediaIdSet.clear();
         this.productIdsByMediaId.clear();
       });
+      throwLoadError("Failed to load Instagram product references", e);
     }
   };
 
@@ -488,7 +492,7 @@ export class InstagramStore {
         this.postProductVariantsError = error;
       });
 
-      return null;
+      throwLoadError(`Failed to load product variants for Instagram post ${postId}`, e);
     } finally {
       if (requestSeq === this.postProductVariantsRequestSeq) {
         runInAction(() => {
@@ -554,7 +558,7 @@ export class InstagramStore {
         this.postAiExtractionError = error;
       });
 
-      return null;
+      throwLoadError(`Failed to load AI extraction for Instagram post ${postId}`, e);
     } finally {
       if (requestSeq === this.postAiExtractionRequestSeq) {
         runInAction(() => {
@@ -627,6 +631,7 @@ export class InstagramStore {
           this.postCommentsPagingByPostId.set(postId, null);
         }
       });
+      throwLoadError(`Failed to load comments for Instagram post ${postId}`, e);
     } finally {
       if (this.postCommentsRequestSeqByPostId.get(postId) === requestSeq) {
         runInAction(() => {
@@ -705,6 +710,7 @@ export class InstagramStore {
           this.commentRepliesPagingByCommentId.set(commentId, null);
         }
       });
+      throwLoadError(`Failed to load replies for Instagram comment ${commentId}`, e);
     } finally {
       if (
         this.commentRepliesRequestSeqByCommentId.get(commentId) === requestSeq

@@ -1,6 +1,5 @@
-import dayjs from "dayjs";
-
 import type { InstagramMediaFilter } from "@/features/instagram/model/instagram.types";
+import { formatDate } from "@/utils/date-time";
 export {
   getPostCoverUrl,
   getPostMediaDisplaySource,
@@ -31,8 +30,7 @@ export const formatPostDate = (value: string | undefined): string => {
     return "—";
   }
 
-  const parsed = dayjs(value);
-  return parsed.isValid() ? parsed.format("D MMM YYYY") : "—";
+  return formatDate(value) || "—";
 };
 
 export const getFilterLabelKey = (filter: InstagramMediaFilter): string => {

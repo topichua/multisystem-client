@@ -1,10 +1,11 @@
-import { Button, Card, Empty, Flex, Skeleton, Typography } from "antd";
-import dayjs from "dayjs";
+import { Button, Card, Empty, Flex, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { CenteredSpinner } from "@/components/loading/centered-spinner";
 import { Tag } from "@/components/tag/tag";
 import { useOrdersStore } from "@/features/orders/model/use-orders-store";
+import { formatDate } from "@/utils/date-time";
 
 const { Text } = Typography;
 
@@ -41,7 +42,7 @@ export const ClientOrdersList = observer(
       return (
         <Flex vertical gap={4}>
           <Text strong>{t("conversation.clientOrders.ordersTitle")}</Text>
-          <Skeleton active paragraph={{ rows: 3 }} />
+          <CenteredSpinner minHeight={140} />
         </Flex>
       );
     }
@@ -99,7 +100,7 @@ export const ClientOrdersList = observer(
                         })}
                       </Text>
                       <Text type="secondary" style={{ fontSize: 12 }}>
-                        {dayjs(order.createdAt).format("DD.MM.YYYY")}
+                        {formatDate(order.createdAt)}
                       </Text>
                     </Flex>
 

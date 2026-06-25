@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { ordersApi } from "@/features/orders/api/orders-api";
 import type { OrderDetails } from "@/features/orders/model/order.types";
 import { useOrdersStore } from "@/features/orders/model/use-orders-store";
+import { throwLoadError } from "@/utils/throw-load-error";
 import { unknownErrorMessage } from "@/utils/unknown-error-message";
 
 export const useOrderDetails = (orderId: number | null) => {
@@ -31,6 +32,7 @@ export const useOrderDetails = (orderId: number | null) => {
         if (!cancelled) {
           setOrder(null);
           setError(unknownErrorMessage(e));
+          throwLoadError(`Failed to load order ${orderId}`, e);
         }
       } finally {
         if (!cancelled) {

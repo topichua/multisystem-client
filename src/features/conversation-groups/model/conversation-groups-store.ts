@@ -1,6 +1,7 @@
 import { makeAutoObservable, runInAction } from "mobx";
 
 import { conversationGroupsApi } from "@/features/conversation-groups/api/conversation-groups-api";
+import { throwLoadError } from "@/utils/throw-load-error";
 
 import type {
   ConversationGroup,
@@ -40,10 +41,11 @@ export class ConversationGroupsStore {
       runInAction(() => {
         this.groups = items;
       });
-    } catch {
+    } catch (e) {
       runInAction(() => {
         this.groups = [];
       });
+      throwLoadError("Failed to load conversation groups", e);
     } finally {
       if (!silent) {
         runInAction(() => {

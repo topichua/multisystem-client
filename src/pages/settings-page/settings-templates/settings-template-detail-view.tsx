@@ -1,4 +1,4 @@
-import { Alert, Button, Form, Input, message, Spin } from "antd";
+import { Alert, Button, Form, Input, message } from "antd";
 import { observer } from "mobx-react-lite";
 import { useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -7,6 +7,7 @@ import { useNavigate, useParams } from "react-router";
 import { getApiErrorMessage } from "@/api/get-api-error-message";
 import { getSettingsTemplatePath, pagesMap } from "@/app/router/pages-map";
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
+import { CenteredSpinner } from "@/components/loading/centered-spinner";
 import * as S from "@/components/layout/form-card.styled";
 import { useMessageTemplatesStore } from "@/features/message-templates/model/use-message-templates-store";
 
@@ -99,7 +100,7 @@ export const SettingsTemplateDetailView = observer(() => {
   }
 
   if (store.listLoading && !template) {
-    return <Spin style={{ marginTop: 24 }} />;
+    return <CenteredSpinner />;
   }
 
   if (!store.listLoading && !template) {

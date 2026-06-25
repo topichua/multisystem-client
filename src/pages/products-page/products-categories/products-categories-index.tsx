@@ -1,9 +1,10 @@
-import { Button, Empty, Spin } from "antd";
+import { Button, Empty } from "antd";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
 import { Navigate, useOutletContext } from "react-router";
 
 import { getProductCategoryPath } from "@/app/router/pages-map";
+import { CenteredSpinner } from "@/components/loading/centered-spinner";
 import { useCategoriesStore } from "@/features/categories/model/use-categories-store";
 
 import type { ProductsCategoriesOutletContext } from "./products-categories-layout";
@@ -15,7 +16,7 @@ export const ProductsCategoriesIndex = observer(() => {
   const store = useCategoriesStore();
 
   if (store.listLoading && store.categories.length === 0) {
-    return <Spin style={{ marginTop: 24 }} />;
+    return <CenteredSpinner />;
   }
 
   const rootCategories = getRootCategories(store.categories);

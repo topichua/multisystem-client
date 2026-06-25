@@ -1,6 +1,7 @@
 import { makeAutoObservable, runInAction } from "mobx";
 
 import { integrationsApi } from "@/features/integrations/api/integrations-api";
+import { throwLoadError } from "@/utils/throw-load-error";
 
 import type { IntegrationItem, IntegrationType } from "./integration.types";
 
@@ -56,10 +57,11 @@ export class IntegrationsStore {
       runInAction(() => {
         this.items = Array.isArray(data.items) ? data.items : [];
       });
-    } catch {
+    } catch (e) {
       runInAction(() => {
         this.items = [];
       });
+      throwLoadError("Failed to load integrations", e);
     } finally {
       if (!silent) {
         runInAction(() => {

@@ -5,7 +5,6 @@ import {
   Form,
   message,
   Popconfirm,
-  Spin,
   Typography,
 } from "antd";
 import { observer } from "mobx-react-lite";
@@ -19,6 +18,7 @@ import type { ConversationGroupWritePayload } from "@/features/conversation-grou
 import { useConversationGroupsStore } from "@/features/conversation-groups/model/use-conversation-groups-store";
 
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
+import { CenteredSpinner } from "@/components/loading/centered-spinner";
 import * as S from "@/components/layout/form-card.styled";
 
 import { GroupFormFields, type GroupFormValues } from "./group-form-fields";
@@ -106,7 +106,7 @@ export const SettingsGroupDetailView = observer(() => {
   }
 
   if (store.listLoading && !group) {
-    return <Spin style={{ marginTop: 24 }} />;
+    return <CenteredSpinner />;
   }
 
   if (!store.listLoading && !group) {

@@ -1,10 +1,10 @@
 import type { TableColumnsType } from "antd";
 import { Button, Flex, Popconfirm } from "antd";
-import dayjs from "dayjs";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import type { Client } from "@/features/clients/model/client.types";
+import { formatDateTime } from "@/utils/date-time";
 
 type UseClientsTableColumnsParams = {
   deleteLoadingId: number | null;
@@ -50,7 +50,7 @@ export function useClientsTableColumns({
         dataIndex: "createdAt",
         key: "createdAt",
         width: 160,
-        render: (value: string) => dayjs(value).format("YYYY-MM-DD HH:mm"),
+        render: (value: string) => formatDateTime(value),
       },
       {
         title: t("clients.tableActions"),

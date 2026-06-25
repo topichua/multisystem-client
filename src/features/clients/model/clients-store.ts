@@ -8,6 +8,7 @@ import type {
   ClientUpdatePayload,
 } from "@/features/clients/model/client.types";
 import { unknownErrorMessage } from "@/utils/unknown-error-message";
+import { throwLoadError } from "@/utils/throw-load-error";
 
 export class ClientsStore {
   clients: Client[] = [];
@@ -42,6 +43,7 @@ export class ClientsStore {
       runInAction(() => {
         this.listError = unknownErrorMessage(e);
       });
+      throwLoadError("Failed to load clients", e);
     } finally {
       if (!silent) {
         runInAction(() => {

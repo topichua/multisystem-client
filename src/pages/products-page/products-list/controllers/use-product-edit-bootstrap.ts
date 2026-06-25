@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 
 import { getApiErrorMessage } from "@/api/get-api-error-message";
 import type { ProductsStore } from "@/features/products/model/products-store";
+import { throwLoadError } from "@/utils/throw-load-error";
 import { productDetailToProductForm } from "../form/payload/product-detail-to-product-form";
 import type { ProductType } from "../form/sections/product-type-section";
 import type { ProductAddFormValues } from "../form/product-form.types";
@@ -79,6 +80,7 @@ export function useProductEditBootstrap({
           getApiErrorMessage(error, t("products.detailLoadFailed")),
         );
         navigateToProductsList();
+        throwLoadError(`Failed to load product ${editingProductId}`, error);
       } finally {
         if (alive) {
           setIsInitialEditLoading(false);

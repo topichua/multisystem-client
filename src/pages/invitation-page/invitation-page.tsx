@@ -7,6 +7,7 @@ import { getApiErrorMessage } from "@/api/get-api-error-message";
 import { pagesMap } from "@/app/router/pages-map";
 import { workspaceMembersApi } from "@/features/workspace-members/api/workspace-members-api";
 import type { WorkspaceMemberRegisterInfo } from "@/features/workspace-members/model/workspace-member.types";
+import { throwLoadError } from "@/utils/throw-load-error";
 
 import * as S from "./invitation-page.styled";
 
@@ -78,6 +79,7 @@ export const InvitationPage = () => {
           }
 
           setLoadError(getApiErrorMessage(error, t("invitation.loadError")));
+          throwLoadError("Failed to load invitation", error);
         })
         .finally(() => {
           if (cancelled) {

@@ -1,6 +1,7 @@
 import { makeAutoObservable, runInAction } from "mobx";
 
 import { workspaceMembersApi } from "@/features/workspace-members/api/workspace-members-api";
+import { throwLoadError } from "@/utils/throw-load-error";
 import { unknownErrorMessage } from "@/utils/unknown-error-message";
 
 import type {
@@ -65,6 +66,7 @@ export class WorkspaceMembersStore {
       runInAction(() => {
         this.listError = unknownErrorMessage(e);
       });
+      throwLoadError("Failed to load workspace members", e);
     } finally {
       if (!silent) {
         runInAction(() => {

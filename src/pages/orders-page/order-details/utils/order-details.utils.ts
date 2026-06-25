@@ -1,5 +1,6 @@
 import type { OrderDetails } from "@/features/orders/model/order.types";
 import { formatMoney } from "@/features/orders/utils/format-money";
+import { formatDateTime } from "@/utils/date-time";
 
 export { formatMoney };
 
@@ -39,19 +40,7 @@ export const formatText = (value: unknown): string => {
 export const formatDate = (value: string | null | undefined): string => {
   if (!value) return EMPTY_VALUE;
 
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) return EMPTY_VALUE;
-
-  return new Intl.DateTimeFormat("uk-UA", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  })
-    .format(date)
-    .replace(",", "");
+  return formatDateTime(value) || EMPTY_VALUE;
 };
 
 export const getOrderSourceLabel = (

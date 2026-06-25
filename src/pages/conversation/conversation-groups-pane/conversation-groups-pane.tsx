@@ -6,6 +6,7 @@ import { Empty, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
 
+import { CenteredSpinner } from "@/components/loading/centered-spinner";
 import { useConversationGroupsStore } from "@/features/conversation-groups/model/use-conversation-groups-store";
 import { useEnsureConversationGroupsLoaded } from "@/features/conversation-groups/model/use-ensure-conversation-groups-loaded";
 import { useConversationsStore } from "@/features/conversations/model/use-conversations-store";
@@ -86,7 +87,9 @@ export const ConversationGroupsPane = observer(
         </S.Header>
 
         <S.GroupsScroll data-qa="layout-conversations-groups-scroll">
-          {!isInitialLoading && (
+          {isInitialLoading ? (
+            <CenteredSpinner minHeight={160} />
+          ) : (
             <S.GroupList>
               <ConversationGroupFilterRow
                 color={BRAND_PRIMARY}

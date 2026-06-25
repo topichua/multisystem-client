@@ -1,6 +1,7 @@
 import { makeAutoObservable, runInAction } from "mobx";
 
 import { workspaceRolesApi } from "@/features/workspace-roles/api/workspace-roles-api";
+import { throwLoadError } from "@/utils/throw-load-error";
 import { unknownErrorMessage } from "@/utils/unknown-error-message";
 
 import type {
@@ -83,6 +84,7 @@ export class WorkspaceRolesStore {
       runInAction(() => {
         this.catalogError = unknownErrorMessage(e);
       });
+      throwLoadError("Failed to load workspace permissions catalog", e);
     } finally {
       if (!silent) {
         runInAction(() => {
@@ -113,6 +115,7 @@ export class WorkspaceRolesStore {
       runInAction(() => {
         this.listError = unknownErrorMessage(e);
       });
+      throwLoadError("Failed to load workspace roles", e);
     } finally {
       if (!silent) {
         runInAction(() => {
@@ -146,6 +149,7 @@ export class WorkspaceRolesStore {
       runInAction(() => {
         this.integrationGrantsErrorByRoleId.set(roleId, unknownErrorMessage(e));
       });
+      throwLoadError(`Failed to load integration grants for role ${roleId}`, e);
     } finally {
       if (!silent) {
         runInAction(() => {

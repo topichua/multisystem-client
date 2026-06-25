@@ -1,4 +1,4 @@
-import { Alert, Spin, message } from "antd";
+import { Alert, message } from "antd";
 import { observer } from "mobx-react-lite";
 import { useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -18,6 +18,7 @@ import {
   PaneSectionTitle,
 } from "@/components/layout/pane-frame";
 import { PaneNavSplitLayout } from "@/components/layout/pane-nav-split-layout";
+import { CenteredSpinner } from "@/components/loading/centered-spinner";
 import { useOrdersStore } from "@/features/orders/model/use-orders-store";
 
 import { OrderStatusesNavList } from "./order-statuses-nav-list";
@@ -105,7 +106,7 @@ export const OrderStatusesLayout = observer(() => {
               />
             ) : null}
             {store.statusesLoading && store.statuses.length === 0 ? (
-              <Spin style={{ margin: 24 }} />
+              <CenteredSpinner minHeight={160} />
             ) : (
               <div data-qa="layout-order-statuses-nav">
                 <OrderStatusesNavList

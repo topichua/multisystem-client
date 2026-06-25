@@ -1,10 +1,11 @@
-import { Button, Flex, Spin, Table, Typography } from "antd";
+import { Button, Flex, Table, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
 
 import type { Client } from "@/features/clients/model/client.types";
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
 import { PaneSectionTitle } from "@/components/layout/pane-frame";
+import { CenteredSpinner } from "@/components/loading/centered-spinner";
 
 import { ClientFormModal } from "./client-form-modal";
 import { useClientsListController } from "./controllers/use-clients-list-controller";
@@ -26,7 +27,7 @@ export const ClientsListPage = observer(() => {
     return (
       <>
         {controller.contextHolder}
-        <Spin style={{ marginTop: 24 }} />
+        <CenteredSpinner />
       </>
     );
   }

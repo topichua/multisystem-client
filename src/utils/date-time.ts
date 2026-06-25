@@ -22,10 +22,17 @@ export function initDayJs() {
   dayjs.extend(duration);
 }
 
-export const formatDateTime = (date: Date | string) =>
-  dayjs(date).format("lll");
+export const formatDateTime = (date: Date | string) => {
+  const parsed = dayjs(date);
 
-export const formatDate = (date: Date | string) => dayjs(date).format("ll");
+  return parsed.isValid() ? parsed.format("lll") : "";
+};
+
+export const formatDate = (date: Date | string) => {
+  const parsed = dayjs(date);
+
+  return parsed.isValid() ? parsed.format("ll") : "";
+};
 
 export const fromNow = (date: Date | string, skipSuffix?: boolean) =>
   dayjs(date).fromNow(skipSuffix);

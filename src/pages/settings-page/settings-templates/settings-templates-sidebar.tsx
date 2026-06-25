@@ -1,5 +1,5 @@
 import { ChatTextIcon, PlusIcon } from "@phosphor-icons/react";
-import { Alert, Button, Empty, Flex, Spin, Typography } from "antd";
+import { Alert, Button, Empty, Flex, Typography } from "antd";
 import { useTranslation } from "react-i18next";
 
 import {
@@ -8,6 +8,7 @@ import {
   PaneSectionTitle,
 } from "@/components/layout/pane-frame";
 import { PaneNavSplitLayout } from "@/components/layout/pane-nav-split-layout";
+import { CenteredSpinner } from "@/components/loading/centered-spinner";
 import type { MessageTemplate } from "@/features/message-templates/model/message-template.types";
 
 import * as S from "./settings-templates-layout.styled";
@@ -58,7 +59,7 @@ export const SettingsTemplatesSidebar = ({
           />
         ) : null}
         {listLoading && templates.length === 0 ? (
-          <Spin style={{ margin: 24 }} />
+          <CenteredSpinner minHeight={160} />
         ) : (
           <div data-qa="layout-settings-templates-nav">
             {templates.length === 0 ? (

@@ -8,7 +8,6 @@ import {
   Input,
   Menu,
   Modal,
-  Spin,
   Typography,
   message,
 } from "antd";
@@ -25,6 +24,7 @@ import {
   PaneSectionTitle,
 } from "@/components/layout/pane-frame";
 import { PaneNavSplitLayout } from "@/components/layout/pane-nav-split-layout";
+import { CenteredSpinner } from "@/components/loading/centered-spinner";
 import { useWorkspaceRolesStore } from "@/features/workspace-roles/model/use-workspace-roles-store";
 import { DEFAULT_COLOR_PRESET } from "@/shared/components/preset-color-picker/color-presets";
 import { RoleDot } from "@/shared/components/role-dot/role-dot";
@@ -162,7 +162,7 @@ export const TeamRolesPage = observer(() => {
               </Text>
             )}
             {showInitialLoader ? (
-              <Spin style={{ margin: 16 }} />
+              <CenteredSpinner minHeight={160} />
             ) : store.roles.length > 0 ? (
               <div data-qa="layout-team-roles-nav">
                 <Menu

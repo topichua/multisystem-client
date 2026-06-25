@@ -1,6 +1,7 @@
 import { makeAutoObservable, runInAction } from "mobx";
 
 import { messageTemplatesApi } from "@/features/message-templates/api/message-templates-api";
+import { throwLoadError } from "@/utils/throw-load-error";
 import { unknownErrorMessage } from "@/utils/unknown-error-message";
 
 import type {
@@ -41,6 +42,7 @@ export class MessageTemplatesStore {
       runInAction(() => {
         this.listError = unknownErrorMessage(e);
       });
+      throwLoadError("Failed to load message templates", e);
     } finally {
       if (!silent) {
         runInAction(() => {

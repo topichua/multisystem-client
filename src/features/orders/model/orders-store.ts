@@ -19,6 +19,7 @@ import type {
 import { buildOrderCreatePayload } from "@/features/orders/utils/build-order-create-payload";
 import { productsApi } from "@/features/products/api/products-api";
 import type { CatalogVariant } from "@/features/products/model/product.types";
+import { throwLoadError } from "@/utils/throw-load-error";
 import { unknownErrorMessage } from "@/utils/unknown-error-message";
 
 const defaultPageSize = 50;
@@ -317,6 +318,7 @@ export class OrdersStore {
       runInAction(() => {
         this.listError = unknownErrorMessage(e);
       });
+      throwLoadError("Failed to load orders", e);
     } finally {
       if (!silent) {
         runInAction(() => {
@@ -347,10 +349,11 @@ export class OrdersStore {
       runInAction(() => {
         this.catalogSearchResults = response.items;
       });
-    } catch {
+    } catch (e) {
       runInAction(() => {
         this.catalogSearchResults = [];
       });
+      throwLoadError("Failed to load catalog variants", e);
     } finally {
       runInAction(() => {
         this.catalogSearchLoading = false;
@@ -384,6 +387,7 @@ export class OrdersStore {
       runInAction(() => {
         this.statusesError = unknownErrorMessage(e);
       });
+      throwLoadError("Failed to load order statuses", e);
     } finally {
       runInAction(() => {
         this.statusesLoading = false;
@@ -529,12 +533,19 @@ export class OrdersStore {
         }
       });
     } catch (e) {
+      let active = false;
+
       runInAction(() => {
         if (this.clientStatsClientId === clientId) {
+          active = true;
           this.clientStatsError = unknownErrorMessage(e);
           this.clientStats = null;
         }
       });
+
+      if (active) {
+        throwLoadError(`Failed to load client ${clientId} stats`, e);
+      }
     } finally {
       runInAction(() => {
         if (this.clientStatsClientId === clientId) {
@@ -572,13 +583,20 @@ export class OrdersStore {
         }
       });
     } catch (e) {
+      let active = false;
+
       runInAction(() => {
         if (this.clientOrdersClientId === clientId) {
+          active = true;
           this.clientOrdersError = unknownErrorMessage(e);
           this.clientOrders = [];
           this.clientOrdersTotal = 0;
         }
       });
+
+      if (active) {
+        throwLoadError(`Failed to load client ${clientId} orders`, e);
+      }
     } finally {
       runInAction(() => {
         if (this.clientOrdersClientId === clientId) {

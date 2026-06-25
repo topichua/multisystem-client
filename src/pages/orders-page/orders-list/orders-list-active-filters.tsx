@@ -1,17 +1,17 @@
 import { Button, Flex, Typography } from "antd";
 import { Tag } from "@/components/tag/tag";
-import dayjs from "dayjs";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
 
 import { GroupColoredNameTag } from "@/features/conversation-groups/components/group-select-visuals";
 import type { OrderSourceFilter } from "@/features/orders/model/order-list.constants";
 import { useOrdersStore } from "@/features/orders/model/use-orders-store";
+import { formatDate } from "@/utils/date-time";
 
 const { Text } = Typography;
 
 function formatDateLabel(value: string): string {
-  return dayjs(value).format("DD.MM.YYYY");
+  return formatDate(value);
 }
 
 export const OrdersListActiveFilters = observer(() => {

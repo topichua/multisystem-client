@@ -1,9 +1,10 @@
-import { Alert, Button, Flex, Spin } from "antd";
+import { Alert, Button, Flex } from "antd";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
 
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
+import { CenteredSpinner } from "@/components/loading/centered-spinner";
 
 import { CategoryDangerZone } from "./components/category-danger-zone";
 import { CategoryDetailHeader } from "./components/category-detail-header";
@@ -25,7 +26,7 @@ const ProductCategoryDetailContent = observer(() => {
   }
 
   if (controller.isPageLoading) {
-    return <Spin style={{ marginTop: 24 }} />;
+    return <CenteredSpinner />;
   }
 
   if (controller.isNotFound) {

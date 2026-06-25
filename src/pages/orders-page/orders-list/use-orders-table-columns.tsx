@@ -1,13 +1,13 @@
 import type { TableColumnsType } from "antd";
 import { Typography } from "antd";
-import { Tag } from "@/components/tag/tag";
-import dayjs from "dayjs";
+import { Tag } from '@/components/tag/tag';
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import { OrderStatusSelect } from "@/features/orders/components/order-status-select";
 import type { OrderListItem } from "@/features/orders/model/order.types";
 import { formatMoney } from "@/features/orders/utils/format-money";
+import { formatDateTime } from '@/utils/date-time';
 
 const { Text } = Typography;
 
@@ -27,26 +27,26 @@ export function useOrdersTableColumns(): TableColumnsType<OrderListItem> {
     () => [
       {
         // title: t('orders.table.id'),
-        dataIndex: "id",
-        key: "id",
+        dataIndex: 'id',
+        key: 'id',
         width: 80,
         render: (_, order) => <Text># {order.id}</Text>,
       },
       {
-        title: t("orders.table.customer"),
-        key: "customer",
+        title: t('orders.table.customer'),
+        key: 'customer',
         render: (_, order) => <Text>{formatCustomerName(order)}</Text>,
       },
       {
-        title: t("orders.table.source"),
-        dataIndex: "source",
-        key: "source",
+        title: t('orders.table.source'),
+        dataIndex: 'source',
+        key: 'source',
         width: 110,
         render: (_, order) => <Tag color="blue">{order.source}</Tag>,
       },
       {
-        title: t("orders.table.total"),
-        key: "total",
+        title: t('orders.table.total'),
+        key: 'total',
         width: 140,
         render: (_, order) => (
           <Text strong>{formatMoney(order.totalAmount, order.currency)}</Text>
@@ -54,8 +54,8 @@ export function useOrdersTableColumns(): TableColumnsType<OrderListItem> {
       },
 
       {
-        title: t("orders.table.status"),
-        key: "status",
+        title: t('orders.table.status'),
+        key: 'status',
         width: 200,
         render: (_, order) => (
           <span
@@ -72,18 +72,17 @@ export function useOrdersTableColumns(): TableColumnsType<OrderListItem> {
       },
 
       {
-        title: t("orders.table.internalNote"),
-        dataIndex: "internalNote",
-        key: "internalNote",
+        title: t('orders.table.internalNote'),
+        dataIndex: 'internalNote',
+        key: 'internalNote',
         ellipsis: true,
-        render: (value: string | null) => value || "—",
+        render: (value: string | null) => value || '—',
       },
       {
-        title: t("orders.table.createdAt"),
-        dataIndex: "createdAt",
-        key: "createdAt",
-        width: 160,
-        render: (value: string) => dayjs(value).format("DD.MM.YYYY HH:mm"),
+        title: t('orders.table.createdAt'),
+        dataIndex: 'createdAt',
+        key: 'createdAt',
+        render: (value: string) => formatDateTime(value),
       },
     ],
     [t],

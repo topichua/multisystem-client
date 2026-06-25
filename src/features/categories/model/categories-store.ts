@@ -1,6 +1,7 @@
 import { makeAutoObservable, runInAction } from "mobx";
 
 import { categoriesApi } from "@/features/categories/api/categories-api";
+import { throwLoadError } from "@/utils/throw-load-error";
 
 import type {
   Category,
@@ -37,10 +38,11 @@ export class CategoriesStore {
       runInAction(() => {
         this.categories = data;
       });
-    } catch {
+    } catch (e) {
       runInAction(() => {
         this.categories = [];
       });
+      throwLoadError("Failed to load categories", e);
     } finally {
       if (!silent) {
         runInAction(() => {
@@ -67,10 +69,11 @@ export class CategoriesStore {
       runInAction(() => {
         this.activeCategory = data;
       });
-    } catch {
+    } catch (e) {
       runInAction(() => {
         this.activeCategory = null;
       });
+      throwLoadError(`Failed to load category ${id}`, e);
     } finally {
       if (!silent) {
         runInAction(() => {

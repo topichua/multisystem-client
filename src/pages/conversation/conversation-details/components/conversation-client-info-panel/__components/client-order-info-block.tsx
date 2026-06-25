@@ -1,7 +1,7 @@
 import type { Client } from "@/features/clients/model/client.types";
 import { Flex, Space, Typography } from "antd";
-import dayjs from "dayjs";
 import { useTranslation } from "react-i18next";
+import { formatDate } from "@/utils/date-time";
 
 const { Text } = Typography;
 
@@ -35,7 +35,7 @@ export const ClientOrdersInfoBlock = ({
         <Text>
           {t("conversation.clientOrders.clientSince")}:{" "}
           <Text italic type="secondary">
-            {dayjs(linkedClient.createdAt).format("DD.MM.YYYY")}
+            {formatDate(linkedClient.createdAt)}
           </Text>
         </Text>
       </Flex>

@@ -13,6 +13,7 @@ import type {
   ProductsListSort,
 } from "@/features/products/model/product.types";
 import { PRODUCTS_DEFAULT_PAGE_SIZE } from "@/features/products/model/product.constants";
+import { throwLoadError } from "@/utils/throw-load-error";
 import { unknownErrorMessage } from "@/utils/unknown-error-message";
 
 import {
@@ -300,6 +301,7 @@ export class ProductsStore {
       runInAction(() => {
         this.listError = unknownErrorMessage(e);
       });
+      throwLoadError("Failed to load products", e);
     } finally {
       if (!silent) {
         runInAction(() => {
@@ -371,6 +373,8 @@ export class ProductsStore {
         this.activeProduct = data;
       });
       return data;
+    } catch (e) {
+      throwLoadError(`Failed to load product ${id}`, e);
     } finally {
       if (!options?.silent) {
         runInAction(() => {
@@ -399,10 +403,11 @@ export class ProductsStore {
           (a, b) => a.sortOrder - b.sortOrder,
         );
       });
-    } catch {
+    } catch (e) {
       runInAction(() => {
         this.variantCustomFields = [];
       });
+      throwLoadError("Failed to load product variant custom fields", e);
     } finally {
       runInAction(() => {
         this.variantCustomFieldsLoading = false;

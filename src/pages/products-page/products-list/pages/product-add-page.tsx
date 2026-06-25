@@ -1,5 +1,5 @@
-import { Spin } from "antd";
 import { observer } from "mobx-react-lite";
+import { CenteredSpinner } from "@/components/loading/centered-spinner";
 import { ProductForm } from "../form/product-form";
 import { ProductVariantImagesModal } from "../form/variants/product-variant-images-modal";
 import { useProductAddPageController } from "../controllers/use-product-add-page-controller";
@@ -12,16 +12,7 @@ export const ProductAddPage = observer(() => {
       {controller.contextHolder}
 
       {controller.pageLoading ? (
-        <div
-          style={{
-            minHeight: 420,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Spin size="large" />
-        </div>
+        <CenteredSpinner minHeight={420} size="large" />
       ) : (
         <>
           <ProductForm
