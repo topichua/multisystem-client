@@ -1,4 +1,4 @@
-import { Button, Form, Input, message } from "antd";
+import { Button, Form, Input } from "antd";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -6,6 +6,7 @@ import { authApi, type LoginRequest } from "@/features/auth/api/auth-api";
 import { useAuth } from "@/features/auth/model/use-auth";
 
 import * as S from "./login-page.styled";
+import { useNotification } from "@/shared/components/notification/use-notification";
 
 type LoginFormValues = LoginRequest;
 
@@ -13,7 +14,7 @@ export const LoginPage = () => {
   const { t } = useTranslation();
   const { login } = useAuth();
   const [form] = Form.useForm<LoginFormValues>();
-  const [messageApi, contextHolder] = message.useMessage();
+  const notification = useNotification();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (values: LoginFormValues) => {
@@ -25,7 +26,7 @@ export const LoginPage = () => {
         login(response.access_token);
       })
       .catch(() => {
-        messageApi.error(t("login.invalidCredentials"));
+        notification.error({ title: t("login.invalidCredentials") });
       })
       .finally(() => {
         setIsSubmitting(false);
@@ -34,7 +35,6 @@ export const LoginPage = () => {
 
   return (
     <S.Page>
-      {contextHolder}
       <S.FormSide>
         <S.LoginCard>
           <S.Header>

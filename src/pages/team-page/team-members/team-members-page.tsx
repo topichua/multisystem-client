@@ -1,13 +1,5 @@
 import { PlusIcon } from "@phosphor-icons/react";
-import {
-  Button,
-  Flex,
-  Form,
-  message,
-  Space,
-  Table,
-  Typography,
-} from "antd";
+import { Button, Flex, Form, Space, Table, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -23,6 +15,7 @@ import type {
 } from "@/features/workspace-members/model/workspace-member.types";
 import { useWorkspaceMembersStore } from "@/features/workspace-members/model/use-workspace-members-store";
 import { useWorkspaceRolesStore } from "@/features/workspace-roles/model/use-workspace-roles-store";
+import { useNotification } from "@/shared/components/notification/use-notification";
 
 import {
   TeamInviteModal,
@@ -38,7 +31,7 @@ export const TeamMembersPage = observer(() => {
   const store = useWorkspaceMembersStore();
   const rolesStore = useWorkspaceRolesStore();
   const userStore = useUserStore();
-  const [messageApi, contextHolder] = message.useMessage();
+  const notification = useNotification();
   const [form] = Form.useForm<TeamInviteFormValues>();
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
   const inviteDefaultRoleId = useMemo(
@@ -64,11 +57,13 @@ export const TeamMembersPage = observer(() => {
       try {
         await store.updateMember(memberId, payload);
       } catch (e) {
-        messageApi.error(getApiErrorMessage(e, t("team.memberUpdateError")));
+        notification.error({
+          message: getApiErrorMessage(e, t("team.memberUpdateError")),
+        });
         throw e;
       }
     },
-    [messageApi, store, t],
+    [notification, store, t],
   );
 
   const handleDeleteMember = useCallback(
@@ -76,31 +71,39 @@ export const TeamMembersPage = observer(() => {
       try {
         if (member.status === "inactive") {
           await store.removeInvite(member.id);
-          messageApi.success(t("team.actions.removeInviteSuccess"));
+          notification.success({
+            message: t("team.actions.removeInviteSuccess"),
+          });
           return;
         }
 
         await store.deactivateMember(member.id);
-        messageApi.success(t("team.actions.deactivateSuccess"));
+        notification.success({
+          message: t("team.actions.deactivateSuccess"),
+        });
       } catch (e) {
-        messageApi.error(getApiErrorMessage(e, t("team.actions.deleteError")));
+        notification.error({
+          message: getApiErrorMessage(e, t("team.actions.deleteError")),
+        });
       }
     },
-    [messageApi, store, t],
+    [notification, store, t],
   );
 
   const handleResendInvite = useCallback(
     async (member: WorkspaceMember): Promise<void> => {
       try {
         await store.resendInvite(member.id);
-        messageApi.success(t("team.actions.resendInviteSuccess"));
+        notification.success({
+          message: t("team.actions.resendInviteSuccess"),
+        });
       } catch (e) {
-        messageApi.error(
-          getApiErrorMessage(e, t("team.actions.resendInviteError")),
-        );
+        notification.error({
+          message: getApiErrorMessage(e, t("team.actions.resendInviteError")),
+        });
       }
     },
-    [messageApi, store, t],
+    [notification, store, t],
   );
 
   const columns = useTeamMembersTableColumns({
@@ -145,25 +148,23 @@ export const TeamMembersPage = observer(() => {
         role_id: values.roleId,
         skipConfirmation: false,
       });
-      messageApi.success(t("team.invite.success"));
+      notification.success({
+        message: t("team.invite.success"),
+      });
       closeInviteModal();
     } catch (e) {
-      messageApi.error(getApiErrorMessage(e, t("team.invite.error")));
+      notification.error({
+        message: getApiErrorMessage(e, t("team.invite.error")),
+      });
     }
-  }, [closeInviteModal, form, messageApi, store, t]);
+  }, [closeInviteModal, form, notification, store, t]);
 
   if (store.listLoading && store.members.length === 0) {
-    return (
-      <>
-        {contextHolder}
-        <CenteredSpinner />
-      </>
-    );
+    return <CenteredSpinner />;
   }
 
   return (
     <>
-      {contextHolder}
       <PaneDetailLayout.Root inset>
         <PaneDetailLayout.Header data-qa="layout-team-members-header">
           <Flex justify="space-between" align="center" gap={16} wrap="wrap">

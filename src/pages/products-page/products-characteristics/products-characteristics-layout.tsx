@@ -12,7 +12,6 @@ export const ProductsCharacteristicsLayout = observer(() => {
 
   return (
     <>
-      {controller.contextHolder}
       <PaneNavSplitLayout.Root
         data-qa="layout-products-characteristics-shell"
         customWidth={350}

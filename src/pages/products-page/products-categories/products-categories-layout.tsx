@@ -12,7 +12,6 @@ export const ProductsCategoriesLayout = observer(() => {
 
   return (
     <>
-      {controller.contextHolder}
       <PaneNavSplitLayout.Root
         data-qa="layout-products-categories-shell"
         customWidth={350}

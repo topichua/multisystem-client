@@ -1,4 +1,4 @@
-import { Alert, Radio, Select, Typography, message } from "antd";
+import { Alert, Radio, Select, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
@@ -15,6 +15,7 @@ import type { ThemePreference } from "@/theme/theme-mode.types";
 import { useThemeMode } from "@/theme/use-theme-mode";
 
 import * as S from "@/components/layout/form-card.styled";
+import { useNotification } from "@/shared/components/notification/use-notification";
 
 const { Title } = Typography;
 
@@ -22,7 +23,7 @@ export const SettingsSystemView = observer(() => {
   const { t, i18n } = useTranslation();
   const { preference, setPreference } = useThemeMode();
   const workspaceSettingsStore = useWorkspaceSettingsStore();
-  const [messageApi, contextHolder] = message.useMessage();
+  const notification = useNotification();
 
   const langValue = i18n.language.startsWith("uk") ? "uk" : "en";
 
@@ -40,15 +41,16 @@ export const SettingsSystemView = observer(() => {
       try {
         await workspaceSettingsStore.updateCurrency(currency);
       } catch (e) {
-        messageApi.error(getApiErrorMessage(e, t("system.currencySaveError")));
+        notification.error({
+          title: getApiErrorMessage(e, t("system.currencySaveError")),
+        });
       }
     },
-    [messageApi, t, workspaceSettingsStore],
+    [notification, t, workspaceSettingsStore],
   );
 
   return (
     <>
-      {contextHolder}
       <PaneDetailLayout.Root inset data-qa="layout-settings-system">
         <PaneDetailLayout.Header data-qa="layout-settings-system-header">
           <Title level={4} style={{ marginTop: 0 }}>

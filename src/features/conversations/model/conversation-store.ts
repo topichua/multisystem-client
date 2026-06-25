@@ -295,7 +295,10 @@ export class ConversationStore {
         runInAction(() => {
           this.messagesError = unknownErrorMessage(e);
         });
-        throwLoadError(`Failed to load messages for conversation ${conversationId}`, e);
+        throwLoadError(
+          `Failed to load messages for conversation ${conversationId}`,
+          e,
+        );
       })
       .finally(() => {
         runInAction(() => {

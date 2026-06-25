@@ -9,7 +9,6 @@ import {
   Menu,
   Modal,
   Typography,
-  message,
 } from "antd";
 import { observer } from "mobx-react-lite";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -29,6 +28,7 @@ import { useWorkspaceRolesStore } from "@/features/workspace-roles/model/use-wor
 import { DEFAULT_COLOR_PRESET } from "@/shared/components/preset-color-picker/color-presets";
 import { RoleDot } from "@/shared/components/role-dot/role-dot";
 import { slugifyAscii } from "@/utils/slugify";
+import { useNotification } from "@/shared/components/notification/use-notification";
 
 const { Text } = Typography;
 
@@ -42,7 +42,7 @@ export const TeamRolesPage = observer(() => {
   const store = useWorkspaceRolesStore();
   const navigate = useNavigate();
   const location = useLocation();
-  const [messageApi, contextHolder] = message.useMessage();
+  const notification = useNotification();
   const [createForm] = Form.useForm<TeamCreateRoleFormValues>();
   const [createModalOpen, setCreateModalOpen] = useState(false);
 
@@ -114,7 +114,7 @@ export const TeamRolesPage = observer(() => {
     const slug = slugifyAscii(name);
 
     if (!slug) {
-      messageApi.error(t("team.roleSlugGenerationError"));
+      notification.error({ title: t("team.roleSlugGenerationError") });
       return;
     }
 
@@ -128,7 +128,7 @@ export const TeamRolesPage = observer(() => {
           "orders.visibility": "mine",
         },
       });
-      messageApi.success(t("team.roleCreated"));
+      notification.success({ title: t("team.roleCreated") });
       closeCreateModal();
 
       const created = store.roles.find((role) => role.slug === slug);
@@ -136,13 +136,14 @@ export const TeamRolesPage = observer(() => {
         navigate(getTeamRolePath(created.id));
       }
     } catch (e) {
-      messageApi.error(getApiErrorMessage(e, t("team.roleCreateError")));
+      notification.error({
+        title: getApiErrorMessage(e, t("team.roleCreateError")),
+      });
     }
-  }, [closeCreateModal, createForm, messageApi, navigate, store, t]);
+  }, [closeCreateModal, createForm, notification, navigate, store, t]);
 
   return (
     <>
-      {contextHolder}
       <PaneNavSplitLayout.Root data-qa="layout-team-roles-shell">
         <PaneNavSplitLayout.SubSidebar data-qa="layout-team-roles-sidebar">
           <PaneSectionHeaderStack data-qa="layout-team-roles-header">

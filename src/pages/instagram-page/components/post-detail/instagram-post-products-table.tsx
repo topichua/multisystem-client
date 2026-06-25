@@ -4,16 +4,7 @@
 
 import { CaretRightIcon, TrashIcon } from "@phosphor-icons/react";
 import type { TableColumnsType } from "antd";
-import {
-  Button,
-  Card,
-  Empty,
-  Flex,
-  Table,
-  Typography,
-  message,
-  theme,
-} from "antd";
+import { Button, Card, Empty, Flex, Table, Typography, theme } from "antd";
 import { observer } from "mobx-react-lite";
 import { useCallback, useMemo, useState, type Key } from "react";
 import { useTranslation } from "react-i18next";
@@ -32,6 +23,7 @@ import {
 } from "@/features/products/utils/product-display";
 
 import * as S from "../../instagram-page.styled";
+import { useNotification } from "@/shared/components/notification/use-notification";
 
 const { Text } = Typography;
 
@@ -78,7 +70,7 @@ export const InstagramPostProductsTable = observer(
   ({ postId, products }: InstagramPostProductsTableProps) => {
     const { t } = useTranslation();
     const store = useInstagramStore();
-    const [messageApi, contextHolder] = message.useMessage();
+    const notification = useNotification();
     const { token } = theme.useToken();
     const [expandedRowKeys, setExpandedRowKeys] = useState<Key[]>([]);
 
@@ -94,15 +86,20 @@ export const InstagramPostProductsTable = observer(
             postId,
           })
           .then(() => {
-            messageApi.success(t("instagram.unlinkProductSuccess"));
+            notification.success({
+              title: t("instagram.unlinkProductSuccess"),
+            });
           })
           .catch((error: unknown) => {
-            messageApi.error(
-              getApiErrorMessage(error, t("instagram.unlinkProductFailed")),
-            );
+            notification.error({
+              title: getApiErrorMessage(
+                error,
+                t("instagram.unlinkProductFailed"),
+              ),
+            });
           });
       },
-      [messageApi, postId, store, t],
+      [notification, postId, store, t],
     );
 
     const renderUnlinkButton = useCallback(
@@ -366,7 +363,6 @@ export const InstagramPostProductsTable = observer(
 
     return (
       <>
-        {contextHolder}
         <S.PostProductsTableWrapper>
           <Table<InstagramPostProduct>
             rowKey={(product) => idToRowKey(product.id)}

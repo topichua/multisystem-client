@@ -1,5 +1,5 @@
 import type { MenuProps } from "antd";
-import { Button, Form, Menu, message } from "antd";
+import { Button, Form, Menu } from "antd";
 import { observer } from "mobx-react-lite";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -19,13 +19,14 @@ import { ColorLabelRow } from "@/shared/components/color-label-row/color-label-r
 import { DEFAULT_COLOR_PRESET } from "@/shared/components/preset-color-picker/color-presets";
 
 import { GroupFormModal, type GroupFormValues } from "./group-form-modal";
+import { useNotification } from "@/shared/components/notification/use-notification";
 
 export const SettingsGroupsLayout = observer(() => {
   const { t } = useTranslation();
   const store = useConversationGroupsStore();
   const navigate = useNavigate();
   const location = useLocation();
-  const [messageApi, contextHolder] = message.useMessage();
+  const notification = useNotification();
   const [form] = Form.useForm<GroupFormValues>();
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -80,7 +81,7 @@ export const SettingsGroupsLayout = observer(() => {
 
     try {
       await store.createGroup(payload);
-      messageApi.success(t("groups.created"));
+      notification.success({ title: t("groups.created") });
       closeModal();
       const created = store.groups.find(
         (g) => g.name.trim() === values.name.trim(),
@@ -89,14 +90,15 @@ export const SettingsGroupsLayout = observer(() => {
         navigate(getSettingsGroupPath(created.id));
       }
     } catch (e) {
-      messageApi.error(getApiErrorMessage(e, t("groups.createError")));
+      notification.error({
+        title: getApiErrorMessage(e, t("groups.createError")),
+      });
       return Promise.reject();
     }
-  }, [closeModal, form, messageApi, navigate, store, t]);
+  }, [closeModal, form, notification, navigate, store, t]);
 
   return (
     <>
-      {contextHolder}
       <PaneNavSplitLayout.Root data-qa="layout-settings-groups-shell">
         <PaneNavSplitLayout.SubSidebar data-qa="layout-settings-groups-sidebar">
           <PaneSectionHeaderStack data-qa="layout-settings-groups-header">

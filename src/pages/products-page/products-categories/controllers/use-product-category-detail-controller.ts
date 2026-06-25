@@ -1,4 +1,3 @@
-import { message } from "antd";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router";
@@ -10,6 +9,7 @@ import { useCategoriesStore } from "@/features/categories/model/use-categories-s
 import { isCategoryDeleteHasChildrenError } from "@/features/categories/utils/category-delete-error";
 
 import { CATEGORY_NAME_MAX_LENGTH } from "../products-categories.constants";
+import { useNotification } from "@/shared/components/notification/use-notification";
 import {
   resolveNextCategoryIdAfterDelete,
   sortCategoriesByName,
@@ -20,7 +20,7 @@ export const useProductCategoryDetailController = () => {
   const { categoryId } = useParams<{ categoryId: string }>();
   const navigate = useNavigate();
   const store = useCategoriesStore();
-  const [messageApi, contextHolder] = message.useMessage();
+  const notification = useNotification();
   const [isAddingSubcategory, setIsAddingSubcategory] = useState(false);
   const [subcategoryName, setSubcategoryName] = useState("");
   const [deleteBlockedByApi, setDeleteBlockedByApi] = useState(false);
@@ -71,18 +71,18 @@ export const useProductCategoryDetailController = () => {
   const validateCategoryName = useCallback(
     (name: string): boolean => {
       if (!name) {
-        messageApi.error(t("categories.nameRequired"));
+        notification.error({ title: t("categories.nameRequired") });
         return false;
       }
 
       if (name.length > CATEGORY_NAME_MAX_LENGTH) {
-        messageApi.error(t("categories.nameTooLong"));
+        notification.error({ title: t("categories.nameTooLong") });
         return false;
       }
 
       return true;
     },
-    [messageApi, t],
+    [notification, t],
   );
 
   const cancelRenameCategory = useCallback(() => {
@@ -149,16 +149,18 @@ export const useProductCategoryDetailController = () => {
         name,
         parentId: category.parentId,
       });
-      messageApi.success(t("categories.updated"));
+      notification.success({ title: t("categories.updated") });
       cancelRenameCategory();
       await store.loadCategoryById(category.id, { silent: true });
     } catch (error) {
-      messageApi.error(getApiErrorMessage(error, t("categories.updateFailed")));
+      notification.error({
+        title: getApiErrorMessage(error, t("categories.updateFailed")),
+      });
     }
   }, [
     cancelRenameCategory,
     category,
-    messageApi,
+    notification,
     renamingCategoryName,
     store,
     t,
@@ -180,16 +182,18 @@ export const useProductCategoryDetailController = () => {
 
     try {
       await store.createCategory({ name, parentId });
-      messageApi.success(t("categories.createSuccess"));
+      notification.success({ title: t("categories.createSuccess") });
       closeAddSubcategory();
       await store.loadCategoryById(parentId, { silent: true });
     } catch (error) {
-      messageApi.error(getApiErrorMessage(error, t("categories.createFailed")));
+      notification.error({
+        title: getApiErrorMessage(error, t("categories.createFailed")),
+      });
     }
   }, [
     category,
     closeAddSubcategory,
-    messageApi,
+    notification,
     store,
     subcategoryName,
     t,
@@ -210,7 +214,7 @@ export const useProductCategoryDetailController = () => {
 
     try {
       await store.deleteCategory(category.id);
-      messageApi.success(t("categories.deleted"));
+      notification.success({ title: t("categories.deleted") });
 
       if (nextCategoryId != null) {
         navigate(getProductCategoryPath(nextCategoryId));
@@ -224,9 +228,11 @@ export const useProductCategoryDetailController = () => {
         return;
       }
 
-      messageApi.error(getApiErrorMessage(error, t("categories.deleteFailed")));
+      notification.error({
+        title: getApiErrorMessage(error, t("categories.deleteFailed")),
+      });
     }
-  }, [category, messageApi, navigate, store, t]);
+  }, [category, notification, navigate, store, t]);
 
   const handleDeleteSubcategory = useCallback(
     async (childId: number) => {
@@ -236,20 +242,20 @@ export const useProductCategoryDetailController = () => {
           cancelRenameSubcategory();
         }
         setDeleteBlockedByApi(false);
-        messageApi.success(t("categories.deleted"));
+        notification.success({ title: t("categories.deleted") });
         if (currentCategoryId != null) {
           await store.loadCategoryById(currentCategoryId, { silent: true });
         }
       } catch (error) {
-        messageApi.error(
-          getApiErrorMessage(error, t("categories.deleteFailed")),
-        );
+        notification.error({
+          title: getApiErrorMessage(error, t("categories.deleteFailed")),
+        });
       }
     },
     [
       cancelRenameSubcategory,
       currentCategoryId,
-      messageApi,
+      notification,
       renamingSubcategoryId,
       store,
       t,
@@ -273,21 +279,21 @@ export const useProductCategoryDetailController = () => {
 
       try {
         await store.updateCategory(childId, { name, parentId });
-        messageApi.success(t("categories.updated"));
+        notification.success({ title: t("categories.updated") });
         cancelRenameSubcategory();
         if (currentCategoryId != null) {
           await store.loadCategoryById(currentCategoryId, { silent: true });
         }
       } catch (error) {
-        messageApi.error(
-          getApiErrorMessage(error, t("categories.updateFailed")),
-        );
+        notification.error({
+          title: getApiErrorMessage(error, t("categories.updateFailed")),
+        });
       }
     },
     [
       cancelRenameSubcategory,
       currentCategoryId,
-      messageApi,
+      notification,
       renamingSubcategoryName,
       store,
       subcategories,
@@ -301,7 +307,6 @@ export const useProductCategoryDetailController = () => {
   }, [navigate]);
 
   return {
-    contextHolder,
     category,
     subcategories,
     isInvalidCategoryId: categoryIdNumber == null,

@@ -1,4 +1,4 @@
-import { Form, message } from "antd";
+import { Form } from "antd";
 import { observer } from "mobx-react-lite";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -10,6 +10,7 @@ import { PaneNavSplitLayout } from "@/components/layout/pane-nav-split-layout";
 import { useMessageTemplatesStore } from "@/features/message-templates/model/use-message-templates-store";
 
 import { SettingsTemplatesSidebar } from "./settings-templates-sidebar";
+import { useNotification } from "@/shared/components/notification/use-notification";
 import {
   TemplateFormModal,
   type TemplateFormValues,
@@ -20,7 +21,7 @@ export const SettingsTemplatesLayout = observer(() => {
   const store = useMessageTemplatesStore();
   const navigate = useNavigate();
   const location = useLocation();
-  const [messageApi, contextHolder] = message.useMessage();
+  const notification = useNotification();
   const [form] = Form.useForm<TemplateFormValues>();
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -74,20 +75,21 @@ export const SettingsTemplatesLayout = observer(() => {
         name: values.name.trim(),
         template: values.template ?? "",
       });
-      messageApi.success(t("templates.created"));
+      notification.success({ title: t("templates.created") });
       closeModal();
       if (created) {
         navigate(getSettingsTemplatePath(created.id));
       }
     } catch (e) {
-      messageApi.error(getApiErrorMessage(e, t("templates.createError")));
+      notification.error({
+        title: getApiErrorMessage(e, t("templates.createError")),
+      });
       return Promise.reject();
     }
-  }, [closeModal, form, messageApi, navigate, store, t]);
+  }, [closeModal, form, notification, navigate, store, t]);
 
   return (
     <>
-      {contextHolder}
       <PaneNavSplitLayout.Root data-qa="layout-settings-templates-shell">
         <SettingsTemplatesSidebar
           templates={sortedTemplates}

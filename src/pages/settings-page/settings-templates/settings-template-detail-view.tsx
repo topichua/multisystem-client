@@ -1,4 +1,4 @@
-import { Alert, Button, Form, Input, message } from "antd";
+import { Alert, Button, Form, Input } from "antd";
 import { observer } from "mobx-react-lite";
 import { useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -14,13 +14,14 @@ import { useMessageTemplatesStore } from "@/features/message-templates/model/use
 import { getTemplateCharacterCount } from "./settings-templates.utils";
 import { TemplateDetailHeader } from "./template-detail-header";
 import type { TemplateFormValues } from "./template-form-modal";
+import { useNotification } from "@/shared/components/notification/use-notification";
 
 export const SettingsTemplateDetailView = observer(() => {
   const { t } = useTranslation();
   const { templateId } = useParams<{ templateId: string }>();
   const navigate = useNavigate();
   const store = useMessageTemplatesStore();
-  const [messageApi, contextHolder] = message.useMessage();
+  const notification = useNotification();
   const [form] = Form.useForm<TemplateFormValues>();
   const templateBody = Form.useWatch("template", form) ?? "";
 
@@ -73,11 +74,13 @@ export const SettingsTemplateDetailView = observer(() => {
         name: values.name.trim(),
         template: values.template ?? "",
       });
-      messageApi.success(t("templates.updated"));
+      notification.success({ title: t("templates.updated") });
     } catch (e) {
-      messageApi.error(getApiErrorMessage(e, t("templates.updateError")));
+      notification.error({
+        title: getApiErrorMessage(e, t("templates.updateError")),
+      });
     }
-  }, [form, messageApi, store, t, template]);
+  }, [form, notification, store, t, template]);
 
   const handleDelete = useCallback(async () => {
     if (!template) {
@@ -86,12 +89,14 @@ export const SettingsTemplateDetailView = observer(() => {
 
     try {
       await store.deleteTemplate(template.id);
-      messageApi.success(t("templates.deleted"));
+      notification.success({ title: t("templates.deleted") });
       pickNavigateAfterDelete();
     } catch (e) {
-      messageApi.error(getApiErrorMessage(e, t("templates.deleteError")));
+      notification.error({
+        title: getApiErrorMessage(e, t("templates.deleteError")),
+      });
     }
-  }, [messageApi, pickNavigateAfterDelete, store, t, template]);
+  }, [notification, pickNavigateAfterDelete, store, t, template]);
 
   if (!Number.isFinite(idNum)) {
     return (
@@ -128,7 +133,6 @@ export const SettingsTemplateDetailView = observer(() => {
 
   return (
     <>
-      {contextHolder}
       <PaneDetailLayout.Root inset data-qa="layout-settings-template-detail">
         <PaneDetailLayout.Header data-qa="layout-settings-template-detail-header">
           <TemplateDetailHeader

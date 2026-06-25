@@ -1,4 +1,4 @@
-import { message, type TableProps } from "antd";
+import { type TableProps } from "antd";
 import { useCallback, useEffect, useMemo, useState, type Key } from "react";
 import { useLocation, useNavigate } from "react-router";
 
@@ -10,6 +10,7 @@ import type { Product } from "@/features/products/model/product.types";
 import { readProductsListReturnSearch } from "@/features/products/model/products-list-url";
 import { useProductsStore } from "@/features/products/model/use-products-store";
 import { useTranslation } from "react-i18next";
+import { useNotification } from "@/shared/components/notification/use-notification";
 
 export const useProductsListController = () => {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ export const useProductsListController = () => {
   const productsStore = useProductsStore();
   const categoriesStore = useCategoriesStore();
   const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
-  const [messageApi, contextHolder] = message.useMessage();
+  const notification = useNotification();
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -66,16 +67,18 @@ export const useProductsListController = () => {
     async (productId: number, options?: { navigateToList?: boolean }) => {
       try {
         await productsStore.deleteProduct(productId);
-        messageApi.success(t("products.deleteSuccess"));
+        notification.success({ title: t("products.deleteSuccess") });
 
         if (options?.navigateToList) {
           navigateToProductsList();
         }
       } catch (e) {
-        messageApi.error(getApiErrorMessage(e, t("products.deleteFailed")));
+        notification.error({
+          title: getApiErrorMessage(e, t("products.deleteFailed")),
+        });
       }
     },
-    [messageApi, navigateToProductsList, productsStore, t],
+    [notification, navigateToProductsList, productsStore, t],
   );
 
   const loadVariantCustomFields = useCallback(() => {
@@ -92,6 +95,5 @@ export const useProductsListController = () => {
     isVariantCustomFieldsLoading: productsStore.variantCustomFieldsLoading,
     loadVariantCustomFields,
     handleDeleteById,
-    contextHolder,
   };
 };

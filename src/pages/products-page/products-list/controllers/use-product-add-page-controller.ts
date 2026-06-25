@@ -1,4 +1,4 @@
-import { Form, message } from "antd";
+import { Form } from "antd";
 import type { FormInstance } from "antd";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
@@ -28,9 +28,9 @@ import {
 } from "./use-product-variant-images-controller";
 import { useProductVariantsController } from "./use-product-variants-controller";
 import { useInstagramAiProductFillController } from "./use-instagram-ai-product-fill-controller";
+import { useNotification } from "@/shared/components/notification/use-notification";
 
 export type ProductAddPageControllerReturn = {
-  contextHolder: React.ReactElement;
   pageLoading: boolean;
   form: FormInstance<ProductAddFormValues>;
   initialValues: ProductAddFormValues;
@@ -80,7 +80,7 @@ export const useProductAddPageController =
     } = useProductsListController();
     const { t } = useTranslation();
     const { productId } = useParams();
-    const [messageApi, contextHolder] = message.useMessage();
+    const notification = useNotification();
     const [form] = Form.useForm<ProductAddFormValues>();
     const parsedProductId = productId ? Number(productId) : null;
     const editingProductId =
@@ -92,7 +92,7 @@ export const useProductAddPageController =
     const variantsController = useProductVariantsController({
       form,
       isEditMode,
-      messageApi,
+      notification,
       variantCustomFields,
       isVariantCustomFieldsLoading,
     });
@@ -108,7 +108,7 @@ export const useProductAddPageController =
       onReorder: handleReorderProductMedia,
     }: ProductMediaControllerReturn = useProductMediaController({
       getProductVariants: variantsController.getProductVariantsWithFormValues,
-      messageApi,
+      notification,
       texts: {
         invalidType: t("products.media.invalidType"),
         tooLarge: t("products.media.tooLarge"),
@@ -142,7 +142,7 @@ export const useProductAddPageController =
     const isInitialEditLoading = useProductEditBootstrap({
       editingProductId,
       form,
-      messageApi,
+      notification,
       navigateToProductsList,
       productsStore,
       setProductType: variantsController.setProductType,
@@ -158,7 +158,7 @@ export const useProductAddPageController =
       getProductVariantsWithFormValues:
         variantsController.getProductVariantsWithFormValues,
       isEditMode,
-      messageApi,
+      notification,
       navigateToProductsList,
       productMedia: uploadedProductMedia,
       productType: variantsController.productType,
@@ -172,7 +172,7 @@ export const useProductAddPageController =
       categoryOptions,
       form,
       loadVariantCustomFields,
-      messageApi,
+      notification,
       productsStore,
       setProductMedia,
       uploadedProductMedia,
@@ -186,7 +186,6 @@ export const useProductAddPageController =
     const requiredMessage = t("products.form.required");
 
     return {
-      contextHolder,
       pageLoading: isInitialEditLoading,
       form,
       initialValues: {

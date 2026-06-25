@@ -1,4 +1,4 @@
-import { Alert, Button, Flex, Form, message, Typography } from "antd";
+import { Alert, Button, Flex, Form, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -12,6 +12,7 @@ import * as S from "@/components/layout/form-card.styled";
 import type { OrderStatusUpdatePayload } from "@/features/orders/model/order.types";
 import { useOrdersStore } from "@/features/orders/model/use-orders-store";
 import { formatOrderStatusName } from "@/features/orders/utils/format-order-status-name";
+import { useNotification } from "@/shared/components/notification/use-notification";
 
 import {
   OrderStatusFormFields,
@@ -25,7 +26,7 @@ export const OrderStatusDetailView = observer(() => {
   const { statusId } = useParams<{ statusId: string }>();
   const navigate = useNavigate();
   const store = useOrdersStore();
-  const [messageApi, contextHolder] = message.useMessage();
+  const notification = useNotification();
   const [form] = Form.useForm<OrderStatusFormValues>();
 
   const idNum = statusId != null ? Number(statusId) : NaN;
@@ -67,11 +68,13 @@ export const OrderStatusDetailView = observer(() => {
 
     try {
       await store.updateStatus(status.id, payload);
-      messageApi.success(t("orderStatuses.updated"));
+      notification.success({ title: t("orderStatuses.updated") });
     } catch (e) {
-      messageApi.error(getApiErrorMessage(e, t("orderStatuses.updateError")));
+      notification.error({
+        title: getApiErrorMessage(e, t("orderStatuses.updateError")),
+      });
     }
-  }, [form, messageApi, status, store, t]);
+  }, [form, notification, status, store, t]);
 
   if (!Number.isFinite(idNum)) {
     return (
@@ -108,7 +111,6 @@ export const OrderStatusDetailView = observer(() => {
 
   return (
     <>
-      {contextHolder}
       <PaneDetailLayout.Root inset data-qa="layout-order-status-detail">
         <PaneDetailLayout.Header data-qa="layout-order-status-detail-header">
           <Flex justify="space-between" align="flex-start" gap={16} wrap="wrap">

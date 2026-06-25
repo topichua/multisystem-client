@@ -1,4 +1,4 @@
-import { Alert, message } from "antd";
+import { Alert } from "antd";
 import { observer } from "mobx-react-lite";
 import { useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -22,6 +22,7 @@ import { CenteredSpinner } from "@/components/loading/centered-spinner";
 import { useOrdersStore } from "@/features/orders/model/use-orders-store";
 
 import { OrderStatusesNavList } from "./order-statuses-nav-list";
+import { useNotification } from "@/shared/components/notification/use-notification";
 
 export const OrderStatusesLayout = observer(() => {
   const { t } = useTranslation();
@@ -29,7 +30,7 @@ export const OrderStatusesLayout = observer(() => {
   const navigate = useNavigate();
   const location = useLocation();
   const { statusId: statusIdParam } = useParams<{ statusId?: string }>();
-  const [messageApi, contextHolder] = message.useMessage();
+  const notification = useNotification();
 
   useEffect(() => {
     void store.loadStatuses({ force: true });
@@ -80,17 +81,16 @@ export const OrderStatusesLayout = observer(() => {
       try {
         await store.reorderStatuses(ids);
       } catch (e) {
-        messageApi.error(
-          getApiErrorMessage(e, t("orderStatuses.reorderError")),
-        );
+        notification.error({
+          title: getApiErrorMessage(e, t("orderStatuses.reorderError")),
+        });
       }
     },
-    [messageApi, sortedStatuses, store, t],
+    [notification, sortedStatuses, store, t],
   );
 
   return (
     <>
-      {contextHolder}
       <PaneNavSplitLayout.Root data-qa="layout-order-statuses-shell">
         <PaneNavSplitLayout.SubSidebar data-qa="layout-order-statuses-sidebar">
           <PaneSectionHeaderStack data-qa="layout-order-statuses-header">

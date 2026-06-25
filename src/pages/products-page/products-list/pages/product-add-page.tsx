@@ -9,8 +9,6 @@ export const ProductAddPage = observer(() => {
 
   return (
     <>
-      {controller.contextHolder}
-
       {controller.pageLoading ? (
         <CenteredSpinner minHeight={420} size="large" />
       ) : (

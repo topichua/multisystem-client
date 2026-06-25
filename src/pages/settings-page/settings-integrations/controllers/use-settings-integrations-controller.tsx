@@ -1,4 +1,4 @@
-import { Modal, message } from "antd";
+import { Modal } from "antd";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -11,6 +11,7 @@ import {
 import type { IntegrationItem } from "@/features/integrations/model/integration.types";
 import { isIntegrationNotAvailableError } from "@/features/integrations/model/integrations-store";
 import { useIntegrationsStore } from "@/features/integrations/model/use-integrations-store";
+import { useNotification } from "@/shared/components/notification/use-notification";
 
 import {
   createEmptyIntegrationsByType,
@@ -23,7 +24,7 @@ import {
 
 export function useSettingsIntegrationsController() {
   const store = useIntegrationsStore();
-  const [messageApi, contextHolder] = message.useMessage();
+  const notification = useNotification();
   const { t } = useTranslation();
   const [query, setQuery] = useState("");
   const [selectedFilter, setSelectedFilter] =
@@ -109,17 +110,19 @@ export function useSettingsIntegrationsController() {
         onOk: async () => {
           try {
             await store.disconnectIntegration(integration.type, integration.id);
-            messageApi.success(t("integrations.disconnectSuccess"));
+            notification.success({
+              title: t("integrations.disconnectSuccess"),
+            });
           } catch (e) {
-            messageApi.error(
-              getApiErrorMessage(e, t("integrations.disconnectFailed")),
-            );
+            notification.error({
+              title: getApiErrorMessage(e, t("integrations.disconnectFailed")),
+            });
             return Promise.reject();
           }
         },
       });
     },
-    [messageApi, store, t],
+    [notification, store, t],
   );
 
   const handleConnectType = useCallback(
@@ -135,21 +138,20 @@ export function useSettingsIntegrationsController() {
         }
 
         closeIntegrationAuthWindow(authWindow);
-        messageApi.success(t("integrations.connectSuccess"));
+        notification.success({ title: t("integrations.connectSuccess") });
       } catch (e) {
         closeIntegrationAuthWindow(authWindow);
-        messageApi.error(
-          isIntegrationNotAvailableError(e)
+        notification.error({
+          title: isIntegrationNotAvailableError(e)
             ? t("integrations.notAvailableYet")
             : getApiErrorMessage(e, t("integrations.connectFailed")),
-        );
+        });
       }
     },
-    [messageApi, store, t],
+    [notification, store, t],
   );
 
   return {
-    contextHolder,
     store,
     query,
     selectedFilter,

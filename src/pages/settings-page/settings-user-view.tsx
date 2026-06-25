@@ -1,4 +1,4 @@
-import { Button, Form, Input, Typography, Upload, message } from "antd";
+import { Button, Form, Input, Typography, Upload } from "antd";
 import type { UploadProps } from "antd";
 import ImgCrop from "antd-img-crop";
 import { observer } from "mobx-react-lite";
@@ -16,6 +16,7 @@ import type { AuthUserRole } from "@/features/auth/model/auth-session.types";
 import { useUserStore } from "@/features/auth/model/use-user-store";
 
 import * as S from "./settings-user-view.styled";
+import { useNotification } from "@/shared/components/notification/use-notification";
 
 const { Title } = Typography;
 
@@ -45,7 +46,7 @@ function getPhoneFromMetadata(
 export const SettingsUserView = observer(() => {
   const { t } = useTranslation();
   const userStore = useUserStore();
-  const [messageApi, contextHolder] = message.useMessage();
+  const notification = useNotification();
   const [form] = Form.useForm<UserSettingsFormValues>();
   const [profileSaving, setProfileSaving] = useState(false);
   const [avatarUploading, setAvatarUploading] = useState(false);
@@ -86,16 +87,19 @@ export const SettingsUserView = observer(() => {
           phone: values.phone?.trim() || undefined,
         });
         await userStore.loadAuth();
-        messageApi.success(t("userSettings.profileUpdateSuccess"));
+        notification.success({ title: t("userSettings.profileUpdateSuccess") });
       } catch (error) {
-        messageApi.error(
-          getApiErrorMessage(error, t("userSettings.profileUpdateError")),
-        );
+        notification.error({
+          title: getApiErrorMessage(
+            error,
+            t("userSettings.profileUpdateError"),
+          ),
+        });
       } finally {
         setProfileSaving(false);
       }
     },
-    [messageApi, t, userStore],
+    [notification, t, userStore],
   );
 
   const handleAvatarBeforeUpload: UploadProps["beforeUpload"] = useCallback(
@@ -106,12 +110,17 @@ export const SettingsUserView = observer(() => {
         .updateAvatar(file)
         .then(() => userStore.loadAuth())
         .then(() => {
-          messageApi.success(t("userSettings.avatarUpdateSuccess"));
+          notification.success({
+            title: t("userSettings.avatarUpdateSuccess"),
+          });
         })
         .catch((error) => {
-          messageApi.error(
-            getApiErrorMessage(error, t("userSettings.avatarUpdateError")),
-          );
+          notification.error({
+            title: getApiErrorMessage(
+              error,
+              t("userSettings.avatarUpdateError"),
+            ),
+          });
         })
         .finally(() => {
           setAvatarUploading(false);
@@ -119,12 +128,11 @@ export const SettingsUserView = observer(() => {
 
       return Upload.LIST_IGNORE;
     },
-    [messageApi, t, userStore],
+    [notification, t, userStore],
   );
 
   return (
     <>
-      {contextHolder}
       <PaneDetailLayout.Root inset data-qa="layout-settings-user">
         <PaneDetailLayout.Header data-qa="layout-settings-user-header">
           <Title level={4} style={{ marginTop: 0 }}>

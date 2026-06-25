@@ -17,8 +17,8 @@ export type ProductMediaUploadRequestOptions = Parameters<
 >[0];
 
 type ProductMediaMessageApi = {
-  error: (content: string) => void;
-  warning: (content: string) => void;
+  error: (config: { title: string }) => void;
+  warning: (config: { title: string }) => void;
 };
 
 type ProductMediaTexts = {
@@ -30,7 +30,7 @@ type ProductMediaTexts = {
 
 export type UseProductMediaControllerParams = {
   getProductVariants: () => ProductVariantUi[];
-  messageApi: ProductMediaMessageApi;
+  notification: ProductMediaMessageApi;
   texts: ProductMediaTexts;
 };
 
@@ -47,7 +47,7 @@ export type ProductMediaControllerReturn = {
 
 export function useProductMediaController({
   getProductVariants,
-  messageApi,
+  notification,
   texts,
 }: UseProductMediaControllerParams): ProductMediaControllerReturn {
   const [uploadedProductMedia, setUploadedProductMedia] = useState<
@@ -73,7 +73,7 @@ export function useProductMediaController({
 
       if (validationError) {
         options.onError?.(new Error(validationError));
-        messageApi.error(validationError);
+        notification.error({ title: validationError });
         return;
       }
 
@@ -86,12 +86,14 @@ export function useProductMediaController({
         options.onSuccess?.(uploaded);
       } catch (error) {
         options.onError?.(error as Error);
-        messageApi.error(getApiErrorMessage(error, texts.uploadFailed));
+        notification.error({
+          title: getApiErrorMessage(error, texts.uploadFailed),
+        });
       } finally {
         setProductMediaUploadingCount((count) => Math.max(0, count - 1));
       }
     },
-    [messageApi, texts.invalidType, texts.tooLarge, texts.uploadFailed],
+    [notification, texts.invalidType, texts.tooLarge, texts.uploadFailed],
   );
 
   const onDelete = useCallback(
@@ -99,7 +101,7 @@ export function useProductMediaController({
       const variants = getProductVariants();
 
       if (isProductMediaUsedByVariants(mediaId, variants)) {
-        messageApi.warning(texts.usedByVariants);
+        notification.warning({ title: texts.usedByVariants });
         return;
       }
 
@@ -111,7 +113,7 @@ export function useProductMediaController({
         current === mediaId ? null : current,
       );
     },
-    [getProductVariants, messageApi, texts.usedByVariants],
+    [getProductVariants, notification, texts.usedByVariants],
   );
 
   const onReorder = useCallback(
@@ -144,13 +146,13 @@ export function useProductMediaController({
         tooLarge: texts.tooLarge,
       });
       if (validationError) {
-        messageApi.error(validationError);
+        notification.error({ title: validationError });
         return Upload.LIST_IGNORE;
       }
 
       return true;
     },
-    [messageApi, texts.invalidType, texts.tooLarge],
+    [notification, texts.invalidType, texts.tooLarge],
   );
 
   return {

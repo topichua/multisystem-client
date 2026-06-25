@@ -1,4 +1,4 @@
-import { Form, message } from "antd";
+import { Form } from "antd";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -10,6 +10,7 @@ import type {
 } from "@/features/orders/model/order.types";
 import { useOrdersStore } from "@/features/orders/model/use-orders-store";
 import type { CatalogVariant } from "@/features/products/model/product.types";
+import { useNotification } from "@/shared/components/notification/use-notification";
 
 const MIN_SEARCH_LENGTH = 3;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -33,7 +34,7 @@ export function useClientOrderCreateController({
 }: UseClientOrderCreateControllerParams) {
   const { t } = useTranslation();
   const ordersStore = useOrdersStore();
-  const [messageApi, contextHolder] = message.useMessage();
+  const notification = useNotification();
   const [form] = Form.useForm<OrderFormValues>();
   const [searchQuery, setSearchQuery] = useState("");
   const [productPickerKey, setProductPickerKey] = useState(0);
@@ -162,23 +163,25 @@ export function useClientOrderCreateController({
         orderLines,
         formValues,
       });
-      messageApi.success(t("conversation.clientOrders.placeOrderSuccess"));
+      notification.success({
+        title: t("conversation.clientOrders.placeOrderSuccess"),
+      });
       resetDrawerState();
       onOrderCreated?.();
       onClose();
     } catch (error) {
-      messageApi.error(
-        getApiErrorMessage(
+      notification.error({
+        title: getApiErrorMessage(
           error,
           t("conversation.clientOrders.placeOrderFailed"),
         ),
-      );
+      });
     }
   }, [
     conversationId,
     form,
     linkedClient,
-    messageApi,
+    notification,
     onClose,
     onOrderCreated,
     orderLines,
@@ -233,7 +236,6 @@ export function useClientOrderCreateController({
 
   return {
     catalogSearchLoading: ordersStore.catalogSearchLoading,
-    contextHolder,
     createLoading: ordersStore.createLoading,
     form,
     orderLines,

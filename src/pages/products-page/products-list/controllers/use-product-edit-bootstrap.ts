@@ -15,13 +15,13 @@ import type {
 import { syncProductVariantsToForm } from "../form/variants/product-add-variant.utils";
 
 type ProductEditBootstrapMessageApi = {
-  error: (content: string) => void;
+  error: (config: { title: string }) => void;
 };
 
 type UseProductEditBootstrapParams = {
   editingProductId: number | null;
   form: FormInstance<ProductAddFormValues>;
-  messageApi: ProductEditBootstrapMessageApi;
+  notification: ProductEditBootstrapMessageApi;
   navigateToProductsList: () => void;
   productsStore: ProductsStore;
   setProductType: (productType: ProductType) => void;
@@ -34,7 +34,7 @@ type UseProductEditBootstrapParams = {
 export function useProductEditBootstrap({
   editingProductId,
   form,
-  messageApi,
+  notification,
   navigateToProductsList,
   productsStore,
   setProductType,
@@ -76,9 +76,9 @@ export function useProductEditBootstrap({
         form.setFieldsValue(detailFormState.formValues);
         syncProductVariantsToForm(form, detailFormState.variants);
       } catch (error) {
-        messageApi.error(
-          getApiErrorMessage(error, t("products.detailLoadFailed")),
-        );
+        notification.error({
+          title: getApiErrorMessage(error, t("products.detailLoadFailed")),
+        });
         navigateToProductsList();
         throwLoadError(`Failed to load product ${editingProductId}`, error);
       } finally {
@@ -94,7 +94,7 @@ export function useProductEditBootstrap({
   }, [
     editingProductId,
     form,
-    messageApi,
+    notification,
     navigateToProductsList,
     productsStore,
     setApplyingInitialEditValues,

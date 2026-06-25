@@ -1,5 +1,5 @@
 import { PlusIcon } from "@phosphor-icons/react";
-import { Button, Flex, Popover, Select, Spin, Typography, message } from "antd";
+import { Button, Flex, Popover, Select, Spin, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -11,6 +11,7 @@ import { CatalogVariantSearchItem } from "@/features/products/components/catalog
 import type { CatalogVariant } from "@/features/products/model/product.types";
 
 import * as S from "../../instagram-page.styled";
+import { useNotification } from "@/shared/components/notification/use-notification";
 
 const { Text } = Typography;
 
@@ -33,7 +34,7 @@ export const InstagramLinkProductPicker = observer(
   ({ disabled, permalink, postId }: InstagramLinkProductPickerProps) => {
     const { t } = useTranslation();
     const store = useInstagramStore();
-    const [messageApi, contextHolder] = message.useMessage();
+    const notification = useNotification();
     const [open, setOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [variants, setVariants] = useState<CatalogVariant[]>([]);
@@ -138,20 +139,22 @@ export const InstagramLinkProductPicker = observer(
             permalink,
           })
           .then(() => {
-            messageApi.success(t("instagram.linkProductSuccess"));
+            notification.success({ title: t("instagram.linkProductSuccess") });
           })
           .catch((error: unknown) => {
-            messageApi.error(
-              getApiErrorMessage(error, t("instagram.linkProductFailed")),
-            );
+            notification.error({
+              title: getApiErrorMessage(
+                error,
+                t("instagram.linkProductFailed"),
+              ),
+            });
           });
       },
-      [messageApi, permalink, postId, resetSearch, store, t, variantsById],
+      [notification, permalink, postId, resetSearch, store, t, variantsById],
     );
 
     return (
       <>
-        {contextHolder}
         <Popover
           arrow={false}
           content={

@@ -1,4 +1,4 @@
-import { Form, message } from "antd";
+import { Form } from "antd";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { matchPath, useLocation, useNavigate } from "react-router";
@@ -7,6 +7,7 @@ import { getApiErrorMessage } from "@/api/get-api-error-message";
 import { getProductCharacteristicPath, pagesMap } from "@/app/router/pages-map";
 import type { CharacteristicFieldType } from "@/features/characteristics/model/characteristic.types";
 import { useCharacteristicsStore } from "@/features/characteristics/model/use-characteristics-store";
+import { useNotification } from "@/shared/components/notification/use-notification";
 
 import {
   buildUniqueCharacteristicKey,
@@ -29,7 +30,7 @@ export const useProductsCharacteristicsLayoutController = () => {
   const store = useCharacteristicsStore();
   const navigate = useNavigate();
   const location = useLocation();
-  const [messageApi, contextHolder] = message.useMessage();
+  const notification = useNotification();
   const [form] = Form.useForm<CharacteristicCreateFormValues>();
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
@@ -102,16 +103,16 @@ export const useProductsCharacteristicsLayoutController = () => {
         sortOrder: getNextCharacteristicSortOrder(store.items),
       });
 
-      messageApi.success(t("characteristics.createSuccess"));
+      notification.success({ title: t("characteristics.createSuccess") });
       closeCreate();
       navigate(getProductCharacteristicPath(createdCharacteristic.id));
     } catch (error) {
-      messageApi.error(
-        getApiErrorMessage(error, t("characteristics.createFailed")),
-      );
+      notification.error({
+        title: getApiErrorMessage(error, t("characteristics.createFailed")),
+      });
       return Promise.reject();
     }
-  }, [closeCreate, form, messageApi, navigate, store, t]);
+  }, [closeCreate, form, notification, navigate, store, t]);
 
   const navigateToCharacteristic = useCallback(
     (characteristicId: number) => {
@@ -121,7 +122,6 @@ export const useProductsCharacteristicsLayoutController = () => {
   );
 
   return {
-    contextHolder,
     store,
     form,
     createModalOpen,

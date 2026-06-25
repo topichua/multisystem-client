@@ -40,7 +40,6 @@ export const ClientOrderDrawer = observer(
     const {
       billingMethodOptions,
       catalogSearchLoading,
-      contextHolder,
       createLoading,
       deliveryMethodOptions,
       form,
@@ -65,7 +64,6 @@ export const ClientOrderDrawer = observer(
 
     return (
       <>
-        {contextHolder}
         <Drawer
           title={t("conversation.clientOrders.drawerTitle")}
           closable={{

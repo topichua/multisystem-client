@@ -1,5 +1,5 @@
 import { CheckIcon } from "@phosphor-icons/react";
-import { message, Select } from "antd";
+import { Select } from "antd";
 import { observer } from "mobx-react-lite";
 import { useCallback, useMemo, useState } from "react";
 import type { CSSProperties } from "react";
@@ -14,6 +14,7 @@ import type { WorkspaceMember } from "@/features/workspace-members/model/workspa
 import { useEnsureWorkspaceMembersLoaded } from "@/features/workspace-members/model/use-ensure-workspace-members-loaded";
 import { useWorkspaceMembersStore } from "@/features/workspace-members/model/use-workspace-members-store";
 import { getWorkspaceMemberName } from "@/features/workspace-members/utils/workspace-member-display";
+import { useNotification } from "@/shared/components/notification/use-notification";
 
 const UNASSIGNED_VALUE = "__unassigned__";
 
@@ -48,7 +49,7 @@ export const ConversationAssigneeSelect = observer(
 
     const membersStore = useWorkspaceMembersStore();
     const conversationsStore = useConversationsStore();
-    const [messageApi, contextHolder] = message.useMessage();
+    const notification = useNotification();
     const [saving, setSaving] = useState(false);
     const currentAssigneeId = responsibleMemberId ?? assignee?.id ?? null;
 
@@ -116,9 +117,9 @@ export const ConversationAssigneeSelect = observer(
             member ? getWorkspaceMemberAssignee(member) : null,
           );
         } catch (e) {
-          messageApi.error(
-            getApiErrorMessage(e, t("conversation.updateAssigneeError")),
-          );
+          notification.error({
+            title: getApiErrorMessage(e, t("conversation.updateAssigneeError")),
+          });
         } finally {
           setSaving(false);
         }
@@ -128,7 +129,7 @@ export const ConversationAssigneeSelect = observer(
         conversationsStore,
         currentAssigneeId,
         membersStore.members,
-        messageApi,
+        notification,
         t,
       ],
     );
@@ -140,7 +141,6 @@ export const ConversationAssigneeSelect = observer(
 
     return (
       <>
-        {contextHolder}
         <Select
           data-qa="layout-conversation-details-assignee-select"
           className={className}

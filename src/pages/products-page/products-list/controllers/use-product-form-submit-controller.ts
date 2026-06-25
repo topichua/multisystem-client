@@ -19,15 +19,15 @@ import { findDuplicateVariantKeys } from "../form/variants/product-add-variant.u
 import type { ProductType } from "../form/sections/product-type-section";
 
 type ProductSubmitMessageApi = {
-  error: (content: string) => void;
-  success: (content: string) => void;
+  error: (config: { title: string }) => void;
+  success: (config: { title: string }) => void;
 };
 
 type UseProductFormSubmitControllerParams = {
   editingProductId: number | null;
   getProductVariantsWithFormValues: () => ProductVariantUi[];
   isEditMode: boolean;
-  messageApi: ProductSubmitMessageApi;
+  notification: ProductSubmitMessageApi;
   navigateToProductsList: () => void;
   productMedia: UploadedProductMedia[];
   productType: ProductType;
@@ -38,7 +38,7 @@ export function useProductFormSubmitController({
   editingProductId,
   getProductVariantsWithFormValues,
   isEditMode,
-  messageApi,
+  notification,
   navigateToProductsList,
   productMedia,
   productType,
@@ -73,24 +73,29 @@ export function useProductFormSubmitController({
         });
 
         if (payload.variants.length === 0) {
-          messageApi.error(t("products.variantsForm.addAtLeastOne"));
+          notification.error({
+            title: t("products.variantsForm.addAtLeastOne"),
+          });
           return;
         }
 
         await productsStore.createProduct(payload);
-        messageApi.success(t("products.createSuccess"));
+        notification.success({ title: t("products.createSuccess") });
         navigateToProductsList();
       } catch (error) {
-        messageApi.error(
-          getProductSubmitErrorMessage(error, t("products.createFailed")),
-        );
+        notification.error({
+          title: getProductSubmitErrorMessage(
+            error,
+            t("products.createFailed"),
+          ),
+        });
       } finally {
         setIsSavingProduct(false);
       }
     },
     [
       getProductSubmitErrorMessage,
-      messageApi,
+      notification,
       navigateToProductsList,
       productMedia,
       productsStore,
@@ -119,17 +124,22 @@ export function useProductFormSubmitController({
         });
 
         if (payload.variants.length === 0) {
-          messageApi.error(t("products.variantsForm.addAtLeastOne"));
+          notification.error({
+            title: t("products.variantsForm.addAtLeastOne"),
+          });
           return;
         }
 
         await productsStore.updateProduct(editingProductId, payload);
-        messageApi.success(t("products.updateSuccess"));
+        notification.success({ title: t("products.updateSuccess") });
         navigateToProductsList();
       } catch (error) {
-        messageApi.error(
-          getProductSubmitErrorMessage(error, t("products.updateFailed")),
-        );
+        notification.error({
+          title: getProductSubmitErrorMessage(
+            error,
+            t("products.updateFailed"),
+          ),
+        });
       } finally {
         setIsSavingProduct(false);
       }
@@ -137,7 +147,7 @@ export function useProductFormSubmitController({
     [
       editingProductId,
       getProductSubmitErrorMessage,
-      messageApi,
+      notification,
       navigateToProductsList,
       productMedia,
       productsStore,
@@ -150,13 +160,13 @@ export function useProductFormSubmitController({
       const variantsForSubmit = getProductVariantsWithFormValues();
 
       if (productType === "variants" && variantsForSubmit.length === 0) {
-        messageApi.error(t("products.variantsForm.addAtLeastOne"));
+        notification.error({ title: t("products.variantsForm.addAtLeastOne") });
         return;
       }
 
       const duplicateKeys = findDuplicateVariantKeys(variantsForSubmit);
       if (duplicateKeys.size > 0) {
-        messageApi.error(t("products.variantsForm.duplicate"));
+        notification.error({ title: t("products.variantsForm.duplicate") });
         return;
       }
 
@@ -167,7 +177,9 @@ export function useProductFormSubmitController({
           variant.customFields.some((field) => !field.value.trim()),
       );
       if (manualVariantsWithMissingFields.length > 0) {
-        messageApi.error(t("products.variantsForm.manualMissingFields"));
+        notification.error({
+          title: t("products.variantsForm.manualMissingFields"),
+        });
         return;
       }
 
@@ -207,7 +219,7 @@ export function useProductFormSubmitController({
     [
       getProductVariantsWithFormValues,
       isEditMode,
-      messageApi,
+      notification,
       productType,
       submitCreateProduct,
       submitUpdateProduct,

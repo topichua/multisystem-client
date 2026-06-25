@@ -492,7 +492,10 @@ export class InstagramStore {
         this.postProductVariantsError = error;
       });
 
-      throwLoadError(`Failed to load product variants for Instagram post ${postId}`, e);
+      throwLoadError(
+        `Failed to load product variants for Instagram post ${postId}`,
+        e,
+      );
     } finally {
       if (requestSeq === this.postProductVariantsRequestSeq) {
         runInAction(() => {
@@ -558,7 +561,10 @@ export class InstagramStore {
         this.postAiExtractionError = error;
       });
 
-      throwLoadError(`Failed to load AI extraction for Instagram post ${postId}`, e);
+      throwLoadError(
+        `Failed to load AI extraction for Instagram post ${postId}`,
+        e,
+      );
     } finally {
       if (requestSeq === this.postAiExtractionRequestSeq) {
         runInAction(() => {
@@ -710,7 +716,10 @@ export class InstagramStore {
           this.commentRepliesPagingByCommentId.set(commentId, null);
         }
       });
-      throwLoadError(`Failed to load replies for Instagram comment ${commentId}`, e);
+      throwLoadError(
+        `Failed to load replies for Instagram comment ${commentId}`,
+        e,
+      );
     } finally {
       if (
         this.commentRepliesRequestSeqByCommentId.get(commentId) === requestSeq

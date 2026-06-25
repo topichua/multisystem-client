@@ -51,8 +51,6 @@ const ProductCategoryDetailContent = observer(() => {
 
   return (
     <>
-      {controller.contextHolder}
-
       <PaneDetailLayout.Root>
         <PaneDetailLayout.Header>
           <CategoryDetailHeader

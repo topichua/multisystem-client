@@ -206,8 +206,6 @@ const ProductCharacteristicDetailContent = observer(() => {
 
   return (
     <>
-      {controller.contextHolder}
-
       <PaneDetailLayout.Root>
         <PaneDetailLayout.Header>
           <CharacteristicDetailHeader

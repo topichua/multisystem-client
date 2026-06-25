@@ -1,5 +1,5 @@
 import { CaretDownIcon, CaretRightIcon, XIcon } from "@phosphor-icons/react";
-import { Avatar, Button, Card, Empty, Flex, Typography, message } from "antd";
+import { Avatar, Button, Card, Empty, Flex, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -20,6 +20,7 @@ import {
   variantStatusToColor,
 } from "@/features/products/utils/product-display";
 import { Tag } from "@/components/tag/tag";
+import { useNotification } from "@/shared/components/notification/use-notification";
 
 const { Text } = Typography;
 
@@ -32,7 +33,7 @@ export const InstagramPostProductsDetailedCard = observer(
   ({ postId, products }: InstagramPostProductsTableProps) => {
     const { t } = useTranslation();
     const store = useInstagramStore();
-    const [messageApi, contextHolder] = message.useMessage();
+    const notification = useNotification();
 
     const [expandedProductIds, setExpandedProductIds] = useState<Set<string>>(
       () => new Set(),
@@ -50,15 +51,20 @@ export const InstagramPostProductsDetailedCard = observer(
             postId,
           })
           .then(() => {
-            messageApi.success(t("instagram.unlinkProductSuccess"));
+            notification.success({
+              title: t("instagram.unlinkProductSuccess"),
+            });
           })
           .catch((error: unknown) => {
-            messageApi.error(
-              getApiErrorMessage(error, t("instagram.unlinkProductFailed")),
-            );
+            notification.error({
+              title: getApiErrorMessage(
+                error,
+                t("instagram.unlinkProductFailed"),
+              ),
+            });
           });
       },
-      [messageApi, postId, store, t],
+      [notification, postId, store, t],
     );
 
     const renderUnlinkButton = useCallback(
@@ -176,8 +182,6 @@ export const InstagramPostProductsDetailedCard = observer(
 
     return (
       <>
-        {contextHolder}
-
         {products.length === 0 ? (
           <Empty
             image={Empty.PRESENTED_IMAGE_SIMPLE}

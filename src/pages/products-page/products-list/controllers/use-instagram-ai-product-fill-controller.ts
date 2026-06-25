@@ -18,9 +18,9 @@ type CategoryOption = {
 };
 
 type ProductInstagramAiMessageApi = {
-  error: (content: string) => void;
-  success: (content: string) => void;
-  warning: (content: string) => void;
+  error: (config: { title: string }) => void;
+  success: (config: { title: string }) => void;
+  warning: (config: { title: string }) => void;
 };
 
 type InstagramAiVariantsController = Pick<
@@ -35,7 +35,7 @@ export type UseInstagramAiProductFillControllerParams = {
   categoryOptions: readonly CategoryOption[];
   form: FormInstance<ProductAddFormValues>;
   loadVariantCustomFields: () => Promise<void>;
-  messageApi: ProductInstagramAiMessageApi;
+  notification: ProductInstagramAiMessageApi;
   productsStore: ProductsStore;
   setProductMedia: (media: UploadedProductMedia[]) => void;
   uploadedProductMedia: UploadedProductMedia[];
@@ -46,7 +46,7 @@ export const useInstagramAiProductFillController = ({
   categoryOptions,
   form,
   loadVariantCustomFields,
-  messageApi,
+  notification,
   productsStore,
   setProductMedia,
   uploadedProductMedia,
@@ -90,16 +90,18 @@ export const useInstagramAiProductFillController = ({
           mediaUploadResult.selectedMediaCount > 0 &&
           mediaUploadResult.failedMediaCount > 0
         ) {
-          messageApi.warning(
-            t("products.instagram.ai.fillMediaPartialWarning", {
+          notification.warning({
+            title: t("products.instagram.ai.fillMediaPartialWarning", {
               count: mediaUploadResult.failedMediaCount,
             }),
-          );
+          });
         } else {
-          messageApi.success(t("products.instagram.ai.fillSuccess"));
+          notification.success({
+            title: t("products.instagram.ai.fillSuccess"),
+          });
         }
       } catch (error) {
-        messageApi.error(t("products.instagram.ai.fillError"));
+        notification.error({ title: t("products.instagram.ai.fillError") });
         throw error;
       } finally {
         setApplyingInstagramAiExtraction(false);
@@ -109,7 +111,7 @@ export const useInstagramAiProductFillController = ({
       categoryOptions,
       form,
       loadVariantCustomFields,
-      messageApi,
+      notification,
       productsStore,
       setProductMedia,
       t,

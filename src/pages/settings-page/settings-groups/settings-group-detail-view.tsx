@@ -1,12 +1,4 @@
-import {
-  Alert,
-  Button,
-  Flex,
-  Form,
-  message,
-  Popconfirm,
-  Typography,
-} from "antd";
+import { Alert, Button, Flex, Form, Popconfirm, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -22,6 +14,7 @@ import { CenteredSpinner } from "@/components/loading/centered-spinner";
 import * as S from "@/components/layout/form-card.styled";
 
 import { GroupFormFields, type GroupFormValues } from "./group-form-fields";
+import { useNotification } from "@/shared/components/notification/use-notification";
 
 const { Title, Text } = Typography;
 
@@ -30,7 +23,7 @@ export const SettingsGroupDetailView = observer(() => {
   const { groupId } = useParams<{ groupId: string }>();
   const navigate = useNavigate();
   const store = useConversationGroupsStore();
-  const [messageApi, contextHolder] = message.useMessage();
+  const notification = useNotification();
   const [form] = Form.useForm<GroupFormValues>();
 
   const idNum = groupId != null ? Number(groupId) : NaN;
@@ -84,22 +77,26 @@ export const SettingsGroupDetailView = observer(() => {
 
     try {
       await store.updateGroup(group.id, payload);
-      messageApi.success(t("groups.updated"));
+      notification.success({ title: t("groups.updated") });
     } catch (e) {
-      messageApi.error(getApiErrorMessage(e, t("groups.updateError")));
+      notification.error({
+        title: getApiErrorMessage(e, t("groups.updateError")),
+      });
     }
-  }, [form, group, messageApi, store, t]);
+  }, [form, group, notification, store, t]);
 
   const handleDelete = useCallback(async () => {
     if (!group) return;
     try {
       await store.deleteGroup(group.id);
-      messageApi.success(t("groups.deleted"));
+      notification.success({ title: t("groups.deleted") });
       pickNavigateAfterDelete();
     } catch (e) {
-      messageApi.error(getApiErrorMessage(e, t("groups.deleteError")));
+      notification.error({
+        title: getApiErrorMessage(e, t("groups.deleteError")),
+      });
     }
-  }, [group, messageApi, pickNavigateAfterDelete, store, t]);
+  }, [group, notification, pickNavigateAfterDelete, store, t]);
 
   if (!Number.isFinite(idNum)) {
     return <Alert type="error" title={t("groups.invalidGroup")} showIcon />;
@@ -134,7 +131,6 @@ export const SettingsGroupDetailView = observer(() => {
 
   return (
     <>
-      {contextHolder}
       <PaneDetailLayout.Root inset data-qa="layout-settings-group-detail">
         <PaneDetailLayout.Header data-qa="layout-settings-group-detail-header">
           <Flex justify="space-between" align="flex-start" gap={16} wrap="wrap">

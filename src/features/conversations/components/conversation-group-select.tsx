@@ -1,4 +1,4 @@
-import { message, Select, Space } from "antd";
+import { Select, Space } from "antd";
 import { observer } from "mobx-react-lite";
 import { useCallback, useMemo, useState } from "react";
 import type { CSSProperties } from "react";
@@ -17,6 +17,7 @@ import {
 import { useEnsureConversationGroupsLoaded } from "@/features/conversation-groups/model/use-ensure-conversation-groups-loaded";
 import { useConversationGroupsStore } from "@/features/conversation-groups/model/use-conversation-groups-store";
 import { useConversationsStore } from "@/features/conversations/model/use-conversations-store";
+import { useNotification } from "@/shared/components/notification/use-notification";
 
 type ConversationGroupSelectProps = {
   conversationId: string | undefined;
@@ -41,7 +42,7 @@ export const ConversationGroupSelect = observer(
 
     const groupsStore = useConversationGroupsStore();
     const conversationsStore = useConversationsStore();
-    const [messageApi, contextHolder] = message.useMessage();
+    const notification = useNotification();
     const [saving, setSaving] = useState(false);
 
     const options = useMemo(
@@ -63,14 +64,17 @@ export const ConversationGroupSelect = observer(
             next,
           );
         } catch (e) {
-          messageApi.error(
-            getApiErrorMessage(e, t("groups.updateConversationGroupError")),
-          );
+          notification.error({
+            title: getApiErrorMessage(
+              e,
+              t("groups.updateConversationGroupError"),
+            ),
+          });
         } finally {
           setSaving(false);
         }
       },
-      [conversationId, conversationsStore, groupId, messageApi, t],
+      [conversationId, conversationsStore, groupId, notification, t],
     );
 
     const selectDisabled = disabled || !conversationId || saving;
@@ -78,7 +82,6 @@ export const ConversationGroupSelect = observer(
 
     return (
       <>
-        {contextHolder}
         <Select
           data-qa="layout-conversation-details-group-select"
           className={className}

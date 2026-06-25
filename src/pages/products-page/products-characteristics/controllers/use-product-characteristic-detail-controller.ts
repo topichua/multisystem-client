@@ -1,4 +1,3 @@
-import { message } from "antd";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router";
@@ -11,6 +10,7 @@ import type {
   CharacteristicTopTextValue,
 } from "@/features/characteristics/model/characteristic.types";
 import { useCharacteristicsStore } from "@/features/characteristics/model/use-characteristics-store";
+import { useNotification } from "@/shared/components/notification/use-notification";
 
 import {
   CHARACTERISTIC_NAME_MAX_LENGTH,
@@ -26,7 +26,7 @@ export const useProductCharacteristicDetailController = () => {
   const { characteristicId } = useParams<{ characteristicId: string }>();
   const navigate = useNavigate();
   const store = useCharacteristicsStore();
-  const [messageApi, contextHolder] = message.useMessage();
+  const notification = useNotification();
   const [isAddingOption, setIsAddingOption] = useState(false);
   const [optionValue, setOptionValue] = useState("");
   const [renamingOptionId, setRenamingOptionId] = useState<number | null>(null);
@@ -102,29 +102,29 @@ export const useProductCharacteristicDetailController = () => {
   const validateCharacteristicLabel = useCallback(
     (label: string): boolean => {
       if (!label) {
-        messageApi.error(t("characteristics.nameRequired"));
+        notification.error({ title: t("characteristics.nameRequired") });
         return false;
       }
 
       if (label.length > CHARACTERISTIC_NAME_MAX_LENGTH) {
-        messageApi.error(t("characteristics.nameTooLong"));
+        notification.error({ title: t("characteristics.nameTooLong") });
         return false;
       }
 
       return true;
     },
-    [messageApi, t],
+    [notification, t],
   );
 
   const validateOptionValue = useCallback(
     (value: string, excludeIndex?: number): boolean => {
       if (!value) {
-        messageApi.error(t("characteristics.optionValueRequired"));
+        notification.error({ title: t("characteristics.optionValueRequired") });
         return false;
       }
 
       if (value.length > CHARACTERISTIC_OPTION_VALUE_MAX_LENGTH) {
-        messageApi.error(t("characteristics.optionValueTooLong"));
+        notification.error({ title: t("characteristics.optionValueTooLong") });
         return false;
       }
 
@@ -135,13 +135,15 @@ export const useProductCharacteristicDetailController = () => {
           excludeIndex,
         )
       ) {
-        messageApi.error(t("characteristics.duplicateOptionValue"));
+        notification.error({
+          title: t("characteristics.duplicateOptionValue"),
+        });
         return false;
       }
 
       return true;
     },
-    [messageApi, options, t],
+    [notification, options, t],
   );
 
   const cancelRenameCharacteristic = useCallback(() => {
@@ -205,17 +207,17 @@ export const useProductCharacteristicDetailController = () => {
 
     try {
       await store.updateCharacteristic(characteristic.id, { label });
-      messageApi.success(t("characteristics.updated"));
+      notification.success({ title: t("characteristics.updated") });
       cancelRenameCharacteristic();
     } catch (error) {
-      messageApi.error(
-        getApiErrorMessage(error, t("characteristics.updateFailed")),
-      );
+      notification.error({
+        title: getApiErrorMessage(error, t("characteristics.updateFailed")),
+      });
     }
   }, [
     cancelRenameCharacteristic,
     characteristic,
-    messageApi,
+    notification,
     renamingCharacteristicLabel,
     store,
     t,
@@ -237,17 +239,17 @@ export const useProductCharacteristicDetailController = () => {
       await store.createCharacteristicOption(characteristic.id, {
         label: value,
       });
-      messageApi.success(t("characteristics.valueAdded"));
+      notification.success({ title: t("characteristics.valueAdded") });
       closeAddOption();
     } catch (error) {
-      messageApi.error(
-        getApiErrorMessage(error, t("characteristics.updateFailed")),
-      );
+      notification.error({
+        title: getApiErrorMessage(error, t("characteristics.updateFailed")),
+      });
     }
   }, [
     characteristic,
     closeAddOption,
-    messageApi,
+    notification,
     optionValue,
     store,
     t,
@@ -284,18 +286,18 @@ export const useProductCharacteristicDetailController = () => {
         await store.updateCharacteristicOption(characteristic.id, optionId, {
           label: value,
         });
-        messageApi.success(t("characteristics.valueUpdated"));
+        notification.success({ title: t("characteristics.valueUpdated") });
         cancelRenameOption();
       } catch (error) {
-        messageApi.error(
-          getApiErrorMessage(error, t("characteristics.updateFailed")),
-        );
+        notification.error({
+          title: getApiErrorMessage(error, t("characteristics.updateFailed")),
+        });
       }
     },
     [
       cancelRenameOption,
       characteristic,
-      messageApi,
+      notification,
       options,
       renamingOptionValue,
       store,
@@ -317,17 +319,17 @@ export const useProductCharacteristicDetailController = () => {
           cancelRenameOption();
         }
 
-        messageApi.success(t("characteristics.valueDeleted"));
+        notification.success({ title: t("characteristics.valueDeleted") });
       } catch (error) {
-        messageApi.error(
-          getApiErrorMessage(error, t("characteristics.updateFailed")),
-        );
+        notification.error({
+          title: getApiErrorMessage(error, t("characteristics.updateFailed")),
+        });
       }
     },
     [
       cancelRenameOption,
       characteristic,
-      messageApi,
+      notification,
       renamingOptionId,
       store,
       t,
@@ -346,7 +348,7 @@ export const useProductCharacteristicDetailController = () => {
 
     try {
       await store.deleteCharacteristic(characteristic.id);
-      messageApi.success(t("characteristics.deleted"));
+      notification.success({ title: t("characteristics.deleted") });
 
       if (nextCharacteristicId != null) {
         navigate(getProductCharacteristicPath(nextCharacteristicId));
@@ -355,18 +357,17 @@ export const useProductCharacteristicDetailController = () => {
 
       navigate(pagesMap.productsCharacteristics);
     } catch (error) {
-      messageApi.error(
-        getApiErrorMessage(error, t("characteristics.deleteFailed")),
-      );
+      notification.error({
+        title: getApiErrorMessage(error, t("characteristics.deleteFailed")),
+      });
     }
-  }, [characteristic, messageApi, navigate, store, t]);
+  }, [characteristic, notification, navigate, store, t]);
 
   const navigateToCharacteristics = useCallback(() => {
     navigate(pagesMap.productsCharacteristics);
   }, [navigate]);
 
   return {
-    contextHolder,
     characteristic,
     options,
     topTextValues,

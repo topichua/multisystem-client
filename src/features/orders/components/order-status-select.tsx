@@ -1,4 +1,4 @@
-import { message, Select, Space } from "antd";
+import { Select, Space } from "antd";
 import { observer } from "mobx-react-lite";
 import { startTransition, useCallback, useMemo, useOptimistic } from "react";
 import type { CSSProperties } from "react";
@@ -12,6 +12,7 @@ import {
 } from "@/features/conversation-groups/components/group-select-visuals";
 import { useEnsureOrderStatusesLoaded } from "@/features/orders/model/use-ensure-order-statuses-loaded";
 import { useOrdersStore } from "@/features/orders/model/use-orders-store";
+import { useNotification } from "@/shared/components/notification/use-notification";
 import {
   type OrderStatusSelectOptionData,
   toOrderStatusSelectOptions,
@@ -41,7 +42,7 @@ export const OrderStatusSelect = observer(
     useEnsureOrderStatusesLoaded();
 
     const ordersStore = useOrdersStore();
-    const [messageApi, contextHolder] = message.useMessage();
+    const notification = useNotification();
     const [optimisticStatusId, setOptimisticStatusId] = useOptimistic(statusId);
 
     const options = useMemo(
@@ -62,14 +63,14 @@ export const OrderStatusSelect = observer(
             await ordersStore.updateOrderStatus(orderId, nextStatusId);
             onChangeSuccess?.(nextStatusId);
           } catch (e) {
-            messageApi.error(
-              getApiErrorMessage(e, t("orders.updateStatusError")),
-            );
+            notification.error({
+              title: getApiErrorMessage(e, t("orders.updateStatusError")),
+            });
           }
         });
       },
       [
-        messageApi,
+        notification,
         optimisticStatusId,
         orderId,
         ordersStore,
@@ -84,7 +85,6 @@ export const OrderStatusSelect = observer(
 
     return (
       <>
-        {contextHolder}
         <Select
           variant={variant}
           data-qa="layout-orders-list-status-select"

@@ -5,7 +5,6 @@ import {
   Flex,
   Form,
   Input,
-  message,
   Popconfirm,
   Typography,
 } from "antd";
@@ -32,6 +31,7 @@ import { PresetColorPicker } from "@/shared/components/preset-color-picker/prese
 import { RoleDot } from "@/shared/components/role-dot/role-dot";
 
 import { TeamRolePermissionsForm } from "./team-role-permissions-form";
+import { useNotification } from "@/shared/components/notification/use-notification";
 
 const { Text, Title } = Typography;
 
@@ -42,7 +42,7 @@ export const TeamRoleDetailView = observer(() => {
   const { roleId } = useParams<{ roleId: string }>();
   const navigate = useNavigate();
   const store = useWorkspaceRolesStore();
-  const [messageApi, contextHolder] = message.useMessage();
+  const notification = useNotification();
   const [form] = Form.useForm<WorkspaceRoleFormValues>();
 
   const idNum = roleId != null ? Number(roleId) : NaN;
@@ -112,15 +112,17 @@ export const TeamRoleDetailView = observer(() => {
             )
           : undefined,
       );
-      messageApi.success(t("team.roleUpdated"));
+      notification.success({ title: t("team.roleUpdated") });
     } catch (e) {
-      messageApi.error(getApiErrorMessage(e, t("team.roleUpdateError")));
+      notification.error({
+        title: getApiErrorMessage(e, t("team.roleUpdateError")),
+      });
     }
   }, [
     form,
     integrationGrants,
     integrationGrantsLoaded,
-    messageApi,
+    notification,
     role,
     shouldLoadIntegrationGrants,
     store,
@@ -148,12 +150,14 @@ export const TeamRoleDetailView = observer(() => {
 
     try {
       await store.deleteRole(role.id);
-      messageApi.success(t("team.roleDeleted"));
+      notification.success({ title: t("team.roleDeleted") });
       navigate(pathAfterDelete);
     } catch (e) {
-      messageApi.error(getApiErrorMessage(e, t("team.roleDeleteError")));
+      notification.error({
+        title: getApiErrorMessage(e, t("team.roleDeleteError")),
+      });
     }
-  }, [messageApi, navigate, pickNavigateAfterDelete, role, store, t]);
+  }, [notification, navigate, pickNavigateAfterDelete, role, store, t]);
 
   if (!Number.isFinite(idNum)) {
     return <Alert type="error" title={t("team.invalidRole")} showIcon />;
@@ -187,7 +191,6 @@ export const TeamRoleDetailView = observer(() => {
 
   return (
     <>
-      {contextHolder}
       <PaneDetailLayout.Root inset data-qa="layout-team-role-detail">
         <PaneDetailLayout.Header data-qa="layout-team-role-detail-header">
           <Flex justify="space-between" align="center" gap={16} wrap="wrap">

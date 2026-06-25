@@ -26,7 +26,6 @@ export const ClientsListPage = observer(() => {
   if (store.listLoading && store.clients.length === 0) {
     return (
       <>
-        {controller.contextHolder}
         <CenteredSpinner />
       </>
     );
@@ -34,7 +33,6 @@ export const ClientsListPage = observer(() => {
 
   return (
     <>
-      {controller.contextHolder}
       <PaneDetailLayout.Root inset>
         <PaneDetailLayout.Header data-qa="layout-clients-list-header">
           <Flex justify="space-between" align="center" gap={16} wrap="wrap">

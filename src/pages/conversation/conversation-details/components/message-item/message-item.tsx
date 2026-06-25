@@ -1,5 +1,5 @@
 import { CopySimpleIcon, TrashIcon } from "@phosphor-icons/react";
-import { message as antdMessage, Typography } from "antd";
+import { Typography } from "antd";
 import type { MenuProps } from "antd";
 import { memo, useCallback, useMemo, useRef, useState } from "react";
 import type { FocusEvent, MouseEvent } from "react";
@@ -22,6 +22,7 @@ import { MessageReplyQuote } from "./message-reply-quote";
 import { normalizeWebhookReactionEmoji } from "./normalize-webhook-reaction-emoji";
 import { replyQuoteAuthorLabel } from "./reply-quote-author-label";
 import { formatMessageTime } from "@/utils/date-time";
+import { useNotification } from "@/shared/components/notification/use-notification";
 
 const { Paragraph } = Typography;
 
@@ -48,6 +49,7 @@ export const MessageItem = memo(
     onStartReply,
   }: MessageItemProps) => {
     const { t } = useTranslation();
+    const notification = useNotification();
     const [menuOpen, setMenuOpen] = useState(false);
     const [rowHovered, setRowHovered] = useState(false);
     const menuOpenRef = useRef(menuOpen);
@@ -126,11 +128,11 @@ export const MessageItem = memo(
     const handleCopy = useCallback(async () => {
       const ok = await copyTextToClipboard(clipboardText);
       if (ok) {
-        antdMessage.success(t("messages.copied"));
+        notification.success({ title: t("messages.copied") });
       } else {
-        antdMessage.error(t("messages.copyFailed"));
+        notification.error({ title: t("messages.copyFailed") });
       }
-    }, [clipboardText, t]);
+    }, [clipboardText, notification, t]);
 
     const menuItems: MenuProps["items"] = useMemo(
       () => [

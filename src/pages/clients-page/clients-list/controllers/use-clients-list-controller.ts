@@ -1,4 +1,4 @@
-import { Form, message } from "antd";
+import { Form } from "antd";
 import { useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
@@ -8,6 +8,7 @@ import type { Client } from "@/features/clients/model/client.types";
 import { instagramUserIdToApiString } from "@/features/clients/model/client-instagram-payload";
 import { useClientsStore } from "@/features/clients/model/use-clients-store";
 import { normalizeClientPhoneForInput } from "@/utils/phone-input";
+import { useNotification } from "@/shared/components/notification/use-notification";
 
 export type ClientFormValues = {
   first_name: string;
@@ -35,7 +36,7 @@ function clientToFormValues(client: Client): ClientFormValues {
 export function useClientsListController() {
   const { t } = useTranslation();
   const store = useClientsStore();
-  const [messageApi, contextHolder] = message.useMessage();
+  const notification = useNotification();
   const [form] = Form.useForm<ClientFormValues>();
   const [modalOpen, setModalOpen] = useState(false);
   const [editingClient, setEditingClient] = useState<Client | null>(null);
@@ -84,7 +85,7 @@ export function useClientsListController() {
             editingClient.instagramUserId,
           ),
         });
-        messageApi.success(t("clients.updateSuccess"));
+        notification.success({ title: t("clients.updateSuccess") });
       } else {
         await store.createClient({
           first_name: values.first_name,
@@ -93,29 +94,32 @@ export function useClientsListController() {
           delivery_info: values.delivery_info ?? "",
           instagramId: "",
         });
-        messageApi.success(t("clients.createSuccess"));
+        notification.success({ title: t("clients.createSuccess") });
       }
       closeModal();
     } catch (e) {
-      messageApi.error(getApiErrorMessage(e, t("clients.requestFailed")));
+      notification.error({
+        title: getApiErrorMessage(e, t("clients.requestFailed")),
+      });
       return Promise.reject();
     }
-  }, [closeModal, editingClient, form, messageApi, store, t]);
+  }, [closeModal, editingClient, form, notification, store, t]);
 
   const handleDelete = useCallback(
     async (id: number) => {
       try {
         await store.deleteClient(id);
-        messageApi.success(t("clients.deleteSuccess"));
+        notification.success({ title: t("clients.deleteSuccess") });
       } catch (e) {
-        messageApi.error(getApiErrorMessage(e, t("clients.deleteFailed")));
+        notification.error({
+          title: getApiErrorMessage(e, t("clients.deleteFailed")),
+        });
       }
     },
-    [messageApi, store, t],
+    [notification, store, t],
   );
 
   return {
-    contextHolder,
     store,
     form,
     modalOpen,

@@ -26,14 +26,14 @@ import {
 } from "../form/variants/product-add-variant.utils";
 
 type ProductVariantsMessageApi = {
-  error: (content: string) => void;
-  warning: (content: string) => void;
+  error: (config: { title: string }) => void;
+  warning: (config: { title: string }) => void;
 };
 
 export type ProductVariantsControllerParams = {
   form: FormInstance<ProductAddFormValues>;
   isEditMode: boolean;
-  messageApi: ProductVariantsMessageApi;
+  notification: ProductVariantsMessageApi;
   variantCustomFields: VariantCustomField[];
   isVariantCustomFieldsLoading: boolean;
 };
@@ -41,7 +41,7 @@ export type ProductVariantsControllerParams = {
 export function useProductVariantsController({
   form,
   isEditMode,
-  messageApi,
+  notification,
   variantCustomFields,
   isVariantCustomFieldsLoading,
 }: ProductVariantsControllerParams) {
@@ -245,7 +245,9 @@ export function useProductVariantsController({
           hasCharacteristicsAdded ||
           hasMeaningfulVariantUserData(variantsWithForm)
         ) {
-          messageApi.warning(t("products.productType.switchToSingleBlocked"));
+          notification.warning({
+            title: t("products.productType.switchToSingleBlocked"),
+          });
           return;
         }
 
@@ -256,7 +258,7 @@ export function useProductVariantsController({
       setProductType("variants");
       form.setFieldValue("singleCharacteristics", []);
     },
-    [form, hasCharacteristicsAdded, isEditMode, messageApi, productType, t],
+    [form, hasCharacteristicsAdded, isEditMode, notification, productType, t],
   );
 
   const handleDeleteVariant = useCallback(
@@ -285,14 +287,14 @@ export function useProductVariantsController({
           return nextVariants;
         });
       } catch (error) {
-        messageApi.error(
-          getApiErrorMessage(error, t("products.variantDeleteFailed")),
-        );
+        notification.error({
+          title: getApiErrorMessage(error, t("products.variantDeleteFailed")),
+        });
       } finally {
         setDeletingVariantKey(null);
       }
     },
-    [form, messageApi, t],
+    [form, notification, t],
   );
 
   const handleAddManualVariant = useCallback(() => {

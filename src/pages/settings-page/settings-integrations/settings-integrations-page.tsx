@@ -22,7 +22,6 @@ export const SettingsIntegrationsPage = observer(() => {
 
   return (
     <>
-      {controller.contextHolder}
       <PaneDetailLayout.Root inset data-qa="layout-settings-integrations">
         <PaneDetailLayout.Header data-qa="layout-settings-integrations-header">
           <PaneSectionTitle>{t("integrations.title")}</PaneSectionTitle>

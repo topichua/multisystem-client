@@ -1,12 +1,4 @@
-import {
-  Avatar,
-  Button,
-  Flex,
-  Form,
-  Input,
-  Typography,
-  message,
-} from "antd";
+import { Avatar, Button, Flex, Form, Input, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -28,6 +20,7 @@ import { ClientOrdersInfoBlock } from "./__components/client-order-info-block";
 import { ClientOrdersSummary } from "./__components/client-order-summary";
 import { ClientOrdersList } from "./__components/client-orders-list";
 import * as S from "./conversation-client-info-panel.styled";
+import { useNotification } from "@/shared/components/notification/use-notification";
 
 const { Text } = Typography;
 
@@ -85,7 +78,7 @@ export const ConversationClientInfoPanel = observer(
     onClientCreated,
   }: ConversationClientInfoPanelProps) => {
     const { t } = useTranslation();
-    const [messageApi, contextHolder] = message.useMessage();
+    const notification = useNotification();
     const clientsStore = useClientsStore();
     const ordersStore = useOrdersStore();
     const [form] = Form.useForm<ClientFormValues>();
@@ -152,11 +145,13 @@ export const ConversationClientInfoPanel = observer(
         }
         setShowCreateForm(false);
         form.resetFields();
-        messageApi.success(t("clients.createSuccess"));
+        notification.success({ title: t("clients.createSuccess") });
       } catch (e) {
-        messageApi.error(getApiErrorMessage(e, t("clients.createFailed")));
+        notification.error({
+          title: getApiErrorMessage(e, t("clients.createFailed")),
+        });
       }
-    }, [clientsStore, conversation, form, messageApi, onClientCreated, t]);
+    }, [clientsStore, conversation, form, notification, onClientCreated, t]);
 
     const associationPending = instagramAssociation === undefined;
 
@@ -190,7 +185,6 @@ export const ConversationClientInfoPanel = observer(
 
     return (
       <S.Root aria-label={t("conversation.clientPanelAria")}>
-        {contextHolder}
         {instagramAssociation && !instagramAssociation.associated ? (
           <Text type="secondary" style={{ fontSize: 12, marginBottom: 12 }}>
             {t("conversation.clientNotLinked")}

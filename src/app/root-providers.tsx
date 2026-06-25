@@ -1,4 +1,4 @@
-import { ConfigProvider } from "antd";
+import { App as AntdApp, ConfigProvider } from "antd";
 import enUS from "antd/locale/en_US";
 import ukUA from "antd/locale/uk_UA";
 import dayjs from "dayjs";
@@ -32,6 +32,29 @@ function AntConfigBridge({ children }: { children: ReactNode }) {
   const { i18n: i18nInstance } = useTranslation();
   const { mode } = useThemeMode();
   const antdTheme = useMemo(() => createAntdTheme(mode), [mode]);
+  const notificationConfig = useMemo(() => {
+    const token = antdTheme.token;
+
+    return {
+      placement: "bottomLeft" as const,
+      showProgress: true,
+      styles: {
+        root: {
+          background: token?.colorBgElevated,
+          border: `1px solid ${token?.colorBorderSecondary}`,
+          borderRadius: token?.borderRadiusLG,
+          boxShadow: token?.boxShadow,
+        },
+        title: {
+          color: token?.colorText,
+          fontWeight: 600,
+        },
+        description: {
+          color: token?.colorTextSecondary,
+        },
+      },
+    };
+  }, [antdTheme]);
 
   const lang = i18nInstance.language.startsWith("uk") ? "uk" : "en";
 
@@ -44,7 +67,7 @@ function AntConfigBridge({ children }: { children: ReactNode }) {
 
   return (
     <ConfigProvider locale={locale} theme={antdTheme}>
-      {children}
+      <AntdApp notification={notificationConfig}>{children}</AntdApp>
     </ConfigProvider>
   );
 }

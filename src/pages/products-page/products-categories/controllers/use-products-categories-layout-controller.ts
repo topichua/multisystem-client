@@ -1,4 +1,4 @@
-import { Form, message } from "antd";
+import { Form } from "antd";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { matchPath, useLocation, useNavigate } from "react-router";
@@ -9,6 +9,7 @@ import { categoriesEligibleAsParent } from "@/features/categories/model/category
 import { useCategoriesStore } from "@/features/categories/model/use-categories-store";
 
 import { getRootCategories } from "../products-categories.utils";
+import { useNotification } from "@/shared/components/notification/use-notification";
 
 export type CategoryCreateFormValues = {
   name: string;
@@ -25,7 +26,7 @@ export const useProductsCategoriesLayoutController = () => {
   const store = useCategoriesStore();
   const navigate = useNavigate();
   const location = useLocation();
-  const [messageApi, contextHolder] = message.useMessage();
+  const notification = useNotification();
   const [form] = Form.useForm<CategoryCreateFormValues>();
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
@@ -93,17 +94,19 @@ export const useProductsCategoriesLayoutController = () => {
         parentId: values.parentId ?? null,
       });
 
-      messageApi.success(t("categories.createSuccess"));
+      notification.success({ title: t("categories.createSuccess") });
       closeCreate();
 
       if (values.parentId == null) {
         navigate(getProductCategoryPath(createdCategory.id));
       }
     } catch (error) {
-      messageApi.error(getApiErrorMessage(error, t("categories.createFailed")));
+      notification.error({
+        title: getApiErrorMessage(error, t("categories.createFailed")),
+      });
       return Promise.reject();
     }
-  }, [closeCreate, form, messageApi, navigate, store, t]);
+  }, [closeCreate, form, notification, navigate, store, t]);
 
   const navigateToCategory = useCallback(
     (categoryId: number) => {
@@ -113,7 +116,6 @@ export const useProductsCategoriesLayoutController = () => {
   );
 
   return {
-    contextHolder,
     store,
     form,
     createModalOpen,
