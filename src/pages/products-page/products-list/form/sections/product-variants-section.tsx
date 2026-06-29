@@ -2,12 +2,14 @@ import { Card, Flex, Typography } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useTranslation } from "react-i18next";
 import type { VariantCustomField } from "@/features/products/model/product-create-api.types";
+import type { SelectedCharacteristic } from "../variants/generate-product-variants";
 import type { ProductVariantUi } from "../variants/product-add-variant.types";
 import type { ProductOptionCharacteristicsBaseline } from "../variants/product-option-baseline";
 import {
   ProductCharacteristicsBuilder,
   type ProductCharacteristicBuilderRow,
 } from "./product-characteristics-builder";
+import { MobileProductVariantsList } from "./mobile-product-variants-list";
 import { ProductVariantsTable } from "./product-variants-table";
 
 const { Title, Text } = Typography;
@@ -24,6 +26,16 @@ export type ProductVariantsSectionProps = {
     attributeId?: number,
   ) => Array<{ value: string; label: string }>;
   onAddManualVariant: () => void;
+  selectedCharacteristics: SelectedCharacteristic[];
+  onManageVariantImages: (variant: ProductVariantUi) => void;
+  onDeleteVariant: (variant: ProductVariantUi) => void;
+  onUpdateManualVariantCustomField: (
+    variantKey: string,
+    fieldStableKey: string,
+    value: string,
+  ) => void;
+  deletingVariantKey: string | null;
+  isMobile?: boolean;
 };
 
 export const ProductVariantsSection = ({
@@ -36,6 +48,12 @@ export const ProductVariantsSection = ({
   optionEditRestrictionsActive,
   getCharacteristicValueOptions,
   onAddManualVariant,
+  selectedCharacteristics,
+  onManageVariantImages,
+  onDeleteVariant,
+  onUpdateManualVariantCustomField,
+  deletingVariantKey,
+  isMobile = false,
 }: ProductVariantsSectionProps) => {
   const { t } = useTranslation();
 
@@ -57,13 +75,27 @@ export const ProductVariantsSection = ({
           optionBaseline={optionBaseline}
           optionEditRestrictionsActive={optionEditRestrictionsActive}
           getCharacteristicValueOptions={getCharacteristicValueOptions}
+          isMobile={isMobile}
         />
 
-        <ProductVariantsTable
-          productVariants={productVariants}
-          variantTableColumns={variantTableColumns}
-          onAddManualVariant={onAddManualVariant}
-        />
+        {isMobile ? (
+          <MobileProductVariantsList
+            productVariants={productVariants}
+            selectedCharacteristics={selectedCharacteristics}
+            variantCustomFields={variantCustomFields}
+            deletingVariantKey={deletingVariantKey}
+            onManageVariantImages={onManageVariantImages}
+            onDeleteVariant={onDeleteVariant}
+            onUpdateManualVariantCustomField={onUpdateManualVariantCustomField}
+            onAddManualVariant={onAddManualVariant}
+          />
+        ) : (
+          <ProductVariantsTable
+            productVariants={productVariants}
+            variantTableColumns={variantTableColumns}
+            onAddManualVariant={onAddManualVariant}
+          />
+        )}
       </Flex>
     </Card>
   );

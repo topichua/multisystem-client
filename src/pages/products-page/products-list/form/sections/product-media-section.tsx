@@ -17,6 +17,8 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import {
+  ArrowDownIcon,
+  ArrowUpIcon,
   CloudArrowUpIcon,
   DotsSixVerticalIcon,
   TrashIcon,
@@ -49,23 +51,36 @@ export type ProductMediaSectionProps = {
     deleteTooltip: string;
     uploadHint: string;
     reorderHint: string;
+    moveEarlierAria?: string;
+    moveLaterAria?: string;
   };
+  isMobile?: boolean;
 };
 
 type SortableProductMediaPreviewProps = {
   media: UploadedProductMedia;
   isMain: boolean;
   deleting: boolean;
+  canMoveEarlier: boolean;
+  canMoveLater: boolean;
   onDelete: (mediaId: number) => void;
+  onMoveEarlier: () => void;
+  onMoveLater: () => void;
   texts: ProductMediaSectionProps["texts"];
+  isMobile: boolean;
 };
 
 const SortableProductMediaPreview = ({
   media,
   isMain,
   deleting,
+  canMoveEarlier,
+  canMoveLater,
   onDelete,
+  onMoveEarlier,
+  onMoveLater,
   texts,
+  isMobile,
 }: SortableProductMediaPreviewProps) => {
   const {
     attributes,
@@ -80,10 +95,13 @@ const SortableProductMediaPreview = ({
     <UploadedMediaPreview
       ref={setNodeRef}
       $isMain={isMain}
+      data-qa={`products-mobile-image-${media.id}`}
       style={{
         transform: CSS.Transform.toString(transform),
         transition,
         opacity: isDragging ? 0.65 : 1,
+        width: isMobile ? "100%" : undefined,
+        maxWidth: isMobile ? 160 : undefined,
       }}
     >
       {isMain ? (
@@ -92,14 +110,35 @@ const SortableProductMediaPreview = ({
         </Tag>
       ) : null}
 
-      <Button
-        type="text"
-        size="small"
-        className="uploaded-media-drag"
-        icon={<DotsSixVerticalIcon size={16} />}
-        {...attributes}
-        {...listeners}
-      />
+      {!isMobile ? (
+        <Button
+          type="text"
+          size="small"
+          className="uploaded-media-drag"
+          icon={<DotsSixVerticalIcon size={16} />}
+          {...attributes}
+          {...listeners}
+        />
+      ) : (
+        <Flex className="uploaded-media-move" gap={4}>
+          <Button
+            type="text"
+            size="small"
+            icon={<ArrowUpIcon size={16} />}
+            aria-label={texts.moveEarlierAria}
+            disabled={!canMoveEarlier}
+            onClick={onMoveEarlier}
+          />
+          <Button
+            type="text"
+            size="small"
+            icon={<ArrowDownIcon size={16} />}
+            aria-label={texts.moveLaterAria}
+            disabled={!canMoveLater}
+            onClick={onMoveLater}
+          />
+        </Flex>
+      )}
 
       <img src={media.src} alt="" />
 
@@ -128,6 +167,7 @@ export const ProductMediaSection = ({
   onDelete,
   onReorder,
   texts,
+  isMobile = false,
 }: ProductMediaSectionProps) => {
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
@@ -146,7 +186,7 @@ export const ProductMediaSection = ({
   };
 
   return (
-    <Card>
+    <Card data-qa={isMobile ? "products-mobile-images" : undefined}>
       <Flex vertical gap={24}>
         <Flex vertical>
           <Title level={5} style={{ margin: 0 }}>
@@ -154,13 +194,28 @@ export const ProductMediaSection = ({
           </Title>
 
           <Text type="secondary">{texts.subtitle}</Text>
-          <Text type="secondary" style={{ fontSize: 12 }}>
-            {texts.reorderHint}
-          </Text>
+          {!isMobile ? (
+            <Text type="secondary" style={{ fontSize: 12 }}>
+              {texts.reorderHint}
+            </Text>
+          ) : (
+            <Text type="secondary" style={{ fontSize: 12 }}>
+              {texts.reorderHint}
+            </Text>
+          )}
         </Flex>
 
-        <Flex gap={16} align="flex-start" wrap="wrap">
-          <Spin spinning={productMediaUploadingCount > 0}>
+        <Flex
+          gap={16}
+          align="flex-start"
+          wrap="wrap"
+          vertical={isMobile}
+          style={{ width: "100%" }}
+        >
+          <Spin
+            spinning={productMediaUploadingCount > 0}
+            style={{ width: isMobile ? "100%" : undefined }}
+          >
             <Dragger
               name={PRODUCT_MEDIA_UPLOAD_FIELD_NAME}
               multiple={false}
@@ -168,7 +223,7 @@ export const ProductMediaSection = ({
               showUploadList={false}
               beforeUpload={onBeforeUpload}
               customRequest={onUpload}
-              style={{ minHeight: 134 }}
+              style={{ minHeight: 134, width: isMobile ? "100%" : undefined }}
             >
               <p className="ant-upload-drag-icon">
                 <CloudArrowUpIcon size={32} />
@@ -189,15 +244,35 @@ export const ProductMediaSection = ({
               items={uploadedProductMedia.map((media) => media.id)}
               strategy={rectSortingStrategy}
             >
-              <Flex gap={16} align="flex-start" wrap="wrap">
+              <Flex
+                gap={16}
+                align="flex-start"
+                wrap="wrap"
+                style={{ width: isMobile ? "100%" : undefined }}
+              >
                 {uploadedProductMedia.map((media, index) => (
                   <SortableProductMediaPreview
                     key={media.id}
                     media={media}
                     isMain={index === 0}
                     deleting={deletingProductMediaId === media.id}
+                    canMoveEarlier={index > 0}
+                    canMoveLater={index < uploadedProductMedia.length - 1}
                     onDelete={onDelete}
+                    onMoveEarlier={() => {
+                      const previous = uploadedProductMedia[index - 1];
+                      if (previous) {
+                        onReorder(media.id, previous.id);
+                      }
+                    }}
+                    onMoveLater={() => {
+                      const next = uploadedProductMedia[index + 1];
+                      if (next) {
+                        onReorder(media.id, next.id);
+                      }
+                    }}
                     texts={texts}
+                    isMobile={isMobile}
                   />
                 ))}
               </Flex>

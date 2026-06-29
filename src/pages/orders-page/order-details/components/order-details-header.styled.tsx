@@ -12,6 +12,13 @@ export const HeaderRoot = styled.div`
   @media (max-width: 980px) {
     flex-direction: column;
   }
+
+  @media (max-width: 767px) {
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    min-width: 0;
+  }
 `;
 
 export const LeftCluster = styled.div`
@@ -29,7 +36,23 @@ export const BackButton = styled(Button)`
   }
 `;
 
+export const MobileBackButton = styled(Button)`
+  && {
+    align-self: flex-start;
+    height: auto;
+    min-height: 44px;
+    padding-inline: 0;
+    color: ${({ theme }) => theme.colors.functional.text.subdued};
+  }
+
+  &&:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.functional.border.selected};
+    outline-offset: 2px;
+  }
+`;
+
 export const TitleBlock = styled.div`
+  width: 100%;
   min-width: 0;
 `;
 
@@ -70,10 +93,15 @@ export const StatusDot = styled.span`
 
 export const MetaLine = styled.div`
   display: flex;
+  width: 100%;
   align-items: center;
   gap: 10px;
   margin-top: 8px;
   flex-wrap: wrap;
+
+  @media (max-width: 767px) {
+    margin-top: 0;
+  }
 `;
 
 export const MetaItem = styled(Text)`
@@ -117,4 +145,25 @@ export const PrintButton = styled(Button)`
 
 export const StatusSelectSlot = styled.div`
   min-width: 176px;
+
+  @media (max-width: 767px) {
+    width: 100%;
+    min-width: 0;
+  }
+`;
+
+export const MobileStatusSection = styled.div`
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+`;
+
+export const StatusFieldLabel = styled(Text)`
+  && {
+    display: block;
+    margin-bottom: 6px;
+    color: ${({ theme }) => theme.colors.functional.text.subdued};
+    font-size: ${({ theme }) => theme.fontSize.small};
+    line-height: 1.25;
+  }
 `;

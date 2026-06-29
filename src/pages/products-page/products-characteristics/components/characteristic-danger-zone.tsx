@@ -5,11 +5,15 @@ import { useTranslation } from "react-i18next";
 type CharacteristicDangerZoneProps = {
   deleteLoading: boolean;
   onDelete: () => Promise<void>;
+  deleteDataQa?: string;
+  mobileLayout?: boolean;
 };
 
 export const CharacteristicDangerZone = ({
   deleteLoading,
   onDelete,
+  deleteDataQa,
+  mobileLayout = false,
 }: CharacteristicDangerZoneProps) => {
   const { t } = useTranslation();
 
@@ -23,10 +27,17 @@ export const CharacteristicDangerZone = ({
     >
       <Button
         danger
-        type="text"
+        type={mobileLayout ? "default" : "text"}
+        block={mobileLayout}
         icon={<TrashIcon size={18} />}
         loading={deleteLoading}
-        style={{ alignSelf: "flex-start", paddingInline: 0 }}
+        data-qa={deleteDataQa}
+        aria-label={t("characteristics.mobile.deleteCharacteristicAria")}
+        style={
+          mobileLayout
+            ? undefined
+            : { alignSelf: "flex-start", paddingInline: 0 }
+        }
       >
         {t("characteristics.deleteCharacteristic")}
       </Button>

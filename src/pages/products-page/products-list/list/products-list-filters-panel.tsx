@@ -17,6 +17,7 @@ import { useTranslation } from "react-i18next";
 import type { Category } from "@/features/categories/model/category.types";
 import { useCategoriesStore } from "@/features/categories/model/use-categories-store";
 import { useProductsStore } from "@/features/products/model/use-products-store";
+import { useIsMobileViewport } from "@/utils/use-media-query";
 
 const { Text } = Typography;
 const CATEGORY_LEVEL_INDENT = 20;
@@ -147,21 +148,151 @@ export const ProductsListFiltersPanel = observer(
       }
     };
 
+    const isMobileViewport = useIsMobileViewport();
+
+    const filterContent = (
+      <Flex
+        vertical
+        gap={20}
+        style={{
+          width: isMobileViewport ? "100%" : 360,
+          maxWidth: isMobileViewport ? "100%" : "80vw",
+        }}
+      >
+        <div>
+          <Text strong style={{ display: "block", marginBottom: 8 }}>
+            {t("products.toolbar.category")}
+          </Text>
+          <Input
+            allowClear
+            placeholder={t(
+              "products.listFilters.panelCategorySearchPlaceholder",
+            )}
+            prefix={<MagnifyingGlassIcon size={16} />}
+            value={categoryQuery}
+            onChange={(e) => setCategoryQuery(e.target.value)}
+            style={{ marginBottom: 8 }}
+          />
+          <div
+            style={{
+              maxHeight: 220,
+              overflowY: "auto",
+              border: `1px solid ${token.colorBorderSecondary}`,
+              borderRadius: 8,
+              padding: 8,
+            }}
+          >
+            <div style={{ marginBottom: 8 }}>
+              <Checkbox
+                checked={allSelected}
+                indeterminate={someSelected}
+                onChange={(e) => toggleSelectAllCategories(e.target.checked)}
+              >
+                {t("products.listFilters.panelSelectAll")}
+              </Checkbox>
+            </div>
+            {filteredCategoryItems.map(({ category, level }) => (
+              <div
+                key={category.id}
+                style={{
+                  marginBottom: 4,
+                  paddingLeft: level * CATEGORY_LEVEL_INDENT,
+                }}
+              >
+                <Checkbox
+                  checked={draftSet.has(category.id)}
+                  onChange={(e) =>
+                    toggleCategory(category.id, e.target.checked)
+                  }
+                >
+                  {category.name}
+                </Checkbox>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <Text strong style={{ display: "block", marginBottom: 8 }}>
+            {t("products.toolbar.status")}
+          </Text>
+          <Select
+            style={{ width: "100%" }}
+            value={productsStore.draftStatus ?? ""}
+            options={[
+              { value: "", label: t("products.toolbar.allStatuses") },
+              { value: "draft", label: t("products.toolbar.statusDraft") },
+              { value: "active", label: t("products.toolbar.statusActive") },
+              {
+                value: "archived",
+                label: t("products.toolbar.statusArchived"),
+              },
+            ]}
+            onChange={(v) =>
+              productsStore.setDraftStatus(
+                v === undefined || v === null || v === "" ? null : String(v),
+              )
+            }
+          />
+        </div>
+
+        <div>
+          <Text strong style={{ display: "block", marginBottom: 8 }}>
+            {t("products.listFilters.panelPriceSection")}
+          </Text>
+          <Flex gap={8} align="center">
+            <InputNumber
+              style={{ flex: 1, minWidth: 0 }}
+              placeholder={t("products.listFilters.panelPriceFrom")}
+              value={productsStore.draftMinPrice ?? undefined}
+              onChange={(v) => {
+                if (v == null) {
+                  productsStore.setDraftMinPrice(null);
+                } else {
+                  productsStore.setDraftMinPrice(Number(v));
+                }
+              }}
+            />
+            <span>–</span>
+            <InputNumber
+              style={{ flex: 1, minWidth: 0 }}
+              placeholder={t("products.listFilters.panelPriceTo")}
+              value={productsStore.draftMaxPrice ?? undefined}
+              onChange={(v) => {
+                if (v == null) {
+                  productsStore.setDraftMaxPrice(null);
+                } else {
+                  productsStore.setDraftMaxPrice(Number(v));
+                }
+              }}
+            />
+          </Flex>
+        </div>
+      </Flex>
+    );
+
     return (
       <Drawer
         title={t("products.toolbar.filters")}
         open={open}
-        placement="right"
-        size="auto"
+        placement={isMobileViewport ? "bottom" : "right"}
+        size={isMobileViewport ? undefined : "auto"}
+        height={isMobileViewport ? "auto" : undefined}
         onClose={onClose}
         destroyOnHidden
+        data-qa={
+          isMobileViewport ? "products-mobile-list-filters-drawer" : undefined
+        }
         styles={{
           body: {
             padding: 16,
             overflowY: "auto",
+            maxHeight: isMobileViewport ? "min(70vh, 560px)" : undefined,
           },
           footer: {
-            padding: 16,
+            padding: isMobileViewport
+              ? "12px 16px calc(12px + env(safe-area-inset-bottom, 0px))"
+              : 16,
           },
         }}
         footer={
@@ -186,117 +317,7 @@ export const ProductsListFiltersPanel = observer(
           </Flex>
         }
       >
-        <Flex vertical gap={20} style={{ width: 360, maxWidth: "80vw" }}>
-          <div>
-            <Text strong style={{ display: "block", marginBottom: 8 }}>
-              {t("products.toolbar.category")}
-            </Text>
-            <Input
-              allowClear
-              placeholder={t(
-                "products.listFilters.panelCategorySearchPlaceholder",
-              )}
-              prefix={<MagnifyingGlassIcon size={16} />}
-              value={categoryQuery}
-              onChange={(e) => setCategoryQuery(e.target.value)}
-              style={{ marginBottom: 8 }}
-            />
-            <div
-              style={{
-                maxHeight: 220,
-                overflowY: "auto",
-                border: `1px solid ${token.colorBorderSecondary}`,
-                borderRadius: 8,
-                padding: 8,
-              }}
-            >
-              <div style={{ marginBottom: 8 }}>
-                <Checkbox
-                  checked={allSelected}
-                  indeterminate={someSelected}
-                  onChange={(e) => toggleSelectAllCategories(e.target.checked)}
-                >
-                  {t("products.listFilters.panelSelectAll")}
-                </Checkbox>
-              </div>
-              {filteredCategoryItems.map(({ category, level }) => (
-                <div
-                  key={category.id}
-                  style={{
-                    marginBottom: 4,
-                    paddingLeft: level * CATEGORY_LEVEL_INDENT,
-                  }}
-                >
-                  <Checkbox
-                    checked={draftSet.has(category.id)}
-                    onChange={(e) =>
-                      toggleCategory(category.id, e.target.checked)
-                    }
-                  >
-                    {category.name}
-                  </Checkbox>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <Text strong style={{ display: "block", marginBottom: 8 }}>
-              {t("products.toolbar.status")}
-            </Text>
-            <Select
-              style={{ width: "100%" }}
-              value={productsStore.draftStatus ?? ""}
-              options={[
-                { value: "", label: t("products.toolbar.allStatuses") },
-                { value: "draft", label: t("products.toolbar.statusDraft") },
-                { value: "active", label: t("products.toolbar.statusActive") },
-                {
-                  value: "archived",
-                  label: t("products.toolbar.statusArchived"),
-                },
-              ]}
-              onChange={(v) =>
-                productsStore.setDraftStatus(
-                  v === undefined || v === null || v === "" ? null : String(v),
-                )
-              }
-            />
-          </div>
-
-          <div>
-            <Text strong style={{ display: "block", marginBottom: 8 }}>
-              {t("products.listFilters.panelPriceSection")}
-            </Text>
-            <Flex gap={8} align="center">
-              <InputNumber
-                style={{ flex: 1, minWidth: 0 }}
-                placeholder={t("products.listFilters.panelPriceFrom")}
-                value={productsStore.draftMinPrice ?? undefined}
-                onChange={(v) => {
-                  if (v == null) {
-                    productsStore.setDraftMinPrice(null);
-                  } else {
-                    productsStore.setDraftMinPrice(Number(v));
-                  }
-                }}
-              />
-              <span>–</span>
-              <InputNumber
-                style={{ flex: 1, minWidth: 0 }}
-                placeholder={t("products.listFilters.panelPriceTo")}
-                value={productsStore.draftMaxPrice ?? undefined}
-                onChange={(v) => {
-                  if (v == null) {
-                    productsStore.setDraftMaxPrice(null);
-                  } else {
-                    productsStore.setDraftMaxPrice(Number(v));
-                  }
-                }}
-              />
-            </Flex>
-          </div>
-        </Flex>
+        {filterContent}
       </Drawer>
     );
   },

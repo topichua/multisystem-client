@@ -181,7 +181,7 @@ const ProductsCard = ({ order, t }: OrderSectionProps) => {
   const discountDisplayValue = getDiscountDisplayValue(order.discountAmount);
 
   return (
-    <S.DetailsCard className="print-card">
+    <S.DetailsCard className="print-card section-products">
       <S.CardHeader>
         <Flex align="center" gap={10} wrap>
           <S.CardTitle level={3}>{t("orders.productsTab")}</S.CardTitle>
@@ -278,7 +278,7 @@ const HistoryCard = ({ order, t }: OrderSectionProps) => {
   );
 
   return (
-    <S.DetailsCard className="no-print print-card">
+    <S.DetailsCard className="no-print print-card section-history">
       <S.CardHeader>
         <S.CardTitle level={3}>{t("orders.details.statusHistory")}</S.CardTitle>
       </S.CardHeader>
@@ -333,7 +333,7 @@ const HistoryCard = ({ order, t }: OrderSectionProps) => {
 };
 
 const CustomerCard = ({ order, customerName, t }: CustomerSectionProps) => (
-  <S.DetailsCard className="print-card">
+  <S.DetailsCard className="print-card section-customer">
     <S.CardHeader>
       <S.CardTitle level={3}>{t("orders.customer")}</S.CardTitle>
     </S.CardHeader>
@@ -386,7 +386,7 @@ const DeliveryCard = ({ order, customerName, t }: CustomerSectionProps) => {
   );
 
   return (
-    <S.DetailsCard className="print-card">
+    <S.DetailsCard className="print-card section-delivery">
       <S.CardHeader>
         <Flex align="center" gap={10}>
           <S.MutedIcon>
@@ -456,7 +456,7 @@ const DeliveryCard = ({ order, customerName, t }: CustomerSectionProps) => {
 };
 
 const PaymentCard = ({ order, t }: OrderSectionProps) => (
-  <S.DetailsCard className="no-print print-card">
+  <S.DetailsCard className="no-print print-card section-payment">
     <S.CardHeader>
       <Flex align="center" gap={10}>
         <S.MutedIcon>

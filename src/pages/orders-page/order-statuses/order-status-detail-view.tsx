@@ -1,92 +1,43 @@
 import { Alert, Button, Flex, Form, Typography } from "antd";
 import { observer } from "mobx-react-lite";
-import { useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useParams } from "react-router";
+import { useParams } from "react-router";
 
-import { getApiErrorMessage } from "@/api/get-api-error-message";
-import { pagesMap } from "@/app/router/pages-map";
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
 import { CenteredSpinner } from "@/components/loading/centered-spinner";
 import * as S from "@/components/layout/form-card.styled";
-import type { OrderStatusUpdatePayload } from "@/features/orders/model/order.types";
-import { useOrdersStore } from "@/features/orders/model/use-orders-store";
 import { formatOrderStatusName } from "@/features/orders/utils/format-order-status-name";
-import { useNotification } from "@/shared/components/notification/use-notification";
 
-import {
-  OrderStatusFormFields,
-  type OrderStatusFormValues,
-} from "./order-status-form-fields";
+import { OrderStatusFormFields } from "./order-status-form-fields";
+import { useOrderStatusEditor } from "./use-order-status-editor";
 
 const { Title, Text } = Typography;
 
 export const OrderStatusDetailView = observer(() => {
   const { t } = useTranslation();
   const { statusId } = useParams<{ statusId: string }>();
-  const navigate = useNavigate();
-  const store = useOrdersStore();
-  const notification = useNotification();
-  const [form] = Form.useForm<OrderStatusFormValues>();
+  const {
+    status,
+    form,
+    store,
+    isInvalidId,
+    isLoading,
+    isNotFound,
+    handleSave,
+    navigateToStatuses,
+  } = useOrderStatusEditor(statusId);
 
-  const idNum = statusId != null ? Number(statusId) : NaN;
-
-  const status = useMemo(
-    () =>
-      Number.isFinite(idNum)
-        ? store.statuses.find((s) => s.id === idNum)
-        : undefined,
-    [store.statuses, idNum],
-  );
-
-  useEffect(() => {
-    if (status) {
-      form.setFieldsValue({
-        name: status.name,
-        color: status.color,
-        isDefault: status.isDefault,
-      });
-    }
-  }, [form, status]);
-
-  const handleSave = useCallback(async () => {
-    if (!status) return;
-
-    let values: OrderStatusFormValues;
-    try {
-      values = await form.validateFields();
-    } catch {
-      return;
-    }
-
-    const payload: OrderStatusUpdatePayload = {
-      name: values.name,
-      color:
-        typeof values.color === "string" ? values.color : String(values.color),
-      isDefault: values.isDefault === true,
-    };
-
-    try {
-      await store.updateStatus(status.id, payload);
-      notification.success({ title: t("orderStatuses.updated") });
-    } catch (e) {
-      notification.error({
-        title: getApiErrorMessage(e, t("orderStatuses.updateError")),
-      });
-    }
-  }, [form, notification, status, store, t]);
-
-  if (!Number.isFinite(idNum)) {
+  if (isInvalidId) {
     return (
       <Alert type="error" title={t("orderStatuses.invalidStatus")} showIcon />
     );
   }
 
-  if (store.statusesLoading && !status) {
+  if (isLoading) {
     return <CenteredSpinner />;
   }
 
-  if (!store.statusesLoading && !status) {
+  if (isNotFound) {
     return (
       <Alert
         type="warning"
@@ -94,10 +45,7 @@ export const OrderStatusDetailView = observer(() => {
         description={t("orderStatuses.notFoundDescription")}
         showIcon
         action={
-          <Button
-            size="small"
-            onClick={() => navigate(pagesMap.ordersStatuses)}
-          >
+          <Button size="small" onClick={navigateToStatuses}>
             {t("orderStatuses.backToStatuses")}
           </Button>
         }
@@ -110,41 +58,39 @@ export const OrderStatusDetailView = observer(() => {
   }
 
   return (
-    <>
-      <PaneDetailLayout.Root inset data-qa="layout-order-status-detail">
-        <PaneDetailLayout.Header data-qa="layout-order-status-detail-header">
-          <Flex justify="space-between" align="flex-start" gap={16} wrap="wrap">
-            <Flex vertical gap={4}>
-              <Title level={4} style={{ margin: 0 }}>
-                {formatOrderStatusName(
-                  status.name,
-                  status.isDefault,
-                  t("orderStatuses.defaultLabel"),
-                )}
-              </Title>
-              <Text type="secondary">{t("orderStatuses.editHint")}</Text>
-            </Flex>
-            <Button
-              type="primary"
-              loading={store.statusSaveLoading}
-              onClick={() => void handleSave()}
-              style={{ flexShrink: 0 }}
-            >
-              {t("orderStatuses.saveChanges")}
-            </Button>
+    <PaneDetailLayout.Root inset data-qa="layout-order-status-detail">
+      <PaneDetailLayout.Header data-qa="layout-order-status-detail-header">
+        <Flex justify="space-between" align="flex-start" gap={16} wrap="wrap">
+          <Flex vertical gap={4}>
+            <Title level={4} style={{ margin: 0 }}>
+              {formatOrderStatusName(
+                status.name,
+                status.isDefault,
+                t("orderStatuses.defaultLabel"),
+              )}
+            </Title>
+            <Text type="secondary">{t("orderStatuses.editHint")}</Text>
           </Flex>
-        </PaneDetailLayout.Header>
-        <PaneDetailLayout.Body data-qa="layout-order-status-detail-body">
-          <S.FormCard>
-            <Form form={form} layout="vertical" onFinish={handleSave}>
-              <OrderStatusFormFields
-                statuses={store.statuses}
-                editingStatusId={status.id}
-              />
-            </Form>
-          </S.FormCard>
-        </PaneDetailLayout.Body>
-      </PaneDetailLayout.Root>
-    </>
+          <Button
+            type="primary"
+            loading={store.statusSaveLoading}
+            onClick={() => void handleSave()}
+            style={{ flexShrink: 0 }}
+          >
+            {t("orderStatuses.saveChanges")}
+          </Button>
+        </Flex>
+      </PaneDetailLayout.Header>
+      <PaneDetailLayout.Body data-qa="layout-order-status-detail-body">
+        <S.FormCard>
+          <Form form={form} layout="vertical" onFinish={handleSave}>
+            <OrderStatusFormFields
+              statuses={store.statuses}
+              editingStatusId={status.id}
+            />
+          </Form>
+        </S.FormCard>
+      </PaneDetailLayout.Body>
+    </PaneDetailLayout.Root>
   );
 });

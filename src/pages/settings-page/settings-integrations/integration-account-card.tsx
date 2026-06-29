@@ -1,26 +1,91 @@
+import { ClockIcon, PlugsIcon } from "@phosphor-icons/react";
 import { Avatar, Button, Flex, Typography } from "antd";
 import { useTranslation } from "react-i18next";
 
 import type { IntegrationItem } from "@/features/integrations/model/integration.types";
+import { formatDateTime } from "@/utils/date-time";
 
 import * as S from "./settings-integrations.styled";
-import { ClockIcon, PlugsIcon } from "@phosphor-icons/react";
-import { formatDateTime } from "@/utils/date-time";
 
 const { Text, Title } = Typography;
 
 type IntegrationAccountCardProps = {
   integration: IntegrationItem;
   isDisconnecting: boolean;
+  layout?: "desktop" | "mobile";
   onDisconnect: (integration: IntegrationItem) => void;
 };
 
 export function IntegrationAccountCard({
   integration,
   isDisconnecting,
+  layout = "desktop",
   onDisconnect,
 }: IntegrationAccountCardProps) {
   const { t } = useTranslation();
+  const isMobile = layout === "mobile";
+
+  const accountDetails = (
+    <>
+      <Title level={5} style={{ margin: 0 }}>
+        {integration.name}
+      </Title>
+      {integration.userName ? (
+        <Text type="secondary">@{integration.userName}</Text>
+      ) : null}
+      {integration.postsCount != null ? (
+        <Text type="secondary">
+          {t("instagram.postsCount", {
+            count: integration.postsCount,
+          })}
+        </Text>
+      ) : null}
+    </>
+  );
+
+  const statusRow = (
+    <S.MobileIntegrationAccountStatusRow>
+      <S.IntegrationConnectedStatus>
+        {t("integrations.connectedTag")}
+      </S.IntegrationConnectedStatus>
+      {integration.connectedAt ? (
+        <Flex align="center" gap={4}>
+          <ClockIcon />
+          <Text type="secondary">
+            {formatDateTime(integration.connectedAt)}
+          </Text>
+        </Flex>
+      ) : null}
+    </S.MobileIntegrationAccountStatusRow>
+  );
+
+  if (isMobile) {
+    return (
+      <S.MobileIntegrationAccountCard
+        data-qa={`settings-mobile-integration-account-${integration.id}`}
+      >
+        <S.MobileIntegrationAccountMeta>
+          <Avatar size={40} src={integration.avatar} alt={integration.name}>
+            {integration.name.charAt(0).toUpperCase()}
+          </Avatar>
+          <S.MobileIntegrationAccountDetails>
+            {accountDetails}
+            {statusRow}
+          </S.MobileIntegrationAccountDetails>
+        </S.MobileIntegrationAccountMeta>
+        <Button
+          danger
+          block
+          loading={isDisconnecting}
+          icon={<PlugsIcon />}
+          data-qa={`settings-mobile-integration-disconnect-${integration.id}`}
+          onClick={() => onDisconnect(integration)}
+        >
+          {t("integrations.disconnectAction")}
+        </Button>
+      </S.MobileIntegrationAccountCard>
+    );
+  }
 
   return (
     <S.IntegrationAccountRow>
@@ -30,19 +95,7 @@ export function IntegrationAccountCard({
         </Avatar>
         <Flex vertical gap={12} flex={1}>
           <Flex vertical gap={0} flex={1}>
-            <Title level={5} style={{ margin: 0 }}>
-              {integration.name}
-            </Title>
-            {integration.userName && (
-              <Text type="secondary">@{integration.userName}</Text>
-            )}
-            {integration.postsCount != null && (
-              <Text type="secondary">
-                {t("instagram.postsCount", {
-                  count: integration.postsCount,
-                })}
-              </Text>
-            )}
+            {accountDetails}
           </Flex>
           <Flex align="center" gap={16}>
             <S.IntegrationConnectedStatus>
@@ -50,11 +103,11 @@ export function IntegrationAccountCard({
             </S.IntegrationConnectedStatus>
             <Flex align="center" gap={4}>
               <ClockIcon />
-              {integration.connectedAt && (
+              {integration.connectedAt ? (
                 <Text type="secondary">
                   {formatDateTime(integration.connectedAt)}
                 </Text>
-              )}
+              ) : null}
             </Flex>
           </Flex>
         </Flex>

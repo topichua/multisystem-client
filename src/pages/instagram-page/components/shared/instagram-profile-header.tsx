@@ -9,7 +9,8 @@ import {
   formatCompactNumber,
   formatHandle,
 } from "../../utils/instagram-page-format";
-import { Avatar, Flex, Typography } from "antd";
+import { Avatar, Typography } from "antd";
+import * as S from "../../instagram-page.styled";
 
 const { Text, Title } = Typography;
 
@@ -26,20 +27,19 @@ export const InstagramProfileHeader = ({
   const postsCount = integration.posts_count ?? integration.media_count;
 
   return (
-    <Flex gap={16} align="center">
+    <S.ProfileHeader>
       <Avatar size={50} src={integration.avatar} alt={integration.name}>
         {integration.name.charAt(0).toUpperCase()}
       </Avatar>
 
-      <Flex vertical gap={4}>
-        <Title level={5} style={{ margin: 0 }}>
-          {integration.name}
+      <S.ProfileCopy>
+        <S.ProfileTitleRow>
+          <Title level={5}>{integration.name}</Title>
           <Text type="secondary">
-            &nbsp;&nbsp;(
-            {formatHandle(integration.username ?? integration.name)})
+            ({formatHandle(integration.username ?? integration.name)})
           </Text>
-        </Title>
-        <Flex gap={16} align="center">
+        </S.ProfileTitleRow>
+        <S.ProfileStats>
           <Text>
             <Text strong>
               {formatCompactNumber(postsCount ?? mediaPaging?.total)}{" "}
@@ -52,8 +52,8 @@ export const InstagramProfileHeader = ({
             </Text>
             {t("instagram.followersLabel")}
           </Text>
-        </Flex>
-      </Flex>
-    </Flex>
+        </S.ProfileStats>
+      </S.ProfileCopy>
+    </S.ProfileHeader>
   );
 };

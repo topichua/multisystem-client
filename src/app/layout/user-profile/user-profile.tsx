@@ -12,12 +12,17 @@ import { useUserStore } from "@/features/auth/model/use-user-store";
 import * as S from "./user-profile.styled";
 
 type UserProfileProps = {
-  menuPlacement?: "rightTop" | "topRight";
+  menuPlacement?: "rightTop" | "topRight" | "bottomRight";
   collapsed?: boolean;
+  touchTarget?: boolean;
 };
 
 export const UserProfile = observer(
-  ({ menuPlacement = "rightTop", collapsed = true }: UserProfileProps) => {
+  ({
+    menuPlacement = "rightTop",
+    collapsed = true,
+    touchTarget = false,
+  }: UserProfileProps) => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const { logout } = useAuth();
@@ -56,8 +61,8 @@ export const UserProfile = observer(
           />
         }
       >
-        <S.ProfileTrigger>
-          <S.ProfileAvatarSlot>
+        <S.ProfileTrigger $touchTarget={touchTarget}>
+          <S.ProfileAvatarSlot $touchTarget={touchTarget}>
             <S.Avatar
               data-qa="layout-app-user-menu-trigger"
               name={displayName}

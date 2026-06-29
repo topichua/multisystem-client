@@ -31,6 +31,8 @@ export const InstagramMediaFilters = ({
             key={filter}
             type="button"
             $active={active}
+            aria-pressed={active}
+            data-qa={`instagram-media-filter-${filter}`}
             onClick={() => onChange(filter)}
           >
             {t(getFilterLabelKey(filter))}

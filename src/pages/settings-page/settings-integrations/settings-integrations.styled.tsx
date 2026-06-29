@@ -109,3 +109,58 @@ export const IntegrationConnectedStatus = styled.span`
     flex-shrink: 0;
   }
 `;
+
+export const MobileIntegrationsStack = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  min-width: 0;
+`;
+
+export const MobileIntegrationCardHeader = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+`;
+
+export const MobileConnectedCount = styled.span`
+  font-size: ${({ theme }) => theme.fontSize.small};
+  color: ${({ theme }) => theme.colors.functional.text.subdued};
+  line-height: 1.35;
+`;
+
+export const MobileIntegrationAccountCard = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  padding: 16px 0;
+
+  & + & {
+    border-top: 1px solid ${({ theme }) => theme.colors.functional.border.split};
+  }
+`;
+
+export const MobileIntegrationAccountMeta = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+`;
+
+export const MobileIntegrationAccountDetails = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  flex: 1 1 auto;
+`;
+
+export const MobileIntegrationAccountStatusRow = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+`;

@@ -389,10 +389,7 @@ export function useProductVariantsController({
     optionEditRestrictionsActive:
       productType === "variants" &&
       isEditMode &&
-      isProductOptionBaselineActiveForProduct(
-        optionBaseline,
-        editingProductId,
-      ),
+      isProductOptionBaselineActiveForProduct(optionBaseline, editingProductId),
     isVariantCustomFieldsLoading,
     getCharacteristicValueOptions,
     deletingVariantKey,

@@ -29,6 +29,7 @@ type ModuleCardProps = {
   integrationGrants: WorkspaceRoleIntegrationGrant[];
   integrationGrantsError?: string | null;
   integrationGrantsLoading?: boolean;
+  layoutVariant?: "default" | "mobile";
   module: WorkspacePermissionsCatalogModule;
   rows: PermissionFormRow[];
 };
@@ -46,6 +47,7 @@ export const TeamRolePermissionsModuleCard = ({
   integrationGrants,
   integrationGrantsError,
   integrationGrantsLoading,
+  layoutVariant = "default",
   module,
   rows,
 }: ModuleCardProps) => {
@@ -92,6 +94,8 @@ export const TeamRolePermissionsModuleCard = ({
     });
   };
 
+  const headerPadding = layoutVariant === "mobile" ? "12px 16px" : "12px 24px";
+
   return (
     <Card
       size="small"
@@ -99,7 +103,7 @@ export const TeamRolePermissionsModuleCard = ({
         body: { padding: 0 },
         header: {
           minHeight: 50,
-          padding: "12px 24px",
+          padding: headerPadding,
           background: "#f1eeff",
           fontWeight: 700,
         },
@@ -129,6 +133,7 @@ export const TeamRolePermissionsModuleCard = ({
           key={row.item.key}
           row={row}
           index={index}
+          layoutVariant={layoutVariant}
           borderColor={token.colorBorderSecondary}
           borderRadius={token.borderRadiusLG}
           permissionValues={permissionValues}

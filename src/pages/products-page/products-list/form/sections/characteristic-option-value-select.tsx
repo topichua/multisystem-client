@@ -81,9 +81,7 @@ export function CharacteristicOptionValueSelect({
   const lockedNormalizedValues = useMemo(
     () =>
       new Set(
-        lockedValues
-          .map(normalizeCharacteristicOptionValue)
-          .filter(Boolean),
+        lockedValues.map(normalizeCharacteristicOptionValue).filter(Boolean),
       ),
     [lockedValues],
   );
@@ -92,9 +90,9 @@ export function CharacteristicOptionValueSelect({
     () =>
       normalizedSearch.length > 0 &&
       options.some((option) =>
-        normalizeCharacteristicOptionValue(`${option.label} ${option.value}`).includes(
-          normalizedSearch,
-        ),
+        normalizeCharacteristicOptionValue(
+          `${option.label} ${option.value}`,
+        ).includes(normalizedSearch),
       ),
     [normalizedSearch, options],
   );

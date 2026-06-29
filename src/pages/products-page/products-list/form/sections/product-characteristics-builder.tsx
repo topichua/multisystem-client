@@ -42,6 +42,7 @@ type ProductCharacteristicsBuilderProps = {
   getCharacteristicValueOptions: (
     attributeId?: number,
   ) => Array<{ value: string; label: string }>;
+  isMobile?: boolean;
 };
 
 export function ProductCharacteristicsBuilder({
@@ -51,6 +52,7 @@ export function ProductCharacteristicsBuilder({
   optionBaseline,
   optionEditRestrictionsActive,
   getCharacteristicValueOptions,
+  isMobile = false,
 }: ProductCharacteristicsBuilderProps) {
   const { t } = useTranslation();
   const form = Form.useFormInstance();
@@ -128,6 +130,7 @@ export function ProductCharacteristicsBuilder({
                           key={field.key}
                           id={field.key}
                           dragLabel={t("products.characteristics.dragRow")}
+                          stacked={isMobile}
                         >
                           <Form.Item
                             name={[field.name, "field"]}
@@ -173,7 +176,10 @@ export function ProductCharacteristicsBuilder({
                                 },
                               },
                             ]}
-                            style={{ width: 380, marginBottom: 0 }}
+                            style={{
+                              width: isMobile ? "100%" : 380,
+                              marginBottom: 0,
+                            }}
                           >
                             <CharacteristicFieldSelect
                               placeholder={t("products.characteristics.choose")}

@@ -49,6 +49,16 @@ export const UploadedMediaPreview = styled.div<{ $isMain: boolean }>`
       cursor: grabbing;
     }
   }
+
+  .uploaded-media-move {
+    position: absolute;
+    bottom: 4px;
+    left: 4px;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.92);
+    border-radius: 6px;
+    padding: 2px;
+  }
 `;
 
 export const AiButton = styled(Button)<{ $filled: boolean }>`

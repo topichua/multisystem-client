@@ -20,6 +20,7 @@ import { DEFAULT_COLOR_PRESET } from "@/shared/components/preset-color-picker/co
 
 import { GroupFormModal, type GroupFormValues } from "./group-form-modal";
 import { useNotification } from "@/shared/components/notification/use-notification";
+import { useIsMobileViewport } from "@/utils/use-media-query";
 
 export const SettingsGroupsLayout = observer(() => {
   const { t } = useTranslation();
@@ -27,6 +28,7 @@ export const SettingsGroupsLayout = observer(() => {
   const navigate = useNavigate();
   const location = useLocation();
   const notification = useNotification();
+  const isMobileViewport = useIsMobileViewport();
   const [form] = Form.useForm<GroupFormValues>();
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -83,11 +85,13 @@ export const SettingsGroupsLayout = observer(() => {
       await store.createGroup(payload);
       notification.success({ title: t("groups.created") });
       closeModal();
-      const created = store.groups.find(
-        (g) => g.name.trim() === values.name.trim(),
-      );
-      if (created) {
-        navigate(getSettingsGroupPath(created.id));
+      if (!isMobileViewport) {
+        const created = store.groups.find(
+          (g) => g.name.trim() === values.name.trim(),
+        );
+        if (created) {
+          navigate(getSettingsGroupPath(created.id));
+        }
       }
     } catch (e) {
       notification.error({
@@ -95,40 +99,42 @@ export const SettingsGroupsLayout = observer(() => {
       });
       return Promise.reject();
     }
-  }, [closeModal, form, notification, navigate, store, t]);
+  }, [closeModal, form, isMobileViewport, notification, navigate, store, t]);
+
+  const outletContext = {
+    onCreateClick: openCreate,
+  } satisfies SettingsGroupsOutletContext;
 
   return (
     <>
-      <PaneNavSplitLayout.Root data-qa="layout-settings-groups-shell">
-        <PaneNavSplitLayout.SubSidebar data-qa="layout-settings-groups-sidebar">
-          <PaneSectionHeaderStack data-qa="layout-settings-groups-header">
-            <PaneSectionTitle>{t("groups.title")}</PaneSectionTitle>
-            <Button type="primary" onClick={openCreate}>
-              {t("groups.createGroup")}
-            </Button>
-          </PaneSectionHeaderStack>
-          <PaneScrollRegion data-qa="layout-settings-groups-nav-scroll">
-            <div data-qa="layout-settings-groups-nav">
-              <Menu
-                mode="inline"
-                selectedKeys={[location.pathname]}
-                items={menuItems}
-                onClick={({ key }) => navigate(String(key))}
-                style={{ borderInlineEnd: "none" }}
-              />
-            </div>
-          </PaneScrollRegion>
-        </PaneNavSplitLayout.SubSidebar>
-        <PaneNavSplitLayout.SubMain data-qa="layout-settings-groups-main">
-          <Outlet
-            context={
-              {
-                onCreateClick: openCreate,
-              } satisfies SettingsGroupsOutletContext
-            }
-          />
-        </PaneNavSplitLayout.SubMain>
-      </PaneNavSplitLayout.Root>
+      {isMobileViewport ? (
+        <Outlet context={outletContext} />
+      ) : (
+        <PaneNavSplitLayout.Root data-qa="layout-settings-groups-shell">
+          <PaneNavSplitLayout.SubSidebar data-qa="layout-settings-groups-sidebar">
+            <PaneSectionHeaderStack data-qa="layout-settings-groups-header">
+              <PaneSectionTitle>{t("groups.title")}</PaneSectionTitle>
+              <Button type="primary" onClick={openCreate}>
+                {t("groups.createGroup")}
+              </Button>
+            </PaneSectionHeaderStack>
+            <PaneScrollRegion data-qa="layout-settings-groups-nav-scroll">
+              <div data-qa="layout-settings-groups-nav">
+                <Menu
+                  mode="inline"
+                  selectedKeys={[location.pathname]}
+                  items={menuItems}
+                  onClick={({ key }) => navigate(String(key))}
+                  style={{ borderInlineEnd: "none" }}
+                />
+              </div>
+            </PaneScrollRegion>
+          </PaneNavSplitLayout.SubSidebar>
+          <PaneNavSplitLayout.SubMain data-qa="layout-settings-groups-main">
+            <Outlet context={outletContext} />
+          </PaneNavSplitLayout.SubMain>
+        </PaneNavSplitLayout.Root>
+      )}
 
       <GroupFormModal
         open={modalOpen}

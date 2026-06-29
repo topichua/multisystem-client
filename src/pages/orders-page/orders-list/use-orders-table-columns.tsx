@@ -9,16 +9,9 @@ import type { OrderListItem } from "@/features/orders/model/order.types";
 import { formatMoney } from "@/features/orders/utils/format-money";
 import { formatDateTime } from "@/utils/date-time";
 
-const { Text } = Typography;
+import { formatOrderCustomerName } from "./order-list-display.utils";
 
-function formatCustomerName(order: OrderListItem): string {
-  return (
-    [order.customer.firstName, order.customer.lastName]
-      .filter(Boolean)
-      .join(" ")
-      .trim() || "—"
-  );
-}
+const { Text } = Typography;
 
 export function useOrdersTableColumns(): TableColumnsType<OrderListItem> {
   const { t } = useTranslation();
@@ -35,7 +28,7 @@ export function useOrdersTableColumns(): TableColumnsType<OrderListItem> {
       {
         title: t("orders.table.customer"),
         key: "customer",
-        render: (_, order) => <Text>{formatCustomerName(order)}</Text>,
+        render: (_, order) => <Text>{formatOrderCustomerName(order)}</Text>,
       },
       {
         title: t("orders.table.source"),

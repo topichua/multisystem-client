@@ -17,6 +17,9 @@ export const PageLayout = styled.main.attrs(() => dataQaAttrs("layout-app"))`
 
   @media (max-width: 767px) {
     grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    height: 100dvh;
+    max-height: 100dvh;
   }
 `;
 
@@ -34,32 +37,5 @@ export const WorkspaceLayout = styled.section.attrs(() =>
 
   & > * {
     min-height: 0;
-  }
-
-  @media (max-width: 767px) {
-    padding-bottom: 76px;
-  }
-`;
-
-export const MobileDock = styled.div.attrs(() =>
-  dataQaAttrs("layout-mobile-dock"),
-)`
-  display: none;
-
-  @media (max-width: 767px) {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 100;
-    padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
-    background: ${({ theme }) => theme.colors.functional.background.elevated};
-    border-top: 1px solid
-      ${({ theme }) => theme.colors.functional.border.cardBase};
-    box-sizing: border-box;
   }
 `;

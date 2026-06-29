@@ -88,14 +88,12 @@ export function buildProductOptionCharacteristicsBaseline(
       }
 
       const fieldStableKey = `existing:${fieldId}`;
-      const baseline =
-        byStableKey.get(fieldStableKey) ??
-        {
-          fieldId,
-          fieldStableKey,
-          values: [],
-          normalizedValues: new Set<string>(),
-        };
+      const baseline = byStableKey.get(fieldStableKey) ?? {
+        fieldId,
+        fieldStableKey,
+        values: [],
+        normalizedValues: new Set<string>(),
+      };
 
       if (!baseline.normalizedValues.has(normalizedValue)) {
         baseline.normalizedValues.add(normalizedValue);
@@ -123,7 +121,9 @@ export function buildProductOptionCharacteristicsBaseline(
 export function hasProductOptionCharacteristicsBaseline(
   baseline: ProductOptionCharacteristicsBaseline,
 ): boolean {
-  return baseline.productId != null && baseline.initialProductType === "variants";
+  return (
+    baseline.productId != null && baseline.initialProductType === "variants"
+  );
 }
 
 export function isProductOptionBaselineActiveForProduct(
@@ -215,9 +215,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
 }
 
-function getCurrentCharacteristicFieldStableKey(
-  value: unknown,
-): string | null {
+function getCurrentCharacteristicFieldStableKey(value: unknown): string | null {
   if (!isRecord(value)) {
     return null;
   }
@@ -287,7 +285,9 @@ function getCurrentOptionFieldStableKeys(
 
   for (const characteristic of selectedCharacteristics) {
     if (characteristic.fieldType === "OPTION") {
-      fieldStableKeys.add(getCharacteristicFieldStableKey(characteristic.field));
+      fieldStableKeys.add(
+        getCharacteristicFieldStableKey(characteristic.field),
+      );
     }
   }
 

@@ -4,10 +4,13 @@ import { useNavigate, useParams } from "react-router";
 
 import { pagesMap } from "@/app/router/pages-map";
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
-import { coerceOrderId } from "./utils/order-details.utils";
-import { useOrderDetails } from "./hooks/use-order-details";
-import { OrderDetailsHeader } from "./components/order-details-header";
+import { useIsMobileViewport } from "@/utils/use-media-query";
+
 import { OrderDetailsContent } from "./components/order-details-content";
+import { OrderDetailsHeader } from "./components/order-details-header";
+import { useOrderDetails } from "./hooks/use-order-details";
+import * as S from "./order-details-page.styled";
+import { coerceOrderId } from "./utils/order-details.utils";
 
 const { Text } = Typography;
 
@@ -15,6 +18,7 @@ export const OrderDetailsPage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const params = useParams<{ orderId: string }>();
+  const isMobileViewport = useIsMobileViewport();
 
   const orderId = coerceOrderId(params.orderId);
   const invalidOrderIdError =
@@ -27,8 +31,8 @@ export const OrderDetailsPage = () => {
     window.print();
   };
 
-  return (
-    <PaneDetailLayout.Root inset>
+  const content = (
+    <>
       <OrderDetailsHeader
         order={order}
         orderId={orderId}
@@ -50,6 +54,12 @@ export const OrderDetailsPage = () => {
           {order ? <OrderDetailsContent order={order} /> : null}
         </Spin>
       </PaneDetailLayout.Body>
-    </PaneDetailLayout.Root>
+    </>
   );
+
+  if (isMobileViewport) {
+    return <S.PageRoot>{content}</S.PageRoot>;
+  }
+
+  return <PaneDetailLayout.Root inset>{content}</PaneDetailLayout.Root>;
 };

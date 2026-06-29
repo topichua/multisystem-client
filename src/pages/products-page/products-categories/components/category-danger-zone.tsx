@@ -6,12 +6,16 @@ type CategoryDangerZoneProps = {
   deleteBlockedByApi: boolean;
   deleteLoading: boolean;
   onDelete: () => Promise<void>;
+  deleteDataQa?: string;
+  mobileLayout?: boolean;
 };
 
 export const CategoryDangerZone = ({
   deleteBlockedByApi,
   deleteLoading,
   onDelete,
+  deleteDataQa,
+  mobileLayout = false,
 }: CategoryDangerZoneProps) => {
   const { t } = useTranslation();
 
@@ -36,10 +40,17 @@ export const CategoryDangerZone = ({
       >
         <Button
           danger
-          type="text"
+          type={mobileLayout ? "default" : "text"}
+          block={mobileLayout}
           icon={<TrashIcon size={18} />}
           loading={deleteLoading}
-          style={{ alignSelf: "flex-start", paddingInline: 0 }}
+          data-qa={deleteDataQa}
+          aria-label={t("categories.mobile.deleteCategoryAria")}
+          style={
+            mobileLayout
+              ? undefined
+              : { alignSelf: "flex-start", paddingInline: 0 }
+          }
         >
           {t("categories.deleteCategory")}
         </Button>

@@ -2,8 +2,9 @@ import { Drawer, Flex, Spin, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 
+import { pagesMap } from "@/app/router/pages-map";
 import { useUserStore } from "@/features/auth/model/use-user-store";
 import { clientsApi } from "@/features/clients/api/clients-api";
 import { instagramUserIdToApiString } from "@/features/clients/model/client-instagram-payload";
@@ -13,6 +14,7 @@ import type {
 } from "@/features/clients/model/client.types";
 import { useConversationsStore } from "@/features/conversations/model/use-conversations-store";
 import type { SendMessagePayload } from "@/features/conversations/model/types";
+import { useIsMobileViewport } from "@/utils/use-media-query";
 
 import * as S from "./conversation-details.styled";
 import { ConversationClientInfoPanel } from "./components/conversation-client-info-panel/conversation-client-info-panel";
@@ -27,7 +29,9 @@ const { Text } = Typography;
 
 export const ConversationDetails = observer(() => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { conversationId } = useParams();
+  const isMobileViewport = useIsMobileViewport();
   const [draft, setDraft] = useState("");
   const [replyTarget, setReplyTarget] = useState<ReplyComposeTarget | null>(
     null,
@@ -217,6 +221,11 @@ export const ConversationDetails = observer(() => {
       <S.ThreadColumn>
         <Header
           clientInfoOpen={clientInfoOpen}
+          onBackToList={
+            isMobileViewport
+              ? () => navigate(pagesMap.conversations)
+              : undefined
+          }
           onClientInfoOpen={() => setClientInfoOpen(true)}
         />
 
@@ -273,8 +282,19 @@ export const ConversationDetails = observer(() => {
         }}
         onClose={() => setClientInfoOpen(false)}
         open={clientInfoOpen}
-        size={380}
+        placement={isMobileViewport ? "bottom" : "right"}
+        size={isMobileViewport ? undefined : 380}
+        height={
+          isMobileViewport
+            ? "calc(100dvh - env(safe-area-inset-top, 0px))"
+            : undefined
+        }
         destroyOnHidden
+        styles={{
+          body: {
+            overflowY: "auto",
+          },
+        }}
       >
         <ConversationClientInfoPanel
           conversation={activeConversation}

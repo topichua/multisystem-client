@@ -20,12 +20,14 @@ export type ProductMainInfoSectionProps = {
     quantity: string;
     status: string;
   };
+  isMobile?: boolean;
 };
 
 export const ProductMainInfoSection = ({
   categoryOptions,
   requiredMessage,
   labels,
+  isMobile = false,
 }: ProductMainInfoSectionProps) => {
   const { t } = useTranslation();
   const statusOptions: StatusOption[] = useMemo(
@@ -44,8 +46,8 @@ export const ProductMainInfoSection = ({
           {t("products.form.mainInfoTitle")}
         </Title>
 
-        <Row gutter={24}>
-          <Col span={12}>
+        <Row gutter={isMobile ? [0, 0] : [24, 0]}>
+          <Col span={isMobile ? 24 : 12}>
             <Form.Item
               name="name"
               label={labels.name}
@@ -60,7 +62,7 @@ export const ProductMainInfoSection = ({
             </Form.Item>
           </Col>
 
-          <Col span={12}>
+          <Col span={isMobile ? 24 : 12}>
             <Form.Item
               name="categoryId"
               label={labels.category}
@@ -92,7 +94,7 @@ export const ProductMainInfoSection = ({
             </Form.Item>
           </Col>
 
-          <Col span={12}>
+          <Col span={isMobile ? 24 : 12}>
             <Form.Item
               name="price"
               label={labels.price}
@@ -116,7 +118,7 @@ export const ProductMainInfoSection = ({
             </Form.Item>
           </Col>
 
-          <Col span={12}>
+          <Col span={isMobile ? 24 : 12}>
             <Form.Item
               name="quantity"
               label={labels.quantity}

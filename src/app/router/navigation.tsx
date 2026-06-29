@@ -4,6 +4,7 @@ import {
   ChartLineUpIcon,
   GearSixIcon,
   GlobeIcon,
+  HouseIcon,
   InstagramLogoIcon,
   PackageIcon,
   ReceiptIcon,
@@ -54,6 +55,20 @@ export type QuickActionNavItem = NavItemBase & {
 
 export type SectionNavItem = NavItemBase & {
   key: string;
+};
+
+export type MobileNavItemKey = MainNavItem["key"] | "home" | "integrations";
+
+export type MobileNavItem = NavItemBase & {
+  key: MobileNavItemKey;
+  icon: ReactNode;
+  exact?: boolean;
+};
+
+export type MobileNavSection = {
+  key: "workspace" | "daily-work" | "customers-workspace";
+  titleKey: string;
+  items: readonly MobileNavItem[];
 };
 
 export const mainNavItems: readonly MainNavItem[] = [
@@ -182,7 +197,7 @@ export const quickActionNavItems: readonly QuickActionNavItem[] = [
   },
 ] as const;
 
-export const productsSectionNavItems: readonly SectionNavItem[] = [
+export const productsSectionNavItems = [
   {
     key: "products-list",
     path: pagesMap.productsList,
@@ -198,9 +213,9 @@ export const productsSectionNavItems: readonly SectionNavItem[] = [
     path: pagesMap.productsCharacteristics,
     labelKey: "characteristics.title",
   },
-] as const;
+] as const satisfies readonly SectionNavItem[];
 
-export const ordersSectionNavItems: readonly SectionNavItem[] = [
+export const ordersSectionNavItems = [
   {
     key: "orders-list",
     path: pagesMap.ordersList,
@@ -211,9 +226,9 @@ export const ordersSectionNavItems: readonly SectionNavItem[] = [
     path: pagesMap.ordersStatuses,
     labelKey: "orders.menu.statuses",
   },
-] as const;
+] as const satisfies readonly SectionNavItem[];
 
-export const teamSectionNavItems: readonly SectionNavItem[] = [
+export const teamSectionNavItems = [
   {
     key: "team-members",
     path: pagesMap.teamMembers,
@@ -224,7 +239,7 @@ export const teamSectionNavItems: readonly SectionNavItem[] = [
     path: pagesMap.teamRoles,
     labelKey: "team.menu.roles",
   },
-] as const;
+] as const satisfies readonly SectionNavItem[];
 
 export const clientsSectionNavItems: readonly SectionNavItem[] = [
   {
@@ -234,7 +249,7 @@ export const clientsSectionNavItems: readonly SectionNavItem[] = [
   },
 ] as const;
 
-export const settingsSectionNavItems: readonly SectionNavItem[] = [
+export const settingsSectionNavItems = [
   {
     key: "settings-groups",
     path: pagesMap.settingsGroups,
@@ -260,11 +275,100 @@ export const settingsSectionNavItems: readonly SectionNavItem[] = [
     path: pagesMap.settingsIntegrations,
     labelKey: "settings.menu.integrations",
   },
-] as const;
+] as const satisfies readonly SectionNavItem[];
+
+const findMainNavItem = (key: MainNavItem["key"]): MainNavItem => {
+  const item = mainNavItems.find((navItem) => navItem.key === key);
+
+  if (!item) {
+    throw new Error(`Missing main navigation item: ${key}`);
+  }
+
+  return item;
+};
+
+export const mobileNavSections = [
+  {
+    key: "workspace",
+    titleKey: "nav.mobileSections.workspace",
+    items: [
+      {
+        key: "home",
+        path: pagesMap.home,
+        labelKey: "nav.workspaceHome",
+        icon: <HouseIcon size={24} />,
+        exact: true,
+      },
+    ],
+  },
+  {
+    key: "daily-work",
+    titleKey: "nav.mobileSections.dailyWork",
+    items: [
+      findMainNavItem("chats"),
+      findMainNavItem("instagram"),
+      findMainNavItem("products"),
+      findMainNavItem("orders"),
+    ],
+  },
+  {
+    key: "customers-workspace",
+    titleKey: "nav.mobileSections.customersWorkspace",
+    items: [
+      findMainNavItem("clients"),
+      findMainNavItem("analytics"),
+      findMainNavItem("team"),
+      {
+        key: "integrations",
+        path: pagesMap.settingsIntegrations,
+        labelKey: "settings.menu.integrations",
+        icon: <GlobeIcon size={24} />,
+      },
+      findMainNavItem("settings"),
+    ],
+  },
+] as const satisfies readonly MobileNavSection[];
+
+export const mobileNavItems: readonly MobileNavItem[] =
+  mobileNavSections.reduce<MobileNavItem[]>((items, section) => {
+    items.push(...section.items);
+    return items;
+  }, []);
+
+function doesPathMatch(path: string, pathname: string, exact = false): boolean {
+  if (exact || path === pagesMap.home) {
+    return pathname === path;
+  }
+
+  return pathname === path || pathname.startsWith(`${path}/`);
+}
 
 export function isNavItemActive(item: NavItemBase, pathname: string) {
   const matchPaths = item.matchPaths ?? [item.path];
-  return matchPaths.some((path) => pathname.startsWith(path));
+  return matchPaths.some((path) => doesPathMatch(path, pathname));
+}
+
+export function getSelectedMobileNavKey(
+  pathname: string,
+): MobileNavItemKey | undefined {
+  const integrationsActive = doesPathMatch(
+    pagesMap.settingsIntegrations,
+    pathname,
+  );
+
+  return mobileNavItems.find((item) => {
+    if (item.key === "integrations") {
+      return integrationsActive;
+    }
+
+    if (item.key === "settings" && integrationsActive) {
+      return false;
+    }
+
+    const matchPaths = item.matchPaths ?? [item.path];
+
+    return matchPaths.some((path) => doesPathMatch(path, pathname, item.exact));
+  })?.key;
 }
 
 export function getSelectedSectionNavPath(

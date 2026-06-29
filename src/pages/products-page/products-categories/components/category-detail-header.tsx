@@ -23,6 +23,7 @@ type CategoryDetailHeaderProps = {
   subcategoriesCount: number;
   saveLoading: boolean;
   nameEdit: CategoryNameEditState;
+  editDataQa?: string;
 };
 
 export const CategoryDetailHeader = ({
@@ -30,6 +31,7 @@ export const CategoryDetailHeader = ({
   subcategoriesCount,
   saveLoading,
   nameEdit,
+  editDataQa,
 }: CategoryDetailHeaderProps) => {
   const { t } = useTranslation();
 
@@ -63,6 +65,7 @@ export const CategoryDetailHeader = ({
             type="text"
             icon={<PencilSimpleIcon size={20} />}
             aria-label={t("categories.renameCategory")}
+            data-qa={editDataQa}
             onClick={nameEdit.onOpen}
           />
         </Flex>

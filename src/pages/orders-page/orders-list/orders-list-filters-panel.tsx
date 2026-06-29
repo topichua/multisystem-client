@@ -21,6 +21,7 @@ import {
 } from "@/features/orders/model/order-list.constants";
 import { useOrdersStore } from "@/features/orders/model/use-orders-store";
 import { BRAND_PRIMARY } from "@/styled/brand";
+import { useIsMobileViewport } from "@/utils/use-media-query";
 
 const { Text } = Typography;
 
@@ -113,21 +114,161 @@ export const OrdersListFiltersPanel = observer(
       ordersStore.setDraftSources([...next]);
     };
 
+    const isMobileViewport = useIsMobileViewport();
+
+    const filterContent = (
+      <Flex
+        vertical
+        gap={20}
+        style={{
+          width: isMobileViewport ? "100%" : 360,
+          maxWidth: isMobileViewport ? "100%" : "80vw",
+        }}
+      >
+        <div>
+          <Text strong style={{ display: "block", marginBottom: 8 }}>
+            {t("orders.listFilters.panelStatusSection")}
+          </Text>
+          <Flex gap={8} wrap="wrap">
+            {sortedStatuses.map((status) => {
+              const checked = ordersStore.draftStatusIds.includes(status.id);
+              return (
+                <button
+                  key={status.id}
+                  type="button"
+                  onClick={() => toggleStatus(status.id, !checked)}
+                  style={getFilterPillStyle(checked, token)}
+                >
+                  <span
+                    aria-hidden
+                    style={{
+                      width: 8,
+                      height: 8,
+                      borderRadius: "50%",
+                      background: status.color,
+                      flexShrink: 0,
+                    }}
+                  />
+                  {status.name}
+                </button>
+              );
+            })}
+          </Flex>
+        </div>
+
+        <div>
+          <Text strong style={{ display: "block", marginBottom: 8 }}>
+            {t("orders.listFilters.panelSourceSection")}
+          </Text>
+          <Flex gap={8} wrap="wrap">
+            {ORDER_SOURCE_FILTER_VALUES.map((source) => {
+              const checked = ordersStore.draftSources.includes(source);
+              return (
+                <button
+                  key={source}
+                  type="button"
+                  onClick={() => toggleSource(source, !checked)}
+                  style={getFilterPillStyle(checked, token)}
+                >
+                  {t(`orders.sources.${source}`, { defaultValue: source })}
+                </button>
+              );
+            })}
+          </Flex>
+        </div>
+
+        <div>
+          <Text strong style={{ display: "block", marginBottom: 8 }}>
+            {t("orders.listFilters.panelTotalSection")}
+          </Text>
+          <Flex gap={8} align="center">
+            <InputNumber
+              style={{ flex: 1, minWidth: 0 }}
+              placeholder={t("orders.listFilters.panelTotalFrom")}
+              value={ordersStore.draftTotalPriceFrom ?? undefined}
+              onChange={(value) => {
+                if (value == null) {
+                  ordersStore.setDraftTotalPriceFrom(null);
+                } else {
+                  ordersStore.setDraftTotalPriceFrom(Number(value));
+                }
+              }}
+            />
+            <span>-</span>
+            <InputNumber
+              style={{ flex: 1, minWidth: 0 }}
+              placeholder={t("orders.listFilters.panelTotalTo")}
+              value={ordersStore.draftTotalPriceTo ?? undefined}
+              onChange={(value) => {
+                if (value == null) {
+                  ordersStore.setDraftTotalPriceTo(null);
+                } else {
+                  ordersStore.setDraftTotalPriceTo(Number(value));
+                }
+              }}
+            />
+          </Flex>
+        </div>
+
+        <div>
+          <Text strong style={{ display: "block", marginBottom: 8 }}>
+            {t("orders.listFilters.panelCreatedSection")}
+          </Text>
+          <Flex gap={8} align="center">
+            <DatePicker
+              style={{ flex: 1, minWidth: 0 }}
+              placeholder={t("orders.listFilters.panelCreatedFrom")}
+              value={
+                ordersStore.draftCreatedFrom
+                  ? dayjs(ordersStore.draftCreatedFrom)
+                  : null
+              }
+              onChange={(value) => {
+                ordersStore.setDraftCreatedFrom(
+                  value ? value.format("YYYY-MM-DD") : null,
+                );
+              }}
+            />
+            <span>–</span>
+            <DatePicker
+              style={{ flex: 1, minWidth: 0 }}
+              placeholder={t("orders.listFilters.panelCreatedTo")}
+              value={
+                ordersStore.draftCreatedTo
+                  ? dayjs(ordersStore.draftCreatedTo)
+                  : null
+              }
+              onChange={(value) => {
+                ordersStore.setDraftCreatedTo(
+                  value ? value.format("YYYY-MM-DD") : null,
+                );
+              }}
+            />
+          </Flex>
+        </div>
+      </Flex>
+    );
+
     return (
       <Drawer
         title={t("orders.toolbar.filters")}
         open={open}
-        placement="right"
-        size="auto"
+        placement={isMobileViewport ? "bottom" : "right"}
+        size={isMobileViewport ? undefined : "auto"}
+        height={isMobileViewport ? "auto" : undefined}
         onClose={onClose}
         destroyOnHidden
+        data-qa={isMobileViewport ? "orders-mobile-filters-drawer" : undefined}
         styles={{
           body: {
             padding: 16,
             overflowY: "auto",
+            maxHeight: isMobileViewport ? "min(70vh, 560px)" : undefined,
           },
           footer: {
-            padding: 16,
+            padding: isMobileViewport
+              ? "12px 16px calc(12px + env(safe-area-inset-bottom, 0px))"
+              : 16,
           },
         }}
         footer={
@@ -152,129 +293,7 @@ export const OrdersListFiltersPanel = observer(
           </Flex>
         }
       >
-        <Flex vertical gap={20} style={{ width: 360, maxWidth: "80vw" }}>
-          <div>
-            <Text strong style={{ display: "block", marginBottom: 8 }}>
-              {t("orders.listFilters.panelStatusSection")}
-            </Text>
-            <Flex gap={8} wrap="wrap">
-              {sortedStatuses.map((status) => {
-                const checked = ordersStore.draftStatusIds.includes(status.id);
-                return (
-                  <button
-                    key={status.id}
-                    type="button"
-                    onClick={() => toggleStatus(status.id, !checked)}
-                    style={getFilterPillStyle(checked, token)}
-                  >
-                    <span
-                      aria-hidden
-                      style={{
-                        width: 8,
-                        height: 8,
-                        borderRadius: "50%",
-                        background: status.color,
-                        flexShrink: 0,
-                      }}
-                    />
-                    {status.name}
-                  </button>
-                );
-              })}
-            </Flex>
-          </div>
-
-          <div>
-            <Text strong style={{ display: "block", marginBottom: 8 }}>
-              {t("orders.listFilters.panelSourceSection")}
-            </Text>
-            <Flex gap={8} wrap="wrap">
-              {ORDER_SOURCE_FILTER_VALUES.map((source) => {
-                const checked = ordersStore.draftSources.includes(source);
-                return (
-                  <button
-                    key={source}
-                    type="button"
-                    onClick={() => toggleSource(source, !checked)}
-                    style={getFilterPillStyle(checked, token)}
-                  >
-                    {t(`orders.sources.${source}`, { defaultValue: source })}
-                  </button>
-                );
-              })}
-            </Flex>
-          </div>
-
-          <div>
-            <Text strong style={{ display: "block", marginBottom: 8 }}>
-              {t("orders.listFilters.panelTotalSection")}
-            </Text>
-            <Flex gap={8} align="center">
-              <InputNumber
-                style={{ flex: 1, minWidth: 0 }}
-                placeholder={t("orders.listFilters.panelTotalFrom")}
-                value={ordersStore.draftTotalPriceFrom ?? undefined}
-                onChange={(value) => {
-                  if (value == null) {
-                    ordersStore.setDraftTotalPriceFrom(null);
-                  } else {
-                    ordersStore.setDraftTotalPriceFrom(Number(value));
-                  }
-                }}
-              />
-              <span>-</span>
-              <InputNumber
-                style={{ flex: 1, minWidth: 0 }}
-                placeholder={t("orders.listFilters.panelTotalTo")}
-                value={ordersStore.draftTotalPriceTo ?? undefined}
-                onChange={(value) => {
-                  if (value == null) {
-                    ordersStore.setDraftTotalPriceTo(null);
-                  } else {
-                    ordersStore.setDraftTotalPriceTo(Number(value));
-                  }
-                }}
-              />
-            </Flex>
-          </div>
-
-          <div>
-            <Text strong style={{ display: "block", marginBottom: 8 }}>
-              {t("orders.listFilters.panelCreatedSection")}
-            </Text>
-            <Flex gap={8} align="center">
-              <DatePicker
-                style={{ flex: 1, minWidth: 0 }}
-                placeholder={t("orders.listFilters.panelCreatedFrom")}
-                value={
-                  ordersStore.draftCreatedFrom
-                    ? dayjs(ordersStore.draftCreatedFrom)
-                    : null
-                }
-                onChange={(value) => {
-                  ordersStore.setDraftCreatedFrom(
-                    value ? value.format("YYYY-MM-DD") : null,
-                  );
-                }}
-              />
-              <span>–</span>
-              <DatePicker
-                style={{ flex: 1, minWidth: 0 }}
-                placeholder={t("orders.listFilters.panelCreatedTo")}
-                value={
-                  ordersStore.draftCreatedTo
-                    ? dayjs(ordersStore.draftCreatedTo)
-                    : null
-                }
-                onChange={(value) => {
-                  ordersStore.setDraftCreatedTo(
-                    value ? value.format("YYYY-MM-DD") : null,
-                  );
-                }}
-              />
-            </Flex>
-          </div>
-        </Flex>
+        {filterContent}
       </Drawer>
     );
   },

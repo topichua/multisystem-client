@@ -7,6 +7,7 @@ import { getApiErrorMessage } from "@/api/get-api-error-message";
 import { getProductCharacteristicPath, pagesMap } from "@/app/router/pages-map";
 import type { CharacteristicFieldType } from "@/features/characteristics/model/characteristic.types";
 import { useCharacteristicsStore } from "@/features/characteristics/model/use-characteristics-store";
+import { useIsMobileViewport } from "@/utils/use-media-query";
 import { useNotification } from "@/shared/components/notification/use-notification";
 
 import {
@@ -31,6 +32,7 @@ export const useProductsCharacteristicsLayoutController = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const notification = useNotification();
+  const isMobileViewport = useIsMobileViewport();
   const [form] = Form.useForm<CharacteristicCreateFormValues>();
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
@@ -105,14 +107,17 @@ export const useProductsCharacteristicsLayoutController = () => {
 
       notification.success({ title: t("characteristics.createSuccess") });
       closeCreate();
-      navigate(getProductCharacteristicPath(createdCharacteristic.id));
+
+      if (!isMobileViewport) {
+        navigate(getProductCharacteristicPath(createdCharacteristic.id));
+      }
     } catch (error) {
       notification.error({
         title: getApiErrorMessage(error, t("characteristics.createFailed")),
       });
       return Promise.reject();
     }
-  }, [closeCreate, form, notification, navigate, store, t]);
+  }, [closeCreate, form, isMobileViewport, notification, navigate, store, t]);
 
   const navigateToCharacteristic = useCallback(
     (characteristicId: number) => {

@@ -5,8 +5,10 @@ import { dataQaAttrs } from "@/styled/data-qa-attrs";
 
 export const Page = styled.main.attrs(() => dataQaAttrs("layout-login"))`
   min-height: 100vh;
+  min-height: 100dvh;
   display: grid;
   grid-template-columns: 1fr 1fr;
+
   @media (max-width: 767px) {
     display: flex;
     align-items: center;
@@ -28,6 +30,7 @@ export const FormSide = styled.section.attrs(() =>
 
     width: 100%;
     min-height: 100vh;
+    min-height: 100dvh;
     padding: 24px;
     background: ${(props) => props.theme.colors.functional.background.elevated};
 
@@ -68,6 +71,7 @@ export const ImageSide = styled.section.attrs(() =>
   dataQaAttrs("layout-login-image-side"),
 )`
   min-height: 100vh;
+  min-height: 100dvh;
   background-image: url("/background-images/login-cover.jpg");
   background-size: cover;
   background-position: center;

@@ -11,6 +11,7 @@ import { useMessageTemplatesStore } from "@/features/message-templates/model/use
 
 import { SettingsTemplatesSidebar } from "./settings-templates-sidebar";
 import { useNotification } from "@/shared/components/notification/use-notification";
+import { useIsMobileViewport } from "@/utils/use-media-query";
 import {
   TemplateFormModal,
   type TemplateFormValues,
@@ -22,6 +23,7 @@ export const SettingsTemplatesLayout = observer(() => {
   const navigate = useNavigate();
   const location = useLocation();
   const notification = useNotification();
+  const isMobileViewport = useIsMobileViewport();
   const [form] = Form.useForm<TemplateFormValues>();
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -88,30 +90,32 @@ export const SettingsTemplatesLayout = observer(() => {
     }
   }, [closeModal, form, notification, navigate, store, t]);
 
+  const outletContext = {
+    onCreateClick: openCreate,
+  } satisfies SettingsTemplatesOutletContext;
+
   return (
     <>
-      <PaneNavSplitLayout.Root data-qa="layout-settings-templates-shell">
-        <SettingsTemplatesSidebar
-          templates={sortedTemplates}
-          activeTemplateId={activeTemplateId}
-          listLoading={store.listLoading}
-          listError={store.listError}
-          onCreateClick={openCreate}
-          onTemplateClick={(templateId) =>
-            navigate(getSettingsTemplatePath(templateId))
-          }
-        />
-
-        <PaneNavSplitLayout.SubMain data-qa="layout-settings-templates-main">
-          <Outlet
-            context={
-              {
-                onCreateClick: openCreate,
-              } satisfies SettingsTemplatesOutletContext
+      {isMobileViewport ? (
+        <Outlet context={outletContext} />
+      ) : (
+        <PaneNavSplitLayout.Root data-qa="layout-settings-templates-shell">
+          <SettingsTemplatesSidebar
+            templates={sortedTemplates}
+            activeTemplateId={activeTemplateId}
+            listLoading={store.listLoading}
+            listError={store.listError}
+            onCreateClick={openCreate}
+            onTemplateClick={(templateId) =>
+              navigate(getSettingsTemplatePath(templateId))
             }
           />
-        </PaneNavSplitLayout.SubMain>
-      </PaneNavSplitLayout.Root>
+
+          <PaneNavSplitLayout.SubMain data-qa="layout-settings-templates-main">
+            <Outlet context={outletContext} />
+          </PaneNavSplitLayout.SubMain>
+        </PaneNavSplitLayout.Root>
+      )}
 
       <TemplateFormModal
         open={modalOpen}
