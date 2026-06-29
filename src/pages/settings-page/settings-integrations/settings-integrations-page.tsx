@@ -12,6 +12,7 @@ import { PaneNavSplitLayout } from "@/components/layout/pane-nav-split-layout";
 
 import { useSettingsIntegrationsController } from "./controllers/use-settings-integrations-controller";
 import { IntegrationTypeCard } from "./integration-type-card";
+import { NovaPoshtaIntegrationWizard } from "./nova-poshta";
 import { IntegrationTypeSidebar } from "./integration-type-sidebar";
 import * as S from "./settings-integrations.styled";
 import { TelegramQrLoginModal } from "./telegram-qr-login-modal";
@@ -78,6 +79,18 @@ export const SettingsIntegrationsPage = observer(() => {
                           )}
                           isDisconnecting={(type, id) =>
                             store.isDisconnecting(type, id)
+                          }
+                          setupContent={
+                            definition.type === "novaposhta" &&
+                            controller.novaPoshtaWizardOpen ? (
+                              <NovaPoshtaIntegrationWizard
+                                submitting={store.isConnecting("novaposhta")}
+                                onCancel={controller.closeNovaPoshtaWizard}
+                                onSubmit={
+                                  controller.handleNovaPoshtaWizardSubmit
+                                }
+                              />
+                            ) : undefined
                           }
                           onConnectType={(type) =>
                             void controller.handleConnectType(type)

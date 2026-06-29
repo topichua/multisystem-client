@@ -1,0 +1,4 @@
+export const CITY_MIN_SEARCH_LENGTH = 2;
+export const SEARCH_DEBOUNCE_MS = 300;
+export const STREET_MIN_SEARCH_LENGTH = 1;
+export const WAREHOUSE_MIN_SEARCH_LENGTH = 1;

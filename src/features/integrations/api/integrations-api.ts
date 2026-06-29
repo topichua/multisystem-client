@@ -6,15 +6,46 @@ import type {
   IntegrationCreatePayload,
   IntegrationItem,
   IntegrationsListResponse,
+  NovaPoshtaIntegrationCreatePayload,
+  NovaPoshtaSender,
+  NovaPoshtaSettlement,
+  NovaPoshtaStreet,
+  NovaPoshtaWarehouse,
   TelegramQrLoginStartResponse,
   TelegramQrLoginSession,
 } from "../model/integration.types";
 
 const basePath = "/integrations";
 const telegramIntegrationsBasePath = "/telegram-integrations";
+const novaPoshtaIntegrationsBasePath = "/novaposhta-integrations";
+const novaPoshtaSearchBasePath = "/nova-poshta";
 const invalidTelegramQrLoginResponseError = new Error(
   "Invalid Telegram QR login response",
 );
+
+type NovaPoshtaWarehousesSearchParams = {
+  apiKey: string;
+  cityRef: string;
+  query?: string;
+  type?: string;
+};
+
+type NovaPoshtaStreetsSearchParams = {
+  apiKey: string;
+  settlementRef: string;
+  query: string;
+};
+
+type ListResponse<TItem> =
+  | TItem[]
+  | {
+      data?: TItem[];
+      items?: TItem[];
+      senders?: TItem[];
+      settlements?: TItem[];
+      streets?: TItem[];
+      warehouses?: TItem[];
+    };
 
 function readTelegramQrLoginId(
   value: unknown,
@@ -60,6 +91,35 @@ function parseTelegramQrLoginSession(
   }
 
   return { id, qrImageUrl };
+}
+
+function listFromResponse<TItem>(data: ListResponse<TItem>): TItem[] {
+  if (Array.isArray(data)) {
+    return data;
+  }
+
+  return (
+    data.items ??
+    data.data ??
+    data.senders ??
+    data.settlements ??
+    data.warehouses ??
+    data.streets ??
+    []
+  );
+}
+
+function withParams(
+  config: AxiosRequestConfig | undefined,
+  params: Record<string, string>,
+): AxiosRequestConfig {
+  return {
+    ...config,
+    params: {
+      ...(config?.params as Record<string, string> | undefined),
+      ...params,
+    },
+  };
 }
 
 export const integrationsApi = {
@@ -113,5 +173,88 @@ export const integrationsApi = {
     );
 
     return data;
+  },
+
+  createNovaPoshtaIntegration: async (
+    payload: NovaPoshtaIntegrationCreatePayload,
+  ): Promise<IntegrationItem> => {
+    const { data } = await apiClient.post<IntegrationItem>(
+      novaPoshtaIntegrationsBasePath,
+      payload,
+    );
+
+    return data;
+  },
+
+  discoverNovaPoshtaSenders: async (
+    novaposhtaApiKey: string,
+    config?: AxiosRequestConfig,
+  ): Promise<NovaPoshtaSender[]> => {
+    const { data } = await apiClient.post<ListResponse<NovaPoshtaSender>>(
+      `${novaPoshtaIntegrationsBasePath}/discover-senders`,
+      { api_key: novaposhtaApiKey.trim() },
+      config,
+    );
+
+    return listFromResponse(data);
+  },
+
+  searchNovaPoshtaSettlements: async (
+    novaposhtaApiKey: string,
+    query: string,
+    config?: AxiosRequestConfig,
+  ): Promise<NovaPoshtaSettlement[]> => {
+    const { data } = await apiClient.get<ListResponse<NovaPoshtaSettlement>>(
+      `${novaPoshtaSearchBasePath}/settlements/search`,
+      withParams(config, {
+        api_key: novaposhtaApiKey.trim(),
+        query: query.trim(),
+      }),
+    );
+
+    return listFromResponse(data);
+  },
+
+  searchNovaPoshtaWarehouses: async (
+    params: NovaPoshtaWarehousesSearchParams,
+    config?: AxiosRequestConfig,
+  ): Promise<NovaPoshtaWarehouse[]> => {
+    const queryParams: Record<string, string> = {
+      api_key: params.apiKey.trim(),
+      cityRef: params.cityRef,
+    };
+    const query = params.query?.trim();
+    const type = params.type?.trim();
+
+    if (query) {
+      queryParams.query = query;
+    }
+
+    if (type) {
+      queryParams.type = type;
+    }
+
+    const { data } = await apiClient.get<ListResponse<NovaPoshtaWarehouse>>(
+      `${novaPoshtaSearchBasePath}/warehouses/search`,
+      withParams(config, queryParams),
+    );
+
+    return listFromResponse(data);
+  },
+
+  searchNovaPoshtaStreets: async (
+    params: NovaPoshtaStreetsSearchParams,
+    config?: AxiosRequestConfig,
+  ): Promise<NovaPoshtaStreet[]> => {
+    const { data } = await apiClient.get<ListResponse<NovaPoshtaStreet>>(
+      `${novaPoshtaSearchBasePath}/streets/search`,
+      withParams(config, {
+        api_key: params.apiKey.trim(),
+        settlementRef: params.settlementRef,
+        query: params.query.trim(),
+      }),
+    );
+
+    return listFromResponse(data);
   },
 };

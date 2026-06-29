@@ -674,6 +674,83 @@
         }
       }
     },
+    "novaPoshtaWizard": {
+      "steps": {
+        "apiKey": "API key",
+        "sender": "Sender details",
+        "payment": "Payment details"
+      },
+      "fields": {
+        "name": {
+          "label": "Integration name",
+          "placeholder": "E.g. Nova Poshta · Main cabinet",
+          "required": "Enter integration name"
+        },
+        "apiKey": {
+          "label": "Nova Poshta cabinet API key",
+          "placeholder": "E.g. 7f3a9c1b4e2d8a6f0b5c2e9d1a4f7b3c",
+          "required": "Enter API key"
+        },
+        "sender": {
+          "label": "Sender contact",
+          "placeholder": "Select sender contact",
+          "required": "Select sender contact"
+        },
+        "city": {
+          "label": "Sender city",
+          "placeholder": "Start typing city",
+          "required": "Select sender city"
+        },
+        "senderType": {
+          "label": "Sender type"
+        },
+        "warehouse": {
+          "label": "Warehouse",
+          "placeholder": "Start typing number or address",
+          "required": "Select warehouse"
+        },
+        "street": {
+          "label": "Street",
+          "placeholder": "Start typing street",
+          "required": "Select street"
+        },
+        "building": {
+          "label": "Building",
+          "placeholder": "E.g. 11",
+          "required": "Enter building"
+        },
+        "flat": {
+          "label": "Flat",
+          "placeholder": "E.g. 24"
+        },
+        "payerType": {
+          "label": "Delivery payment",
+          "placeholder": "Select payer",
+          "required": "Select payer"
+        }
+      },
+      "senderTypes": {
+        "warehouse": "Warehouse",
+        "address": "Address"
+      },
+      "payerTypes": {
+        "sender": "Sender",
+        "recipient": "Recipient"
+      },
+      "senderStepNote": "This information is used as the sender on new waybills.",
+      "apiKeyHint": "The key is available in Nova Poshta cabinet → Settings → Security → API.",
+      "discoverFailed": "Could not load senders",
+      "noSenders": "No sender contacts found for this API key",
+      "searchFailed": "Could not load options",
+      "searchEmpty": "Nothing found",
+      "searchMinLength": "Enter at least {{count}} characters",
+      "actions": {
+        "cancel": "Cancel",
+        "back": "Back",
+        "next": "Next",
+        "finish": "Finish connection"
+      }
+    },
     "telegramQr": {
       "title": "Connect Telegram",
       "subtitle": "Scan the QR code with Telegram on your phone",

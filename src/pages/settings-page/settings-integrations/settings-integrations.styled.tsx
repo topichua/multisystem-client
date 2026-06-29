@@ -110,6 +110,116 @@ export const IntegrationConnectedStatus = styled.span`
   }
 `;
 
+export const NovaPoshtaWizard = styled.div`
+  margin-top: 20px;
+`;
+
+export const NovaPoshtaWizardSteps = styled.div`
+  margin-bottom: 24px;
+
+  .ant-steps-item-icon {
+    border: 0;
+  }
+
+  .ant-steps-item-finish {
+    .ant-steps-item-icon {
+      background: ${({ theme }) => theme.colors.semantic.success};
+    }
+
+    .ant-steps-item-title {
+      color: ${({ theme }) => theme.colors.semantic.success};
+    }
+
+    .ant-steps-icon {
+      color: ${({ theme }) => theme.colors.functional.text.inverted};
+
+      svg {
+        color: ${({ theme }) => theme.colors.functional.text.inverted};
+      }
+    }
+  }
+
+  .ant-steps-item-process {
+    .ant-steps-item-icon {
+      background: ${({ theme }) => theme.colors.semantic.primary};
+    }
+
+    .ant-steps-icon {
+      color: ${({ theme }) => theme.colors.functional.text.inverted};
+    }
+  }
+
+  .ant-steps-item-wait {
+    .ant-steps-item-icon {
+      background: ${({ theme }) => theme.colors.functional.background.natural};
+    }
+
+    .ant-steps-icon,
+    .ant-steps-item-title {
+      color: ${({ theme }) => theme.colors.functional.text.subdued};
+    }
+  }
+
+  .ant-steps-item-title {
+    font-weight: 600;
+  }
+`;
+
+export const NovaPoshtaWizardStepNote = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin-top: 16px;
+  font-size: ${({ theme }) => theme.fontSize.small};
+  color: ${({ theme }) => theme.colors.functional.text.subdued};
+  line-height: 1.4;
+
+  svg {
+    flex: 0 0 auto;
+    margin-top: 2px;
+    color: currentColor;
+  }
+`;
+
+export const NovaPoshtaWizardHint = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin-top: -8px;
+  font-size: ${({ theme }) => theme.fontSize.small};
+
+  svg {
+    flex: 0 0 auto;
+    margin-top: 2px;
+    color: ${({ theme }) => theme.colors.functional.text.subdued};
+  }
+`;
+
+export const NovaPoshtaWizardFooter = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 24px;
+
+  @media (max-width: 575px) {
+    flex-direction: column-reverse;
+
+    .ant-btn {
+      width: 100%;
+    }
+  }
+`;
+
+export const NovaPoshtaAddressGrid = styled.div`
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(92px, 120px) minmax(92px, 120px);
+  gap: 12px;
+
+  @media (max-width: 767px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
 export const MobileIntegrationsStack = styled.div`
   display: flex;
   flex-direction: column;

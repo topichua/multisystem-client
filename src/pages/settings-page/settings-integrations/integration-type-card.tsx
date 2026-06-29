@@ -1,5 +1,6 @@
 import { PlusIcon } from "@phosphor-icons/react";
 import { Button, Flex } from "antd";
+import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 
 import type { IntegrationItem } from "@/features/integrations/model/integration.types";
@@ -17,6 +18,7 @@ type IntegrationTypeCardProps = {
   integrations: IntegrationItem[];
   isDisconnecting: (type: IntegrationItem["type"], id: number) => boolean;
   layout?: "desktop" | "mobile";
+  setupContent?: ReactNode;
   onConnectType: (type: IntegrationType) => void;
   onDisconnect: (integration: IntegrationItem) => void;
 };
@@ -27,11 +29,13 @@ export const IntegrationTypeCard = ({
   integrations,
   isDisconnecting,
   layout = "desktop",
+  setupContent,
   onConnectType,
   onDisconnect,
 }: IntegrationTypeCardProps) => {
   const { t } = useTranslation();
   const hasConnections = integrations.length > 0;
+  const hasSetupContent = setupContent != null;
   const isMobile = layout === "mobile";
 
   const connectButton = (
@@ -78,10 +82,15 @@ export const IntegrationTypeCard = ({
             </S.IntegrationCardText>
           </S.IntegrationCardIdentity>
 
-          {connectButton}
+          {hasSetupContent ? null : connectButton}
         </S.MobileIntegrationCardHeader>
 
-        {hasConnections ? (
+        {hasSetupContent ? (
+          <>
+            <S.IntegrationCardDivider />
+            {setupContent}
+          </>
+        ) : hasConnections ? (
           <>
             <S.IntegrationCardDivider />
             <S.IntegrationAccountsList>
@@ -124,12 +133,14 @@ export const IntegrationTypeCard = ({
             </S.IntegrationCardDescription>
           </S.IntegrationCardText>
         </S.IntegrationCardIdentity>
-        <Flex flex="0 0 auto">{connectButton}</Flex>
+        {hasSetupContent ? null : <Flex flex="0 0 auto">{connectButton}</Flex>}
       </S.IntegrationCardHeader>
 
       <S.IntegrationCardDivider />
 
-      {hasConnections ? (
+      {hasSetupContent ? (
+        setupContent
+      ) : hasConnections ? (
         <S.IntegrationAccountsList>
           {integrations.map((integration) => (
             <IntegrationAccountCard

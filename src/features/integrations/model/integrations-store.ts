@@ -6,6 +6,7 @@ import { throwLoadError } from "@/utils/throw-load-error";
 import type {
   IntegrationItem,
   IntegrationType,
+  NovaPoshtaIntegrationCreatePayload,
   TelegramQrLoginSession,
 } from "./integration.types";
 
@@ -124,6 +125,28 @@ export class IntegrationsStore {
     } finally {
       runInAction(() => {
         if (this.connectLoadingType === "telegram") {
+          this.connectLoadingType = null;
+        }
+      });
+    }
+  };
+
+  createNovaPoshtaIntegration = async (
+    payload: NovaPoshtaIntegrationCreatePayload,
+  ): Promise<IntegrationItem> => {
+    runInAction(() => {
+      this.connectLoadingType = "novaposhta";
+    });
+
+    try {
+      const created =
+        await integrationsApi.createNovaPoshtaIntegration(payload);
+      await this.loadIntegrations({ silent: true });
+
+      return created;
+    } finally {
+      runInAction(() => {
+        if (this.connectLoadingType === "novaposhta") {
           this.connectLoadingType = null;
         }
       });

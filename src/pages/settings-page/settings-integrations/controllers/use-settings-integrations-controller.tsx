@@ -10,6 +10,7 @@ import {
 } from "@/features/integrations/open-integration-auth";
 import type {
   IntegrationItem,
+  NovaPoshtaIntegrationCreatePayload,
   TelegramQrLoginSession,
 } from "@/features/integrations/model/integration.types";
 import { isIntegrationNotAvailableError } from "@/features/integrations/model/integrations-store";
@@ -41,6 +42,7 @@ export function useSettingsIntegrationsController() {
   const [query, setQuery] = useState("");
   const [selectedFilter, setSelectedFilter] =
     useState<IntegrationFilter>("all");
+  const [novaPoshtaWizardOpen, setNovaPoshtaWizardOpen] = useState(false);
   const [telegramQrModal, setTelegramQrModal] = useState<TelegramQrModalState>({
     open: false,
     status: "idle",
@@ -293,6 +295,11 @@ export function useSettingsIntegrationsController() {
 
   const handleConnectType = useCallback(
     async (type: IntegrationType) => {
+      if (type === "novaposhta") {
+        setNovaPoshtaWizardOpen(true);
+        return;
+      }
+
       if (type === "telegram") {
         await startTelegramQrLogin();
         return;
@@ -322,6 +329,25 @@ export function useSettingsIntegrationsController() {
     [notification, startTelegramQrLogin, store, t],
   );
 
+  const closeNovaPoshtaWizard = useCallback(() => {
+    setNovaPoshtaWizardOpen(false);
+  }, []);
+
+  const handleNovaPoshtaWizardSubmit = useCallback(
+    async (payload: NovaPoshtaIntegrationCreatePayload) => {
+      try {
+        await store.createNovaPoshtaIntegration(payload);
+        setNovaPoshtaWizardOpen(false);
+        notification.success({ title: t("integrations.connectSuccess") });
+      } catch (e) {
+        notification.error({
+          title: getApiErrorMessage(e, t("integrations.connectFailed")),
+        });
+      }
+    },
+    [notification, store, t],
+  );
+
   return {
     store,
     query,
@@ -334,6 +360,9 @@ export function useSettingsIntegrationsController() {
     getVisibleIntegrations,
     handleDisconnect,
     handleConnectType,
+    novaPoshtaWizardOpen,
+    closeNovaPoshtaWizard,
+    handleNovaPoshtaWizardSubmit,
     telegramQrModal,
     closeTelegramQrModal,
     retryTelegramQrLogin: startTelegramQrLogin,

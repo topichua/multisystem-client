@@ -10,6 +10,7 @@ import { dataQaAttrs } from "@/styled/data-qa-attrs";
 import * as MobileS from "../mobile-settings-page.styled";
 import { useSettingsIntegrationsController } from "./controllers/use-settings-integrations-controller";
 import { IntegrationTypeCard } from "./integration-type-card";
+import { NovaPoshtaIntegrationWizard } from "./nova-poshta";
 import { INTEGRATION_TYPES } from "./settings-integrations.definitions";
 import * as S from "./settings-integrations.styled";
 import { TelegramQrLoginModal } from "./telegram-qr-login-modal";
@@ -65,6 +66,16 @@ export const MobileSettingsIntegrationsPage = observer(() => {
                       store.isDisconnecting(type, id)
                     }
                     layout="mobile"
+                    setupContent={
+                      definition.type === "novaposhta" &&
+                      controller.novaPoshtaWizardOpen ? (
+                        <NovaPoshtaIntegrationWizard
+                          submitting={store.isConnecting("novaposhta")}
+                          onCancel={controller.closeNovaPoshtaWizard}
+                          onSubmit={controller.handleNovaPoshtaWizardSubmit}
+                        />
+                      ) : undefined
+                    }
                     onConnectType={(type) =>
                       void controller.handleConnectType(type)
                     }

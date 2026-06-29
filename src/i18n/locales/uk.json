@@ -682,6 +682,83 @@
         }
       }
     },
+    "novaPoshtaWizard": {
+      "steps": {
+        "apiKey": "API ключ",
+        "sender": "Дані відправника",
+        "payment": "Дані про оплату"
+      },
+      "fields": {
+        "name": {
+          "label": "Назва інтеграції",
+          "placeholder": "Напр. Нова Пошта · Основний кабінет",
+          "required": "Вкажіть назву інтеграції"
+        },
+        "apiKey": {
+          "label": "API ключ кабінету Нової Пошти",
+          "placeholder": "Напр. 7f3a9c1b4e2d8a6f0b5c2e9d1a4f7b3c",
+          "required": "Вкажіть API ключ"
+        },
+        "sender": {
+          "label": "Контакт відправника",
+          "placeholder": "Оберіть контакт відправника",
+          "required": "Оберіть контакт відправника"
+        },
+        "city": {
+          "label": "Місто відправлення",
+          "placeholder": "Почніть вводити місто",
+          "required": "Оберіть місто відправлення"
+        },
+        "senderType": {
+          "label": "Тип відправлення"
+        },
+        "warehouse": {
+          "label": "Відділення",
+          "placeholder": "Почніть вводити номер або адресу",
+          "required": "Оберіть відділення"
+        },
+        "street": {
+          "label": "Вулиця",
+          "placeholder": "Почніть вводити вулицю",
+          "required": "Оберіть вулицю"
+        },
+        "building": {
+          "label": "Будинок",
+          "placeholder": "Напр. 11",
+          "required": "Вкажіть будинок"
+        },
+        "flat": {
+          "label": "Квартира",
+          "placeholder": "Напр. 24"
+        },
+        "payerType": {
+          "label": "Оплата за доставку",
+          "placeholder": "Оберіть платника",
+          "required": "Оберіть платника"
+        }
+      },
+      "senderTypes": {
+        "warehouse": "Відділення",
+        "address": "Адреса"
+      },
+      "payerTypes": {
+        "sender": "Відправник",
+        "recipient": "Отримувач"
+      },
+      "senderStepNote": "Ці дані використовуються як відправник у нових накладних.",
+      "apiKeyHint": "Ключ доступний у кабінеті Нової Пошти → Налаштування → Безпека → API.",
+      "discoverFailed": "Не вдалося завантажити відправників",
+      "noSenders": "Для цього API ключа не знайдено контактів відправника",
+      "searchFailed": "Не вдалося завантажити варіанти",
+      "searchEmpty": "Нічого не знайдено",
+      "searchMinLength": "Введіть щонайменше {{count}} символи",
+      "actions": {
+        "cancel": "Скасувати",
+        "back": "Назад",
+        "next": "Далі",
+        "finish": "Завершити підключення"
+      }
+    },
     "telegramQr": {
       "title": "Підключення Telegram",
       "subtitle": "Відскануйте QR-код застосунком Telegram на телефоні",
