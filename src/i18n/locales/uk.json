@@ -681,6 +681,23 @@
           "description": "Підключити магазин Prom"
         }
       }
+    },
+    "telegramQr": {
+      "title": "Підключення Telegram",
+      "subtitle": "Відскануйте QR-код застосунком Telegram на телефоні",
+      "imageAlt": "QR-код для підключення Telegram",
+      "retry": "Оновити QR-код",
+      "steps": {
+        "openTelegram": "Відкрийте <strong>Telegram</strong> на телефоні",
+        "openDevices": "Перейдіть у <strong>Налаштування → Пристрої</strong>",
+        "connectDevice": "Натисніть <strong>Підключити пристрій</strong> та наведіть камеру"
+      },
+      "status": {
+        "loading": "Створення QR-коду...",
+        "waiting": "Очікування сканування...",
+        "expired": "QR-код прострочено",
+        "error": "Не вдалося підключити Telegram"
+      }
     }
   },
   "system": {

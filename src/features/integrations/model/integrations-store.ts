@@ -3,7 +3,11 @@ import { makeAutoObservable, runInAction } from "mobx";
 import { integrationsApi } from "@/features/integrations/api/integrations-api";
 import { throwLoadError } from "@/utils/throw-load-error";
 
-import type { IntegrationItem, IntegrationType } from "./integration.types";
+import type {
+  IntegrationItem,
+  IntegrationType,
+  TelegramQrLoginSession,
+} from "./integration.types";
 
 const INTEGRATION_NOT_AVAILABLE_ERROR = "INTEGRATION_NOT_AVAILABLE";
 
@@ -18,6 +22,10 @@ const CONNECTABLE_INTEGRATION_TYPES = [
 type ConnectableIntegrationType =
   (typeof CONNECTABLE_INTEGRATION_TYPES)[number];
 
+type IntegrationRequestOptions = {
+  signal?: AbortSignal;
+};
+
 export const isConnectableIntegrationType = (
   type: string,
 ): type is ConnectableIntegrationType =>
@@ -28,7 +36,7 @@ export class IntegrationsStore {
 
   listLoading = false;
 
-  connectLoading = false;
+  connectLoadingType: IntegrationType | null = null;
   disconnectLoadingKey: string | null = null;
 
   constructor() {
@@ -41,6 +49,10 @@ export class IntegrationsStore {
 
   isDisconnecting(type: IntegrationType, id: number): boolean {
     return this.disconnectLoadingKey === this.disconnectKey(type, id);
+  }
+
+  isConnecting(type: IntegrationType): boolean {
+    return this.connectLoadingType === type;
   }
 
   loadIntegrations = async (options?: { silent?: boolean }): Promise<void> => {
@@ -79,7 +91,7 @@ export class IntegrationsStore {
     }
 
     runInAction(() => {
-      this.connectLoading = true;
+      this.connectLoadingType = integration_type;
     });
 
     try {
@@ -93,9 +105,37 @@ export class IntegrationsStore {
       return created;
     } finally {
       runInAction(() => {
-        this.connectLoading = false;
+        if (this.connectLoadingType === integration_type) {
+          this.connectLoadingType = null;
+        }
       });
     }
+  };
+
+  startTelegramQrLogin = async (
+    options?: IntegrationRequestOptions,
+  ): Promise<TelegramQrLoginSession> => {
+    runInAction(() => {
+      this.connectLoadingType = "telegram";
+    });
+
+    try {
+      return await integrationsApi.startTelegramQrLogin(options);
+    } finally {
+      runInAction(() => {
+        if (this.connectLoadingType === "telegram") {
+          this.connectLoadingType = null;
+        }
+      });
+    }
+  };
+
+  confirmTelegramQrLogin = async (
+    id: TelegramQrLoginSession["id"],
+    options?: IntegrationRequestOptions,
+  ): Promise<void> => {
+    await integrationsApi.confirmTelegramQrLogin(id, options);
+    await this.loadIntegrations({ silent: true });
   };
 
   disconnectIntegration = async (

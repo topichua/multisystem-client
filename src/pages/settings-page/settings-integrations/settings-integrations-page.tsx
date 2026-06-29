@@ -14,6 +14,7 @@ import { useSettingsIntegrationsController } from "./controllers/use-settings-in
 import { IntegrationTypeCard } from "./integration-type-card";
 import { IntegrationTypeSidebar } from "./integration-type-sidebar";
 import * as S from "./settings-integrations.styled";
+import { TelegramQrLoginModal } from "./telegram-qr-login-modal";
 
 export const SettingsIntegrationsPage = observer(() => {
   const { t } = useTranslation();
@@ -70,7 +71,7 @@ export const SettingsIntegrationsPage = observer(() => {
                       controller.visibleIntegrationTypes.map((definition) => (
                         <IntegrationTypeCard
                           key={definition.type}
-                          connectLoading={store.connectLoading}
+                          connectLoading={store.isConnecting(definition.type)}
                           definition={definition}
                           integrations={controller.getVisibleIntegrations(
                             definition,
@@ -92,6 +93,14 @@ export const SettingsIntegrationsPage = observer(() => {
           )}
         </PaneDetailLayout.Body>
       </PaneDetailLayout.Root>
+
+      <TelegramQrLoginModal
+        open={controller.telegramQrModal.open}
+        qrImageUrl={controller.telegramQrModal.session?.qrImageUrl ?? null}
+        status={controller.telegramQrModal.status}
+        onCancel={controller.closeTelegramQrModal}
+        onRetry={controller.retryTelegramQrLogin}
+      />
     </>
   );
 });

@@ -22,3 +22,33 @@ export type IntegrationsListResponse = {
 export type IntegrationCreatePayload = {
   integration_type: IntegrationType;
 };
+
+export type TelegramQrLoginSession = {
+  id: number | string;
+  qrImageUrl: string;
+};
+
+export type TelegramQrLoginStartResponse = {
+  id?: unknown;
+  integrationId?: unknown;
+  integration_id?: unknown;
+  telegramIntegrationId?: unknown;
+  telegram_integration_id?: unknown;
+  qrImageUrl?: unknown;
+  qr_image_url?: unknown;
+  integration?: {
+    id?: unknown;
+    integrationId?: unknown;
+    integration_id?: unknown;
+  };
+  telegramIntegration?: {
+    id?: unknown;
+    integrationId?: unknown;
+    integration_id?: unknown;
+  };
+  telegram_integration?: {
+    id?: unknown;
+    integrationId?: unknown;
+    integration_id?: unknown;
+  };
+};

@@ -1,10 +1,10 @@
-import type { WorkspaceMember } from "@/features/workspace-members/model/workspace-member.types";
-
-import * as S from "./team-members-page.styled";
+import type { WorkspaceMember } from '@/features/workspace-members/model/workspace-member.types';
+import { UserAvatar } from '@/components/user-avatar';
+import * as S from './team-members-page.styled';
 
 function formatMemberName(member: WorkspaceMember): string {
   const parts = [member.user.firstName, member.user.lastName].filter(Boolean);
-  return parts.join(" ").trim() || "—";
+  return parts.join(' ').trim() || '—';
 }
 
 function getMemberInitials(member: WorkspaceMember): string {
@@ -24,7 +24,7 @@ function getMemberInitials(member: WorkspaceMember): string {
     return email.slice(0, 2).toUpperCase();
   }
 
-  return "?";
+  return '?';
 }
 
 type TeamMemberCellProps = {
@@ -41,11 +41,22 @@ export const TeamMemberCell = ({
   const isCurrentUser =
     currentUserId !== null && member.userId === currentUserId;
   const name = formatMemberName(member);
-  const email = member.user.email?.trim() || "—";
+  const email = member.user.email?.trim() || '—';
 
   return (
     <S.MemberIdentity>
-      <S.MemberAvatar size={40}>{getMemberInitials(member)}</S.MemberAvatar>
+      <UserAvatar
+        size={40}
+        name={getMemberInitials(member)}
+        src={member.user.avatar_src || undefined}
+        style={
+          member.color
+            ? {
+                backgroundColor: member.color,
+              }
+            : undefined
+        }
+      />
       <S.MemberText>
         <S.MemberNameRow>
           <S.MemberName>{name}</S.MemberName>

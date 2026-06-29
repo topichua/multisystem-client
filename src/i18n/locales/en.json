@@ -673,6 +673,23 @@
           "description": "Connect Prom store"
         }
       }
+    },
+    "telegramQr": {
+      "title": "Connect Telegram",
+      "subtitle": "Scan the QR code with Telegram on your phone",
+      "imageAlt": "QR code for connecting Telegram",
+      "retry": "Refresh QR code",
+      "steps": {
+        "openTelegram": "Open <strong>Telegram</strong> on your phone",
+        "openDevices": "Go to <strong>Settings → Devices</strong>",
+        "connectDevice": "Tap <strong>Link device</strong> and point the camera"
+      },
+      "status": {
+        "loading": "Creating QR code...",
+        "waiting": "Waiting for scan...",
+        "expired": "QR code expired",
+        "error": "Could not connect Telegram"
+      }
     }
   },
   "system": {

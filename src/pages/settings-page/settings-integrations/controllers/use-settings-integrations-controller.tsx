@@ -1,5 +1,5 @@
 import { Modal } from "antd";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { getApiErrorMessage } from "@/api/get-api-error-message";
@@ -8,7 +8,10 @@ import {
   navigateIntegrationAuthUrl,
   openIntegrationAuthWindow,
 } from "@/features/integrations/open-integration-auth";
-import type { IntegrationItem } from "@/features/integrations/model/integration.types";
+import type {
+  IntegrationItem,
+  TelegramQrLoginSession,
+} from "@/features/integrations/model/integration.types";
 import { isIntegrationNotAvailableError } from "@/features/integrations/model/integrations-store";
 import { useIntegrationsStore } from "@/features/integrations/model/use-integrations-store";
 import { useNotification } from "@/shared/components/notification/use-notification";
@@ -21,6 +24,15 @@ import {
   type IntegrationFilter,
   type IntegrationType,
 } from "../settings-integrations.definitions";
+import type { TelegramQrLoginModalStatus } from "../telegram-qr-login-modal";
+
+const TELEGRAM_QR_LOGIN_TIMEOUT_MS = 90_000;
+
+type TelegramQrModalState = {
+  open: boolean;
+  status: TelegramQrLoginModalStatus;
+  session: TelegramQrLoginSession | null;
+};
 
 export function useSettingsIntegrationsController() {
   const store = useIntegrationsStore();
@@ -29,10 +41,164 @@ export function useSettingsIntegrationsController() {
   const [query, setQuery] = useState("");
   const [selectedFilter, setSelectedFilter] =
     useState<IntegrationFilter>("all");
+  const [telegramQrModal, setTelegramQrModal] = useState<TelegramQrModalState>({
+    open: false,
+    status: "idle",
+    session: null,
+  });
+  const telegramQrRunIdRef = useRef(0);
+  const telegramQrAbortControllerRef = useRef<AbortController | null>(null);
+  const telegramQrTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     void store.loadIntegrations();
   }, [store]);
+
+  const clearTelegramQrTimeout = useCallback(() => {
+    if (telegramQrTimeoutRef.current != null) {
+      window.clearTimeout(telegramQrTimeoutRef.current);
+      telegramQrTimeoutRef.current = null;
+    }
+  }, []);
+
+  const abortTelegramQrRequest = useCallback(() => {
+    clearTelegramQrTimeout();
+    telegramQrAbortControllerRef.current?.abort();
+    telegramQrAbortControllerRef.current = null;
+  }, [clearTelegramQrTimeout]);
+
+  const waitForTelegramQrConfirmation = useCallback(
+    async (session: TelegramQrLoginSession, runId: number) => {
+      const abortController = new AbortController();
+      const startedAt = Date.now();
+      telegramQrAbortControllerRef.current = abortController;
+
+      const timeoutId = window.setTimeout(() => {
+        if (telegramQrRunIdRef.current !== runId) {
+          return;
+        }
+
+        abortController.abort();
+        setTelegramQrModal((current) => {
+          if (!current.open || current.session?.id !== session.id) {
+            return current;
+          }
+
+          return { ...current, status: "expired" };
+        });
+      }, TELEGRAM_QR_LOGIN_TIMEOUT_MS);
+      telegramQrTimeoutRef.current = timeoutId;
+
+      try {
+        await store.confirmTelegramQrLogin(session.id, {
+          signal: abortController.signal,
+        });
+
+        if (telegramQrRunIdRef.current !== runId) {
+          return;
+        }
+
+        setTelegramQrModal({ open: false, status: "idle", session: null });
+        notification.success({ title: t("integrations.connectSuccess") });
+      } catch (e) {
+        if (telegramQrRunIdRef.current !== runId) {
+          return;
+        }
+
+        if (
+          abortController.signal.aborted ||
+          Date.now() - startedAt >= TELEGRAM_QR_LOGIN_TIMEOUT_MS
+        ) {
+          setTelegramQrModal((current) => {
+            if (!current.open || current.session?.id !== session.id) {
+              return current;
+            }
+
+            return { ...current, status: "expired" };
+          });
+          return;
+        }
+
+        setTelegramQrModal((current) => ({ ...current, status: "error" }));
+        notification.error({
+          title: getApiErrorMessage(e, t("integrations.connectFailed")),
+        });
+      } finally {
+        if (telegramQrAbortControllerRef.current === abortController) {
+          telegramQrAbortControllerRef.current = null;
+        }
+        if (telegramQrTimeoutRef.current === timeoutId) {
+          window.clearTimeout(timeoutId);
+          telegramQrTimeoutRef.current = null;
+        }
+      }
+    },
+    [notification, store, t],
+  );
+
+  const startTelegramQrLogin = useCallback(async () => {
+    const runId = telegramQrRunIdRef.current + 1;
+    telegramQrRunIdRef.current = runId;
+    abortTelegramQrRequest();
+
+    const abortController = new AbortController();
+    telegramQrAbortControllerRef.current = abortController;
+    setTelegramQrModal({ open: true, status: "loading", session: null });
+
+    try {
+      const session = await store.startTelegramQrLogin({
+        signal: abortController.signal,
+      });
+
+      if (telegramQrRunIdRef.current !== runId) {
+        return;
+      }
+
+      if (!session.qrImageUrl) {
+        setTelegramQrModal({ open: true, status: "error", session: null });
+        notification.error({ title: t("integrations.connectFailed") });
+        return;
+      }
+
+      setTelegramQrModal({ open: true, status: "waiting", session });
+      void waitForTelegramQrConfirmation(session, runId);
+    } catch (e) {
+      if (
+        telegramQrRunIdRef.current !== runId ||
+        abortController.signal.aborted
+      ) {
+        return;
+      }
+
+      setTelegramQrModal({ open: true, status: "error", session: null });
+      notification.error({
+        title: getApiErrorMessage(e, t("integrations.connectFailed")),
+      });
+    } finally {
+      if (telegramQrAbortControllerRef.current === abortController) {
+        telegramQrAbortControllerRef.current = null;
+      }
+    }
+  }, [
+    abortTelegramQrRequest,
+    notification,
+    store,
+    t,
+    waitForTelegramQrConfirmation,
+  ]);
+
+  const closeTelegramQrModal = useCallback(() => {
+    telegramQrRunIdRef.current += 1;
+    abortTelegramQrRequest();
+    setTelegramQrModal({ open: false, status: "idle", session: null });
+  }, [abortTelegramQrRequest]);
+
+  useEffect(() => {
+    return () => {
+      telegramQrRunIdRef.current += 1;
+      abortTelegramQrRequest();
+    };
+  }, [abortTelegramQrRequest]);
 
   const normalizedQuery = useMemo(() => query.trim().toLowerCase(), [query]);
 
@@ -127,6 +293,11 @@ export function useSettingsIntegrationsController() {
 
   const handleConnectType = useCallback(
     async (type: IntegrationType) => {
+      if (type === "telegram") {
+        await startTelegramQrLogin();
+        return;
+      }
+
       const authWindow = openIntegrationAuthWindow();
 
       try {
@@ -148,7 +319,7 @@ export function useSettingsIntegrationsController() {
         });
       }
     },
-    [notification, store, t],
+    [notification, startTelegramQrLogin, store, t],
   );
 
   return {
@@ -163,5 +334,8 @@ export function useSettingsIntegrationsController() {
     getVisibleIntegrations,
     handleDisconnect,
     handleConnectType,
+    telegramQrModal,
+    closeTelegramQrModal,
+    retryTelegramQrLogin: startTelegramQrLogin,
   };
 }
