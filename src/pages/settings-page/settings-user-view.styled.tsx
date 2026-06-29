@@ -58,3 +58,10 @@ export const FormFooter = styled.div`
   justify-content: flex-end;
   padding-top: 8px;
 `;
+
+export const MobileProfileSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+`;

@@ -1,114 +1,43 @@
 import { Alert, Button, Form, Input } from "antd";
 import { observer } from "mobx-react-lite";
-import { useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useParams } from "react-router";
+import { useParams } from "react-router";
 
-import { getApiErrorMessage } from "@/api/get-api-error-message";
-import { getSettingsTemplatePath, pagesMap } from "@/app/router/pages-map";
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
 import { CenteredSpinner } from "@/components/loading/centered-spinner";
 import * as S from "@/components/layout/form-card.styled";
-import { useMessageTemplatesStore } from "@/features/message-templates/model/use-message-templates-store";
 
 import { getTemplateCharacterCount } from "./settings-templates.utils";
 import { TemplateDetailHeader } from "./template-detail-header";
-import type { TemplateFormValues } from "./template-form-modal";
-import { useNotification } from "@/shared/components/notification/use-notification";
+import { useSettingsTemplateEditor } from "./use-settings-template-editor";
 
 export const SettingsTemplateDetailView = observer(() => {
   const { t } = useTranslation();
   const { templateId } = useParams<{ templateId: string }>();
-  const navigate = useNavigate();
-  const store = useMessageTemplatesStore();
-  const notification = useNotification();
-  const [form] = Form.useForm<TemplateFormValues>();
-  const templateBody = Form.useWatch("template", form) ?? "";
+  const {
+    template,
+    form,
+    templateBody,
+    store,
+    isInvalidId,
+    isLoading,
+    isNotFound,
+    handleSave,
+    handleDelete,
+    navigateToTemplates,
+  } = useSettingsTemplateEditor(templateId);
 
-  const idNum = templateId != null ? Number(templateId) : NaN;
-
-  const template = useMemo(
-    () =>
-      Number.isFinite(idNum)
-        ? store.templates.find((item) => item.id === idNum)
-        : undefined,
-    [idNum, store.templates],
-  );
-
-  useEffect(() => {
-    if (template) {
-      form.setFieldsValue({
-        name: template.name,
-        template: template.template,
-      });
-    }
-  }, [form, template]);
-
-  const pickNavigateAfterDelete = useCallback(() => {
-    const sorted = [...store.templates].sort((a, b) =>
-      a.name.localeCompare(b.name, undefined, { sensitivity: "base" }),
-    );
-    const idx = sorted.findIndex((item) => item.id === idNum);
-    const next = sorted[idx + 1] ?? sorted[idx - 1];
-    if (next) {
-      navigate(getSettingsTemplatePath(next.id));
-    } else {
-      navigate(pagesMap.settingsTemplates);
-    }
-  }, [idNum, navigate, store.templates]);
-
-  const handleSave = useCallback(async () => {
-    if (!template) {
-      return;
-    }
-
-    let values: TemplateFormValues;
-    try {
-      values = await form.validateFields();
-    } catch {
-      return;
-    }
-
-    try {
-      await store.updateTemplate(template.id, {
-        name: values.name.trim(),
-        template: values.template ?? "",
-      });
-      notification.success({ title: t("templates.updated") });
-    } catch (e) {
-      notification.error({
-        title: getApiErrorMessage(e, t("templates.updateError")),
-      });
-    }
-  }, [form, notification, store, t, template]);
-
-  const handleDelete = useCallback(async () => {
-    if (!template) {
-      return;
-    }
-
-    try {
-      await store.deleteTemplate(template.id);
-      notification.success({ title: t("templates.deleted") });
-      pickNavigateAfterDelete();
-    } catch (e) {
-      notification.error({
-        title: getApiErrorMessage(e, t("templates.deleteError")),
-      });
-    }
-  }, [notification, pickNavigateAfterDelete, store, t, template]);
-
-  if (!Number.isFinite(idNum)) {
+  if (isInvalidId) {
     return (
       <Alert type="error" title={t("templates.invalidTemplate")} showIcon />
     );
   }
 
-  if (store.listLoading && !template) {
+  if (isLoading) {
     return <CenteredSpinner />;
   }
 
-  if (!store.listLoading && !template) {
+  if (isNotFound) {
     return (
       <Alert
         type="warning"
@@ -116,10 +45,7 @@ export const SettingsTemplateDetailView = observer(() => {
         description={t("templates.notFound")}
         showIcon
         action={
-          <Button
-            size="small"
-            onClick={() => navigate(pagesMap.settingsTemplates)}
-          >
+          <Button size="small" onClick={navigateToTemplates}>
             {t("templates.backToTemplates")}
           </Button>
         }

@@ -3,6 +3,8 @@ import { ArrowLeftIcon, FloppyDiskIcon, PlusIcon } from "@phosphor-icons/react";
 import { Button, Flex, Form } from "antd";
 import type { FormInstance, FormProps } from "antd";
 import { useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useIsMobileViewport } from "@/utils/use-media-query";
 import {
   ProductTypeSection,
   type ProductType,
@@ -24,6 +26,7 @@ import { ProductFormHeader } from "./sections/product-form-header";
 import { ProductInstagramAiDrawer } from "../instagram-ai-panel";
 import type { ProductAddFormValues } from "./product-form.types";
 import type { InstagramPostAiExtractionResponse } from "@/features/instagram/model/instagram.types";
+import * as MobileS from "./mobile-product-form-layout.styled";
 
 export type ProductFormProps = {
   form: FormInstance<ProductAddFormValues>;
@@ -96,6 +99,8 @@ export const ProductForm = ({
   onSubmit,
   onInstagramAiFill,
 }: ProductFormProps) => {
+  const { t } = useTranslation();
+  const isMobileViewport = useIsMobileViewport();
   const [instagramAiDrawerOpen, setInstagramAiDrawerOpen] = useState(false);
 
   const openInstagramAiDrawer = useCallback(() => {
@@ -134,6 +139,164 @@ export const ProductForm = ({
     [form],
   );
 
+  const formSections = (
+    <>
+      {!isMobileViewport ? (
+        <ProductFormHeader
+          title={title}
+          subtitle={subtitle}
+          onInstagramAiClick={openInstagramAiDrawer}
+        />
+      ) : null}
+
+      <ProductTypeSection
+        value={productType}
+        onChange={onProductTypeChange}
+        isMobile={isMobileViewport}
+      />
+
+      <ProductMainInfoSection
+        categoryOptions={categoryOptions}
+        requiredMessage={requiredMessage}
+        labels={labels}
+        isMobile={isMobileViewport}
+      />
+
+      <ProductMediaSection
+        uploadedProductMedia={mediaProps.uploadedProductMedia}
+        productMediaUploadingCount={mediaProps.productMediaUploadingCount}
+        deletingProductMediaId={mediaProps.deletingProductMediaId}
+        onBeforeUpload={mediaProps.onBeforeUpload}
+        onUpload={mediaProps.onUpload}
+        onDelete={mediaProps.onDelete}
+        onReorder={mediaProps.onReorder}
+        texts={mediaProps.texts}
+        isMobile={isMobileViewport}
+      />
+
+      {productType === "single" ? (
+        <SingleProductCharacteristicsSection
+          form={form}
+          watchedSingleCharacteristics={
+            singleCharacteristicsProps.watchedSingleCharacteristics
+          }
+          variantCustomFields={singleCharacteristicsProps.variantCustomFields}
+          isVariantCustomFieldsLoading={
+            singleCharacteristicsProps.isVariantCustomFieldsLoading
+          }
+          getCharacteristicValueOptions={
+            singleCharacteristicsProps.getCharacteristicValueOptions
+          }
+          isMobile={isMobileViewport}
+        />
+      ) : null}
+
+      {productType === "variants" ? (
+        <ProductVariantsSection
+          productVariants={variantsProps.productVariants}
+          variantTableColumns={variantsProps.variantTableColumns}
+          watchedCharacteristics={variantsProps.watchedCharacteristics}
+          variantCustomFields={variantsProps.variantCustomFields}
+          isVariantCustomFieldsLoading={
+            variantsProps.isVariantCustomFieldsLoading
+          }
+          optionBaseline={variantsProps.optionBaseline}
+          optionEditRestrictionsActive={
+            variantsProps.optionEditRestrictionsActive
+          }
+          getCharacteristicValueOptions={
+            variantsProps.getCharacteristicValueOptions
+          }
+          onAddManualVariant={variantsProps.onAddManualVariant}
+          selectedCharacteristics={variantsProps.selectedCharacteristics}
+          onManageVariantImages={variantsProps.onManageVariantImages}
+          onDeleteVariant={variantsProps.onDeleteVariant}
+          onUpdateManualVariantCustomField={
+            variantsProps.onUpdateManualVariantCustomField
+          }
+          deletingVariantKey={variantsProps.deletingVariantKey}
+          isMobile={isMobileViewport}
+        />
+      ) : null}
+    </>
+  );
+
+  const submitButton = (
+    <Button
+      type="primary"
+      htmlType="submit"
+      loading={submitButtonProps.loading}
+      disabled={submitButtonProps.disabled}
+      icon={
+        submitButtonProps.icon === "save" ? (
+          <FloppyDiskIcon size={18} />
+        ) : (
+          <PlusIcon size={18} />
+        )
+      }
+      size="large"
+      block={isMobileViewport}
+      aria-label={
+        isMobileViewport ? t("products.mobile.form.saveAria") : undefined
+      }
+      data-qa={isMobileViewport ? "products-mobile-form-save" : undefined}
+    >
+      {submitButtonProps.label}
+    </Button>
+  );
+
+  if (isMobileViewport) {
+    return (
+      <>
+        <MobileS.MobileRoot>
+          <MobileS.MobilePageHeader>
+            <MobileS.MobileBackButton
+              type="text"
+              icon={<ArrowLeftIcon size={20} />}
+              aria-label={t("products.mobile.form.backToListAria")}
+              data-qa="products-mobile-form-back"
+              onClick={onBack}
+            >
+              {backLabel}
+            </MobileS.MobileBackButton>
+            <MobileS.MobilePageTitle level={3}>{title}</MobileS.MobilePageTitle>
+            <ProductFormHeader
+              title={title}
+              subtitle={subtitle}
+              onInstagramAiClick={openInstagramAiDrawer}
+              isMobile
+            />
+          </MobileS.MobilePageHeader>
+
+          <MobileS.MobileScrollRegion>
+            <Form
+              form={form}
+              layout="vertical"
+              initialValues={initialValues}
+              onFinish={onSubmit}
+              onFinishFailed={handleFinishFailed}
+            >
+              <MobileS.MobileFormSections vertical gap={16}>
+                {formSections}
+                <MobileS.MobileFormActions>
+                  {submitButton}
+                </MobileS.MobileFormActions>
+              </MobileS.MobileFormSections>
+            </Form>
+          </MobileS.MobileScrollRegion>
+        </MobileS.MobileRoot>
+
+        <ProductInstagramAiDrawer
+          open={instagramAiDrawerOpen}
+          onClose={closeInstagramAiDrawer}
+          categoryOptions={categoryOptions}
+          onFillProductForm={handleInstagramAiFill}
+          isMobile
+        />
+      </>
+    );
+  }
+
   return (
     <>
       <PaneDetailLayout.Root inset>
@@ -162,94 +325,8 @@ export const ProductForm = ({
               gap={16}
               style={{ maxWidth: 1100, margin: "0 auto" }}
             >
-              <ProductFormHeader
-                title={title}
-                subtitle={subtitle}
-                onInstagramAiClick={openInstagramAiDrawer}
-              />
-
-              <Flex vertical gap={16}>
-                <ProductTypeSection
-                  value={productType}
-                  onChange={onProductTypeChange}
-                />
-
-                <ProductMainInfoSection
-                  categoryOptions={categoryOptions}
-                  requiredMessage={requiredMessage}
-                  labels={labels}
-                />
-
-                <ProductMediaSection
-                  uploadedProductMedia={mediaProps.uploadedProductMedia}
-                  productMediaUploadingCount={
-                    mediaProps.productMediaUploadingCount
-                  }
-                  deletingProductMediaId={mediaProps.deletingProductMediaId}
-                  onBeforeUpload={mediaProps.onBeforeUpload}
-                  onUpload={mediaProps.onUpload}
-                  onDelete={mediaProps.onDelete}
-                  onReorder={mediaProps.onReorder}
-                  texts={mediaProps.texts}
-                />
-
-                {productType === "single" ? (
-                  <SingleProductCharacteristicsSection
-                    form={form}
-                    watchedSingleCharacteristics={
-                      singleCharacteristicsProps.watchedSingleCharacteristics
-                    }
-                    variantCustomFields={
-                      singleCharacteristicsProps.variantCustomFields
-                    }
-                    isVariantCustomFieldsLoading={
-                      singleCharacteristicsProps.isVariantCustomFieldsLoading
-                    }
-                    getCharacteristicValueOptions={
-                      singleCharacteristicsProps.getCharacteristicValueOptions
-                    }
-                  />
-                ) : null}
-
-                {productType === "variants" ? (
-                  <ProductVariantsSection
-                    productVariants={variantsProps.productVariants}
-                    variantTableColumns={variantsProps.variantTableColumns}
-                    watchedCharacteristics={
-                      variantsProps.watchedCharacteristics
-                    }
-                    variantCustomFields={variantsProps.variantCustomFields}
-                    isVariantCustomFieldsLoading={
-                      variantsProps.isVariantCustomFieldsLoading
-                    }
-                    optionBaseline={variantsProps.optionBaseline}
-                    optionEditRestrictionsActive={
-                      variantsProps.optionEditRestrictionsActive
-                    }
-                    getCharacteristicValueOptions={
-                      variantsProps.getCharacteristicValueOptions
-                    }
-                    onAddManualVariant={variantsProps.onAddManualVariant}
-                  />
-                ) : null}
-
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  loading={submitButtonProps.loading}
-                  disabled={submitButtonProps.disabled}
-                  icon={
-                    submitButtonProps.icon === "save" ? (
-                      <FloppyDiskIcon size={18} />
-                    ) : (
-                      <PlusIcon size={18} />
-                    )
-                  }
-                  size="large"
-                >
-                  {submitButtonProps.label}
-                </Button>
-              </Flex>
+              {formSections}
+              {submitButton}
             </Flex>
           </Form>
         </PaneDetailLayout.Body>

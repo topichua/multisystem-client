@@ -14,6 +14,7 @@ type TeamRolePermissionsFormProps = {
   integrationGrants: WorkspaceRoleIntegrationGrant[];
   integrationGrantsError?: string | null;
   integrationGrantsLoading?: boolean;
+  layoutVariant?: "default" | "mobile";
 };
 
 export const TeamRolePermissionsForm = ({
@@ -21,6 +22,7 @@ export const TeamRolePermissionsForm = ({
   integrationGrantsError,
   integrationGrantsLoading,
   schema,
+  layoutVariant = "default",
 }: TeamRolePermissionsFormProps) => {
   const moduleRows = useMemo(
     () =>
@@ -36,6 +38,7 @@ export const TeamRolePermissionsForm = ({
       {moduleRows.map(({ module, rows }) => (
         <TeamRolePermissionsModuleCard
           key={module.module}
+          layoutVariant={layoutVariant}
           integrationGrants={integrationGrants}
           integrationGrantsError={integrationGrantsError}
           integrationGrantsLoading={integrationGrantsLoading}

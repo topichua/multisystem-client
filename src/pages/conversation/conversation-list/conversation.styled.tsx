@@ -7,14 +7,18 @@ const { Title: AntdTitle } = Typography;
 
 export const Conversation = styled.div.attrs(() =>
   dataQaAttrs("layout-conversations-list-body"),
-)`
+)<{ $variant?: "desktop" | "mobile" }>`
   flex: 1;
   min-height: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  padding: 12px;
+  padding: ${({ $variant }) => ($variant === "mobile" ? "16px" : "12px")};
   gap: 12px;
+  background: ${({ $variant, theme }) =>
+    $variant === "mobile"
+      ? theme.colors.functional.background.base
+      : "transparent"};
 `;
 
 export const CollapsedColumn = styled.div.attrs(() =>
@@ -84,12 +88,15 @@ export const ListItemPlaceholder = styled.div.attrs(() =>
 
 export const ListScroll = styled.div.attrs(() =>
   dataQaAttrs("layout-conversations-list-scroll"),
-)`
+)<{ $variant?: "desktop" | "mobile" }>`
   flex: 1;
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  padding-bottom: 16px;
+  padding-bottom: ${({ $variant }) =>
+    $variant === "mobile"
+      ? "calc(24px + env(safe-area-inset-bottom, 0px))"
+      : "16px"};
 `;
 
 export const Title = styled(AntdTitle)`

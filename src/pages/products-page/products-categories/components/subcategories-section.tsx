@@ -63,6 +63,8 @@ type SubcategoriesSectionProps = {
   saveLoading: boolean;
   deleteLoadingId: number | null;
   onDeleteSubcategory: (subcategoryId: number) => Promise<void>;
+  addSubcategoryDataQa?: string;
+  getSubcategoryItemDataQa?: (subcategoryId: number) => string;
 };
 
 export const SubcategoriesSection = ({
@@ -72,6 +74,8 @@ export const SubcategoriesSection = ({
   saveLoading,
   deleteLoadingId,
   onDeleteSubcategory,
+  addSubcategoryDataQa,
+  getSubcategoryItemDataQa,
 }: SubcategoriesSectionProps) => {
   const { t } = useTranslation();
 
@@ -96,7 +100,12 @@ export const SubcategoriesSection = ({
           </Space>
 
           {!create.isAdding && (
-            <Button icon={<PlusIcon />} onClick={create.onOpen}>
+            <Button
+              icon={<PlusIcon />}
+              data-qa={addSubcategoryDataQa}
+              aria-label={t("categories.mobile.addSubcategoryAria")}
+              onClick={create.onOpen}
+            >
               {t("categories.addSubcategory")}
             </Button>
           )}
@@ -121,7 +130,10 @@ export const SubcategoriesSection = ({
             split
             dataSource={subcategories}
             renderItem={(subcategory) => (
-              <List.Item key={subcategory.id}>
+              <List.Item
+                key={subcategory.id}
+                data-qa={getSubcategoryItemDataQa?.(subcategory.id)}
+              >
                 <SubcategoryListItem
                   subcategory={subcategory}
                   rename={rename}

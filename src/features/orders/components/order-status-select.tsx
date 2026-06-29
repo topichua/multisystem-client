@@ -26,6 +26,7 @@ type OrderStatusSelectProps = {
   style?: CSSProperties;
   onChangeSuccess?: (nextStatusId: number) => void;
   variant?: "filled" | "outlined" | "borderless" | "underlined";
+  dataQa?: string;
 };
 
 export const OrderStatusSelect = observer(
@@ -37,6 +38,7 @@ export const OrderStatusSelect = observer(
     style,
     onChangeSuccess,
     variant = "filled",
+    dataQa = "layout-orders-list-status-select",
   }: OrderStatusSelectProps) => {
     const { t } = useTranslation();
     useEnsureOrderStatusesLoaded();
@@ -87,7 +89,7 @@ export const OrderStatusSelect = observer(
       <>
         <Select
           variant={variant}
-          data-qa="layout-orders-list-status-select"
+          data-qa={dataQa}
           className={className}
           style={{ minWidth: 160, ...style }}
           placeholder={t("orders.statusSelectPlaceholder")}

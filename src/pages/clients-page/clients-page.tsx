@@ -1,53 +1,19 @@
-import type { MenuProps } from "antd";
-import { Menu } from "antd";
-import { useMemo } from "react";
-import { useTranslation } from "react-i18next";
-import { Outlet, useLocation, useNavigate } from "react-router";
+import type { ReactNode } from "react";
 
-import {
-  clientsSectionNavItems,
-  getSelectedSectionNavPath,
-} from "@/app/router/navigation";
-import { SettingsShell } from "@/components/settings/settings-shell/settings-shell";
+import { clientsSectionNavItems } from "@/app/router/navigation";
+import { DesktopSectionShell } from "@/components/settings/desktop-section-shell/desktop-section-shell";
+
+import { ClientsMobilePageShell } from "./clients-mobile-page-shell.styled";
 
 export const ClientsPage = () => {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const menuItems: MenuProps["items"] = useMemo(
-    () =>
-      clientsSectionNavItems.map((item) => ({
-        key: item.path,
-        label: t(item.labelKey),
-      })),
-    [t],
-  );
-
-  const selectedKey = useMemo(
-    () => getSelectedSectionNavPath(clientsSectionNavItems, location.pathname),
-    [location.pathname],
-  );
-
   return (
-    <SettingsShell.Root>
-      <SettingsShell.Sidebar>
-        <SettingsShell.Title>{t("clients.shellTitle")}</SettingsShell.Title>
-        <SettingsShell.SidebarScroll>
-          <div data-qa="layout-clients-primary-nav">
-            <Menu
-              mode="inline"
-              selectedKeys={[selectedKey]}
-              items={menuItems}
-              onClick={({ key }) => navigate(String(key))}
-              style={{ borderInlineEnd: "none" }}
-            />
-          </div>
-        </SettingsShell.SidebarScroll>
-      </SettingsShell.Sidebar>
-      <SettingsShell.Content>
-        <Outlet />
-      </SettingsShell.Content>
-    </SettingsShell.Root>
+    <DesktopSectionShell
+      items={clientsSectionNavItems}
+      mobileWrapper={(children: ReactNode) => (
+        <ClientsMobilePageShell>{children}</ClientsMobilePageShell>
+      )}
+      navDataQa="layout-clients-primary-nav"
+      titleKey="clients.shellTitle"
+    />
   );
 };

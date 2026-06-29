@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { ClientPhoneFormInput } from "@/components/client-phone-form-input";
 import type { Client } from "@/features/clients/model/client.types";
 import { phoneFieldRules } from "@/utils/phone-input";
+import { useIsMobileViewport } from "@/utils/use-media-query";
 
 import {
   emptyClientFormValues,
@@ -30,6 +31,7 @@ export function ClientFormModal({
   onSubmit,
 }: ClientFormModalProps) {
   const { t } = useTranslation();
+  const isMobileViewport = useIsMobileViewport();
   const phoneRules = useMemo(
     () =>
       phoneFieldRules({
@@ -52,7 +54,18 @@ export function ClientFormModal({
       okText={editingClient ? t("clients.save") : t("clients.modalCreateOk")}
       confirmLoading={saveLoading}
       destroyOnHidden
-      width={480}
+      centered={isMobileViewport}
+      width={isMobileViewport ? "calc(100vw - 32px)" : 480}
+      styles={
+        isMobileViewport
+          ? {
+              body: {
+                maxHeight: "calc(100dvh - 12rem)",
+                overflowY: "auto",
+              },
+            }
+          : undefined
+      }
     >
       <Form form={form} layout="vertical" initialValues={emptyClientFormValues}>
         <Form.Item

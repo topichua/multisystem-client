@@ -32,11 +32,13 @@ const PRODUCT_TYPE_OPTIONS: ProductTypeOption[] = [
 export type ProductTypeSectionProps = {
   value: ProductType;
   onChange: (nextType: ProductType) => void;
+  isMobile?: boolean;
 };
 
 export const ProductTypeSection = ({
   value,
   onChange,
+  isMobile = false,
 }: ProductTypeSectionProps) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -53,9 +55,9 @@ export const ProductTypeSection = ({
         <Radio.Group
           value={value}
           onChange={(event) => onChange(event.target.value)}
-          style={{ flex: 1 }}
+          style={{ width: "100%" }}
         >
-          <Flex gap={24}>
+          <Flex gap={isMobile ? 12 : 24} vertical={isMobile}>
             {PRODUCT_TYPE_OPTIONS.map((option) => {
               const isSelected = value === option.value;
 
@@ -64,8 +66,13 @@ export const ProductTypeSection = ({
                   key={option.value}
                   hoverable
                   onClick={() => onChange(option.value)}
+                  {...(isMobile
+                    ? {
+                        "data-qa": `products-mobile-product-type-${option.value}`,
+                      }
+                    : {})}
                   style={{
-                    width: 400,
+                    width: isMobile ? "100%" : 400,
                     borderColor: isSelected ? token.colorPrimary : undefined,
                     boxShadow: isSelected
                       ? `0 0 0 1px ${token.colorPrimary}`

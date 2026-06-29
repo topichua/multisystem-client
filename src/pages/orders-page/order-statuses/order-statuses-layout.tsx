@@ -10,7 +10,6 @@ import {
   useParams,
 } from "react-router";
 
-import { getApiErrorMessage } from "@/api/get-api-error-message";
 import { getOrderStatusPath, pagesMap } from "@/app/router/pages-map";
 import {
   PaneScrollRegion,
@@ -20,9 +19,10 @@ import {
 import { PaneNavSplitLayout } from "@/components/layout/pane-nav-split-layout";
 import { CenteredSpinner } from "@/components/loading/centered-spinner";
 import { useOrdersStore } from "@/features/orders/model/use-orders-store";
+import { useIsMobileViewport } from "@/utils/use-media-query";
 
 import { OrderStatusesNavList } from "./order-statuses-nav-list";
-import { useNotification } from "@/shared/components/notification/use-notification";
+import { useOrderStatusesReorder } from "./use-order-statuses-reorder";
 
 export const OrderStatusesLayout = observer(() => {
   const { t } = useTranslation();
@@ -30,7 +30,7 @@ export const OrderStatusesLayout = observer(() => {
   const navigate = useNavigate();
   const location = useLocation();
   const { statusId: statusIdParam } = useParams<{ statusId?: string }>();
-  const notification = useNotification();
+  const isMobileViewport = useIsMobileViewport();
 
   useEffect(() => {
     void store.loadStatuses({ force: true });
@@ -68,62 +68,45 @@ export const OrderStatusesLayout = observer(() => {
     [navigate],
   );
 
-  const handleReorder = useCallback(
-    async (ids: number[]) => {
-      const currentIds = sortedStatuses.map((status) => status.id);
-      if (
-        ids.length === currentIds.length &&
-        ids.every((id, index) => id === currentIds[index])
-      ) {
-        return;
-      }
+  const handleReorder = useOrderStatusesReorder(sortedStatuses);
 
-      try {
-        await store.reorderStatuses(ids);
-      } catch (e) {
-        notification.error({
-          title: getApiErrorMessage(e, t("orderStatuses.reorderError")),
-        });
-      }
-    },
-    [notification, sortedStatuses, store, t],
-  );
+  if (isMobileViewport) {
+    return <Outlet />;
+  }
 
   return (
-    <>
-      <PaneNavSplitLayout.Root data-qa="layout-order-statuses-shell">
-        <PaneNavSplitLayout.SubSidebar data-qa="layout-order-statuses-sidebar">
-          <PaneSectionHeaderStack data-qa="layout-order-statuses-header">
-            <PaneSectionTitle>{t("orderStatuses.title")}</PaneSectionTitle>
-          </PaneSectionHeaderStack>
-          <PaneScrollRegion data-qa="layout-order-statuses-nav-scroll">
-            {store.statusesError ? (
-              <Alert
-                type="error"
-                title={store.statusesError}
-                showIcon
-                style={{ margin: 16 }}
+    <PaneNavSplitLayout.Root data-qa="layout-order-statuses-shell">
+      <PaneNavSplitLayout.SubSidebar data-qa="layout-order-statuses-sidebar">
+        <PaneSectionHeaderStack data-qa="layout-order-statuses-header">
+          <PaneSectionTitle>{t("orderStatuses.title")}</PaneSectionTitle>
+        </PaneSectionHeaderStack>
+        <PaneScrollRegion data-qa="layout-order-statuses-nav-scroll">
+          {store.statusesError ? (
+            <Alert
+              type="error"
+              title={store.statusesError}
+              showIcon
+              style={{ margin: 16 }}
+            />
+          ) : null}
+          {store.statusesLoading && store.statuses.length === 0 ? (
+            <CenteredSpinner minHeight={160} />
+          ) : (
+            <div data-qa="layout-order-statuses-nav">
+              <OrderStatusesNavList
+                statuses={sortedStatuses}
+                selectedStatusId={selectedStatusId}
+                reorderDisabled={store.statusSaveLoading}
+                onSelect={handleSelect}
+                onReorder={(ids) => void handleReorder(ids)}
               />
-            ) : null}
-            {store.statusesLoading && store.statuses.length === 0 ? (
-              <CenteredSpinner minHeight={160} />
-            ) : (
-              <div data-qa="layout-order-statuses-nav">
-                <OrderStatusesNavList
-                  statuses={sortedStatuses}
-                  selectedStatusId={selectedStatusId}
-                  reorderDisabled={store.statusSaveLoading}
-                  onSelect={handleSelect}
-                  onReorder={(ids) => void handleReorder(ids)}
-                />
-              </div>
-            )}
-          </PaneScrollRegion>
-        </PaneNavSplitLayout.SubSidebar>
-        <PaneNavSplitLayout.SubMain data-qa="layout-order-statuses-main">
-          <Outlet />
-        </PaneNavSplitLayout.SubMain>
-      </PaneNavSplitLayout.Root>
-    </>
+            </div>
+          )}
+        </PaneScrollRegion>
+      </PaneNavSplitLayout.SubSidebar>
+      <PaneNavSplitLayout.SubMain data-qa="layout-order-statuses-main">
+        <Outlet />
+      </PaneNavSplitLayout.SubMain>
+    </PaneNavSplitLayout.Root>
   );
 });

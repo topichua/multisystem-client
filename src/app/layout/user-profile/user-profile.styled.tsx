@@ -6,6 +6,7 @@ const collapsedSiderWidth = "72px";
 const panelPadding = "8px";
 const profileAvatarSlotWidth = `calc(${collapsedSiderWidth} - (${panelPadding} * 2))`;
 const profileItemHeight = "40px";
+const profileTouchTargetHeight = "44px";
 const profileTransition = "0.22s ease";
 const profileTextMaxWidth = "160px";
 
@@ -19,11 +20,12 @@ export const Avatar = styled(UserAvatar)`
   }
 `;
 
-export const ProfileTrigger = styled.div`
+export const ProfileTrigger = styled.div<{ $touchTarget: boolean }>`
   align-self: stretch;
   min-width: 0;
   max-width: 100%;
-  height: ${profileItemHeight};
+  height: ${(props) =>
+    props.$touchTarget ? profileTouchTargetHeight : profileItemHeight};
   padding: 0;
   display: flex;
   align-items: center;
@@ -39,10 +41,13 @@ export const ProfileTrigger = styled.div`
   }
 `;
 
-export const ProfileAvatarSlot = styled.div`
-  width: ${profileAvatarSlotWidth};
-  min-width: ${profileAvatarSlotWidth};
-  height: ${profileItemHeight};
+export const ProfileAvatarSlot = styled.div<{ $touchTarget: boolean }>`
+  width: ${(props) =>
+    props.$touchTarget ? profileTouchTargetHeight : profileAvatarSlotWidth};
+  min-width: ${(props) =>
+    props.$touchTarget ? profileTouchTargetHeight : profileAvatarSlotWidth};
+  height: ${(props) =>
+    props.$touchTarget ? profileTouchTargetHeight : profileItemHeight};
   display: inline-flex;
   flex: 0 0 auto;
   align-items: center;

@@ -7,6 +7,7 @@ import { getApiErrorMessage } from "@/api/get-api-error-message";
 import { getProductCategoryPath, pagesMap } from "@/app/router/pages-map";
 import { categoriesEligibleAsParent } from "@/features/categories/model/category-tree";
 import { useCategoriesStore } from "@/features/categories/model/use-categories-store";
+import { useIsMobileViewport } from "@/utils/use-media-query";
 
 import { getRootCategories } from "../products-categories.utils";
 import { useNotification } from "@/shared/components/notification/use-notification";
@@ -27,6 +28,7 @@ export const useProductsCategoriesLayoutController = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const notification = useNotification();
+  const isMobileViewport = useIsMobileViewport();
   const [form] = Form.useForm<CategoryCreateFormValues>();
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
@@ -97,7 +99,7 @@ export const useProductsCategoriesLayoutController = () => {
       notification.success({ title: t("categories.createSuccess") });
       closeCreate();
 
-      if (values.parentId == null) {
+      if (!isMobileViewport && values.parentId == null) {
         navigate(getProductCategoryPath(createdCategory.id));
       }
     } catch (error) {
@@ -106,7 +108,7 @@ export const useProductsCategoriesLayoutController = () => {
       });
       return Promise.reject();
     }
-  }, [closeCreate, form, notification, navigate, store, t]);
+  }, [closeCreate, form, isMobileViewport, notification, navigate, store, t]);
 
   const navigateToCategory = useCallback(
     (categoryId: number) => {

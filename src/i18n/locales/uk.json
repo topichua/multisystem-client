@@ -8,6 +8,16 @@
     "analytics": "Аналітика",
     "team": "Команда",
     "settings": "Налаштування",
+    "workspaceHome": "Головна робочого простору",
+    "mobileNavigationTitle": "Навігація",
+    "openMobileNavigationAria": "Відкрити навігацію",
+    "closeMobileNavigationAria": "Закрити навігацію",
+    "returnWorkspaceHomeAria": "Повернутися на головну робочого простору",
+    "mobileSections": {
+      "workspace": "Робочий простір",
+      "dailyWork": "Щоденна робота",
+      "customersWorkspace": "Клієнти та простір"
+    },
     "homeAria": "Головна",
     "openConversationsAria": "Відкрити розмови",
     "toggleSiderAria": "Згорнути або розгорнути меню",
@@ -29,10 +39,13 @@
     "productBadge": "Товар",
     "choosePost": "Обрати",
     "openOnInstagram": "Відкрити в Instagram",
+    "previousPage": "Назад",
+    "pageLabel": "Сторінка {{page}}",
+    "nextPage": "Далі",
     "noCaption": "Немає опису",
     "noPosts": "Дописи не знайдено",
     "noPostsForFilter": "Немає дописів для цього фільтра",
-    "postDetailsTitle": "Post details",
+    "postDetailsTitle": "Деталі допису",
     "postDetailsUnavailable": "Оберіть допис зі списку Instagram.",
     "backToPosts": "До дописів",
     "comments": "Коментарі",
@@ -67,6 +80,11 @@
     "unlinkProductSuccess": "Товар відв'язано від допису",
     "unlinkProductFailed": "Не вдалося відв'язати товар від допису",
     "unlinkProductAria": "Відв'язати товар від допису",
+    "mobile": {
+      "accountSwitcherLabel": "Сторінки Instagram",
+      "selectAccountAria": "Обрати {{name}}",
+      "openCommentsAria": "Відкрити коментарі допису"
+    },
     "filters": {
       "all": "Усі дописи",
       "withoutProduct": "Без товару",
@@ -237,7 +255,7 @@
   "team": {
     "pageTitle": "Команда",
     "shellTitle": "Команда",
-    "membersTitle": "Команда",
+    "membersTitle": "Учасники",
     "membersActiveCount": "{{count}} активних",
     "membersActiveCount_one": "{{count}} активний",
     "membersActiveCount_few": "{{count}} активних",
@@ -417,8 +435,21 @@
     "inviteCta": "Запросити",
     "placeholder": "Тут з'явиться керування командою.",
     "menu": {
-      "members": "Команда",
+      "members": "Учасники",
       "roles": "Ролі"
+    },
+    "mobile": {
+      "backToTeamAria": "Повернутися до команди",
+      "backToRolesAria": "Повернутися до ролей",
+      "createRoleAria": "Створити роль",
+      "editorFallbackTitle": "Роль",
+      "membersTitle": "Учасники",
+      "inviteAria": "Запросити учасника",
+      "emptyMembers": "Ще немає учасників",
+      "descriptions": {
+        "members": "Запрошуйте та керуйте учасниками робочого простору.",
+        "roles": "Налаштовуйте ролі та дозволи."
+      }
     },
     "table": {
       "member": "Учасник",
@@ -478,6 +509,10 @@
   "quickActions": {
     "title": "Керуйте вашим робочим простором",
     "subtitle": "Усе необхідне для щоденної роботи завжди у вас під рукою.",
+    "mobileSections": {
+      "dailyWork": "Щоденна робота",
+      "customersWorkspace": "Клієнти та простір"
+    },
     "cards": {
       "chats": {
         "title": "Чати",
@@ -513,6 +548,20 @@
       "system": "Система",
       "integrations": "Інтеграції",
       "templates": "Шаблони"
+    },
+    "mobile": {
+      "sections": {
+        "workspace": "Робочий простір",
+        "account": "Акаунт",
+        "preferences": "Параметри"
+      },
+      "descriptions": {
+        "groups": "Створюйте й керуйте групами розмов.",
+        "templates": "Створюйте й редагуйте готові відповіді.",
+        "integrations": "Підключайте канали й зовнішні сервіси.",
+        "user": "Оновлюйте профіль і дані акаунта.",
+        "system": "Налаштовуйте системні параметри."
+      }
     }
   },
   "templates": {
@@ -540,7 +589,13 @@
     "updateError": "Не вдалося оновити шаблон",
     "deleted": "Шаблон видалено",
     "deleteError": "Не вдалося видалити шаблон",
-    "deleteConfirmTitle": "Видалити цей шаблон?"
+    "deleteConfirmTitle": "Видалити цей шаблон?",
+    "mobile": {
+      "backToSettingsAria": "До налаштувань",
+      "createTemplateAria": "Створити шаблон",
+      "editorFallbackTitle": "Шаблон",
+      "deleteAria": "Видалити шаблон"
+    }
   },
   "integrations": {
     "title": "Інтеграції",
@@ -564,6 +619,13 @@
     "connectedTag": "Підключено",
     "typeLabel": "Тип: {{type}}",
     "addedLabel": "Додано: {{date}}",
+    "mobile": {
+      "backToSettingsAria": "До налаштувань",
+      "connectedAccountsCount_one": "{{count}} підключений акаунт",
+      "connectedAccountsCount_few": "{{count}} підключені акаунти",
+      "connectedAccountsCount_many": "{{count}} підключених акаунтів",
+      "connectedAccountsCount_other": "{{count}} підключених акаунтів"
+    },
     "types": {
       "instagram": {
         "label": "Instagram",
@@ -638,7 +700,12 @@
     "dark": "Темна",
     "themeAuto": "Системна",
     "english": "English",
-    "ukrainian": "Українська"
+    "ukrainian": "Українська",
+    "mobile": {
+      "backToSettingsAria": "До налаштувань",
+      "workspaceSection": "Робочий простір",
+      "appearanceSection": "Зовнішній вигляд"
+    }
   },
   "groups": {
     "title": "Групи",
@@ -675,7 +742,13 @@
     "collapseGroupsPaneAria": "Згорнути панель груп",
     "expandGroupsPaneAria": "Розгорнути панель груп",
     "noGroupsEmpty": "Немає груп",
-    "updateConversationGroupError": "Не вдалося оновити групу розмови"
+    "updateConversationGroupError": "Не вдалося оновити групу розмови",
+    "mobile": {
+      "backToSettingsAria": "До налаштувань",
+      "createGroupAria": "Створити групу",
+      "editorFallbackTitle": "Група",
+      "deleteAria": "Видалити групу"
+    }
   },
   "userSettings": {
     "title": "Користувач",
@@ -701,6 +774,9 @@
     "roles": {
       "super_admin": "Адміністратор",
       "account_owner": "Власник акаунта"
+    },
+    "mobile": {
+      "backToSettingsAria": "До налаштувань"
     }
   },
   "conversations": {
@@ -718,9 +794,14 @@
     "listViewModeAria": "Режим списку розмов",
     "collapseListPaneAria": "Згорнути список розмов",
     "expandListPaneAria": "Розгорнути список розмов",
+    "unassignedAssignee": "Без відповідального",
+    "unassignedAssigneeAria": "Розмова без відповідального",
     "markRead": "Позначити прочитаним",
     "delete": "Видалити",
-    "rowActionsAria": "Дії з розмовою"
+    "rowActionsAria": "Дії з розмовою",
+    "mobile": {
+      "backToListAria": "Назад до розмов"
+    }
   },
   "conversation": {
     "fallbackTitle": "Розмова",
@@ -797,6 +878,27 @@
   },
   "products": {
     "shellTitle": "Товари",
+    "mobile": {
+      "backToProductsAria": "Повернутися до товарів",
+      "addProductAria": "Додати товар",
+      "filtersAria": "Фільтри",
+      "searchAria": "Пошук товарів",
+      "sortAria": "Сортування товарів",
+      "emptyProducts": "Товарів не знайдено",
+      "qty": "К-сть {{value}}",
+      "variantsSectionTitle": "Варіанти · {{count}}",
+      "form": {
+        "backToListAria": "Повернутися до списку товарів",
+        "saveAria": "Зберегти зміни товару",
+        "moveImageEarlierAria": "Перемістити зображення раніше",
+        "moveImageLaterAria": "Перемістити зображення пізніше"
+      },
+      "descriptions": {
+        "list": "Переглядайте та керуйте каталогом товарів.",
+        "categories": "Організуйте категорії товарів.",
+        "characteristics": "Керуйте атрибутами та опціями товарів."
+      }
+    },
     "listTitle": "Список товарів",
     "pagination": {
       "summary": "Показано {{from}}–{{to}} з {{total}} товарів"
@@ -1079,10 +1181,25 @@
     "pickColor": "Оберіть колір",
     "colorPickerAria": "Колір статусу замовлення",
     "dragHandleAria": "Перетягніть для зміни порядку",
-    "reorderError": "Не вдалося змінити порядок статусів замовлень"
+    "reorderError": "Не вдалося змінити порядок статусів замовлень",
+    "mobile": {
+      "backToOrdersAria": "Назад до замовлень",
+      "backToStatusesAria": "Назад до статусів замовлень"
+    }
   },
   "orders": {
     "shellTitle": "Замовлення",
+    "mobile": {
+      "descriptions": {
+        "list": "Переглядайте та керуйте замовленнями клієнтів.",
+        "statuses": "Налаштовуйте статуси робочого процесу замовлень."
+      },
+      "backToOrdersAria": "Назад до замовлень",
+      "filtersAria": "Фільтри",
+      "searchAria": "Пошук замовлень",
+      "emptyOrders": "Замовлень не знайдено",
+      "detailBackAria": "Назад до всіх замовлень"
+    },
     "menu": {
       "statuses": "Статуси замовлень"
     },
@@ -1257,6 +1374,20 @@
   "clients": {
     "pageTitle": "Клієнти",
     "shellTitle": "Клієнти",
+    "mobile": {
+      "subtitle": "Керуйте інформацією про клієнтів та комунікацією.",
+      "backToClientsAria": "Повернутися до клієнтів",
+      "createClientAria": "Створити клієнта",
+      "actionsAria": "Дії з клієнтом",
+      "clientCardAria": "{{name}}",
+      "emptyClients": "Клієнтів ще немає",
+      "titles": {
+        "clientsWorkspace": "Усі клієнти"
+      },
+      "descriptions": {
+        "clientsWorkspace": "Переглядайте та керуйте профілями клієнтів і контактними даними."
+      }
+    },
     "firstName": "Ім'я",
     "lastName": "Прізвище",
     "phone": "Телефон",
@@ -1285,6 +1416,12 @@
   },
   "categories": {
     "title": "Категорії",
+    "mobile": {
+      "backToCategoriesAria": "Повернутися до категорій",
+      "createCategoryAria": "Створити категорію",
+      "deleteCategoryAria": "Видалити категорію",
+      "addSubcategoryAria": "Додати підкатегорію"
+    },
     "itemsCount_one": "{{count}} категорія",
     "itemsCount_few": "{{count}} категорії",
     "itemsCount_many": "{{count}} категорій",
@@ -1356,6 +1493,12 @@
   },
   "characteristics": {
     "title": "Характеристики",
+    "mobile": {
+      "backToCharacteristicsAria": "Повернутися до характеристик",
+      "createCharacteristicAria": "Створити характеристику",
+      "deleteCharacteristicAria": "Видалити характеристику",
+      "addOptionAria": "Додати опцію"
+    },
     "itemsCount_one": "{{count}} характеристика",
     "itemsCount_few": "{{count}} характеристики",
     "itemsCount_many": "{{count}} характеристик",

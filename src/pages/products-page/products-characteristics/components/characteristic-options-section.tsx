@@ -63,6 +63,8 @@ type CharacteristicOptionsSectionProps = {
   saveLoading: boolean;
   optionDeleteLoadingId: number | null;
   onDeleteOption: (optionId: number) => Promise<void>;
+  addOptionDataQa?: string;
+  getOptionItemDataQa?: (optionId: number) => string;
 };
 
 export const CharacteristicOptionsSection = ({
@@ -72,6 +74,8 @@ export const CharacteristicOptionsSection = ({
   saveLoading,
   optionDeleteLoadingId,
   onDeleteOption,
+  addOptionDataQa,
+  getOptionItemDataQa,
 }: CharacteristicOptionsSectionProps) => {
   const { t } = useTranslation();
 
@@ -91,7 +95,12 @@ export const CharacteristicOptionsSection = ({
           </Space>
 
           {!create.isAdding && (
-            <Button icon={<PlusIcon />} onClick={create.onOpen}>
+            <Button
+              icon={<PlusIcon />}
+              data-qa={addOptionDataQa}
+              aria-label={t("characteristics.mobile.addOptionAria")}
+              onClick={create.onOpen}
+            >
               {t("characteristics.addValue")}
             </Button>
           )}
@@ -116,7 +125,11 @@ export const CharacteristicOptionsSection = ({
             split
             dataSource={options}
             renderItem={(option) => (
-              <List.Item key={option.optionId} style={{ paddingBlock: 12 }}>
+              <List.Item
+                key={option.optionId}
+                style={{ paddingBlock: 12 }}
+                data-qa={getOptionItemDataQa?.(option.optionId)}
+              >
                 <CharacteristicOptionListItem
                   option={option}
                   rename={rename}

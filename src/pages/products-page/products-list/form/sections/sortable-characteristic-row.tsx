@@ -4,10 +4,11 @@ import { DotsSixVerticalIcon } from "@phosphor-icons/react";
 import type { ReactNode } from "react";
 import styled from "styled-components";
 
-const Row = styled.div<{ $isDragging: boolean }>`
+const Row = styled.div<{ $isDragging: boolean; $stacked?: boolean }>`
   display: flex;
   gap: 12px;
-  align-items: flex-start;
+  align-items: ${({ $stacked }) => ($stacked ? "stretch" : "flex-start")};
+  flex-direction: ${({ $stacked }) => ($stacked ? "column" : "row")};
   opacity: ${({ $isDragging }) => ($isDragging ? 0.7 : 1)};
   position: relative;
   z-index: ${({ $isDragging }) => ($isDragging ? 1 : "auto")};
@@ -41,12 +42,14 @@ type SortableCharacteristicRowProps = {
   id: number;
   dragLabel: string;
   children: ReactNode;
+  stacked?: boolean;
 };
 
 export function SortableCharacteristicRow({
   id,
   dragLabel,
   children,
+  stacked = false,
 }: SortableCharacteristicRowProps) {
   const {
     attributes,
@@ -65,6 +68,7 @@ export function SortableCharacteristicRow({
         transition,
       }}
       $isDragging={isDragging}
+      $stacked={stacked}
     >
       <DragHandle
         type="button"

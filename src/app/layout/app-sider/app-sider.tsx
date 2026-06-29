@@ -1,5 +1,5 @@
-import { CaretLeftIcon, MoonIcon } from "@phosphor-icons/react";
-import { Tooltip, Typography } from "antd";
+import { CaretLeftIcon } from "@phosphor-icons/react";
+import { Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -11,8 +11,8 @@ import {
   type MainNavItem,
 } from "@/app/router/navigation";
 import { pagesMap } from "@/app/router/pages-map";
-import { useThemeMode } from "@/theme/use-theme-mode";
 
+import { ThemePreferenceControl } from "../theme-preference-control/theme-preference-control";
 import { UserProfile } from "../user-profile/user-profile";
 import {
   readStoredAppSiderExpanded,
@@ -73,53 +73,6 @@ const MenuSiderMain = observer((props: MenuSiderProps) => (
     <SiderNavItems {...props} />
   </S.MenuSider>
 ));
-
-const ThemeSwitchRow = observer(({ showLabel }: { showLabel: boolean }) => {
-  const { t } = useTranslation();
-  const { mode, preference, setPreference } = useThemeMode();
-  const isAutoTheme = preference === "system";
-
-  return (
-    <Tooltip
-      placement="right"
-      trigger={["hover", "click"]}
-      title={
-        isAutoTheme ? t("sidebar.themeAutoSwitchDisabledTooltip") : undefined
-      }
-    >
-      <S.ThemeSwitchTooltipTarget>
-        <S.ThemeSwitchRow
-          $showLabel={showLabel}
-          $disabled={isAutoTheme}
-          onClick={() => {
-            if (showLabel || isAutoTheme) {
-              return;
-            }
-
-            setPreference(mode === "dark" ? "light" : "dark");
-          }}
-        >
-          <S.FooterIcon>
-            <MoonIcon size={20} />
-          </S.FooterIcon>
-
-          {showLabel && <S.FooterLabel>{t("sidebar.darkTheme")}</S.FooterLabel>}
-
-          {showLabel && (
-            <S.ThemeSwitch
-              size="small"
-              checked={mode === "dark"}
-              disabled={isAutoTheme}
-              onChange={(checked) => {
-                setPreference(checked ? "dark" : "light");
-              }}
-            />
-          )}
-        </S.ThemeSwitchRow>
-      </S.ThemeSwitchTooltipTarget>
-    </Tooltip>
-  );
-});
 
 export const AppSider = observer(() => {
   const { t } = useTranslation();
@@ -193,7 +146,7 @@ export const AppSider = observer(() => {
           <MenuSiderMain showLabel={isExpanded} items={primaryNavItems} />
         </S.SiderScrollArea>
         <S.SiderFooter>
-          <ThemeSwitchRow showLabel={isExpanded} />
+          <ThemePreferenceControl variant="sider" showLabel={isExpanded} />
           {settingsNavItem && (
             <S.FooterNav $showLabel={isExpanded}>
               <SiderNavItems showLabel={isExpanded} items={[settingsNavItem]} />

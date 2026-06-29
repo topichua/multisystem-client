@@ -52,7 +52,14 @@ const conversationMatchesSearch = (
 };
 
 export const Conversation = observer(
-  ({ collapsed, onCollapse, onExpand, onSelect }: ConversationPanelProps) => {
+  ({
+    collapsed,
+    variant = "desktop",
+    listHeaderSlot,
+    onCollapse,
+    onExpand,
+    onSelect,
+  }: ConversationPanelProps) => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const { conversationId } = useParams();
@@ -113,7 +120,9 @@ export const Conversation = observer(
       },
     ];
 
-    if (collapsed) {
+    const isMobile = variant === "mobile";
+
+    if (collapsed && !isMobile) {
       return (
         <S.CollapsedColumn>
           <S.ExpandButton
@@ -129,23 +138,28 @@ export const Conversation = observer(
     }
 
     return (
-      <S.Conversation>
+      <S.Conversation $variant={variant}>
         <Flex justify="space-between" gap={12}>
           <Title level={4}>{t("conversations.title")}</Title>
-          <S.HeaderActions>
-            <S.ExpandButton
-              type="button"
-              aria-label={t("groups.expandGroupsPaneAria")}
-              onClick={onCollapse}
-            >
-              <CaretDoubleLeftIcon size={16} weight="bold" />
-            </S.ExpandButton>
-          </S.HeaderActions>
+          {!isMobile ? (
+            <S.HeaderActions>
+              <S.ExpandButton
+                type="button"
+                aria-label={t("conversations.collapseListPaneAria")}
+                onClick={onCollapse}
+              >
+                <CaretDoubleLeftIcon size={16} weight="bold" />
+              </S.ExpandButton>
+            </S.HeaderActions>
+          ) : null}
         </Flex>
+
+        {listHeaderSlot}
 
         <Flex align="center" gap={8}>
           <Input.Search
             allowClear
+            size={isMobile ? "large" : "middle"}
             value={searchQuery}
             placeholder={t("conversations.searchPlaceholder")}
             onChange={(event) => setSearchQuery(event.target.value)}
@@ -171,7 +185,7 @@ export const Conversation = observer(
           </Button>
         </Flex>
 
-        <S.ListScroll>
+        <S.ListScroll $variant={variant}>
           <Spin spinning={listLoading}>
             <Flex
               vertical

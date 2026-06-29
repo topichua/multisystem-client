@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 
 import type { OrderStatus } from "@/features/orders/model/order.types";
 import { PresetColorPicker } from "@/shared/components/preset-color-picker/preset-color-picker";
+import { useIsMobileViewport } from "@/utils/use-media-query";
 
 import { isDuplicateOrderStatusName } from "./order-status-name-validation";
 
@@ -24,6 +25,7 @@ export const OrderStatusFormFields = ({
   editingStatusId,
 }: OrderStatusFormFieldsProps) => {
   const { t } = useTranslation();
+  const isMobileViewport = useIsMobileViewport();
 
   return (
     <>
@@ -58,7 +60,10 @@ export const OrderStatusFormFields = ({
         label={t("orderStatuses.fieldColor")}
         rules={[{ required: true, message: t("orderStatuses.pickColor") }]}
       >
-        <PresetColorPicker ariaLabel={t("orderStatuses.colorPickerAria")} />
+        <PresetColorPicker
+          ariaLabel={t("orderStatuses.colorPickerAria")}
+          columns={isMobileViewport ? 5 : undefined}
+        />
       </Form.Item>
       <Form.Item name="isDefault" valuePropName="checked">
         <Checkbox>

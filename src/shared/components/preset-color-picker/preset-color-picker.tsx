@@ -11,6 +11,7 @@ export type PresetColorPickerProps = {
   onChange?: (color: string) => void;
   presets?: readonly string[];
   ariaLabel: string;
+  columns?: number;
 };
 
 export const PresetColorPicker = ({
@@ -18,6 +19,7 @@ export const PresetColorPicker = ({
   onChange,
   presets: presetValues = COLOR_PRESETS,
   ariaLabel,
+  columns,
 }: PresetColorPickerProps) => {
   const presets = useMemo(() => {
     const base = [...presetValues];
@@ -37,7 +39,13 @@ export const PresetColorPicker = ({
     <div
       role="listbox"
       aria-label={ariaLabel}
-      style={{ display: "flex", flexWrap: "wrap", gap: 10 }}
+      style={{
+        display: columns != null ? "grid" : "flex",
+        flexWrap: columns != null ? undefined : "wrap",
+        gridTemplateColumns:
+          columns != null ? `repeat(${columns}, 28px)` : undefined,
+        gap: 10,
+      }}
     >
       {presets.map((hex) => {
         const selected =

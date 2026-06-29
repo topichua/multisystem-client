@@ -2,6 +2,7 @@ import { observer } from "mobx-react-lite";
 import { Outlet } from "react-router";
 
 import { PaneNavSplitLayout } from "@/components/layout/pane-nav-split-layout";
+import { useIsMobileViewport } from "@/utils/use-media-query";
 
 import { CategoryCreateModal } from "./components/category-create-modal";
 import { ProductsCategoriesSidebar } from "./components/products-categories-sidebar";
@@ -9,32 +10,39 @@ import { useProductsCategoriesLayoutController } from "./controllers/use-product
 
 export const ProductsCategoriesLayout = observer(() => {
   const controller = useProductsCategoriesLayoutController();
+  const isMobileViewport = useIsMobileViewport();
+
+  const outletContext = {
+    onCreateClick: controller.openCreate,
+    searchValue: controller.searchValue,
+    setSearchValue: controller.setSearchValue,
+    visibleCategories: controller.visibleCategories,
+    totalCount: controller.store.categories.length,
+  } satisfies ProductsCategoriesOutletContext;
 
   return (
     <>
-      <PaneNavSplitLayout.Root
-        data-qa="layout-products-categories-shell"
-        customWidth={350}
-      >
-        <ProductsCategoriesSidebar
-          categories={controller.visibleCategories}
-          totalCount={controller.store.categories.length}
-          activeCategoryId={controller.activeCategoryId}
-          searchValue={controller.searchValue}
-          onSearchChange={controller.setSearchValue}
-          onCreateClick={controller.openCreate}
-          onCategoryClick={controller.navigateToCategory}
-        />
-        <PaneNavSplitLayout.SubMain data-qa="layout-products-categories-main">
-          <Outlet
-            context={
-              {
-                onCreateClick: controller.openCreate,
-              } satisfies ProductsCategoriesOutletContext
-            }
+      {isMobileViewport ? (
+        <Outlet context={outletContext} />
+      ) : (
+        <PaneNavSplitLayout.Root
+          data-qa="layout-products-categories-shell"
+          customWidth={350}
+        >
+          <ProductsCategoriesSidebar
+            categories={controller.visibleCategories}
+            totalCount={controller.store.categories.length}
+            activeCategoryId={controller.activeCategoryId}
+            searchValue={controller.searchValue}
+            onSearchChange={controller.setSearchValue}
+            onCreateClick={controller.openCreate}
+            onCategoryClick={controller.navigateToCategory}
           />
-        </PaneNavSplitLayout.SubMain>
-      </PaneNavSplitLayout.Root>
+          <PaneNavSplitLayout.SubMain data-qa="layout-products-categories-main">
+            <Outlet context={outletContext} />
+          </PaneNavSplitLayout.SubMain>
+        </PaneNavSplitLayout.Root>
+      )}
 
       <CategoryCreateModal
         form={controller.form}
@@ -50,4 +58,10 @@ export const ProductsCategoriesLayout = observer(() => {
 
 export type ProductsCategoriesOutletContext = {
   onCreateClick: () => void;
+  searchValue: string;
+  setSearchValue: (value: string) => void;
+  visibleCategories: ReturnType<
+    typeof useProductsCategoriesLayoutController
+  >["visibleCategories"];
+  totalCount: number;
 };

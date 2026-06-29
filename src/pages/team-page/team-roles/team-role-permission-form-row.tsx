@@ -25,6 +25,7 @@ const { Text } = Typography;
 type TeamRolePermissionFormRowProps = {
   row: PermissionFormRow;
   index: number;
+  layoutVariant?: "default" | "mobile";
   borderColor: string;
   borderRadius: number;
   permissionValues: Record<string, boolean>;
@@ -43,13 +44,13 @@ const renderRowLabel = (
   nested: boolean,
   disabled: boolean,
 ): ReactNode => (
-  <Flex align="center" gap={10} style={{ minWidth: 0 }}>
+  <Flex align="center" gap={10} style={{ minWidth: 0, flex: "1 1 auto" }}>
     {nested && (
       <Text type="secondary" aria-hidden>
         -
       </Text>
     )}
-    <Text type={disabled ? "secondary" : undefined}>
+    <Text type={disabled ? "secondary" : undefined} style={{ minWidth: 0 }}>
       {getCatalogItemLabel(t, item)}
     </Text>
   </Flex>
@@ -58,6 +59,7 @@ const renderRowLabel = (
 export const TeamRolePermissionFormRow = ({
   row,
   index,
+  layoutVariant = "default",
   borderColor,
   borderRadius,
   permissionValues,
@@ -68,10 +70,11 @@ export const TeamRolePermissionFormRow = ({
 }: TeamRolePermissionFormRowProps) => {
   const { t } = useTranslation();
 
+  const rowPadding = layoutVariant === "mobile" ? "12px 16px" : "16px 24px";
   const borderTop = index === 0 ? undefined : `1px solid ${borderColor}`;
   const rowStyle = {
     borderTop,
-    padding: "16px 24px",
+    padding: rowPadding,
   };
 
   if (row.kind === "integration_grants") {
@@ -196,6 +199,7 @@ export const TeamRolePermissionFormRow = ({
       align="center"
       justify="space-between"
       gap={16}
+      wrap={layoutVariant === "mobile" ? "wrap" : undefined}
       style={rowStyle}
     >
       {renderRowLabel(t, row.item, row.nested, disabled)}

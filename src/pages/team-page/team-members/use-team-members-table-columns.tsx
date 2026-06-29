@@ -1,5 +1,5 @@
 import type { TableColumnsType } from "antd";
-import { Flex, Select, Switch, Typography } from "antd";
+import { Switch } from "antd";
 import { Tag } from "@/components/tag/tag";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -9,73 +9,12 @@ import type {
   WorkspaceMemberUpdatePayload,
 } from "@/features/workspace-members/model/workspace-member.types";
 import type { WorkspaceRole } from "@/features/workspace-roles/model/workspace-role.types";
-import { DEFAULT_COLOR_PRESET } from "@/shared/components/preset-color-picker/color-presets";
-import { RoleDot } from "@/shared/components/role-dot/role-dot";
 import { fromNow } from "@/utils/date-time";
 
 import { TeamMemberActions } from "./team-member-actions";
 import { TeamMemberCell } from "./team-member-cell";
-
-const { Text } = Typography;
-
-type TeamMemberRoleOption = {
-  value: number;
-  label: string;
-  color: string;
-};
-
-function getMemberStatus(status: string | null | undefined): {
-  color: string;
-  labelKey: string;
-} {
-  if (status === "active") {
-    return { color: "success", labelKey: "team.table.statuses.active" };
-  }
-
-  if (status === "inactive") {
-    return { color: "error", labelKey: "team.table.statuses.inactive" };
-  }
-
-  if (status === "deactivated") {
-    return { color: "default", labelKey: "team.table.statuses.deactivated" };
-  }
-
-  return { color: "default", labelKey: "team.table.statuses.unknown" };
-}
-
-const toRoleOptions = (roles: WorkspaceRole[]): TeamMemberRoleOption[] =>
-  [...roles]
-    .sort((a, b) => a.id - b.id)
-    .map((role) => ({
-      value: role.id,
-      label: role.name,
-      color: role.color ?? DEFAULT_COLOR_PRESET,
-    }));
-
-const getMemberRoleOptions = (
-  member: WorkspaceMember,
-  roleOptions: TeamMemberRoleOption[],
-): TeamMemberRoleOption[] => {
-  if (roleOptions.some((option) => option.value === member.roleId)) {
-    return roleOptions;
-  }
-
-  return [
-    {
-      value: member.roleId,
-      label: member.roleName || member.roleSlug || String(member.roleId),
-      color: DEFAULT_COLOR_PRESET,
-    },
-    ...roleOptions,
-  ];
-};
-
-const renderRoleOption = (option: TeamMemberRoleOption) => (
-  <Flex align="center" gap={8}>
-    <RoleDot color={option.color} />
-    <Text>{option.label}</Text>
-  </Flex>
-);
+import { TeamMemberRoleSelect } from "./team-member-role-select";
+import { getMemberStatus } from "./team-member.utils";
 
 type UseTeamMembersTableColumnsParams = {
   currentUserId: number | null;
@@ -106,7 +45,6 @@ export function useTeamMembersTableColumns({
   return useMemo(() => {
     const updatingMemberIdSet = new Set(updatingMemberIds);
     const actionLoadingMemberIdSet = new Set(actionLoadingMemberIds);
-    const roleOptions = toRoleOptions(roles);
 
     return [
       {
@@ -125,46 +63,15 @@ export function useTeamMembersTableColumns({
         dataIndex: "roleId",
         key: "roleId",
         width: 220,
-        render: (value: number, record) => {
-          const isUpdating = updatingMemberIdSet.has(record.id);
-          const options = getMemberRoleOptions(record, roleOptions);
-
-          return (
-            <Select
-              value={value}
-              options={options}
-              loading={rolesLoading || isUpdating}
-              disabled={rolesLoading || isUpdating}
-              style={{ minWidth: 180, width: "100%" }}
-              popupMatchSelectWidth={false}
-              showSearch={{ optionFilterProp: "label" }}
-              optionRender={(option) =>
-                renderRoleOption(option.data as TeamMemberRoleOption)
-              }
-              labelRender={(props) => {
-                const id = props.value as number;
-                const option = options.find((item) => item.value === id);
-                const label =
-                  option?.label || record.roleName || record.roleSlug || "-";
-                const color = option?.color ?? DEFAULT_COLOR_PRESET;
-
-                return renderRoleOption({ value: id, label, color });
-              }}
-              onChange={(nextRoleId) => {
-                if (nextRoleId === value) {
-                  return;
-                }
-
-                void onUpdateMember(record.id, {
-                  role_id: nextRoleId,
-                  can_be_assigned_to_chat: Boolean(
-                    record.can_be_assigned_to_chat,
-                  ),
-                });
-              }}
-            />
-          );
-        },
+        render: (_, record) => (
+          <TeamMemberRoleSelect
+            member={record}
+            roles={roles}
+            rolesLoading={rolesLoading}
+            isUpdating={updatingMemberIdSet.has(record.id)}
+            onUpdateMember={onUpdateMember}
+          />
+        ),
       },
       {
         title: t("team.table.canBeAssignedToChat"),

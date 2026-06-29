@@ -42,6 +42,7 @@ export type SingleProductCharacteristicsSectionProps = {
   getCharacteristicValueOptions: (
     attributeId?: number,
   ) => Array<{ value: string; label: string }>;
+  isMobile?: boolean;
 };
 
 export const SingleProductCharacteristicsSection = ({
@@ -50,6 +51,7 @@ export const SingleProductCharacteristicsSection = ({
   variantCustomFields,
   isVariantCustomFieldsLoading,
   getCharacteristicValueOptions,
+  isMobile = false,
 }: SingleProductCharacteristicsSectionProps) => {
   const { t } = useTranslation();
   const sensors = useSensors(
@@ -147,6 +149,7 @@ export const SingleProductCharacteristicsSection = ({
                             key={field.key}
                             id={field.key}
                             dragLabel={t("products.characteristics.dragRow")}
+                            stacked={isMobile}
                           >
                             <Form.Item
                               name={[field.name, "field"]}
@@ -196,7 +199,10 @@ export const SingleProductCharacteristicsSection = ({
                                   },
                                 },
                               ]}
-                              style={{ width: 380, marginBottom: 0 }}
+                              style={{
+                                width: isMobile ? "100%" : 380,
+                                marginBottom: 0,
+                              }}
                             >
                               <CharacteristicFieldSelect
                                 placeholder={t(

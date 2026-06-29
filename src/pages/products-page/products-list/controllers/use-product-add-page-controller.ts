@@ -242,6 +242,8 @@ export const useProductAddPageController =
           deleteTooltip: t("products.media.deleteTooltip"),
           uploadHint: t("products.media.uploadHintShort"),
           reorderHint: t("products.media.reorderHint"),
+          moveEarlierAria: t("products.mobile.form.moveImageEarlierAria"),
+          moveLaterAria: t("products.mobile.form.moveImageLaterAria"),
         },
       },
       variantsProps: {
@@ -256,6 +258,12 @@ export const useProductAddPageController =
         getCharacteristicValueOptions:
           variantsController.getCharacteristicValueOptions,
         onAddManualVariant: variantsController.onAddManualVariant,
+        selectedCharacteristics: variantsController.selectedCharacteristics,
+        onManageVariantImages: handleManageVariantImages,
+        onDeleteVariant: variantsController.onDeleteVariant,
+        onUpdateManualVariantCustomField:
+          variantsController.onUpdateManualVariantCustomField,
+        deletingVariantKey: variantsController.deletingVariantKey,
       },
       submitButtonProps: {
         loading: isSavingProduct,

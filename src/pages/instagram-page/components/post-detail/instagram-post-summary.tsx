@@ -3,7 +3,7 @@ import {
   ChatCircleIcon,
   HeartIcon,
 } from "@phosphor-icons/react";
-import { Button, Flex, Typography } from "antd";
+import { Typography } from "antd";
 import { useTranslation } from "react-i18next";
 
 import { InstagramLogoIcon } from "@/components/icons/instagram/instagram-logo-icon";
@@ -40,20 +40,20 @@ export const InstagramPostSummary = ({
 
   return (
     <>
-      <Flex align="center" justify="space-between" gap={16}>
-        <Flex align="center" gap={12}>
+      <S.SummaryHeader>
+        <S.SummaryAccount>
           <InstagramLogoIcon size={40} />
 
-          <Flex vertical gap={0}>
+          <S.SummaryAccountCopy>
             <S.AccountTitle>
               <Title level={4}>{formatHandle(selectedIntegration.name)}</Title>
             </S.AccountTitle>
             <Text type="secondary">{formatPostDate(post.timestamp)}</Text>
-          </Flex>
-        </Flex>
+          </S.SummaryAccountCopy>
+        </S.SummaryAccount>
 
         {post.permalink ? (
-          <Button
+          <S.ExternalButton
             type="text"
             href={post.permalink}
             target="_blank"
@@ -61,22 +61,23 @@ export const InstagramPostSummary = ({
           >
             {t("instagram.openOnInstagram")}
             <ArrowSquareOutIcon size={18} />
-          </Button>
+          </S.ExternalButton>
         ) : null}
-      </Flex>
+      </S.SummaryHeader>
 
-      <Flex gap={24} justify="flex-start">
-        <Flex vertical gap={12}>
+      <S.SummaryBody>
+        <S.SummaryMediaColumn>
           <S.MediaPreview>
             <InstagramPostMediaPreview post={post} />
           </S.MediaPreview>
-          <Flex align="center" justify="space-between" gap={24} wrap="wrap">
-            <Flex align="center" gap={8}>
+          <S.SummaryMetaRow>
+            <S.MetricsGroup>
               <S.Metric>
                 <HeartIcon size={18} />
                 <Text strong>{formatCompactNumber(post.like_count)}</Text>
               </S.Metric>
               <S.MetricButton
+                aria-label={t("instagram.mobile.openCommentsAria")}
                 aria-pressed={commentsOpen}
                 onClick={onToggleComments}
                 type="button"
@@ -84,12 +85,12 @@ export const InstagramPostSummary = ({
                 <ChatCircleIcon size={18} />
                 <Text strong>{formatCompactNumber(post.comments_count)}</Text>
               </S.MetricButton>
-            </Flex>
+            </S.MetricsGroup>
             <Text type="secondary">{formatPostDate(post.timestamp)}</Text>
-          </Flex>
-        </Flex>
+          </S.SummaryMetaRow>
+        </S.SummaryMediaColumn>
         <InstagramPostDescriptionSection post={post} />
-      </Flex>
+      </S.SummaryBody>
     </>
   );
 };

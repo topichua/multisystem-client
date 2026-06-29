@@ -4,9 +4,10 @@ import { useTranslation } from "react-i18next";
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
 import { OrderStatusSelect } from "@/features/orders/components/order-status-select";
 import type { OrderDetails } from "@/features/orders/model/order.types";
+import { useIsMobileViewport } from "@/utils/use-media-query";
 
-import * as S from "./order-details-header.styled";
 import { formatDate, getOrderSourceLabel } from "../utils/order-details.utils";
+import * as S from "./order-details-header.styled";
 
 type OrderDetailsHeaderProps = {
   order: OrderDetails | null;
@@ -24,32 +25,58 @@ export const OrderDetailsHeader = ({
   onStatusChangeSuccess,
 }: OrderDetailsHeaderProps) => {
   const { t } = useTranslation();
+  const isMobileViewport = useIsMobileViewport();
+
+  const statusSelect = order ? (
+    <OrderStatusSelect
+      orderId={order.id}
+      statusId={order.statusId}
+      variant="outlined"
+      style={{ width: "100%", minWidth: 0 }}
+      dataQa={
+        isMobileViewport
+          ? "orders-mobile-detail-status-select"
+          : "layout-orders-list-status-select"
+      }
+      onChangeSuccess={onStatusChangeSuccess}
+    />
+  ) : null;
 
   return (
     <PaneDetailLayout.Header data-qa="layout-order-details-header">
       <S.HeaderRoot>
-        <S.LeftCluster>
-          <S.BackButton
-            aria-label={t("orders.backToOrders")}
-            className="no-print"
-            icon={<ArrowLeftIcon size={24} />}
-            onClick={onBack}
-          />
+        {isMobileViewport ? (
+          <>
+            <S.MobileBackButton
+              type="text"
+              icon={<ArrowLeftIcon size={16} />}
+              aria-label={t("orders.mobile.detailBackAria")}
+              data-qa="orders-mobile-detail-back"
+              className="no-print"
+              onClick={onBack}
+            >
+              {t("orders.backToOrders")}
+            </S.MobileBackButton>
 
-          <S.TitleBlock>
-            <S.TitleRow>
-              <S.Title level={3}>
-                {t("orders.orderTitle")}{" "}
-                {(order?.id ?? orderId) ? `#${order?.id ?? orderId}` : ""}
-              </S.Title>
+            <S.TitleBlock>
+              <S.TitleRow>
+                <S.Title level={3}>
+                  {t("orders.orderTitle")}{" "}
+                  {(order?.id ?? orderId) ? `#${order?.id ?? orderId}` : ""}
+                </S.Title>
+              </S.TitleRow>
+            </S.TitleBlock>
 
-              {order?.status ? (
-                <S.StatusBadge $color={order.status.color}>
-                  <S.StatusDot />
-                  {order.status.name}
-                </S.StatusBadge>
-              ) : null}
-            </S.TitleRow>
+            {order ? (
+              <S.MobileStatusSection className="no-print">
+                <S.StatusFieldLabel>
+                  {t("orders.table.status")}
+                </S.StatusFieldLabel>
+                <S.StatusSelectSlot data-qa="orders-mobile-detail-status">
+                  {statusSelect}
+                </S.StatusSelectSlot>
+              </S.MobileStatusSection>
+            ) : null}
 
             {order ? (
               <S.MetaLine>
@@ -71,30 +98,70 @@ export const OrderDetailsHeader = ({
                 </S.MetaItem>
               </S.MetaLine>
             ) : null}
-          </S.TitleBlock>
-        </S.LeftCluster>
-
-        {order ? (
-          <S.Actions className="no-print">
-            <S.PrintButton
-              className="no-print"
-              icon={<PrinterIcon size={20} />}
-              onClick={onPrint}
-            >
-              {t("orders.print")}
-            </S.PrintButton>
-
-            <S.StatusSelectSlot>
-              <OrderStatusSelect
-                orderId={order.id}
-                statusId={order.statusId}
-                variant="outlined"
-                style={{ width: "100%" }}
-                onChangeSuccess={onStatusChangeSuccess}
+          </>
+        ) : (
+          <>
+            <S.LeftCluster>
+              <S.BackButton
+                aria-label={t("orders.backToOrders")}
+                className="no-print"
+                icon={<ArrowLeftIcon size={24} />}
+                onClick={onBack}
               />
-            </S.StatusSelectSlot>
-          </S.Actions>
-        ) : null}
+
+              <S.TitleBlock>
+                <S.TitleRow>
+                  <S.Title level={3}>
+                    {t("orders.orderTitle")}{" "}
+                    {(order?.id ?? orderId) ? `#${order?.id ?? orderId}` : ""}
+                  </S.Title>
+
+                  {order?.status ? (
+                    <S.StatusBadge $color={order.status.color}>
+                      <S.StatusDot />
+                      {order.status.name}
+                    </S.StatusBadge>
+                  ) : null}
+                </S.TitleRow>
+
+                {order ? (
+                  <S.MetaLine>
+                    <S.MetaItem>
+                      <TagIcon size={18} />
+                      {getOrderSourceLabel(t, order.source)}
+                    </S.MetaItem>
+
+                    <S.MetaSeparator>·</S.MetaSeparator>
+
+                    <S.MetaItem>
+                      {t("orders.createdAt")} {formatDate(order.createdAt)}
+                    </S.MetaItem>
+
+                    <S.MetaSeparator>·</S.MetaSeparator>
+
+                    <S.MetaItem>
+                      {t("orders.updatedAt")} {formatDate(order.updatedAt)}
+                    </S.MetaItem>
+                  </S.MetaLine>
+                ) : null}
+              </S.TitleBlock>
+            </S.LeftCluster>
+
+            {order ? (
+              <S.Actions className="no-print">
+                <S.PrintButton
+                  className="no-print"
+                  icon={<PrinterIcon size={20} />}
+                  onClick={onPrint}
+                >
+                  {t("orders.print")}
+                </S.PrintButton>
+
+                <S.StatusSelectSlot>{statusSelect}</S.StatusSelectSlot>
+              </S.Actions>
+            ) : null}
+          </>
+        )}
       </S.HeaderRoot>
     </PaneDetailLayout.Header>
   );

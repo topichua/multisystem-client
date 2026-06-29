@@ -6,6 +6,7 @@ import type {
   ConversationGroupWritePayload,
 } from "@/features/conversation-groups/model/conversation-group.types";
 import { PresetColorPicker } from "@/shared/components/preset-color-picker/preset-color-picker";
+import { useIsMobileViewport } from "@/utils/use-media-query";
 
 import { isDuplicateGroupName } from "./group-name-validation";
 
@@ -24,6 +25,7 @@ export const GroupFormFields = ({
   editingGroupId,
 }: GroupFormFieldsProps) => {
   const { t } = useTranslation();
+  const isMobileViewport = useIsMobileViewport();
 
   return (
     <>
@@ -61,7 +63,10 @@ export const GroupFormFields = ({
         label={t("groups.fieldColor")}
         rules={[{ required: true, message: t("groups.pickColor") }]}
       >
-        <PresetColorPicker ariaLabel={t("groups.colorPickerAria")} />
+        <PresetColorPicker
+          ariaLabel={t("groups.colorPickerAria")}
+          columns={isMobileViewport ? 5 : undefined}
+        />
       </Form.Item>
     </>
   );

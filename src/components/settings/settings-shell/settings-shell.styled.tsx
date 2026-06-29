@@ -24,12 +24,6 @@ export const Root = styled.section.attrs(() =>
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   overflow: hidden;
-
-  @media (max-width: 767px) {
-    margin: 0 12px 0;
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto minmax(0, 1fr);
-  }
 `;
 
 export const Sidebar = styled.aside.attrs(() =>
@@ -43,14 +37,6 @@ export const Sidebar = styled.aside.attrs(() =>
   padding: 16px 0 0;
   border-right: 1px solid
     ${(props) => props.theme.colors.functional.border.cardBase};
-
-  @media (max-width: 767px) {
-    border-right: none;
-    border-bottom: 1px solid
-      ${(props) => props.theme.colors.functional.border.cardBase};
-    padding: 8px 0 0;
-    width: auto;
-  }
 `;
 
 export const Title = styled(PaneSectionTitle).attrs(() =>

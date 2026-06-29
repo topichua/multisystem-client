@@ -1,4 +1,4 @@
-import { Button as CommonButton, Switch as CommonSwitch } from "antd";
+import { Button as CommonButton } from "antd";
 import styled from "styled-components";
 
 import { dataQaAttrs } from "@/styled/data-qa-attrs";
@@ -258,62 +258,4 @@ export const CollapseButton = styled(CommonButton)`
       props.theme.colors.functional.background.primary}!important;
     color: ${(props) => props.theme.colors.semantic.primary};
   }
-`;
-
-export const ThemeSwitchTooltipTarget = styled.span`
-  display: block;
-  width: 100%;
-`;
-
-export const ThemeSwitchRow = styled.div<{
-  $showLabel: boolean;
-  $disabled: boolean;
-}>`
-  width: 100%;
-  height: ${navItemSize};
-  padding: 0 !important;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  border-radius: ${(props) => props.theme.radius.medium};
-  box-sizing: border-box;
-  color: ${(props) => props.theme.colors.functional.text.subdued};
-  cursor: ${(props) => {
-    if (props.$disabled) {
-      return "not-allowed";
-    }
-
-    return props.$showLabel ? "default" : "pointer";
-  }};
-  opacity: ${(props) => (props.$disabled ? 0.72 : 1)};
-`;
-
-export const FooterIcon = styled.span`
-  width: ${siderRailWidth};
-  min-width: ${siderRailWidth};
-  height: ${navItemSize};
-  display: inline-flex;
-  flex: 0 0 auto;
-  align-items: center;
-  justify-content: center;
-  color: currentColor;
-  line-height: 1;
-`;
-
-export const FooterLabel = styled.span`
-  flex: 1 1 auto;
-  min-width: 0;
-  overflow: hidden;
-  color: currentColor;
-  font-size: ${(props) => props.theme.fontSize.medium};
-  font-weight: 500;
-  line-height: 1.3;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-export const ThemeSwitch = styled(CommonSwitch).attrs(() =>
-  dataQaAttrs("layout-app-sider-theme-switch"),
-)`
-  flex: 0 0 auto;
 `;

@@ -24,6 +24,19 @@ export const HeaderSlot = styled.div`
   h6 {
     font-size: ${({ theme }) => theme.fontSize.ultraLarge};
   }
+
+  @media (max-width: 767px) {
+    padding: 10px 16px;
+
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-size: ${({ theme }) => theme.fontSize.large};
+      line-height: 1.3;
+    }
+  }
 `;
 
 export const BodySlot = styled.div`
@@ -34,4 +47,8 @@ export const BodySlot = styled.div`
   padding-top: 16px;
   padding: 12px 24px;
   background: ${({ theme }) => theme.colors.functional.background.base};
+
+  @media (max-width: 767px) {
+    padding: 12px 16px;
+  }
 `;

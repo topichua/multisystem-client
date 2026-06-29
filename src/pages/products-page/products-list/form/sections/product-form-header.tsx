@@ -11,14 +11,32 @@ export type ProductFormHeaderProps = {
   title: string;
   subtitle: string;
   onInstagramAiClick: () => void;
+  isMobile?: boolean;
 };
 
 export const ProductFormHeader = ({
   title,
   subtitle,
   onInstagramAiClick,
+  isMobile = false,
 }: ProductFormHeaderProps) => {
   const { t } = useTranslation();
+
+  if (isMobile) {
+    return (
+      <AiButton
+        $filled
+        block
+        htmlType="button"
+        icon={<AIAssistanceIcon />}
+        aria-label={t("products.instagram.ai.addWithInstagramButton")}
+        data-qa="products-mobile-form-ai"
+        onClick={onInstagramAiClick}
+      >
+        {t("products.instagram.ai.addWithInstagramButton")}
+      </AiButton>
+    );
+  }
 
   return (
     <Flex justify="space-between" align="flex-start" gap={24}>

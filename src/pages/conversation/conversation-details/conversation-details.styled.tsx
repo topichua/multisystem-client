@@ -11,6 +11,10 @@ export const Root = styled.div.attrs(() =>
   min-height: 0;
   min-width: 0;
   height: 100%;
+
+  @media (max-width: 767px) {
+    background: ${({ theme }) => theme.colors.functional.background.base};
+  }
 `;
 
 export const ThreadColumn = styled.div.attrs(() =>
@@ -31,6 +35,12 @@ export const MessagesScroll = styled.div.attrs(() =>
   overflow-y: auto;
   overflow-x: hidden;
   padding: 16px 24px;
+
+  @media (max-width: 767px) {
+    padding: 12px 12px 16px;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
 `;
 
 export const MessagesInner = styled.div.attrs(() =>

@@ -29,6 +29,9 @@ import { DEFAULT_COLOR_PRESET } from "@/shared/components/preset-color-picker/co
 import { RoleDot } from "@/shared/components/role-dot/role-dot";
 import { slugifyAscii } from "@/utils/slugify";
 import { useNotification } from "@/shared/components/notification/use-notification";
+import { useIsMobileViewport } from "@/utils/use-media-query";
+
+import { TeamMobilePageShell } from "../team-mobile-page-shell.styled";
 
 const { Text } = Typography;
 
@@ -43,6 +46,7 @@ export const TeamRolesPage = observer(() => {
   const navigate = useNavigate();
   const location = useLocation();
   const notification = useNotification();
+  const isMobileViewport = useIsMobileViewport();
   const [createForm] = Form.useForm<TeamCreateRoleFormValues>();
   const [createModalOpen, setCreateModalOpen] = useState(false);
 
@@ -131,62 +135,82 @@ export const TeamRolesPage = observer(() => {
       notification.success({ title: t("team.roleCreated") });
       closeCreateModal();
 
-      const created = store.roles.find((role) => role.slug === slug);
-      if (created) {
-        navigate(getTeamRolePath(created.id));
+      if (!isMobileViewport) {
+        const created = store.roles.find((role) => role.slug === slug);
+        if (created) {
+          navigate(getTeamRolePath(created.id));
+        }
       }
     } catch (e) {
       notification.error({
         title: getApiErrorMessage(e, t("team.roleCreateError")),
       });
     }
-  }, [closeCreateModal, createForm, notification, navigate, store, t]);
+  }, [
+    closeCreateModal,
+    createForm,
+    isMobileViewport,
+    notification,
+    navigate,
+    store,
+    t,
+  ]);
+
+  const outletContext = {
+    onCreateClick: openCreateModal,
+  } satisfies TeamRolesOutletContext;
 
   return (
     <>
-      <PaneNavSplitLayout.Root data-qa="layout-team-roles-shell">
-        <PaneNavSplitLayout.SubSidebar data-qa="layout-team-roles-sidebar">
-          <PaneSectionHeaderStack data-qa="layout-team-roles-header">
-            <PaneSectionTitle>{t("team.rolesTitle")}</PaneSectionTitle>
-            <Button
-              type="primary"
-              icon={<PlusIcon size={16} />}
-              onClick={openCreateModal}
-            >
-              {t("team.createRole")}
-            </Button>
-          </PaneSectionHeaderStack>
-          <PaneScrollRegion data-qa="layout-team-roles-nav-scroll">
-            {store.listError && (
-              <Text type="danger" style={{ display: "block", margin: 8 }}>
-                {store.listError}
-              </Text>
-            )}
-            {showInitialLoader ? (
-              <CenteredSpinner minHeight={160} />
-            ) : store.roles.length > 0 ? (
-              <div data-qa="layout-team-roles-nav">
-                <Menu
-                  mode="inline"
-                  selectedKeys={selectedKey ? [selectedKey] : []}
-                  items={menuItems}
-                  onClick={({ key }) => navigate(String(key))}
-                  style={{ borderInlineEnd: "none" }}
+      {isMobileViewport ? (
+        <TeamMobilePageShell>
+          <Outlet context={outletContext} />
+        </TeamMobilePageShell>
+      ) : (
+        <PaneNavSplitLayout.Root data-qa="layout-team-roles-shell">
+          <PaneNavSplitLayout.SubSidebar data-qa="layout-team-roles-sidebar">
+            <PaneSectionHeaderStack data-qa="layout-team-roles-header">
+              <PaneSectionTitle>{t("team.rolesTitle")}</PaneSectionTitle>
+              <Button
+                type="primary"
+                icon={<PlusIcon size={16} />}
+                onClick={openCreateModal}
+              >
+                {t("team.createRole")}
+              </Button>
+            </PaneSectionHeaderStack>
+            <PaneScrollRegion data-qa="layout-team-roles-nav-scroll">
+              {store.listError && (
+                <Text type="danger" style={{ display: "block", margin: 8 }}>
+                  {store.listError}
+                </Text>
+              )}
+              {showInitialLoader ? (
+                <CenteredSpinner minHeight={160} />
+              ) : store.roles.length > 0 ? (
+                <div data-qa="layout-team-roles-nav">
+                  <Menu
+                    mode="inline"
+                    selectedKeys={selectedKey ? [selectedKey] : []}
+                    items={menuItems}
+                    onClick={({ key }) => navigate(String(key))}
+                    style={{ borderInlineEnd: "none" }}
+                  />
+                </div>
+              ) : (
+                <Empty
+                  image={Empty.PRESENTED_IMAGE_SIMPLE}
+                  description={t("team.rolesEmpty")}
+                  style={{ marginTop: 24 }}
                 />
-              </div>
-            ) : (
-              <Empty
-                image={Empty.PRESENTED_IMAGE_SIMPLE}
-                description={t("team.rolesEmpty")}
-                style={{ marginTop: 24 }}
-              />
-            )}
-          </PaneScrollRegion>
-        </PaneNavSplitLayout.SubSidebar>
-        <PaneNavSplitLayout.SubMain data-qa="layout-team-roles-main">
-          <Outlet />
-        </PaneNavSplitLayout.SubMain>
-      </PaneNavSplitLayout.Root>
+              )}
+            </PaneScrollRegion>
+          </PaneNavSplitLayout.SubSidebar>
+          <PaneNavSplitLayout.SubMain data-qa="layout-team-roles-main">
+            <Outlet context={outletContext} />
+          </PaneNavSplitLayout.SubMain>
+        </PaneNavSplitLayout.Root>
+      )}
 
       <Modal
         title={t("team.createRoleTitle")}
@@ -219,3 +243,7 @@ export const TeamRolesPage = observer(() => {
     </>
   );
 });
+
+export type TeamRolesOutletContext = {
+  onCreateClick: () => void;
+};

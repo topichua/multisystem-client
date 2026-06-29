@@ -17,6 +17,7 @@ export type ProductInstagramAiDrawerProps = {
   onClose: () => void;
   categoryOptions: readonly ProductInstagramAiCategoryOption[];
   onFillProductForm?: ProductInstagramAiFillHandler;
+  isMobile?: boolean;
 };
 
 export const ProductInstagramAiDrawer = ({
@@ -24,6 +25,7 @@ export const ProductInstagramAiDrawer = ({
   onClose,
   categoryOptions,
   onFillProductForm,
+  isMobile = false,
 }: ProductInstagramAiDrawerProps) => {
   const { t } = useTranslation();
 
@@ -31,10 +33,10 @@ export const ProductInstagramAiDrawer = ({
     <Drawer
       title={
         <Flex align="center" gap={12}>
-          <InstagramLogoIcon size={34} />
+          <InstagramLogoIcon size={isMobile ? 28 : 34} />
           <Flex vertical>
-            <Flex align="center" gap={8}>
-              <Title level={4} style={{ margin: 0 }}>
+            <Flex align="center" gap={8} wrap="wrap">
+              <Title level={isMobile ? 5 : 4} style={{ margin: 0 }}>
                 {t("products.instagram.ai.drawerTitle")}
               </Title>
               <Tag color="purple" icon={<SparkleIcon size={14} />}>
@@ -49,10 +51,18 @@ export const ProductInstagramAiDrawer = ({
       }
       open={open}
       onClose={onClose}
-      size={960}
+      placement={isMobile ? "bottom" : "right"}
+      size={isMobile ? undefined : 960}
+      height={isMobile ? "100dvh" : undefined}
       destroyOnHidden
       styles={{
-        body: { padding: "0 24px 36px 24px" },
+        body: {
+          padding: isMobile
+            ? "0 16px calc(16px + env(safe-area-inset-bottom, 0px))"
+            : "0 24px 36px 24px",
+          overflowY: "auto",
+        },
+        header: isMobile ? { padding: "12px 16px" } : undefined,
       }}
     >
       {open ? (

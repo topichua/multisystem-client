@@ -42,6 +42,7 @@ type CharacteristicDetailHeaderProps = {
   totalProducts: number;
   saveLoading: boolean;
   labelEdit: CharacteristicLabelEditState;
+  editDataQa?: string;
 };
 
 export const CharacteristicDetailHeader = ({
@@ -49,6 +50,7 @@ export const CharacteristicDetailHeader = ({
   totalProducts,
   saveLoading,
   labelEdit,
+  editDataQa,
 }: CharacteristicDetailHeaderProps) => {
   const { t } = useTranslation();
   const TypeIcon =
@@ -86,6 +88,7 @@ export const CharacteristicDetailHeader = ({
             type="text"
             icon={<PencilSimpleIcon size={20} />}
             aria-label={t("characteristics.renameCharacteristic")}
+            data-qa={editDataQa}
             onClick={labelEdit.onOpen}
           />
         </Flex>

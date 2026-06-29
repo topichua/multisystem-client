@@ -8,6 +8,16 @@
     "analytics": "Analytics",
     "team": "Team",
     "settings": "Settings",
+    "workspaceHome": "Workspace home",
+    "mobileNavigationTitle": "Navigation",
+    "openMobileNavigationAria": "Open navigation",
+    "closeMobileNavigationAria": "Close navigation",
+    "returnWorkspaceHomeAria": "Return to workspace home",
+    "mobileSections": {
+      "workspace": "Workspace",
+      "dailyWork": "Daily work",
+      "customersWorkspace": "Customers & workspace"
+    },
     "homeAria": "Home",
     "openConversationsAria": "Open conversations",
     "toggleSiderAria": "Collapse or expand menu",
@@ -29,6 +39,9 @@
     "productBadge": "Product",
     "choosePost": "Choose",
     "openOnInstagram": "Open on Instagram",
+    "previousPage": "Previous",
+    "pageLabel": "Page {{page}}",
+    "nextPage": "Next",
     "noCaption": "No caption",
     "noPosts": "No posts found",
     "noPostsForFilter": "No posts match this filter",
@@ -67,6 +80,11 @@
     "unlinkProductSuccess": "Product unlinked from post",
     "unlinkProductFailed": "Failed to unlink product from post",
     "unlinkProductAria": "Unlink product from post",
+    "mobile": {
+      "accountSwitcherLabel": "Instagram pages",
+      "selectAccountAria": "Select {{name}}",
+      "openCommentsAria": "Open post comments"
+    },
     "filters": {
       "all": "All posts",
       "withoutProduct": "Without product",
@@ -237,7 +255,7 @@
   "team": {
     "pageTitle": "Team",
     "shellTitle": "Team",
-    "membersTitle": "Team",
+    "membersTitle": "Members",
     "membersActiveCount": "{{count}} active",
     "membersActiveCount_one": "{{count}} active",
     "membersActiveCount_other": "{{count}} active",
@@ -411,8 +429,21 @@
     "inviteCta": "Invite",
     "placeholder": "Team management will appear here.",
     "menu": {
-      "members": "Team",
+      "members": "Members",
       "roles": "Roles"
+    },
+    "mobile": {
+      "backToTeamAria": "Back to team",
+      "backToRolesAria": "Back to roles",
+      "createRoleAria": "Create role",
+      "editorFallbackTitle": "Role",
+      "membersTitle": "Members",
+      "inviteAria": "Invite member",
+      "emptyMembers": "No members yet",
+      "descriptions": {
+        "members": "Invite and manage workspace members.",
+        "roles": "Configure roles and permissions."
+      }
     },
     "table": {
       "member": "Member",
@@ -472,6 +503,10 @@
   "quickActions": {
     "title": "Manage your workspace",
     "subtitle": "Everything you need for daily operations is right at your fingertips.",
+    "mobileSections": {
+      "dailyWork": "Daily work",
+      "customersWorkspace": "Customers & workspace"
+    },
     "cards": {
       "chats": {
         "title": "Chats",
@@ -507,6 +542,20 @@
       "system": "System",
       "integrations": "Integrations",
       "templates": "Templates"
+    },
+    "mobile": {
+      "sections": {
+        "workspace": "Workspace",
+        "account": "Account",
+        "preferences": "Preferences"
+      },
+      "descriptions": {
+        "groups": "Create and manage conversation groups.",
+        "templates": "Create and edit reusable replies.",
+        "integrations": "Connect channels and external services.",
+        "user": "Update profile and account details.",
+        "system": "Configure system preferences."
+      }
     }
   },
   "templates": {
@@ -534,7 +583,13 @@
     "updateError": "Could not update template",
     "deleted": "Template deleted",
     "deleteError": "Could not delete template",
-    "deleteConfirmTitle": "Delete this template?"
+    "deleteConfirmTitle": "Delete this template?",
+    "mobile": {
+      "backToSettingsAria": "Back to settings",
+      "createTemplateAria": "Create template",
+      "editorFallbackTitle": "Template",
+      "deleteAria": "Delete template"
+    }
   },
   "integrations": {
     "title": "Integrations",
@@ -558,6 +613,11 @@
     "connectedTag": "Connected",
     "typeLabel": "Type: {{type}}",
     "addedLabel": "Added: {{date}}",
+    "mobile": {
+      "backToSettingsAria": "Back to settings",
+      "connectedAccountsCount_one": "{{count}} connected account",
+      "connectedAccountsCount_other": "{{count}} connected accounts"
+    },
     "types": {
       "instagram": {
         "label": "Instagram",
@@ -632,7 +692,12 @@
     "dark": "Dark",
     "themeAuto": "System",
     "english": "English",
-    "ukrainian": "Ukrainian"
+    "ukrainian": "Ukrainian",
+    "mobile": {
+      "backToSettingsAria": "Back to settings",
+      "workspaceSection": "Workspace",
+      "appearanceSection": "Appearance"
+    }
   },
   "groups": {
     "title": "Groups",
@@ -669,7 +734,13 @@
     "collapseGroupsPaneAria": "Collapse groups pane",
     "expandGroupsPaneAria": "Expand groups pane",
     "noGroupsEmpty": "No groups",
-    "updateConversationGroupError": "Could not update conversation group"
+    "updateConversationGroupError": "Could not update conversation group",
+    "mobile": {
+      "backToSettingsAria": "Back to settings",
+      "createGroupAria": "Create group",
+      "editorFallbackTitle": "Group",
+      "deleteAria": "Delete group"
+    }
   },
   "userSettings": {
     "title": "User",
@@ -695,6 +766,9 @@
     "roles": {
       "super_admin": "Administrator",
       "account_owner": "Account owner"
+    },
+    "mobile": {
+      "backToSettingsAria": "Back to settings"
     }
   },
   "conversations": {
@@ -712,9 +786,14 @@
     "listViewModeAria": "Conversation list view mode",
     "collapseListPaneAria": "Collapse conversations list",
     "expandListPaneAria": "Expand conversations list",
+    "unassignedAssignee": "Unassigned",
+    "unassignedAssigneeAria": "Conversation is unassigned",
     "markRead": "Mark read",
     "delete": "Delete",
-    "rowActionsAria": "Conversation actions"
+    "rowActionsAria": "Conversation actions",
+    "mobile": {
+      "backToListAria": "Back to conversations"
+    }
   },
   "conversation": {
     "fallbackTitle": "Conversation",
@@ -789,6 +868,27 @@
   },
   "products": {
     "shellTitle": "Products",
+    "mobile": {
+      "backToProductsAria": "Back to products",
+      "addProductAria": "Add product",
+      "filtersAria": "Filters",
+      "searchAria": "Search products",
+      "sortAria": "Sort products",
+      "emptyProducts": "No products found",
+      "qty": "Qty {{value}}",
+      "variantsSectionTitle": "Variants · {{count}}",
+      "form": {
+        "backToListAria": "Back to products list",
+        "saveAria": "Save product changes",
+        "moveImageEarlierAria": "Move image earlier",
+        "moveImageLaterAria": "Move image later"
+      },
+      "descriptions": {
+        "list": "Browse and manage your product catalog.",
+        "categories": "Organize your product categories.",
+        "characteristics": "Manage product attributes and options."
+      }
+    },
     "listTitle": "Products list",
     "pagination": {
       "summary": "Showing {{from}} to {{to}} of {{total}} products"
@@ -1065,10 +1165,25 @@
     "pickColor": "Pick a color",
     "colorPickerAria": "Order status color",
     "dragHandleAria": "Drag to reorder",
-    "reorderError": "Could not reorder order statuses"
+    "reorderError": "Could not reorder order statuses",
+    "mobile": {
+      "backToOrdersAria": "Back to orders",
+      "backToStatusesAria": "Back to order statuses"
+    }
   },
   "orders": {
     "shellTitle": "Orders",
+    "mobile": {
+      "descriptions": {
+        "list": "View and manage customer orders.",
+        "statuses": "Configure order workflow statuses."
+      },
+      "backToOrdersAria": "Back to orders",
+      "filtersAria": "Filters",
+      "searchAria": "Search orders",
+      "emptyOrders": "No orders found",
+      "detailBackAria": "Back to all orders"
+    },
     "menu": {
       "statuses": "Order statuses"
     },
@@ -1239,6 +1354,20 @@
   "clients": {
     "pageTitle": "Clients",
     "shellTitle": "Clients",
+    "mobile": {
+      "subtitle": "Manage customer information and communication.",
+      "backToClientsAria": "Back to clients",
+      "createClientAria": "Create client",
+      "actionsAria": "Client actions",
+      "clientCardAria": "{{name}}",
+      "emptyClients": "No clients yet",
+      "titles": {
+        "clientsWorkspace": "All clients"
+      },
+      "descriptions": {
+        "clientsWorkspace": "View and manage client profiles and contact details."
+      }
+    },
     "firstName": "First name",
     "lastName": "Last name",
     "phone": "Phone",
@@ -1267,6 +1396,12 @@
   },
   "categories": {
     "title": "Categories",
+    "mobile": {
+      "backToCategoriesAria": "Back to categories",
+      "createCategoryAria": "Create category",
+      "deleteCategoryAria": "Delete category",
+      "addSubcategoryAria": "Add subcategory"
+    },
     "itemsCount_one": "{{count}} category",
     "itemsCount_other": "{{count}} categories",
     "searchPlaceholder": "Search categories…",
@@ -1328,6 +1463,12 @@
   },
   "characteristics": {
     "title": "Characteristics",
+    "mobile": {
+      "backToCharacteristicsAria": "Back to characteristics",
+      "createCharacteristicAria": "Create characteristic",
+      "deleteCharacteristicAria": "Delete characteristic",
+      "addOptionAria": "Add option"
+    },
     "itemsCount_one": "{{count}} characteristic",
     "itemsCount_other": "{{count}} characteristics",
     "searchPlaceholder": "Search characteristics…",

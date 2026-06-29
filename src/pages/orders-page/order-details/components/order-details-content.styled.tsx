@@ -100,6 +100,16 @@ export const LayoutRoot = styled.div`
     grid-template-columns: 1fr;
   }
 
+  @media (max-width: 767px) {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    max-width: none;
+    align-items: stretch;
+    padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px));
+  }
+
   @media print {
     display: block;
     max-width: none;
@@ -113,6 +123,11 @@ export const MainColumn = styled.div`
   flex-direction: column;
   gap: 24px;
 
+  @media (max-width: 767px) {
+    display: contents;
+    gap: 16px;
+  }
+
   @media print {
     gap: 16px;
     margin-bottom: 16px;
@@ -125,6 +140,11 @@ export const SideColumn = styled.aside`
   flex-direction: column;
   gap: 24px;
 
+  @media (max-width: 767px) {
+    display: contents;
+    gap: 16px;
+  }
+
   @media print {
     gap: 16px;
   }
@@ -136,6 +156,43 @@ export const DetailsCard = styled.section`
   border: 1px solid ${({ theme }) => theme.colors.functional.border.cardBase};
   border-radius: ${({ theme }) => theme.radius.large};
   background: ${({ theme }) => theme.colors.functional.background.elevated};
+
+  &.section-products {
+    @media (max-width: 767px) {
+      order: 1;
+    }
+  }
+
+  &.section-customer {
+    @media (max-width: 767px) {
+      order: 2;
+    }
+  }
+
+  &.section-delivery {
+    @media (max-width: 767px) {
+      order: 3;
+    }
+  }
+
+  &.section-payment {
+    @media (max-width: 767px) {
+      order: 4;
+    }
+  }
+
+  &.section-history {
+    @media (max-width: 767px) {
+      order: 5;
+    }
+  }
+
+  @media (max-width: 767px) {
+    box-sizing: border-box;
+    width: 100%;
+    align-self: stretch;
+    padding: 16px;
+  }
 
   @media print {
     margin-bottom: 16px;
@@ -151,6 +208,14 @@ export const CardHeader = styled.div`
   justify-content: space-between;
   gap: 16px;
   margin-bottom: 20px;
+
+  @media (max-width: 767px) {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+    width: 100%;
+    margin-bottom: 16px;
+  }
 `;
 
 export const CardTitle = styled(Title)`
@@ -181,6 +246,8 @@ export const CountBadge = styled.span`
 export const ProductsList = styled.div`
   display: flex;
   flex-direction: column;
+  width: 100%;
+  min-width: 0;
 `;
 
 export const ProductRow = styled.div`
@@ -197,6 +264,12 @@ export const ProductRow = styled.div`
 
   &:first-child {
     padding-top: 0;
+  }
+
+  @media (max-width: 767px) {
+    grid-template-columns: 56px minmax(0, 1fr);
+    gap: 12px;
+    align-items: start;
   }
 
   @media (max-width: 720px) {
@@ -234,12 +307,22 @@ export const ProductMeta = styled(Text)`
     color: ${({ theme }) => theme.colors.functional.text.subdued};
     text-overflow: ellipsis;
     white-space: nowrap;
+
+    @media (max-width: 767px) {
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
   }
 `;
 
 export const ProductPrice = styled.div`
   justify-self: end;
   white-space: nowrap;
+
+  @media (max-width: 767px) {
+    grid-column: 2;
+    justify-self: start;
+  }
 
   @media (max-width: 720px) {
     grid-column: 2;
@@ -253,6 +336,11 @@ export const ProductTotal = styled(Text)`
     color: ${({ theme }) => theme.colors.functional.text.heading};
     font-size: ${({ theme }) => theme.fontSize.large};
     white-space: nowrap;
+  }
+
+  @media (max-width: 767px) {
+    grid-column: 2;
+    justify-self: start;
   }
 
   @media (max-width: 720px) {
@@ -344,8 +432,15 @@ export const InfoGrid = styled.dl`
   grid-template-columns: minmax(108px, 0.42fr) minmax(0, 1fr);
   gap: 14px 18px;
   margin: 0;
+  width: 100%;
+  min-width: 0;
 
   @media (max-width: 520px) {
+    grid-template-columns: 1fr;
+    gap: 4px 0;
+  }
+
+  @media (max-width: 767px) {
     grid-template-columns: 1fr;
     gap: 4px 0;
   }
@@ -419,6 +514,11 @@ export const DeliveryStatusBox = styled.div`
     align-items: flex-start;
     flex-direction: column;
   }
+
+  @media (max-width: 767px) {
+    align-items: flex-start;
+    flex-direction: column;
+  }
 `;
 
 export const AmountDue = styled(Text)`
@@ -465,6 +565,13 @@ export const HistoryItem = styled.li<{ $isLast: boolean }>`
   @media (max-width: 720px) {
     grid-template-columns: 1fr;
     gap: 6px;
+  }
+
+  @media (max-width: 767px) {
+    grid-template-columns: 1fr;
+    gap: 6px;
+    min-height: 0;
+    padding-left: 40px;
   }
 `;
 
@@ -513,6 +620,7 @@ export const HistoryDescription = styled(Text)`
     margin-top: 10px;
     color: ${({ theme }) => theme.colors.functional.text.primary};
     font-size: ${({ theme }) => theme.fontSize.large};
+    overflow-wrap: anywhere;
   }
 `;
 
@@ -531,6 +639,11 @@ export const HistoryDate = styled(Text)`
 
   @media (max-width: 720px) {
     justify-self: start;
+  }
+
+  @media (max-width: 767px) {
+    justify-self: start;
+    white-space: normal;
   }
 `;
 

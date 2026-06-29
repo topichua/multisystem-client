@@ -19,6 +19,51 @@ export const Content = styled.div`
   padding: 8px 12px 32px;
 `;
 
+export const ProfileHeader = styled.div`
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  @media (max-width: 767px) {
+    align-items: flex-start;
+    gap: 12px;
+  }
+`;
+
+export const ProfileCopy = styled.div`
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+`;
+
+export const ProfileTitleRow = styled.div`
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+
+  .ant-typography {
+    margin: 0;
+    min-width: 0;
+  }
+`;
+
+export const ProfileStats = styled.div`
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  row-gap: 4px;
+
+  @media (max-width: 767px) {
+    gap: 12px;
+  }
+`;
+
 export const MediaContentRoot = styled.div`
   height: 100%;
   min-height: 0;
@@ -44,6 +89,10 @@ export const MediaFiltersInner = styled.div`
   max-width: 1060px;
   margin: 0 auto;
   padding: 8px 12px 0;
+
+  @media (max-width: 767px) {
+    padding: 10px 16px 0;
+  }
 `;
 
 export const MediaContentInner = styled.div`
@@ -51,6 +100,10 @@ export const MediaContentInner = styled.div`
   max-width: 1060px;
   margin: 0 auto;
   padding: 0 12px 32px;
+
+  @media (max-width: 767px) {
+    padding: 0 16px calc(32px + env(safe-area-inset-bottom, 0px));
+  }
 `;
 
 export const FilterRow = styled.div`
@@ -60,6 +113,22 @@ export const FilterRow = styled.div`
   gap: 12px;
   flex-wrap: wrap;
   margin-bottom: 16px;
+
+  @media (max-width: 767px) {
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    gap: 8px;
+    margin-bottom: 12px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
 `;
 
 export const FilterPill = styled.button<{ $active?: boolean }>`
@@ -99,6 +168,14 @@ export const FilterPill = styled.button<{ $active?: boolean }>`
     outline: 2px solid ${({ theme }) => theme.colors.functional.border.selected};
     outline-offset: 2px;
   }
+
+  @media (max-width: 767px) {
+    min-height: 38px;
+    flex: 0 0 auto;
+    padding: 0 12px;
+    font-size: ${({ theme }) => theme.fontSize.small};
+    box-shadow: none;
+  }
 `;
 
 export const FilterCount = styled.span<{ $active?: boolean }>`
@@ -133,6 +210,10 @@ export const PostsGrid = styled.div`
   @media (max-width: 820px) {
     grid-template-columns: minmax(0, 1fr);
   }
+
+  @media (max-width: 767px) {
+    gap: 12px;
+  }
 `;
 
 export const PostCard = styled(Card)`
@@ -159,6 +240,11 @@ export const PostCard = styled(Card)`
   &:focus-visible {
     outline: 2px solid ${({ theme }) => theme.colors.functional.border.selected};
     outline-offset: 2px;
+  }
+
+  @media (max-width: 767px) {
+    border-radius: ${({ theme }) => theme.radius.large};
+    box-shadow: ${({ theme }) => theme.shadow.cardShadow};
   }
 `;
 
@@ -269,6 +355,10 @@ export const MediaCarouselButton = styled.button<{ $side: "left" | "right" }>`
 
 export const PostBody = styled.div`
   padding: 14px 14px 12px;
+
+  @media (max-width: 767px) {
+    padding: 12px;
+  }
 `;
 
 export const PostCaption = styled.p`

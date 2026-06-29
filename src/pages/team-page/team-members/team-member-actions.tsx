@@ -12,6 +12,7 @@ import type { WorkspaceMember } from "@/features/workspace-members/model/workspa
 type TeamMemberActionsProps = {
   member: WorkspaceMember;
   loading: boolean;
+  actionsDataQa?: string;
   onDeleteMember: (member: WorkspaceMember) => Promise<void>;
   onResendInvite: (member: WorkspaceMember) => Promise<void>;
 };
@@ -19,6 +20,7 @@ type TeamMemberActionsProps = {
 export function TeamMemberActions({
   member,
   loading,
+  actionsDataQa,
   onDeleteMember,
   onResendInvite,
 }: TeamMemberActionsProps) {
@@ -111,6 +113,7 @@ export function TeamMemberActions({
           icon={<DotsThreeIcon size={24} />}
           aria-label={t("team.table.actions")}
           aria-expanded={open}
+          {...(actionsDataQa ? { "data-qa": actionsDataQa } : {})}
           onClick={(e) => e.stopPropagation()}
           onMouseDown={(e) => e.stopPropagation()}
         />

@@ -24,7 +24,7 @@ export const InstagramPostLinkedProductsSection = ({
 
   return (
     <Flex vertical gap={10}>
-      <Flex align="center" justify="space-between" gap={16}>
+      <Flex align="center" justify="space-between" gap={12} wrap="wrap">
         <S.SectionTitle>
           <TagIcon size={16} />
           {t("instagram.linkedProducts")}

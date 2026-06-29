@@ -103,7 +103,7 @@ type TextDetailRendererProps = {
   totalProducts: number;
 };
 
-const TextDetailRenderer = ({
+export const CharacteristicTextValuesSection = ({
   rows,
   totalProducts,
 }: TextDetailRendererProps) => {
@@ -232,7 +232,7 @@ const ProductCharacteristicDetailContent = observer(() => {
                 onDeleteOption={controller.onDeleteOption}
               />
             ) : (
-              <TextDetailRenderer
+              <CharacteristicTextValuesSection
                 rows={controller.topTextValues}
                 totalProducts={controller.totalProducts}
               />

@@ -2,6 +2,7 @@ import { Outlet } from "react-router";
 import { useState } from "react";
 
 import { ConversationsShell } from "@/components/layout/conversations-shell";
+import { useIsMobileViewport } from "@/utils/use-media-query";
 
 import { ConversationGroupsPane } from "./conversation-groups-pane/conversation-groups-pane";
 import { Conversation } from "./conversation-list";
@@ -9,6 +10,11 @@ import { Conversation } from "./conversation-list";
 export const ConversationsPage = () => {
   const [groupsCollapsed, setGroupsCollapsed] = useState(false);
   const [listCollapsed, setListCollapsed] = useState(false);
+  const isMobileViewport = useIsMobileViewport();
+
+  if (isMobileViewport) {
+    return <Outlet />;
+  }
 
   return (
     <ConversationsShell.Root

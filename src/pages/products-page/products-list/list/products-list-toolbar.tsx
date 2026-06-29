@@ -4,7 +4,7 @@ import {
   FunnelSimpleIcon,
   MagnifyingGlassIcon,
 } from "@phosphor-icons/react";
-import { Button, Flex, Input, Select, theme } from "antd";
+import { Badge, Button, Flex, Input, Select, theme } from "antd";
 import { Tag } from "@/components/tag/tag";
 import { observer } from "mobx-react-lite";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
@@ -19,6 +19,7 @@ import { useProductsStore } from "@/features/products/model/use-products-store";
 import { normalizeAppliedListKeyword } from "@/features/products/model/products-list-url";
 
 import { BRAND_PRIMARY } from "@/styled/brand";
+import { useIsMobileViewport } from "@/utils/use-media-query";
 import { ProductsListViewToggle } from "./products-list-view-toggle";
 
 type ProductsListToolbarProps = {
@@ -29,6 +30,7 @@ export const ProductsListToolbar = observer(
   ({ onToggleFilters }: ProductsListToolbarProps) => {
     const { t } = useTranslation();
     const { token } = theme.useToken();
+    const isMobileViewport = useIsMobileViewport();
     const productsStore = useProductsStore();
     const [keywordDraft, setKeywordDraft] = useState(
       () => productsStore.listKeyword,
@@ -61,6 +63,56 @@ export const ProductsListToolbar = observer(
     );
 
     const filterCount = productsStore.appliedNonKeywordFilterCount;
+
+    if (isMobileViewport) {
+      return (
+        <Flex vertical gap={8} style={{ marginBottom: 12, width: "100%" }}>
+          <Input
+            allowClear
+            size="large"
+            placeholder={t("products.toolbar.searchPlaceholderMinChars")}
+            aria-label={t("products.mobile.searchAria")}
+            prefix={<MagnifyingGlassIcon size={18} />}
+            value={keywordDraft}
+            data-qa="products-mobile-list-search"
+            onFocus={() => {
+              searchFocused.current = true;
+            }}
+            onBlur={() => {
+              searchFocused.current = false;
+            }}
+            onChange={(event) => setKeywordDraft(event.target.value)}
+            style={{ width: "100%" }}
+          />
+          <Flex align="center" gap={8} style={{ width: "100%" }}>
+            <Select<ProductsListSort>
+              size="large"
+              value={productsStore.listSort}
+              options={sortOptions}
+              onChange={(value) => productsStore.setListSort(value)}
+              prefix={<ArrowsDownUpIcon size={18} />}
+              suffixIcon={<CaretDownIcon size={14} />}
+              popupMatchSelectWidth={false}
+              aria-label={t("products.mobile.sortAria")}
+              data-qa="products-mobile-list-sort"
+              style={{ flex: "1 1 auto", minWidth: 0 }}
+            />
+            <Badge count={filterCount > 0 ? filterCount : 0} size="small">
+              <Button
+                size="large"
+                type="default"
+                icon={<FunnelSimpleIcon size={18} />}
+                aria-label={t("products.mobile.filtersAria")}
+                data-qa="products-mobile-list-filters"
+                onClick={onToggleFilters}
+              >
+                {t("products.toolbar.filters")}
+              </Button>
+            </Badge>
+          </Flex>
+        </Flex>
+      );
+    }
 
     return (
       <Flex

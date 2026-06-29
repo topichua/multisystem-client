@@ -137,21 +137,26 @@ export const InstagramPostProductsDetailedCard = observer(
                 }}
               >
                 <Flex align="center" justify="space-between" gap={16}>
-                  <Text strong style={{ flex: "1 1 auto", minWidth: 240 }}>
+                  <Text strong style={{ flex: "1 1 160px", minWidth: 0 }}>
                     {title ||
                       `${t("products.variant.fallbackName")} #${variant.id}`}
                   </Text>
 
-                  <Flex align="center" gap={24} wrap="wrap">
+                  <Flex
+                    align="center"
+                    gap={12}
+                    wrap="wrap"
+                    style={{ flex: "1 1 220px", minWidth: 0 }}
+                  >
                     <Tag color={variantStatusToColor(variant.status)}>
                       {variant.status}
                     </Tag>
 
-                    <Text type="secondary" style={{ minWidth: 110 }}>
+                    <Text type="secondary" style={{ minWidth: 80 }}>
                       {variant.sku || "—"}
                     </Text>
 
-                    <Text strong style={{ minWidth: 90 }}>
+                    <Text strong style={{ minWidth: 80 }}>
                       {formatProductPrice(variant.price, product.currency)}
                     </Text>
 
