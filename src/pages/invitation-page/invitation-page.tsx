@@ -1,104 +1,25 @@
-import { Alert, Button, Form, Input, Result, Spin, Typography } from "antd";
-import { useEffect, useMemo, useState } from "react";
-import { Trans, useTranslation } from "react-i18next";
-import { Link, useNavigate, useParams, useSearchParams } from "react-router";
+import { Alert, Button, Result, Spin } from "antd";
+import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { Link, useNavigate } from "react-router";
 
 import { getApiErrorMessage } from "@/api/get-api-error-message";
 import { pagesMap } from "@/app/router/pages-map";
-import { workspaceMembersApi } from "@/features/workspace-members/api/workspace-members-api";
-import type { WorkspaceMemberRegisterInfo } from "@/features/workspace-members/model/workspace-member.types";
-import { throwLoadError } from "@/utils/throw-load-error";
 
 import * as S from "./invitation-page.styled";
-
-type InvitationFormValues = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-};
+import {
+  useInvitationRegistration,
+  type InvitationFormValues,
+} from "./use-invitation-registration";
+import { InvitationForm } from "./invitation-form";
 
 export const InvitationPage = () => {
-  const { t } = useTranslation();
   const navigate = useNavigate();
-  const [form] = Form.useForm<InvitationFormValues>();
-  const { token: pathToken } = useParams<{ token?: string }>();
-  const [searchParams] = useSearchParams();
-  const [inviteInfo, setInviteInfo] =
-    useState<WorkspaceMemberRegisterInfo | null>(null);
-  const [loadError, setLoadError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isCompleted, setIsCompleted] = useState(false);
 
-  const invitationHash = useMemo(
-    () =>
-      searchParams.get("token") ?? searchParams.get("hash") ?? pathToken ?? "",
-    [pathToken, searchParams],
-  );
-  const displayError = invitationHash
-    ? loadError
-    : t("invitation.missingToken");
-  const password = Form.useWatch("password", form);
+  const { form, loadState, submitState, submit } = useInvitationRegistration();
 
   useEffect(() => {
-    if (!invitationHash) {
-      return;
-    }
-
-    let cancelled = false;
-
-    const loadInvitation = async () => {
-      await Promise.resolve();
-
-      if (cancelled) {
-        return;
-      }
-
-      setIsLoading(true);
-      setLoadError(null);
-
-      await workspaceMembersApi
-        .getRegisterInfo(invitationHash)
-        .then((info) => {
-          if (cancelled) {
-            return;
-          }
-
-          setInviteInfo(info);
-          form.setFieldsValue({
-            firstName: info.first_name ?? info.firstName ?? "",
-            lastName: info.last_name ?? info.lastName ?? "",
-            email: info.email,
-          });
-        })
-        .catch((error) => {
-          if (cancelled) {
-            return;
-          }
-
-          setLoadError(getApiErrorMessage(error, t("invitation.loadError")));
-          throwLoadError("Failed to load invitation", error);
-        })
-        .finally(() => {
-          if (cancelled) {
-            return;
-          }
-
-          setIsLoading(false);
-        });
-    };
-
-    void loadInvitation();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [form, invitationHash, t]);
-
-  useEffect(() => {
-    if (!isCompleted) {
+    if (submitState.status !== "success") {
       return;
     }
 
@@ -109,199 +30,113 @@ export const InvitationPage = () => {
     return () => {
       window.clearTimeout(timeoutId);
     };
-  }, [isCompleted, navigate]);
-
-  const handleSubmit = async (values: InvitationFormValues) => {
-    if (!invitationHash) {
-      setLoadError(t("invitation.missingToken"));
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    await workspaceMembersApi
-      .register(invitationHash, {
-        first_name: values.firstName.trim(),
-        last_name: values.lastName.trim(),
-        password: values.password,
-      })
-      .then((response) => {
-        if (response.registered) {
-          setIsCompleted(true);
-          return;
-        }
-
-        setLoadError(t("invitation.submitError"));
-      })
-      .catch((error) => {
-        setLoadError(getApiErrorMessage(error, t("invitation.submitError")));
-      })
-      .finally(() => {
-        setIsSubmitting(false);
-      });
-  };
+  }, [navigate, submitState.status]);
 
   return (
     <S.Page>
       <S.FormSide>
         <S.InvitationCard>
-          {isLoading ? (
-            <S.StateCard>
-              <Spin />
-            </S.StateCard>
-          ) : isCompleted ? (
-            <Result
-              status="success"
-              title={t("invitation.successTitle")}
-              subTitle={t("invitation.successDescription")}
-              extra={
-                <Link to={pagesMap.login}>
-                  <Button type="primary">{t("invitation.goToLogin")}</Button>
-                </Link>
-              }
-            />
-          ) : (
-            <>
-              <S.Header>
-                <S.PageTitle>{t("invitation.title")}</S.PageTitle>
-                <S.PageDescription>
-                  <Trans
-                    i18nKey="invitation.description"
-                    values={{
-                      workspaceName:
-                        inviteInfo?.workspaceName ??
-                        inviteInfo?.workspace_name ??
-                        t("brand"),
-                    }}
-                    components={{ strong: <Typography.Text strong /> }}
-                  />
-                </S.PageDescription>
-              </S.Header>
-
-              {displayError ? (
-                <Alert
-                  type="error"
-                  showIcon
-                  message={displayError}
-                  style={{ marginBottom: 24 }}
-                />
-              ) : null}
-
-              <Form
-                form={form}
-                layout="vertical"
-                onFinish={handleSubmit}
-                autoComplete="off"
-                disabled={!invitationHash || !inviteInfo || isSubmitting}
-              >
-                <S.NameFields>
-                  <Form.Item
-                    label={t("invitation.firstName")}
-                    name="firstName"
-                    rules={[
-                      {
-                        required: true,
-                        message: t("invitation.firstNameRequired"),
-                      },
-                    ]}
-                  >
-                    <Input
-                      placeholder={t("invitation.firstNamePlaceholder")}
-                      autoComplete="given-name"
-                    />
-                  </Form.Item>
-
-                  <Form.Item
-                    label={t("invitation.lastName")}
-                    name="lastName"
-                    rules={[
-                      {
-                        required: true,
-                        message: t("invitation.lastNameRequired"),
-                      },
-                    ]}
-                  >
-                    <Input
-                      placeholder={t("invitation.lastNamePlaceholder")}
-                      autoComplete="family-name"
-                    />
-                  </Form.Item>
-                </S.NameFields>
-
-                <Form.Item
-                  label={t("invitation.email")}
-                  name="email"
-                  extra={t("invitation.emailHint")}
-                >
-                  <Input disabled autoComplete="username" />
-                </Form.Item>
-
-                <Form.Item
-                  label={t("invitation.password")}
-                  name="password"
-                  extra={t("invitation.passwordHint")}
-                  rules={[
-                    {
-                      required: true,
-                      message: t("invitation.passwordRequired"),
-                    },
-                    {
-                      min: 8,
-                      message: t("invitation.passwordMin"),
-                    },
-                  ]}
-                >
-                  <Input.Password
-                    placeholder={t("invitation.passwordPlaceholder")}
-                    autoComplete="new-password"
-                  />
-                </Form.Item>
-
-                <Form.Item
-                  label={t("invitation.confirmPassword")}
-                  name="confirmPassword"
-                  dependencies={["password"]}
-                  rules={[
-                    {
-                      required: true,
-                      message: t("invitation.confirmPasswordRequired"),
-                    },
-                    {
-                      validator: (_, value: string | undefined) => {
-                        if (!value || value === password) {
-                          return Promise.resolve();
-                        }
-
-                        return Promise.reject(
-                          new Error(t("invitation.passwordMismatch")),
-                        );
-                      },
-                    },
-                  ]}
-                >
-                  <Input.Password
-                    placeholder={t("invitation.confirmPasswordPlaceholder")}
-                    autoComplete="new-password"
-                  />
-                </Form.Item>
-
-                <S.FormActions>
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    block
-                    loading={isSubmitting}
-                  >
-                    {t("invitation.submit")}
-                  </Button>
-                </S.FormActions>
-              </Form>
-            </>
-          )}
+          <InvitationContent
+            form={form}
+            loadState={loadState}
+            submitState={submitState}
+            onSubmit={submit}
+          />
         </S.InvitationCard>
       </S.FormSide>
 
       <S.ImageSide />
     </S.Page>
+  );
+};
+
+type InvitationContentProps = {
+  form: ReturnType<typeof useInvitationRegistration>["form"];
+  loadState: ReturnType<typeof useInvitationRegistration>["loadState"];
+  submitState: ReturnType<typeof useInvitationRegistration>["submitState"];
+  onSubmit: (values: InvitationFormValues) => Promise<void>;
+};
+
+const InvitationContent = ({
+  form,
+  loadState,
+  submitState,
+  onSubmit,
+}: InvitationContentProps) => {
+  const { t } = useTranslation();
+
+  if (loadState.status === "loading") {
+    return (
+      <S.StateCard>
+        <Spin />
+      </S.StateCard>
+    );
+  }
+
+  if (loadState.status === "missing-token") {
+    return <InvitationErrorState message={t("invitation.missingToken")} />;
+  }
+
+  if (loadState.status === "error") {
+    return (
+      <InvitationErrorState
+        message={getApiErrorMessage(loadState.error, t("invitation.loadError"))}
+      />
+    );
+  }
+
+  if (submitState.status === "success") {
+    return (
+      <Result
+        status="success"
+        title={t("invitation.successTitle")}
+        subTitle={t("invitation.successDescription")}
+        extra={
+          <Link to={pagesMap.login}>
+            <Button type="primary">{t("invitation.goToLogin")}</Button>
+          </Link>
+        }
+      />
+    );
+  }
+
+  const submitError =
+    submitState.status === "error"
+      ? submitState.error
+        ? getApiErrorMessage(submitState.error, t("invitation.submitError"))
+        : t("invitation.submitError")
+      : null;
+
+  return (
+    <InvitationForm
+      form={form}
+      inviteInfo={loadState.info}
+      isSubmitting={submitState.status === "submitting"}
+      submitError={submitError}
+      onSubmit={onSubmit}
+    />
+  );
+};
+
+type InvitationErrorStateProps = {
+  message: string;
+};
+
+const InvitationErrorState = ({ message }: InvitationErrorStateProps) => {
+  const { t } = useTranslation();
+
+  return (
+    <>
+      <Alert
+        type="error"
+        showIcon
+        title={message}
+        style={{ marginBottom: 24 }}
+      />
+
+      <S.Footer>
+        <Link to={pagesMap.login}>{t("invitation.goToLogin")}</Link>
+      </S.Footer>
+    </>
   );
 };

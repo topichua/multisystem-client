@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 import { dataQaAttrs } from "@/styled/data-qa-attrs";
 
-export const Page = styled.main.attrs(() => dataQaAttrs("layout-invitation"))`
+export const Page = styled.main.attrs(() => dataQaAttrs("layout-register"))`
   min-height: 100vh;
   min-height: 100dvh;
   display: grid;
@@ -17,7 +17,7 @@ export const Page = styled.main.attrs(() => dataQaAttrs("layout-invitation"))`
 `;
 
 export const FormSide = styled.section.attrs(() =>
-  dataQaAttrs("layout-invitation-form-side"),
+  dataQaAttrs("layout-register-form-side"),
 )`
   position: relative;
   display: flex;
@@ -52,8 +52,8 @@ export const FormSide = styled.section.attrs(() =>
   }
 `;
 
-export const InvitationCard = styled(Card).attrs(() =>
-  dataQaAttrs("layout-invitation-card"),
+export const RegisterCard = styled(Card).attrs(() =>
+  dataQaAttrs("layout-register-card"),
 )`
   width: 100%;
   max-width: 464px;
@@ -67,7 +67,7 @@ export const InvitationCard = styled(Card).attrs(() =>
 `;
 
 export const ImageSide = styled.section.attrs(() =>
-  dataQaAttrs("layout-invitation-image-side"),
+  dataQaAttrs("layout-register-image-side"),
 )`
   min-height: 100vh;
   min-height: 100dvh;
@@ -97,7 +97,7 @@ export const PageDescription = styled.p`
   line-height: 1.5;
 `;
 
-export const NameFields = styled.div`
+export const TwoColumnFields = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
@@ -108,12 +108,15 @@ export const NameFields = styled.div`
   }
 `;
 
-export const FormActions = styled.div`
-  margin-top: 24px;
+export const FieldHint = styled.p`
+  margin: -8px 0 24px;
+  color: ${(props) => props.theme.colors.functional.text.subdued};
+  font-size: 14px;
+  line-height: 1.5;
 `;
 
-export const StateCard = styled.div`
-  padding: 24px 0;
+export const FormActions = styled.div`
+  margin-top: 24px;
 `;
 
 export const Footer = styled.div`
@@ -122,4 +125,35 @@ export const Footer = styled.div`
   color: ${(props) => props.theme.colors.functional.text.subdued};
   font-size: 14px;
   line-height: 1.5;
+`;
+
+export const FooterLink = styled.a`
+  color: ${(props) => props.theme.colors.semantic.primary};
+  font-weight: 500;
+
+  &:hover {
+    color: ${(props) => props.theme.colors.semantic.primary};
+    opacity: 0.85;
+  }
+`;
+
+export const InlineLink = styled.a`
+  color: ${(props) => props.theme.colors.semantic.primary};
+
+  &:hover {
+    color: ${(props) => props.theme.colors.semantic.primary};
+    opacity: 0.85;
+  }
+`;
+
+export const Disclaimer = styled.p`
+  margin: 32px 0 0;
+  text-align: center;
+  color: ${(props) => props.theme.colors.functional.text.subdued};
+  font-size: 12px;
+  line-height: 1.5;
+`;
+
+export const StateCard = styled.div`
+  padding: 24px 0;
 `;

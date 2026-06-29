@@ -17,6 +17,18 @@ export type UpdateAuthProfileRequest = {
   phone?: string;
 };
 
+export type RegisterStartRequest = {
+  companyName: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+};
+
+export type RegisterConfirmRequest = {
+  token: string;
+};
+
 function axiosMultipartFormDataConfig() {
   return {
     transformRequest: [
@@ -75,5 +87,13 @@ export const authApi = {
     );
 
     return data;
+  },
+
+  registerStart: async (payload: RegisterStartRequest) => {
+    await apiClient.post("/auth/register/start", payload);
+  },
+
+  registerConfirm: async (payload: RegisterConfirmRequest) => {
+    await apiClient.post("/auth/register/confirm", payload);
   },
 };

@@ -3,6 +3,8 @@ import { HomePage } from "@/pages/home-page/home-page";
 import { QuickActionsPage } from "@/pages/home-page/quick-actions/quick-actions-page";
 import { InvitationPage } from "@/pages/invitation-page/invitation-page";
 import { LoginPage } from "@/pages/login-page/login-page";
+import { RegisterConfirmPage } from "@/pages/register-page/register-confirm-page";
+import { RegisterPage } from "@/pages/register-page/register-page";
 import { SettingsPage } from "@/pages/settings-page/settings-page";
 import { SettingsIndexRoute } from "@/pages/settings-page/settings-index-route";
 import { SettingsGroupDetailRoute } from "@/pages/settings-page/settings-groups/settings-group-detail-route";
@@ -56,6 +58,15 @@ export const PageRoutes = () => {
     <Routes>
       <Route element={<PublicOnlyRoute />}>
         <Route path={pagesMap.login} element={<LoginPage />} />
+        <Route path={pagesMap.register} element={<RegisterPage />} />
+        <Route
+          path={pagesMap.registerConfirm}
+          element={<RegisterConfirmPage />}
+        />
+        <Route
+          path={`${pagesMap.registerConfirm}/:token`}
+          element={<RegisterConfirmPage />}
+        />
         <Route path={pagesMap.invitation} element={<InvitationPage />} />
         <Route
           path={`${pagesMap.invitation}/:token`}
