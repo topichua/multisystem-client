@@ -35,6 +35,13 @@ type TelegramQrModalState = {
   session: TelegramQrLoginSession | null;
 };
 
+type TelegramPasswordModalState = {
+  open: boolean;
+  integrationId: number | string | null;
+  hint: string | null;
+  submitting: boolean;
+};
+
 export function useSettingsIntegrationsController() {
   const store = useIntegrationsStore();
   const notification = useNotification();
@@ -48,6 +55,13 @@ export function useSettingsIntegrationsController() {
     status: "idle",
     session: null,
   });
+  const [telegramPasswordModal, setTelegramPasswordModal] =
+    useState<TelegramPasswordModalState>({
+      open: false,
+      integrationId: null,
+      hint: null,
+      submitting: false,
+    });
   const telegramQrRunIdRef = useRef(0);
   const telegramQrAbortControllerRef = useRef<AbortController | null>(null);
   const telegramQrTimeoutRef = useRef<number | null>(null);
@@ -92,7 +106,7 @@ export function useSettingsIntegrationsController() {
       telegramQrTimeoutRef.current = timeoutId;
 
       try {
-        await store.confirmTelegramQrLogin(session.id, {
+        const result = await store.confirmTelegramQrLogin(session.id, {
           signal: abortController.signal,
         });
 
@@ -100,8 +114,26 @@ export function useSettingsIntegrationsController() {
           return;
         }
 
-        setTelegramQrModal({ open: false, status: "idle", session: null });
-        notification.success({ title: t("integrations.connectSuccess") });
+        if (result.status === "pending_password") {
+          clearTelegramQrTimeout();
+          setTelegramQrModal({ open: false, status: "idle", session: null });
+          setTelegramPasswordModal({
+            open: true,
+            integrationId: result.id,
+            hint: result.nextStep ?? null,
+            submitting: false,
+          });
+          return;
+        }
+
+        if (result.status === "active") {
+          setTelegramQrModal({ open: false, status: "idle", session: null });
+          notification.success({ title: t("integrations.connectSuccess") });
+          return;
+        }
+
+        setTelegramQrModal((current) => ({ ...current, status: "error" }));
+        notification.error({ title: t("integrations.connectFailed") });
       } catch (e) {
         if (telegramQrRunIdRef.current !== runId) {
           return;
@@ -135,7 +167,65 @@ export function useSettingsIntegrationsController() {
         }
       }
     },
-    [notification, store, t],
+    [clearTelegramQrTimeout, notification, store, t],
+  );
+
+  const closeTelegramPasswordModal = useCallback(() => {
+    setTelegramPasswordModal({
+      open: false,
+      integrationId: null,
+      hint: null,
+      submitting: false,
+    });
+  }, []);
+
+  const submitTelegramPassword = useCallback(
+    async (password: string) => {
+      const { integrationId } = telegramPasswordModal;
+
+      if (integrationId == null) {
+        return;
+      }
+
+      setTelegramPasswordModal((current) => ({
+        ...current,
+        submitting: true,
+      }));
+
+      try {
+        const result = await store.confirmTelegramPassword(
+          integrationId,
+          password,
+        );
+
+        if (result.status === "active") {
+          closeTelegramPasswordModal();
+          notification.success({ title: t("integrations.connectSuccess") });
+          return;
+        }
+
+        notification.error({ title: t("integrations.connectFailed") });
+      } catch (e) {
+        notification.error({
+          title: getApiErrorMessage(
+            e,
+            t("integrations.telegramPassword.submitFailed"),
+          ),
+        });
+      } finally {
+        setTelegramPasswordModal((current) => ({
+          ...current,
+          submitting: false,
+        }));
+      }
+    },
+    [
+      closeTelegramPasswordModal,
+      notification,
+      store,
+      t,
+      telegramPasswordModal,
+    ],
   );
 
   const startTelegramQrLogin = useCallback(async () => {
@@ -366,5 +456,8 @@ export function useSettingsIntegrationsController() {
     telegramQrModal,
     closeTelegramQrModal,
     retryTelegramQrLogin: startTelegramQrLogin,
+    telegramPasswordModal,
+    closeTelegramPasswordModal,
+    submitTelegramPassword,
   };
 }

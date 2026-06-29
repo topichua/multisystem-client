@@ -775,6 +775,15 @@
         "expired": "QR-код прострочено",
         "error": "Не вдалося підключити Telegram"
       }
+    },
+    "telegramPassword": {
+      "title": "Введіть пароль Telegram",
+      "subtitle": "У вашому акаунті Telegram увімкнено двофакторну автентифікацію",
+      "passwordLabel": "Пароль",
+      "passwordPlaceholder": "Введіть пароль Telegram",
+      "passwordRequired": "Введіть пароль Telegram",
+      "submit": "Продовжити",
+      "submitFailed": "Не вдалося підтвердити пароль Telegram"
     }
   },
   "system": {

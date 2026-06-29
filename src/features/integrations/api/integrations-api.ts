@@ -11,6 +11,7 @@ import type {
   NovaPoshtaSettlement,
   NovaPoshtaStreet,
   NovaPoshtaWarehouse,
+  TelegramIntegrationConfirmResponse,
   TelegramQrLoginStartResponse,
   TelegramQrLoginSession,
 } from "../model/integration.types";
@@ -157,18 +158,40 @@ export const integrationsApi = {
   confirmTelegramQrLogin: async (
     id: TelegramQrLoginSession["id"],
     config?: AxiosRequestConfig,
-  ): Promise<IntegrationItem> => {
+  ): Promise<TelegramIntegrationConfirmResponse> => {
     const telegramIntegrationId = readTelegramQrLoginId(id);
 
     if (telegramIntegrationId == null) {
       throw invalidTelegramQrLoginResponseError;
     }
 
-    const { data } = await apiClient.post<IntegrationItem>(
+    const { data } = await apiClient.post<TelegramIntegrationConfirmResponse>(
       `${telegramIntegrationsBasePath}/${encodeURIComponent(
         String(telegramIntegrationId),
       )}/qr-login/confirm`,
       undefined,
+      config,
+    );
+
+    return data;
+  },
+
+  confirmTelegramPassword: async (
+    id: TelegramQrLoginSession["id"],
+    password: string,
+    config?: AxiosRequestConfig,
+  ): Promise<TelegramIntegrationConfirmResponse> => {
+    const telegramIntegrationId = readTelegramQrLoginId(id);
+
+    if (telegramIntegrationId == null) {
+      throw invalidTelegramQrLoginResponseError;
+    }
+
+    const { data } = await apiClient.post<TelegramIntegrationConfirmResponse>(
+      `${telegramIntegrationsBasePath}/${encodeURIComponent(
+        String(telegramIntegrationId),
+      )}/confirm-password`,
+      { password },
       config,
     );
 

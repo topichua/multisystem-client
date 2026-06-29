@@ -15,6 +15,7 @@ import { IntegrationTypeCard } from "./integration-type-card";
 import { NovaPoshtaIntegrationWizard } from "./nova-poshta";
 import { IntegrationTypeSidebar } from "./integration-type-sidebar";
 import * as S from "./settings-integrations.styled";
+import { TelegramPasswordModal } from "./telegram-password-modal";
 import { TelegramQrLoginModal } from "./telegram-qr-login-modal";
 
 export const SettingsIntegrationsPage = observer(() => {
@@ -113,6 +114,16 @@ export const SettingsIntegrationsPage = observer(() => {
         status={controller.telegramQrModal.status}
         onCancel={controller.closeTelegramQrModal}
         onRetry={controller.retryTelegramQrLogin}
+      />
+
+      <TelegramPasswordModal
+        hint={controller.telegramPasswordModal.hint}
+        open={controller.telegramPasswordModal.open}
+        submitting={controller.telegramPasswordModal.submitting}
+        onCancel={controller.closeTelegramPasswordModal}
+        onSubmit={(password) => {
+          void controller.submitTelegramPassword(password);
+        }}
       />
     </>
   );

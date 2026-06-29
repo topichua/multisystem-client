@@ -99,6 +99,20 @@ export type TelegramQrLoginSession = {
   qrImageUrl: string;
 };
 
+export type TelegramIntegrationStatus =
+  | "pending_password"
+  | "active"
+  | (string & {});
+
+export type TelegramIntegrationConfirmResponse = {
+  id: number;
+  workspaceId?: number;
+  status: TelegramIntegrationStatus;
+  name?: string;
+  phoneNumber?: string;
+  nextStep?: string;
+};
+
 export type TelegramQrLoginStartResponse = {
   id?: unknown;
   integrationId?: unknown;

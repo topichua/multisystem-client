@@ -156,9 +156,32 @@ export class IntegrationsStore {
   confirmTelegramQrLogin = async (
     id: TelegramQrLoginSession["id"],
     options?: IntegrationRequestOptions,
-  ): Promise<void> => {
-    await integrationsApi.confirmTelegramQrLogin(id, options);
-    await this.loadIntegrations({ silent: true });
+  ) => {
+    const result = await integrationsApi.confirmTelegramQrLogin(id, options);
+
+    if (result.status === "active") {
+      await this.loadIntegrations({ silent: true });
+    }
+
+    return result;
+  };
+
+  confirmTelegramPassword = async (
+    id: TelegramQrLoginSession["id"],
+    password: string,
+    options?: IntegrationRequestOptions,
+  ) => {
+    const result = await integrationsApi.confirmTelegramPassword(
+      id,
+      password,
+      options,
+    );
+
+    if (result.status === "active") {
+      await this.loadIntegrations({ silent: true });
+    }
+
+    return result;
   };
 
   disconnectIntegration = async (

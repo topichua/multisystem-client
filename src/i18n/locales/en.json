@@ -767,6 +767,15 @@
         "expired": "QR code expired",
         "error": "Could not connect Telegram"
       }
+    },
+    "telegramPassword": {
+      "title": "Enter Telegram password",
+      "subtitle": "Your Telegram account has two-step verification enabled",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Enter your Telegram password",
+      "passwordRequired": "Enter your Telegram password",
+      "submit": "Continue",
+      "submitFailed": "Could not verify Telegram password"
     }
   },
   "system": {
