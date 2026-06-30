@@ -16,6 +16,10 @@ export type Product = {
   sourceId?: string | null;
   referenceGroupId?: number | null;
   categoryId: number | null;
+  weight_grams?: number | null;
+  length_cm?: number | null;
+  width_cm?: number | null;
+  height_cm?: number | null;
   createdAt: string;
   updatedAt: string;
   sizes?: string[] | string | null;

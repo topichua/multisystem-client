@@ -266,6 +266,10 @@ export function productDetailToProductForm(
       price: Number(product.price ?? 0),
       quantity: Number(product.quantity ?? 0),
       categoryId: product.categoryId ?? undefined,
+      weight_grams: product.weight_grams ?? undefined,
+      length_cm: product.length_cm ?? undefined,
+      width_cm: product.width_cm ?? undefined,
+      height_cm: product.height_cm ?? undefined,
       characteristics:
         productType === "variants"
           ? buildVariantCharacteristics(product.variants)

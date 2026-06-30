@@ -170,6 +170,33 @@ function normalizeProductMediaIds(
   return productMedia.map((item) => item.id);
 }
 
+function normalizeDeliveryDimension(value: unknown): number | null {
+  if (value == null || value === "") {
+    return null;
+  }
+
+  const num = Number(value);
+  if (!Number.isFinite(num) || num < 0) {
+    return null;
+  }
+
+  return num;
+}
+
+function normalizeDeliveryFields(formValues: ProductCreateFormValues): {
+  weight_grams: number | null;
+  length_cm: number | null;
+  width_cm: number | null;
+  height_cm: number | null;
+} {
+  return {
+    weight_grams: normalizeDeliveryDimension(formValues.weight_grams),
+    length_cm: normalizeDeliveryDimension(formValues.length_cm),
+    width_cm: normalizeDeliveryDimension(formValues.width_cm),
+    height_cm: normalizeDeliveryDimension(formValues.height_cm),
+  };
+}
+
 function buildSingleProductCustomFields(
   formValues: ProductCreateFormValues,
   variantsFromSubmit: ProductVariantUi[],
@@ -359,6 +386,7 @@ export function normalizeCreateProductPayload({
     quantity: Number(formValues.quantity ?? 0),
     mediaIds: normalizeProductMediaIds(productMedia),
     categoryId,
+    ...normalizeDeliveryFields(formValues),
     variants: normalizedVariants,
   };
 }
@@ -400,6 +428,7 @@ export function normalizeUpdateProductPayload({
     quantity: Number(formValues.quantity ?? 0),
     mediaIds: normalizeProductMediaIds(productMedia),
     categoryId,
+    ...normalizeDeliveryFields(formValues),
     variants: normalizedVariants,
   };
 }

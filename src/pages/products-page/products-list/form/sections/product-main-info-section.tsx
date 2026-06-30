@@ -2,6 +2,7 @@ import { Card, Col, Flex, Form, Input, InputNumber, Row, Select } from "antd";
 import { Typography } from "antd";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { ProductDeliverySection } from "./product-delivery-section";
 
 const { Title, Text } = Typography;
 
@@ -143,6 +144,8 @@ export const ProductMainInfoSection = ({
             </Form.Item>
           </Col>
         </Row>
+
+        <ProductDeliverySection isMobile={isMobile} />
 
         <Flex vertical gap={16}>
           <Title level={5} style={{ margin: 0 }}>

@@ -69,6 +69,10 @@ export type CreateProductPayload = {
   quantity: number;
   mediaIds: number[];
   categoryId: number;
+  weight_grams?: number | null;
+  length_cm?: number | null;
+  width_cm?: number | null;
+  height_cm?: number | null;
   variants: CreateProductVariantPayload[];
 };
 

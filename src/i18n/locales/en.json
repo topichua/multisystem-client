@@ -1168,6 +1168,16 @@
       "title": "Publication parameters",
       "draftHint": "Draft — product will not be visible to customers"
     },
+    "delivery": {
+      "title": "Delivery",
+      "description": "These values apply to variants when their dimensions are not specified.",
+      "weight": "Weight",
+      "length": "Length",
+      "width": "Width",
+      "height": "Height",
+      "unitGrams": "g",
+      "unitCm": "cm"
+    },
     "characteristics": {
       "title": "Characteristics",
       "singleDescription": "Add optional characteristics like color or size. Each value is selected once for the product.",
