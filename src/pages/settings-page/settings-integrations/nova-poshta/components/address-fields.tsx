@@ -7,8 +7,9 @@ import type { RemoteSelectState, StreetOption } from "../types";
 import { SelectNotFoundContent } from "./select-not-found-content";
 
 type AddressFieldsProps = {
-  selectedSettlementRef?: string;
+  options?: StreetOption[];
   streetSelect: RemoteSelectState<StreetOption>;
+  disabled?: boolean;
   onStreetChange: (
     value: string,
     option?: StreetOption | StreetOption[],
@@ -16,7 +17,8 @@ type AddressFieldsProps = {
 };
 
 export function AddressFields({
-  selectedSettlementRef,
+  disabled = false,
+  options,
   streetSelect,
   onStreetChange,
 }: AddressFieldsProps) {
@@ -36,9 +38,9 @@ export function AddressFields({
       >
         <Select<string, StreetOption>
           showSearch
-          disabled={!selectedSettlementRef}
+          disabled={disabled}
           filterOption={false}
-          options={streetSelect.options}
+          options={options ?? streetSelect.options}
           loading={streetSelect.loading}
           searchValue={streetSelect.search}
           placeholder={t(

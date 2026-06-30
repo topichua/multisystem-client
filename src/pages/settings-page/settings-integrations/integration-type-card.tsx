@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import type { IntegrationItem } from "@/features/integrations/model/integration.types";
 
 import { IntegrationAccountCard } from "./integration-account-card";
+import { NovaPoshtaIntegrationCard } from "./nova-poshta";
 import type {
   IntegrationDefinition,
   IntegrationType,
@@ -21,6 +22,7 @@ type IntegrationTypeCardProps = {
   setupContent?: ReactNode;
   onConnectType: (type: IntegrationType) => void;
   onDisconnect: (integration: IntegrationItem) => void;
+  onIntegrationUpdated?: () => void;
 };
 
 export const IntegrationTypeCard = ({
@@ -32,6 +34,7 @@ export const IntegrationTypeCard = ({
   setupContent,
   onConnectType,
   onDisconnect,
+  onIntegrationUpdated,
 }: IntegrationTypeCardProps) => {
   const { t } = useTranslation();
   const hasConnections = integrations.length > 0;
@@ -56,6 +59,26 @@ export const IntegrationTypeCard = ({
       {t(definition.connectLabelKey)}
     </Button>
   );
+
+  const renderIntegrationCard = (integration: IntegrationItem) =>
+    integration.type === "novaposhta" ? (
+      <NovaPoshtaIntegrationCard
+        key={`${integration.type}-${integration.id}-${integration.connectedAt}`}
+        integration={integration}
+        isDisconnecting={isDisconnecting(integration.type, integration.id)}
+        layout={layout}
+        onDisconnect={onDisconnect}
+        onUpdated={onIntegrationUpdated}
+      />
+    ) : (
+      <IntegrationAccountCard
+        key={`${integration.type}-${integration.id}-${integration.connectedAt}`}
+        integration={integration}
+        isDisconnecting={isDisconnecting(integration.type, integration.id)}
+        layout={layout}
+        onDisconnect={onDisconnect}
+      />
+    );
 
   if (isMobile) {
     return (
@@ -94,18 +117,7 @@ export const IntegrationTypeCard = ({
           <>
             <S.IntegrationCardDivider />
             <S.IntegrationAccountsList>
-              {integrations.map((integration) => (
-                <IntegrationAccountCard
-                  key={`${integration.type}-${integration.id}-${integration.connectedAt}`}
-                  integration={integration}
-                  isDisconnecting={isDisconnecting(
-                    integration.type,
-                    integration.id,
-                  )}
-                  layout="mobile"
-                  onDisconnect={onDisconnect}
-                />
-              ))}
+              {integrations.map(renderIntegrationCard)}
             </S.IntegrationAccountsList>
           </>
         ) : (
@@ -142,17 +154,7 @@ export const IntegrationTypeCard = ({
         setupContent
       ) : hasConnections ? (
         <S.IntegrationAccountsList>
-          {integrations.map((integration) => (
-            <IntegrationAccountCard
-              key={`${integration.type}-${integration.id}-${integration.connectedAt}`}
-              integration={integration}
-              isDisconnecting={isDisconnecting(
-                integration.type,
-                integration.id,
-              )}
-              onDisconnect={onDisconnect}
-            />
-          ))}
+          {integrations.map(renderIntegrationCard)}
         </S.IntegrationAccountsList>
       ) : (
         <S.IntegrationEmptyState>

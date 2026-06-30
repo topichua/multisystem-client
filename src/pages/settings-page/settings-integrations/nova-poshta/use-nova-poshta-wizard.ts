@@ -48,7 +48,6 @@ export function useNovaPoshtaWizard({ onSubmit }: UseNovaPoshtaWizardParams) {
   const { citySelect, streetSelect, warehouseSelect } = useNovaPoshtaSelects({
     currentStep,
     form,
-    selectedCityRef,
     selectedSenderType,
     selectedSettlementRef,
   });
@@ -129,7 +128,9 @@ export function useNovaPoshtaWizard({ onSubmit }: UseNovaPoshtaWizardParams) {
     setDiscoverLoading(true);
 
     try {
-      const senders = await integrationsApi.discoverNovaPoshtaSenders(apiKey);
+      const senders = await integrationsApi.discoverNovaPoshtaSenders({
+        auth: { apiKey },
+      });
       const options = sendersToOptions(senders);
       const firstSender = options[0];
 

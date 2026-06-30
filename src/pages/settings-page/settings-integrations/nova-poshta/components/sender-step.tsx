@@ -1,10 +1,7 @@
-import { Col, Form, Row, Segmented, Select } from "antd";
-import { useMemo } from "react";
-import { useTranslation } from "react-i18next";
+import { Col, Row } from "antd";
 
 import type { NovaPoshtaSenderType } from "@/features/integrations/model/integration.types";
 
-import { CITY_MIN_SEARCH_LENGTH } from "../constants";
 import type {
   CityOption,
   RemoteSelectState,
@@ -13,18 +10,30 @@ import type {
   WarehouseOption,
 } from "../types";
 import { AddressFields } from "./address-fields";
-import { SelectNotFoundContent } from "./select-not-found-content";
+import { CitySelectField } from "./city-select-field";
+import { SenderSelectField } from "./sender-select-field";
+import { SenderTypeField } from "./sender-type-field";
 import { WarehouseFields } from "./warehouse-fields";
 
 type SenderStepProps = {
+  cityOptions?: CityOption[];
   citySelect: RemoteSelectState<CityOption>;
+  columnBreakpoint?: "sm" | "md";
   selectedCityRef?: string;
   selectedSenderType: NovaPoshtaSenderType;
   selectedSettlementRef?: string;
+  senderLoading?: boolean;
   senderOptions: SenderOption[];
+  senderTypeLabel?: "senderType" | "senderPlace";
+  streetOptions?: StreetOption[];
   streetSelect: RemoteSelectState<StreetOption>;
+  warehouseOptions?: WarehouseOption[];
   warehouseSelect: RemoteSelectState<WarehouseOption>;
   onCityChange: (value: string, option?: CityOption | CityOption[]) => void;
+  onSenderChange?: (
+    value: string,
+    option?: SenderOption | SenderOption[],
+  ) => void;
   onSenderTypeChange: (value: string | number) => void;
   onStreetChange: (
     value: string,
@@ -37,112 +46,64 @@ type SenderStepProps = {
 };
 
 export function SenderStep({
+  cityOptions,
   citySelect,
+  columnBreakpoint = "sm",
   selectedCityRef,
   selectedSenderType,
   selectedSettlementRef,
+  senderLoading = false,
   senderOptions,
+  senderTypeLabel = "senderType",
+  streetOptions,
   streetSelect,
+  warehouseOptions,
   warehouseSelect,
   onCityChange,
+  onSenderChange,
   onSenderTypeChange,
   onStreetChange,
   onWarehouseChange,
 }: SenderStepProps) {
-  const { t } = useTranslation();
-  const senderTypeOptions = useMemo(
-    () => [
-      {
-        value: "warehouse",
-        label: t("integrations.novaPoshtaWizard.senderTypes.warehouse"),
-      },
-      {
-        value: "address",
-        label: t("integrations.novaPoshtaWizard.senderTypes.address"),
-      },
-    ],
-    [t],
-  );
+  const columnProps =
+    columnBreakpoint === "md" ? { md: 12 as const } : { sm: 12 as const };
 
   return (
     <>
-      <Form.Item
-        label={t("integrations.novaPoshtaWizard.fields.sender.label")}
-        name="sender_contact_ref"
-        rules={[
-          {
-            required: true,
-            message: t("integrations.novaPoshtaWizard.fields.sender.required"),
-          },
-        ]}
-      >
-        <Select<string, SenderOption>
-          options={senderOptions}
-          placeholder={t(
-            "integrations.novaPoshtaWizard.fields.sender.placeholder",
-          )}
-        />
-      </Form.Item>
+      <SenderSelectField
+        loading={senderLoading}
+        options={senderOptions}
+        onChange={onSenderChange}
+      />
 
       <Row gutter={12}>
-        <Col xs={24} sm={12}>
-          <Form.Item
-            label={t("integrations.novaPoshtaWizard.fields.city.label")}
-            name="sender_city_ref"
-            rules={[
-              {
-                required: true,
-                message: t(
-                  "integrations.novaPoshtaWizard.fields.city.required",
-                ),
-              },
-            ]}
-          >
-            <Select<string, CityOption>
-              showSearch
-              filterOption={false}
-              options={citySelect.options}
-              loading={citySelect.loading}
-              searchValue={citySelect.search}
-              placeholder={t(
-                "integrations.novaPoshtaWizard.fields.city.placeholder",
-              )}
-              notFoundContent={
-                <SelectNotFoundContent
-                  failed={citySelect.failed}
-                  loading={citySelect.loading}
-                  minSearchLength={CITY_MIN_SEARCH_LENGTH}
-                />
-              }
-              onSearch={citySelect.setSearch}
-              onChange={onCityChange}
-            />
-          </Form.Item>
+        <Col xs={24} {...columnProps}>
+          <CitySelectField
+            citySelect={citySelect}
+            options={cityOptions}
+            onChange={onCityChange}
+          />
         </Col>
 
-        <Col xs={24} sm={12}>
-          <Form.Item
-            label={t("integrations.novaPoshtaWizard.fields.senderType.label")}
-            name="sender_type"
-          >
-            <Segmented
-              block
-              options={senderTypeOptions}
-              onChange={onSenderTypeChange}
-            />
-          </Form.Item>
+        <Col xs={24} {...columnProps}>
+          <SenderTypeField
+            label={senderTypeLabel}
+            onChange={onSenderTypeChange}
+          />
         </Col>
       </Row>
 
       {selectedSenderType === "warehouse" ? (
         <WarehouseFields
-          selectedCityRef={selectedCityRef}
+          disabled={!selectedCityRef}
+          options={warehouseOptions}
           warehouseSelect={warehouseSelect}
           onWarehouseChange={onWarehouseChange}
         />
       ) : (
         <AddressFields
-          selectedSettlementRef={selectedSettlementRef}
+          disabled={!selectedSettlementRef}
+          options={streetOptions}
           streetSelect={streetSelect}
           onStreetChange={onStreetChange}
         />

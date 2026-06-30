@@ -81,6 +81,7 @@ export const MobileSettingsIntegrationsPage = observer(() => {
                       void controller.handleConnectType(type)
                     }
                     onDisconnect={controller.handleDisconnect}
+                    onIntegrationUpdated={controller.handleIntegrationUpdated}
                   />
                 ))}
               </S.MobileIntegrationsStack>

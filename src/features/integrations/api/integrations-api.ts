@@ -7,6 +7,8 @@ import type {
   IntegrationItem,
   IntegrationsListResponse,
   NovaPoshtaIntegrationCreatePayload,
+  NovaPoshtaIntegrationDetails,
+  NovaPoshtaIntegrationUpdatePayload,
   NovaPoshtaSender,
   NovaPoshtaSettlement,
   NovaPoshtaStreet,
@@ -24,15 +26,24 @@ const invalidTelegramQrLoginResponseError = new Error(
   "Invalid Telegram QR login response",
 );
 
+type NovaPoshtaSearchAuth =
+  | { apiKey: string }
+  | { novaPoshtaIntegrationId: number | string };
+
+type NovaPoshtaSettlementsSearchParams = {
+  auth: NovaPoshtaSearchAuth;
+  query: string;
+};
+
 type NovaPoshtaWarehousesSearchParams = {
-  apiKey: string;
-  cityRef: string;
+  auth: NovaPoshtaSearchAuth;
+  ref: string;
   query?: string;
   type?: string;
 };
 
 type NovaPoshtaStreetsSearchParams = {
-  apiKey: string;
+  auth: NovaPoshtaSearchAuth;
   settlementRef: string;
   query: string;
 };
@@ -47,6 +58,19 @@ type ListResponse<TItem> =
       streets?: TItem[];
       warehouses?: TItem[];
     };
+
+type DetailListResponse<TItem> =
+  | TItem
+  | TItem[]
+  | {
+      data?: TItem | TItem[];
+      items?: TItem[];
+    };
+
+type NovaPoshtaDetailsEnvelope = {
+  data?: NovaPoshtaIntegrationDetails | NovaPoshtaIntegrationDetails[];
+  items?: NovaPoshtaIntegrationDetails[];
+};
 
 function readTelegramQrLoginId(
   value: unknown,
@@ -110,6 +134,37 @@ function listFromResponse<TItem>(data: ListResponse<TItem>): TItem[] {
   );
 }
 
+function isNovaPoshtaDetailsEnvelope(
+  data: Exclude<
+    DetailListResponse<NovaPoshtaIntegrationDetails>,
+    NovaPoshtaIntegrationDetails[]
+  >,
+): data is NovaPoshtaDetailsEnvelope {
+  return "items" in data || "data" in data;
+}
+
+function novaPoshtaDetailsFromResponse(
+  data: DetailListResponse<NovaPoshtaIntegrationDetails>,
+): NovaPoshtaIntegrationDetails[] {
+  if (Array.isArray(data)) {
+    return data;
+  }
+
+  if (isNovaPoshtaDetailsEnvelope(data)) {
+    if (Array.isArray(data.items)) {
+      return data.items;
+    }
+
+    if (data.data != null) {
+      return Array.isArray(data.data) ? data.data : [data.data];
+    }
+
+    return [];
+  }
+
+  return [data];
+}
+
 function withParams(
   config: AxiosRequestConfig | undefined,
   params: Record<string, string>,
@@ -120,6 +175,18 @@ function withParams(
       ...(config?.params as Record<string, string> | undefined),
       ...params,
     },
+  };
+}
+
+function buildNovaPoshtaSearchAuthParams(
+  auth: NovaPoshtaSearchAuth,
+): Record<string, string> {
+  if ("apiKey" in auth) {
+    return { api_key: auth.apiKey.trim() };
+  }
+
+  return {
+    nova_poshta_integration_id: String(auth.novaPoshtaIntegrationId),
   };
 }
 
@@ -209,13 +276,35 @@ export const integrationsApi = {
     return data;
   },
 
+  getNovaPoshtaIntegrations: async (
+    config?: AxiosRequestConfig,
+  ): Promise<NovaPoshtaIntegrationDetails[]> => {
+    const { data } = await apiClient.get<
+      DetailListResponse<NovaPoshtaIntegrationDetails>
+    >(novaPoshtaIntegrationsBasePath, config);
+
+    return novaPoshtaDetailsFromResponse(data);
+  },
+
+  updateNovaPoshtaIntegration: async (
+    id: NovaPoshtaIntegrationDetails["id"],
+    payload: NovaPoshtaIntegrationUpdatePayload,
+  ): Promise<NovaPoshtaIntegrationDetails> => {
+    const { data } = await apiClient.patch<NovaPoshtaIntegrationDetails>(
+      `${novaPoshtaIntegrationsBasePath}/${encodeURIComponent(String(id))}`,
+      payload,
+    );
+
+    return data;
+  },
+
   discoverNovaPoshtaSenders: async (
-    novaposhtaApiKey: string,
+    params: { auth: NovaPoshtaSearchAuth },
     config?: AxiosRequestConfig,
   ): Promise<NovaPoshtaSender[]> => {
     const { data } = await apiClient.post<ListResponse<NovaPoshtaSender>>(
       `${novaPoshtaIntegrationsBasePath}/discover-senders`,
-      { api_key: novaposhtaApiKey.trim() },
+      buildNovaPoshtaSearchAuthParams(params.auth),
       config,
     );
 
@@ -223,15 +312,14 @@ export const integrationsApi = {
   },
 
   searchNovaPoshtaSettlements: async (
-    novaposhtaApiKey: string,
-    query: string,
+    params: NovaPoshtaSettlementsSearchParams,
     config?: AxiosRequestConfig,
   ): Promise<NovaPoshtaSettlement[]> => {
     const { data } = await apiClient.get<ListResponse<NovaPoshtaSettlement>>(
       `${novaPoshtaSearchBasePath}/settlements/search`,
       withParams(config, {
-        api_key: novaposhtaApiKey.trim(),
-        query: query.trim(),
+        ...buildNovaPoshtaSearchAuthParams(params.auth),
+        query: params.query.trim(),
       }),
     );
 
@@ -243,8 +331,8 @@ export const integrationsApi = {
     config?: AxiosRequestConfig,
   ): Promise<NovaPoshtaWarehouse[]> => {
     const queryParams: Record<string, string> = {
-      api_key: params.apiKey.trim(),
-      cityRef: params.cityRef,
+      ...buildNovaPoshtaSearchAuthParams(params.auth),
+      cityRef: params.ref,
     };
     const query = params.query?.trim();
     const type = params.type?.trim();
@@ -272,7 +360,7 @@ export const integrationsApi = {
     const { data } = await apiClient.get<ListResponse<NovaPoshtaStreet>>(
       `${novaPoshtaSearchBasePath}/streets/search`,
       withParams(config, {
-        api_key: params.apiKey.trim(),
+        ...buildNovaPoshtaSearchAuthParams(params.auth),
         settlementRef: params.settlementRef,
         query: params.query.trim(),
       }),

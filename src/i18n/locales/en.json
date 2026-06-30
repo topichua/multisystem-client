@@ -751,6 +751,32 @@
         "finish": "Finish connection"
       }
     },
+    "novaPoshtaDetails": {
+      "loadFailed": "Failed to load Nova Poshta settings",
+      "notFound": "Nova Poshta settings were not found",
+      "retryAction": "Retry",
+      "editAction": "Edit integration",
+      "saveAction": "Save",
+      "cancelAction": "Cancel",
+      "updateSuccess": "Nova Poshta integration updated",
+      "updateFailed": "Failed to update Nova Poshta integration",
+      "emptyValue": "Not set",
+      "apiKeyPlaceholder": "Enter a new API key to replace the current one",
+      "apiKeyConfigured": "Configured",
+      "apiKeyMissing": "Not configured",
+      "sections": {
+        "sender": "Sender",
+        "defaults": "Default parameters"
+      },
+      "fields": {
+        "apiKey": "API key",
+        "senderPlace": "Dispatch place",
+        "senderName": "Sender",
+        "senderNameRequired": "Enter sender",
+        "senderPhone": "Sender phone",
+        "senderPhoneRequired": "Enter sender phone"
+      }
+    },
     "telegramQr": {
       "title": "Connect Telegram",
       "subtitle": "Scan the QR code with Telegram on your phone",

@@ -97,6 +97,9 @@ export const SettingsIntegrationsPage = observer(() => {
                             void controller.handleConnectType(type)
                           }
                           onDisconnect={controller.handleDisconnect}
+                          onIntegrationUpdated={
+                            controller.handleIntegrationUpdated
+                          }
                         />
                       ))
                     )}

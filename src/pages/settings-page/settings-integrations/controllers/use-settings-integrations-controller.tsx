@@ -219,13 +219,7 @@ export function useSettingsIntegrationsController() {
         }));
       }
     },
-    [
-      closeTelegramPasswordModal,
-      notification,
-      store,
-      t,
-      telegramPasswordModal,
-    ],
+    [closeTelegramPasswordModal, notification, store, t, telegramPasswordModal],
   );
 
   const startTelegramQrLogin = useCallback(async () => {
@@ -423,6 +417,10 @@ export function useSettingsIntegrationsController() {
     setNovaPoshtaWizardOpen(false);
   }, []);
 
+  const handleIntegrationUpdated = useCallback(() => {
+    void store.loadIntegrations({ silent: true });
+  }, [store]);
+
   const handleNovaPoshtaWizardSubmit = useCallback(
     async (payload: NovaPoshtaIntegrationCreatePayload) => {
       try {
@@ -450,6 +448,7 @@ export function useSettingsIntegrationsController() {
     getVisibleIntegrations,
     handleDisconnect,
     handleConnectType,
+    handleIntegrationUpdated,
     novaPoshtaWizardOpen,
     closeNovaPoshtaWizard,
     handleNovaPoshtaWizardSubmit,

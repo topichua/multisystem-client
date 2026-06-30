@@ -20,7 +20,6 @@ import { useRemoteSelect } from "./use-remote-select";
 type UseNovaPoshtaSelectsParams = {
   currentStep: number;
   form: FormInstance<NovaPoshtaWizardFormValues>;
-  selectedCityRef?: string;
   selectedSenderType: NovaPoshtaSenderType;
   selectedSettlementRef?: string;
 };
@@ -28,7 +27,6 @@ type UseNovaPoshtaSelectsParams = {
 export function useNovaPoshtaSelects({
   currentStep,
   form,
-  selectedCityRef,
   selectedSenderType,
   selectedSettlementRef,
 }: UseNovaPoshtaSelectsParams) {
@@ -41,8 +39,7 @@ export function useNovaPoshtaSelects({
       }
 
       const settlements = await integrationsApi.searchNovaPoshtaSettlements(
-        apiKey,
-        query,
+        { auth: { apiKey }, query },
         { signal },
       );
 
@@ -55,14 +52,18 @@ export function useNovaPoshtaSelects({
     async (query: string, signal: AbortSignal) => {
       const apiKey = form.getFieldValue("apiKey");
 
-      if (!selectedCityRef || typeof apiKey !== "string" || !apiKey.trim()) {
+      if (
+        !selectedSettlementRef ||
+        typeof apiKey !== "string" ||
+        !apiKey.trim()
+      ) {
         return [];
       }
 
       const warehouses = await integrationsApi.searchNovaPoshtaWarehouses(
         {
-          apiKey,
-          cityRef: selectedCityRef,
+          auth: { apiKey },
+          ref: selectedSettlementRef,
           query,
         },
         { signal },
@@ -70,7 +71,7 @@ export function useNovaPoshtaSelects({
 
       return warehousesToOptions(warehouses);
     },
-    [form, selectedCityRef],
+    [form, selectedSettlementRef],
   );
 
   const loadStreetOptions = useCallback(
@@ -87,7 +88,7 @@ export function useNovaPoshtaSelects({
 
       const streets = await integrationsApi.searchNovaPoshtaStreets(
         {
-          apiKey,
+          auth: { apiKey },
           settlementRef: selectedSettlementRef,
           query,
         },
@@ -108,7 +109,7 @@ export function useNovaPoshtaSelects({
     enabled:
       currentStep === 1 &&
       selectedSenderType === "warehouse" &&
-      Boolean(selectedCityRef),
+      Boolean(selectedSettlementRef),
     minSearchLength: WAREHOUSE_MIN_SEARCH_LENGTH,
     loadOptions: loadWarehouseOptions,
   });

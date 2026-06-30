@@ -1,8 +1,25 @@
 import { Form, Input } from "antd";
 
-export function HiddenFields() {
+type HiddenFieldsProps = {
+  includeSenderFields?: boolean;
+};
+
+export function HiddenFields({ includeSenderFields = false }: HiddenFieldsProps) {
   return (
     <>
+      {includeSenderFields ? (
+        <>
+          <Form.Item name="sender_ref" hidden>
+            <Input />
+          </Form.Item>
+          <Form.Item name="sender_name" hidden>
+            <Input />
+          </Form.Item>
+          <Form.Item name="sender_phone" hidden>
+            <Input />
+          </Form.Item>
+        </>
+      ) : null}
       <Form.Item name="sender_city_name" hidden>
         <Input />
       </Form.Item>

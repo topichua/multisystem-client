@@ -6,7 +6,8 @@ import type { RemoteSelectState, WarehouseOption } from "../types";
 import { SelectNotFoundContent } from "./select-not-found-content";
 
 type WarehouseFieldsProps = {
-  selectedCityRef?: string;
+  disabled?: boolean;
+  options?: WarehouseOption[];
   warehouseSelect: RemoteSelectState<WarehouseOption>;
   onWarehouseChange: (
     value: string,
@@ -15,7 +16,8 @@ type WarehouseFieldsProps = {
 };
 
 export function WarehouseFields({
-  selectedCityRef,
+  disabled = false,
+  options,
   warehouseSelect,
   onWarehouseChange,
 }: WarehouseFieldsProps) {
@@ -34,9 +36,9 @@ export function WarehouseFields({
     >
       <Select<string, WarehouseOption>
         showSearch
-        disabled={!selectedCityRef}
+        disabled={disabled}
         filterOption={false}
-        options={warehouseSelect.options}
+        options={options ?? warehouseSelect.options}
         loading={warehouseSelect.loading}
         searchValue={warehouseSelect.search}
         placeholder={t(

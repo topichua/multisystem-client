@@ -759,6 +759,32 @@
         "finish": "Завершити підключення"
       }
     },
+    "novaPoshtaDetails": {
+      "loadFailed": "Не вдалося завантажити налаштування Нової Пошти",
+      "notFound": "Налаштування Нової Пошти не знайдено",
+      "retryAction": "Повторити",
+      "editAction": "Редагувати інтеграцію",
+      "saveAction": "Зберегти",
+      "cancelAction": "Скасувати",
+      "updateSuccess": "Інтеграцію Нової Пошти оновлено",
+      "updateFailed": "Не вдалося оновити інтеграцію Нової Пошти",
+      "emptyValue": "Не вказано",
+      "apiKeyPlaceholder": "Введіть новий API ключ, щоб замінити поточний",
+      "apiKeyConfigured": "Налаштовано",
+      "apiKeyMissing": "Не налаштовано",
+      "sections": {
+        "sender": "Відправник",
+        "defaults": "Параметри за замовчуванням"
+      },
+      "fields": {
+        "apiKey": "API ключ",
+        "senderPlace": "Місце відправлення",
+        "senderName": "Відправник",
+        "senderNameRequired": "Вкажіть відправника",
+        "senderPhone": "Телефон відправника",
+        "senderPhoneRequired": "Вкажіть телефон відправника"
+      }
+    },
     "telegramQr": {
       "title": "Підключення Telegram",
       "subtitle": "Відскануйте QR-код застосунком Telegram на телефоні",

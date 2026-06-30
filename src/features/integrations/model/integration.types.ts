@@ -94,6 +94,51 @@ export type NovaPoshtaIntegrationCreatePayload = {
   sender_flat?: string;
 };
 
+export type NovaPoshtaIntegrationDetails = {
+  id: number;
+  workspaceId: number;
+  name: string;
+  connectedAt: string;
+  createdAt: string;
+  updatedAt: string;
+  apiKeyConfigured: boolean;
+  sender_name: string;
+  sender_phone: string;
+  sender_city_ref: string;
+  sender_city_name: string;
+  sender_type: NovaPoshtaSenderType;
+  sender_warehouse_ref: string | null;
+  sender_warehouse_name: string | null;
+  sender_street_ref: string | null;
+  sender_street_name: string | null;
+  sender_building: string | null;
+  sender_flat: string | null;
+  sender_ref: string;
+  sender_contact_ref: string;
+  payment_method: NovaPoshtaPayerType;
+  payer_type: NovaPoshtaPayerType;
+};
+
+export type NovaPoshtaIntegrationUpdatePayload = {
+  name?: string;
+  api_key?: string;
+  sender_name?: string;
+  sender_phone?: string;
+  sender_ref?: string;
+  sender_contact_ref?: string;
+  sender_city_ref?: string;
+  sender_city_name?: string;
+  sender_type?: NovaPoshtaSenderType;
+  payment_method?: NovaPoshtaPayerType;
+  payer_type?: NovaPoshtaPayerType;
+  sender_warehouse_ref?: string | null;
+  sender_warehouse_name?: string | null;
+  sender_street_ref?: string | null;
+  sender_street_name?: string | null;
+  sender_building?: string | null;
+  sender_flat?: string | null;
+};
+
 export type TelegramQrLoginSession = {
   id: number | string;
   qrImageUrl: string;
