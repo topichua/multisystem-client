@@ -1,6 +1,7 @@
 import { apiClient } from "@/api/api-client";
 
 import {
+  INVENTORY_MODE_VALUES,
   WORKSPACE_CURRENCIES,
   type WorkspaceSettings,
   type WorkspaceSettingsUpdatePayload,
@@ -16,13 +17,21 @@ function isWorkspaceSettings(value: unknown): value is WorkspaceSettings {
     "currency" in value &&
     typeof value.workspaceId === "number" &&
     typeof value.currency === "string" &&
-    (WORKSPACE_CURRENCIES as readonly string[]).includes(value.currency)
+    (WORKSPACE_CURRENCIES as readonly string[]).includes(value.currency) &&
+    "inventoryMode" in value &&
+    typeof value.inventoryMode === "string" &&
+    (INVENTORY_MODE_VALUES as readonly string[]).includes(value.inventoryMode)
   );
 }
 
 export const workspaceSettingsApi = {
   get: async (): Promise<WorkspaceSettings> => {
-    const { data } = await apiClient.get<WorkspaceSettings>(basePath);
+    const { data } = await apiClient.get<unknown>(basePath);
+
+    if (!isWorkspaceSettings(data)) {
+      throw new Error("Invalid workspace settings response");
+    }
+
     return data;
   },
 

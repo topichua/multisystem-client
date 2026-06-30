@@ -2,6 +2,7 @@ import styled from "styled-components";
 
 export const FormCard = styled.div`
   box-sizing: border-box;
+  width: 100%;
   max-width: 960px;
   padding: 24px;
   border: 1px solid ${({ theme }) => theme.colors.functional.border.cardBase};

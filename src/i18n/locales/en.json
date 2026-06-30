@@ -822,6 +822,17 @@
     "themeAuto": "System",
     "english": "English",
     "ukrainian": "Ukrainian",
+    "inventory": {
+      "title": "Inventory management",
+      "description": "How products track quantity in stock.",
+      "offTitle": "Off",
+      "offDescription": "All products are unlimited — quantity is not tracked.",
+      "simpleTitle": "Basic",
+      "simpleDescription": "Edit stock quantity for each variant.",
+      "advancedTitle": "Advanced",
+      "advancedDescription": "Deliveries with purchase price, defects, write-offs, change history.",
+      "saveError": "Could not update inventory mode"
+    },
     "mobile": {
       "backToSettingsAria": "Back to settings",
       "workspaceSection": "Workspace",

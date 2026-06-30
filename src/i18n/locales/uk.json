@@ -830,6 +830,17 @@
     "themeAuto": "Системна",
     "english": "English",
     "ukrainian": "Українська",
+    "inventory": {
+      "title": "Управління залишками",
+      "description": "Як товари обліковують кількість на складі.",
+      "offTitle": "Відсутнє",
+      "offDescription": "Усі товари безлімітні — кількість не відстежується.",
+      "simpleTitle": "Базовий",
+      "simpleDescription": "Редагування кількості залишку для кожного варіанта.",
+      "advancedTitle": "Просунутий",
+      "advancedDescription": "Поставки із закупочною ціною, брак, списання, історія змін.",
+      "saveError": "Не вдалося оновити режим обліку залишків"
+    },
     "mobile": {
       "backToSettingsAria": "До налаштувань",
       "workspaceSection": "Робочий простір",

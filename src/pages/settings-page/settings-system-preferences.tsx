@@ -69,11 +69,11 @@ export const SettingsSystemPreferences = observer(
         placeholder={t("system.currencyPlaceholder")}
         loading={
           workspaceSettingsStore.loadLoading ||
-          workspaceSettingsStore.saveLoading
+          workspaceSettingsStore.currencySaveLoading
         }
         disabled={
           workspaceSettingsStore.loadLoading ||
-          workspaceSettingsStore.saveLoading
+          workspaceSettingsStore.currencySaveLoading
         }
         options={WORKSPACE_CURRENCIES.map((currency) => ({
           value: currency,

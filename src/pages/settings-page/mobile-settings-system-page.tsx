@@ -6,6 +6,7 @@ import { pagesMap } from "@/app/router/pages-map";
 import { dataQaAttrs } from "@/styled/data-qa-attrs";
 
 import * as MobileS from "./mobile-settings-page.styled";
+import { SettingsInventorySection } from "./settings-inventory-section";
 import { SettingsSystemPreferences } from "./settings-system-preferences";
 
 export const MobileSettingsSystemPage = () => {
@@ -33,6 +34,10 @@ export const MobileSettingsSystemPage = () => {
 
       <MobileS.ScrollRegion>
         <MobileS.ContentSection>
+          <SettingsInventorySection layout="mobile" />
+
+          <MobileS.MobileFormDivider />
+
           <SettingsSystemPreferences layout="mobile" />
         </MobileS.ContentSection>
       </MobileS.ScrollRegion>

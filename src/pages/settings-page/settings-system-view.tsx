@@ -1,14 +1,12 @@
-import { Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
 
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
-import { PaneSectionHint } from "@/components/layout/pane-frame";
 
-import * as S from "@/components/layout/form-card.styled";
+import * as FormS from "@/components/layout/form-card.styled";
+import { SettingsInventorySection } from "./settings-inventory-section";
 import { SettingsSystemPreferences } from "./settings-system-preferences";
-
-const { Title } = Typography;
+import * as S from "./settings-system-view.styled";
 
 export const SettingsSystemView = observer(() => {
   const { t } = useTranslation();
@@ -17,17 +15,18 @@ export const SettingsSystemView = observer(() => {
     <>
       <PaneDetailLayout.Root inset data-qa="layout-settings-system">
         <PaneDetailLayout.Header data-qa="layout-settings-system-header">
-          <Title level={4} style={{ marginTop: 0 }}>
-            {t("system.title")}
-          </Title>
-          <PaneSectionHint style={{ marginTop: 0 }}>
-            {t("system.sectionHint")}
-          </PaneSectionHint>
+          <S.PageTitle level={4}>{t("system.title")}</S.PageTitle>
+          <S.HeaderHint>{t("system.sectionHint")}</S.HeaderHint>
         </PaneDetailLayout.Header>
         <PaneDetailLayout.Body data-qa="layout-settings-system-body">
-          <S.FormCard>
-            <SettingsSystemPreferences layout="desktop" />
-          </S.FormCard>
+          <S.CardsStack>
+            <FormS.FormCard>
+              <SettingsInventorySection />
+            </FormS.FormCard>
+            <FormS.FormCard>
+              <SettingsSystemPreferences layout="desktop" />
+            </FormS.FormCard>
+          </S.CardsStack>
         </PaneDetailLayout.Body>
       </PaneDetailLayout.Root>
     </>

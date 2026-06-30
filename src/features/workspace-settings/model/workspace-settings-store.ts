@@ -4,16 +4,21 @@ import { workspaceSettingsApi } from "@/features/workspace-settings/api/workspac
 import { throwLoadError } from "@/utils/throw-load-error";
 import { unknownErrorMessage } from "@/utils/unknown-error-message";
 
-import type { WorkspaceCurrency } from "./workspace-settings.types";
+import type {
+  InventoryMode,
+  WorkspaceCurrency,
+} from "./workspace-settings.types";
 
 export class WorkspaceSettingsStore {
   currency: WorkspaceCurrency | null = null;
+  inventoryMode: InventoryMode | null = null;
 
   initialized = false;
   loadLoading = false;
   loadError: string | null = null;
 
-  saveLoading = false;
+  currencySaveLoading = false;
+  inventoryModeSaveLoading = false;
 
   constructor() {
     makeAutoObservable(this);
@@ -34,6 +39,7 @@ export class WorkspaceSettingsStore {
 
       runInAction(() => {
         this.currency = data.currency;
+        this.inventoryMode = data.inventoryMode;
         this.initialized = true;
         this.loadError = null;
       });
@@ -60,7 +66,7 @@ export class WorkspaceSettingsStore {
 
     runInAction(() => {
       this.currency = currency;
-      this.saveLoading = true;
+      this.currencySaveLoading = true;
     });
 
     try {
@@ -69,6 +75,7 @@ export class WorkspaceSettingsStore {
       runInAction(() => {
         if (data) {
           this.currency = data.currency;
+          this.inventoryMode = data.inventoryMode;
         } else {
           this.currency = currency;
         }
@@ -80,7 +87,46 @@ export class WorkspaceSettingsStore {
       throw e;
     } finally {
       runInAction(() => {
-        this.saveLoading = false;
+        this.currencySaveLoading = false;
+      });
+    }
+  };
+
+  updateInventoryMode = async (inventoryMode: InventoryMode): Promise<void> => {
+    if (this.inventoryMode === inventoryMode || !this.currency) {
+      return;
+    }
+
+    const previousInventoryMode = this.inventoryMode;
+    const currency = this.currency;
+
+    runInAction(() => {
+      this.inventoryMode = inventoryMode;
+      this.inventoryModeSaveLoading = true;
+    });
+
+    try {
+      const data = await workspaceSettingsApi.update({
+        currency,
+        inventoryMode,
+      });
+
+      runInAction(() => {
+        if (data) {
+          this.inventoryMode = data.inventoryMode;
+          this.currency = data.currency;
+        } else {
+          this.inventoryMode = inventoryMode;
+        }
+      });
+    } catch (e) {
+      runInAction(() => {
+        this.inventoryMode = previousInventoryMode;
+      });
+      throw e;
+    } finally {
+      runInAction(() => {
+        this.inventoryModeSaveLoading = false;
       });
     }
   };
