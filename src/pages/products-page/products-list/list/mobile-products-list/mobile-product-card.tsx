@@ -26,6 +26,7 @@ type MobileProductCardProps = {
   product: Product;
   categoryName: string;
   deleteLoading: boolean;
+  showInventoryQuantity: boolean;
   onEdit: (productId: number) => void;
   onDelete: (productId: number) => Promise<void>;
 };
@@ -34,6 +35,7 @@ export const MobileProductCard = ({
   product,
   categoryName,
   deleteLoading,
+  showInventoryQuantity,
   onEdit,
   onDelete,
 }: MobileProductCardProps) => {
@@ -47,12 +49,13 @@ export const MobileProductCard = ({
       ? formatProductPrice(product.price, product.currency)
       : t("products.noPrice");
 
-  const quantityLabel =
-    product.inStock === false
+  const quantityLabel = showInventoryQuantity
+    ? product.inStock === false
       ? t("products.outOfStock")
       : product.quantity == null
         ? t("products.unknownQuantity")
-        : t("products.mobile.qty", { value: product.quantity });
+        : t("products.mobile.qty", { value: product.quantity })
+    : null;
 
   const secondaryMeta = hasVariants
     ? t("products.table.variantsCount", { count: variantsCount })
@@ -143,7 +146,7 @@ export const MobileProductCard = ({
 
       <S.CardBottomRow justify="space-between" align="center">
         <S.PriceQuantity>
-          {priceLabel} · {quantityLabel}
+          {[priceLabel, quantityLabel].filter(Boolean).join(" · ")}
         </S.PriceQuantity>
 
         <S.StatusWrap>
@@ -202,8 +205,18 @@ export const MobileProductCard = ({
               product.currency,
             );
             const variantQuantity =
-              variant.quantity == null ? "—" : String(variant.quantity);
-            const skuPart = variant.sku ? ` · ${variant.sku}` : "";
+              showInventoryQuantity && variant.quantity != null
+                ? String(variant.quantity)
+                : "—";
+            const variantDetails = [
+              variantPrice,
+              showInventoryQuantity
+                ? `${t("products.variant.quantity")} ${variantQuantity}`
+                : null,
+              variant.sku || null,
+            ]
+              .filter(Boolean)
+              .join(" · ");
 
             return (
               <S.VariantRow
@@ -215,7 +228,7 @@ export const MobileProductCard = ({
                   <Tag color={variantStatusToColor(variant.status)}>
                     {variant.status}
                   </Tag>
-                  {` · ${variantPrice} · ${t("products.variant.quantity")} ${variantQuantity}${skuPart}`}
+                  {variantDetails ? ` · ${variantDetails}` : null}
                 </S.VariantDetails>
               </S.VariantRow>
             );

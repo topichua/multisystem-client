@@ -18,7 +18,12 @@ export function NovaPoshtaIntegrationEditForm({
   const { t } = useTranslation();
 
   return (
-    <Form form={form} layout="vertical" requiredMark={false} onFinish={onSubmit}>
+    <Form
+      form={form}
+      layout="vertical"
+      requiredMark={false}
+      onFinish={onSubmit}
+    >
       <HiddenFields includeSenderFields />
 
       <Row gutter={12}>

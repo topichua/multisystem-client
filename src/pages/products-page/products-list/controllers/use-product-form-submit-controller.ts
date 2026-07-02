@@ -8,6 +8,7 @@ import type {
   ProductType as ApiProductType,
   VariantCustomField,
 } from "@/features/products/model/product-create-api.types";
+import type { InventoryMode } from "@/features/workspace-settings/model/workspace-settings.types";
 import type { ProductAddFormValues } from "../form/product-form.types";
 import {
   normalizeCreateProductPayload,
@@ -41,6 +42,7 @@ type UseProductFormSubmitControllerParams = {
   productsStore: ProductsStore;
   optionBaseline: ProductOptionCharacteristicsBaseline;
   variantCustomFields: VariantCustomField[];
+  inventoryMode: InventoryMode | null;
 };
 
 export function useProductFormSubmitController({
@@ -54,6 +56,7 @@ export function useProductFormSubmitController({
   productsStore,
   optionBaseline,
   variantCustomFields,
+  inventoryMode,
 }: UseProductFormSubmitControllerParams) {
   const { t } = useTranslation();
   const [isSavingProduct, setIsSavingProduct] = useState(false);
@@ -72,6 +75,7 @@ export function useProductFormSubmitController({
       values: ProductAddFormValues,
       submitProductType: ApiProductType,
       variantsForSubmit: ProductVariantUi[],
+      submitInventoryMode: InventoryMode,
     ) => {
       setIsSavingProduct(true);
 
@@ -81,6 +85,7 @@ export function useProductFormSubmitController({
           productType: submitProductType,
           productMedia,
           variants: variantsForSubmit,
+          inventoryMode: submitInventoryMode,
         });
 
         if (payload.variants.length === 0) {
@@ -119,6 +124,7 @@ export function useProductFormSubmitController({
       values: ProductAddFormValues,
       submitProductType: ApiProductType,
       variantsForSubmit: ProductVariantUi[],
+      submitInventoryMode: InventoryMode,
     ) => {
       if (!editingProductId) {
         return;
@@ -132,6 +138,7 @@ export function useProductFormSubmitController({
           productType: submitProductType,
           productMedia,
           variants: variantsForSubmit,
+          inventoryMode: submitInventoryMode,
         });
 
         if (payload.variants.length === 0) {
@@ -187,6 +194,11 @@ export function useProductFormSubmitController({
 
   const handleCreateProductSubmit = useCallback(
     async (values: ProductAddFormValues) => {
+      if (!inventoryMode) {
+        notification.error({ title: t("system.settingsLoadError") });
+        return;
+      }
+
       const variantsForSubmit = getProductVariantsWithFormValues();
 
       if (productType === "variants" && variantsForSubmit.length === 0) {
@@ -230,13 +242,19 @@ export function useProductFormSubmitController({
             isEditMode ? "products.saveChanges" : "products.modalCreateOk",
           ),
           cancelText: t("products.cancelEdit"),
-          onOk: () => submitProduct(values, "single", variantsForSubmit),
+          onOk: () =>
+            submitProduct(values, "single", variantsForSubmit, inventoryMode),
         });
         return;
       }
 
       if (productType === "single") {
-        await submitProduct(values, "single", singleVariantsForSubmit);
+        await submitProduct(
+          values,
+          "single",
+          singleVariantsForSubmit,
+          inventoryMode,
+        );
         return;
       }
 
@@ -244,10 +262,12 @@ export function useProductFormSubmitController({
         values,
         productType as ApiProductType,
         variantsForSubmit,
+        inventoryMode,
       );
     },
     [
       getProductVariantsWithFormValues,
+      inventoryMode,
       isEditMode,
       notification,
       productType,

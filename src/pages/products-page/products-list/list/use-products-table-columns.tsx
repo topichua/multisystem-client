@@ -1,5 +1,6 @@
 import {
   CaretRightIcon,
+  CubeIcon,
   DotsThreeIcon,
   PencilSimpleIcon,
   TrashIcon,
@@ -22,7 +23,10 @@ type UseProductsTableColumnsParams = {
   categoryNameById: Map<number, string>;
   deleteLoadingId: number | null;
   expandedRowKeys: Key[];
+  showInventoryQuantity: boolean;
+  showInventoryManagement: boolean;
   onToggleRowExpand: (productId: number) => void;
+  onOpenInventory: (product: Product) => void;
   onEdit: (productId: number) => void | Promise<void>;
   onDelete: (productId: number) => Promise<void>;
 };
@@ -31,7 +35,10 @@ export const useProductsTableColumns = ({
   categoryNameById,
   deleteLoadingId,
   expandedRowKeys,
+  showInventoryQuantity,
+  showInventoryManagement,
   onToggleRowExpand,
+  onOpenInventory,
   onEdit,
   onDelete,
 }: UseProductsTableColumnsParams): TableColumnsType<Product> => {
@@ -142,21 +149,25 @@ export const useProductsTableColumns = ({
             ? formatProductPrice(product.price, product.currency)
             : t("products.noPrice"),
       },
-      {
-        title: t("products.table.stock"),
-        key: "stock",
-        width: 100,
-        render: (_, product) => {
-          if (product.inStock === false) {
-            return t("products.outOfStock");
-          }
-          if (product.quantity == null) {
-            return t("products.unknownQuantity");
-          }
+      ...(showInventoryQuantity
+        ? [
+            {
+              title: t("products.table.stock"),
+              key: "stock",
+              width: 100,
+              render: (_: unknown, product: Product) => {
+                if (product.inStock === false) {
+                  return t("products.outOfStock");
+                }
+                if (product.quantity == null) {
+                  return t("products.unknownQuantity");
+                }
 
-          return product.quantity;
-        },
-      },
+                return product.quantity;
+              },
+            },
+          ]
+        : []),
       {
         title: t("products.table.status"),
         dataIndex: "status",
@@ -180,6 +191,15 @@ export const useProductsTableColumns = ({
               trigger={["click"]}
               menu={{
                 items: [
+                  ...(showInventoryManagement
+                    ? [
+                        {
+                          key: "inventory",
+                          label: t("system.inventory.title"),
+                          icon: <CubeIcon size={16} />,
+                        },
+                      ]
+                    : []),
                   {
                     key: "edit",
                     label: t("products.edit"),
@@ -195,6 +215,10 @@ export const useProductsTableColumns = ({
                 ],
                 onClick: ({ key, domEvent }) => {
                   domEvent.stopPropagation();
+                  if (key === "inventory") {
+                    onOpenInventory(product);
+                    return;
+                  }
                   if (key === "edit") {
                     void onEdit(product.id);
                     return;
@@ -230,7 +254,10 @@ export const useProductsTableColumns = ({
       expandedRowKeys,
       onDelete,
       onEdit,
+      onOpenInventory,
       onToggleRowExpand,
+      showInventoryManagement,
+      showInventoryQuantity,
       t,
       token.colorFillAlter,
     ],

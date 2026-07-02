@@ -9,6 +9,10 @@ import type {
   UpdateProductVariantPayload,
 } from "@/features/products/model/product-create-api.types";
 import {
+  InventoryMode,
+  type InventoryMode as WorkspaceInventoryMode,
+} from "@/features/workspace-settings/model/workspace-settings.types";
+import {
   PRODUCT_DEFAULT_CURRENCY,
   PRODUCT_DEFAULT_IN_STOCK,
   PRODUCT_DEFAULT_SOURCE_TYPE,
@@ -28,6 +32,7 @@ export type NormalizeCreateProductPayloadInput = {
   productType: ProductType;
   productMedia: UploadedProductMedia[];
   variants: ProductVariantUi[];
+  inventoryMode: WorkspaceInventoryMode;
 };
 
 export type NormalizeUpdateProductPayloadInput =
@@ -160,6 +165,17 @@ function normalizeOptionalSku(
   return { sku: trimmed };
 }
 
+function normalizeVariantQuantity(
+  inventoryMode: WorkspaceInventoryMode,
+  quantity: unknown,
+): Pick<CreateProductVariantPayload, "quantity"> {
+  if (inventoryMode !== InventoryMode.simple) {
+    return {};
+  }
+
+  return { quantity: Number(quantity ?? 0) };
+}
+
 function normalizeVariantMediaIds(media: VariantMediaItem[]): number[] {
   return media.map((item) => item.id);
 }
@@ -184,16 +200,16 @@ function normalizeDeliveryDimension(value: unknown): number | null {
 }
 
 function normalizeDeliveryFields(formValues: ProductCreateFormValues): {
-  weight_grams: number | null;
-  length_cm: number | null;
-  width_cm: number | null;
-  height_cm: number | null;
+  weightGrams: number | null;
+  lengthCm: number | null;
+  widthCm: number | null;
+  heightCm: number | null;
 } {
   return {
-    weight_grams: normalizeDeliveryDimension(formValues.weight_grams),
-    length_cm: normalizeDeliveryDimension(formValues.length_cm),
-    width_cm: normalizeDeliveryDimension(formValues.width_cm),
-    height_cm: normalizeDeliveryDimension(formValues.height_cm),
+    weightGrams: normalizeDeliveryDimension(formValues.weightGrams),
+    lengthCm: normalizeDeliveryDimension(formValues.lengthCm),
+    widthCm: normalizeDeliveryDimension(formValues.widthCm),
+    heightCm: normalizeDeliveryDimension(formValues.heightCm),
   };
 }
 
@@ -266,6 +282,7 @@ function buildSingleProductVariant(
   formValues: ProductCreateFormValues,
   productStatus: ProductLifecycleStatus,
   variantsFromSubmit: ProductVariantUi[],
+  inventoryMode: WorkspaceInventoryMode,
 ): CreateProductVariantPayload {
   const variantMedia =
     variantsFromSubmit.length === 1 ? variantsFromSubmit[0].media : [];
@@ -278,7 +295,7 @@ function buildSingleProductVariant(
     ),
     price: Number(formValues.price ?? 0),
     inStock: PRODUCT_DEFAULT_IN_STOCK,
-    quantity: Number(formValues.quantity ?? 0),
+    ...normalizeVariantQuantity(inventoryMode, formValues.quantity),
     mediaIds: normalizeVariantMediaIds(variantMedia),
   };
 }
@@ -287,6 +304,7 @@ function buildSingleProductUpdateVariant(
   formValues: ProductCreateFormValues,
   productStatus: ProductLifecycleStatus,
   variantsFromSubmit: ProductVariantUi[],
+  inventoryMode: WorkspaceInventoryMode,
 ): UpdateProductVariantPayload {
   const existingVariant =
     variantsFromSubmit.length > 0 ? variantsFromSubmit[0] : undefined;
@@ -304,7 +322,7 @@ function buildSingleProductUpdateVariant(
     ).map(normalizeUpdateSingleCharacteristicCustomField),
     price: Number(formValues.price ?? 0),
     inStock: PRODUCT_DEFAULT_IN_STOCK,
-    quantity: Number(formValues.quantity ?? 0),
+    ...normalizeVariantQuantity(inventoryMode, formValues.quantity),
     mediaIds: normalizeVariantMediaIds(variantMedia),
     ...normalizeOptionalSku(existingVariant?.sku),
   };
@@ -313,6 +331,7 @@ function buildSingleProductUpdateVariant(
 function buildVariantsProductVariant(
   variant: ProductVariantUi,
   productStatus: ProductLifecycleStatus,
+  inventoryMode: WorkspaceInventoryMode,
 ): CreateProductVariantPayload {
   const status = normalizeLifecycleStatus(variant.status, productStatus);
 
@@ -321,7 +340,7 @@ function buildVariantsProductVariant(
     customFields: normalizeVariantCustomFields(variant.customFields),
     price: Number(variant.price ?? 0),
     inStock: PRODUCT_DEFAULT_IN_STOCK,
-    quantity: Number(variant.quantity ?? 0),
+    ...normalizeVariantQuantity(inventoryMode, variant.quantity),
     mediaIds: normalizeVariantMediaIds(variant.media),
     ...normalizeOptionalSku(variant.sku),
   };
@@ -330,6 +349,7 @@ function buildVariantsProductVariant(
 function buildVariantsProductUpdateVariant(
   variant: ProductVariantUi,
   productStatus: ProductLifecycleStatus,
+  inventoryMode: WorkspaceInventoryMode,
 ): UpdateProductVariantPayload {
   const status = normalizeLifecycleStatus(variant.status, productStatus);
 
@@ -339,7 +359,7 @@ function buildVariantsProductUpdateVariant(
     customFields: normalizeUpdateVariantCustomFields(variant.customFields),
     price: Number(variant.price ?? 0),
     inStock: PRODUCT_DEFAULT_IN_STOCK,
-    quantity: Number(variant.quantity ?? 0),
+    ...normalizeVariantQuantity(inventoryMode, variant.quantity),
     mediaIds: normalizeVariantMediaIds(variant.media),
     ...normalizeOptionalSku(variant.sku),
   };
@@ -350,6 +370,7 @@ export function normalizeCreateProductPayload({
   productType,
   productMedia,
   variants,
+  inventoryMode,
 }: NormalizeCreateProductPayloadInput): CreateProductPayload {
   const categoryId = formValues.categoryId;
   if (categoryId == null) {
@@ -361,9 +382,16 @@ export function normalizeCreateProductPayload({
 
   const normalizedVariants =
     productType === "single"
-      ? [buildSingleProductVariant(formValues, productStatus, variants)]
+      ? [
+          buildSingleProductVariant(
+            formValues,
+            productStatus,
+            variants,
+            inventoryMode,
+          ),
+        ]
       : variants.map((variant) =>
-          buildVariantsProductVariant(variant, productStatus),
+          buildVariantsProductVariant(variant, productStatus, inventoryMode),
         );
 
   if (productType === "single" && normalizedVariants.length !== 1) {
@@ -383,7 +411,6 @@ export function normalizeCreateProductPayload({
     price: Number(formValues.price ?? 0),
     currency: PRODUCT_DEFAULT_CURRENCY,
     inStock: PRODUCT_DEFAULT_IN_STOCK,
-    quantity: Number(formValues.quantity ?? 0),
     mediaIds: normalizeProductMediaIds(productMedia),
     categoryId,
     ...normalizeDeliveryFields(formValues),
@@ -396,6 +423,7 @@ export function normalizeUpdateProductPayload({
   productType,
   productMedia,
   variants,
+  inventoryMode,
 }: NormalizeUpdateProductPayloadInput): UpdateProductPayload {
   const categoryId = formValues.categoryId;
   if (categoryId == null) {
@@ -407,9 +435,20 @@ export function normalizeUpdateProductPayload({
 
   const normalizedVariants =
     productType === "single"
-      ? [buildSingleProductUpdateVariant(formValues, productStatus, variants)]
+      ? [
+          buildSingleProductUpdateVariant(
+            formValues,
+            productStatus,
+            variants,
+            inventoryMode,
+          ),
+        ]
       : variants.map((variant) =>
-          buildVariantsProductUpdateVariant(variant, productStatus),
+          buildVariantsProductUpdateVariant(
+            variant,
+            productStatus,
+            inventoryMode,
+          ),
         );
 
   if (productType === "variants" && normalizedVariants.length === 0) {
@@ -425,7 +464,6 @@ export function normalizeUpdateProductPayload({
     price: Number(formValues.price ?? 0),
     currency: PRODUCT_DEFAULT_CURRENCY,
     inStock: PRODUCT_DEFAULT_IN_STOCK,
-    quantity: Number(formValues.quantity ?? 0),
     mediaIds: normalizeProductMediaIds(productMedia),
     categoryId,
     ...normalizeDeliveryFields(formValues),

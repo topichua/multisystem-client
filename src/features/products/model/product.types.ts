@@ -16,10 +16,10 @@ export type Product = {
   sourceId?: string | null;
   referenceGroupId?: number | null;
   categoryId: number | null;
-  weight_grams?: number | null;
-  length_cm?: number | null;
-  width_cm?: number | null;
-  height_cm?: number | null;
+  weightGrams?: number | null;
+  lengthCm?: number | null;
+  widthCm?: number | null;
+  heightCm?: number | null;
   createdAt: string;
   updatedAt: string;
   sizes?: string[] | string | null;
@@ -73,6 +73,24 @@ export type ProductDetails = Product & {
   variants: ProductVariant[];
   media: ProductMediaItem[];
   sourceReferences: ProductSourceReference[];
+};
+
+export type ProductInventoryVariant = {
+  variantId: number;
+  sku: string | null;
+  name: string | null;
+  price: number | null;
+  quantity: number;
+  reservedQuantity: number;
+  availableQuantity: number;
+  stockQty: number;
+  stockCostTotal: number;
+  averagePurchasePrice: number | null;
+};
+
+export type ProductInventoryResponse = {
+  productId: number;
+  variants: ProductInventoryVariant[];
 };
 
 export const PRODUCTS_LIST_SORT_VALUES = [

@@ -45,6 +45,7 @@ export type ProductFormProps = {
   // Main info section
   categoryOptions: Array<{ value: number; label: string }>;
   requiredMessage: string;
+  showMainQuantityField: boolean;
   labels: {
     name: string;
     category: string;
@@ -91,6 +92,7 @@ export const ProductForm = ({
   onProductTypeChange,
   categoryOptions,
   requiredMessage,
+  showMainQuantityField,
   labels,
   singleCharacteristicsProps,
   mediaProps,
@@ -158,6 +160,7 @@ export const ProductForm = ({
       <ProductMainInfoSection
         categoryOptions={categoryOptions}
         requiredMessage={requiredMessage}
+        showQuantityField={showMainQuantityField}
         labels={labels}
         isMobile={isMobileViewport}
       />
@@ -215,6 +218,7 @@ export const ProductForm = ({
             variantsProps.onUpdateManualVariantCustomField
           }
           deletingVariantKey={variantsProps.deletingVariantKey}
+          showQuantityField={variantsProps.showQuantityField}
           isMobile={isMobileViewport}
         />
       ) : null}

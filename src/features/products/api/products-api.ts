@@ -10,6 +10,7 @@ import type {
   CatalogVariantsListResponse,
   Product,
   ProductDetails,
+  ProductInventoryResponse,
   ProductsListResponse,
   ProductsListSort,
 } from "@/features/products/model/product.types";
@@ -173,6 +174,14 @@ export const productsApi = {
 
   getById: async (id: number): Promise<ProductDetails> => {
     const { data } = await apiClient.get<ProductDetails>(`${basePath}/${id}`);
+
+    return data;
+  },
+
+  getInventory: async (id: number): Promise<ProductInventoryResponse> => {
+    const { data } = await apiClient.get<ProductInventoryResponse>(
+      `${basePath}/${id}/inventory`,
+    );
 
     return data;
   },

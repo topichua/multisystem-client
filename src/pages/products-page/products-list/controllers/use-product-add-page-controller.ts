@@ -5,6 +5,8 @@ import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
 
 import type { InstagramPostAiExtractionResponse } from "@/features/instagram/model/instagram.types";
+import { InventoryMode } from "@/features/workspace-settings/model/workspace-settings.types";
+import { useWorkspaceSettingsStore } from "@/features/workspace-settings/model/use-workspace-settings-store";
 
 import {
   defaultCreateValues,
@@ -42,6 +44,7 @@ export type ProductAddPageControllerReturn = {
   onProductTypeChange: (nextType: ProductType) => void;
   categoryOptions: Array<{ value: number; label: string }>;
   requiredMessage: string;
+  showMainQuantityField: boolean;
   labels: {
     name: string;
     category: string;
@@ -81,6 +84,7 @@ export const useProductAddPageController =
     const { t } = useTranslation();
     const { productId } = useParams();
     const notification = useNotification();
+    const workspaceSettingsStore = useWorkspaceSettingsStore();
     const [form] = Form.useForm<ProductAddFormValues>();
     const parsedProductId = productId ? Number(productId) : null;
     const editingProductId =
@@ -88,6 +92,10 @@ export const useProductAddPageController =
         ? parsedProductId
         : null;
     const isEditMode = editingProductId != null;
+    const inventoryMode = workspaceSettingsStore.inventoryMode;
+    const isSimpleInventoryMode = inventoryMode === InventoryMode.simple;
+    const workspaceSettingsReady =
+      workspaceSettingsStore.initialized && inventoryMode != null;
 
     const variantsController = useProductVariantsController({
       form,
@@ -138,6 +146,7 @@ export const useProductAddPageController =
       onUpdateManualVariantCustomField:
         variantsController.onUpdateManualVariantCustomField,
       deletingVariantKey: variantsController.deletingVariantKey,
+      showQuantityColumn: isSimpleInventoryMode,
     });
 
     const isInitialEditLoading = useProductEditBootstrap({
@@ -168,6 +177,7 @@ export const useProductAddPageController =
       productsStore,
       optionBaseline: variantsController.optionBaseline,
       variantCustomFields,
+      inventoryMode,
     });
 
     const {
@@ -188,10 +198,23 @@ export const useProductAddPageController =
       void loadVariantCustomFields();
     }, [loadVariantCustomFields]);
 
+    useEffect(() => {
+      if (
+        !workspaceSettingsStore.initialized &&
+        !workspaceSettingsStore.loadLoading
+      ) {
+        void workspaceSettingsStore.loadSettings().catch(() => {
+          notification.error({ title: t("system.settingsLoadError") });
+        });
+      }
+    }, [notification, t, workspaceSettingsStore]);
+
     const requiredMessage = t("products.form.required");
 
     return {
-      pageLoading: isInitialEditLoading,
+      pageLoading:
+        isInitialEditLoading ||
+        (!workspaceSettingsReady && !workspaceSettingsStore.loadError),
       form,
       initialValues: {
         ...defaultCreateValues,
@@ -211,6 +234,8 @@ export const useProductAddPageController =
       onProductTypeChange: variantsController.onProductTypeChange,
       categoryOptions,
       requiredMessage,
+      showMainQuantityField:
+        isSimpleInventoryMode && variantsController.productType === "single",
       labels: {
         name: t("products.form.name"),
         category: t("products.form.category"),
@@ -264,11 +289,13 @@ export const useProductAddPageController =
         onUpdateManualVariantCustomField:
           variantsController.onUpdateManualVariantCustomField,
         deletingVariantKey: variantsController.deletingVariantKey,
+        showQuantityField: isSimpleInventoryMode,
       },
       submitButtonProps: {
         loading: isSavingProduct,
         disabled:
           isSavingProduct ||
+          !workspaceSettingsReady ||
           isApplyingInstagramAiExtraction ||
           productMediaUploadingCount > 0 ||
           (isEditMode && productsStore.detailLoading),

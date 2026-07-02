@@ -24,6 +24,7 @@ export const ProductAddPage = observer(() => {
             onProductTypeChange={controller.onProductTypeChange}
             categoryOptions={controller.categoryOptions}
             requiredMessage={controller.requiredMessage}
+            showMainQuantityField={controller.showMainQuantityField}
             labels={controller.labels}
             singleCharacteristicsProps={controller.singleCharacteristicsProps}
             mediaProps={controller.mediaProps}

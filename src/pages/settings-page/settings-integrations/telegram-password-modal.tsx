@@ -93,7 +93,9 @@ export function TelegramPasswordModal({
             <Input.Password
               autoFocus
               disabled={submitting}
-              placeholder={t("integrations.telegramPassword.passwordPlaceholder")}
+              placeholder={t(
+                "integrations.telegramPassword.passwordPlaceholder",
+              )}
               onPressEnter={() => form.submit()}
             />
           </Form.Item>

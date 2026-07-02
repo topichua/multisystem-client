@@ -21,6 +21,7 @@ export type ProductMainInfoSectionProps = {
     quantity: string;
     status: string;
   };
+  showQuantityField: boolean;
   isMobile?: boolean;
 };
 
@@ -28,6 +29,7 @@ export const ProductMainInfoSection = ({
   categoryOptions,
   requiredMessage,
   labels,
+  showQuantityField,
   isMobile = false,
 }: ProductMainInfoSectionProps) => {
   const { t } = useTranslation();
@@ -119,30 +121,32 @@ export const ProductMainInfoSection = ({
             </Form.Item>
           </Col>
 
-          <Col span={isMobile ? 24 : 12}>
-            <Form.Item
-              name="quantity"
-              label={labels.quantity}
-              rules={[
-                {
-                  required: true,
-                  message: requiredMessage,
-                },
-                {
-                  type: "number",
-                  min: 0,
-                  message: requiredMessage,
-                },
-              ]}
-            >
-              <InputNumber
-                min={0}
-                precision={0}
-                placeholder="0"
-                style={{ width: "100%" }}
-              />
-            </Form.Item>
-          </Col>
+          {showQuantityField && (
+            <Col span={isMobile ? 24 : 12}>
+              <Form.Item
+                name="quantity"
+                label={labels.quantity}
+                rules={[
+                  {
+                    required: true,
+                    message: requiredMessage,
+                  },
+                  {
+                    type: "number",
+                    min: 0,
+                    message: requiredMessage,
+                  },
+                ]}
+              >
+                <InputNumber
+                  min={0}
+                  precision={0}
+                  placeholder="0"
+                  style={{ width: "100%" }}
+                />
+              </Form.Item>
+            </Col>
+          )}
         </Row>
 
         <ProductDeliverySection isMobile={isMobile} />

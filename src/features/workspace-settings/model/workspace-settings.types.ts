@@ -3,7 +3,6 @@ export const WORKSPACE_CURRENCIES = ["UAH", "USD"] as const;
 export type WorkspaceCurrency = (typeof WORKSPACE_CURRENCIES)[number];
 
 export const InventoryMode = {
-  off: "off",
   simple: "simple",
   advanced: "advanced",
 } as const;

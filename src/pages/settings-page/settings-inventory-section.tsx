@@ -1,4 +1,4 @@
-import { CubeIcon, InfinityIcon, SquaresFourIcon } from "@phosphor-icons/react";
+import { CubeIcon, SquaresFourIcon } from "@phosphor-icons/react";
 import { Spin, Typography } from "antd";
 import type { KeyboardEvent, ReactNode } from "react";
 import { observer } from "mobx-react-lite";
@@ -23,12 +23,6 @@ type InventoryModeOption = {
 };
 
 const INVENTORY_MODE_OPTIONS: InventoryModeOption[] = [
-  {
-    value: InventoryMode.off,
-    titleKey: "system.inventory.offTitle",
-    descriptionKey: "system.inventory.offDescription",
-    icon: <InfinityIcon size={20} />,
-  },
   {
     value: InventoryMode.simple,
     titleKey: "system.inventory.simpleTitle",

@@ -8,6 +8,7 @@ import { ClientsProvider } from "@/features/clients/model/clients-provider";
 import { ConversationGroupsProvider } from "@/features/conversation-groups/model/conversation-groups-provider";
 import { ConversationsProvider } from "@/features/conversations/model/conversations-provider";
 import { InstagramProvider } from "@/features/instagram/model/instagram-provider";
+import { InventoryProvider } from "@/features/inventory/model/inventory-provider";
 import { MessageTemplatesProvider } from "@/features/message-templates/model/message-templates-provider";
 import { OrdersProvider } from "@/features/orders/model/orders-provider";
 import { ProductsProvider } from "@/features/products/model/products-provider";
@@ -24,6 +25,7 @@ const featureProviders: ProviderComponent[] = [
   CharacteristicsProvider,
   ClientsProvider,
   ProductsProvider,
+  InventoryProvider,
   InstagramProvider,
   OrdersProvider,
   ConversationGroupsProvider,

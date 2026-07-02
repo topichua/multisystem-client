@@ -21,8 +21,12 @@ export const MobileProductsListPage = observer(() => {
   const navigate = useNavigate();
   const location = useLocation();
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const { productsStore, categoryNameById, handleDeleteById } =
-    useProductsListController();
+  const {
+    productsStore,
+    categoryNameById,
+    showInventoryQuantity,
+    handleDeleteById,
+  } = useProductsListController();
 
   useProductsListUrlSync(productsStore);
 
@@ -102,6 +106,7 @@ export const MobileProductsListPage = observer(() => {
                       : t("products.noCategory")
                   }
                   deleteLoading={productsStore.deleteLoadingId === product.id}
+                  showInventoryQuantity={showInventoryQuantity}
                   onEdit={handleOpenProduct}
                   onDelete={handleDeleteProduct}
                 />

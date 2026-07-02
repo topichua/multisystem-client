@@ -4,7 +4,12 @@ import type {
 } from "@/features/integrations/model/integration.types";
 
 import { trimOptional } from "../helpers";
-import type { CityOption, SenderOption, StreetOption, WarehouseOption } from "../types";
+import type {
+  CityOption,
+  SenderOption,
+  StreetOption,
+  WarehouseOption,
+} from "../types";
 import type { NovaPoshtaIntegrationEditFormValues } from "./nova-poshta-integration-card.types";
 
 export function findNovaPoshtaIntegrationDetails(

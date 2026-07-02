@@ -4,7 +4,9 @@ type HiddenFieldsProps = {
   includeSenderFields?: boolean;
 };
 
-export function HiddenFields({ includeSenderFields = false }: HiddenFieldsProps) {
+export function HiddenFields({
+  includeSenderFields = false,
+}: HiddenFieldsProps) {
   return (
     <>
       {includeSenderFields ? (

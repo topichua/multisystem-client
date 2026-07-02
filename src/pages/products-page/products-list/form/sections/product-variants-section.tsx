@@ -35,6 +35,7 @@ export type ProductVariantsSectionProps = {
     value: string,
   ) => void;
   deletingVariantKey: string | null;
+  showQuantityField: boolean;
   isMobile?: boolean;
 };
 
@@ -53,6 +54,7 @@ export const ProductVariantsSection = ({
   onDeleteVariant,
   onUpdateManualVariantCustomField,
   deletingVariantKey,
+  showQuantityField,
   isMobile = false,
 }: ProductVariantsSectionProps) => {
   const { t } = useTranslation();
@@ -87,6 +89,7 @@ export const ProductVariantsSection = ({
             onManageVariantImages={onManageVariantImages}
             onDeleteVariant={onDeleteVariant}
             onUpdateManualVariantCustomField={onUpdateManualVariantCustomField}
+            showQuantityField={showQuantityField}
             onAddManualVariant={onAddManualVariant}
           />
         ) : (

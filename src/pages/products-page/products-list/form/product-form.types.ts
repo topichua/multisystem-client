@@ -10,10 +10,10 @@ export type ProductCreateFormValues = {
   price: number;
   quantity: number;
   categoryId?: number;
-  weight_grams?: number | null;
-  length_cm?: number | null;
-  width_cm?: number | null;
-  height_cm?: number | null;
+  weightGrams?: number | null;
+  lengthCm?: number | null;
+  widthCm?: number | null;
+  heightCm?: number | null;
 };
 
 export type ProductAddCharacteristicRow = ProductCharacteristicFormRow & {
@@ -38,8 +38,8 @@ export const defaultCreateValues: ProductCreateFormValues = {
   price: 0,
   quantity: 0,
   categoryId: undefined,
-  weight_grams: undefined,
-  length_cm: undefined,
-  width_cm: undefined,
-  height_cm: undefined,
+  weightGrams: undefined,
+  lengthCm: undefined,
+  widthCm: undefined,
+  heightCm: undefined,
 };

@@ -247,6 +247,10 @@ export function productDetailToProductForm(
   const mappedVariants = product.variants.map((variant) =>
     mapProductVariant(variant, productType, productMediaIds),
   );
+  const singleProductQuantity =
+    productType === "single"
+      ? Number(product.variants[0]?.quantity ?? product.quantity ?? 0)
+      : Number(product.quantity ?? 0);
 
   return {
     productType,
@@ -264,12 +268,12 @@ export function productDetailToProductForm(
           ? product.status
           : "draft",
       price: Number(product.price ?? 0),
-      quantity: Number(product.quantity ?? 0),
+      quantity: singleProductQuantity,
       categoryId: product.categoryId ?? undefined,
-      weight_grams: product.weight_grams ?? undefined,
-      length_cm: product.length_cm ?? undefined,
-      width_cm: product.width_cm ?? undefined,
-      height_cm: product.height_cm ?? undefined,
+      weightGrams: product.weightGrams ?? undefined,
+      lengthCm: product.lengthCm ?? undefined,
+      widthCm: product.widthCm ?? undefined,
+      heightCm: product.heightCm ?? undefined,
       characteristics:
         productType === "variants"
           ? buildVariantCharacteristics(product.variants)

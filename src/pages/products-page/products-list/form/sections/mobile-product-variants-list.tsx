@@ -23,6 +23,7 @@ type MobileProductVariantsListProps = {
     fieldStableKey: string,
     value: string,
   ) => void;
+  showQuantityField: boolean;
   onAddManualVariant: () => void;
 };
 
@@ -34,6 +35,7 @@ export function MobileProductVariantsList({
   onManageVariantImages,
   onDeleteVariant,
   onUpdateManualVariantCustomField,
+  showQuantityField,
   onAddManualVariant,
 }: MobileProductVariantsListProps) {
   const { t } = useTranslation();
@@ -65,6 +67,7 @@ export function MobileProductVariantsList({
                 onUpdateManualVariantCustomField={
                   onUpdateManualVariantCustomField
                 }
+                showQuantityField={showQuantityField}
               />
             ))}
           </Flex>

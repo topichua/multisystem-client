@@ -73,7 +73,7 @@ export const OptionRadio = styled(Radio)`
 export const OptionContent = styled.div`
   min-width: 0;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
 `;
 

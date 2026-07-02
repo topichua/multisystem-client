@@ -32,6 +32,7 @@ type ProductsListGridProps = {
   onEdit: (productId: number) => void;
   onDelete: (productId: number) => Promise<void>;
   deleteLoadingId: number | null;
+  showInventoryQuantity: boolean;
 };
 
 export const ProductsListGrid = ({
@@ -42,6 +43,7 @@ export const ProductsListGrid = ({
   onEdit,
   onDelete,
   deleteLoadingId,
+  showInventoryQuantity,
 }: ProductsListGridProps) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -114,13 +116,15 @@ export const ProductsListGrid = ({
                       t("products.noPrice"),
                     )}
                   </Text>
-                  <Text type="secondary" style={{ fontSize: 12 }}>
-                    {product.inStock === false
-                      ? t("products.outOfStock")
-                      : product.quantity == null
-                        ? t("products.unknownQuantity")
-                        : String(product.quantity)}
-                  </Text>
+                  {showInventoryQuantity ? (
+                    <Text type="secondary" style={{ fontSize: 12 }}>
+                      {product.inStock === false
+                        ? t("products.outOfStock")
+                        : product.quantity == null
+                          ? t("products.unknownQuantity")
+                          : String(product.quantity)}
+                    </Text>
+                  ) : null}
                   <Tag
                     color={productStatusToColor(product.status)}
                     style={{ width: "fit-content" }}

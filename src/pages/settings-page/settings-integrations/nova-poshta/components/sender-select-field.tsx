@@ -6,10 +6,7 @@ import type { SenderOption } from "../types";
 type SenderSelectFieldProps = {
   loading?: boolean;
   options: SenderOption[];
-  onChange?: (
-    value: string,
-    option?: SenderOption | SenderOption[],
-  ) => void;
+  onChange?: (value: string, option?: SenderOption | SenderOption[]) => void;
 };
 
 export function SenderSelectField({

@@ -9,6 +9,8 @@ import { useCategoriesStore } from "@/features/categories/model/use-categories-s
 import type { Product } from "@/features/products/model/product.types";
 import { readProductsListReturnSearch } from "@/features/products/model/products-list-url";
 import { useProductsStore } from "@/features/products/model/use-products-store";
+import { InventoryMode } from "@/features/workspace-settings/model/workspace-settings.types";
+import { useWorkspaceSettingsStore } from "@/features/workspace-settings/model/use-workspace-settings-store";
 import { useTranslation } from "react-i18next";
 import { useNotification } from "@/shared/components/notification/use-notification";
 
@@ -17,6 +19,7 @@ export const useProductsListController = () => {
   const location = useLocation();
   const productsStore = useProductsStore();
   const categoriesStore = useCategoriesStore();
+  const workspaceSettingsStore = useWorkspaceSettingsStore();
   const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
   const notification = useNotification();
   const { t } = useTranslation();
@@ -26,6 +29,15 @@ export const useProductsListController = () => {
       void categoriesStore.loadCategories({ silent: true });
     }
   }, [categoriesStore]);
+
+  useEffect(() => {
+    if (
+      !workspaceSettingsStore.initialized &&
+      !workspaceSettingsStore.loadLoading
+    ) {
+      void workspaceSettingsStore.loadSettings();
+    }
+  }, [workspaceSettingsStore]);
 
   const categoryNameById = useMemo(
     () =>
@@ -93,6 +105,9 @@ export const useProductsListController = () => {
     navigateToProductsList,
     variantCustomFields: productsStore.variantCustomFields,
     isVariantCustomFieldsLoading: productsStore.variantCustomFieldsLoading,
+    showInventoryQuantity: workspaceSettingsStore.inventoryMode != null,
+    showInventoryManagement:
+      workspaceSettingsStore.inventoryMode === InventoryMode.advanced,
     loadVariantCustomFields,
     handleDeleteById,
   };

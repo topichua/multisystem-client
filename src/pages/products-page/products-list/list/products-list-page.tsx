@@ -8,6 +8,7 @@ import { useLocation, useNavigate } from "react-router";
 import { getProductEditPath, pagesMap } from "@/app/router/pages-map";
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
 import { PaneSectionTitle } from "@/components/layout/pane-frame";
+import { ProductInventoryDrawer } from "@/features/products/components/product-inventory-drawer/product-inventory-drawer";
 import type { Product } from "@/features/products/model/product.types";
 import {
   formatProductPrice,
@@ -32,9 +33,17 @@ export const ProductsListPage = observer(() => {
   const navigate = useNavigate();
   const location = useLocation();
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const { productsStore, categoryNameById, rowSelection, handleDeleteById } =
-    useProductsListController();
+  const {
+    productsStore,
+    categoryNameById,
+    rowSelection,
+    showInventoryQuantity,
+    showInventoryManagement,
+    handleDeleteById,
+  } = useProductsListController();
   const [expandedRowKeys, setExpandedRowKeys] = useState<Key[]>([]);
+  const [inventoryDrawerProduct, setInventoryDrawerProduct] =
+    useState<Product | null>(null);
 
   useProductsListUrlSync(productsStore);
 
@@ -93,11 +102,22 @@ export const ProductsListPage = observer(() => {
     [handleDeleteById],
   );
 
+  const handleOpenInventoryDrawer = useCallback((product: Product) => {
+    setInventoryDrawerProduct(product);
+  }, []);
+
+  const handleCloseInventoryDrawer = useCallback(() => {
+    setInventoryDrawerProduct(null);
+  }, []);
+
   const columns = useProductsTableColumns({
     categoryNameById,
     deleteLoadingId: productsStore.deleteLoadingId,
     expandedRowKeys,
+    showInventoryQuantity,
+    showInventoryManagement,
     onToggleRowExpand: handleToggleRowExpand,
+    onOpenInventory: handleOpenInventoryDrawer,
     onEdit: handleOpenProduct,
     onDelete: handleDeleteProduct,
   });
@@ -145,17 +165,19 @@ export const ProductsListPage = observer(() => {
                       {formatProductPrice(variant.price, product.currency)}
                     </Text>
 
-                    <Flex gap={8} align="baseline" style={{ minWidth: 80 }}>
-                      <Text type="secondary">
-                        {t("products.variant.quantity")}
-                      </Text>
-                      <Text
-                        type={variant.quantity === 0 ? "danger" : undefined}
-                        strong
-                      >
-                        {variant.quantity ?? "—"}
-                      </Text>
-                    </Flex>
+                    {showInventoryQuantity ? (
+                      <Flex gap={8} align="baseline" style={{ minWidth: 80 }}>
+                        <Text type="secondary">
+                          {t("products.variant.quantity")}
+                        </Text>
+                        <Text
+                          type={variant.quantity === 0 ? "danger" : undefined}
+                          strong
+                        >
+                          {variant.quantity ?? "—"}
+                        </Text>
+                      </Flex>
+                    ) : null}
                   </Flex>
                 </Flex>
               </Card>
@@ -164,7 +186,7 @@ export const ProductsListPage = observer(() => {
         </Flex>
       );
     },
-    [t],
+    [showInventoryQuantity, t],
   );
 
   return (
@@ -230,6 +252,7 @@ export const ProductsListPage = observer(() => {
                 onEdit={handleOpenProduct}
                 onDelete={handleDeleteProduct}
                 deleteLoadingId={productsStore.deleteLoadingId}
+                showInventoryQuantity={showInventoryQuantity}
               />
             )}
             <ProductsTablePagination
@@ -245,6 +268,12 @@ export const ProductsListPage = observer(() => {
         <ProductsListFiltersPanel
           open={filtersOpen}
           onClose={() => setFiltersOpen(false)}
+        />
+        <ProductInventoryDrawer
+          open={showInventoryManagement && inventoryDrawerProduct != null}
+          product={inventoryDrawerProduct}
+          onClose={handleCloseInventoryDrawer}
+          onOpenProduct={handleOpenProduct}
         />
       </PaneDetailLayout.Body>
     </PaneDetailLayout.Root>

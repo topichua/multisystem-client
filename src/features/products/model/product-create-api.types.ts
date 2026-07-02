@@ -52,7 +52,7 @@ export type CreateProductVariantPayload = {
   customFields: CreateProductVariantCustomFieldValue[];
   price: number;
   inStock: boolean;
-  quantity: number;
+  quantity?: number;
   sku?: string;
   mediaIds: number[];
 };
@@ -66,13 +66,12 @@ export type CreateProductPayload = {
   price: number;
   currency: ProductCreateCurrency;
   inStock: boolean;
-  quantity: number;
   mediaIds: number[];
   categoryId: number;
-  weight_grams?: number | null;
-  length_cm?: number | null;
-  width_cm?: number | null;
-  height_cm?: number | null;
+  weightGrams?: number | null;
+  lengthCm?: number | null;
+  widthCm?: number | null;
+  heightCm?: number | null;
   variants: CreateProductVariantPayload[];
 };
 
@@ -92,7 +91,7 @@ export type UpdateProductVariantPayload = {
   customFields: UpdateProductVariantCustomFieldValue[];
   price: number;
   inStock: boolean;
-  quantity: number;
+  quantity?: number;
   sku?: string;
   mediaIds: number[];
 };

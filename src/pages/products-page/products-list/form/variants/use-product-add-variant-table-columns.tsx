@@ -154,6 +154,7 @@ type UseProductAddVariantTableColumnsParams = {
     value: string,
   ) => void;
   deletingVariantKey: string | null;
+  showQuantityColumn: boolean;
 };
 
 const VariantImageThumb = styled.img`
@@ -171,6 +172,7 @@ export function useProductAddVariantTableColumns({
   onDeleteVariant,
   onUpdateManualVariantCustomField,
   deletingVariantKey,
+  showQuantityColumn,
 }: UseProductAddVariantTableColumnsParams): ColumnsType<ProductVariantUi> {
   const { t } = useTranslation();
 
@@ -272,24 +274,41 @@ export function useProductAddVariantTableColumns({
           </Form.Item>
         ),
       },
-      {
-        title: (
-          <span>
-            {t("products.variant.quantity")} <Text type="danger">*</Text>
-          </span>
-        ),
-        dataIndex: "quantity",
-        width: 160,
-        render: (_: unknown, _record: ProductVariantUi, index: number) => (
-          <Form.Item
-            name={["variants", index, "quantity"]}
-            rules={[{ required: true, message: t("products.form.required") }]}
-            style={{ marginBottom: 0 }}
-          >
-            <InputNumber min={0} placeholder="0" style={{ width: "100%" }} />
-          </Form.Item>
-        ),
-      },
+      ...(showQuantityColumn
+        ? [
+            {
+              title: (
+                <span>
+                  {t("products.variant.quantity")} <Text type="danger">*</Text>
+                </span>
+              ),
+              dataIndex: "quantity",
+              width: 160,
+              render: (
+                _: unknown,
+                _record: ProductVariantUi,
+                index: number,
+              ) => (
+                <Form.Item
+                  name={["variants", index, "quantity"]}
+                  rules={[
+                    {
+                      required: true,
+                      message: t("products.form.required"),
+                    },
+                  ]}
+                  style={{ marginBottom: 0 }}
+                >
+                  <InputNumber
+                    min={0}
+                    placeholder="0"
+                    style={{ width: "100%" }}
+                  />
+                </Form.Item>
+              ),
+            },
+          ]
+        : []),
       {
         title: t("products.variant.discountPrice"),
         dataIndex: "discountPrice",
@@ -326,6 +345,7 @@ export function useProductAddVariantTableColumns({
     onManageVariantImages,
     onUpdateManualVariantCustomField,
     selectedCharacteristics,
+    showQuantityColumn,
     t,
   ]);
 }

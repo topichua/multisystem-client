@@ -85,6 +85,7 @@ type MobileProductVariantCardProps = {
     fieldStableKey: string,
     value: string,
   ) => void;
+  showQuantityField: boolean;
 };
 
 export function MobileProductVariantCard({
@@ -96,6 +97,7 @@ export function MobileProductVariantCard({
   onManageVariantImages,
   onDeleteVariant,
   onUpdateManualVariantCustomField,
+  showQuantityField,
 }: MobileProductVariantCardProps) {
   const { t } = useTranslation();
   const variantQaId = variant.id ?? variant.key;
@@ -238,18 +240,20 @@ export function MobileProductVariantCard({
           </Form.Item>
         </FieldBlock>
 
-        <FieldBlock>
-          <FieldLabel>
-            {t("products.variant.quantity")} <Text type="danger">*</Text>
-          </FieldLabel>
-          <Form.Item
-            name={["variants", variantIndex, "quantity"]}
-            rules={[{ required: true, message: t("products.form.required") }]}
-            style={{ marginBottom: 0 }}
-          >
-            <InputNumber min={0} placeholder="0" style={{ width: "100%" }} />
-          </Form.Item>
-        </FieldBlock>
+        {showQuantityField ? (
+          <FieldBlock>
+            <FieldLabel>
+              {t("products.variant.quantity")} <Text type="danger">*</Text>
+            </FieldLabel>
+            <Form.Item
+              name={["variants", variantIndex, "quantity"]}
+              rules={[{ required: true, message: t("products.form.required") }]}
+              style={{ marginBottom: 0 }}
+            >
+              <InputNumber min={0} placeholder="0" style={{ width: "100%" }} />
+            </Form.Item>
+          </FieldBlock>
+        ) : null}
 
         <FieldBlock>
           <FieldLabel>{t("products.variant.discountPrice")}</FieldLabel>
