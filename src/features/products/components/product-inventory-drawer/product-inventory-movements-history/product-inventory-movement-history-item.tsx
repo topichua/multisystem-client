@@ -48,8 +48,8 @@ export const ProductInventoryMovementHistoryItem = ({
       </Tag>
 
       <Flex vertical gap={4} style={{ flex: 1, minWidth: 0 }}>
-        <Flex align="flex-start" justify="space-between" gap={8}>
-          <Flex vertical gap={2} style={{ minWidth: 0 }}>
+        <Flex align="flex-start" justify="space-between" gap={8} wrap="wrap">
+          <Flex vertical gap={2} style={{ minWidth: 0, flex: "1 1 160px" }}>
             <Text strong>{getMovementTitle(movement.type, t)}</Text>
             {movement.reason && (
               <Text type="secondary" style={secondaryTextStyle}>
@@ -57,14 +57,7 @@ export const ProductInventoryMovementHistoryItem = ({
               </Text>
             )}
           </Flex>
-          <Text
-            type="secondary"
-            style={{
-              ...secondaryTextStyle,
-              flexShrink: 0,
-              whiteSpace: "nowrap",
-            }}
-          >
+          <Text type="secondary" style={secondaryTextStyle}>
             {formatDateTime(movement.createdAt)}
           </Text>
         </Flex>

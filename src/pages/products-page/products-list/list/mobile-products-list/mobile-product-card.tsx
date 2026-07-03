@@ -1,34 +1,38 @@
 import {
   CaretDownIcon,
-  DotsThreeIcon,
+  CubeIcon,
   PencilSimpleIcon,
   TrashIcon,
-} from "@phosphor-icons/react";
-import { Button, Dropdown, Modal } from "antd";
-import { Tag } from "@/components/tag/tag";
+} from '@phosphor-icons/react';
+import { Button, Flex, Modal } from "antd";
+// import { Tag } from "@/components/tag/tag";
 import { useState, type MouseEvent } from "react";
 import { useTranslation } from "react-i18next";
 
 import type { Product } from "@/features/products/model/product.types";
 import {
   formatProductPrice,
+  getProductPriceRange,
   getVariantTitle,
-  productStatusToColor,
-  variantStatusToColor,
-} from "@/features/products/utils/product-display";
+  // productStatusToColor,
+  // variantStatusToColor,
+} from '@/features/products/utils/product-display';
 
 import * as S from "./mobile-products-list-page.styled";
 
 const CARD_NAVIGATION_BLOCKER_SELECTOR =
-  "a,button,input,select,textarea,[role='button'],[role='combobox'],.ant-select,.rc-select,.ant-select-selector,.ant-dropdown,.ant-dropdown-menu,.ant-modal-wrap,.ant-popover,.ant-popconfirm,[data-qa^='products-mobile-actions-'],[data-qa^='products-mobile-expand-']";
+  "a,button,input,select,textarea,[role='button'],[role='combobox'],.ant-select,.rc-select,.ant-select-selector,.ant-modal-wrap,.ant-popover,.ant-popconfirm,[data-qa^='products-mobile-action-'],[data-qa^='products-mobile-expand-'],[data-qa^='products-mobile-variant-inventory-']";
 
 type MobileProductCardProps = {
   product: Product;
   categoryName: string;
   deleteLoading: boolean;
   showInventoryQuantity: boolean;
+  showInventoryManagement: boolean;
   onEdit: (productId: number) => void;
   onDelete: (productId: number) => Promise<void>;
+  onOpenInventory: (product: Product) => void;
+  onOpenVariantInventory: (product: Product, variantId: number) => void;
 };
 
 export const MobileProductCard = ({
@@ -36,8 +40,11 @@ export const MobileProductCard = ({
   categoryName,
   deleteLoading,
   showInventoryQuantity,
+  showInventoryManagement,
   onEdit,
   onDelete,
+  onOpenInventory,
+  onOpenVariantInventory,
 }: MobileProductCardProps) => {
   const { t } = useTranslation();
   const variantsCount = product.variants?.length ?? 0;
@@ -45,9 +52,7 @@ export const MobileProductCard = ({
   const [expanded, setExpanded] = useState(false);
 
   const priceLabel =
-    product.price != null
-      ? formatProductPrice(product.price, product.currency)
-      : t("products.noPrice");
+    getProductPriceRange(product) ?? t("products.noPrice");
 
   const quantityLabel = showInventoryQuantity
     ? product.inStock === false
@@ -86,74 +91,22 @@ export const MobileProductCard = ({
           <S.ProductCopy>
             <S.ProductName>{product.name}</S.ProductName>
             <S.ProductMeta>
-              {[secondaryMeta, categoryName].filter(Boolean).join(" · ")}
+              {[secondaryMeta, categoryName].filter(Boolean).join(' · ')}
             </S.ProductMeta>
           </S.ProductCopy>
         </S.ProductInfo>
-
-        <S.ActionsWrap
-          onClick={stopCardNavigation}
-          onMouseDown={stopCardNavigation}
-          onPointerDown={stopCardNavigation}
-        >
-          <Dropdown
-            trigger={["click"]}
-            menu={{
-              items: [
-                {
-                  key: "edit",
-                  label: t("products.edit"),
-                  icon: <PencilSimpleIcon size={16} />,
-                },
-                {
-                  key: "delete",
-                  label: t("products.delete"),
-                  danger: true,
-                  disabled: deleteLoading,
-                  icon: <TrashIcon size={16} />,
-                },
-              ],
-              onClick: ({ key, domEvent }) => {
-                domEvent.stopPropagation();
-                if (key === "edit") {
-                  void onEdit(product.id);
-                  return;
-                }
-                if (key === "delete") {
-                  Modal.confirm({
-                    title: t("products.deleteConfirm"),
-                    okText: t("products.delete"),
-                    okType: "danger",
-                    onOk: () => onDelete(product.id),
-                  });
-                }
-              },
-            }}
-          >
-            <Button
-              type="text"
-              size="small"
-              loading={deleteLoading}
-              icon={<DotsThreeIcon size={25} />}
-              aria-label={t("products.table.actions")}
-              data-qa={`products-mobile-actions-${product.id}`}
-              onClick={stopCardNavigation}
-              onMouseDown={stopCardNavigation}
-            />
-          </Dropdown>
-        </S.ActionsWrap>
       </S.CardTopRow>
 
       <S.CardBottomRow justify="space-between" align="center">
         <S.PriceQuantity>
-          {[priceLabel, quantityLabel].filter(Boolean).join(" · ")}
+          {[priceLabel, quantityLabel].filter(Boolean).join(' · ')}
         </S.PriceQuantity>
 
-        <S.StatusWrap>
+        {/* <S.StatusWrap>
           <Tag color={productStatusToColor(product.status)}>
             {product.status}
           </Tag>
-        </S.StatusWrap>
+        </S.StatusWrap> */}
 
         {hasVariants ? (
           <S.ExpandButton
@@ -163,16 +116,16 @@ export const MobileProductCard = ({
             aria-controls={`products-mobile-variants-${product.id}`}
             aria-label={
               expanded
-                ? t("products.table.collapseRowAria")
-                : t("products.table.expandRowAria")
+                ? t('products.table.collapseRowAria')
+                : t('products.table.expandRowAria')
             }
             data-qa={`products-mobile-expand-${product.id}`}
             icon={
               <CaretDownIcon
                 size={16}
                 style={{
-                  transform: expanded ? "rotate(180deg)" : undefined,
-                  transition: "transform 0.2s ease",
+                  transform: expanded ? 'rotate(180deg)' : undefined,
+                  transition: 'transform 0.2s ease',
                 }}
               />
             }
@@ -186,20 +139,20 @@ export const MobileProductCard = ({
         ) : null}
       </S.CardBottomRow>
 
-      {hasVariants && expanded ? (
+      {hasVariants && expanded && (
         <S.VariantsSection
           id={`products-mobile-variants-${product.id}`}
           data-qa={`products-mobile-variants-${product.id}`}
         >
           <S.VariantsSectionTitle>
-            {t("products.mobile.variantsSectionTitle", {
+            {t('products.mobile.variantsSectionTitle', {
               count: variantsCount,
             })}
           </S.VariantsSectionTitle>
           {product.variants?.map((variant) => {
             const title = getVariantTitle(variant);
             const variantName =
-              title || `${t("products.variant.fallbackName")} #${variant.id}`;
+              title || `${t('products.variant.fallbackName')} #${variant.id}`;
             const variantPrice = formatProductPrice(
               variant.price,
               product.currency,
@@ -207,34 +160,97 @@ export const MobileProductCard = ({
             const variantQuantity =
               showInventoryQuantity && variant.quantity != null
                 ? String(variant.quantity)
-                : "—";
+                : '—';
             const variantDetails = [
               variantPrice,
               showInventoryQuantity
-                ? `${t("products.variant.quantity")} ${variantQuantity}`
+                ? `${t('products.variant.quantity')} ${variantQuantity}`
                 : null,
               variant.sku || null,
             ]
               .filter(Boolean)
-              .join(" · ");
+              .join(' · ');
 
             return (
               <S.VariantRow
                 key={variant.id}
                 data-qa={`products-mobile-variant-${variant.id}`}
               >
-                <S.VariantName>{variantName}</S.VariantName>
-                <S.VariantDetails>
-                  <Tag color={variantStatusToColor(variant.status)}>
-                    {variant.status}
-                  </Tag>
-                  {variantDetails ? ` · ${variantDetails}` : null}
-                </S.VariantDetails>
+                <Flex align="flex-start" justify="space-between" gap={8}>
+                  <div style={{ minWidth: 0, flex: 1 }}>
+                    <S.VariantName>{variantName}</S.VariantName>
+                    <S.VariantDetails>
+                      {variantDetails ? variantDetails : null}
+                    </S.VariantDetails>
+                  </div>
+                  {showInventoryManagement ? (
+                    <Button
+                      type="text"
+                      size="small"
+                      icon={<CubeIcon size={16} />}
+                      aria-label={t(
+                        'products.inventoryDrawer.openVariantStockAria',
+                      )}
+                      data-qa={`products-mobile-variant-inventory-${variant.id}`}
+                      onClick={(event) => {
+                        stopCardNavigation(event);
+                        onOpenVariantInventory(product, variant.id);
+                      }}
+                      onMouseDown={stopCardNavigation}
+                      onPointerDown={stopCardNavigation}
+                    />
+                  ) : null}
+                </Flex>
               </S.VariantRow>
             );
           })}
         </S.VariantsSection>
-      ) : null}
+      )}
+
+      <S.CardActionsRow
+        align="center"
+        justify="center"
+        gap={12}
+        onClick={stopCardNavigation}
+        onMouseDown={stopCardNavigation}
+        onPointerDown={stopCardNavigation}
+      >
+        {showInventoryManagement ? (
+          <Button
+            type="text"
+            size="small"
+            icon={<CubeIcon size={16} />}
+            aria-label={t('system.inventory.title')}
+            data-qa={`products-mobile-action-inventory-${product.id}`}
+            onClick={() => onOpenInventory(product)}
+          />
+        ) : null}
+        <Button
+          type="text"
+          size="small"
+          icon={<PencilSimpleIcon size={16} />}
+          aria-label={t('products.edit')}
+          data-qa={`products-mobile-action-edit-${product.id}`}
+          onClick={() => void onEdit(product.id)}
+        />
+        <Button
+          type="text"
+          size="small"
+          danger
+          loading={deleteLoading}
+          icon={<TrashIcon size={16} />}
+          aria-label={t('products.delete')}
+          data-qa={`products-mobile-action-delete-${product.id}`}
+          onClick={() => {
+            Modal.confirm({
+              title: t('products.deleteConfirm'),
+              okText: t('products.delete'),
+              okType: 'danger',
+              onOk: () => onDelete(product.id),
+            });
+          }}
+        />
+      </S.CardActionsRow>
     </S.ProductCard>
   );
 };

@@ -7,6 +7,8 @@ import { useLocation, useNavigate } from "react-router";
 
 import { getProductEditPath, pagesMap } from "@/app/router/pages-map";
 import { CenteredSpinner } from "@/components/loading/centered-spinner";
+import { ProductInventoryDrawer } from "@/features/products/components/product-inventory-drawer/product-inventory-drawer";
+import type { Product } from "@/features/products/model/product.types";
 
 import { useProductsListController } from "../../controllers/use-products-list-controller";
 import { ProductsListActiveFilters } from "../products-list-active-filters";
@@ -15,6 +17,12 @@ import { ProductsListToolbar } from "../products-list-toolbar";
 import { useProductsListUrlSync } from "../use-products-list-url-sync";
 import { MobileProductCard } from "./mobile-product-card";
 import * as S from "./mobile-products-list-page.styled";
+
+type InventoryDrawerSelection = {
+  product: Product;
+  targetVariantId: number | null;
+  focusId: number;
+};
 
 export const MobileProductsListPage = observer(() => {
   const { t } = useTranslation();
@@ -25,8 +33,12 @@ export const MobileProductsListPage = observer(() => {
     productsStore,
     categoryNameById,
     showInventoryQuantity,
+    showInventoryManagement,
     handleDeleteById,
   } = useProductsListController();
+  const [inventoryDrawerSelection, setInventoryDrawerSelection] =
+    useState<InventoryDrawerSelection | null>(null);
+  const inventoryDrawerProduct = inventoryDrawerSelection?.product ?? null;
 
   useProductsListUrlSync(productsStore);
 
@@ -43,6 +55,28 @@ export const MobileProductsListPage = observer(() => {
     (productId: number) => handleDeleteById(productId),
     [handleDeleteById],
   );
+
+  const handleOpenInventoryDrawer = useCallback(
+    (product: Product, targetVariantId: number | null = null) => {
+      setInventoryDrawerSelection((current) => ({
+        product,
+        targetVariantId,
+        focusId: (current?.focusId ?? 0) + 1,
+      }));
+    },
+    [],
+  );
+
+  const handleOpenVariantInventory = useCallback(
+    (product: Product, variantId: number) => {
+      handleOpenInventoryDrawer(product, variantId);
+    },
+    [handleOpenInventoryDrawer],
+  );
+
+  const handleCloseInventoryDrawer = useCallback(() => {
+    setInventoryDrawerSelection(null);
+  }, []);
 
   const showInitialLoader =
     productsStore.listLoading && productsStore.products.length === 0;
@@ -107,8 +141,11 @@ export const MobileProductsListPage = observer(() => {
                   }
                   deleteLoading={productsStore.deleteLoadingId === product.id}
                   showInventoryQuantity={showInventoryQuantity}
+                  showInventoryManagement={showInventoryManagement}
                   onEdit={handleOpenProduct}
                   onDelete={handleDeleteProduct}
+                  onOpenInventory={handleOpenInventoryDrawer}
+                  onOpenVariantInventory={handleOpenVariantInventory}
                 />
               ))}
             </S.ProductList>
@@ -132,6 +169,14 @@ export const MobileProductsListPage = observer(() => {
         <ProductsListFiltersPanel
           open={filtersOpen}
           onClose={() => setFiltersOpen(false)}
+        />
+        <ProductInventoryDrawer
+          open={showInventoryManagement && inventoryDrawerProduct != null}
+          product={inventoryDrawerProduct}
+          targetVariantId={inventoryDrawerSelection?.targetVariantId ?? null}
+          targetVariantFocusId={inventoryDrawerSelection?.focusId ?? 0}
+          onClose={handleCloseInventoryDrawer}
+          onOpenProduct={handleOpenProduct}
         />
       </S.ScrollRegion>
     </S.Root>

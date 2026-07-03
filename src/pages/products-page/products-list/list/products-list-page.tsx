@@ -1,5 +1,6 @@
-import { Button, Card, Flex, Table, Typography } from "antd";
-import { Tag } from "@/components/tag/tag";
+import { CubeIcon } from "@phosphor-icons/react";
+import { Button, Card, Flex, Table, Tooltip, Typography } from "antd";
+// import { Tag } from "@/components/tag/tag";
 import { observer } from "mobx-react-lite";
 import { useCallback, useState, type Key, type MouseEvent } from "react";
 import { useTranslation } from "react-i18next";
@@ -13,7 +14,7 @@ import type { Product } from "@/features/products/model/product.types";
 import {
   formatProductPrice,
   getVariantTitle,
-  variantStatusToColor,
+  // variantStatusToColor,
 } from "@/features/products/utils/product-display";
 
 import { ProductsListActiveFilters } from "./products-list-active-filters";
@@ -27,6 +28,12 @@ import { ProductsListGrid } from "./products-list-grid";
 import * as S from "./products-list-page.styled";
 
 const { Text } = Typography;
+
+type InventoryDrawerSelection = {
+  product: Product;
+  targetVariantId: number | null;
+  focusId: number;
+};
 
 export const ProductsListPage = observer(() => {
   const { t } = useTranslation();
@@ -42,8 +49,9 @@ export const ProductsListPage = observer(() => {
     handleDeleteById,
   } = useProductsListController();
   const [expandedRowKeys, setExpandedRowKeys] = useState<Key[]>([]);
-  const [inventoryDrawerProduct, setInventoryDrawerProduct] =
-    useState<Product | null>(null);
+  const [inventoryDrawerSelection, setInventoryDrawerSelection] =
+    useState<InventoryDrawerSelection | null>(null);
+  const inventoryDrawerProduct = inventoryDrawerSelection?.product ?? null;
 
   useProductsListUrlSync(productsStore);
 
@@ -102,12 +110,26 @@ export const ProductsListPage = observer(() => {
     [handleDeleteById],
   );
 
-  const handleOpenInventoryDrawer = useCallback((product: Product) => {
-    setInventoryDrawerProduct(product);
-  }, []);
+  const handleOpenInventoryDrawer = useCallback(
+    (product: Product, targetVariantId: number | null = null) => {
+      setInventoryDrawerSelection((current) => ({
+        product,
+        targetVariantId,
+        focusId: (current?.focusId ?? 0) + 1,
+      }));
+    },
+    [],
+  );
+
+  const handleOpenVariantInventory = useCallback(
+    (product: Product, variantId: number) => {
+      handleOpenInventoryDrawer(product, variantId);
+    },
+    [handleOpenInventoryDrawer],
+  );
 
   const handleCloseInventoryDrawer = useCallback(() => {
-    setInventoryDrawerProduct(null);
+    setInventoryDrawerSelection(null);
   }, []);
 
   const columns = useProductsTableColumns({
@@ -153,9 +175,9 @@ export const ProductsListPage = observer(() => {
                   </Text>
 
                   <Flex align="center" gap={24} style={{ flexShrink: 0 }}>
-                    <Tag color={variantStatusToColor(variant.status)}>
+                    {/* <Tag color={variantStatusToColor(variant.status)}>
                       {variant.status}
-                    </Tag>
+                    </Tag> */}
 
                     <Text type="secondary" style={{ minWidth: 110 }}>
                       {variant.sku || "—"}
@@ -166,7 +188,7 @@ export const ProductsListPage = observer(() => {
                     </Text>
 
                     {showInventoryQuantity ? (
-                      <Flex gap={8} align="baseline" style={{ minWidth: 80 }}>
+                      <Flex gap={8} align="center" style={{ minWidth: 80 }}>
                         <Text type="secondary">
                           {t("products.variant.quantity")}
                         </Text>
@@ -176,6 +198,28 @@ export const ProductsListPage = observer(() => {
                         >
                           {variant.quantity ?? "—"}
                         </Text>
+                        {showInventoryManagement ? (
+                          <Tooltip
+                            title={t(
+                              "products.inventoryDrawer.openVariantStockAria",
+                            )}
+                          >
+                            <Button
+                              type="text"
+                              size="small"
+                              icon={<CubeIcon size={16} />}
+                              aria-label={t(
+                                "products.inventoryDrawer.openVariantStockAria",
+                              )}
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                handleOpenVariantInventory(product, variant.id);
+                              }}
+                              onMouseDown={(event) => event.stopPropagation()}
+                              onPointerDown={(event) => event.stopPropagation()}
+                            />
+                          </Tooltip>
+                        ) : null}
                       </Flex>
                     ) : null}
                   </Flex>
@@ -186,7 +230,12 @@ export const ProductsListPage = observer(() => {
         </Flex>
       );
     },
-    [showInventoryQuantity, t],
+    [
+      handleOpenVariantInventory,
+      showInventoryManagement,
+      showInventoryQuantity,
+      t,
+    ],
   );
 
   return (
@@ -253,6 +302,8 @@ export const ProductsListPage = observer(() => {
                 onDelete={handleDeleteProduct}
                 deleteLoadingId={productsStore.deleteLoadingId}
                 showInventoryQuantity={showInventoryQuantity}
+                showInventoryManagement={showInventoryManagement}
+                onOpenInventory={handleOpenInventoryDrawer}
               />
             )}
             <ProductsTablePagination
@@ -272,6 +323,8 @@ export const ProductsListPage = observer(() => {
         <ProductInventoryDrawer
           open={showInventoryManagement && inventoryDrawerProduct != null}
           product={inventoryDrawerProduct}
+          targetVariantId={inventoryDrawerSelection?.targetVariantId ?? null}
+          targetVariantFocusId={inventoryDrawerSelection?.focusId ?? 0}
           onClose={handleCloseInventoryDrawer}
           onOpenProduct={handleOpenProduct}
         />

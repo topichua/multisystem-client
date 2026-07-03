@@ -2,7 +2,12 @@ import { PlusIcon } from "@phosphor-icons/react";
 import { Badge, Button, Card, Flex, Tag, Typography, theme } from "antd";
 import { useTranslation } from "react-i18next";
 
-import type { InventoryMovementsResponse } from "@/features/inventory/model/inventory.types";
+import type {
+  InitialStockValues,
+  InventoryMovementsResponse,
+  StockCorrectionValues,
+  StockPurchaseValues,
+} from "@/features/inventory/model/inventory.types";
 import type {
   ProductInventoryVariant,
   ProductVariant,
@@ -28,8 +33,15 @@ type ProductInventoryVariantCardProps = {
   movements: InventoryMovementsResponse | null;
   movementsLoading: boolean;
   movementsError: string | null;
+  initialStockSubmitting: boolean;
+  initialStockError: string | null;
+  stockMovementSubmitting: boolean;
+  stockMovementError: string | null;
   onToggleExpanded: () => void;
   onRetryMovements: () => void;
+  onCreateInitialStock: (values: InitialStockValues) => Promise<void>;
+  onCreateStockPurchase: (values: StockPurchaseValues) => Promise<void>;
+  onCreateStockCorrection: (values: StockCorrectionValues) => Promise<void>;
 };
 
 export const ProductInventoryVariantCard = ({
@@ -41,8 +53,15 @@ export const ProductInventoryVariantCard = ({
   movements,
   movementsLoading,
   movementsError,
+  initialStockSubmitting,
+  initialStockError,
+  stockMovementSubmitting,
+  stockMovementError,
   onToggleExpanded,
   onRetryMovements,
+  onCreateInitialStock,
+  onCreateStockPurchase,
+  onCreateStockCorrection,
 }: ProductInventoryVariantCardProps) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -61,13 +80,13 @@ export const ProductInventoryVariantCard = ({
     <Card
       size="small"
       style={{
-        background: expanded ? token.colorBgContainer : token.colorBgElevated,
+        background: expanded ? token.colorBgContainer : 'rgb(242, 242, 242)',
         borderColor: expanded ? token.colorPrimary : token.colorBorderSecondary,
-        transition: "background 0.2s ease, border-color 0.2s ease",
+        transition: 'background 0.2s ease, border-color 0.2s ease',
       }}
       styles={{
         body: {
-          background: "transparent",
+          background: 'transparent',
         },
       }}
     >
@@ -82,12 +101,12 @@ export const ProductInventoryVariantCard = ({
 
           <Flex align="center" gap={12} style={{ flexShrink: 0 }}>
             <Flex align="center" gap={6}>
-              <Badge status={quantity > 0 ? "success" : "error"} />
-              <Text type={quantity === 0 ? "danger" : undefined} strong>
+              <Badge status={quantity > 0 ? 'success' : 'error'} />
+              <Text type={quantity === 0 ? 'danger' : undefined} strong>
                 {formatNumber(quantity)}
               </Text>
-              <Text type={quantity === 0 ? "danger" : undefined} strong>
-                {t("products.inventoryDrawer.unit")}
+              <Text type={quantity === 0 ? 'danger' : undefined} strong>
+                {t('products.inventoryDrawer.unit')}
               </Text>
             </Flex>
 
@@ -95,8 +114,8 @@ export const ProductInventoryVariantCard = ({
               icon={<PlusIcon size={16} />}
               aria-label={t(
                 expanded
-                  ? "products.inventoryDrawer.collapseHistoryAria"
-                  : "products.inventoryDrawer.expandHistoryAria",
+                  ? 'products.inventoryDrawer.collapseHistoryAria'
+                  : 'products.inventoryDrawer.expandHistoryAria',
               )}
               style={{
                 background: expanded
@@ -104,9 +123,9 @@ export const ProductInventoryVariantCard = ({
                   : token.colorBgContainer,
                 borderColor: expanded ? token.colorPrimary : undefined,
                 color: expanded ? token.colorPrimary : undefined,
-                transform: expanded ? "rotate(45deg)" : undefined,
+                transform: expanded ? 'rotate(45deg)' : undefined,
                 transition:
-                  "background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease",
+                  'background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease',
               }}
               onClick={onToggleExpanded}
             />
@@ -115,22 +134,22 @@ export const ProductInventoryVariantCard = ({
 
         <Flex gap={8} wrap="wrap">
           <Tag>
-            <Text type="secondary">{t("products.inventoryDrawer.price")}</Text>{" "}
+            <Text type="secondary">{t('products.inventoryDrawer.price')}</Text>{' '}
             <Text strong>{formatProductPrice(price, currency)}</Text>
           </Tag>
           <Tag>
             <Text type="secondary">
-              {t("products.inventoryDrawer.purchasePrice")}
-            </Text>{" "}
+              {t('products.inventoryDrawer.purchasePrice')}
+            </Text>{' '}
             <Text>
               {purchasePrice == null
-                ? "—"
+                ? '—'
                 : formatProductPrice(purchasePrice, currency)}
             </Text>
           </Tag>
           {marginPercent != null && (
-            <Tag color={marginPercent >= 0 ? "success" : "error"}>
-              {marginPercent > 0 ? "+" : ""}
+            <Tag color={marginPercent >= 0 ? 'success' : 'error'}>
+              {marginPercent > 0 ? '+' : ''}
               {marginPercent}%
             </Tag>
           )}
@@ -138,12 +157,23 @@ export const ProductInventoryVariantCard = ({
 
         <ProductInventoryMovementsHistory
           expanded={expanded}
+          variantId={variant.variantId}
+          variantName={variantName}
           movements={movements}
           movementsLoading={movementsLoading}
           movementsError={movementsError}
           quantity={quantity}
           currency={currency}
+          canInitializeStock={variant.stockInitialized === false}
+          canCreateStockMovement={variant.stockInitialized === true}
+          initialStockSubmitting={initialStockSubmitting}
+          initialStockError={initialStockError}
+          stockMovementSubmitting={stockMovementSubmitting}
+          stockMovementError={stockMovementError}
           onRetryMovements={onRetryMovements}
+          onCreateInitialStock={onCreateInitialStock}
+          onCreateStockPurchase={onCreateStockPurchase}
+          onCreateStockCorrection={onCreateStockCorrection}
         />
       </Flex>
     </Card>

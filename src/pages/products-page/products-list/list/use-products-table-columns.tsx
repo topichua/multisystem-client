@@ -1,21 +1,20 @@
 import {
   CaretRightIcon,
   CubeIcon,
-  DotsThreeIcon,
   PencilSimpleIcon,
   TrashIcon,
-} from "@phosphor-icons/react";
+} from '@phosphor-icons/react';
 import type { TableColumnsType } from "antd";
-import { Button, Dropdown, Flex, Modal, Typography, theme } from "antd";
-import { Tag } from "@/components/tag/tag";
+import { Button, Flex, Modal, Tooltip, Typography, theme } from "antd";
+// import { Tag } from "@/components/tag/tag";
 import { useMemo, type Key } from "react";
 import { useTranslation } from "react-i18next";
 
 import type { Product } from "@/features/products/model/product.types";
 import {
-  formatProductPrice,
-  productStatusToColor,
-} from "@/features/products/utils/product-display";
+  getProductPriceRange,
+  // productStatusToColor,
+} from '@/features/products/utils/product-display';
 
 const { Text } = Typography;
 
@@ -48,8 +47,8 @@ export const useProductsTableColumns = ({
   return useMemo(
     () => [
       {
-        title: t("products.table.product"),
-        key: "product",
+        title: t('products.table.product'),
+        key: 'product',
         width: 360,
         render: (_, product) => {
           const variantsCount = product.variants?.length ?? 0;
@@ -65,16 +64,16 @@ export const useProductsTableColumns = ({
                   size="small"
                   aria-label={
                     isExpanded
-                      ? t("products.table.collapseRowAria")
-                      : t("products.table.expandRowAria")
+                      ? t('products.table.collapseRowAria')
+                      : t('products.table.expandRowAria')
                   }
                   aria-expanded={isExpanded}
                   icon={
                     <CaretRightIcon
                       size={16}
                       style={{
-                        transform: isExpanded ? "rotate(90deg)" : undefined,
-                        transition: "transform 0.2s ease",
+                        transform: isExpanded ? 'rotate(90deg)' : undefined,
+                        transition: 'transform 0.2s ease',
                       }}
                     />
                   }
@@ -92,10 +91,12 @@ export const useProductsTableColumns = ({
                   <img
                     src={product.mainImageUrl}
                     alt={product.name}
-                    width={48}
-                    height={48}
+                    width={44}
+                    height={44}
                     style={{
-                      objectFit: "cover",
+                      width: 44,
+                      height: 44,
+                      objectFit: 'cover',
                       borderRadius: 8,
                       backgroundColor: token.colorFillAlter,
                       flexShrink: 0,
@@ -105,8 +106,8 @@ export const useProductsTableColumns = ({
                   <div
                     aria-hidden
                     style={{
-                      width: 48,
-                      height: 48,
+                      width: 50,
+                      height: 50,
                       borderRadius: 8,
                       backgroundColor: token.colorFillAlter,
                       flexShrink: 0,
@@ -119,7 +120,7 @@ export const useProductsTableColumns = ({
                   </Text>
                   {hasVariants && (
                     <Text italic type="secondary" ellipsis>
-                      {t("products.table.variantsCount", {
+                      {t('products.table.variantsCount', {
                         count: variantsCount,
                       })}
                     </Text>
@@ -131,36 +132,34 @@ export const useProductsTableColumns = ({
         },
       },
       {
-        title: t("products.table.category"),
-        dataIndex: "categoryId",
-        key: "categoryId",
+        title: t('products.table.category'),
+        dataIndex: 'categoryId',
+        key: 'categoryId',
         width: 100,
-        render: (categoryId: Product["categoryId"]) =>
+        render: (categoryId: Product['categoryId']) =>
           categoryId != null
             ? (categoryNameById.get(categoryId) ?? `#${categoryId}`)
-            : t("products.noCategory"),
+            : t('products.noCategory'),
       },
       {
-        title: t("products.table.price"),
-        key: "price",
-        width: 100,
+        title: t('products.table.price'),
+        key: 'price',
+        width: 140,
         render: (_, product) =>
-          product.price != null
-            ? formatProductPrice(product.price, product.currency)
-            : t("products.noPrice"),
+          getProductPriceRange(product) ?? t('products.noPrice'),
       },
       ...(showInventoryQuantity
         ? [
             {
-              title: t("products.table.stock"),
-              key: "stock",
+              title: t('products.table.stock'),
+              key: 'stock',
               width: 100,
               render: (_: unknown, product: Product) => {
                 if (product.inStock === false) {
-                  return t("products.outOfStock");
+                  return t('products.outOfStock');
                 }
                 if (product.quantity == null) {
-                  return t("products.unknownQuantity");
+                  return t('products.unknownQuantity');
                 }
 
                 return product.quantity;
@@ -168,83 +167,66 @@ export const useProductsTableColumns = ({
             },
           ]
         : []),
+      // {
+      //   title: t("products.table.status"),
+      //   dataIndex: "status",
+      //   key: "status",
+      //   width: 100,
+      //   render: (status: string) => (
+      //     <Tag color={productStatusToColor(status)}>{status}</Tag>
+      //   ),
+      // },
       {
-        title: t("products.table.status"),
-        dataIndex: "status",
-        key: "status",
-        width: 100,
-        render: (status: string) => (
-          <Tag color={productStatusToColor(status)}>{status}</Tag>
-        ),
-      },
-      {
-        title: t("products.table.actions"),
-        key: "actions",
-        width: 50,
+        title: t('products.table.actions'),
+        key: 'actions',
+        width: 120,
         render: (_, product) => (
-          <div
+          <Flex
+            align="center"
+            gap={4}
             onClick={(e) => e.stopPropagation()}
             onMouseDown={(e) => e.stopPropagation()}
             onPointerDown={(e) => e.stopPropagation()}
           >
-            <Dropdown
-              trigger={["click"]}
-              menu={{
-                items: [
-                  ...(showInventoryManagement
-                    ? [
-                        {
-                          key: "inventory",
-                          label: t("system.inventory.title"),
-                          icon: <CubeIcon size={16} />,
-                        },
-                      ]
-                    : []),
-                  {
-                    key: "edit",
-                    label: t("products.edit"),
-                    icon: <PencilSimpleIcon size={16} />,
-                  },
-                  {
-                    key: "delete",
-                    label: t("products.delete"),
-                    danger: true,
-                    disabled: deleteLoadingId === product.id,
-                    icon: <TrashIcon size={16} />,
-                  },
-                ],
-                onClick: ({ key, domEvent }) => {
-                  domEvent.stopPropagation();
-                  if (key === "inventory") {
-                    onOpenInventory(product);
-                    return;
-                  }
-                  if (key === "edit") {
-                    void onEdit(product.id);
-                    return;
-                  }
-                  if (key === "delete") {
-                    Modal.confirm({
-                      title: t("products.deleteConfirm"),
-                      okText: t("products.delete"),
-                      okType: "danger",
-                      onOk: () => onDelete(product.id),
-                    });
-                  }
-                },
-              }}
-            >
+            {showInventoryManagement ? (
+              <Tooltip title={t('system.inventory.title')}>
+                <Button
+                  type="text"
+                  size="small"
+                  icon={<CubeIcon size={16} />}
+                  aria-label={t('system.inventory.title')}
+                  onClick={() => onOpenInventory(product)}
+                />
+              </Tooltip>
+            ) : null}
+            <Tooltip title={t('products.edit')}>
               <Button
                 type="text"
                 size="small"
-                loading={deleteLoadingId === product.id}
-                icon={<DotsThreeIcon size={25} />}
-                aria-label={t("products.table.actions")}
-                onClick={(e) => e.stopPropagation()}
-                onMouseDown={(e) => e.stopPropagation()}
+                icon={<PencilSimpleIcon size={16} />}
+                aria-label={t('products.edit')}
+                onClick={() => void onEdit(product.id)}
               />
-            </Dropdown>
-          </div>
+            </Tooltip>
+            <Tooltip title={t('products.delete')}>
+              <Button
+                type="text"
+                size="small"
+                danger
+                loading={deleteLoadingId === product.id}
+                icon={<TrashIcon size={16} />}
+                aria-label={t('products.delete')}
+                onClick={() => {
+                  Modal.confirm({
+                    title: t('products.deleteConfirm'),
+                    okText: t('products.delete'),
+                    okType: 'danger',
+                    onOk: () => onDelete(product.id),
+                  });
+                }}
+              />
+            </Tooltip>
+          </Flex>
         ),
       },
     ],

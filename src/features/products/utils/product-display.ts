@@ -100,22 +100,29 @@ export const formatProductPrice = (
 export const getProductPriceRange = (
   product: ProductPriceSource,
 ): string | null => {
-  const variantPrices = (product.variants ?? [])
-    .map((variant) => variant.price)
-    .filter((price): price is number => typeof price === "number");
+  const hasVariants = (product.variants?.length ?? 0) > 0;
 
-  if (variantPrices.length === 0) {
-    return product.price != null
-      ? formatProductPrice(product.price, product.currency)
-      : null;
+  if (hasVariants) {
+    const variantPrices = (product.variants ?? [])
+      .map((variant) => variant.price)
+      .filter((price): price is number => typeof price === 'number');
+
+    if (variantPrices.length === 0) {
+      return null;
+    }
+
+    const minPrice = Math.min(...variantPrices);
+    const maxPrice = Math.max(...variantPrices);
+    const currency = product.currency ?? '';
+
+    if (minPrice === maxPrice) {
+      return formatProductPrice(minPrice, product.currency);
+    }
+
+    return `${minPrice.toLocaleString()} - ${maxPrice.toLocaleString()} ${currency}`.trim();
   }
 
-  const minPrice = Math.min(...variantPrices);
-  const maxPrice = Math.max(...variantPrices);
-
-  if (minPrice === maxPrice) {
-    return formatProductPrice(minPrice, product.currency);
-  }
-
-  return `${formatProductPrice(minPrice, product.currency)} - ${formatProductPrice(maxPrice, product.currency)}`;
+  return product.price != null
+    ? formatProductPrice(product.price, product.currency)
+    : null;
 };

@@ -86,6 +86,8 @@ export type ProductInventoryVariant = {
   stockQty: number;
   stockCostTotal: number;
   averagePurchasePrice: number | null;
+  stockInitialized?: boolean;
+  requiresInitialization?: boolean;
 };
 
 export type ProductInventoryResponse = {

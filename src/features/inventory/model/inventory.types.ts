@@ -1,4 +1,5 @@
 export const INVENTORY_MOVEMENTS_DEFAULT_LIMIT = 20;
+export const INVENTORY_MOVEMENTS_PREVIEW_LIMIT = 3;
 
 export type InventoryMovementType =
   | "initial_stock"
@@ -31,6 +32,15 @@ export type InventoryMovement = {
   createdAt: string;
 };
 
+export type InventoryStock = {
+  variantId: number;
+  quantity: number;
+  avgPurchasePrice: number | null;
+  totalCost: number;
+  stockInitialized: boolean;
+  requiresInitialization: boolean;
+};
+
 export type InventoryMovementsResponse = {
   items: InventoryMovement[];
   total: number;
@@ -40,3 +50,44 @@ export type InventoryVariantMovementsQuery = {
   variantId: number;
   limit?: number;
 };
+
+export type CreateInitialStockRequest = {
+  variantId: number;
+  quantity: number;
+  purchasePrice: number;
+  comment: string;
+};
+
+export type InitialStockValues = Omit<CreateInitialStockRequest, "variantId">;
+
+export type CreateStockMovementResponse = {
+  movement: InventoryMovement;
+  stock: InventoryStock;
+};
+
+export type CreateInitialStockResponse = CreateStockMovementResponse;
+
+export type CreateStockPurchaseRequest = {
+  variantId: number;
+  quantity: number;
+  purchasePrice: number;
+  comment: string;
+};
+
+export type StockPurchaseValues = Omit<CreateStockPurchaseRequest, "variantId">;
+
+export type CreateStockPurchaseResponse = CreateStockMovementResponse;
+
+export type CreateStockCorrectionRequest = {
+  variantId: number;
+  quantityChange: number;
+  reason: string;
+  comment: string;
+};
+
+export type StockCorrectionValues = Omit<
+  CreateStockCorrectionRequest,
+  "variantId"
+>;
+
+export type CreateStockCorrectionResponse = CreateStockMovementResponse;

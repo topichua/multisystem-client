@@ -10,6 +10,37 @@ export type MovementWithQuantityTransition = {
   quantityAfter: number;
 };
 
+const PLACEHOLDER_MOVEMENT_TYPES = new Set<InventoryMovement["type"]>([
+  "simple_adjustment",
+]);
+
+export function isPlaceholderInventoryMovement(
+  movement: InventoryMovement,
+): boolean {
+  return PLACEHOLDER_MOVEMENT_TYPES.has(movement.type);
+}
+
+export function getDisplayableInventoryMovements(
+  movements: InventoryMovement[],
+): InventoryMovement[] {
+  return movements.filter(
+    (movement) => !isPlaceholderInventoryMovement(movement),
+  );
+}
+
+export function getDisplayableInventoryMovementsTotal(
+  movements: InventoryMovement[],
+  total?: number | null,
+): number {
+  const placeholderCount = movements.filter(isPlaceholderInventoryMovement).length;
+
+  if (total == null) {
+    return getDisplayableInventoryMovements(movements).length;
+  }
+
+  return Math.max(0, total - placeholderCount);
+}
+
 export function getMovementTitle(type: string, t: TFunction): string {
   const key = `products.inventoryDrawer.movementTypes.${type}`;
   const translated = t(key);

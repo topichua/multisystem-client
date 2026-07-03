@@ -1,6 +1,6 @@
 import type { MouseEvent } from "react";
 
-import { PencilSimpleIcon, TrashIcon } from "@phosphor-icons/react";
+import { CubeIcon, PencilSimpleIcon, TrashIcon } from "@phosphor-icons/react";
 import {
   Button,
   Card,
@@ -10,6 +10,7 @@ import {
   Popconfirm,
   Row,
   Spin,
+  Tooltip,
   Typography,
   theme,
 } from "antd";
@@ -33,6 +34,8 @@ type ProductsListGridProps = {
   onDelete: (productId: number) => Promise<void>;
   deleteLoadingId: number | null;
   showInventoryQuantity: boolean;
+  showInventoryManagement: boolean;
+  onOpenInventory: (product: Product) => void;
 };
 
 export const ProductsListGrid = ({
@@ -44,6 +47,8 @@ export const ProductsListGrid = ({
   onDelete,
   deleteLoadingId,
   showInventoryQuantity,
+  showInventoryManagement,
+  onOpenInventory,
 }: ProductsListGridProps) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -137,6 +142,17 @@ export const ProductsListGrid = ({
                     align="center"
                     onClick={(e) => e.stopPropagation()}
                   >
+                    {showInventoryManagement ? (
+                      <Tooltip title={t("system.inventory.title")}>
+                        <Button
+                          type="text"
+                          size="small"
+                          icon={<CubeIcon size={18} />}
+                          aria-label={t("system.inventory.title")}
+                          onClick={() => onOpenInventory(product)}
+                        />
+                      </Tooltip>
+                    ) : null}
                     <Button
                       type="text"
                       size="small"

@@ -1,6 +1,12 @@
 import { apiClient } from "@/api/api-client";
 
 import {
+  type CreateInitialStockRequest,
+  type CreateInitialStockResponse,
+  type CreateStockCorrectionRequest,
+  type CreateStockCorrectionResponse,
+  type CreateStockPurchaseRequest,
+  type CreateStockPurchaseResponse,
   INVENTORY_MOVEMENTS_DEFAULT_LIMIT,
   type InventoryMovementsResponse,
   type InventoryVariantMovementsQuery,
@@ -37,5 +43,38 @@ export const inventoryApi = {
     );
 
     return normalizeInventoryMovements(data);
+  },
+
+  createInitialStock: async (
+    payload: CreateInitialStockRequest,
+  ): Promise<CreateInitialStockResponse> => {
+    const { data } = await apiClient.post<CreateInitialStockResponse>(
+      `${basePath}/stock/initial`,
+      payload,
+    );
+
+    return data;
+  },
+
+  createStockPurchase: async (
+    payload: CreateStockPurchaseRequest,
+  ): Promise<CreateStockPurchaseResponse> => {
+    const { data } = await apiClient.post<CreateStockPurchaseResponse>(
+      `${basePath}/stock/purchase`,
+      payload,
+    );
+
+    return data;
+  },
+
+  createStockCorrection: async (
+    payload: CreateStockCorrectionRequest,
+  ): Promise<CreateStockCorrectionResponse> => {
+    const { data } = await apiClient.post<CreateStockCorrectionResponse>(
+      `${basePath}/stock/correction`,
+      payload,
+    );
+
+    return data;
   },
 };

@@ -215,6 +215,16 @@ export const ExpandButton = styled(Button)`
   }
 `;
 
+export const CardActionsRow = styled(Flex)`
+  && {
+    width: 100%;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid
+      ${({ theme }) => theme.colors.functional.border.split};
+  }
+`;
+
 export const VariantsSection = styled.div`
   min-width: 0;
   margin-top: 12px;
@@ -263,10 +273,6 @@ export const VariantDetails = styled(Typography.Text)`
     line-height: 1.4;
     overflow-wrap: anywhere;
   }
-`;
-
-export const ActionsWrap = styled.div`
-  flex: 0 0 auto;
 `;
 
 export const StateContainer = styled.div`

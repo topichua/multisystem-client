@@ -52,7 +52,7 @@ export const Header = observer(
         </Text>
 
         {username && (
-          <Text type="secondary" ellipsis style={{ fontSize: 13 }}>
+          <Text type="secondary" ellipsis>
             {username}
           </Text>
         )}
