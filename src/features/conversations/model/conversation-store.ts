@@ -28,6 +28,10 @@ import type {
   MessagesPaging,
   SendMessagePayload,
 } from "./types";
+import {
+  resolveSelfAccountIdForMessage,
+  type ConversationSelfIds,
+} from "@/features/conversations/utils/conversation-message-ownership";
 
 const normalizeListGroupFilterIds = (ids: number[]): number[] =>
   [...new Set(ids)]
@@ -139,6 +143,7 @@ export class ConversationStore {
   _messagesRequestSeq = 0;
 
   selfInstagramAccountId: string | null = null;
+  selfTelegramAccountId: string | null = null;
 
   constructor() {
     makeAutoObservable(this, {
@@ -155,6 +160,17 @@ export class ConversationStore {
   setSelfInstagramAccountId = (instagramAccountId: string | null): void => {
     this.selfInstagramAccountId = instagramAccountId;
   };
+
+  setSelfTelegramAccountId = (telegramAccountId: string | null): void => {
+    this.selfTelegramAccountId = telegramAccountId;
+  };
+
+  private get conversationSelfIds(): ConversationSelfIds {
+    return {
+      instagram: this.selfInstagramAccountId,
+      telegram: this.selfTelegramAccountId,
+    };
+  }
 
   snapshotMessageListMutationGeneration = (conversationId: string): number => {
     return this._messageListMutationGeneration.get(conversationId) ?? 0;
@@ -628,10 +644,22 @@ export class ConversationStore {
     const normalized = normalizeInstagramMessage(dto);
     const existing = this.messagesByConversationId[conversationId] ?? [];
     const isNew = isNewConversationMessage(existing, normalized.id);
+    const conversation = this.conversations.find(
+      (item) => String(item.id) === conversationId,
+    );
+    const selfAccountId = resolveSelfAccountIdForMessage(
+      normalized,
+      this.conversationSelfIds,
+      conversation?.participant.id,
+    );
     const isFromParticipant =
-      this.selfInstagramAccountId != null &&
-      normalized.from?.id != null &&
-      String(normalized.from.id) !== String(this.selfInstagramAccountId);
+      conversation?.channel === "telegram" &&
+      conversation.participant.id != null &&
+      normalized.from?.id != null
+        ? String(normalized.from.id) === String(conversation.participant.id)
+        : selfAccountId != null &&
+          normalized.from?.id != null &&
+          String(normalized.from.id) !== selfAccountId;
 
     this.messagesByConversationId = {
       ...this.messagesByConversationId,

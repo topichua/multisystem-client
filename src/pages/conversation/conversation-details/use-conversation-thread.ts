@@ -9,6 +9,8 @@ import {
 import { useConversationsSocketStore } from "@/features/conversations/model/use-conversations-socket-store";
 import { useConversationsStore } from "@/features/conversations/model/use-conversations-store";
 
+import type { ConversationOwnershipContext } from "@/features/conversations/utils/conversation-message-ownership";
+
 import {
   chronologicalConversationMessages,
   EMPTY_MESSAGES,
@@ -18,7 +20,7 @@ import {
 
 export const useConversationThread = (
   conversationId: string | undefined,
-  selfInstagramId: string | number | null,
+  ownershipContext: ConversationOwnershipContext,
 ) => {
   const {
     loadConversationMessages,
@@ -48,8 +50,12 @@ export const useConversationThread = (
   );
 
   const lastOwnMessageIndex = useMemo(
-    () => findLastOwnMessageIndex(chronologicalMessages, selfInstagramId),
-    [chronologicalMessages, selfInstagramId],
+    () =>
+      findLastOwnMessageIndex(chronologicalMessages, {
+        ...ownershipContext,
+        messages: chronologicalMessages,
+      }),
+    [chronologicalMessages, ownershipContext],
   );
 
   const scrollToBottomAnchor = useMemo(

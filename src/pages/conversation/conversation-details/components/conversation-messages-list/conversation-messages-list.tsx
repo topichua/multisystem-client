@@ -5,6 +5,7 @@ import type {
   ConversationChannel,
   ConversationMessage,
 } from "@/features/conversations/model/types";
+import type { ConversationOwnershipContext } from "@/features/conversations/utils/conversation-message-ownership";
 
 import * as S from "../../conversation-details.styled";
 import type { ReplyComposeTarget } from "../../reply-compose-target";
@@ -17,7 +18,8 @@ import {
 type ConversationMessagesListProps = {
   chronologicalMessages: ConversationMessage[];
   channel?: ConversationChannel;
-  selfInstagramId: string | number | null;
+  selfIds: ConversationOwnershipContext["selfIds"];
+  participantId?: string | number | null;
   loadingOlderMessages: boolean;
   lastOwnMessageIndex: number;
   onResend: (clientTempId: string) => void;
@@ -28,7 +30,8 @@ type ConversationMessagesListProps = {
 export const ConversationMessagesList = memo(function ConversationMessagesList({
   chronologicalMessages,
   channel,
-  selfInstagramId,
+  selfIds,
+  participantId,
   loadingOlderMessages,
   lastOwnMessageIndex,
   onResend,
@@ -66,7 +69,9 @@ export const ConversationMessagesList = memo(function ConversationMessagesList({
               message={message}
               channel={channel}
               index={index}
-              selfInstagramId={selfInstagramId}
+              selfIds={selfIds}
+              participantId={participantId}
+              chronologicalMessages={chronologicalMessages}
               showReadReceipt={
                 index === lastOwnMessageIndex &&
                 message.read_at != null &&

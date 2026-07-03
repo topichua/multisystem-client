@@ -14,6 +14,13 @@ import type {
 } from "@/features/clients/model/client.types";
 import { useConversationsStore } from "@/features/conversations/model/use-conversations-store";
 import type { SendMessagePayload } from "@/features/conversations/model/types";
+import {
+  resolveSelfAccountId,
+  resolveTelegramSelfAccountId,
+  type ConversationOwnershipContext,
+  type ConversationSelfIds,
+} from "@/features/conversations/utils/conversation-message-ownership";
+import { useIntegrationsStore } from "@/features/integrations/model/use-integrations-store";
 import { useIsMobileViewport } from "@/utils/use-media-query";
 
 import * as S from "./conversation-details.styled";
@@ -51,20 +58,7 @@ export const ConversationDetails = observer(() => {
     useConversationsStore();
 
   const { company } = useUserStore();
-
-  const sentBy = useMemo(
-    () =>
-      company?.instagramAccountId != null
-        ? { id: company.instagramAccountId, name: company.name }
-        : undefined,
-    [company],
-  );
-
-  const selfInstagramId = company?.instagramAccountId ?? null;
-
-  const thread = useConversationThread(conversationId, selfInstagramId);
-
-  const canSend = Boolean(draft.trim());
+  const integrationsStore = useIntegrationsStore();
 
   const activeConversation = useMemo(
     () =>
@@ -73,6 +67,82 @@ export const ConversationDetails = observer(() => {
         : undefined,
     [conversations, conversationId],
   );
+
+  const integrationTelegramAccountId = useMemo(() => {
+    const telegramIntegration = integrationsStore.items.find(
+      (item) => item.type === "telegram",
+    );
+
+    return telegramIntegration?.businessAccountId ?? null;
+  }, [integrationsStore.items]);
+
+  const participantId = activeConversation?.participant.id ?? null;
+
+  const selfIds = useMemo(
+    (): ConversationSelfIds => ({
+      instagram: company?.instagramAccountId ?? null,
+      telegram: integrationTelegramAccountId,
+    }),
+    [company?.instagramAccountId, integrationTelegramAccountId],
+  );
+
+  const ownershipContext = useMemo(
+    (): ConversationOwnershipContext => ({
+      channel: activeConversation?.channel,
+      selfIds,
+      participantId,
+    }),
+    [activeConversation?.channel, participantId, selfIds],
+  );
+
+  const thread = useConversationThread(conversationId, ownershipContext);
+
+  const resolvedSelfIds = useMemo(
+    (): ConversationSelfIds => ({
+      instagram: selfIds.instagram,
+      telegram: resolveTelegramSelfAccountId(
+        thread.chronologicalMessages,
+        selfIds.telegram,
+        participantId,
+      ),
+    }),
+    [participantId, selfIds, thread.chronologicalMessages],
+  );
+
+  const sentBy = useMemo(() => {
+    if (!company) {
+      return undefined;
+    }
+
+    if (activeConversation?.channel === "telegram") {
+      const telegramAccountId = resolveSelfAccountId({
+        channel: "telegram",
+        selfIds,
+        participantId,
+        messages: thread.chronologicalMessages,
+      });
+
+      if (telegramAccountId != null) {
+        return { id: telegramAccountId, name: company.name };
+      }
+
+      return undefined;
+    }
+
+    if (company.instagramAccountId != null) {
+      return { id: String(company.instagramAccountId), name: company.name };
+    }
+
+    return undefined;
+  }, [
+    activeConversation?.channel,
+    company,
+    participantId,
+    selfIds,
+    thread.chronologicalMessages,
+  ]);
+
+  const canSend = Boolean(draft.trim());
 
   const participantInstagramId =
     activeConversation?.participant.id != null
@@ -144,6 +214,10 @@ export const ConversationDetails = observer(() => {
     },
     [thread.messagesScrollRef],
   );
+
+  useEffect(() => {
+    void integrationsStore.loadIntegrations({ silent: true });
+  }, [integrationsStore]);
 
   useEffect(() => {
     setReplyTarget(null);
@@ -255,7 +329,8 @@ export const ConversationDetails = observer(() => {
             <ConversationMessagesList
               chronologicalMessages={thread.chronologicalMessages}
               channel={activeConversation?.channel}
-              selfInstagramId={selfInstagramId}
+              selfIds={resolvedSelfIds}
+              participantId={participantId}
               loadingOlderMessages={thread.loadingOlderMessages}
               lastOwnMessageIndex={thread.lastOwnMessageIndex}
               onResend={handleResend}

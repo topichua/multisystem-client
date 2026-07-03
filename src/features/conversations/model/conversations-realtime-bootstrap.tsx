@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useAuth } from "@/features/auth/model/use-auth";
 import { tokenStorage } from "@/features/auth/model/token-storage";
 import { useUserStore } from "@/features/auth/model/use-user-store";
+import { useIntegrationsStore } from "@/features/integrations/model/use-integrations-store";
 import { installMessageNotificationAudioUnlock } from "@/features/conversations/realtime/play-new-message-notification";
 
 import type { ConversationStore } from "./conversation-store";
@@ -19,12 +20,34 @@ export const ConversationsRealtimeBootstrap = ({
 }: ConversationsRealtimeBootstrapProps) => {
   const { isAuthenticated, logout } = useAuth();
   const { company } = useUserStore();
+  const integrationsStore = useIntegrationsStore();
 
   useEffect(() => {
     conversationStore.setSelfInstagramAccountId(
       company?.instagramAccountId ?? null,
     );
   }, [company?.instagramAccountId, conversationStore]);
+
+  useEffect(() => {
+    const telegramIntegration = integrationsStore.items.find(
+      (item) => item.type === "telegram",
+    );
+    const telegramAccountId =
+      telegramIntegration?.businessAccountId != null &&
+      String(telegramIntegration.businessAccountId).trim() !== ""
+        ? String(telegramIntegration.businessAccountId)
+        : null;
+
+    conversationStore.setSelfTelegramAccountId(telegramAccountId);
+  }, [conversationStore, integrationsStore.items]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      return;
+    }
+
+    void integrationsStore.loadIntegrations({ silent: true });
+  }, [integrationsStore, isAuthenticated]);
 
   useEffect(() => {
     if (!isAuthenticated) {

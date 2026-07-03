@@ -9,6 +9,8 @@ import type {
   ConversationChannel,
   ConversationMessage,
 } from "@/features/conversations/model/types";
+import type { ConversationOwnershipContext } from "@/features/conversations/utils/conversation-message-ownership";
+import { isOwnConversationMessage } from "@/features/conversations/utils/conversation-message-ownership";
 import type { ReplyComposeTarget } from "../../reply-compose-target";
 import { MessageAttachments } from "../message-attachments/message-attachments";
 import {
@@ -30,7 +32,9 @@ type MessageItemProps = {
   message: ConversationMessage;
   channel?: ConversationChannel;
   index: number;
-  selfInstagramId: string | number | null;
+  selfIds: ConversationOwnershipContext["selfIds"];
+  participantId?: string | number | null;
+  chronologicalMessages: ConversationMessage[];
   showReadReceipt?: boolean;
   onResend: (clientTempId: string) => void;
   onScrollToMessage: (messageId: string) => void;
@@ -42,7 +46,9 @@ export const MessageItem = memo(
     message,
     channel,
     index,
-    selfInstagramId,
+    selfIds,
+    participantId,
+    chronologicalMessages,
     showReadReceipt = false,
     onResend,
     onScrollToMessage,
@@ -58,11 +64,12 @@ export const MessageItem = memo(
 
     const actionsVisible = rowHovered || menuOpen;
 
-    const fromId = message.from?.id ?? null;
-    const isOwn =
-      selfInstagramId != null &&
-      fromId != null &&
-      String(fromId) === String(selfInstagramId);
+    const isOwn = isOwnConversationMessage(message, {
+      channel,
+      selfIds,
+      participantId,
+      messages: chronologicalMessages,
+    });
 
     const pendingOutbound = message.outboundStatus === "pending";
     const failedOutbound = message.outboundStatus === "failed";
