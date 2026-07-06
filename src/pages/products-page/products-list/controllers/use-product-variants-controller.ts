@@ -190,7 +190,7 @@ export function useProductVariantsController({
       base: {
         price: Number(watchedPrice ?? 0),
         quantity: Number(watchedQuantity ?? 0),
-        status: watchedStatus ?? "draft",
+        status: watchedStatus ?? "active",
       },
       previousVariants,
     });
@@ -328,7 +328,7 @@ export function useProductVariantsController({
     const manualVariant = createManualVariant({
       price: Number(watchedPrice ?? 0),
       quantity: Number(watchedQuantity ?? 0),
-      status: watchedStatus ?? "draft",
+      status: watchedStatus ?? "active",
       selectedCharacteristics: normalizeSelectedCharacteristics(
         watchedCharacteristics,
         variantCustomFields,

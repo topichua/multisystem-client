@@ -57,7 +57,6 @@ export const EditorShell = styled.div`
   border: 1px solid ${({ theme }) => theme.colors.functional.border.cardBase};
   border-radius: ${({ theme }) => theme.radius.semiLarge};
   background: ${({ theme }) => theme.colors.functional.background.elevated};
-
   @media (max-width: 767px) {
     padding: 8px;
 

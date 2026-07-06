@@ -3,9 +3,7 @@ import { observer } from "mobx-react-lite";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
-import {
-  INVENTORY_MOVEMENTS_DEFAULT_LIMIT,
-} from "@/features/inventory/model/inventory.types";
+import { INVENTORY_MOVEMENTS_DEFAULT_LIMIT } from "@/features/inventory/model/inventory.types";
 import { useInventoryStore } from "@/features/inventory/model/use-inventory-store";
 import { useWorkspaceMembersStore } from "@/features/workspace-members/model/use-workspace-members-store";
 import { getWorkspaceMemberName } from "@/features/workspace-members/utils/workspace-member-display";
@@ -48,7 +46,8 @@ export const ProductInventoryMovementsFullHistoryDrawer = observer(
     const inventoryStore = useInventoryStore();
     const workspaceMembersStore = useWorkspaceMembersStore();
     const movements = inventoryStore.getVariantMovements(variantId);
-    const movementsLoading = inventoryStore.isVariantMovementsLoading(variantId);
+    const movementsLoading =
+      inventoryStore.isVariantMovementsLoading(variantId);
     const movementsError = inventoryStore.getVariantMovementsError(variantId);
     const movementItems = movements?.items;
     const displayableMovements = useMemo(

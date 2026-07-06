@@ -80,13 +80,13 @@ export const ProductInventoryVariantCard = ({
     <Card
       size="small"
       style={{
-        background: expanded ? token.colorBgContainer : 'rgb(242, 242, 242)',
+        background: expanded ? token.colorBgContainer : "rgb(242, 242, 242)",
         borderColor: expanded ? token.colorPrimary : token.colorBorderSecondary,
-        transition: 'background 0.2s ease, border-color 0.2s ease',
+        transition: "background 0.2s ease, border-color 0.2s ease",
       }}
       styles={{
         body: {
-          background: 'transparent',
+          background: "transparent",
         },
       }}
     >
@@ -101,12 +101,12 @@ export const ProductInventoryVariantCard = ({
 
           <Flex align="center" gap={12} style={{ flexShrink: 0 }}>
             <Flex align="center" gap={6}>
-              <Badge status={quantity > 0 ? 'success' : 'error'} />
-              <Text type={quantity === 0 ? 'danger' : undefined} strong>
+              <Badge status={quantity > 0 ? "success" : "error"} />
+              <Text type={quantity === 0 ? "danger" : undefined} strong>
                 {formatNumber(quantity)}
               </Text>
-              <Text type={quantity === 0 ? 'danger' : undefined} strong>
-                {t('products.inventoryDrawer.unit')}
+              <Text type={quantity === 0 ? "danger" : undefined} strong>
+                {t("products.inventoryDrawer.unit")}
               </Text>
             </Flex>
 
@@ -114,8 +114,8 @@ export const ProductInventoryVariantCard = ({
               icon={<PlusIcon size={16} />}
               aria-label={t(
                 expanded
-                  ? 'products.inventoryDrawer.collapseHistoryAria'
-                  : 'products.inventoryDrawer.expandHistoryAria',
+                  ? "products.inventoryDrawer.collapseHistoryAria"
+                  : "products.inventoryDrawer.expandHistoryAria",
               )}
               style={{
                 background: expanded
@@ -123,9 +123,9 @@ export const ProductInventoryVariantCard = ({
                   : token.colorBgContainer,
                 borderColor: expanded ? token.colorPrimary : undefined,
                 color: expanded ? token.colorPrimary : undefined,
-                transform: expanded ? 'rotate(45deg)' : undefined,
+                transform: expanded ? "rotate(45deg)" : undefined,
                 transition:
-                  'background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease',
+                  "background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease",
               }}
               onClick={onToggleExpanded}
             />
@@ -134,22 +134,22 @@ export const ProductInventoryVariantCard = ({
 
         <Flex gap={8} wrap="wrap">
           <Tag>
-            <Text type="secondary">{t('products.inventoryDrawer.price')}</Text>{' '}
+            <Text type="secondary">{t("products.inventoryDrawer.price")}</Text>{" "}
             <Text strong>{formatProductPrice(price, currency)}</Text>
           </Tag>
           <Tag>
             <Text type="secondary">
-              {t('products.inventoryDrawer.purchasePrice')}
-            </Text>{' '}
+              {t("products.inventoryDrawer.purchasePrice")}
+            </Text>{" "}
             <Text>
               {purchasePrice == null
-                ? '—'
+                ? "—"
                 : formatProductPrice(purchasePrice, currency)}
             </Text>
           </Tag>
           {marginPercent != null && (
-            <Tag color={marginPercent >= 0 ? 'success' : 'error'}>
-              {marginPercent > 0 ? '+' : ''}
+            <Tag color={marginPercent >= 0 ? "success" : "error"}>
+              {marginPercent > 0 ? "+" : ""}
               {marginPercent}%
             </Tag>
           )}

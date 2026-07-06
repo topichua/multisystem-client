@@ -5,6 +5,8 @@ import {
   createOptimisticOutboundMessage,
   mergeLatestMessagesPageWithSendResult,
   normalizeSentMessage,
+  type ConversationListCounters,
+  type ListConversationsParams,
 } from "@/features/conversations/api/conversations-api";
 
 import { normalizeInstagramMessage } from "@/features/conversations/realtime/normalize-instagram-message";
@@ -32,6 +34,19 @@ import {
   resolveSelfAccountIdForMessage,
   type ConversationSelfIds,
 } from "@/features/conversations/utils/conversation-message-ownership";
+
+export type ConversationListSegment = "all" | "unread" | "withoutResponsible";
+
+export type ConversationListFilters = {
+  channelIds?: number[];
+  responsibleUserIds?: number[];
+};
+
+const EMPTY_LIST_COUNTERS: ConversationListCounters = {
+  total: 0,
+  unread: 0,
+  withoutResponsible: 0,
+};
 
 const normalizeListGroupFilterIds = (ids: number[]): number[] =>
   [...new Set(ids)]
@@ -127,6 +142,11 @@ function replaceOptimisticMessageWithConfirmed(
 export class ConversationStore {
   conversations: Conversation[] = [];
   conversationListGroupFilterIds: number[] = [];
+  conversationListSegment: ConversationListSegment = "all";
+  conversationListKeyword = "";
+  conversationListChannelIds: number[] = [];
+  conversationListResponsibleUserIds: number[] = [];
+  listCounters: ConversationListCounters = EMPTY_LIST_COUNTERS;
   messagesByConversationId: Record<string, ConversationMessage[]> = {};
   messagesPagingByConversationId: Record<string, MessagesPaging | undefined> =
     {};
@@ -155,6 +175,13 @@ export class ConversationStore {
 
   get sortedConversations(): Conversation[] {
     return sortConversationsByInstUpdatedAt(this.conversations);
+  }
+
+  get hasConversationListFilters(): boolean {
+    return (
+      this.conversationListChannelIds.length > 0 ||
+      this.conversationListResponsibleUserIds.length > 0
+    );
   }
 
   setSelfInstagramAccountId = (instagramAccountId: string | null): void => {
@@ -230,23 +257,129 @@ export class ConversationStore {
     void this.loadConversations();
   };
 
+  setConversationListSegment = (segment: ConversationListSegment): void => {
+    if (this.conversationListSegment === segment) {
+      return;
+    }
+
+    runInAction(() => {
+      this.conversationListSegment = segment;
+    });
+
+    void this.loadConversations();
+  };
+
+  setConversationListKeyword = (keyword: string): void => {
+    const normalized = keyword.trim();
+
+    if (this.conversationListKeyword === normalized) {
+      return;
+    }
+
+    runInAction(() => {
+      this.conversationListKeyword = normalized;
+    });
+
+    void this.loadConversations();
+  };
+
+  setConversationListChannelIds = (ids: number[]): void => {
+    const normalized = normalizeListGroupFilterIds(ids);
+
+    if (sameSortedNumberList(this.conversationListChannelIds, normalized)) {
+      return;
+    }
+
+    runInAction(() => {
+      this.conversationListChannelIds = normalized;
+    });
+
+    void this.loadConversations();
+  };
+
+  setConversationListResponsibleUserIds = (ids: number[]): void => {
+    const normalized = normalizeListGroupFilterIds(ids);
+
+    if (
+      sameSortedNumberList(this.conversationListResponsibleUserIds, normalized)
+    ) {
+      return;
+    }
+
+    runInAction(() => {
+      this.conversationListResponsibleUserIds = normalized;
+    });
+
+    void this.loadConversations();
+  };
+
+  applyConversationListFilters = (filters: ConversationListFilters): void => {
+    const channelIds = normalizeListGroupFilterIds(filters.channelIds ?? []);
+    const responsibleUserIds = normalizeListGroupFilterIds(
+      filters.responsibleUserIds ?? [],
+    );
+
+    if (
+      sameSortedNumberList(this.conversationListChannelIds, channelIds) &&
+      sameSortedNumberList(
+        this.conversationListResponsibleUserIds,
+        responsibleUserIds,
+      )
+    ) {
+      return;
+    }
+
+    runInAction(() => {
+      this.conversationListChannelIds = channelIds;
+      this.conversationListResponsibleUserIds = responsibleUserIds;
+    });
+
+    void this.loadConversations();
+  };
+
+  private buildListParams = (): ListConversationsParams | undefined => {
+    const params: ListConversationsParams = {};
+
+    if (this.conversationListGroupFilterIds.length > 0) {
+      params.groupIds = this.conversationListGroupFilterIds;
+    }
+
+    if (this.conversationListChannelIds.length > 0) {
+      params.channelIds = this.conversationListChannelIds;
+    }
+
+    if (this.conversationListResponsibleUserIds.length > 0) {
+      params.responsibleUserIds = this.conversationListResponsibleUserIds;
+    }
+
+    if (this.conversationListKeyword) {
+      params.keyword = this.conversationListKeyword;
+    }
+
+    if (this.conversationListSegment === "unread") {
+      params.unreadOnly = true;
+    }
+
+    if (this.conversationListSegment === "withoutResponsible") {
+      params.showWithoutResponsibleOnly = true;
+    }
+
+    return Object.keys(params).length > 0 ? params : undefined;
+  };
+
   loadConversations = async (): Promise<void> => {
     runInAction(() => {
       this.listLoading = true;
       this.listError = null;
     });
 
-    const groupIdsParam =
-      this.conversationListGroupFilterIds.length > 0
-        ? this.conversationListGroupFilterIds
-        : undefined;
-
     try {
-      const data = await conversationsApi.list(
-        groupIdsParam != null ? { groupIds: groupIdsParam } : undefined,
+      const { conversations, counters } = await conversationsApi.list(
+        this.buildListParams(),
       );
       runInAction(() => {
-        this.conversations = sortConversationsByInstUpdatedAt(data);
+        this.conversations = sortConversationsByInstUpdatedAt(conversations);
+        this.listCounters = counters;
       });
     } catch (e) {
       runInAction(() => {

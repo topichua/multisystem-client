@@ -39,15 +39,22 @@ export function useNovaPoshtaEditSenders({
     const abortController = new AbortController();
     const integrationId = details.id;
 
-    setLoading(true);
-    setError(null);
+    const loadSenders = async () => {
+      await Promise.resolve();
 
-    void integrationsApi
-      .discoverNovaPoshtaSenders(
-        { auth: { novaPoshtaIntegrationId: integrationId } },
-        { signal: abortController.signal },
-      )
-      .then((senders) => {
+      if (abortController.signal.aborted) {
+        return;
+      }
+
+      setLoading(true);
+      setError(null);
+
+      try {
+        const senders = await integrationsApi.discoverNovaPoshtaSenders(
+          { auth: { novaPoshtaIntegrationId: integrationId } },
+          { signal: abortController.signal },
+        );
+
         if (abortController.signal.aborted) {
           return;
         }
@@ -58,8 +65,7 @@ export function useNovaPoshtaEditSenders({
             sendersToOptions(senders),
           ),
         );
-      })
-      .catch((requestError) => {
+      } catch (requestError) {
         if (abortController.signal.aborted) {
           return;
         }
@@ -73,12 +79,14 @@ export function useNovaPoshtaEditSenders({
             t("integrations.novaPoshtaWizard.discoverFailed"),
           ),
         );
-      })
-      .finally(() => {
+      } finally {
         if (!abortController.signal.aborted) {
           setLoading(false);
         }
-      });
+      }
+    };
+
+    void loadSenders();
 
     return () => {
       abortController.abort();

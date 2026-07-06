@@ -46,6 +46,7 @@ export type ProductFormProps = {
   categoryOptions: Array<{ value: number; label: string }>;
   requiredMessage: string;
   showMainQuantityField: boolean;
+  showStatusField?: boolean;
   labels: {
     name: string;
     category: string;
@@ -93,6 +94,7 @@ export const ProductForm = ({
   categoryOptions,
   requiredMessage,
   showMainQuantityField,
+  showStatusField = true,
   labels,
   singleCharacteristicsProps,
   mediaProps,
@@ -161,6 +163,7 @@ export const ProductForm = ({
         categoryOptions={categoryOptions}
         requiredMessage={requiredMessage}
         showQuantityField={showMainQuantityField}
+        showStatusField={showStatusField}
         labels={labels}
         isMobile={isMobileViewport}
       />

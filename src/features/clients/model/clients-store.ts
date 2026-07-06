@@ -5,14 +5,26 @@ import { clientsApi } from "@/features/clients/api/clients-api";
 import type {
   Client,
   ClientCreatePayload,
+  ClientLookupResponse,
+  ClientsListQueryParams,
+  ClientsLookupParams,
   ClientUpdatePayload,
 } from "@/features/clients/model/client.types";
 import { unknownErrorMessage } from "@/utils/unknown-error-message";
 import { throwLoadError } from "@/utils/throw-load-error";
 
+export type ClientsListLoadOptions = Pick<
+  ClientsListQueryParams,
+  "page" | "pageSize" | "include_order_stat"
+>;
+
 export class ClientsStore {
   clients: Client[] = [];
   activeClient: Client | null = null;
+
+  listTotal = 0;
+  listPage = 1;
+  listPageSize = 50;
 
   listLoading = false;
   listError: string | null = null;
@@ -24,7 +36,9 @@ export class ClientsStore {
     makeAutoObservable(this);
   }
 
-  loadClients = async (options?: { silent?: boolean }): Promise<void> => {
+  loadClients = async (
+    options?: ClientsListLoadOptions & { silent?: boolean },
+  ): Promise<void> => {
     const silent = options?.silent === true;
 
     if (!silent) {
@@ -35,9 +49,17 @@ export class ClientsStore {
     }
 
     try {
-      const items = await clientsApi.list();
+      const response = await clientsApi.listClients({
+        page: options?.page ?? this.listPage,
+        pageSize: options?.pageSize ?? this.listPageSize,
+        include_order_stat: options?.include_order_stat ?? true,
+      });
+
       runInAction(() => {
-        this.clients = items;
+        this.clients = response.items;
+        this.listTotal = response.total;
+        this.listPage = response.page;
+        this.listPageSize = response.pageSize;
       });
     } catch (e) {
       runInAction(() => {
@@ -52,6 +74,10 @@ export class ClientsStore {
       }
     }
   };
+
+  lookupClient = async (
+    params: ClientsLookupParams,
+  ): Promise<ClientLookupResponse> => clientsApi.lookupClient(params);
 
   createClient = async (payload: ClientCreatePayload): Promise<void> => {
     runInAction(() => {

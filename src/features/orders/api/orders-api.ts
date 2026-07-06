@@ -98,9 +98,17 @@ export type OrdersListQueryParams = {
   sources?: string[];
 };
 
+export type ClientOrdersQueryParams = Omit<OrdersListQueryParams, "clientId">;
+
+type BuildOrdersListSearchParamsOptions = {
+  includeClientId?: boolean;
+};
+
 function buildOrdersListSearchParams(
   params: OrdersListQueryParams,
+  options: BuildOrdersListSearchParamsOptions = {},
 ): URLSearchParams {
+  const includeClientId = options.includeClientId !== false;
   const sp = new URLSearchParams();
   sp.set("page", String(params.page ?? 1));
   sp.set("pageSize", String(params.pageSize ?? 50));
@@ -109,7 +117,7 @@ function buildOrdersListSearchParams(
     sp.set("statusId", String(params.statusId));
   }
 
-  if (params.clientId != null) {
+  if (includeClientId && params.clientId != null) {
     sp.set("clientId", String(params.clientId));
   }
 
@@ -166,23 +174,24 @@ export const ordersApi = {
     return data;
   },
 
-  listByClient: async (
+  getClientOrders: async (
     clientId: number,
-    params?: Pick<OrdersListQueryParams, "page" | "pageSize">,
+    params: ClientOrdersQueryParams = {},
   ): Promise<OrdersListResponse> => {
     const { data } = await apiClient.get<unknown>(
       `/clients/${clientId}/orders`,
       {
-        params: buildOrdersListSearchParams({
-          page: params?.page,
-          pageSize: params?.pageSize,
-          clientId: clientId,
+        params: buildOrdersListSearchParams(params, {
+          includeClientId: false,
         }),
       },
     );
 
     return normalizeOrdersList(data);
   },
+
+  getClientOrderStats: async (clientId: number): Promise<ClientOrderStats> =>
+    ordersApi.getClientStats(clientId),
 
   getClientStats: async (clientId: number): Promise<ClientOrderStats> => {
     const { data } = await apiClient.get<unknown>(

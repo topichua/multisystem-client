@@ -25,14 +25,12 @@ export const resolveTelegramSelfAccountId = (
   integrationAccountId?: string | number | null,
   participantId?: string | number | null,
 ): string | null => {
-  const participantKey =
-    participantId != null ? String(participantId) : null;
+  const participantKey = participantId != null ? String(participantId) : null;
 
   if (
     integrationAccountId != null &&
     String(integrationAccountId).trim() &&
-    (participantKey == null ||
-      String(integrationAccountId) !== participantKey)
+    (participantKey == null || String(integrationAccountId) !== participantKey)
   ) {
     return String(integrationAccountId);
   }

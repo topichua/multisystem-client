@@ -1,26 +1,28 @@
-import { Avatar, Button, Flex, Form, Input, Typography } from "antd";
+import { Avatar, Button, Col, Flex, Form, Input, Row, Typography } from "antd";
 import { observer } from "mobx-react-lite";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router";
 
+import { getClientDetailsPath } from "@/app/router/pages-map";
 import { getApiErrorMessage } from "@/api/get-api-error-message";
 import { ClientPhoneFormInput } from "@/components/client-phone-form-input";
 import { CenteredSpinner } from "@/components/loading/centered-spinner";
 import type {
   Client,
-  ClientInstagramAssociationResponse,
+  ClientLookupResponse,
 } from "@/features/clients/model/client.types";
 import { useClientsStore } from "@/features/clients/model/use-clients-store";
-import { useOrdersStore } from "@/features/orders/model/use-orders-store";
 import type { Conversation } from "@/features/conversations/model/types";
+import { useNotification } from "@/shared/components/notification/use-notification";
 import { phoneFieldRules } from "@/utils/phone-input";
 
-import { ClientOrderDrawer } from "./__components/client-order-drawers";
 import { ClientOrdersInfoBlock } from "./__components/client-order-info-block";
 import { ClientOrdersSummary } from "./__components/client-order-summary";
 import { ClientOrdersList } from "./__components/client-orders-list";
+import { useConversationClientDetails } from "./hooks/use-conversation-client-details";
 import * as S from "./conversation-client-info-panel.styled";
-import { useNotification } from "@/shared/components/notification/use-notification";
+import { ArrowLineUpRightIcon } from "@phosphor-icons/react";
 
 const { Text } = Typography;
 
@@ -28,7 +30,6 @@ type ClientFormValues = {
   first_name: string;
   last_name: string;
   phone: string;
-  delivery_info?: string;
 };
 
 function participantAvatarInitials(
@@ -63,44 +64,49 @@ function splitParticipantName(name: string): { first: string; last: string } {
 
 type ConversationClientInfoPanelProps = {
   conversation: Conversation | undefined;
-  instagramAssociation: ClientInstagramAssociationResponse | undefined;
+  clientLookup: ClientLookupResponse | undefined;
   linkedClient: Client | undefined;
-  linkedClientLoading: boolean;
+  clientLookupLoading: boolean;
+  clientInfoOpen: boolean;
   onClientCreated: (client: Client) => void;
 };
 
 export const ConversationClientInfoPanel = observer(
   ({
     conversation,
-    instagramAssociation,
+    clientLookup,
     linkedClient,
-    linkedClientLoading,
+    clientLookupLoading,
+    clientInfoOpen,
     onClientCreated,
   }: ConversationClientInfoPanelProps) => {
     const { t } = useTranslation();
+    const navigate = useNavigate();
     const notification = useNotification();
     const clientsStore = useClientsStore();
-    const ordersStore = useOrdersStore();
     const [form] = Form.useForm<ClientFormValues>();
-    const [showCreateForm, setShowCreateForm] = useState(false);
-    const [createOrderDrawerOpen, setCreateOrderDrawerOpen] = useState(false);
 
-    const showCreateOrderDrawer = () => {
-      setCreateOrderDrawerOpen(true);
-    };
+    const shouldLoadClientDetails =
+      clientInfoOpen &&
+      linkedClient != null &&
+      clientLookup?.associated === true;
 
-    const closeCreateOrderDrawer = () => {
-      setCreateOrderDrawerOpen(false);
-    };
+    const { client: loadedClient, loading: clientDetailsLoading } =
+      useConversationClientDetails(linkedClient?.id, shouldLoadClientDetails);
 
-    useEffect(() => {
-      setShowCreateForm(false);
-      form.resetFields();
-    }, [conversation?.id, form]);
+    const displayClient = loadedClient ?? linkedClient;
+
+    const handleOpenFullProfile = useCallback(() => {
+      if (displayClient == null) {
+        return;
+      }
+
+      navigate(getClientDetailsPath(displayClient.id));
+    }, [displayClient, navigate]);
 
     const initialCreateValues = useMemo((): ClientFormValues => {
       if (!conversation) {
-        return { first_name: "", last_name: "", phone: "", delivery_info: "" };
+        return { first_name: "", last_name: "", phone: "" };
       }
       const { first, last } = splitParticipantName(
         conversation.participant.name,
@@ -109,15 +115,15 @@ export const ConversationClientInfoPanel = observer(
         first_name: first,
         last_name: last,
         phone: "",
-        delivery_info: "",
       };
     }, [conversation]);
 
     useEffect(() => {
-      if (showCreateForm && conversation) {
+      form.resetFields();
+      if (conversation) {
         form.setFieldsValue(initialCreateValues);
       }
-    }, [conversation, form, initialCreateValues, showCreateForm]);
+    }, [conversation?.id, conversation, form, initialCreateValues]);
 
     const handleCreate = useCallback(async () => {
       if (!conversation) {
@@ -132,19 +138,21 @@ export const ConversationClientInfoPanel = observer(
       }
 
       try {
+        const participantId = String(conversation.participant.id);
+
         await clientsStore.createClient({
           first_name: values.first_name,
           last_name: values.last_name,
           phone: values.phone,
-          delivery_info: values.delivery_info ?? "",
-          instagramId: String(conversation.participant.id),
+          instagramUserIds:
+            conversation.channel === "instagram" ? [participantId] : [],
+          telegramUserIds:
+            conversation.channel === "telegram" ? [participantId] : [],
         });
         const created = clientsStore.activeClient;
         if (created) {
           onClientCreated(created);
         }
-        setShowCreateForm(false);
-        form.resetFields();
         notification.success({ title: t("clients.createSuccess") });
       } catch (e) {
         notification.error({
@@ -153,20 +161,18 @@ export const ConversationClientInfoPanel = observer(
       }
     }, [clientsStore, conversation, form, notification, onClientCreated, t]);
 
-    const associationPending = instagramAssociation === undefined;
-
     const phoneRules = useMemo(
       () =>
         phoneFieldRules({
-          requiredMessage: t("clients.required"),
+          required: false,
           invalidMessage: t("clients.phoneInvalid"),
         }),
       [t],
     );
 
-    const renderParticipantPhoto = (flush?: boolean, avatarSize = 80) =>
+    const renderParticipantPhoto = (avatarSize = 80) =>
       conversation ? (
-        <S.ParticipantPhoto $flush={flush}>
+        <S.ParticipantPhoto>
           <Avatar
             size={avatarSize}
             src={conversation.participant.profilePic || undefined}
@@ -185,142 +191,79 @@ export const ConversationClientInfoPanel = observer(
 
     return (
       <S.Root aria-label={t("conversation.clientPanelAria")}>
-        {instagramAssociation && !instagramAssociation.associated ? (
-          <Text type="secondary" style={{ fontSize: 12, marginBottom: 12 }}>
-            {t("conversation.clientNotLinked")}
-          </Text>
-        ) : null}
         <S.PanelScroll>
           {!conversation ? (
             <CenteredSpinner minHeight={200} />
-          ) : associationPending ? (
+          ) : clientLookupLoading ? (
             <CenteredSpinner minHeight={200} />
-          ) : instagramAssociation && !instagramAssociation.associated ? (
-            showCreateForm ? (
-              <Form
-                form={form}
-                layout="vertical"
-                initialValues={initialCreateValues}
+          ) : clientLookup && !clientLookup.associated ? (
+            <Form
+              form={form}
+              layout="vertical"
+              initialValues={initialCreateValues}
+            >
+              {renderParticipantPhoto()}
+              <Row gutter={12}>
+                <Col span={12}>
+                  <Form.Item
+                    name="first_name"
+                    label={t("clients.firstName")}
+                    rules={[{ required: true, message: t("clients.required") }]}
+                  >
+                    <Input />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item name="last_name" label={t("clients.lastName")}>
+                    <Input />
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Form.Item
+                name="phone"
+                label={t("clients.phone")}
+                rules={phoneRules}
               >
-                {renderParticipantPhoto()}
-                <Form.Item
-                  name="first_name"
-                  label={t("clients.firstName")}
-                  rules={[{ required: true, message: t("clients.required") }]}
-                >
-                  <Input />
-                </Form.Item>
-                <Form.Item
-                  name="last_name"
-                  label={t("clients.lastName")}
-                  rules={[{ required: true, message: t("clients.required") }]}
-                >
-                  <Input />
-                </Form.Item>
-                <Form.Item
-                  name="phone"
-                  label={t("clients.phone")}
-                  rules={phoneRules}
-                >
-                  <ClientPhoneFormInput
-                    autoComplete="tel"
-                    placeholder={t("clients.phonePlaceholder")}
-                  />
-                </Form.Item>
-                <Form.Item
-                  name="delivery_info"
-                  label={t("clients.deliveryInfo")}
-                >
-                  <Input.TextArea rows={3} />
-                </Form.Item>
-                <Flex vertical gap={8}>
-                  <Button
-                    type="primary"
-                    block
-                    loading={clientsStore.saveLoading}
-                    onClick={() => void handleCreate()}
-                  >
-                    {t("clients.createSubmit")}
-                  </Button>
-                  <Button
-                    block
-                    onClick={() => {
-                      form.resetFields();
-                      setShowCreateForm(false);
-                    }}
-                  >
-                    {t("conversation.backFromCreate")}
-                  </Button>
-                </Flex>
-              </Form>
-            ) : (
-              <S.EmptyCenter>
-                <Flex
-                  vertical
-                  align="center"
-                  gap={12}
-                  style={{ width: "100%", maxWidth: 300 }}
-                >
-                  {renderParticipantPhoto(true)}
-                  <Text
-                    type="secondary"
-                    style={{ textAlign: "center", lineHeight: 1.45 }}
-                    data-qa="layout-conversation-details-client-not-linked-hint"
-                  >
-                    {t("conversation.clientNotLinked")}
-                  </Text>
-                  <Button
-                    type="primary"
-                    size="large"
-                    onClick={() => setShowCreateForm(true)}
-                  >
-                    {t("conversation.addClient")}
-                  </Button>
-                </Flex>
-              </S.EmptyCenter>
-            )
-          ) : linkedClientLoading ? (
-            <CenteredSpinner minHeight={200} />
-          ) : linkedClient ? (
-            <Flex gap={24} vertical>
-              <ClientOrdersInfoBlock
-                linkedClient={linkedClient}
-                renderParticipantPhoto={renderParticipantPhoto}
-              />
-              <ClientOrdersSummary clientId={linkedClient.id} />
-              <ClientOrdersList clientId={linkedClient.id} />
-              <Button type="primary" block onClick={showCreateOrderDrawer}>
-                {t("conversation.clientOrders.createOrder")}
+                <ClientPhoneFormInput
+                  autoComplete="tel"
+                  placeholder={t("clients.phonePlaceholder")}
+                />
+              </Form.Item>
+              <Button
+                type="primary"
+                block
+                loading={clientsStore.saveLoading}
+                onClick={() => void handleCreate()}
+              >
+                {t("clients.createSubmit")}
               </Button>
-            </Flex>
+            </Form>
+          ) : displayClient && conversation ? (
+            clientDetailsLoading ? (
+              <CenteredSpinner minHeight={200} />
+            ) : (
+              <Flex gap={24} vertical>
+                <ClientOrdersInfoBlock
+                  linkedClient={displayClient}
+                  conversation={conversation}
+                />
+                <ClientOrdersSummary clientId={displayClient.id} />
+                <ClientOrdersList clientId={displayClient.id} />
+                <Button
+                  variant="outlined"
+                  block
+                  onClick={handleOpenFullProfile}
+                  icon={<ArrowLineUpRightIcon />}
+                >
+                  {t("conversation.clientProfile.fullProfile")}
+                </Button>
+              </Flex>
+            )
           ) : (
             <Text type="secondary">
               {t("conversation.clientRecordMissing")}
             </Text>
           )}
-
-          {linkedClient && conversation ? (
-            <ClientOrderDrawer
-              linkedClient={linkedClient}
-              conversationId={conversation.id}
-              onClose={closeCreateOrderDrawer}
-              onOpen={createOrderDrawerOpen}
-              clientPic={conversation.participant.profilePic ?? undefined}
-              onOrderCreated={() => {
-                void ordersStore.loadOrders({ silent: true });
-                if (ordersStore.clientStatsClientId != null) {
-                  void ordersStore.loadClientStats(
-                    ordersStore.clientStatsClientId,
-                  );
-                }
-                if (ordersStore.clientOrdersClientId != null) {
-                  void ordersStore.loadClientOrders(
-                    ordersStore.clientOrdersClientId,
-                  );
-                }
-              }}
-            />
-          ) : null}
         </S.PanelScroll>
       </S.Root>
     );

@@ -45,6 +45,7 @@ export type ProductAddPageControllerReturn = {
   categoryOptions: Array<{ value: number; label: string }>;
   requiredMessage: string;
   showMainQuantityField: boolean;
+  showStatusField: boolean;
   labels: {
     name: string;
     category: string;
@@ -236,6 +237,7 @@ export const useProductAddPageController =
       requiredMessage,
       showMainQuantityField:
         isSimpleInventoryMode && variantsController.productType === "single",
+      showStatusField: isEditMode,
       labels: {
         name: t("products.form.name"),
         category: t("products.form.category"),

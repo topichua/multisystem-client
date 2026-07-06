@@ -572,7 +572,7 @@ export class OrdersStore {
     });
 
     try {
-      const response = await ordersApi.listByClient(clientId, {
+      const response = await ordersApi.getClientOrders(clientId, {
         page: 1,
         pageSize: defaultPageSize,
       });

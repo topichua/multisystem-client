@@ -49,12 +49,6 @@ export function ClientOrderClientCard({
             </Text>
             {linkedClient.phone || "-"}
           </Text>
-          <Text>
-            <Text type="secondary">
-              {t("conversation.clientOrders.drawer.labelDelivery")}{" "}
-            </Text>
-            {linkedClient.deliveryInfo || "-"}
-          </Text>
         </Flex>
       </Flex>
     </Card>

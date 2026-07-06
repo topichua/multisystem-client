@@ -1,22 +1,23 @@
 import {
-  BookmarkSimpleIcon,
   CaretDoubleLeftIcon,
   CaretDoubleRightIcon,
-  FunnelIcon,
+  EnvelopeSimpleIcon,
+  UserPlusIcon,
 } from "@phosphor-icons/react";
-import { Button, Flex, Input, Segmented, Spin, Typography } from "antd";
+import { Flex, Input, Segmented, Spin, Typography } from "antd";
 import { observer } from "mobx-react-lite";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router";
 
 import { pagesMap } from "@/app/router/pages-map";
 import { useEnsureConversationGroupsLoaded } from "@/features/conversation-groups/model/use-ensure-conversation-groups-loaded";
-import type { Conversation as ConversationModel } from "@/features/conversations/model/types";
+import type { ConversationListSegment } from "@/features/conversations/model/conversation-store";
 import { useConversationsStore } from "@/features/conversations/model/use-conversations-store";
 import { useEnsureWorkspaceMembersLoaded } from "@/features/workspace-members/model/use-ensure-workspace-members-loaded";
 
 import { ConversationRowSkeleton } from "./components/conversation-row-skeleton";
+import { ConversationFiltersPopover } from "./conversation-filters-popover";
 import type { ConversationPanelProps } from "./conversation-panel.types";
 import { ConversationRow } from "./conversation-row";
 import * as S from "./conversation.styled";
@@ -26,30 +27,7 @@ const { Title } = Typography;
 
 const SKELETON_ROW_KEYS = [0, 1, 2, 3, 4] as const;
 
-type ConversationListSegment = "all" | "unread";
-
-const normalizeSearchValue = (value: string): string =>
-  value.trim().toLocaleLowerCase();
-
-const conversationMatchesSearch = (
-  conversation: ConversationModel,
-  normalizedQuery: string,
-): boolean => {
-  if (!normalizedQuery) {
-    return true;
-  }
-
-  const username = conversation.participant.username ?? "";
-  const searchableValues = [
-    conversation.participant.name,
-    username,
-    username ? `@${username}` : "",
-  ];
-
-  return searchableValues.some((value) =>
-    value.toLocaleLowerCase().includes(normalizedQuery),
-  );
-};
+const SEARCH_DEBOUNCE_MS = 400;
 
 export const Conversation = observer(
   ({
@@ -66,36 +44,30 @@ export const Conversation = observer(
     useEnsureConversationGroupsLoaded();
     useEnsureWorkspaceMembersLoaded();
 
-    const { loadConversations, sortedConversations, listLoading } =
-      useConversationsStore();
+    const {
+      loadConversations,
+      sortedConversations,
+      listLoading,
+      listCounters,
+      conversationListSegment,
+      setConversationListSegment,
+      setConversationListKeyword,
+    } = useConversationsStore();
     const [searchQuery, setSearchQuery] = useState("");
-    const [selectedSegment, setSelectedSegment] =
-      useState<ConversationListSegment>("all");
 
     useEffect(() => {
       void loadConversations();
     }, [loadConversations]);
 
-    const searchMatchedConversations = useMemo(() => {
-      const normalizedQuery = normalizeSearchValue(searchQuery);
+    useEffect(() => {
+      const timeoutId = window.setTimeout(() => {
+        setConversationListKeyword(searchQuery);
+      }, SEARCH_DEBOUNCE_MS);
 
-      return sortedConversations.filter((conversation) =>
-        conversationMatchesSearch(conversation, normalizedQuery),
-      );
-    }, [searchQuery, sortedConversations]);
+      return () => window.clearTimeout(timeoutId);
+    }, [searchQuery, setConversationListKeyword]);
 
-    const unreadConversations = useMemo(
-      () =>
-        searchMatchedConversations.filter(
-          (conversation) => conversation.unreadCount > 0,
-        ),
-      [searchMatchedConversations],
-    );
-
-    const visibleConversations =
-      selectedSegment === "unread"
-        ? unreadConversations
-        : searchMatchedConversations;
+    const visibleConversations = sortedConversations;
 
     const showSkeleton = listLoading && sortedConversations.length === 0;
 
@@ -104,7 +76,7 @@ export const Conversation = observer(
         label: (
           <FilterLabel
             label={t("conversations.all")}
-            count={searchMatchedConversations.length}
+            count={listCounters.total}
           />
         ),
         value: "all",
@@ -112,11 +84,22 @@ export const Conversation = observer(
       {
         label: (
           <FilterLabel
-            label={t("conversations.unread")}
-            count={unreadConversations.length}
+            ariaLabel={t("conversations.unread")}
+            icon={<EnvelopeSimpleIcon size={16} weight="regular" />}
+            count={listCounters.unread}
           />
         ),
         value: "unread",
+      },
+      {
+        label: (
+          <FilterLabel
+            ariaLabel={t("conversations.withoutResponsible")}
+            icon={<UserPlusIcon size={16} weight="regular" />}
+            count={listCounters.withoutResponsible}
+          />
+        ),
+        value: "withoutResponsible",
       },
     ];
 
@@ -141,7 +124,7 @@ export const Conversation = observer(
       <S.Conversation $variant={variant}>
         <Flex justify="space-between" gap={12}>
           <Title level={4}>{t("conversations.title")}</Title>
-          {!isMobile ? (
+          {!isMobile && (
             <S.HeaderActions>
               <S.ExpandButton
                 type="button"
@@ -151,7 +134,7 @@ export const Conversation = observer(
                 <CaretDoubleLeftIcon size={16} weight="bold" />
               </S.ExpandButton>
             </S.HeaderActions>
-          ) : null}
+          )}
         </Flex>
 
         {listHeaderSlot}
@@ -165,24 +148,22 @@ export const Conversation = observer(
             onChange={(event) => setSearchQuery(event.target.value)}
             onSearch={setSearchQuery}
           />
-          <Button variant="filled" color="default" style={{ padding: "0 8px" }}>
-            <FunnelIcon size={18} weight="regular" />
-          </Button>
+          <ConversationFiltersPopover size={isMobile ? "large" : "middle"} />
         </Flex>
 
         <Flex align="center" gap={8}>
           <Segmented
             block
-            value={selectedSegment}
+            value={conversationListSegment}
             style={{ flex: 1 }}
             options={segmentedOptions}
             onChange={(value) =>
-              setSelectedSegment(value as ConversationListSegment)
+              setConversationListSegment(value as ConversationListSegment)
             }
           />
-          <Button variant="filled" color="default" style={{ padding: "0 8px" }}>
+          {/* <Button variant="filled" color="default" style={{ padding: "0 8px" }}>
             <BookmarkSimpleIcon size={18} weight="regular" />
-          </Button>
+          </Button> */}
         </Flex>
 
         <S.ListScroll $variant={variant}>

@@ -220,8 +220,7 @@ export const CardActionsRow = styled(Flex)`
     width: 100%;
     margin-top: 12px;
     padding-top: 12px;
-    border-top: 1px solid
-      ${({ theme }) => theme.colors.functional.border.split};
+    border-top: 1px solid ${({ theme }) => theme.colors.functional.border.split};
   }
 `;
 

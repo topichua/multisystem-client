@@ -34,7 +34,7 @@ export type ProductAddFormValues = ProductCreateFormValues & {
 export const defaultCreateValues: ProductCreateFormValues = {
   name: "",
   description: "",
-  status: "draft",
+  status: "active",
   price: 0,
   quantity: 0,
   categoryId: undefined,

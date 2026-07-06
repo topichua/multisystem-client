@@ -22,19 +22,10 @@ export const PanelScroll = styled.div.attrs(() =>
   flex-direction: column;
 `;
 
-export const EmptyCenter = styled.div`
-  flex: 1;
-  min-height: 220px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-`;
-
 export const ParticipantPhoto = styled.div.attrs(() =>
   dataQaAttrs("layout-conversation-details-client-info-photo"),
-)<{ $flush?: boolean }>`
+)`
   display: flex;
   justify-content: center;
-  margin-bottom: ${({ $flush }) => ($flush ? 0 : "16px")};
+  margin-bottom: 16px;
 `;

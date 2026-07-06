@@ -105,7 +105,7 @@ export const getProductPriceRange = (
   if (hasVariants) {
     const variantPrices = (product.variants ?? [])
       .map((variant) => variant.price)
-      .filter((price): price is number => typeof price === 'number');
+      .filter((price): price is number => typeof price === "number");
 
     if (variantPrices.length === 0) {
       return null;
@@ -113,7 +113,7 @@ export const getProductPriceRange = (
 
     const minPrice = Math.min(...variantPrices);
     const maxPrice = Math.max(...variantPrices);
-    const currency = product.currency ?? '';
+    const currency = product.currency ?? "";
 
     if (minPrice === maxPrice) {
       return formatProductPrice(minPrice, product.currency);

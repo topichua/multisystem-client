@@ -67,7 +67,7 @@ export const ProductInventoryInitialStockForm = ({
         <Flex align="center" gap={8}>
           <InfoIcon size={14} color={token.colorPrimary} />
           <Text type="secondary">
-            {t('products.inventoryDrawer.initialStock.hint')}
+            {t("products.inventoryDrawer.initialStock.hint")}
           </Text>
         </Flex>
 
@@ -75,19 +75,19 @@ export const ProductInventoryInitialStockForm = ({
 
         <div
           style={{
-            display: 'grid',
+            display: "grid",
             gap: 12,
-            gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+            gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
           }}
         >
           <Form.Item
             name="quantity"
-            label={t('products.inventoryDrawer.initialStock.quantityLabel')}
+            label={t("products.inventoryDrawer.initialStock.quantityLabel")}
             rules={[
               {
                 required: true,
                 message: t(
-                  'products.inventoryDrawer.initialStock.quantityRequired',
+                  "products.inventoryDrawer.initialStock.quantityRequired",
                 ),
               },
             ]}
@@ -98,23 +98,23 @@ export const ProductInventoryInitialStockForm = ({
               min={0}
               precision={0}
               placeholder={t(
-                'products.inventoryDrawer.initialStock.quantityPlaceholder',
+                "products.inventoryDrawer.initialStock.quantityPlaceholder",
               )}
-              style={{ width: '100%' }}
+              style={{ width: "100%" }}
             />
           </Form.Item>
 
           <Form.Item
             name="purchasePrice"
             label={t(
-              'products.inventoryDrawer.initialStock.purchasePriceLabel',
+              "products.inventoryDrawer.initialStock.purchasePriceLabel",
               { currency },
             )}
             rules={[
               {
                 required: true,
                 message: t(
-                  'products.inventoryDrawer.initialStock.purchasePriceRequired',
+                  "products.inventoryDrawer.initialStock.purchasePriceRequired",
                 ),
               },
             ]}
@@ -125,16 +125,16 @@ export const ProductInventoryInitialStockForm = ({
               min={0}
               precision={2}
               placeholder={t(
-                'products.inventoryDrawer.initialStock.purchasePricePlaceholder',
+                "products.inventoryDrawer.initialStock.purchasePricePlaceholder",
               )}
-              style={{ width: '100%' }}
+              style={{ width: "100%" }}
             />
           </Form.Item>
         </div>
 
         <Flex justify="flex-end" gap={8} wrap="wrap">
           <Button disabled={submitting} onClick={onCancel}>
-            {t('products.inventoryDrawer.initialStock.cancel')}
+            {t("products.inventoryDrawer.initialStock.cancel")}
           </Button>
           <Button
             type="primary"
@@ -142,7 +142,7 @@ export const ProductInventoryInitialStockForm = ({
             icon={<CheckIcon />}
             loading={submitting}
           >
-            {t('products.inventoryDrawer.initialStock.submit')}
+            {t("products.inventoryDrawer.initialStock.submit")}
           </Button>
         </Flex>
       </Flex>

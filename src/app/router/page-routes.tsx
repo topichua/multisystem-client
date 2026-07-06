@@ -27,6 +27,7 @@ import { ProductCharacteristicDetailRoute } from "@/pages/products-page/products
 import { ProductAddPage } from "@/pages/products-page/products-list/pages/product-add-page";
 import { ProductsListRoute } from "@/pages/products-page/products-list/list/products-list-route";
 import { ClientsIndexRoute } from "@/pages/clients-page/clients-index-route";
+import { ClientDetailRoute } from "@/pages/clients-page/client-details/client-detail-route";
 import { ClientsListRoute } from "@/pages/clients-page/clients-list/clients-list-route";
 import { ClientsPage } from "@/pages/clients-page/clients-page";
 import { OrdersIndexRoute } from "@/pages/orders-page/orders-index-route";
@@ -155,6 +156,7 @@ export const PageRoutes = () => {
             <Route index element={<ClientsIndexRoute />} />
             <Route element={<ClientsPage />}>
               <Route path="clients" element={<ClientsListRoute />} />
+              <Route path=":clientId" element={<ClientDetailRoute />} />
             </Route>
           </Route>
           <Route path="team">

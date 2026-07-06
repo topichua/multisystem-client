@@ -1,7 +1,7 @@
 import { CheckIcon } from "@phosphor-icons/react";
 import { Alert, Button, Drawer, Empty, Flex, Spin, Typography } from "antd";
 import { observer } from "mobx-react-lite";
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { getApiErrorMessage } from "@/api/get-api-error-message";
@@ -46,7 +46,7 @@ type ProductInventoryDrawerLoadState = {
 };
 
 function getInventoryVariantKey(productId: number | null, variantId: number) {
-  return `${productId ?? 'product'}:${variantId}`;
+  return `${productId ?? "product"}:${variantId}`;
 }
 
 function applyInventoryStock(
@@ -162,7 +162,7 @@ export const ProductInventoryDrawer = observer(
             productDetails: null,
             error: getApiErrorMessage(
               nextError,
-              t('products.inventoryDrawer.loadError'),
+              t("products.inventoryDrawer.loadError"),
             ),
             loading: false,
           });
@@ -185,8 +185,8 @@ export const ProductInventoryDrawer = observer(
     );
 
     const variants = inventory?.variants ?? [];
-    const productName = productDetails?.name ?? product?.name ?? '';
-    const currency = productDetails?.currency ?? product?.currency ?? '';
+    const productName = productDetails?.name ?? product?.name ?? "";
+    const currency = productDetails?.currency ?? product?.currency ?? "";
     const totalQuantity = variants.reduce(
       (total, variant) => total + getVariantQuantity(variant),
       0,
@@ -236,8 +236,8 @@ export const ProductInventoryDrawer = observer(
         variantCardElementByVariantIdRef.current
           .get(targetVariantId)
           ?.scrollIntoView({
-            behavior: 'smooth',
-            block: 'center',
+            behavior: "smooth",
+            block: "center",
           });
         handledTargetVariantFocusRef.current = focusKey;
       });
@@ -360,7 +360,7 @@ export const ProductInventoryDrawer = observer(
             variant={variant}
             detailVariant={variantsById.get(variant.variantId)}
             currency={currency}
-            fallbackName={`${t('products.variant.fallbackName')} #${variant.variantId}`}
+            fallbackName={`${t("products.variant.fallbackName")} #${variant.variantId}`}
             expanded={expandedVariantKeys.has(variantKey)}
             movements={inventoryStore.getVariantMovements(variant.variantId)}
             movementsLoading={inventoryStore.isVariantMovementsLoading(
@@ -412,10 +412,10 @@ export const ProductInventoryDrawer = observer(
         title={
           <Flex vertical gap={4}>
             <Title level={isMobileViewport ? 5 : 4} style={{ margin: 0 }}>
-              {t('products.inventoryDrawer.title')}
+              {t("products.inventoryDrawer.title")}
             </Title>
             <Text type="secondary">
-              {t('products.inventoryDrawer.totalUnits', {
+              {t("products.inventoryDrawer.totalUnits", {
                 productName,
                 count: totalQuantity,
               })}
@@ -435,10 +435,10 @@ export const ProductInventoryDrawer = observer(
                 }
               }}
             >
-              {t('products.inventoryDrawer.openProduct')}
+              {t("products.inventoryDrawer.openProduct")}
             </Button>
             <Button block type="primary" icon={<CheckIcon />} onClick={onClose}>
-              {t('products.inventoryDrawer.done')}
+              {t("products.inventoryDrawer.done")}
             </Button>
           </Flex>
         }
@@ -451,7 +451,7 @@ export const ProductInventoryDrawer = observer(
         ) : error ? (
           <Alert type="error" title={error} showIcon />
         ) : variants.length === 0 ? (
-          <Empty description={t('products.inventoryDrawer.empty')} />
+          <Empty description={t("products.inventoryDrawer.empty")} />
         ) : (
           <Flex vertical gap={10}>
             {variants.map(renderVariantCard)}

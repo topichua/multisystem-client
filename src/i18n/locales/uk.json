@@ -24,7 +24,7 @@
     "expandSiderAria": "Розгорнути меню",
     "collapseSiderAria": "Згорнути меню"
   },
-  "brand": "Multi-sale",
+  "brand": "MultiSale",
   "instagram": {
     "pageTitle": "Instagram",
     "placeholder": "Тут з'явиться керування Instagram.",
@@ -927,6 +927,7 @@
     "searchPlaceholder": "Пошук по імені або @нік",
     "all": "Усі",
     "unread": "Непрочитані",
+    "withoutResponsible": "Без відповідального",
     "filtersAria": "Фільтри розмов",
     "bookmarksAria": "Закладки розмов",
     "listViewModeAria": "Режим списку розмов",
@@ -937,6 +938,24 @@
     "markRead": "Позначити прочитаним",
     "delete": "Видалити",
     "rowActionsAria": "Дії з розмовою",
+    "filterPopover": {
+      "title": "Фільтри",
+      "channels": "Канали",
+      "responsibleUsers": "Відповідальні",
+      "dates": "Дати",
+      "allChannels": {
+        "instagram": "Усі Instagram",
+        "telegram": "Усі Telegram"
+      },
+      "firstMessageDate": "Перше повідомлення",
+      "lastMessageDate": "Останнє повідомлення",
+      "datePlaceholder": "dd.mm.yyyy",
+      "cancel": "Скасувати",
+      "apply": "Застосувати",
+      "criteriaLoadError": "Не вдалося завантажити фільтри",
+      "noChannels": "Каналів немає",
+      "noResponsibleUsers": "Відповідальних немає"
+    },
     "mobile": {
       "backToListAria": "Назад до розмов"
     }
@@ -958,6 +977,12 @@
     "addClient": "Додати клієнта",
     "backFromCreate": "Назад",
     "clientRecordMissing": "Не вдалося завантажити картку клієнта.",
+    "clientProfile": {
+      "aiAnalysis": "AI-аналіз клієнта",
+      "firstContact": "Перший контакт",
+      "lastActivity": "Остання активність",
+      "fullProfile": "Повний профіль"
+    },
     "clientOrders": {
       "delivery": "Доставка",
       "clientSince": "Клієнт з",
@@ -1620,6 +1645,19 @@
     "phone": "Телефон",
     "deliveryInfo": "Доставка",
     "tableColumnDelivery": "Доставка",
+    "searchPlaceholder": "Пошук за іменем або телефоном",
+    "table": {
+      "client": "Клієнт",
+      "contacts": "Контакти",
+      "source": "Джерело",
+      "orders": "Замовлень",
+      "totalSpent": "Сума покупок",
+      "lastOrder": "Останнє"
+    },
+    "source": {
+      "instagram": "Instagram",
+      "telegram": "Telegram"
+    },
     "tableActions": "Дії",
     "edit": "Редагувати",
     "delete": "Видалити",
@@ -1639,7 +1677,33 @@
     "deleteFailed": "Не вдалося видалити клієнта",
     "required": "Обов'язково",
     "phonePlaceholder": "+380 …",
-    "phoneInvalid": "Уведіть коректний номер телефону"
+    "phoneInvalid": "Уведіть коректний номер телефону",
+    "details": {
+      "backToClients": "До клієнтів",
+      "backToClientsAria": "Повернутися до клієнтів",
+      "invalidClientId": "Некоректний ідентифікатор клієнта",
+      "notFound": "Клієнта не знайдено",
+      "clientSince": "Клієнт з {{date}}",
+      "message": "Написати",
+      "createOrder": "Замовлення",
+      "retry": "Повторити",
+      "ordersTitle": "Замовлення",
+      "emptyOrders": "У клієнта поки немає замовлень",
+      "openOrderAria": "Відкрити замовлення №{{id}}",
+      "stats": {
+        "orders": "Замовлень",
+        "totalSpent": "Сума покупок",
+        "averageCheck": "Середній чек",
+        "lastOrder": "Останнє замовлення"
+      },
+      "ordersTable": {
+        "number": "№",
+        "date": "Дата",
+        "positions": "Позицій",
+        "total": "Сума",
+        "status": "Статус"
+      }
+    }
   },
   "categories": {
     "title": "Категорії",
@@ -1806,7 +1870,14 @@
     "emptyState": "Поки немає характеристик"
   },
   "composer": {
+    "tabsAria": "Режим введення",
+    "tabs": {
+      "messages": "Повідомлення",
+      "note": "Нотатка"
+    },
+    "createOrderDisabledTooltip": "Спочатку створіть клієнта",
     "placeholder": "Напишіть повідомлення... (Enter — надіслати, Shift+Enter — новий рядок)",
+    "notePlaceholder": "Напишіть нотатку... (Enter — надіслати, Shift+Enter — новий рядок)",
     "send": "Надіслати",
     "templates": "Шаблони",
     "aiReply": "AI-відповідь",

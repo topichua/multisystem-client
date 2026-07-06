@@ -377,7 +377,7 @@ export function normalizeCreateProductPayload({
     throw new Error(PRODUCT_CATEGORY_REQUIRED_ERROR);
   }
 
-  const productStatus = normalizeLifecycleStatus(formValues.status);
+  const productStatus = normalizeLifecycleStatus(formValues.status, "active");
   const description = formValues.description.trim() ?? "";
 
   const normalizedVariants =

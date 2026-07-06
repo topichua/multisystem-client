@@ -5,7 +5,6 @@ import { useState } from "react";
 
 import { getApiErrorMessage } from "@/api/get-api-error-message";
 import type { Client } from "@/features/clients/model/client.types";
-import { instagramUserIdToApiString } from "@/features/clients/model/client-instagram-payload";
 import { useClientsStore } from "@/features/clients/model/use-clients-store";
 import { normalizeClientPhoneForInput } from "@/utils/phone-input";
 import { useNotification } from "@/shared/components/notification/use-notification";
@@ -14,14 +13,12 @@ export type ClientFormValues = {
   first_name: string;
   last_name: string;
   phone: string;
-  delivery_info?: string;
 };
 
 export const emptyClientFormValues: ClientFormValues = {
   first_name: "",
   last_name: "",
   phone: "",
-  delivery_info: "",
 };
 
 function clientToFormValues(client: Client): ClientFormValues {
@@ -29,7 +26,6 @@ function clientToFormValues(client: Client): ClientFormValues {
     first_name: client.firstName,
     last_name: client.lastName,
     phone: normalizeClientPhoneForInput(client.phone),
-    delivery_info: client.deliveryInfo,
   };
 }
 
@@ -80,10 +76,8 @@ export function useClientsListController() {
           first_name: values.first_name,
           last_name: values.last_name,
           phone: values.phone,
-          delivery_info: values.delivery_info ?? "",
-          instagramId: instagramUserIdToApiString(
-            editingClient.instagramUserId,
-          ),
+          instagramUserIds: editingClient.instagramUserIds ?? [],
+          telegramUserIds: editingClient.telegramUserIds ?? [],
         });
         notification.success({ title: t("clients.updateSuccess") });
       } else {
@@ -91,8 +85,8 @@ export function useClientsListController() {
           first_name: values.first_name,
           last_name: values.last_name,
           phone: values.phone,
-          delivery_info: values.delivery_info ?? "",
-          instagramId: "",
+          instagramUserIds: [],
+          telegramUserIds: [],
         });
         notification.success({ title: t("clients.createSuccess") });
       }

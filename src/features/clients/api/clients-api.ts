@@ -3,72 +3,105 @@ import { apiClient } from "@/api/api-client";
 import type {
   Client,
   ClientCreatePayload,
-  ClientInstagramAssociationResponse,
+  ClientLookupResponse,
+  ClientsGetParams,
+  ClientsListQueryParams,
+  ClientsListResponse,
+  ClientsLookupParams,
   ClientUpdatePayload,
 } from "@/features/clients/model/client.types";
 
+import {
+  buildClientsGetQueryParams,
+  isClientLookupResponse,
+  isClientsLookupParams,
+  normalizeClient,
+  normalizeClientLookupResponse,
+  normalizeClientsListResponse,
+} from "./clients-api.utils";
+
 const basePath = "/clients";
 
-function normalizeClientsList(data: unknown): Client[] {
-  if (Array.isArray(data)) {
-    return data as Client[];
+async function getClients(
+  params?: ClientsListQueryParams,
+): Promise<ClientsListResponse>;
+async function getClients(
+  params: ClientsLookupParams,
+): Promise<ClientLookupResponse>;
+async function getClients(
+  params: ClientsGetParams = {},
+): Promise<ClientsListResponse | ClientLookupResponse> {
+  const queryParams = buildClientsGetQueryParams(params);
+  const { data } = await apiClient.get<unknown>(basePath, {
+    params: queryParams,
+  });
+
+  if (isClientsLookupParams(params)) {
+    return normalizeClientLookupResponse(data);
   }
 
-  if (data && typeof data === "object") {
-    const record = data as Record<string, unknown>;
-
-    if (Array.isArray(record.items)) {
-      return record.items as Client[];
-    }
-
-    if (Array.isArray(record.clients)) {
-      return record.clients as Client[];
-    }
-
-    if (record.client != null && typeof record.client === "object") {
-      return [record.client as Client];
-    }
-  }
-
-  return [];
+  return normalizeClientsListResponse(data);
 }
 
 export const clientsApi = {
-  list: async (): Promise<Client[]> => {
-    const { data } = await apiClient.get<unknown>(`${basePath}`);
+  get: getClients,
 
-    return normalizeClientsList(data);
-  },
+  listClients: async (
+    params: ClientsListQueryParams = {},
+  ): Promise<ClientsListResponse> => {
+    const result = await getClients(params);
 
-  checkInstagramAssociation: async (
-    instagramId: string,
-  ): Promise<ClientInstagramAssociationResponse> => {
-    const { data } = await apiClient.get<unknown>(basePath, {
-      params: { instagramId },
-    });
-
-    if (!data || typeof data !== "object") {
-      return { associated: false, status: "" };
+    if (isClientLookupResponse(result)) {
+      throw new Error("Unexpected lookup response for clients list request");
     }
 
-    const record = data as Record<string, unknown>;
-    const associated = Boolean(record.associated);
-    const status = typeof record.status === "string" ? record.status : "";
-    const rawClient = record.client;
-    const client =
-      rawClient != null && typeof rawClient === "object"
-        ? (rawClient as Client)
-        : undefined;
+    return result;
+  },
 
-    return client !== undefined
-      ? { associated, status, client }
-      : { associated, status };
+  lookupClient: async (
+    params: ClientsLookupParams,
+  ): Promise<ClientLookupResponse> => {
+    const result = await getClients(params);
+    return isClientLookupResponse(result)
+      ? result
+      : { associated: false, status: "" };
+  },
+
+  /** @deprecated Use listClients */
+  list: async (params?: ClientsListQueryParams): Promise<Client[]> => {
+    const response = await clientsApi.listClients({
+      include_order_stat: true,
+      ...params,
+    });
+
+    return response.items;
+  },
+
+  /** @deprecated Use lookupClient */
+  checkInstagramAssociation: async (
+    instagramId: string,
+  ): Promise<ClientLookupResponse> => clientsApi.lookupClient({ instagramId }),
+
+  getById: async (id: number): Promise<Client> => {
+    const { data } = await apiClient.get<unknown>(`${basePath}/${id}`);
+    const client = normalizeClient(data);
+
+    if (client == null) {
+      throw new Error(`Client ${id} not found`);
+    }
+
+    return client;
   },
 
   create: async (payload: ClientCreatePayload): Promise<Client> => {
-    const { data } = await apiClient.post<Client>(basePath, payload);
+    const { data } = await apiClient.post<unknown>(basePath, payload);
+    const client = normalizeClient(data);
 
-    return data;
+    if (client == null) {
+      throw new Error("Invalid client create response");
+    }
+
+    return client;
   },
 
   update: async (id: number, payload: ClientUpdatePayload): Promise<Client> => {

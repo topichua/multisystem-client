@@ -78,6 +78,7 @@ export type OrderListItem = {
   discountAmount: number;
   deliveryAmount: number;
   totalAmount: number;
+  itemsCount?: number;
   customerNote: string | null;
   internalNote: string | null;
   paidAt: string | null;

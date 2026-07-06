@@ -4,7 +4,6 @@ import type {
   Conversation,
   ConversationChannel,
   ConversationSource,
-  ConversationsListResponse,
   ConversationMessage,
   ConversationUpdatePayload,
   MessageParticipant,
@@ -15,8 +14,42 @@ import type {
 
 const basePath = "/conversations";
 
+export type ConversationListCounters = {
+  total: number;
+  unread: number;
+  withoutResponsible: number;
+};
+
+export type ListConversationsResult = {
+  conversations: Conversation[];
+  counters: ConversationListCounters;
+};
+
 export type ListConversationsParams = {
   groupIds?: number[];
+  channelIds?: number[];
+  responsibleUserIds?: number[];
+  keyword?: string;
+  unreadOnly?: boolean;
+  showWithoutResponsibleOnly?: boolean;
+};
+
+export type ConversationCriteriaChannel = {
+  integrationId: number;
+  name: string;
+  type: ConversationChannel;
+};
+
+export type ConversationCriteriaResponsibleUser = {
+  id: number;
+  name: string;
+  email: string;
+  avatar: string | null;
+};
+
+export type ConversationCriteria = {
+  channels: ConversationCriteriaChannel[];
+  responsibleUsers: ConversationCriteriaResponsibleUser[];
 };
 
 export const isSendMessageApiResponse = (
@@ -81,6 +114,65 @@ const getConversationListItems = (data: unknown): unknown[] => {
 
   const record = getRecord(data);
   return Array.isArray(record.items) ? record.items : [];
+};
+
+const getFallbackListCounters = (
+  conversations: Conversation[],
+): ConversationListCounters => ({
+  total: conversations.length,
+  unread: conversations.filter((conversation) => conversation.unreadCount > 0)
+    .length,
+  withoutResponsible: conversations.filter(
+    (conversation) => conversation.responsibleMemberId == null,
+  ).length,
+});
+
+const normalizeListCounters = (
+  data: unknown,
+  conversations: Conversation[],
+): ConversationListCounters => {
+  const counters = getRecord(getRecord(data).counters);
+  const fallback = getFallbackListCounters(conversations);
+
+  return {
+    total: getNumber(counters.total, fallback.total),
+    unread: getNumber(counters.unread, fallback.unread),
+    withoutResponsible: getNumber(
+      counters.withoutResponsible,
+      fallback.withoutResponsible,
+    ),
+  };
+};
+
+const buildListQuery = (
+  params?: ListConversationsParams,
+): Record<string, string> | undefined => {
+  const query: Record<string, string> = {};
+
+  const appendIds = (key: string, ids?: number[]): void => {
+    if (ids != null && ids.length > 0) {
+      query[key] = ids.join(",");
+    }
+  };
+
+  appendIds("groupIds", params?.groupIds);
+  appendIds("channel_ids", params?.channelIds);
+  appendIds("responsible_user_ids", params?.responsibleUserIds);
+
+  const keyword = params?.keyword?.trim();
+  if (keyword) {
+    query.keyword = keyword;
+  }
+
+  if (params?.unreadOnly) {
+    query.unread_only = "true";
+  }
+
+  if (params?.showWithoutResponsibleOnly) {
+    query.show_without_responsible_only = "true";
+  }
+
+  return Object.keys(query).length > 0 ? query : undefined;
 };
 
 const normalizeConversation = (raw: unknown): Conversation => {
@@ -165,6 +257,62 @@ const normalizeConversation = (raw: unknown): Conversation => {
   };
 };
 
+const normalizeConversationCriteriaChannel = (
+  raw: unknown,
+): ConversationCriteriaChannel | null => {
+  const record = getRecord(raw);
+  const integrationId = getOptionalNumber(record.integrationId);
+
+  if (integrationId == null) {
+    return null;
+  }
+
+  return {
+    integrationId,
+    name: getString(record.name),
+    type: isConversationChannel(record.type) ? record.type : "instagram",
+  };
+};
+
+const normalizeConversationCriteriaResponsibleUser = (
+  raw: unknown,
+): ConversationCriteriaResponsibleUser | null => {
+  const record = getRecord(raw);
+  const id = getOptionalNumber(record.id);
+
+  if (id == null) {
+    return null;
+  }
+
+  return {
+    id,
+    name: getString(record.name),
+    email: getString(record.email),
+    avatar: typeof record.avatar === "string" ? record.avatar : null,
+  };
+};
+
+const normalizeConversationCriteria = (raw: unknown): ConversationCriteria => {
+  const record = getRecord(raw);
+  const channels = Array.isArray(record.channels) ? record.channels : [];
+  const responsibleUsers = Array.isArray(record.responsibleUsers)
+    ? record.responsibleUsers
+    : [];
+
+  return {
+    channels: channels
+      .map(normalizeConversationCriteriaChannel)
+      .filter(
+        (channel): channel is ConversationCriteriaChannel => channel !== null,
+      ),
+    responsibleUsers: responsibleUsers
+      .map(normalizeConversationCriteriaResponsibleUser)
+      .filter(
+        (user): user is ConversationCriteriaResponsibleUser => user !== null,
+      ),
+  };
+};
+
 export const mergeLatestMessagesPageWithSendResult = (
   pageMessages: ConversationMessage[],
   raw: SendMessageApiResponse | ConversationMessage,
@@ -224,17 +372,27 @@ export type GetMessagesParams = {
 };
 
 export const conversationsApi = {
-  list: async (params?: ListConversationsParams) => {
-    const query =
-      params?.groupIds != null && params.groupIds.length > 0
-        ? { groupIds: params.groupIds.join(",") }
-        : undefined;
+  criteria: async (): Promise<ConversationCriteria> => {
+    const { data } = await apiClient.get<unknown>(`${basePath}/criteria`);
 
-    const { data } = await apiClient.get<ConversationsListResponse>(basePath, {
-      params: query,
+    return normalizeConversationCriteria(data);
+  },
+
+  list: async (
+    params?: ListConversationsParams,
+  ): Promise<ListConversationsResult> => {
+    const { data } = await apiClient.get<unknown>(basePath, {
+      params: buildListQuery(params),
     });
 
-    return getConversationListItems(data).map(normalizeConversation);
+    const conversations = getConversationListItems(data).map(
+      normalizeConversation,
+    );
+
+    return {
+      conversations,
+      counters: normalizeListCounters(data, conversations),
+    };
   },
 
   update: async (

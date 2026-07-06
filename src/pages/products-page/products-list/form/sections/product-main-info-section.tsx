@@ -22,6 +22,7 @@ export type ProductMainInfoSectionProps = {
     status: string;
   };
   showQuantityField: boolean;
+  showStatusField?: boolean;
   isMobile?: boolean;
 };
 
@@ -30,6 +31,7 @@ export const ProductMainInfoSection = ({
   requiredMessage,
   labels,
   showQuantityField,
+  showStatusField = true,
   isMobile = false,
 }: ProductMainInfoSectionProps) => {
   const { t } = useTranslation();
@@ -151,27 +153,33 @@ export const ProductMainInfoSection = ({
 
         <ProductDeliverySection isMobile={isMobile} />
 
-        <Flex vertical gap={16}>
-          <Title level={5} style={{ margin: 0 }}>
-            {t("products.publication.title")}
-          </Title>
+        {showStatusField ? (
+          <Flex vertical gap={16}>
+            <Title level={5} style={{ margin: 0 }}>
+              {t("products.publication.title")}
+            </Title>
 
-          <Form.Item
-            name="status"
-            label={labels.status}
-            rules={[
-              {
-                required: true,
-                message: requiredMessage,
-              },
-            ]}
-            style={{ marginBottom: 0 }}
-          >
-            <Select options={statusOptions} />
+            <Form.Item
+              name="status"
+              label={labels.status}
+              rules={[
+                {
+                  required: true,
+                  message: requiredMessage,
+                },
+              ]}
+              style={{ marginBottom: 0 }}
+            >
+              <Select options={statusOptions} />
+            </Form.Item>
+
+            <Text type="secondary">{t("products.publication.draftHint")}</Text>
+          </Flex>
+        ) : (
+          <Form.Item name="status" hidden>
+            <Input />
           </Form.Item>
-
-          <Text type="secondary">{t("products.publication.draftHint")}</Text>
-        </Flex>
+        )}
       </Flex>
     </Card>
   );

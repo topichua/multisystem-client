@@ -1,4 +1,4 @@
-import { Form, Input, Modal } from "antd";
+import { Col, Form, Input, Modal, Row } from "antd";
 import type { FormInstance } from "antd";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -32,13 +32,15 @@ export function ClientFormModal({
 }: ClientFormModalProps) {
   const { t } = useTranslation();
   const isMobileViewport = useIsMobileViewport();
+  const isEditing = editingClient != null;
   const phoneRules = useMemo(
     () =>
       phoneFieldRules({
+        required: isEditing,
         requiredMessage: t("clients.required"),
         invalidMessage: t("clients.phoneInvalid"),
       }),
-    [t],
+    [isEditing, t],
   );
 
   return (
@@ -68,32 +70,35 @@ export function ClientFormModal({
       }
     >
       <Form form={form} layout="vertical" initialValues={emptyClientFormValues}>
-        <Form.Item
-          name="first_name"
-          label={t("clients.firstName")}
-          rules={[{ required: true, message: t("clients.required") }]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          name="last_name"
-          label={t("clients.lastName")}
-          rules={[{ required: true, message: t("clients.required") }]}
-        >
-          <Input />
-        </Form.Item>
+        <Row gutter={12}>
+          <Col span={12}>
+            <Form.Item
+              name="first_name"
+              label={t("clients.firstName")}
+              rules={[{ required: true, message: t("clients.required") }]}
+            >
+              <Input />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              name="last_name"
+              label={t("clients.lastName")}
+              rules={
+                isEditing
+                  ? [{ required: true, message: t("clients.required") }]
+                  : undefined
+              }
+            >
+              <Input />
+            </Form.Item>
+          </Col>
+        </Row>
         <Form.Item name="phone" label={t("clients.phone")} rules={phoneRules}>
           <ClientPhoneFormInput
             autoComplete="tel"
             placeholder={t("clients.phonePlaceholder")}
           />
-        </Form.Item>
-        <Form.Item
-          name="delivery_info"
-          required
-          label={t("clients.deliveryInfo")}
-        >
-          <Input.TextArea rows={2} />
         </Form.Item>
       </Form>
     </Modal>

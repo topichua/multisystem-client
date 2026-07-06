@@ -32,7 +32,9 @@ export function getDisplayableInventoryMovementsTotal(
   movements: InventoryMovement[],
   total?: number | null,
 ): number {
-  const placeholderCount = movements.filter(isPlaceholderInventoryMovement).length;
+  const placeholderCount = movements.filter(
+    isPlaceholderInventoryMovement,
+  ).length;
 
   if (total == null) {
     return getDisplayableInventoryMovements(movements).length;

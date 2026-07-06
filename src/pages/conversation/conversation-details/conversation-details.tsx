@@ -7,10 +7,10 @@ import { useNavigate, useParams } from "react-router";
 import { pagesMap } from "@/app/router/pages-map";
 import { useUserStore } from "@/features/auth/model/use-user-store";
 import { clientsApi } from "@/features/clients/api/clients-api";
-import { instagramUserIdToApiString } from "@/features/clients/model/client-instagram-payload";
 import type {
   Client,
-  ClientInstagramAssociationResponse,
+  ClientLookupResponse,
+  ClientsLookupParams,
 } from "@/features/clients/model/client.types";
 import { useConversationsStore } from "@/features/conversations/model/use-conversations-store";
 import type { SendMessagePayload } from "@/features/conversations/model/types";
@@ -44,15 +44,10 @@ export const ConversationDetails = observer(() => {
     null,
   );
   const [clientInfoOpen, setClientInfoOpen] = useState(false);
-  const [instagramAssociation, setInstagramAssociation] = useState<
-    ClientInstagramAssociationResponse | undefined
+  const [clientLookup, setClientLookup] = useState<
+    ClientLookupResponse | undefined
   >();
-  const [linkedFromList, setLinkedFromList] = useState<{
-    loading: boolean;
-    client?: Client;
-  }>({
-    loading: false,
-  });
+  const [clientLookupLoading, setClientLookupLoading] = useState(false);
 
   const { conversations, sendConversationMessage, resendOutboundMessage } =
     useConversationsStore();
@@ -144,27 +139,57 @@ export const ConversationDetails = observer(() => {
 
   const canSend = Boolean(draft.trim());
 
-  const participantInstagramId =
+  const participantSocialId =
     activeConversation?.participant.id != null
       ? String(activeConversation.participant.id)
       : undefined;
+  const conversationChannel = activeConversation?.channel;
 
-  const linkedClient = useMemo(() => {
-    if (!instagramAssociation?.associated) {
+  const clientLookupParams = useMemo((): ClientsLookupParams | undefined => {
+    if (conversationChannel == null || participantSocialId == null) {
       return undefined;
     }
-    return instagramAssociation.client ?? linkedFromList.client;
-  }, [instagramAssociation, linkedFromList.client]);
 
-  const linkedClientLoading = Boolean(
-    instagramAssociation?.associated &&
-    !instagramAssociation.client &&
-    linkedFromList.loading,
-  );
+    if (conversationChannel === "telegram") {
+      return { telegramUserId: participantSocialId };
+    }
+
+    return { instagramId: participantSocialId };
+  }, [conversationChannel, participantSocialId]);
+
+  const linkedClient = useMemo(() => {
+    if (!clientLookup?.associated) {
+      return undefined;
+    }
+
+    return clientLookup.client;
+  }, [clientLookup]);
+
+  const clientPanelTitle = useMemo(() => {
+    const showNotLinkedHint =
+      !clientLookupLoading && clientLookup && !clientLookup.associated;
+
+    if (!showNotLinkedHint) {
+      return t("conversation.clientPanelTitle");
+    }
+
+    return (
+      <Flex vertical gap={2}>
+        <span>{t("conversation.clientPanelTitle")}</span>
+        <Text
+          type="secondary"
+          style={{ fontSize: 12, fontWeight: 400, lineHeight: 1.45 }}
+          data-qa="layout-conversation-details-client-not-linked-hint"
+        >
+          {t("conversation.clientNotLinked")}
+        </Text>
+      </Flex>
+    );
+  }, [clientLookup, clientLookupLoading, t]);
 
   const handleClientCreated = useCallback((created: Client) => {
-    setLinkedFromList({ loading: false, client: created });
-    setInstagramAssociation({
+    setClientLookupLoading(false);
+    setClientLookup({
       associated: true,
       status: "ok",
       client: created,
@@ -225,22 +250,27 @@ export const ConversationDetails = observer(() => {
   }, [conversationId]);
 
   useEffect(() => {
-    if (!conversationId || !participantInstagramId) {
+    if (!clientLookupParams) {
+      setClientLookup(undefined);
+      setClientLookupLoading(false);
       return;
     }
 
     let cancelled = false;
-    setInstagramAssociation(undefined);
+    setClientLookup(undefined);
+    setClientLookupLoading(true);
 
-    void clientsApi.checkInstagramAssociation(participantInstagramId).then(
+    void clientsApi.lookupClient(clientLookupParams).then(
       (body) => {
         if (!cancelled) {
-          setInstagramAssociation(body);
+          setClientLookup(body);
+          setClientLookupLoading(false);
         }
       },
       () => {
         if (!cancelled) {
-          setInstagramAssociation(undefined);
+          setClientLookup(undefined);
+          setClientLookupLoading(false);
         }
       },
     );
@@ -248,43 +278,7 @@ export const ConversationDetails = observer(() => {
     return () => {
       cancelled = true;
     };
-  }, [conversationId, participantInstagramId]);
-
-  useEffect(() => {
-    if (
-      !instagramAssociation?.associated ||
-      instagramAssociation.client ||
-      !participantInstagramId
-    ) {
-      setLinkedFromList({ loading: false, client: undefined });
-      return;
-    }
-
-    let cancelled = false;
-    setLinkedFromList({ loading: true, client: undefined });
-
-    void clientsApi.list().then(
-      (list) => {
-        const found = list.find(
-          (c) =>
-            instagramUserIdToApiString(c.instagramUserId) ===
-            participantInstagramId,
-        );
-        if (!cancelled) {
-          setLinkedFromList({ loading: false, client: found });
-        }
-      },
-      () => {
-        if (!cancelled) {
-          setLinkedFromList({ loading: false, client: undefined });
-        }
-      },
-    );
-
-    return () => {
-      cancelled = true;
-    };
-  }, [instagramAssociation, participantInstagramId]);
+  }, [clientLookupParams]);
 
   if (!conversationId) {
     return null;
@@ -341,8 +335,11 @@ export const ConversationDetails = observer(() => {
         </S.MessagesScroll>
 
         <Composer
+          conversationId={conversationId}
           draft={draft}
           canSend={canSend}
+          hasLinkedClient={linkedClient != null}
+          clientLookupLoading={clientLookupLoading}
           replyPreview={replyTarget}
           onCancelReply={handleCancelReply}
           onDraftChange={setDraft}
@@ -351,7 +348,7 @@ export const ConversationDetails = observer(() => {
       </S.ThreadColumn>
 
       <Drawer
-        title={t("conversation.clientPanelTitle")}
+        title={clientPanelTitle}
         closable={{
           "aria-label": t("conversation.closeClientPanelAria"),
         }}
@@ -373,9 +370,10 @@ export const ConversationDetails = observer(() => {
       >
         <ConversationClientInfoPanel
           conversation={activeConversation}
-          instagramAssociation={instagramAssociation}
+          clientLookup={clientLookup}
           linkedClient={linkedClient}
-          linkedClientLoading={linkedClientLoading}
+          clientLookupLoading={clientLookupLoading}
+          clientInfoOpen={clientInfoOpen}
           onClientCreated={handleClientCreated}
         />
       </Drawer>

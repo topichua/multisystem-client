@@ -19,6 +19,12 @@ export const Conversation = styled.div.attrs(() =>
     $variant === "mobile"
       ? theme.colors.functional.background.base
       : "transparent"};
+
+  .ant-segmented-item-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 `;
 
 export const CollapsedColumn = styled.div.attrs(() =>

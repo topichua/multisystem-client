@@ -3,7 +3,7 @@ import {
   CubeIcon,
   PencilSimpleIcon,
   TrashIcon,
-} from '@phosphor-icons/react';
+} from "@phosphor-icons/react";
 import { Button, Flex, Modal } from "antd";
 // import { Tag } from "@/components/tag/tag";
 import { useState, type MouseEvent } from "react";
@@ -16,7 +16,7 @@ import {
   getVariantTitle,
   // productStatusToColor,
   // variantStatusToColor,
-} from '@/features/products/utils/product-display';
+} from "@/features/products/utils/product-display";
 
 import * as S from "./mobile-products-list-page.styled";
 
@@ -51,8 +51,7 @@ export const MobileProductCard = ({
   const hasVariants = variantsCount > 0;
   const [expanded, setExpanded] = useState(false);
 
-  const priceLabel =
-    getProductPriceRange(product) ?? t("products.noPrice");
+  const priceLabel = getProductPriceRange(product) ?? t("products.noPrice");
 
   const quantityLabel = showInventoryQuantity
     ? product.inStock === false
@@ -91,7 +90,7 @@ export const MobileProductCard = ({
           <S.ProductCopy>
             <S.ProductName>{product.name}</S.ProductName>
             <S.ProductMeta>
-              {[secondaryMeta, categoryName].filter(Boolean).join(' · ')}
+              {[secondaryMeta, categoryName].filter(Boolean).join(" · ")}
             </S.ProductMeta>
           </S.ProductCopy>
         </S.ProductInfo>
@@ -99,7 +98,7 @@ export const MobileProductCard = ({
 
       <S.CardBottomRow justify="space-between" align="center">
         <S.PriceQuantity>
-          {[priceLabel, quantityLabel].filter(Boolean).join(' · ')}
+          {[priceLabel, quantityLabel].filter(Boolean).join(" · ")}
         </S.PriceQuantity>
 
         {/* <S.StatusWrap>
@@ -116,16 +115,16 @@ export const MobileProductCard = ({
             aria-controls={`products-mobile-variants-${product.id}`}
             aria-label={
               expanded
-                ? t('products.table.collapseRowAria')
-                : t('products.table.expandRowAria')
+                ? t("products.table.collapseRowAria")
+                : t("products.table.expandRowAria")
             }
             data-qa={`products-mobile-expand-${product.id}`}
             icon={
               <CaretDownIcon
                 size={16}
                 style={{
-                  transform: expanded ? 'rotate(180deg)' : undefined,
-                  transition: 'transform 0.2s ease',
+                  transform: expanded ? "rotate(180deg)" : undefined,
+                  transition: "transform 0.2s ease",
                 }}
               />
             }
@@ -145,14 +144,14 @@ export const MobileProductCard = ({
           data-qa={`products-mobile-variants-${product.id}`}
         >
           <S.VariantsSectionTitle>
-            {t('products.mobile.variantsSectionTitle', {
+            {t("products.mobile.variantsSectionTitle", {
               count: variantsCount,
             })}
           </S.VariantsSectionTitle>
           {product.variants?.map((variant) => {
             const title = getVariantTitle(variant);
             const variantName =
-              title || `${t('products.variant.fallbackName')} #${variant.id}`;
+              title || `${t("products.variant.fallbackName")} #${variant.id}`;
             const variantPrice = formatProductPrice(
               variant.price,
               product.currency,
@@ -160,16 +159,16 @@ export const MobileProductCard = ({
             const variantQuantity =
               showInventoryQuantity && variant.quantity != null
                 ? String(variant.quantity)
-                : '—';
+                : "—";
             const variantDetails = [
               variantPrice,
               showInventoryQuantity
-                ? `${t('products.variant.quantity')} ${variantQuantity}`
+                ? `${t("products.variant.quantity")} ${variantQuantity}`
                 : null,
               variant.sku || null,
             ]
               .filter(Boolean)
-              .join(' · ');
+              .join(" · ");
 
             return (
               <S.VariantRow
@@ -189,7 +188,7 @@ export const MobileProductCard = ({
                       size="small"
                       icon={<CubeIcon size={16} />}
                       aria-label={t(
-                        'products.inventoryDrawer.openVariantStockAria',
+                        "products.inventoryDrawer.openVariantStockAria",
                       )}
                       data-qa={`products-mobile-variant-inventory-${variant.id}`}
                       onClick={(event) => {
@@ -220,7 +219,7 @@ export const MobileProductCard = ({
             type="text"
             size="small"
             icon={<CubeIcon size={16} />}
-            aria-label={t('system.inventory.title')}
+            aria-label={t("system.inventory.title")}
             data-qa={`products-mobile-action-inventory-${product.id}`}
             onClick={() => onOpenInventory(product)}
           />
@@ -229,7 +228,7 @@ export const MobileProductCard = ({
           type="text"
           size="small"
           icon={<PencilSimpleIcon size={16} />}
-          aria-label={t('products.edit')}
+          aria-label={t("products.edit")}
           data-qa={`products-mobile-action-edit-${product.id}`}
           onClick={() => void onEdit(product.id)}
         />
@@ -239,13 +238,13 @@ export const MobileProductCard = ({
           danger
           loading={deleteLoading}
           icon={<TrashIcon size={16} />}
-          aria-label={t('products.delete')}
+          aria-label={t("products.delete")}
           data-qa={`products-mobile-action-delete-${product.id}`}
           onClick={() => {
             Modal.confirm({
-              title: t('products.deleteConfirm'),
-              okText: t('products.delete'),
-              okType: 'danger',
+              title: t("products.deleteConfirm"),
+              okText: t("products.delete"),
+              okType: "danger",
               onOk: () => onDelete(product.id),
             });
           }}
