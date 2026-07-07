@@ -11,9 +11,13 @@ import type {
 import { useOrdersStore } from "@/features/orders/model/use-orders-store";
 import type { CatalogVariant } from "@/features/products/model/product.types";
 import { useNotification } from "@/shared/components/notification/use-notification";
+import { normalizeClientPhoneForInput } from "@/utils/phone-input";
+
+import { useClientOrderNovaPoshtaDelivery } from "./use-client-order-nova-poshta-delivery";
 
 const MIN_SEARCH_LENGTH = 3;
 const SEARCH_DEBOUNCE_MS = 300;
+const DEFAULT_CASH_ON_DELIVERY_AMOUNT = 110;
 
 type UseClientOrderCreateControllerParams = {
   conversationId: number;
@@ -40,6 +44,28 @@ export function useClientOrderCreateController({
   const [productPickerKey, setProductPickerKey] = useState(0);
   const [orderLines, setOrderLines] = useState<OrderDraftLine[]>([]);
   const trimmedSearch = searchQuery.trim();
+  const isCashOnDelivery = Form.useWatch("isCashOnDelivery", form);
+  const cashOnDeliveryAmount = Form.useWatch("cashOnDeliveryAmount", form);
+
+  const initialFormValues = useMemo<OrderFormValues>(
+    () => ({
+      firstName: linkedClient.firstName,
+      lastName: linkedClient.lastName,
+      phone: normalizeClientPhoneForInput(linkedClient.phone),
+      deliveryMethod: "nova_poshta",
+      deliveryType: "warehouse",
+      isCashOnDelivery: true,
+      cashOnDeliveryAmount: DEFAULT_CASH_ON_DELIVERY_AMOUNT,
+    }),
+    [linkedClient.firstName, linkedClient.lastName, linkedClient.phone],
+  );
+
+  useEffect(() => {
+    form.setFieldsValue(initialFormValues);
+  }, [form, initialFormValues]);
+
+  const novaPoshtaDelivery = useClientOrderNovaPoshtaDelivery({ form });
+  const clearNovaPoshtaSelects = novaPoshtaDelivery.clearSelects;
 
   useEffect(() => {
     if (trimmedSearch.length < MIN_SEARCH_LENGTH) {
@@ -59,15 +85,38 @@ export function useClientOrderCreateController({
       (sum, line) => sum + line.quantity,
       0,
     );
-    const total = orderLines.reduce(
+    const productsTotal = orderLines.reduce(
       (sum, line) => sum + line.quantity * line.variant.unitPrice,
       0,
     );
     const currency =
       orderLines[0]?.variant.product.currency?.toLowerCase() ?? "uah";
+    const hasCashOnDelivery = isCashOnDelivery !== false;
+    const deliveryAmount = hasCashOnDelivery
+      ? Number(cashOnDeliveryAmount) || 0
+      : 0;
 
-    return { productCount, total, currency };
-  }, [orderLines]);
+    return {
+      productCount,
+      productsTotal,
+      deliveryAmount,
+      hasCashOnDelivery,
+      total: productsTotal + deliveryAmount,
+      currency,
+    };
+  }, [cashOnDeliveryAmount, isCashOnDelivery, orderLines]);
+
+  useEffect(() => {
+    if (isCashOnDelivery === false) {
+      return;
+    }
+    const cashOnDeliveryAmount = form.getFieldValue("cashOnDeliveryAmount");
+    if (cashOnDeliveryAmount !== undefined && cashOnDeliveryAmount !== null) {
+      return;
+    }
+
+    form.setFieldValue("cashOnDeliveryAmount", DEFAULT_CASH_ON_DELIVERY_AMOUNT);
+  }, [form, isCashOnDelivery]);
 
   const variantSelectOptions = useMemo(
     () =>
@@ -134,10 +183,12 @@ export function useClientOrderCreateController({
   const resetDrawerState = useCallback(() => {
     setSearchQuery("");
     ordersStore.clearCatalogSearch();
+    clearNovaPoshtaSelects();
     setProductPickerKey(0);
     setOrderLines([]);
     form.resetFields();
-  }, [form, ordersStore]);
+    form.setFieldsValue(initialFormValues);
+  }, [clearNovaPoshtaSelects, form, initialFormValues, ordersStore]);
 
   const handleDrawerClose = useCallback(() => {
     resetDrawerState();
@@ -210,48 +261,22 @@ export function useClientOrderCreateController({
     [ordersStore],
   );
 
-  const deliveryMethodOptions = useMemo(
-    () => [
-      {
-        value: "nova_poshta",
-        label: t("conversation.clientOrders.drawer.deliveryNovaPoshta"),
-      },
-    ],
-    [t],
-  );
-
-  const billingMethodOptions = useMemo(
-    () => [
-      {
-        value: "cash",
-        label: t("conversation.clientOrders.drawer.billingCash"),
-      },
-      {
-        value: "card",
-        label: t("conversation.clientOrders.drawer.billingCard"),
-      },
-    ],
-    [t],
-  );
-
   return {
     catalogSearchLoading: ordersStore.catalogSearchLoading,
     createLoading: ordersStore.createLoading,
     form,
     orderLines,
     orderTotals,
+    novaPoshtaDelivery,
     productPickerKey,
     trimmedSearch,
     variantSelectOptions,
-    deliveryMethodOptions,
-    billingMethodOptions,
     minSearchLength: MIN_SEARCH_LENGTH,
     handleCatalogSearch,
     handleDrawerClose,
     handlePlaceOrder,
     handleVariantSelect,
     removeLine,
-    setSearchQuery,
     updateLineQuantity,
   };
 }

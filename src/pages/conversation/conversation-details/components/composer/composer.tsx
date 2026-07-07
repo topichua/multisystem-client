@@ -16,6 +16,7 @@ type ComposerProps = {
   clientLookupLoading: boolean;
   replyPreview: ReplyComposeTarget | null;
   onCancelReply: () => void;
+  onCreateOrderClick: () => void;
   onDraftChange: (value: string) => void;
   onSend: () => void;
 };
@@ -29,6 +30,7 @@ export const Composer = observer(
     clientLookupLoading,
     replyPreview,
     onCancelReply,
+    onCreateOrderClick,
     onDraftChange,
     onSend,
   }: ComposerProps) => {
@@ -46,6 +48,7 @@ export const Composer = observer(
           activeTab={activeTab}
           hasLinkedClient={hasLinkedClient}
           clientLookupLoading={clientLookupLoading}
+          onCreateOrderClick={onCreateOrderClick}
           onTabChange={setActiveTab}
         />
 

@@ -1,19 +1,18 @@
 import type { Client } from "@/features/clients/model/client.types";
 import { observer } from "mobx-react-lite";
-import { Badge, Card, Drawer, Flex, Space, Typography } from "antd";
+import { Drawer } from "antd";
 import { useTranslation } from "react-i18next";
 
+import * as S from "./client-order-drawer.styled";
 import { ClientOrderClientCard } from "./client-order-client-card";
 import { ClientOrderDeliveryForm } from "./client-order-delivery-form";
 import { ClientOrderDrawerFooter } from "./client-order-drawer-footer";
 import { ClientOrderProductsSection } from "./client-order-products-section";
 import { useClientOrderCreateController } from "./use-client-order-create-controller";
 
-const { Text } = Typography;
-
 type ClientOrderDrawerProps = {
   onClose: () => void;
-  onOpen: boolean;
+  open: boolean;
   linkedClient: Client;
   conversationId: number;
   clientPic?: string;
@@ -21,16 +20,16 @@ type ClientOrderDrawerProps = {
 };
 
 const sectionTitle = (step: number, title: string) => (
-  <Space>
-    <Badge color="purple" count={step} />
-    <Text strong>{title}</Text>
-  </Space>
+  <S.SectionTitle>
+    <S.StepBadge>{step}</S.StepBadge>
+    <S.SectionTitleText>{title}</S.SectionTitleText>
+  </S.SectionTitle>
 );
 
 export const ClientOrderDrawer = observer(
   ({
     onClose,
-    onOpen,
+    open,
     linkedClient,
     conversationId,
     clientPic,
@@ -38,16 +37,15 @@ export const ClientOrderDrawer = observer(
   }: ClientOrderDrawerProps) => {
     const { t } = useTranslation();
     const {
-      billingMethodOptions,
       catalogSearchLoading,
       createLoading,
-      deliveryMethodOptions,
       form,
       handleCatalogSearch,
       handleDrawerClose,
       handlePlaceOrder,
       handleVariantSelect,
       minSearchLength,
+      novaPoshtaDelivery,
       orderLines,
       orderTotals,
       productPickerKey,
@@ -63,16 +61,37 @@ export const ClientOrderDrawer = observer(
     });
 
     return (
-      <>
-        <Drawer
-          title={t("conversation.clientOrders.drawerTitle")}
+      <Drawer
+          title={
+            <S.DrawerTitle>
+              <S.DrawerEyebrow>
+                {t("conversation.clientOrders.newRecord")}
+              </S.DrawerEyebrow>
+              <S.DrawerHeading>
+                {t("conversation.clientOrders.drawerTitle")}
+              </S.DrawerHeading>
+            </S.DrawerTitle>
+          }
           closable={{
             "aria-label": t("conversation.clientOrders.closeDrawerAria"),
           }}
+          keyboard={false}
+          maskClosable={false}
           onClose={handleDrawerClose}
-          open={onOpen}
-          size={960}
+          open={open}
+          size={640}
           destroyOnHidden
+          styles={{
+            header: {
+              padding: "18px 18px 14px",
+            },
+            body: {
+              padding: "18px",
+            },
+            footer: {
+              padding: "14px 18px 16px",
+            },
+          }}
           footer={
             <ClientOrderDrawerFooter
               createLoading={createLoading}
@@ -83,7 +102,7 @@ export const ClientOrderDrawer = observer(
             />
           }
         >
-          <Flex vertical gap={16}>
+          <S.DrawerContent>
             <ClientOrderClientCard
               clientPic={clientPic}
               linkedClient={linkedClient}
@@ -110,30 +129,22 @@ export const ClientOrderDrawer = observer(
               onVariantSelect={handleVariantSelect}
             />
 
-            <Card
-              size="small"
-              title={sectionTitle(
-                3,
-                t("conversation.clientOrders.drawer.sectionOrderDetails"),
-              )}
-              styles={{
-                root: {
-                  borderColor: "#e2e1e1",
-                },
-                header: {
-                  borderColor: "#e2e1e1",
-                },
-              }}
-            >
-              <ClientOrderDeliveryForm
-                billingMethodOptions={billingMethodOptions}
-                deliveryMethodOptions={deliveryMethodOptions}
-                form={form}
-              />
-            </Card>
-          </Flex>
+            <S.Section>
+              <S.SectionHeader>
+                {sectionTitle(
+                  3,
+                  t("conversation.clientOrders.drawer.sectionOrderDetails"),
+                )}
+              </S.SectionHeader>
+              <S.FormPanel>
+                <ClientOrderDeliveryForm
+                  form={form}
+                  novaPoshtaDelivery={novaPoshtaDelivery}
+                />
+              </S.FormPanel>
+            </S.Section>
+          </S.DrawerContent>
         </Drawer>
-      </>
     );
   },
 );

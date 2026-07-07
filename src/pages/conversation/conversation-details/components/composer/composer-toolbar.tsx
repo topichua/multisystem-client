@@ -10,6 +10,7 @@ type ComposerToolbarProps = {
   activeTab: ComposerTab;
   hasLinkedClient: boolean;
   clientLookupLoading: boolean;
+  onCreateOrderClick: () => void;
   onTabChange: (tab: ComposerTab) => void;
 };
 
@@ -17,6 +18,7 @@ export function ComposerToolbar({
   activeTab,
   hasLinkedClient,
   clientLookupLoading,
+  onCreateOrderClick,
   onTabChange,
 }: ComposerToolbarProps) {
   const { t } = useTranslation();
@@ -34,6 +36,7 @@ export function ComposerToolbar({
       icon={<PlusIcon size={16} />}
       disabled={createOrderDisabled}
       data-qa="layout-conversation-details-composer-create-order"
+      onClick={onCreateOrderClick}
     >
       {t("conversation.clientOrders.createOrder")}
     </Button>

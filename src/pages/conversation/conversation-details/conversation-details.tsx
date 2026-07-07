@@ -24,6 +24,7 @@ import { useIntegrationsStore } from "@/features/integrations/model/use-integrat
 import { useIsMobileViewport } from "@/utils/use-media-query";
 
 import * as S from "./conversation-details.styled";
+import { ClientOrderDrawer } from "./components/client-order-drawer/client-order-drawer";
 import { ConversationClientInfoPanel } from "./components/conversation-client-info-panel/conversation-client-info-panel";
 import { Composer } from "./components/composer/composer";
 import { ConversationMessagesList } from "./components/conversation-messages-list/conversation-messages-list";
@@ -48,6 +49,7 @@ export const ConversationDetails = observer(() => {
     ClientLookupResponse | undefined
   >();
   const [clientLookupLoading, setClientLookupLoading] = useState(false);
+  const [orderDrawerOpen, setOrderDrawerOpen] = useState(false);
 
   const { conversations, sendConversationMessage, resendOutboundMessage } =
     useConversationsStore();
@@ -196,6 +198,18 @@ export const ConversationDetails = observer(() => {
     });
   }, []);
 
+  const handleCreateOrderClick = useCallback(() => {
+    if (!activeConversation || !linkedClient) {
+      return;
+    }
+
+    setOrderDrawerOpen(true);
+  }, [activeConversation, linkedClient]);
+
+  const handleCloseOrderDrawer = useCallback(() => {
+    setOrderDrawerOpen(false);
+  }, []);
+
   const handleStartReply = useCallback((target: ReplyComposeTarget) => {
     setReplyTarget(target);
   }, []);
@@ -247,6 +261,7 @@ export const ConversationDetails = observer(() => {
   useEffect(() => {
     setReplyTarget(null);
     setClientInfoOpen(false);
+    setOrderDrawerOpen(false);
   }, [conversationId]);
 
   useEffect(() => {
@@ -342,6 +357,7 @@ export const ConversationDetails = observer(() => {
           clientLookupLoading={clientLookupLoading}
           replyPreview={replyTarget}
           onCancelReply={handleCancelReply}
+          onCreateOrderClick={handleCreateOrderClick}
           onDraftChange={setDraft}
           onSend={handleSend}
         />
@@ -377,6 +393,16 @@ export const ConversationDetails = observer(() => {
           onClientCreated={handleClientCreated}
         />
       </Drawer>
+
+      {activeConversation && linkedClient ? (
+        <ClientOrderDrawer
+          onClose={handleCloseOrderDrawer}
+          open={orderDrawerOpen}
+          linkedClient={linkedClient}
+          conversationId={activeConversation.id}
+          clientPic={activeConversation.participant.profilePic ?? undefined}
+        />
+      ) : null}
     </S.Root>
   );
 });

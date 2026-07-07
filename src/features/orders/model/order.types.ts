@@ -7,16 +7,27 @@ export type OrderCreateItemPayload = {
   quantity: number;
 };
 
+export type OrderDeliveryType = "warehouse" | "address";
+
 export type OrderDeliveryPayload = {
   provider: string;
+  providerId?: number;
+  deliveryStatus?: string;
   recipientName?: string;
   phone?: string;
   city?: string;
   cityRef?: string;
   warehouse?: string;
   warehouseRef?: string;
+  deliveryType?: OrderDeliveryType;
   address?: string;
+  street?: string;
+  streetRef?: string;
+  building?: string;
+  flat?: string;
   trackingNumber?: string;
+  isCashOnDelivery?: boolean;
+  cashOnDeliveryAmount?: number;
   rawProviderPayload?: Record<string, unknown>;
 };
 
@@ -174,9 +185,25 @@ export type OrderDraftLine = {
 };
 
 export type OrderFormValues = {
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
   deliveryMethod?: string;
+  novaPoshtaIntegrationId?: number;
+  deliveryType?: OrderDeliveryType;
+  city?: string;
+  cityRef?: string;
+  settlementRef?: string;
+  warehouse?: string;
+  warehouseRef?: string;
+  street?: string;
+  streetRef?: string;
+  building?: string;
+  flat?: string;
   postAddress?: string;
   billingMethod?: string;
+  isCashOnDelivery?: boolean;
+  cashOnDeliveryAmount?: number;
   comment?: string;
 };
 
