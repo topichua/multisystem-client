@@ -2,21 +2,57 @@ import { apiClient } from "@/api/api-client";
 
 import type {
   ConversationGroup,
+  ConversationGroupResponse,
   ConversationGroupsListResponse,
+  ConversationGroupsListResult,
   ConversationGroupWritePayload,
 } from "@/features/conversation-groups/model/conversation-group.types";
 
 const basePath = "/conversation-groups";
 
-export const conversationGroupsApi = {
-  list: async (): Promise<ConversationGroup[]> => {
-    const { data } =
-      await apiClient.get<ConversationGroupsListResponse>(basePath);
+type ConversationGroupsListParams = {
+  includeDistribution?: boolean;
+};
 
-    return data.items.map((group) => ({
-      ...group,
-      counter: group.counter ?? 0,
-    }));
+const buildListQuery = (
+  params?: ConversationGroupsListParams,
+): Record<string, string> | undefined =>
+  params?.includeDistribution ? { include_distribution: "true" } : undefined;
+
+const normalizeConversationGroup = ({
+  counter,
+  conversationCount,
+  createdById,
+  description,
+  ...group
+}: ConversationGroupResponse): ConversationGroup => ({
+  ...group,
+  description: description ?? "",
+  createdById: createdById ?? null,
+  counter: conversationCount ?? counter ?? 0,
+});
+
+export const conversationGroupsApi = {
+  list: async (
+    params?: ConversationGroupsListParams,
+  ): Promise<ConversationGroupsListResult> => {
+    const { data } = await apiClient.get<ConversationGroupsListResponse>(
+      basePath,
+      {
+        params: buildListQuery(params),
+      },
+    );
+
+    const groups = data.items.map(normalizeConversationGroup);
+    const fallbackTotalConversations = groups.reduce(
+      (total, group) => total + group.counter,
+      0,
+    );
+
+    return {
+      groups,
+      totalConversations: data.totalConversations ?? fallbackTotalConversations,
+    };
   },
 
   create: async (payload: ConversationGroupWritePayload): Promise<void> => {

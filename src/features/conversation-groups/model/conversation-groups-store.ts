@@ -8,8 +8,14 @@ import type {
   ConversationGroupWritePayload,
 } from "./conversation-group.types";
 
+type LoadConversationGroupsOptions = {
+  silent?: boolean;
+  includeDistribution?: boolean;
+};
+
 export class ConversationGroupsStore {
   groups: ConversationGroup[] = [];
+  totalConversations = 0;
   listLoading = false;
 
   saveLoading = false;
@@ -27,7 +33,9 @@ export class ConversationGroupsStore {
     return Math.max(...this.groups.map((g) => g.sortOrder)) + 1;
   }
 
-  loadGroups = async (options?: { silent?: boolean }): Promise<void> => {
+  loadGroups = async (
+    options?: LoadConversationGroupsOptions,
+  ): Promise<void> => {
     const silent = options?.silent === true;
 
     if (!silent) {
@@ -37,13 +45,17 @@ export class ConversationGroupsStore {
     }
 
     try {
-      const items = await conversationGroupsApi.list();
+      const { groups, totalConversations } = await conversationGroupsApi.list({
+        includeDistribution: options?.includeDistribution,
+      });
       runInAction(() => {
-        this.groups = items;
+        this.groups = groups;
+        this.totalConversations = totalConversations;
       });
     } catch (e) {
       runInAction(() => {
         this.groups = [];
+        this.totalConversations = 0;
       });
       throwLoadError("Failed to load conversation groups", e);
     } finally {

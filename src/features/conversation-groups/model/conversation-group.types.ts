@@ -6,16 +6,30 @@ export type ConversationGroup = {
   color: string;
   counter: number;
   createdAt: string;
-  createdById: number;
+  createdById: number | null;
   sortOrder: number;
+  systemKey?: string | null;
+  isSystem?: boolean;
 };
 
-export type ConversationGroupResponse = Omit<ConversationGroup, "counter"> & {
+export type ConversationGroupResponse = Omit<
+  ConversationGroup,
+  "description" | "counter" | "createdById"
+> & {
+  description: string | null;
+  createdById?: number | null;
+  conversationCount?: number | null;
   counter?: number | null;
 };
 
 export type ConversationGroupsListResponse = {
   items: ConversationGroupResponse[];
+  totalConversations?: number | null;
+};
+
+export type ConversationGroupsListResult = {
+  groups: ConversationGroup[];
+  totalConversations: number;
 };
 
 export type ConversationGroupWritePayload = {

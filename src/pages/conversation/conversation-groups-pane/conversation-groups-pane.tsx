@@ -39,11 +39,6 @@ export const ConversationGroupsPane = observer(
     const selectedGroupId =
       conversationsStore.conversationListGroupFilterIds[0] ?? null;
 
-    const totalGroupsCounter = sortedGroups.reduce(
-      (total, group) => total + group.counter,
-      0,
-    );
-
     const isInitialLoading =
       groupsStore.listLoading && sortedGroups.length === 0;
 
@@ -93,7 +88,7 @@ export const ConversationGroupsPane = observer(
             <S.GroupList>
               <ConversationGroupFilterRow
                 color={BRAND_PRIMARY}
-                count={totalGroupsCounter}
+                count={groupsStore.totalConversations}
                 name={t("groups.allConversations")}
                 selected={selectedGroupId === null}
                 onClick={() => handleSelectGroup(null)}

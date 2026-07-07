@@ -6,6 +6,6 @@ export const useEnsureConversationGroupsLoaded = (): void => {
   const groupsStore = useConversationGroupsStore();
 
   useEffect(() => {
-    void groupsStore.loadGroups({ silent: true });
+    void groupsStore.loadGroups({ silent: true, includeDistribution: true });
   }, [groupsStore]);
 };

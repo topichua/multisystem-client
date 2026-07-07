@@ -63,18 +63,29 @@ export const ConversationGroupSelect = observer(
             conversationId,
             next,
           );
+          await groupsStore.loadGroups({
+            silent: true,
+            includeDistribution: true,
+          });
         } catch (e) {
           notification.error({
             title: getApiErrorMessage(
               e,
-              t("groups.updateConversationGroupError"),
+              t('groups.updateConversationGroupError'),
             ),
           });
         } finally {
           setSaving(false);
         }
       },
-      [conversationId, conversationsStore, groupId, notification, t],
+      [
+        conversationId,
+        conversationsStore,
+        groupId,
+        groupsStore,
+        notification,
+        t,
+      ],
     );
 
     const selectDisabled = disabled || !conversationId || saving;

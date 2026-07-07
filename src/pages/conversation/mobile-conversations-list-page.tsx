@@ -25,10 +25,6 @@ const MobileConversationGroupFilters = observer(() => {
 
   const selectedGroupId =
     conversationsStore.conversationListGroupFilterIds[0] ?? null;
-  const totalGroupsCounter = sortedGroups.reduce(
-    (total, group) => total + group.counter,
-    0,
-  );
   const showInitialLoader =
     groupsStore.listLoading && sortedGroups.length === 0;
 
@@ -54,7 +50,7 @@ const MobileConversationGroupFilters = observer(() => {
         >
           <S.GroupDot $color={BRAND_PRIMARY} aria-hidden="true" />
           <S.GroupName>{t("groups.allConversations")}</S.GroupName>
-          <S.GroupCount>{totalGroupsCounter}</S.GroupCount>
+          <S.GroupCount>{groupsStore.totalConversations}</S.GroupCount>
         </S.GroupChip>
 
         {sortedGroups.map((group) => (
