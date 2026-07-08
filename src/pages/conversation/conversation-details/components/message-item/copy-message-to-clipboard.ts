@@ -1,14 +1,13 @@
 import type { ConversationMessage } from "@/features/conversations/model/types";
 
+import { getAttachmentUrl } from "../message-attachments/message-attachment-utils";
+
 function collectAttachmentUrls(message: ConversationMessage): string[] {
   const data = message.attachments?.data ?? [];
   const urls: string[] = [];
 
   for (const entry of data) {
-    const u =
-      entry.image_data?.url ??
-      entry.video_data?.preview_url ??
-      entry.video_data?.url;
+    const u = getAttachmentUrl(entry);
     if (u) {
       urls.push(u);
     }

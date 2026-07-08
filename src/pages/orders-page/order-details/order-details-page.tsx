@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router";
 
 import { pagesMap } from "@/app/router/pages-map";
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
+import { useEnsureWorkspaceMembersLoaded } from "@/features/workspace-members/model/use-ensure-workspace-members-loaded";
 import { useIsMobileViewport } from "@/utils/use-media-query";
 
 import { OrderDetailsContent } from "./components/order-details-content";
@@ -19,6 +20,8 @@ export const OrderDetailsPage = () => {
   const navigate = useNavigate();
   const params = useParams<{ orderId: string }>();
   const isMobileViewport = useIsMobileViewport();
+
+  useEnsureWorkspaceMembersLoaded();
 
   const orderId = coerceOrderId(params.orderId);
   const invalidOrderIdError =

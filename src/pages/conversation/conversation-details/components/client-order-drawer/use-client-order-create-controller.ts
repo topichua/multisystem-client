@@ -1,14 +1,21 @@
 import { Form } from "antd";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { getApiErrorMessage } from "@/api/get-api-error-message";
+import type { Category } from "@/features/categories/model/category.types";
+import { useCategoriesStore } from "@/features/categories/model/use-categories-store";
 import type { Client } from "@/features/clients/model/client.types";
 import type {
   OrderDraftLine,
   OrderFormValues,
 } from "@/features/orders/model/order.types";
+import type { CatalogSearchMode } from "@/features/orders/model/orders-store";
 import { useOrdersStore } from "@/features/orders/model/use-orders-store";
+import {
+  calculateOrderDiscountAmount,
+  normalizeOrderDiscountPercent,
+} from "@/features/orders/utils/order-discount";
 import type { CatalogVariant } from "@/features/products/model/product.types";
 import { useNotification } from "@/shared/components/notification/use-notification";
 import { normalizeClientPhoneForInput } from "@/utils/phone-input";
@@ -19,6 +26,22 @@ const MIN_SEARCH_LENGTH = 3;
 const SEARCH_DEBOUNCE_MS = 300;
 const DEFAULT_CASH_ON_DELIVERY_AMOUNT = 110;
 
+export type CategorySelectOptionData = {
+  value: number;
+  label: string;
+  level: number;
+};
+
+export type VariantSelectOptionData = {
+  variant: CatalogVariant;
+};
+
+export type VariantSelectOption = {
+  label: string;
+  value: number;
+  variant: CatalogVariant;
+};
+
 type UseClientOrderCreateControllerParams = {
   conversationId: number;
   linkedClient: Client;
@@ -26,9 +49,14 @@ type UseClientOrderCreateControllerParams = {
   onOrderCreated?: () => void;
 };
 
-export type VariantSelectOptionData = {
-  variant: CatalogVariant;
-};
+const flattenCategoriesForSelect = (
+  categories: Category[],
+  level = 0,
+): CategorySelectOptionData[] =>
+  categories.flatMap((category) => [
+    { value: category.id, label: category.name, level },
+    ...flattenCategoriesForSelect(category.children ?? [], level + 1),
+  ]);
 
 export function useClientOrderCreateController({
   conversationId,
@@ -38,14 +66,23 @@ export function useClientOrderCreateController({
 }: UseClientOrderCreateControllerParams) {
   const { t } = useTranslation();
   const ordersStore = useOrdersStore();
+  const categoriesStore = useCategoriesStore();
   const notification = useNotification();
   const [form] = Form.useForm<OrderFormValues>();
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
+    null,
+  );
+  const [catalogSearchMode, setCatalogSearchMode] =
+    useState<CatalogSearchMode>("flat");
   const [productPickerKey, setProductPickerKey] = useState(0);
   const [orderLines, setOrderLines] = useState<OrderDraftLine[]>([]);
+  const categoryLoadRequestedRef = useRef(false);
   const trimmedSearch = searchQuery.trim();
+  const withoutDelivery = Form.useWatch("withoutDelivery", form) === true;
   const isCashOnDelivery = Form.useWatch("isCashOnDelivery", form);
   const cashOnDeliveryAmount = Form.useWatch("cashOnDeliveryAmount", form);
+  const discountPercent = Form.useWatch("discountPercent", form);
 
   const initialFormValues = useMemo<OrderFormValues>(
     () => ({
@@ -56,6 +93,8 @@ export function useClientOrderCreateController({
       deliveryType: "warehouse",
       isCashOnDelivery: true,
       cashOnDeliveryAmount: DEFAULT_CASH_ON_DELIVERY_AMOUNT,
+      withoutDelivery: false,
+      discountPercent: 0,
     }),
     [linkedClient.firstName, linkedClient.lastName, linkedClient.phone],
   );
@@ -68,17 +107,35 @@ export function useClientOrderCreateController({
   const clearNovaPoshtaSelects = novaPoshtaDelivery.clearSelects;
 
   useEffect(() => {
+    if (
+      categoryLoadRequestedRef.current ||
+      categoriesStore.categories.length > 0
+    ) {
+      return;
+    }
+
+    categoryLoadRequestedRef.current = true;
+    void categoriesStore.loadCategories().catch(() => undefined);
+  }, [categoriesStore, categoriesStore.categories.length]);
+
+  useEffect(() => {
     if (trimmedSearch.length < MIN_SEARCH_LENGTH) {
       ordersStore.clearCatalogSearch();
       return;
     }
 
     const timer = window.setTimeout(() => {
-      void ordersStore.searchCatalogVariants(trimmedSearch);
+      void ordersStore
+        .searchCatalog({
+          keyword: trimmedSearch,
+          categoryId: selectedCategoryId,
+          mode: catalogSearchMode,
+        })
+        .catch(() => undefined);
     }, SEARCH_DEBOUNCE_MS);
 
     return () => window.clearTimeout(timer);
-  }, [trimmedSearch, ordersStore]);
+  }, [catalogSearchMode, ordersStore, selectedCategoryId, trimmedSearch]);
 
   const orderTotals = useMemo(() => {
     const productCount = orderLines.reduce(
@@ -91,22 +148,39 @@ export function useClientOrderCreateController({
     );
     const currency =
       orderLines[0]?.variant.product.currency?.toLowerCase() ?? "uah";
-    const hasCashOnDelivery = isCashOnDelivery !== false;
+    const hasCashOnDelivery = !withoutDelivery && isCashOnDelivery !== false;
     const deliveryAmount = hasCashOnDelivery
       ? Number(cashOnDeliveryAmount) || 0
       : 0;
+    const normalizedDiscountPercent =
+      normalizeOrderDiscountPercent(discountPercent);
+    const discountAmount = calculateOrderDiscountAmount(
+      productsTotal,
+      normalizedDiscountPercent,
+    );
 
     return {
       productCount,
       productsTotal,
       deliveryAmount,
+      discountAmount,
+      discountPercent: normalizedDiscountPercent,
       hasCashOnDelivery,
-      total: productsTotal + deliveryAmount,
+      total: productsTotal - discountAmount + deliveryAmount,
       currency,
     };
-  }, [cashOnDeliveryAmount, isCashOnDelivery, orderLines]);
+  }, [
+    cashOnDeliveryAmount,
+    discountPercent,
+    isCashOnDelivery,
+    orderLines,
+    withoutDelivery,
+  ]);
 
   useEffect(() => {
+    if (withoutDelivery) {
+      return;
+    }
     if (isCashOnDelivery === false) {
       return;
     }
@@ -116,9 +190,14 @@ export function useClientOrderCreateController({
     }
 
     form.setFieldValue("cashOnDeliveryAmount", DEFAULT_CASH_ON_DELIVERY_AMOUNT);
-  }, [form, isCashOnDelivery]);
+  }, [form, isCashOnDelivery, withoutDelivery]);
 
-  const variantSelectOptions = useMemo(
+  const categorySelectOptions = useMemo(
+    () => flattenCategoriesForSelect(categoriesStore.categories),
+    [categoriesStore.categories],
+  );
+
+  const variantSelectOptions = useMemo<VariantSelectOption[]>(
     () =>
       ordersStore.catalogSearchResults.map((variant) => ({
         value: variant.id,
@@ -139,29 +218,16 @@ export function useClientOrderCreateController({
     [ordersStore.catalogSearchResults],
   );
 
-  const addVariantToOrder = useCallback(
-    (variant: CatalogVariant) => {
-      setOrderLines((prev) => {
-        const existing = prev.find((line) => line.variantId === variant.id);
-        if (existing) {
-          const maxQty =
-            variant.quantity > 0 ? variant.quantity : Number.MAX_SAFE_INTEGER;
-          const nextQuantity = Math.min(existing.quantity + 1, maxQty);
-          return prev.map((line) =>
-            line.variantId === variant.id
-              ? { ...line, quantity: nextQuantity, variant }
-              : line,
-          );
-        }
+  const addVariantToOrder = useCallback((variant: CatalogVariant) => {
+    setOrderLines((prev) => {
+      const existing = prev.find((line) => line.variantId === variant.id);
+      if (existing) {
+        return prev;
+      }
 
-        return [...prev, { variantId: variant.id, quantity: 1, variant }];
-      });
-      setSearchQuery("");
-      ordersStore.clearCatalogSearch();
-      setProductPickerKey((key) => key + 1);
-    },
-    [ordersStore],
-  );
+      return [...prev, { variantId: variant.id, quantity: 1, variant }];
+    });
+  }, []);
 
   const updateLineQuantity = useCallback(
     (variantId: number, quantity: number) => {
@@ -182,6 +248,8 @@ export function useClientOrderCreateController({
 
   const resetDrawerState = useCallback(() => {
     setSearchQuery("");
+    setSelectedCategoryId(null);
+    setCatalogSearchMode("flat");
     ordersStore.clearCatalogSearch();
     clearNovaPoshtaSelects();
     setProductPickerKey(0);
@@ -244,7 +312,7 @@ export function useClientOrderCreateController({
   const handleVariantSelect = useCallback(
     (variantId: number) => {
       const variant = variantsById.get(variantId);
-      if (variant) {
+      if (variant?.inStock) {
         addVariantToOrder(variant);
       }
     },
@@ -261,21 +329,58 @@ export function useClientOrderCreateController({
     [ordersStore],
   );
 
+  const handleCatalogSearchClear = useCallback(() => {
+    setSearchQuery("");
+    ordersStore.clearCatalogSearch();
+  }, [ordersStore]);
+
+  const handleCategoryChange = useCallback((categoryId: number | null) => {
+    setSelectedCategoryId(categoryId);
+  }, []);
+
+  const handleCatalogSearchModeChange = useCallback(
+    (mode: CatalogSearchMode) => {
+      setCatalogSearchMode(mode);
+    },
+    [],
+  );
+
+  const handleWithoutDeliveryChange = useCallback(
+    (checked: boolean) => {
+      form.setFieldValue("withoutDelivery", checked);
+
+      if (checked) {
+        clearNovaPoshtaSelects();
+      }
+    },
+    [clearNovaPoshtaSelects, form],
+  );
+
   return {
+    catalogSearchProductGroups: ordersStore.catalogSearchProductGroups,
+    categoriesLoading: categoriesStore.listLoading,
+    categorySelectOptions,
     catalogSearchLoading: ordersStore.catalogSearchLoading,
+    catalogSearchMode,
     createLoading: ordersStore.createLoading,
     form,
     orderLines,
     orderTotals,
     novaPoshtaDelivery,
     productPickerKey,
+    selectedCategoryId,
     trimmedSearch,
     variantSelectOptions,
+    withoutDelivery,
     minSearchLength: MIN_SEARCH_LENGTH,
+    handleCatalogSearchClear,
+    handleCatalogSearchModeChange,
+    handleCategoryChange,
     handleCatalogSearch,
     handleDrawerClose,
     handlePlaceOrder,
     handleVariantSelect,
+    handleWithoutDeliveryChange,
     removeLine,
     updateLineQuantity,
   };

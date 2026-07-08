@@ -1,9 +1,12 @@
 import { Card, Empty, Flex, Timeline, Typography } from "antd";
 import type { TimelineProps } from "antd";
+import { observer } from "mobx-react-lite";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import type { OrderDetails } from "@/features/orders/model/order.types";
+import { useWorkspaceMembersStore } from "@/features/workspace-members/model/use-workspace-members-store";
+import { getWorkspaceMemberName } from "@/features/workspace-members/utils/workspace-member-display";
 
 import {
   formatDate,
@@ -20,8 +23,21 @@ type OrderHistoryTabProps = {
  * @deprecated Kept temporarily for the legacy tabbed order details layout.
  * Use OrderDetailsContent for the current order details design.
  */
-export function OrderHistoryTab({ order }: OrderHistoryTabProps) {
+export const OrderHistoryTab = observer(function OrderHistoryTab({
+  order,
+}: OrderHistoryTabProps) {
   const { t } = useTranslation();
+  const membersStore = useWorkspaceMembersStore();
+  const actorNamesByUserId = useMemo(
+    () =>
+      new Map(
+        membersStore.members.map((member) => [
+          member.userId,
+          getWorkspaceMemberName(member),
+        ]),
+      ),
+    [membersStore.members],
+  );
 
   const sortedEvents = useMemo(
     () =>
@@ -44,7 +60,10 @@ export function OrderHistoryTab({ order }: OrderHistoryTabProps) {
             </Text>
 
             <Text type="secondary">
-              {t("orders.actor")} #{event.actorId}
+              {t("orders.actor")}{" "}
+              {event.userId != null
+                ? (actorNamesByUserId.get(event.userId) ?? `#${event.actorId ?? event.userId}`)
+                : `#${event.actorId}`}
             </Text>
           </Flex>
         ),
@@ -64,4 +83,4 @@ export function OrderHistoryTab({ order }: OrderHistoryTabProps) {
       )}
     </Card>
   );
-}
+});

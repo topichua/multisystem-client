@@ -111,10 +111,18 @@ export type MessageVideoData = {
   preview_url?: string;
 };
 
+export type MessageAttachmentType = "image" | "audio" | "video" | string;
+
 export type MessageAttachmentEntry = {
   id?: string;
   image_data?: MessageImageData;
   video_data?: MessageVideoData;
+  type?: MessageAttachmentType;
+  url?: string;
+  name?: string;
+  key?: string;
+  r2_key?: string;
+  at?: string;
 };
 
 export type MessageAttachments = {

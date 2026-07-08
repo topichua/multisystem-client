@@ -990,14 +990,15 @@
       "showMore": "Show more",
       "showLess": "Show less",
       "createOrder": "Create order",
-      "newRecord": "New record",
-      "drawerTitle": "Order creation",
+      "drawerTitle": "New order",
       "closeDrawerAria": "Close",
       "placeOrderSuccess": "Order created",
       "placeOrderFailed": "Could not create order",
       "drawer": {
         "footerAmountOfProducts": "Amount of products",
         "footerDelivery": "Delivery",
+        "footerOrderDiscount": "Order discount",
+        "footerDiscount": "Discount ({{percent}}%)",
         "footerTotal": "Total",
         "cancel": "Cancel",
         "placeOrder": "Place order",
@@ -1011,14 +1012,31 @@
         "recommendedTitle": "Recommended products",
         "recommendedDescription": "Suggested based on this conversation. You can add them to the order or search manually.",
         "addProductDivider": "Add product",
-        "productSearchPlaceholder": "Find products or product variants",
+        "allCategories": "All categories",
+        "categoryFilterAria": "Product category",
+        "searchModeAria": "Product search result mode",
+        "searchModeFlat": "Flat variant list",
+        "searchModeGrouped": "Grouped by product",
+        "productSearchPlaceholder": "Search product, variant, or SKU",
         "selectedCount": "{{count}} selected",
         "searchMinChars_one": "Enter at least {{count}} character to search",
         "searchMinChars_other": "Enter at least {{count}} characters to search",
         "searchNoResults": "No products found",
+        "groupedSearchSummary": "Found: {{variants}} in {{products}} products",
+        "groupedVariantCount_one": "{{count}} variant",
+        "groupedVariantCount_other": "{{count}} variants",
+        "groupedSelectedInOrder_one": "{{count}} in order",
+        "groupedSelectedInOrder_other": "{{count}} in order",
+        "groupedOutOfStock": "none",
+        "variantInStock_one": "{{count}} pc",
+        "variantInStock_other": "{{count}} pcs",
+        "variantOutOfStock": "Out of stock",
         "addedProductsDivider": "Added products",
-        "addedProductsEmpty": "No products added yet",
+        "addedProductsEmpty": "No products. Add them using the search above.",
         "deliveryMethodLabel": "Delivery method",
+        "withoutDelivery": "No delivery",
+        "withoutDeliveryAlertTitle": "Order without delivery.",
+        "withoutDeliveryAlertDescription": "Shipping and statuses are managed manually, so delivery fields and tracking number are not required.",
         "deliveryMethodPlaceholder": "Choose delivery method",
         "deliveryNovaPoshta": "Nova Post",
         "deliveryProviderLabel": "Delivery provider",
@@ -1084,6 +1102,11 @@
       }
     },
     "listTitle": "Products list",
+    "catalogVariant": {
+      "inStock_one": "{{count}} pc",
+      "inStock_other": "{{count}} pcs",
+      "outOfStock": "Out of stock"
+    },
     "pagination": {
       "summary": "Showing {{from}} to {{to}} of {{total}} products"
     },
@@ -1564,6 +1587,7 @@
     "conversation": "Conversation",
     "groupId": "Group ID",
     "managerId": "Manager ID",
+    "responsibleMemberId": "Responsible member ID",
     "readAt": "Read at",
     "historyTab": "History",
     "details": {
@@ -1887,7 +1911,13 @@
     "seen": "Seen",
     "reactionAria": "Reaction: {{emoji}}",
     "attachmentSnippet": "Attachment",
-    "ellipsisSnippet": "…"
+    "ellipsisSnippet": "…",
+    "media": {
+      "playAudio": "Play audio",
+      "audioProgress": "Audio progress",
+      "toggleVolume": "Toggle audio volume",
+      "audioVolume": "Audio volume"
+    }
   },
   "login": {
     "subtitle": "Enter your credentials to continue",

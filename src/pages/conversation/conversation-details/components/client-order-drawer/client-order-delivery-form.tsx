@@ -1,5 +1,6 @@
 import { CreditCardIcon } from "@phosphor-icons/react";
 import {
+  Alert,
   Col,
   Flex,
   Form,
@@ -43,6 +44,7 @@ export function ClientOrderDeliveryForm({
   novaPoshtaDelivery,
 }: ClientOrderDeliveryFormProps) {
   const { t } = useTranslation();
+  const withoutDelivery = Form.useWatch("withoutDelivery", form) === true;
   const deliveryType = Form.useWatch("deliveryType", form) ?? "warehouse";
   const isCashOnDelivery = Form.useWatch("isCashOnDelivery", form);
   const isAddressDelivery = deliveryType === "address";
@@ -89,6 +91,9 @@ export function ClientOrderDeliveryForm({
 
   return (
     <Form form={form} layout="vertical">
+      <Form.Item hidden name="withoutDelivery">
+        <Input />
+      </Form.Item>
       <Form.Item hidden name="deliveryMethod">
         <Input />
       </Form.Item>
@@ -106,6 +111,16 @@ export function ClientOrderDeliveryForm({
       </Form.Item>
 
       <Flex vertical gap={12}>
+        {withoutDelivery ? (
+          <Alert
+            showIcon
+            className="client-order-no-delivery-alert"
+            type="info"
+            message={t(drawerKey("withoutDeliveryAlertTitle"))}
+            description={t(drawerKey("withoutDeliveryAlertDescription"))}
+          />
+        ) : null}
+
         <Row gutter={12}>
           <Col span={12}>
             <Form.Item label={t("clients.firstName")} name="firstName">
@@ -119,189 +134,191 @@ export function ClientOrderDeliveryForm({
           </Col>
         </Row>
 
-        <Form.Item
-          label={t("clients.phone")}
-          name="phone"
-          rules={phoneRules}
-        >
+        <Form.Item label={t("clients.phone")} name="phone" rules={phoneRules}>
           <ClientPhoneFormInput
             autoComplete="tel"
             placeholder={t("clients.phonePlaceholder")}
           />
         </Form.Item>
 
-        <Form.Item
-          label={t(drawerKey("deliveryProviderLabel"))}
-          name="novaPoshtaIntegrationId"
-          rules={[
-            {
-              required: true,
-              message: t(drawerKey("deliveryProviderRequired")),
-            },
-          ]}
-        >
-          <Select<number>
-            disabled={
-              novaPoshtaDelivery.integrationsLoading ||
-              novaPoshtaDelivery.providerOptions.length === 0
-            }
-            loading={novaPoshtaDelivery.integrationsLoading}
-            notFoundContent={
-              novaPoshtaDelivery.integrationsFailed
-                ? t(drawerKey("deliveryProviderLoadFailed"))
-                : t(drawerKey("noNovaPoshtaIntegrations"))
-            }
-            options={novaPoshtaDelivery.providerOptions}
-            placeholder={t(drawerKey("deliveryProviderPlaceholder"))}
-            onChange={novaPoshtaDelivery.onProviderChange}
-          />
-        </Form.Item>
-
-        <Form.Item
-          label={t(drawerKey("deliveryPlaceLabel"))}
-          name="deliveryType"
-        >
-          <Segmented
-            block
-            options={deliveryTypeOptions}
-            onChange={novaPoshtaDelivery.onDeliveryTypeChange}
-          />
-        </Form.Item>
-
-        <Form.Item
-          label={t(drawerKey("deliveryCityLabel"))}
-          name="cityRef"
-          rules={[
-            {
-              required: true,
-              message: t(drawerKey("deliveryCityRequired")),
-            },
-          ]}
-        >
-          <NovaPoshtaRemoteSelect<CityOption>
-            disabled={!novaPoshtaDelivery.hasProvider}
-            failed={novaPoshtaDelivery.citySelect.failed}
-            loading={novaPoshtaDelivery.citySelect.loading}
-            minSearchLength={CITY_MIN_SEARCH_LENGTH}
-            options={novaPoshtaDelivery.cityOptions}
-            placeholder={t(drawerKey("deliveryCityPlaceholder"))}
-            search={novaPoshtaDelivery.citySelect.search}
-            onChange={novaPoshtaDelivery.onCityChange}
-            onSearch={novaPoshtaDelivery.citySelect.setSearch}
-          />
-        </Form.Item>
-
-        {isAddressDelivery ? (
+        {!withoutDelivery ? (
           <>
             <Form.Item
-              label={t(drawerKey("deliveryStreetLabel"))}
-              name="streetRef"
+              label={t(drawerKey("deliveryProviderLabel"))}
+              name="novaPoshtaIntegrationId"
               rules={[
                 {
                   required: true,
-                  message: t(drawerKey("deliveryStreetRequired")),
+                  message: t(drawerKey("deliveryProviderRequired")),
                 },
               ]}
             >
-              <NovaPoshtaRemoteSelect<StreetOption>
+              <Select<number>
                 disabled={
-                  !novaPoshtaDelivery.hasProvider ||
-                  !novaPoshtaDelivery.selectedSettlementRef
+                  novaPoshtaDelivery.integrationsLoading ||
+                  novaPoshtaDelivery.providerOptions.length === 0
                 }
-                failed={novaPoshtaDelivery.streetSelect.failed}
-                loading={novaPoshtaDelivery.streetSelect.loading}
-                minSearchLength={STREET_MIN_SEARCH_LENGTH}
-                options={novaPoshtaDelivery.streetOptions}
-                placeholder={t(drawerKey("deliveryStreetPlaceholder"))}
-                search={novaPoshtaDelivery.streetSelect.search}
-                onChange={novaPoshtaDelivery.onStreetChange}
-                onSearch={novaPoshtaDelivery.streetSelect.setSearch}
+                loading={novaPoshtaDelivery.integrationsLoading}
+                notFoundContent={
+                  novaPoshtaDelivery.integrationsFailed
+                    ? t(drawerKey("deliveryProviderLoadFailed"))
+                    : t(drawerKey("noNovaPoshtaIntegrations"))
+                }
+                options={novaPoshtaDelivery.providerOptions}
+                placeholder={t(drawerKey("deliveryProviderPlaceholder"))}
+                onChange={novaPoshtaDelivery.onProviderChange}
               />
             </Form.Item>
 
-            <Row gutter={12}>
-              <Col span={12}>
+            <Form.Item
+              label={t(drawerKey("deliveryPlaceLabel"))}
+              name="deliveryType"
+            >
+              <Segmented
+                block
+                options={deliveryTypeOptions}
+                onChange={novaPoshtaDelivery.onDeliveryTypeChange}
+              />
+            </Form.Item>
+
+            <Form.Item
+              label={t(drawerKey("deliveryCityLabel"))}
+              name="cityRef"
+              rules={[
+                {
+                  required: true,
+                  message: t(drawerKey("deliveryCityRequired")),
+                },
+              ]}
+            >
+              <NovaPoshtaRemoteSelect<CityOption>
+                disabled={!novaPoshtaDelivery.hasProvider}
+                failed={novaPoshtaDelivery.citySelect.failed}
+                loading={novaPoshtaDelivery.citySelect.loading}
+                minSearchLength={CITY_MIN_SEARCH_LENGTH}
+                options={novaPoshtaDelivery.cityOptions}
+                placeholder={t(drawerKey("deliveryCityPlaceholder"))}
+                search={novaPoshtaDelivery.citySelect.search}
+                onChange={novaPoshtaDelivery.onCityChange}
+                onSearch={novaPoshtaDelivery.citySelect.setSearch}
+              />
+            </Form.Item>
+
+            {isAddressDelivery ? (
+              <>
                 <Form.Item
-                  label={t(drawerKey("deliveryBuildingLabel"))}
-                  name="building"
+                  label={t(drawerKey("deliveryStreetLabel"))}
+                  name="streetRef"
                   rules={[
                     {
                       required: true,
-                      whitespace: true,
-                      message: t(drawerKey("deliveryBuildingRequired")),
+                      message: t(drawerKey("deliveryStreetRequired")),
                     },
                   ]}
                 >
-                  <Input
-                    placeholder={t(drawerKey("deliveryBuildingPlaceholder"))}
+                  <NovaPoshtaRemoteSelect<StreetOption>
+                    disabled={
+                      !novaPoshtaDelivery.hasProvider ||
+                      !novaPoshtaDelivery.selectedSettlementRef
+                    }
+                    failed={novaPoshtaDelivery.streetSelect.failed}
+                    loading={novaPoshtaDelivery.streetSelect.loading}
+                    minSearchLength={STREET_MIN_SEARCH_LENGTH}
+                    options={novaPoshtaDelivery.streetOptions}
+                    placeholder={t(drawerKey("deliveryStreetPlaceholder"))}
+                    search={novaPoshtaDelivery.streetSelect.search}
+                    onChange={novaPoshtaDelivery.onStreetChange}
+                    onSearch={novaPoshtaDelivery.streetSelect.setSearch}
                   />
                 </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item
-                  label={t(drawerKey("deliveryFlatLabel"))}
-                  name="flat"
-                >
-                  <Input
-                    placeholder={t(drawerKey("deliveryFlatPlaceholder"))}
-                  />
-                </Form.Item>
-              </Col>
-            </Row>
+
+                <Row gutter={12}>
+                  <Col span={12}>
+                    <Form.Item
+                      label={t(drawerKey("deliveryBuildingLabel"))}
+                      name="building"
+                      rules={[
+                        {
+                          required: true,
+                          whitespace: true,
+                          message: t(drawerKey("deliveryBuildingRequired")),
+                        },
+                      ]}
+                    >
+                      <Input
+                        placeholder={t(
+                          drawerKey("deliveryBuildingPlaceholder"),
+                        )}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item
+                      label={t(drawerKey("deliveryFlatLabel"))}
+                      name="flat"
+                    >
+                      <Input
+                        placeholder={t(drawerKey("deliveryFlatPlaceholder"))}
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
+              </>
+            ) : (
+              <Form.Item
+                label={t(drawerKey("deliveryWarehouseLabel"))}
+                name="warehouseRef"
+                rules={[
+                  {
+                    required: true,
+                    message: t(drawerKey("deliveryWarehouseRequired")),
+                  },
+                ]}
+              >
+                <NovaPoshtaRemoteSelect<WarehouseOption>
+                  disabled={
+                    !novaPoshtaDelivery.hasProvider ||
+                    !novaPoshtaDelivery.selectedSettlementRef
+                  }
+                  failed={novaPoshtaDelivery.warehouseSelect.failed}
+                  loading={novaPoshtaDelivery.warehouseSelect.loading}
+                  minSearchLength={WAREHOUSE_MIN_SEARCH_LENGTH}
+                  options={novaPoshtaDelivery.warehouseOptions}
+                  placeholder={t(drawerKey("deliveryWarehousePlaceholder"))}
+                  search={novaPoshtaDelivery.warehouseSelect.search}
+                  onChange={novaPoshtaDelivery.onWarehouseChange}
+                  onSearch={novaPoshtaDelivery.warehouseSelect.setSearch}
+                />
+              </Form.Item>
+            )}
+
+            <Form.Item
+              label={t(drawerKey("paymentMethodLabel"))}
+              name="isCashOnDelivery"
+              getValueProps={(value?: boolean) => ({
+                value: value === false ? "prepayment" : "cash_on_delivery",
+              })}
+              normalize={(value) => value === "cash_on_delivery"}
+            >
+              <Segmented block options={paymentMethodOptions} />
+            </Form.Item>
+
+            {isCashOnDelivery !== false ? (
+              <Form.Item
+                label={t(drawerKey("cashOnDeliveryAmountLabel"))}
+                name="cashOnDeliveryAmount"
+                preserve={false}
+              >
+                <InputNumber
+                  min={0}
+                  controls={false}
+                  addonAfter={t(drawerKey("uah"))}
+                  placeholder="0"
+                  style={{ width: "100%" }}
+                />
+              </Form.Item>
+            ) : null}
           </>
-        ) : (
-          <Form.Item
-            label={t(drawerKey("deliveryWarehouseLabel"))}
-            name="warehouseRef"
-            rules={[
-              {
-                required: true,
-                message: t(drawerKey("deliveryWarehouseRequired")),
-              },
-            ]}
-          >
-            <NovaPoshtaRemoteSelect<WarehouseOption>
-              disabled={
-                !novaPoshtaDelivery.hasProvider ||
-                !novaPoshtaDelivery.selectedSettlementRef
-              }
-              failed={novaPoshtaDelivery.warehouseSelect.failed}
-              loading={novaPoshtaDelivery.warehouseSelect.loading}
-              minSearchLength={WAREHOUSE_MIN_SEARCH_LENGTH}
-              options={novaPoshtaDelivery.warehouseOptions}
-              placeholder={t(drawerKey("deliveryWarehousePlaceholder"))}
-              search={novaPoshtaDelivery.warehouseSelect.search}
-              onChange={novaPoshtaDelivery.onWarehouseChange}
-              onSearch={novaPoshtaDelivery.warehouseSelect.setSearch}
-            />
-          </Form.Item>
-        )}
-
-        <Form.Item
-          label={t(drawerKey("paymentMethodLabel"))}
-          name="isCashOnDelivery"
-          getValueProps={(value?: boolean) => ({
-            value: value === false ? "prepayment" : "cash_on_delivery",
-          })}
-          normalize={(value) => value === "cash_on_delivery"}
-        >
-          <Segmented block options={paymentMethodOptions} />
-        </Form.Item>
-
-        {isCashOnDelivery !== false ? (
-          <Form.Item
-            label={t(drawerKey("cashOnDeliveryAmountLabel"))}
-            name="cashOnDeliveryAmount"
-            preserve={false}
-          >
-            <InputNumber
-              min={0}
-              controls={false}
-              addonAfter={t(drawerKey("uah"))}
-              placeholder="0"
-              style={{ width: "100%" }}
-            />
-          </Form.Item>
         ) : null}
 
         <Form.Item

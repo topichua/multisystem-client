@@ -2,6 +2,13 @@ import type { CatalogVariant } from "@/features/products/model/product.types";
 import { MinusIcon, PlusIcon, TrashIcon } from "@phosphor-icons/react";
 import { Button, Image, theme } from "antd";
 
+import {
+  formatCatalogVariantCurrency,
+  getCatalogVariantImageUrl,
+  getCatalogVariantMeta,
+  getCatalogVariantUnitPrice,
+} from "@/features/products/utils/catalog-variant-display";
+
 import * as S from "./client-order-drawer.styled";
 
 type OrderProductLineProps = {
@@ -18,13 +25,11 @@ export const OrderProductLine = ({
   onRemove,
 }: OrderProductLineProps) => {
   const { token } = theme.useToken();
-  const imageUrl =
-    variant.imageUrl ?? variant.product.mainImageUrl ?? undefined;
-  const meta = [variant.color, variant.size].filter(Boolean).join(" / ");
-  const currency =
-    variant.product.currency === "UAH" ? "₴" : variant.product.currency;
+  const imageUrl = getCatalogVariantImageUrl(variant) ?? undefined;
+  const meta = getCatalogVariantMeta(variant);
+  const currency = formatCatalogVariantCurrency(variant.product.currency);
   const maxQuantity = variant.quantity > 0 ? variant.quantity : undefined;
-  const lineTotal = variant.unitPrice * quantity;
+  const lineTotal = getCatalogVariantUnitPrice(variant) * quantity;
   const canDecrease = quantity > 1;
   const canIncrease = maxQuantity == null || quantity < maxQuantity;
 
@@ -34,11 +39,11 @@ export const OrderProductLine = ({
         src={imageUrl}
         alt={variant.label}
         preview={false}
-        width={64}
-        height={56}
+        width={40}
+        height={40}
         style={{
           objectFit: "cover",
-          borderRadius: token.borderRadius,
+          borderRadius: token.borderRadiusSM,
           background: token.colorFillAlter,
           flexShrink: 0,
         }}

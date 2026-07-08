@@ -1,11 +1,13 @@
 import { Image } from "antd";
 import { memo } from "react";
 
-import type {
-  MessageAttachmentEntry,
-  MessageAttachments as MessageAttachmentsPayload,
-} from "@/features/conversations/model/types";
+import type { MessageAttachments as MessageAttachmentsPayload } from "@/features/conversations/model/types";
 
+import {
+  getAttachmentImageUrl,
+  getAttachmentPlayableMedia,
+} from "./message-attachment-utils";
+import { MessageMediaAttachment } from "./message-media-attachment";
 import * as S from "./message-attachments.styled";
 
 type MessageAttachmentsProps = {
@@ -13,37 +15,67 @@ type MessageAttachmentsProps = {
   attachments: MessageAttachmentsPayload;
 };
 
-const getAttachmentImageUrl = (attachment: MessageAttachmentEntry) => {
-  return (
-    attachment.image_data?.url ?? attachment.image_data?.preview_url ?? null
-  );
-};
+type RenderableAttachment =
+  | {
+      id: string;
+      type: "image";
+      imageUrl: string;
+    }
+  | {
+      id: string;
+      type: "media";
+      media: NonNullable<ReturnType<typeof getAttachmentPlayableMedia>>;
+    };
 
 export const MessageAttachments = memo(
   ({ messageId, attachments }: MessageAttachmentsProps) => {
-    const imageAttachments = attachments.data
-      .map((attachment, index) => ({
-        id: attachment.id ?? `${messageId}-attachment-${index}`,
-        imageUrl: getAttachmentImageUrl(attachment),
-      }))
-      .filter((attachment): attachment is { id: string; imageUrl: string } =>
-        Boolean(attachment.imageUrl),
+    const renderableAttachments = attachments.data
+      .map((attachment, index): RenderableAttachment | null => {
+        const id = attachment.id ?? `${messageId}-attachment-${index}`;
+        const media = getAttachmentPlayableMedia(attachment);
+
+        if (media != null) {
+          return {
+            id,
+            type: "media",
+            media,
+          };
+        }
+
+        const imageUrl = getAttachmentImageUrl(attachment);
+
+        if (imageUrl) {
+          return {
+            id,
+            type: "image",
+            imageUrl,
+          };
+        }
+
+        return null;
+      })
+      .filter(
+        (attachment): attachment is RenderableAttachment => attachment != null,
       );
 
-    if (imageAttachments.length === 0) {
+    if (renderableAttachments.length === 0) {
       return null;
     }
 
     return (
       <S.Attachments>
-        {imageAttachments.map((attachment) => (
-          <Image
-            width={200}
-            key={attachment.id}
-            alt="Message attachment"
-            src={attachment.imageUrl}
-          />
-        ))}
+        {renderableAttachments.map((attachment) =>
+          attachment.type === "image" ? (
+            <Image
+              width={200}
+              key={attachment.id}
+              alt="Message attachment"
+              src={attachment.imageUrl}
+            />
+          ) : (
+            <MessageMediaAttachment key={attachment.id} {...attachment.media} />
+          ),
+        )}
       </S.Attachments>
     );
   },

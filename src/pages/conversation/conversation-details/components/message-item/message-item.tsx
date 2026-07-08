@@ -14,6 +14,10 @@ import { isOwnConversationMessage } from "@/features/conversations/utils/convers
 import type { ReplyComposeTarget } from "../../reply-compose-target";
 import { MessageAttachments } from "../message-attachments/message-attachments";
 import {
+  getAttachmentImageUrl,
+  isAttachmentPlaceholderMessage,
+} from "../message-attachments/message-attachment-utils";
+import {
   copyTextToClipboard,
   getMessageClipboardText,
 } from "./copy-message-to-clipboard";
@@ -75,6 +79,27 @@ export const MessageItem = memo(
     const failedOutbound = message.outboundStatus === "failed";
     const clientTempId = message.clientTempId;
     const messageText = message.message ?? "";
+    const hasAttachments = (message.attachments?.data?.length ?? 0) > 0;
+    const displayMessageText = useMemo(() => {
+      const trimmed = messageText.trim();
+      if (!trimmed || !hasAttachments) {
+        return messageText;
+      }
+
+      if (
+        isAttachmentPlaceholderMessage(trimmed, message.attachments?.data ?? [])
+      ) {
+        return "";
+      }
+
+      const imageUrls = new Set(
+        (message.attachments?.data ?? [])
+          .map(getAttachmentImageUrl)
+          .filter((url): url is string => url != null),
+      );
+
+      return imageUrls.has(trimmed) ? "" : messageText;
+    }, [hasAttachments, message.attachments?.data, messageText]);
     const webhookReaction = message.webhook_messaging?.reaction;
     const reactionEmoji =
       webhookReaction != null
@@ -82,7 +107,6 @@ export const MessageItem = memo(
         : "";
     const showReactionBadge = reactionEmoji !== "";
     const timeLabel = formatMessageTime(message.created_time);
-    const hasAttachments = (message.attachments?.data?.length ?? 0) > 0;
     const repliedTo = message.replied_to_message;
     const hasReplyQuote =
       repliedTo != null && (repliedTo.message?.trim() ?? "") !== "";
@@ -164,7 +188,7 @@ export const MessageItem = memo(
 
     const showTextTimeRow =
       timeLabel !== "" ||
-      messageText.trim().length > 0 ||
+      displayMessageText.trim().length > 0 ||
       hasAttachments ||
       showReactionBadge ||
       hasReplyQuote;
@@ -255,12 +279,12 @@ export const MessageItem = memo(
                   $hasAttachments={hasAttachments}
                   $hasReply={hasReplyQuote}
                 >
-                  {messageText ? (
+                  {displayMessageText ? (
                     <Paragraph
                       className="conversation-message-body"
                       style={{ flex: 1, marginBottom: 0, minWidth: 0 }}
                     >
-                      {messageText}
+                      {displayMessageText}
                     </Paragraph>
                   ) : (
                     <S.TextTimeSpacer aria-hidden />

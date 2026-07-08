@@ -18,12 +18,26 @@ import type {
 } from "@/features/orders/model/order.types";
 import { buildOrderCreatePayload } from "@/features/orders/utils/build-order-create-payload";
 import { productsApi } from "@/features/products/api/products-api";
-import type { CatalogVariant } from "@/features/products/model/product.types";
+import type { CatalogVariant, Product } from "@/features/products/model/product.types";
+import { productToCatalogVariants } from "@/features/products/utils/catalog-variant-display";
 import { throwLoadError } from "@/utils/throw-load-error";
 import { unknownErrorMessage } from "@/utils/unknown-error-message";
 
 const defaultPageSize = 50;
 const minCatalogSearchLength = 3;
+
+export type CatalogSearchMode = "flat" | "grouped";
+
+export type CatalogSearchProductGroup = {
+  product: Product;
+  variants: CatalogVariant[];
+};
+
+type CatalogSearchParams = {
+  keyword: string;
+  categoryId?: number | null;
+  mode?: CatalogSearchMode;
+};
 
 function snapshotFromStore(store: OrdersStore): OrdersListAppliedUrlState {
   return {
@@ -73,7 +87,9 @@ export class OrdersStore {
   createLoading = false;
 
   catalogSearchResults: CatalogVariant[] = [];
+  catalogSearchProductGroups: CatalogSearchProductGroup[] = [];
   catalogSearchLoading = false;
+  catalogSearchRequestSeq = 0;
 
   clientStats: ClientOrderStats | null = null;
   clientStatsClientId: number | null = null;
@@ -328,42 +344,98 @@ export class OrdersStore {
     }
   };
 
-  searchCatalogVariants = async (keyword: string): Promise<void> => {
+  searchCatalog = async ({
+    keyword,
+    categoryId,
+    mode = "flat",
+  }: CatalogSearchParams): Promise<void> => {
     const query = keyword.trim();
     if (query.length < minCatalogSearchLength) {
+      this.catalogSearchRequestSeq += 1;
+
       runInAction(() => {
         this.catalogSearchResults = [];
+        this.catalogSearchProductGroups = [];
         this.catalogSearchLoading = false;
       });
       return;
     }
 
+    const requestSeq = this.catalogSearchRequestSeq + 1;
+    this.catalogSearchRequestSeq = requestSeq;
+
     runInAction(() => {
       this.catalogSearchLoading = true;
+      this.catalogSearchResults = [];
+      this.catalogSearchProductGroups = [];
     });
 
     try {
-      const response = await productsApi.listCatalogVariants({
+      if (mode === "grouped") {
+        const response = await productsApi.list({
+          sort: "created_desc",
+          page: 1,
+          pageSize: 50,
+          keyword: query,
+          categoryIds: categoryId != null ? [categoryId] : [],
+        });
+
+        if (this.catalogSearchRequestSeq !== requestSeq) {
+          return;
+        }
+
+        const groups = response.items
+          .map((product) => ({
+            product,
+            variants: productToCatalogVariants(product),
+          }))
+          .filter((group) => group.variants.length > 0);
+
+        runInAction(() => {
+          this.catalogSearchProductGroups = groups;
+          this.catalogSearchResults = groups.flatMap((group) => group.variants);
+        });
+        return;
+      }
+
+      const response = await productsApi.listProductVariants({
         keyword: query,
+        categoryIds: categoryId != null ? [categoryId] : undefined,
       });
+
+      if (this.catalogSearchRequestSeq !== requestSeq) {
+        return;
+      }
+
       runInAction(() => {
         this.catalogSearchResults = response.items;
+        this.catalogSearchProductGroups = [];
       });
     } catch (e) {
+      if (this.catalogSearchRequestSeq !== requestSeq) {
+        return;
+      }
+
       runInAction(() => {
         this.catalogSearchResults = [];
+        this.catalogSearchProductGroups = [];
       });
       throwLoadError("Failed to load catalog variants", e);
     } finally {
-      runInAction(() => {
-        this.catalogSearchLoading = false;
-      });
+      if (this.catalogSearchRequestSeq === requestSeq) {
+        runInAction(() => {
+          this.catalogSearchLoading = false;
+        });
+      }
     }
   };
 
   clearCatalogSearch = (): void => {
+    this.catalogSearchRequestSeq += 1;
+
     runInAction(() => {
       this.catalogSearchResults = [];
+      this.catalogSearchProductGroups = [];
       this.catalogSearchLoading = false;
     });
   };

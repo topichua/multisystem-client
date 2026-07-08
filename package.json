@@ -27,6 +27,7 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@phosphor-icons/react": "^2.1.10",
+    "@vidstack/react": "^1.15.6",
     "antd": "^6.3.7",
     "antd-img-crop": "^4.30.0",
     "axios": "^1.15.2",

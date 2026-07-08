@@ -53,16 +53,6 @@ export function OrderCustomerTab({ order }: OrderCustomerTabProps) {
       ),
     },
     {
-      key: "instagramUserId",
-      label: t("orders.instagramUserId"),
-      children: formatText(order.customer.instagramUserId),
-    },
-    {
-      key: "deliveryInfo",
-      label: t("orders.savedDeliveryInfo"),
-      children: formatText(order.customer.deliveryInfo),
-    },
-    {
       key: "createdAt",
       label: t("orders.customerCreatedAt"),
       children: formatDate(order.customer.createdAt),
@@ -112,9 +102,9 @@ export function OrderCustomerTab({ order }: OrderCustomerTabProps) {
                 children: formatText(order.conversation?.groupId),
               },
               {
-                key: "managerId",
-                label: t("orders.managerId"),
-                children: formatText(order.conversation?.managerId),
+                key: "responsibleMemberId",
+                label: t("orders.responsibleMemberId"),
+                children: formatText(order.conversation?.responsibleMemberId),
               },
               {
                 key: "readAt",

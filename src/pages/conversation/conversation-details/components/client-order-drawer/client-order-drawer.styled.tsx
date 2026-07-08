@@ -3,15 +3,6 @@ import styled from "styled-components";
 export const DrawerTitle = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 4px;
-`;
-
-export const DrawerEyebrow = styled.span`
-  font-size: 11px;
-  line-height: 1.2;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: ${({ theme }) => theme.colors.functional.text.subdued};
 `;
 
 export const DrawerHeading = styled.span`
@@ -37,6 +28,11 @@ export const Section = styled.section`
   &:first-child {
     padding-top: 0;
     border-top: 0;
+  }
+
+  .ant-segmented .ant-segmented-item-selected {
+    box-shadow: inset 0 0 0 1px ${({ theme }) => theme.colors.semantic.info};
+    color: ${({ theme }) => theme.colors.functional.text.heading};
   }
 `;
 
@@ -87,10 +83,20 @@ export const SectionCount = styled.span`
   color: ${({ theme }) => theme.colors.functional.text.subdued};
 `;
 
+export const NoDeliveryToggle = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  font-size: 12px;
+  line-height: 1.35;
+  color: ${({ theme }) => theme.colors.functional.text.primary};
+`;
+
 export const SectionPanel = styled.div`
   border: 1px solid ${({ theme }) => theme.colors.functional.border.cardBase};
+  background: ${({ theme }) => theme.colors.functional.background.natural};
   border-radius: 8px;
-  background: ${({ theme }) => theme.colors.functional.background.elevated};
 `;
 
 export const ClientPanel = styled(SectionPanel)`
@@ -142,26 +148,29 @@ export const ClientPhone = styled.div`
   color: ${({ theme }) => theme.colors.functional.text.subdued};
 `;
 
-export const ProductsPanel = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-
-  .ant-select-selector {
-    min-height: 34px;
-    border-radius: 8px !important;
-  }
-`;
-
 export const ProductLine = styled.div`
   display: flex;
   align-items: center;
-  gap: 10px;
-  min-height: 58px;
-  padding: 8px 10px;
+  gap: 8px;
+  min-height: 52px;
+  padding: 8px;
   border: 1px solid ${({ theme }) => theme.colors.functional.border.cardBase};
   border-radius: 8px;
-  background: ${({ theme }) => theme.colors.functional.background.elevated};
+  background: ${({ theme }) => theme.colors.functional.background.natural};
+`;
+
+export const EmptyProductsState = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 70px;
+  padding: 18px 20px;
+  border: 1px dashed ${({ theme }) => theme.colors.functional.border.cardBase};
+  border-radius: 8px;
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.45;
+  color: ${({ theme }) => theme.colors.functional.text.subdued};
 `;
 
 export const ProductCopy = styled.div`
@@ -242,9 +251,7 @@ export const QuantityValue = styled.span`
   color: ${({ theme }) => theme.colors.functional.text.heading};
 `;
 
-export const FormPanel = styled(SectionPanel)`
-  padding: 14px;
-
+export const FormPanel = styled.div`
   .ant-form-item {
     margin-bottom: 14px;
   }
@@ -297,7 +304,7 @@ export const FormPanel = styled(SectionPanel)`
   }
 
   .ant-segmented .ant-segmented-item-selected {
-    box-shadow: inset 0 0 0 2px ${({ theme }) => theme.colors.semantic.primary};
+    box-shadow: inset 0 0 0 1px ${({ theme }) => theme.colors.semantic.info};
     color: ${({ theme }) => theme.colors.functional.text.heading};
   }
 
@@ -312,6 +319,65 @@ export const FormPanel = styled(SectionPanel)`
     margin-left: 6px;
     text-transform: none;
     letter-spacing: 0;
+    color: ${({ theme }) => theme.colors.functional.text.subdued};
+  }
+
+  .client-order-no-delivery-alert {
+    border: 1px dashed ${({ theme }) => theme.colors.functional.border.cardBase};
+    border-radius: 8px;
+    background: ${({ theme }) => theme.colors.functional.background.natural};
+  }
+
+  .client-order-no-delivery-alert .ant-alert-message {
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.35;
+    color: ${({ theme }) => theme.colors.functional.text.heading};
+  }
+
+  .client-order-no-delivery-alert .ant-alert-description {
+    font-size: 12px;
+    line-height: 1.55;
+    color: ${({ theme }) => theme.colors.functional.text.subdued};
+  }
+`;
+
+export const FooterDiscount = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid ${({ theme }) => theme.colors.functional.border.cardBase};
+  border-radius: 8px;
+  background: ${({ theme }) => theme.colors.functional.background.natural};
+`;
+
+export const FooterDiscountLabel = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  font-size: 13px;
+  line-height: 1.35;
+  color: ${({ theme }) => theme.colors.functional.text.primary};
+
+  svg {
+    flex-shrink: 0;
+    color: ${({ theme }) => theme.colors.functional.text.subdued};
+  }
+`;
+
+export const FooterDiscountInput = styled.div`
+  flex: 0 0 88px;
+
+  .ant-input-number {
+    width: 100%;
+  }
+
+  .ant-input-number-group-addon {
+    padding-inline: 8px;
+    background: ${({ theme }) => theme.colors.functional.background.elevated};
     color: ${({ theme }) => theme.colors.functional.text.subdued};
   }
 `;
@@ -340,6 +406,10 @@ export const SummaryRow = styled.div`
   font-size: 13px;
   line-height: 1.35;
   color: ${({ theme }) => theme.colors.functional.text.primary};
+`;
+
+export const SummaryDiscount = styled(SummaryRow)`
+  color: ${({ theme }) => theme.colors.functional.text.success};
 `;
 
 export const SummaryTotal = styled(SummaryRow)`

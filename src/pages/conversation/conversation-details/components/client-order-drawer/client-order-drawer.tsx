@@ -1,6 +1,6 @@
 import type { Client } from "@/features/clients/model/client.types";
 import { observer } from "mobx-react-lite";
-import { Drawer } from "antd";
+import { Drawer, Switch } from "antd";
 import { useTranslation } from "react-i18next";
 
 import * as S from "./client-order-drawer.styled";
@@ -37,22 +37,32 @@ export const ClientOrderDrawer = observer(
   }: ClientOrderDrawerProps) => {
     const { t } = useTranslation();
     const {
+      catalogSearchProductGroups,
+      categoriesLoading,
+      categorySelectOptions,
       catalogSearchLoading,
+      catalogSearchMode,
       createLoading,
       form,
+      handleCatalogSearchClear,
+      handleCatalogSearchModeChange,
+      handleCategoryChange,
       handleCatalogSearch,
       handleDrawerClose,
       handlePlaceOrder,
       handleVariantSelect,
+      handleWithoutDeliveryChange,
       minSearchLength,
       novaPoshtaDelivery,
       orderLines,
       orderTotals,
       productPickerKey,
       removeLine,
+      selectedCategoryId,
       trimmedSearch,
       updateLineQuantity,
       variantSelectOptions,
+      withoutDelivery,
     } = useClientOrderCreateController({
       conversationId,
       linkedClient,
@@ -62,89 +72,106 @@ export const ClientOrderDrawer = observer(
 
     return (
       <Drawer
-          title={
-            <S.DrawerTitle>
-              <S.DrawerEyebrow>
-                {t("conversation.clientOrders.newRecord")}
-              </S.DrawerEyebrow>
-              <S.DrawerHeading>
-                {t("conversation.clientOrders.drawerTitle")}
-              </S.DrawerHeading>
-            </S.DrawerTitle>
-          }
-          closable={{
-            "aria-label": t("conversation.clientOrders.closeDrawerAria"),
-          }}
-          keyboard={false}
-          maskClosable={false}
-          onClose={handleDrawerClose}
-          open={open}
-          size={640}
-          destroyOnHidden
-          styles={{
-            header: {
-              padding: "18px 18px 14px",
-            },
-            body: {
-              padding: "18px",
-            },
-            footer: {
-              padding: "14px 18px 16px",
-            },
-          }}
-          footer={
-            <ClientOrderDrawerFooter
-              createLoading={createLoading}
-              orderTotals={orderTotals}
-              placeOrderDisabled={orderLines.length === 0}
-              onCancel={handleDrawerClose}
-              onPlaceOrder={() => void handlePlaceOrder()}
-            />
-          }
-        >
-          <S.DrawerContent>
-            <ClientOrderClientCard
-              clientPic={clientPic}
-              linkedClient={linkedClient}
-              title={sectionTitle(
-                1,
-                t("conversation.clientOrders.drawer.sectionClient"),
-              )}
-            />
+        title={
+          <S.DrawerTitle>
+            <S.DrawerHeading>
+              {t("conversation.clientOrders.drawerTitle")}
+            </S.DrawerHeading>
+          </S.DrawerTitle>
+        }
+        closable={{
+          "aria-label": t("conversation.clientOrders.closeDrawerAria"),
+        }}
+        keyboard={false}
+        mask={{
+          closable: false,
+        }}
+        onClose={handleDrawerClose}
+        open={open}
+        size={440}
+        destroyOnHidden
+        styles={{
+          header: {
+            padding: "18px 18px 14px",
+          },
+          body: {
+            padding: "18px",
+          },
+          footer: {
+            padding: "14px 18px 16px",
+          },
+        }}
+        footer={
+          <ClientOrderDrawerFooter
+            createLoading={createLoading}
+            form={form}
+            orderTotals={orderTotals}
+            placeOrderDisabled={orderLines.length === 0}
+            onCancel={handleDrawerClose}
+            onPlaceOrder={() => void handlePlaceOrder()}
+          />
+        }
+      >
+        <S.DrawerContent>
+          <ClientOrderClientCard
+            clientPic={clientPic}
+            linkedClient={linkedClient}
+            title={sectionTitle(
+              1,
+              t("conversation.clientOrders.drawer.sectionClient"),
+            )}
+          />
 
-            <ClientOrderProductsSection
-              catalogSearchLoading={catalogSearchLoading}
-              minSearchLength={minSearchLength}
-              orderLines={orderLines}
-              productPickerKey={productPickerKey}
-              title={sectionTitle(
-                2,
-                t("conversation.clientOrders.drawer.sectionProducts"),
-              )}
-              trimmedSearch={trimmedSearch}
-              variantSelectOptions={variantSelectOptions}
-              onProductSearch={handleCatalogSearch}
-              onQuantityChange={updateLineQuantity}
-              onRemoveLine={removeLine}
-              onVariantSelect={handleVariantSelect}
-            />
+          <ClientOrderProductsSection
+            catalogSearchProductGroups={catalogSearchProductGroups}
+            categoriesLoading={categoriesLoading}
+            categorySelectOptions={categorySelectOptions}
+            catalogSearchLoading={catalogSearchLoading}
+            catalogSearchMode={catalogSearchMode}
+            minSearchLength={minSearchLength}
+            orderLines={orderLines}
+            productPickerKey={productPickerKey}
+            selectedCategoryId={selectedCategoryId}
+            title={sectionTitle(
+              2,
+              t("conversation.clientOrders.drawer.sectionProducts"),
+            )}
+            trimmedSearch={trimmedSearch}
+            variantSelectOptions={variantSelectOptions}
+            onCategoryChange={handleCategoryChange}
+            onCatalogSearchClear={handleCatalogSearchClear}
+            onProductSearch={handleCatalogSearch}
+            onSearchModeChange={handleCatalogSearchModeChange}
+            onQuantityChange={updateLineQuantity}
+            onRemoveLine={removeLine}
+            onVariantSelect={handleVariantSelect}
+          />
 
-            <S.Section>
-              <S.SectionHeader>
-                {sectionTitle(
-                  3,
-                  t("conversation.clientOrders.drawer.sectionOrderDetails"),
-                )}
-              </S.SectionHeader>
-              <S.FormPanel>
-                <ClientOrderDeliveryForm
-                  form={form}
-                  novaPoshtaDelivery={novaPoshtaDelivery}
+          <S.Section>
+            <S.SectionHeader>
+              {sectionTitle(
+                3,
+                t("conversation.clientOrders.drawer.sectionOrderDetails"),
+              )}
+              <S.NoDeliveryToggle>
+                <span>
+                  {t("conversation.clientOrders.drawer.withoutDelivery")}
+                </span>
+                <Switch
+                  checked={withoutDelivery}
+                  onChange={handleWithoutDeliveryChange}
                 />
-              </S.FormPanel>
-            </S.Section>
-          </S.DrawerContent>
-        </Drawer>
+              </S.NoDeliveryToggle>
+            </S.SectionHeader>
+            <S.FormPanel>
+              <ClientOrderDeliveryForm
+                form={form}
+                novaPoshtaDelivery={novaPoshtaDelivery}
+              />
+            </S.FormPanel>
+          </S.Section>
+        </S.DrawerContent>
+      </Drawer>
     );
   },
 );

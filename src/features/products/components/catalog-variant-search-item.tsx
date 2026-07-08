@@ -1,6 +1,12 @@
 import { Flex, Image, Typography, theme } from "antd";
+import { useTranslation } from "react-i18next";
 
 import type { CatalogVariant } from "@/features/products/model/product.types";
+import {
+  formatCatalogVariantPrice,
+  getCatalogVariantImageUrl,
+  getCatalogVariantMeta,
+} from "@/features/products/utils/catalog-variant-display";
 
 const { Text } = Typography;
 
@@ -11,15 +17,19 @@ type CatalogVariantSearchItemProps = {
 export const CatalogVariantSearchItem = ({
   variant,
 }: CatalogVariantSearchItemProps) => {
+  const { t } = useTranslation();
   const { token } = theme.useToken();
-  const product = variant.product;
-  const imageUrl = variant.imageUrl ?? product?.mainImageUrl ?? undefined;
-  const meta = [variant.color, variant.size].filter(Boolean).join(" / ");
-  const currency =
-    product?.currency === "UAH" ? "₴" : (product?.currency ?? "");
+  const imageUrl = getCatalogVariantImageUrl(variant) ?? undefined;
+  const meta = getCatalogVariantMeta(variant);
+  const priceLabel = formatCatalogVariantPrice(variant);
+  const stockLabel = variant.inStock
+    ? t("products.catalogVariant.inStock", {
+        count: variant.quantity,
+      })
+    : t("products.catalogVariant.outOfStock");
 
   return (
-    <Flex align="center" gap={12} style={{ padding: "4px 0" }}>
+    <Flex align="center" gap={12} style={{ padding: 0 }}>
       <Image
         src={imageUrl}
         alt={variant.label}
@@ -38,16 +48,8 @@ export const CatalogVariantSearchItem = ({
         <Text strong ellipsis>
           {variant.label}
         </Text>
-        {meta ? (
-          <Text type="secondary" ellipsis>
-            {meta}
-          </Text>
-        ) : null}
-        <Text type="secondary">
-          {variant.unitPrice.toLocaleString("uk-UA")} {currency}
-          {variant.inStock
-            ? ` · ${variant.quantity} шт.`
-            : " · немає в наявності"}
+        <Text type="secondary" ellipsis>
+          {[meta, priceLabel, stockLabel].filter(Boolean).join(" · ")}
         </Text>
       </Flex>
     </Flex>

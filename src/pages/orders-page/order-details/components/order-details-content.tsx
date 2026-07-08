@@ -6,6 +6,7 @@ import {
   TruckIcon,
 } from "@phosphor-icons/react";
 import { Avatar, Button, Empty, Flex, Typography } from "antd";
+import { observer } from "mobx-react-lite";
 import type { ReactNode } from "react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -15,6 +16,8 @@ import type {
   OrderDetails,
   OrderDetailsEvent,
 } from "@/features/orders/model/order.types";
+import { useWorkspaceMembersStore } from "@/features/workspace-members/model/use-workspace-members-store";
+import { getWorkspaceMemberName } from "@/features/workspace-members/utils/workspace-member-display";
 
 import * as S from "./order-details-content.styled";
 import { DeliveryStatusTag, PaymentStatusTag } from "./order-status-tags";
@@ -35,7 +38,7 @@ const { Text } = Typography;
 
 type TranslationFn = ReturnType<typeof useTranslation>["t"];
 type OrderItem = OrderDetails["items"][number];
-type DeliveryInfo = OrderDetails["deliveryInfos"][number] | null | undefined;
+type DeliveryInfo = OrderDetails["deliveryInfo"];
 
 type OrderDetailsContentProps = {
   order: OrderDetails;
@@ -101,10 +104,31 @@ const getEventMeta = (event: OrderDetailsEvent) =>
     titleKey: "",
   };
 
-const getInstagramHandle = (value: string | null | undefined): string => {
-  if (!value) return EMPTY_VALUE;
+const getActorLabel = (
+  event: OrderDetailsEvent,
+  actorNamesByUserId: Map<number, string>,
+  t: TranslationFn,
+): string => {
+  if (event.userId != null) {
+    const userName = actorNamesByUserId.get(event.userId);
+    if (userName) {
+      return `${t("orders.actor")}: ${userName}`;
+    }
+  }
 
-  return value.startsWith("@") ? value : `@${value}`;
+  if (event.actorId != null) {
+    return `${t("orders.actor")}: #${event.actorId}`;
+  }
+
+  return t("orders.details.systemActor");
+};
+
+const formatDeliveryAddress = (deliveryInfo: DeliveryInfo): string => {
+  const parts = [deliveryInfo?.street, deliveryInfo?.building, deliveryInfo?.flat]
+    .map((part) => part?.trim())
+    .filter((part): part is string => Boolean(part));
+
+  return parts.join(", ");
 };
 
 const getDiscountDisplayValue = (discountAmount: number): number =>
@@ -129,11 +153,11 @@ const getDeliveryTypeLabel = (
   deliveryInfo: DeliveryInfo,
   t: TranslationFn,
 ): string => {
-  if (deliveryInfo?.warehouse) {
+  if (deliveryInfo?.deliveryType === "warehouse" || deliveryInfo?.warehouse) {
     return t("orders.details.deliveryBranchType");
   }
 
-  if (deliveryInfo?.address) {
+  if (deliveryInfo?.deliveryType === "address" || deliveryInfo?.street) {
     return t("orders.address");
   }
 
@@ -141,7 +165,7 @@ const getDeliveryTypeLabel = (
 };
 
 const getDeliveryDestination = (deliveryInfo: DeliveryInfo): string =>
-  formatText(deliveryInfo?.warehouse || deliveryInfo?.address);
+  formatText(deliveryInfo?.warehouse || formatDeliveryAddress(deliveryInfo));
 
 const InfoList = ({ items }: { items: InfoItem[] }) => (
   <S.InfoGrid>
@@ -267,7 +291,19 @@ const ProductsCard = ({ order, t }: OrderSectionProps) => {
   );
 };
 
-const HistoryCard = ({ order, t }: OrderSectionProps) => {
+const HistoryCard = observer(({ order, t }: OrderSectionProps) => {
+  const membersStore = useWorkspaceMembersStore();
+  const actorNamesByUserId = useMemo(
+    () =>
+      new Map(
+        membersStore.members.map((member) => [
+          member.userId,
+          getWorkspaceMemberName(member),
+        ]),
+      ),
+    [membersStore.members],
+  );
+
   const sortedEvents = useMemo(
     () =>
       [...order.events].sort(
@@ -309,9 +345,7 @@ const HistoryCard = ({ order, t }: OrderSectionProps) => {
                   </S.HistoryDescription>
 
                   <S.HistoryActor type="secondary">
-                    {event.actorId
-                      ? `${t("orders.actor")}: #${event.actorId}`
-                      : t("orders.details.systemActor")}
+                    {getActorLabel(event, actorNamesByUserId, t)}
                   </S.HistoryActor>
                 </S.HistoryContent>
 
@@ -330,7 +364,7 @@ const HistoryCard = ({ order, t }: OrderSectionProps) => {
       )}
     </S.DetailsCard>
   );
-};
+});
 
 const CustomerCard = ({ order, customerName, t }: CustomerSectionProps) => (
   <S.DetailsCard className="print-card section-customer">
@@ -346,7 +380,7 @@ const CustomerCard = ({ order, customerName, t }: CustomerSectionProps) => (
 
         <S.CustomerSource>
           <InstagramLogoIcon size={16} />
-          {getInstagramHandle(order.customer.instagramUserId)}
+          {getOrderSourceLabel(t, order.source)}
         </S.CustomerSource>
       </S.CustomerIdentity>
     </S.CustomerHeader>
@@ -379,7 +413,7 @@ const CustomerCard = ({ order, customerName, t }: CustomerSectionProps) => (
 );
 
 const DeliveryCard = ({ order, customerName, t }: CustomerSectionProps) => {
-  const primaryDeliveryInfo = order.deliveryInfos[0] ?? null;
+  const primaryDeliveryInfo = order.deliveryInfo;
   const providerLabel = getDeliveryProviderLabel(
     t,
     primaryDeliveryInfo?.provider,
@@ -412,7 +446,7 @@ const DeliveryCard = ({ order, customerName, t }: CustomerSectionProps) => {
       </S.TrackingPanel>
 
       <S.DeliveryStatusBox>
-        <DeliveryStatusTag value={order.deliveryStatus} />
+        <DeliveryStatusTag value={primaryDeliveryInfo?.deliveryStatus} />
       </S.DeliveryStatusBox>
 
       <InfoList

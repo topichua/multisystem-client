@@ -40,7 +40,8 @@ export type OrderCreatePayload = {
   internalNote?: string;
   statusId?: number;
   items: OrderCreateItemPayload[];
-  delivery: OrderDeliveryPayload;
+  delivery?: OrderDeliveryPayload;
+  discountPercent?: number;
 };
 
 export type OrderStatus = {
@@ -68,8 +69,6 @@ export type OrderCustomer = {
   lastName: string;
   createdAt: string;
   phone: string;
-  deliveryInfo: string;
-  instagramUserId: string | null;
   workspaceId: number;
 };
 
@@ -108,58 +107,82 @@ export type OrderConversation = {
   readAt: string | null;
   participantId: string | null;
   source: number | null;
-  managerId: number | null;
+  workspaceId: number;
   groupId: number | null;
+  responsibleMemberId: number | null;
+  responsibleMemberSetAt: string | null;
 };
 
 export type OrderDeliveryInfo = {
   id: number;
-  orderId: number;
   provider: string;
+  providerId: number | null;
+  deliveryStatus: string | null;
   recipientName: string | null;
   phone: string | null;
   city: string | null;
   cityRef: string | null;
   warehouse: string | null;
   warehouseRef: string | null;
-  address: string | null;
+  deliveryType: OrderDeliveryType | null;
+  street: string | null;
+  streetRef: string | null;
+  building: string | null;
+  flat: string | null;
   trackingNumber: string | null;
-  rawProviderPayload: Record<string, unknown> | null;
+  providerStatusCode: string | null;
+  providerStatusText: string | null;
+  providerDocumentRef: string | null;
+  isCashOnDelivery: boolean;
+  cashOnDeliveryAmount: number | null;
+  canRemoveTracking: boolean;
   createdAt: string;
   updatedAt: string;
 };
 
 export type OrderDetailsItem = {
   id: number;
+  workspaceId: number;
   orderId: number;
   productId: number | null;
   variantId: number | null;
-  productTitleSnapshot: string | null;
-  variantTitleSnapshot: string | null;
-  variantAttributesSnapshot: Record<string, unknown> | null;
-  imageUrlSnapshot: string | null;
-  skuSnapshot: string | null;
   quantity: number;
   unitPriceAmount: number;
   totalPriceAmount: number;
+  unitPriceSnapshot: number | null;
+  unitCostSnapshot: number | null;
+  totalSaleAmount: number | null;
+  totalCostAmount: number | null;
+  profitAmount: number | null;
+  stockDeductedAt: string | null;
+  productTitleSnapshot: string | null;
+  variantTitleSnapshot: string | null;
+  skuSnapshot: string | null;
+  imageUrlSnapshot: string | null;
+  variantAttributesSnapshot: Record<string, unknown> | null;
   createdAt: string;
   updatedAt: string;
 };
 
 export type OrderDetailsEvent = {
   id: number;
+  workspaceId: number;
   orderId: number;
   type: string;
-  payload: Record<string, unknown> | null;
   actorId: number | null;
+  userId: number | null;
+  payload: Record<string, unknown> | null;
   createdAt: string;
-  updatedAt: string;
 };
 
 export type OrderDetails = OrderListItem & {
   conversation: OrderConversation | null;
+  deliveryId: number | null;
+  deliveryType: string | null;
   items: OrderDetailsItem[];
-  deliveryInfos: OrderDeliveryInfo[];
+  deliveryInfo: OrderDeliveryInfo | null;
+  canRemoveTracking: boolean;
+  canEditItems: boolean;
   events: OrderDetailsEvent[];
 };
 
@@ -188,6 +211,7 @@ export type OrderFormValues = {
   firstName?: string;
   lastName?: string;
   phone?: string;
+  withoutDelivery?: boolean;
   deliveryMethod?: string;
   novaPoshtaIntegrationId?: number;
   deliveryType?: OrderDeliveryType;
@@ -205,6 +229,7 @@ export type OrderFormValues = {
   isCashOnDelivery?: boolean;
   cashOnDeliveryAmount?: number;
   comment?: string;
+  discountPercent?: number;
 };
 
 export type BuildOrderCreatePayloadInput = {

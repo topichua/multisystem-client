@@ -127,7 +127,7 @@ export type ProductsListResponse = {
 export type CatalogVariantProduct = {
   id: number;
   name: string;
-  categoryId: number;
+  categoryId: number | null;
   mainImageUrl: string | null;
   currency: string;
   status: ProductStatus;

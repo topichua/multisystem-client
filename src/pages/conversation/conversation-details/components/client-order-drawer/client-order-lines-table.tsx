@@ -1,8 +1,9 @@
-import { Empty, Flex } from "antd";
+import { Flex } from "antd";
 import { useTranslation } from "react-i18next";
 
 import type { OrderDraftLine } from "@/features/orders/model/order.types";
 
+import * as S from "./client-order-drawer.styled";
 import { OrderProductLine } from "./order-product-line";
 
 type ClientOrderLinesTableProps = {
@@ -20,15 +21,14 @@ export function ClientOrderLinesTable({
 
   if (orderLines.length === 0) {
     return (
-      <Empty
-        description={t("conversation.clientOrders.drawer.addedProductsEmpty")}
-        image={Empty.PRESENTED_IMAGE_SIMPLE}
-      />
+      <S.EmptyProductsState>
+        {t("conversation.clientOrders.drawer.addedProductsEmpty")}
+      </S.EmptyProductsState>
     );
   }
 
   return (
-    <Flex vertical gap={12}>
+    <Flex vertical gap={8}>
       {orderLines.map((line) => (
         <OrderProductLine
           key={line.variantId}

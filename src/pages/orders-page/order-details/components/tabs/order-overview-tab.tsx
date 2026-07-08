@@ -11,10 +11,13 @@ import {
   Typography,
 } from "antd";
 import type { DescriptionsProps, TimelineProps } from "antd";
+import { observer } from "mobx-react-lite";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import type { OrderDetails } from "@/features/orders/model/order.types";
+import { useWorkspaceMembersStore } from "@/features/workspace-members/model/use-workspace-members-store";
+import { getWorkspaceMemberName } from "@/features/workspace-members/utils/workspace-member-display";
 
 import {
   EMPTY_VALUE,
@@ -40,10 +43,23 @@ type OrderOverviewTabProps = {
  * @deprecated Kept temporarily for the legacy tabbed order details layout.
  * Use OrderDetailsContent for the current order details design.
  */
-export function OrderOverviewTab({ order }: OrderOverviewTabProps) {
+export const OrderOverviewTab = observer(function OrderOverviewTab({
+  order,
+}: OrderOverviewTabProps) {
   const { t } = useTranslation();
+  const membersStore = useWorkspaceMembersStore();
   const orderItems = order.items;
-  const primaryDeliveryInfo = order.deliveryInfos?.[0];
+  const primaryDeliveryInfo = order.deliveryInfo;
+  const actorNamesByUserId = useMemo(
+    () =>
+      new Map(
+        membersStore.members.map((member) => [
+          member.userId,
+          getWorkspaceMemberName(member),
+        ]),
+      ),
+    [membersStore.members],
+  );
 
   const sortedEvents = useMemo(
     () =>
@@ -66,12 +82,15 @@ export function OrderOverviewTab({ order }: OrderOverviewTabProps) {
             </Text>
 
             <Text type="secondary">
-              {t("orders.actor")} #{event.actorId}
+              {t("orders.actor")}{" "}
+              {event.userId != null
+                ? (actorNamesByUserId.get(event.userId) ?? `#${event.actorId ?? event.userId}`)
+                : `#${event.actorId}`}
             </Text>
           </Flex>
         ),
       })),
-    [order.currency, order.items, sortedEvents, t],
+    [actorNamesByUserId, order.currency, order.items, sortedEvents, t],
   );
 
   const orderInfoItems: DescriptionsProps["items"] = [
@@ -119,7 +138,7 @@ export function OrderOverviewTab({ order }: OrderOverviewTabProps) {
     {
       key: "deliveryStatus",
       label: t("orders.deliveryStatusLabel"),
-      children: <DeliveryStatusTag value={order.deliveryStatus} />,
+      children: <DeliveryStatusTag value={primaryDeliveryInfo?.deliveryStatus} />,
     },
     {
       key: "provider",
@@ -155,7 +174,16 @@ export function OrderOverviewTab({ order }: OrderOverviewTabProps) {
     {
       key: "address",
       label: t("orders.address"),
-      children: formatText(primaryDeliveryInfo?.address),
+      children: formatText(
+        [
+          primaryDeliveryInfo?.street,
+          primaryDeliveryInfo?.building,
+          primaryDeliveryInfo?.flat,
+        ]
+          .map((part) => part?.trim())
+          .filter((part): part is string => Boolean(part))
+          .join(", ") || null,
+      ),
     },
     {
       key: "trackingNumber",
@@ -184,16 +212,6 @@ export function OrderOverviewTab({ order }: OrderOverviewTabProps) {
       ) : (
         EMPTY_VALUE
       ),
-    },
-    {
-      key: "instagramUserId",
-      label: t("orders.instagramUserId"),
-      children: formatText(order.customer.instagramUserId),
-    },
-    {
-      key: "deliveryInfo",
-      label: t("orders.savedDeliveryInfo"),
-      children: formatText(order.customer.deliveryInfo),
     },
     {
       key: "createdAt",
@@ -352,4 +370,4 @@ export function OrderOverviewTab({ order }: OrderOverviewTabProps) {
       </Col>
     </Row>
   );
-}
+});

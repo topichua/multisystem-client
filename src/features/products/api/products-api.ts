@@ -1,4 +1,11 @@
 import { apiClient } from "@/api/api-client";
+import {
+  asRecord,
+  getBoolean,
+  getNestedRecord,
+  getNumber,
+  getString,
+} from "@/api/record-parsing";
 import type {
   CreateProductPayload,
   ProductUploadedMedia,
@@ -16,6 +23,7 @@ import type {
 } from "@/features/products/model/product.types";
 import type { CreateProductInstagramReferencePayload } from "@/features/instagram/model/instagram.types";
 import { PRODUCTS_DEFAULT_PAGE_SIZE } from "@/features/products/model/product.constants";
+import { buildCatalogVariantLabelFromParts } from "@/features/products/utils/catalog-variant-display";
 
 const basePath = "/products";
 
@@ -65,6 +73,93 @@ function productsListQueryToRecord(
   return out;
 }
 
+function getCustomFieldValue(
+  record: Record<string, unknown>,
+  key: string,
+): string | null {
+  const customFields = record.customFields;
+  if (!Array.isArray(customFields)) {
+    return null;
+  }
+
+  for (const customField of customFields) {
+    const field = asRecord(customField);
+    if (getString(field, ["key"]) === key) {
+      return getString(field, ["value"]);
+    }
+  }
+
+  return null;
+}
+
+function normalizeCatalogVariant(raw: unknown): CatalogVariant {
+  const record = asRecord(raw);
+  const product = getNestedRecord(record, [
+    "product",
+    "productParent",
+    "product_parent",
+  ]);
+  const productId =
+    getNumber(record, ["productId", "product_id"]) ??
+    getNumber(product, ["id"]) ??
+    0;
+  const productName =
+    getString(product, ["name"]) ??
+    getString(record, ["productName", "product_name"]) ??
+    "";
+  const unitPrice =
+    getNumber(record, ["unitPrice", "unit_price", "price"]) ??
+    getNumber(product, ["price"]) ??
+    0;
+  const quantity =
+    getNumber(record, ["quantity", "availableQuantity", "stockQty"]) ?? 0;
+  const inStock = getBoolean(record, ["inStock", "in_stock"]) ?? quantity > 0;
+  const color =
+    getString(record, ["color"]) ?? getCustomFieldValue(record, "color");
+  const size =
+    getString(record, ["size"]) ?? getCustomFieldValue(record, "size");
+  const sku = getString(record, ["sku"]);
+  const variantId = getNumber(record, ["id"]) ?? 0;
+  const label =
+    getString(record, ["label", "name"]) ??
+    buildCatalogVariantLabelFromParts(productName, { color, size, sku });
+
+  return {
+    id: variantId,
+    productId,
+    color,
+    size,
+    sku,
+    unitPrice,
+    imageUrl:
+      getString(record, ["imageUrl", "image_url"]) ??
+      getString(record, ["variantImageUrl", "variant_image_url"]),
+    inStock,
+    quantity,
+    status: getString(record, ["status"]) ?? "active",
+    label: label || `#${variantId}`,
+    product: {
+      id: productId,
+      name: productName,
+      categoryId:
+        getNumber(product, ["categoryId", "category_id"]) ??
+        getNumber(record, ["categoryId", "category_id"]),
+      mainImageUrl:
+        getString(product, ["mainImageUrl", "main_image_url"]) ??
+        getString(record, ["productImageUrl", "product_image_url"]),
+      currency:
+        getString(product, ["currency"]) ??
+        getString(record, ["currency"]) ??
+        "UAH",
+      status:
+        getString(product, ["status"]) ??
+        getString(record, ["productStatus", "product_status"]) ??
+        "active",
+      price: getNumber(product, ["price"]) ?? unitPrice,
+    },
+  };
+}
+
 function normalizeCatalogVariantsList(
   data: unknown,
 ): CatalogVariantsListResponse {
@@ -74,7 +169,7 @@ function normalizeCatalogVariantsList(
 
   const record = data as Record<string, unknown>;
   const items = Array.isArray(record.items)
-    ? (record.items as CatalogVariant[])
+    ? record.items.map(normalizeCatalogVariant)
     : [];
   const total = typeof record.total === "number" ? record.total : items.length;
   const pageSize = typeof record.pageSize === "number" ? record.pageSize : 50;
@@ -139,33 +234,53 @@ function axiosMultipartFormDataConfig() {
 
 export type CatalogVariantsListQueryParams = {
   keyword: string;
+  categoryIds?: number[];
   page?: number;
   pageSize?: number;
 };
 
+function catalogVariantsListQueryToRecord(
+  params: CatalogVariantsListQueryParams,
+): Record<string, string | number> {
+  const out: Record<string, string | number> = {
+    keyword: params.keyword.trim(),
+    page: params.page ?? 1,
+    pageSize: params.pageSize ?? 50,
+  };
+
+  if (params.categoryIds?.length) {
+    out.categoryIds = params.categoryIds.join(",");
+  }
+
+  return out;
+}
+
+async function fetchCatalogVariants(
+  path: string,
+  params: CatalogVariantsListQueryParams,
+): Promise<CatalogVariantsListResponse> {
+  const { data } = await apiClient.get(path, {
+    params: catalogVariantsListQueryToRecord(params),
+  });
+
+  return normalizeCatalogVariantsList(data);
+}
+
 export const productsApi = {
   listCatalogVariants: async (
     params: CatalogVariantsListQueryParams,
-  ): Promise<CatalogVariantsListResponse> => {
-    const keyword = params.keyword.trim();
-    const { data } = await apiClient.get<unknown>(
-      `${basePath}/catalog-variants`,
-      {
-        params: {
-          keyword,
-          page: params.page ?? 1,
-          pageSize: params.pageSize ?? 50,
-        },
-      },
-    );
+  ): Promise<CatalogVariantsListResponse> =>
+    fetchCatalogVariants(`${basePath}/catalog-variants`, params),
 
-    return normalizeCatalogVariantsList(data);
-  },
+  listProductVariants: async (
+    params: CatalogVariantsListQueryParams,
+  ): Promise<CatalogVariantsListResponse> =>
+    fetchCatalogVariants("/products/variants", params),
 
   list: async (
     params: ProductsListQueryParams,
   ): Promise<ProductsListResponse> => {
-    const { data } = await apiClient.get<unknown>(basePath, {
+    const { data } = await apiClient.get(basePath, {
       params: productsListQueryToRecord(params),
     });
 
