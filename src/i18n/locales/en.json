@@ -1101,7 +1101,7 @@
         "placeOrder": "Place order",
         "sectionClient": "Client",
         "sectionProducts": "Products",
-        "sectionOrderDetails": "Order details",
+        "sectionOrderDetails": "Delivery details",
         "labelName": "Name:",
         "labelPhone": "Phone:",
         "labelDelivery": "Delivery:",
@@ -1607,6 +1607,89 @@
     },
     "listTitle": "All orders",
     "allOrdersTitle": "All orders",
+    "createOrderCta": "New order",
+    "create": {
+      "title": "New order",
+      "backToOrders": "Back to orders",
+      "client": {
+        "title": "Client",
+        "existingMode": "Existing",
+        "newMode": "New",
+        "existingSearchPlaceholder": "Search client by name, phone or @handle",
+        "firstNameLabel": "First name",
+        "firstNamePlaceholder": "First name",
+        "lastNameLabel": "Last name",
+        "lastNamePlaceholder": "Last name",
+        "phoneLabel": "Phone",
+        "phonePlaceholder": "+380 ...",
+        "required": "Fill in this field",
+        "empty": "No clients found",
+        "vip": "VIP",
+        "clearSelectedAria": "Clear selected client"
+      },
+      "products": {
+        "title": "Products",
+        "add": "Add product",
+        "searchPlaceholder": "Search product",
+        "searchMinChars": "Enter at least {{count}} characters",
+        "found": "Found: {{count}}",
+        "stock": "{{count}} pcs",
+        "outOfStock": "Out of stock",
+        "empty": "No products found",
+        "emptyState": "Add products to the order",
+        "decreaseQuantity": "Decrease quantity",
+        "increaseQuantity": "Increase quantity",
+        "toggleDiscount": "Position discount",
+        "positionDiscount": "Position discount",
+        "closeDiscount": "Close discount",
+        "remove": "Remove product",
+        "closeSearch": "Close product search"
+      },
+      "delivery": {
+        "title": "Delivery",
+        "recipient": "Recipient",
+        "recipientPlaceholder": "Recipient name",
+        "recipientPhone": "Recipient phone",
+        "recipientPhonePlaceholder": "+380 ..."
+      },
+      "payment": {
+        "title": "Payment",
+        "prepaymentCard": "Prepayment (card)"
+      },
+      "shipment": {
+        "title": "Shipment parameters",
+        "configure": "Configure",
+        "collapse": "Collapse",
+        "weight": "Weight",
+        "weightPlaceholder": "e.g. 500",
+        "places": "Number of parcels",
+        "length": "Length",
+        "width": "Width",
+        "height": "Height",
+        "declaredValue": "Declared value",
+        "grams": "g",
+        "centimeters": "cm",
+        "hint": "Optional. By default it is calculated from products."
+      },
+      "comment": {
+        "title": "Comment",
+        "placeholder": "Internal comment or delivery instructions..."
+      },
+      "summary": {
+        "title": "Summary",
+        "source": "Order source",
+        "products": "Products ({{count}})",
+        "positionDiscounts": "Position discounts",
+        "delivery": "Delivery",
+        "orderDiscount": "Order discount",
+        "total": "Total",
+        "statusNote": "Created in status « New »",
+        "create": "Create order",
+        "createSuccess": "Order created",
+        "createFailed": "Could not create order",
+        "hint": "Select a client, add products, and choose city and branch."
+      }
+    },
     "toolbar": {
       "filters": "Filters",
       "searchPlaceholder": "Search orders (min. 3 characters)…"
@@ -1732,7 +1815,8 @@
     "sources": {
       "instagram": "Instagram",
       "telegram": "Telegram",
-      "manual": "Manual"
+      "manual": "Manual",
+      "mobile": "Phone"
     },
     "deliveryProviders": {
       "nova_poshta": "Nova Poshta"

@@ -36,6 +36,7 @@ import { ClientsPage } from "@/pages/clients-page/clients-page";
 import { OrdersIndexRoute } from "@/pages/orders-page/orders-index-route";
 import { OrdersPage } from "@/pages/orders-page/orders-page";
 import { OrdersListRoute } from "@/pages/orders-page/orders-list/orders-list-route";
+import { OrdersNewPage } from "@/pages/orders-page/orders-new/orders-new-page";
 import { OrderDetailsPage } from "@/pages/orders-page/order-details/order-details-page";
 
 import { getOrderStatusPath, pagesMap } from "./pages-map";
@@ -163,6 +164,7 @@ export const PageRoutes = () => {
             />
             <Route element={<OrdersPage />}>
               <Route path="list" element={<OrdersListRoute />} />
+              <Route path="new" element={<OrdersNewPage />} />
               <Route path=":orderId" element={<OrderDetailsPage />} />
             </Route>
           </Route>

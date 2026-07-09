@@ -1,4 +1,4 @@
-import { ArrowLeftIcon } from "@phosphor-icons/react";
+import { ArrowLeftIcon, PlusIcon } from "@phosphor-icons/react";
 import { Empty, Pagination, Spin } from "antd";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
@@ -43,6 +43,17 @@ export const MobileOrdersListPage = observer(() => {
           />
           <S.PageTitle level={3}>{t("orders.allOrdersTitle")}</S.PageTitle>
         </S.TitleCluster>
+        <S.CreateButton
+          type="primary"
+          icon={<PlusIcon size={16} />}
+          aria-label={t("orders.createOrderCta")}
+          data-qa="orders-mobile-list-create"
+          onClick={() => navigate(pagesMap.ordersNew)}
+        >
+          <S.CreateButtonLabel>
+            {t("orders.createOrderCta")}
+          </S.CreateButtonLabel>
+        </S.CreateButton>
       </S.Header>
 
       <S.ScrollRegion>

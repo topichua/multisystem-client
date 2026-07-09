@@ -5,6 +5,14 @@ export type OrderCreateItemPayload = {
   productId: number;
   variantId: number;
   quantity: number;
+  discountAmount?: number;
+  discountPercent?: number;
+};
+
+export type OrderCustomerNewPayload = {
+  firstName: string;
+  lastName: string;
+  phone: string;
 };
 
 export type OrderDeliveryType = "warehouse" | "address";
@@ -20,28 +28,30 @@ export type OrderDeliveryPayload = {
   warehouse?: string;
   warehouseRef?: string;
   deliveryType?: OrderDeliveryType;
-  address?: string;
   street?: string;
   streetRef?: string;
   building?: string;
   flat?: string;
   trackingNumber?: string;
+  providerStatusCode?: string;
+  providerStatusText?: string;
+  providerDocumentRef?: string;
   isCashOnDelivery?: boolean;
   cashOnDeliveryAmount?: number;
-  rawProviderPayload?: Record<string, unknown>;
 };
 
 export type OrderCreatePayload = {
-  customerId: number;
+  customerId?: number;
+  customerNew?: OrderCustomerNewPayload;
   conversationId: number;
   source: string;
   currency: string;
   customerNote?: string;
   internalNote?: string;
-  statusId?: number;
+  discountAmount?: number;
+  discountPercent?: number;
   items: OrderCreateItemPayload[];
   delivery?: OrderDeliveryPayload;
-  discountPercent?: number;
 };
 
 export type OrderStatusCategory =
@@ -280,4 +290,18 @@ export type BuildOrderCreatePayloadInput = {
   conversationId: number;
   orderLines: OrderDraftLine[];
   formValues: OrderFormValues;
+};
+
+export type OrderCreateLineInput = OrderDraftLine & {
+  discountPercent?: number;
+};
+
+export type BuildStandaloneOrderCreatePayloadInput = {
+  clientMode: "existing" | "new";
+  existingClient: Client | null;
+  newClient?: OrderCustomerNewPayload;
+  orderLines: OrderCreateLineInput[];
+  formValues: OrderFormValues;
+  source: string;
+  orderDiscountPercent?: number;
 };

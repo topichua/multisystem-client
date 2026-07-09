@@ -1109,7 +1109,7 @@
         "placeOrder": "Оформити замовлення",
         "sectionClient": "Клієнт",
         "sectionProducts": "Товари",
-        "sectionOrderDetails": "Деталі замовлення",
+        "sectionOrderDetails": "Деталі доставки",
         "labelName": "Ім'я:",
         "labelPhone": "Телефон:",
         "labelDelivery": "Доставка:",
@@ -1633,6 +1633,89 @@
     },
     "listTitle": "Усі замовлення",
     "allOrdersTitle": "Усі замовлення",
+    "createOrderCta": "Нове замовлення",
+    "create": {
+      "title": "Нове замовлення",
+      "backToOrders": "Назад до замовлень",
+      "client": {
+        "title": "Клієнт",
+        "existingMode": "Існуючий",
+        "newMode": "Новий",
+        "existingSearchPlaceholder": "Пошук клієнта за іменем, телефоном чи @нік",
+        "firstNameLabel": "Ім'я",
+        "firstNamePlaceholder": "Ім'я",
+        "lastNameLabel": "Прізвище",
+        "lastNamePlaceholder": "Прізвище",
+        "phoneLabel": "Телефон",
+        "phonePlaceholder": "+380 ...",
+        "required": "Заповніть поле",
+        "empty": "Клієнтів не знайдено",
+        "vip": "VIP",
+        "clearSelectedAria": "Очистити вибраного клієнта"
+      },
+      "products": {
+        "title": "Товари",
+        "add": "Додати товар",
+        "searchPlaceholder": "Пошук товару",
+        "searchMinChars": "Введіть мінімум {{count}} символи",
+        "found": "Знайдено: {{count}}",
+        "stock": "{{count}} шт",
+        "outOfStock": "Немає в наявності",
+        "empty": "Товарів не знайдено",
+        "emptyState": "Додайте товари до замовлення",
+        "decreaseQuantity": "Зменшити кількість",
+        "increaseQuantity": "Збільшити кількість",
+        "toggleDiscount": "Знижка на позицію",
+        "positionDiscount": "Знижка на позицію",
+        "closeDiscount": "Закрити знижку",
+        "remove": "Видалити товар",
+        "closeSearch": "Закрити пошук товарів"
+      },
+      "delivery": {
+        "title": "Доставка",
+        "recipient": "Отримувач",
+        "recipientPlaceholder": "Ім'я отримувача",
+        "recipientPhone": "Телефон отримувача",
+        "recipientPhonePlaceholder": "+380 ..."
+      },
+      "payment": {
+        "title": "Оплата",
+        "prepaymentCard": "Передоплата (карта)"
+      },
+      "shipment": {
+        "title": "Параметри відправлення",
+        "configure": "Налаштувати",
+        "collapse": "Згорнути",
+        "weight": "Вага",
+        "weightPlaceholder": "напр. 500",
+        "places": "Кількість місць",
+        "length": "Довжина",
+        "width": "Ширина",
+        "height": "Висота",
+        "declaredValue": "Оголошена вартість",
+        "grams": "г",
+        "centimeters": "см",
+        "hint": "Необов'язково. За замовчуванням розраховується з товарів."
+      },
+      "comment": {
+        "title": "Коментар",
+        "placeholder": "Внутрішній коментар або інструкція для відправки..."
+      },
+      "summary": {
+        "title": "Підсумок",
+        "source": "Джерело замовлення",
+        "products": "Товари ({{count}})",
+        "positionDiscounts": "Знижки на позиції",
+        "delivery": "Доставка",
+        "orderDiscount": "Знижка на замовлення",
+        "total": "Разом",
+        "statusNote": "Створюється у статусі « Новий »",
+        "create": "Створити замовлення",
+        "createSuccess": "Замовлення створено",
+        "createFailed": "Не вдалося створити замовлення",
+        "hint": "Оберіть клієнта, додайте товари та вкажіть місто й відділення."
+      }
+    },
     "toolbar": {
       "filters": "Фільтри",
       "searchPlaceholder": "Пошук замовлень (мін. 3 символи)…"
@@ -1760,7 +1843,8 @@
     "sources": {
       "instagram": "Instagram",
       "telegram": "Telegram",
-      "manual": "Вручну"
+      "manual": "Вручну",
+      "mobile": "Телефон"
     },
     "deliveryProviders": {
       "nova_poshta": "Нова пошта"

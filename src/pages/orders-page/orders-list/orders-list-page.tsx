@@ -1,10 +1,11 @@
-import { Flex, Spin, Table, Typography } from "antd";
+import { PlusIcon } from "@phosphor-icons/react";
+import { Button, Flex, Spin, Table, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 
-import { getOrderDetailsPath } from "@/app/router/pages-map";
+import { getOrderDetailsPath, pagesMap } from "@/app/router/pages-map";
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
 import { PaneSectionTitle } from "@/components/layout/pane-frame";
 import type { OrderListItem } from "@/features/orders/model/order.types";
@@ -34,7 +35,17 @@ export const OrdersListPage = observer(() => {
   return (
     <PaneDetailLayout.Root inset>
       <PaneDetailLayout.Header data-qa="layout-orders-list-header">
-        <PaneSectionTitle>{t("orders.allOrdersTitle")}</PaneSectionTitle>
+        <Flex justify="space-between" align="center" gap={16} wrap="wrap">
+          <PaneSectionTitle>{t("orders.allOrdersTitle")}</PaneSectionTitle>
+          <Button
+            type="primary"
+            icon={<PlusIcon size={16} />}
+            data-qa="orders-list-create"
+            onClick={() => navigate(pagesMap.ordersNew)}
+          >
+            {t("orders.createOrderCta")}
+          </Button>
+        </Flex>
       </PaneDetailLayout.Header>
       <PaneDetailLayout.Body data-qa="layout-orders-table-scroll">
         <OrdersListToolbar onToggleFilters={() => setFiltersOpen(true)} />

@@ -9,19 +9,21 @@ function trimmed(value: string | undefined): string | undefined {
   return nextValue ? nextValue : undefined;
 }
 
+type DeliveryClientFallback = Pick<Client, "firstName" | "lastName" | "phone">;
+
 export function buildOrderDeliveryPayload(
   formValues: OrderFormValues,
-  linkedClient: Client,
+  linkedClient?: DeliveryClientFallback | null,
 ): OrderDeliveryPayload {
   const recipientName = [
-    formValues.firstName ?? linkedClient.firstName,
-    formValues.lastName ?? linkedClient.lastName,
+    formValues.firstName ?? linkedClient?.firstName,
+    formValues.lastName ?? linkedClient?.lastName,
   ]
     .map((value) => value?.trim())
     .filter(Boolean)
     .join(" ")
     .trim();
-  const recipientPhone = formValues.phone ?? linkedClient.phone;
+  const recipientPhone = formValues.phone ?? linkedClient?.phone;
   const deliveryType = formValues.deliveryType ?? "warehouse";
 
   const delivery: OrderDeliveryPayload = {

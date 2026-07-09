@@ -24,6 +24,7 @@ export const Header = styled.header`
   padding: 16px 16px 12px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
 `;
 
@@ -74,6 +75,18 @@ export const PageTitle = styled(Typography.Title)`
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+`;
+
+export const CreateButton = styled(Button)`
+  && {
+    flex: 0 0 auto;
+  }
+`;
+
+export const CreateButtonLabel = styled.span`
+  @media (max-width: 359px) {
+    display: none;
   }
 `;
 

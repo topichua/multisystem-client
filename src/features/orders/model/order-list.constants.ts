@@ -1,9 +1,19 @@
 export const ORDERS_LIST_KEYWORD_MIN_LENGTH = 3;
 
+export const ORDER_SOURCE_VALUES = [
+  "instagram",
+  "telegram",
+  "manual",
+  "mobile",
+] as const;
+
+export type OrderSource = (typeof ORDER_SOURCE_VALUES)[number];
+
 export const ORDER_SOURCE_FILTER_VALUES = [
   "instagram",
   "telegram",
   "manual",
+  "mobile",
 ] as const;
 
 export type OrderSourceFilter = (typeof ORDER_SOURCE_FILTER_VALUES)[number];

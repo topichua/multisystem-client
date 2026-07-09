@@ -9,6 +9,7 @@ export const pagesMap = {
   productsCharacteristics: "/products/characteristics",
   orders: "/orders",
   ordersList: "/orders/list",
+  ordersNew: "/orders/new",
   analytics: "/analytics",
   analyticsOverview: "/analytics/overview",
   analyticsSales: "/analytics/sales",

@@ -10,6 +10,7 @@ import {
 } from "@/features/orders/model/orders-list-url";
 import type {
   BuildOrderCreatePayloadInput,
+  BuildStandaloneOrderCreatePayloadInput,
   ClientOrderStats,
   OrderCreatePayload,
   OrderListItem,
@@ -18,6 +19,7 @@ import type {
   OrderStatusUpdatePayload,
 } from "@/features/orders/model/order.types";
 import { buildOrderCreatePayload } from "@/features/orders/utils/build-order-create-payload";
+import { buildStandaloneOrderCreatePayload } from "@/features/orders/utils/build-standalone-order-create-payload";
 import { productsApi } from "@/features/products/api/products-api";
 import type {
   CatalogVariant,
@@ -742,6 +744,21 @@ export class OrdersStore {
   ): Promise<OrderListItem> => {
     const payload: OrderCreatePayload = buildOrderCreatePayload(input);
 
+    return this.submitCreateOrder(payload);
+  };
+
+  createStandaloneOrder = async (
+    input: BuildStandaloneOrderCreatePayloadInput,
+  ): Promise<OrderListItem> => {
+    const payload: OrderCreatePayload =
+      buildStandaloneOrderCreatePayload(input);
+
+    return this.submitCreateOrder(payload);
+  };
+
+  private submitCreateOrder = async (
+    payload: OrderCreatePayload,
+  ): Promise<OrderListItem> => {
     runInAction(() => {
       this.createLoading = true;
     });
