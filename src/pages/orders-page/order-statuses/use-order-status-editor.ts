@@ -32,8 +32,8 @@ export function useOrderStatusEditor(statusId: string | undefined) {
     if (status) {
       form.setFieldsValue({
         name: status.name,
+        category: status.category,
         color: status.color,
-        isDefault: status.isDefault,
       });
     }
   }, [form, status]);
@@ -54,7 +54,8 @@ export function useOrderStatusEditor(statusId: string | undefined) {
       name: values.name,
       color:
         typeof values.color === "string" ? values.color : String(values.color),
-      isDefault: values.isDefault === true,
+      category: status.isSystem ? status.category : values.category,
+      isDefault: status.isDefault,
     };
 
     try {
@@ -67,6 +68,22 @@ export function useOrderStatusEditor(statusId: string | undefined) {
     }
   }, [form, notification, status, store, t]);
 
+  const handleDelete = useCallback(async () => {
+    if (!status || status.isSystem) {
+      return;
+    }
+
+    try {
+      await store.deleteStatus(status.id);
+      notification.success({ title: t("orderStatuses.deleted") });
+      navigate(pagesMap.ordersStatuses);
+    } catch (e) {
+      notification.error({
+        title: getApiErrorMessage(e, t("orderStatuses.deleteError")),
+      });
+    }
+  }, [navigate, notification, status, store, t]);
+
   return {
     idNum,
     status,
@@ -76,6 +93,7 @@ export function useOrderStatusEditor(statusId: string | undefined) {
     isLoading: store.statusesLoading && !status,
     isNotFound: !store.statusesLoading && !status,
     handleSave,
+    handleDelete,
     navigateToStatuses: () => navigate(pagesMap.ordersStatuses),
   };
 }

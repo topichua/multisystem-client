@@ -44,11 +44,30 @@ export type OrderCreatePayload = {
   discountPercent?: number;
 };
 
+export type OrderStatusCategory =
+  | "new"
+  | "confirmed"
+  | "packed"
+  | "shipped"
+  | "delivery"
+  | "completed"
+  | "canceled";
+
+export const ORDER_STATUS_CATEGORIES = [
+  "new",
+  "confirmed",
+  "packed",
+  "shipped",
+  "delivery",
+  "completed",
+  "canceled",
+] as const satisfies readonly OrderStatusCategory[];
+
 export type OrderStatus = {
   id: number;
   workspaceId: number;
   name: string;
-  category: string;
+  category: OrderStatusCategory;
   color: string;
   sortOrder: number;
   isDefault: boolean;
@@ -57,10 +76,22 @@ export type OrderStatus = {
   updatedAt: string;
 };
 
+export type OrderStatusCreatePayload = {
+  name: string;
+  category: OrderStatusCategory;
+  color: string;
+  isDefault: boolean;
+};
+
 export type OrderStatusUpdatePayload = {
   name: string;
   color: string;
+  category: OrderStatusCategory;
   isDefault: boolean;
+};
+
+export type OrderStatusReorderPayload = {
+  ids: number[];
 };
 
 export type OrderCustomer = {

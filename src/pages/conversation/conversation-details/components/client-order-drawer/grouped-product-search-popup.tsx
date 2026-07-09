@@ -1,7 +1,4 @@
-import {
-  CaretDownIcon,
-  CaretRightIcon,
-} from "@phosphor-icons/react";
+import { CaretDownIcon, CaretRightIcon } from "@phosphor-icons/react";
 import type { MouseEvent } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -95,8 +92,12 @@ export function GroupedProductSearchPopup({
               )}
 
               <S.GroupedProductCopy>
-                <S.GroupedProductName>{product.productName}</S.GroupedProductName>
-                <S.GroupedProductMeta>{groupMeta.join(" · ")}</S.GroupedProductMeta>
+                <S.GroupedProductName>
+                  {product.productName}
+                </S.GroupedProductName>
+                <S.GroupedProductMeta>
+                  {groupMeta.join(" · ")}
+                </S.GroupedProductMeta>
               </S.GroupedProductCopy>
             </S.GroupedProductHeaderButton>
 

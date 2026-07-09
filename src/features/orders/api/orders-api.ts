@@ -6,6 +6,8 @@ import type {
   OrderDetails,
   OrderListItem,
   OrderStatus,
+  OrderStatusCreatePayload,
+  OrderStatusReorderPayload,
   OrderStatusUpdatePayload,
   OrdersListResponse,
 } from "@/features/orders/model/order.types";
@@ -26,26 +28,6 @@ function normalizeOrdersList(data: unknown): OrdersListResponse {
   const page = typeof record.page === "number" ? record.page : 1;
 
   return { items, total, page, pageSize };
-}
-
-function normalizeOrderStatusesList(data: unknown): OrderStatus[] {
-  if (Array.isArray(data)) {
-    return data as OrderStatus[];
-  }
-
-  if (data && typeof data === "object") {
-    const record = data as Record<string, unknown>;
-
-    if (Array.isArray(record.items)) {
-      return record.items as OrderStatus[];
-    }
-
-    if (Array.isArray(record.statuses)) {
-      return record.statuses as OrderStatus[];
-    }
-  }
-
-  return [];
 }
 
 function normalizeLastOrderAt(value: unknown): string | null {
@@ -202,9 +184,20 @@ export const ordersApi = {
   },
 
   listStatuses: async (): Promise<OrderStatus[]> => {
-    const { data } = await apiClient.get<unknown>(`${basePath}/statuses`);
+    const { data } = await apiClient.get<OrderStatus[]>(`${basePath}/statuses`);
 
-    return normalizeOrderStatusesList(data);
+    return data;
+  },
+
+  createStatus: async (
+    payload: OrderStatusCreatePayload,
+  ): Promise<OrderStatus> => {
+    const { data } = await apiClient.post<OrderStatus>(
+      `${basePath}/statuses`,
+      payload,
+    );
+
+    return data;
   },
 
   updateOrderStatus: async (
@@ -233,12 +226,18 @@ export const ordersApi = {
     return data;
   },
 
-  reorderStatuses: async (ids: number[]): Promise<OrderStatus[]> => {
-    const { data } = await apiClient.put<unknown>(
+  reorderStatuses: async (
+    payload: OrderStatusReorderPayload,
+  ): Promise<OrderStatus[]> => {
+    const { data } = await apiClient.put<OrderStatus[]>(
       `${basePath}/statuses/order`,
-      { ids },
+      payload,
     );
 
-    return normalizeOrderStatusesList(data);
+    return data;
+  },
+
+  deleteStatus: async (statusId: number): Promise<void> => {
+    await apiClient.delete(`${basePath}/statuses/${statusId}`);
   },
 };

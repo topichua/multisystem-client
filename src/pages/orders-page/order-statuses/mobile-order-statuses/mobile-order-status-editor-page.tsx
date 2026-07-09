@@ -7,6 +7,7 @@ import { useParams } from "react-router";
 import { CenteredSpinner } from "@/components/loading/centered-spinner";
 
 import { OrderStatusFormFields } from "../order-status-form-fields";
+import { OrderStatusSystemBadge } from "../order-status-system-badge";
 import { useOrderStatusEditor } from "../use-order-status-editor";
 import * as S from "./mobile-order-status-editor-page.styled";
 
@@ -21,6 +22,7 @@ export const MobileOrderStatusEditorPage = observer(() => {
     isLoading,
     isNotFound,
     handleSave,
+    handleDelete,
     navigateToStatuses,
   } = useOrderStatusEditor(statusId);
 
@@ -90,6 +92,7 @@ export const MobileOrderStatusEditorPage = observer(() => {
         <S.HeaderRow align="center" gap={8}>
           <S.ColorDot $color={status.color} aria-hidden="true" />
           <S.PageTitle level={4}>{pageTitle}</S.PageTitle>
+          {status.isSystem ? <OrderStatusSystemBadge /> : null}
         </S.HeaderRow>
       </S.PageHeader>
 
@@ -103,6 +106,10 @@ export const MobileOrderStatusEditorPage = observer(() => {
             <OrderStatusFormFields
               statuses={store.statuses}
               editingStatusId={status.id}
+              isSystem={status.isSystem}
+              deleteLoading={store.statusDeleteLoading}
+              onDelete={handleDelete}
+              deleteDataQa={`orders-mobile-status-delete-${status.id}`}
             />
           </Form>
         </S.FormSection>

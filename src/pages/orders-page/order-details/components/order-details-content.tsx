@@ -124,7 +124,11 @@ const getActorLabel = (
 };
 
 const formatDeliveryAddress = (deliveryInfo: DeliveryInfo): string => {
-  const parts = [deliveryInfo?.street, deliveryInfo?.building, deliveryInfo?.flat]
+  const parts = [
+    deliveryInfo?.street,
+    deliveryInfo?.building,
+    deliveryInfo?.flat,
+  ]
     .map((part) => part?.trim())
     .filter((part): part is string => Boolean(part));
 

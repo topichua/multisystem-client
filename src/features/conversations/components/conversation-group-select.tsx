@@ -71,7 +71,7 @@ export const ConversationGroupSelect = observer(
           notification.error({
             title: getApiErrorMessage(
               e,
-              t('groups.updateConversationGroupError'),
+              t("groups.updateConversationGroupError"),
             ),
           });
         } finally {

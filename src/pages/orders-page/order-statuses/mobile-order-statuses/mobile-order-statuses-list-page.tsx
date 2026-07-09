@@ -1,36 +1,28 @@
-import {
-  DndContext,
-  type DragEndEvent,
-  KeyboardSensor,
-  PointerSensor,
-  closestCenter,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import {
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
 import { ArrowLeftIcon } from "@phosphor-icons/react";
-import { Alert, Empty } from "antd";
+import { Alert } from "antd";
 import { observer } from "mobx-react-lite";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 
+import { getApiErrorMessage } from "@/api/get-api-error-message";
 import { getOrderStatusPath, pagesMap } from "@/app/router/pages-map";
 import { CenteredSpinner } from "@/components/loading/centered-spinner";
+import type { OrderStatusCategory } from "@/features/orders/model/order.types";
 import { useOrdersStore } from "@/features/orders/model/use-orders-store";
+import { getOrderStatusCategoryColor } from "@/features/orders/utils/group-order-statuses-by-category";
+import { useNotification } from "@/shared/components/notification/use-notification";
 
-import { useOrderStatusesReorder } from "../use-order-statuses-reorder";
-import { MobileOrderStatusRow } from "./mobile-order-status-row";
+import { MobileOrderStatusesNavList } from "./mobile-order-statuses-nav-list";
 import * as S from "./mobile-order-statuses-list-page.styled";
 
 export const MobileOrderStatusesListPage = observer(() => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const store = useOrdersStore();
+  const notification = useNotification();
+  const [creatingCategory, setCreatingCategory] =
+    useState<OrderStatusCategory | null>(null);
 
   useEffect(() => {
     void store.loadStatuses({ force: true });
@@ -41,51 +33,38 @@ export const MobileOrderStatusesListPage = observer(() => {
     [store.statuses],
   );
 
-  const handleReorder = useOrderStatusesReorder(sortedStatuses);
-
-  const statusIds = useMemo(
-    () => sortedStatuses.map((status) => status.id),
-    [sortedStatuses],
-  );
-
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    }),
-  );
-
-  const handleDragEnd = useCallback(
-    (event: DragEndEvent) => {
-      const { active, over } = event;
-      if (over == null || active.id === over.id) {
-        return;
-      }
-
-      const oldIndex = sortedStatuses.findIndex(
-        (status) => status.id === active.id,
-      );
-      const newIndex = sortedStatuses.findIndex(
-        (status) => status.id === over.id,
-      );
-      if (oldIndex < 0 || newIndex < 0 || oldIndex === newIndex) {
-        return;
-      }
-
-      const next = [...sortedStatuses];
-      const [moved] = next.splice(oldIndex, 1);
-      next.splice(newIndex, 0, moved);
-
-      void handleReorder(next.map((status) => status.id));
-    },
-    [handleReorder, sortedStatuses],
-  );
-
   const handleOpen = useCallback(
     (statusId: number) => {
       navigate(getOrderStatusPath(statusId));
     },
     [navigate],
+  );
+
+  const handleCreateStatus = useCallback(
+    async (category: OrderStatusCategory) => {
+      if (creatingCategory != null) {
+        return;
+      }
+
+      setCreatingCategory(category);
+
+      try {
+        const created = await store.createStatus({
+          name: t("orderStatuses.newStatus"),
+          category,
+          color: getOrderStatusCategoryColor(store.statuses, category),
+          isDefault: false,
+        });
+        navigate(getOrderStatusPath(created.id));
+      } catch (error) {
+        notification.error({
+          title: getApiErrorMessage(error, t("orderStatuses.createError")),
+        });
+      } finally {
+        setCreatingCategory(null);
+      }
+    },
+    [creatingCategory, navigate, notification, store, t],
   );
 
   return (
@@ -100,6 +79,9 @@ export const MobileOrderStatusesListPage = observer(() => {
             onClick={() => navigate(pagesMap.orders)}
           />
           <S.PageTitle level={3}>{t("orderStatuses.title")}</S.PageTitle>
+          <S.HeaderCount data-qa="orders-mobile-statuses-total-count">
+            {store.statuses.length}
+          </S.HeaderCount>
         </S.TitleCluster>
       </S.Header>
 
@@ -113,41 +95,18 @@ export const MobileOrderStatusesListPage = observer(() => {
           />
         ) : null}
 
-        {store.statusesLoading && sortedStatuses.length === 0 ? (
+        {store.statusesLoading && store.statuses.length === 0 ? (
           <S.StateContainer>
             <CenteredSpinner minHeight={160} />
           </S.StateContainer>
-        ) : sortedStatuses.length === 0 ? (
-          <S.StateContainer>
-            <Empty
-              image={Empty.PRESENTED_IMAGE_SIMPLE}
-              description={t("orderStatuses.noStatusesYet")}
-            />
-          </S.StateContainer>
         ) : (
-          <S.ListCard>
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
-            >
-              <SortableContext
-                items={statusIds}
-                strategy={verticalListSortingStrategy}
-              >
-                <S.SortableList role="list">
-                  {sortedStatuses.map((status) => (
-                    <MobileOrderStatusRow
-                      key={status.id}
-                      status={status}
-                      reorderDisabled={store.statusSaveLoading}
-                      onOpen={handleOpen}
-                    />
-                  ))}
-                </S.SortableList>
-              </SortableContext>
-            </DndContext>
-          </S.ListCard>
+          <MobileOrderStatusesNavList
+            statuses={sortedStatuses}
+            creatingCategory={creatingCategory}
+            createDisabled={creatingCategory != null}
+            onOpen={handleOpen}
+            onCreateStatus={(category) => void handleCreateStatus(category)}
+          />
         )}
       </S.ScrollRegion>
     </S.Root>

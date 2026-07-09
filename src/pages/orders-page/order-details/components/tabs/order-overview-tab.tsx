@@ -84,7 +84,8 @@ export const OrderOverviewTab = observer(function OrderOverviewTab({
             <Text type="secondary">
               {t("orders.actor")}{" "}
               {event.userId != null
-                ? (actorNamesByUserId.get(event.userId) ?? `#${event.actorId ?? event.userId}`)
+                ? (actorNamesByUserId.get(event.userId) ??
+                  `#${event.actorId ?? event.userId}`)
                 : `#${event.actorId}`}
             </Text>
           </Flex>
@@ -138,7 +139,9 @@ export const OrderOverviewTab = observer(function OrderOverviewTab({
     {
       key: "deliveryStatus",
       label: t("orders.deliveryStatusLabel"),
-      children: <DeliveryStatusTag value={primaryDeliveryInfo?.deliveryStatus} />,
+      children: (
+        <DeliveryStatusTag value={primaryDeliveryInfo?.deliveryStatus} />
+      ),
     },
     {
       key: "provider",

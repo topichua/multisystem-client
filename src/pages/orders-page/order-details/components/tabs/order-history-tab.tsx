@@ -62,7 +62,8 @@ export const OrderHistoryTab = observer(function OrderHistoryTab({
             <Text type="secondary">
               {t("orders.actor")}{" "}
               {event.userId != null
-                ? (actorNamesByUserId.get(event.userId) ?? `#${event.actorId ?? event.userId}`)
+                ? (actorNamesByUserId.get(event.userId) ??
+                  `#${event.actorId ?? event.userId}`)
                 : `#${event.actorId}`}
             </Text>
           </Flex>

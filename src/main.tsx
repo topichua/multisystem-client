@@ -9,8 +9,8 @@ import { FeatureProviders } from "@/app/feature-providers";
 import { RootProviders } from "@/app/root-providers";
 import "@/i18n";
 import { initDayJs } from "@/utils/date-time";
-import '@vidstack/react/player/styles/base.css';
-import '@vidstack/react/player/styles/plyr/theme.css';
+import "@vidstack/react/player/styles/base.css";
+import "@vidstack/react/player/styles/plyr/theme.css";
 
 initDayJs();
 

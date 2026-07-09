@@ -14,11 +14,15 @@ import type {
   OrderCreatePayload,
   OrderListItem,
   OrderStatus,
+  OrderStatusCreatePayload,
   OrderStatusUpdatePayload,
 } from "@/features/orders/model/order.types";
 import { buildOrderCreatePayload } from "@/features/orders/utils/build-order-create-payload";
 import { productsApi } from "@/features/products/api/products-api";
-import type { CatalogVariant, Product } from "@/features/products/model/product.types";
+import type {
+  CatalogVariant,
+  Product,
+} from "@/features/products/model/product.types";
 import { productToCatalogVariants } from "@/features/products/utils/catalog-variant-display";
 import { throwLoadError } from "@/utils/throw-load-error";
 import { unknownErrorMessage } from "@/utils/unknown-error-message";
@@ -106,6 +110,7 @@ export class OrdersStore {
   statusesLoading = false;
   statusesError: string | null = null;
   statusSaveLoading = false;
+  statusDeleteLoading = false;
 
   constructor() {
     makeAutoObservable(this);
@@ -471,6 +476,30 @@ export class OrdersStore {
     return new Map(this.statuses.map((status) => [status.id, status]));
   }
 
+  createStatus = async (
+    payload: OrderStatusCreatePayload,
+  ): Promise<OrderStatus> => {
+    runInAction(() => {
+      this.statusSaveLoading = true;
+      this.statusesError = null;
+    });
+
+    try {
+      const created = await ordersApi.createStatus(payload);
+      runInAction(() => {
+        this.statuses = [...this.statuses, created].sort(
+          (left, right) => left.sortOrder - right.sortOrder,
+        );
+      });
+
+      return created;
+    } finally {
+      runInAction(() => {
+        this.statusSaveLoading = false;
+      });
+    }
+  };
+
   reorderStatuses = async (ids: number[]): Promise<void> => {
     const previous = [...this.statuses];
     const byId = new Map(previous.map((status) => [status.id, status]));
@@ -495,7 +524,7 @@ export class OrdersStore {
     });
 
     try {
-      const items = await ordersApi.reorderStatuses(ids);
+      const items = await ordersApi.reorderStatuses({ ids });
       runInAction(() => {
         this.statuses = items;
       });
@@ -556,6 +585,26 @@ export class OrdersStore {
     } finally {
       runInAction(() => {
         this.statusSaveLoading = false;
+      });
+    }
+  };
+
+  deleteStatus = async (statusId: number): Promise<void> => {
+    runInAction(() => {
+      this.statusDeleteLoading = true;
+      this.statusesError = null;
+    });
+
+    try {
+      await ordersApi.deleteStatus(statusId);
+      runInAction(() => {
+        this.statuses = this.statuses.filter(
+          (status) => status.id !== statusId,
+        );
+      });
+    } finally {
+      runInAction(() => {
+        this.statusDeleteLoading = false;
       });
     }
   };

@@ -11,62 +11,31 @@ import {
   groupOrderStatusesByCategory,
 } from "@/features/orders/utils/group-order-statuses-by-category";
 
-import * as S from "./order-statuses-nav-list.styled";
-import { OrderStatusSystemBadge } from "./order-status-system-badge";
+import { MobileOrderStatusRow } from "./mobile-order-status-row";
+import * as S from "./mobile-order-statuses-list-page.styled";
 
-type OrderStatusNavItemProps = {
-  status: OrderStatus;
-  selected: boolean;
-  onSelect: (statusId: number) => void;
-};
-
-const OrderStatusNavItem = ({
-  status,
-  selected,
-  onSelect,
-}: OrderStatusNavItemProps) => {
-  return (
-    <S.StatusItem
-      role="listitem"
-      data-status-id={status.id}
-      data-qa={`order-status-nav-item-${status.id}`}
-      $selected={selected}
-    >
-      <S.StatusButton
-        type="button"
-        aria-current={selected ? "page" : undefined}
-        onClick={() => onSelect(status.id)}
-      >
-        <S.StatusDot $color={status.color} aria-hidden="true" />
-        <S.StatusName>{status.name}</S.StatusName>
-        {status.isSystem ? <OrderStatusSystemBadge /> : null}
-      </S.StatusButton>
-    </S.StatusItem>
-  );
-};
-
-type OrderStatusCategorySectionProps = {
+type MobileOrderStatusCategorySectionProps = {
   group: ReturnType<typeof groupOrderStatusesByCategory>[number];
-  selectedStatusId: number | null;
   createDisabled: boolean;
   creating: boolean;
-  onSelect: (statusId: number) => void;
+  onOpen: (statusId: number) => void;
   onCreateStatus: (category: OrderStatusCategory) => void;
 };
 
-const OrderStatusCategorySection = ({
+const MobileOrderStatusCategorySection = ({
   group,
-  selectedStatusId,
   createDisabled,
   creating,
-  onSelect,
+  onOpen,
   onCreateStatus,
-}: OrderStatusCategorySectionProps) => {
+}: MobileOrderStatusCategorySectionProps) => {
   const { t } = useTranslation();
   const categoryLabel = t(getOrderStatusCategoryLabelKey(group.category));
 
   return (
-    <S.CategorySection data-qa={`order-status-category-${group.category}`}>
+    <S.CategorySection
+      data-qa={`orders-mobile-status-category-${group.category}`}
+    >
       <S.CategoryHeader>
         <S.CategoryDot $color={group.color} aria-hidden="true" />
         <S.CategoryTitleCluster>
@@ -78,7 +47,7 @@ const OrderStatusCategorySection = ({
           aria-label={t("orderStatuses.addStatusAria", {
             category: categoryLabel,
           })}
-          data-qa={`order-status-category-add-${group.category}`}
+          data-qa={`orders-mobile-status-category-add-${group.category}`}
           disabled={createDisabled}
           onClick={() => onCreateStatus(group.category)}
         >
@@ -91,53 +60,51 @@ const OrderStatusCategorySection = ({
       </S.CategoryHeader>
 
       {group.statuses.length > 0 ? (
-        <S.StatusTree role="list">
-          {group.statuses.map((status) => (
-            <OrderStatusNavItem
-              key={status.id}
-              status={status}
-              selected={selectedStatusId === status.id}
-              onSelect={onSelect}
-            />
-          ))}
-        </S.StatusTree>
+        <S.ListCard>
+          <S.StatusTree role="list">
+            {group.statuses.map((status) => (
+              <MobileOrderStatusRow
+                key={status.id}
+                status={status}
+                onOpen={onOpen}
+              />
+            ))}
+          </S.StatusTree>
+        </S.ListCard>
       ) : null}
     </S.CategorySection>
   );
 };
 
-export type OrderStatusesNavListProps = {
+export type MobileOrderStatusesNavListProps = {
   statuses: OrderStatus[];
-  selectedStatusId: number | null;
   creatingCategory?: OrderStatusCategory | null;
   createDisabled?: boolean;
-  onSelect: (statusId: number) => void;
+  onOpen: (statusId: number) => void;
   onCreateStatus: (category: OrderStatusCategory) => void;
 };
 
-export const OrderStatusesNavList = ({
+export const MobileOrderStatusesNavList = ({
   statuses,
-  selectedStatusId,
   creatingCategory = null,
   createDisabled = false,
-  onSelect,
+  onOpen,
   onCreateStatus,
-}: OrderStatusesNavListProps) => {
+}: MobileOrderStatusesNavListProps) => {
   const groups = useMemo(
     () => groupOrderStatusesByCategory(statuses),
     [statuses],
   );
 
   return (
-    <S.NavRoot data-qa="order-statuses-nav-list">
+    <S.NavRoot data-qa="orders-mobile-statuses-nav-list">
       {groups.map((group) => (
-        <OrderStatusCategorySection
+        <MobileOrderStatusCategorySection
           key={group.category}
           group={group}
-          selectedStatusId={selectedStatusId}
           createDisabled={createDisabled}
           creating={creatingCategory === group.category}
-          onSelect={onSelect}
+          onOpen={onOpen}
           onCreateStatus={onCreateStatus}
         />
       ))}

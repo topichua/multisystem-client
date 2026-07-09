@@ -1,6 +1,6 @@
-import { Alert } from "antd";
+import { Alert, Flex, Typography } from "antd";
 import { observer } from "mobx-react-lite";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   matchPath,
@@ -10,6 +10,7 @@ import {
   useParams,
 } from "react-router";
 
+import { getApiErrorMessage } from "@/api/get-api-error-message";
 import { getOrderStatusPath, pagesMap } from "@/app/router/pages-map";
 import {
   PaneScrollRegion,
@@ -18,19 +19,26 @@ import {
 } from "@/components/layout/pane-frame";
 import { PaneNavSplitLayout } from "@/components/layout/pane-nav-split-layout";
 import { CenteredSpinner } from "@/components/loading/centered-spinner";
+import type { OrderStatusCategory } from "@/features/orders/model/order.types";
 import { useOrdersStore } from "@/features/orders/model/use-orders-store";
+import { getOrderStatusCategoryColor } from "@/features/orders/utils/group-order-statuses-by-category";
+import { useNotification } from "@/shared/components/notification/use-notification";
 import { useIsMobileViewport } from "@/utils/use-media-query";
 
 import { OrderStatusesNavList } from "./order-statuses-nav-list";
-import { useOrderStatusesReorder } from "./use-order-statuses-reorder";
+
+const { Text } = Typography;
 
 export const OrderStatusesLayout = observer(() => {
   const { t } = useTranslation();
   const store = useOrdersStore();
   const navigate = useNavigate();
   const location = useLocation();
+  const notification = useNotification();
   const { statusId: statusIdParam } = useParams<{ statusId?: string }>();
   const isMobileViewport = useIsMobileViewport();
+  const [creatingCategory, setCreatingCategory] =
+    useState<OrderStatusCategory | null>(null);
 
   useEffect(() => {
     void store.loadStatuses({ force: true });
@@ -68,7 +76,32 @@ export const OrderStatusesLayout = observer(() => {
     [navigate],
   );
 
-  const handleReorder = useOrderStatusesReorder(sortedStatuses);
+  const handleCreateStatus = useCallback(
+    async (category: OrderStatusCategory) => {
+      if (creatingCategory != null) {
+        return;
+      }
+
+      setCreatingCategory(category);
+
+      try {
+        const created = await store.createStatus({
+          name: t("orderStatuses.newStatus"),
+          category,
+          color: getOrderStatusCategoryColor(store.statuses, category),
+          isDefault: false,
+        });
+        navigate(getOrderStatusPath(created.id));
+      } catch (error) {
+        notification.error({
+          title: getApiErrorMessage(error, t("orderStatuses.createError")),
+        });
+      } finally {
+        setCreatingCategory(null);
+      }
+    },
+    [creatingCategory, navigate, notification, store, t],
+  );
 
   if (isMobileViewport) {
     return <Outlet />;
@@ -78,7 +111,12 @@ export const OrderStatusesLayout = observer(() => {
     <PaneNavSplitLayout.Root data-qa="layout-order-statuses-shell">
       <PaneNavSplitLayout.SubSidebar data-qa="layout-order-statuses-sidebar">
         <PaneSectionHeaderStack data-qa="layout-order-statuses-header">
-          <PaneSectionTitle>{t("orderStatuses.title")}</PaneSectionTitle>
+          <PaneSectionTitle>
+            <Flex align="center" justify="space-between">
+              {t("orderStatuses.title")}
+              <Text>{store.statuses.length}</Text>
+            </Flex>
+          </PaneSectionTitle>
         </PaneSectionHeaderStack>
         <PaneScrollRegion data-qa="layout-order-statuses-nav-scroll">
           {store.statusesError ? (
@@ -96,9 +134,10 @@ export const OrderStatusesLayout = observer(() => {
               <OrderStatusesNavList
                 statuses={sortedStatuses}
                 selectedStatusId={selectedStatusId}
-                reorderDisabled={store.statusSaveLoading}
+                creatingCategory={creatingCategory}
+                createDisabled={creatingCategory != null}
                 onSelect={handleSelect}
-                onReorder={(ids) => void handleReorder(ids)}
+                onCreateStatus={(category) => void handleCreateStatus(category)}
               />
             </div>
           )}

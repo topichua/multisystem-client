@@ -6,9 +6,9 @@ import { useParams } from "react-router";
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
 import { CenteredSpinner } from "@/components/loading/centered-spinner";
 import * as S from "@/components/layout/form-card.styled";
-import { formatOrderStatusName } from "@/features/orders/utils/format-order-status-name";
 
 import { OrderStatusFormFields } from "./order-status-form-fields";
+import { OrderStatusSystemBadge } from "./order-status-system-badge";
 import { useOrderStatusEditor } from "./use-order-status-editor";
 
 const { Title, Text } = Typography;
@@ -24,6 +24,7 @@ export const OrderStatusDetailView = observer(() => {
     isLoading,
     isNotFound,
     handleSave,
+    handleDelete,
     navigateToStatuses,
   } = useOrderStatusEditor(statusId);
 
@@ -62,13 +63,12 @@ export const OrderStatusDetailView = observer(() => {
       <PaneDetailLayout.Header data-qa="layout-order-status-detail-header">
         <Flex justify="space-between" align="flex-start" gap={16} wrap="wrap">
           <Flex vertical gap={4}>
-            <Title level={4} style={{ margin: 0 }}>
-              {formatOrderStatusName(
-                status.name,
-                status.isDefault,
-                t("orderStatuses.defaultLabel"),
-              )}
-            </Title>
+            <Flex align="center" gap={8} wrap="wrap">
+              <Title level={4} style={{ margin: 0 }}>
+                {status.name}
+              </Title>
+              {status.isSystem ? <OrderStatusSystemBadge /> : null}
+            </Flex>
             <Text type="secondary">{t("orderStatuses.editHint")}</Text>
           </Flex>
           <Button
@@ -87,6 +87,10 @@ export const OrderStatusDetailView = observer(() => {
             <OrderStatusFormFields
               statuses={store.statuses}
               editingStatusId={status.id}
+              isSystem={status.isSystem}
+              deleteLoading={store.statusDeleteLoading}
+              onDelete={handleDelete}
+              deleteDataQa={`order-status-delete-${status.id}`}
             />
           </Form>
         </S.FormCard>

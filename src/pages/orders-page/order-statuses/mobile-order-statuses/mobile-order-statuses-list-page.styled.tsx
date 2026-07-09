@@ -77,9 +77,105 @@ export const PageTitle = styled(Typography.Title)`
   }
 `;
 
+export const HeaderCount = styled.span`
+  flex-shrink: 0;
+  color: ${({ theme }) => theme.colors.functional.text.subdued};
+  font-size: ${({ theme }) => theme.fontSize.medium};
+  font-weight: 500;
+  line-height: 1.25;
+`;
+
+export const NavRoot = styled.div`
+  margin-top: 16px;
+`;
+
+export const CategorySection = styled.section`
+  &:not(:first-child) {
+    margin-top: 16px;
+  }
+`;
+
+export const CategoryHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  padding: 0 4px;
+`;
+
+export const CategoryDot = styled.span<{ $color: string }>`
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: ${({ $color }) => $color};
+  border: 1px solid rgba(0, 0, 0, 0.12);
+`;
+
+export const CategoryTitleCluster = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1 1 auto;
+  min-width: 0;
+`;
+
+export const CategoryTitle = styled.span`
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: ${({ theme }) => theme.colors.functional.text.subdued};
+  font-size: ${({ theme }) => theme.fontSize.small};
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+`;
+
+export const CategoryCount = styled.span`
+  flex-shrink: 0;
+  color: ${({ theme }) => theme.colors.functional.text.placeholder};
+  font-size: ${({ theme }) => theme.fontSize.small};
+  font-weight: 500;
+  line-height: 1.25;
+`;
+
+export const CategoryAddButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: ${({ theme }) => theme.colors.functional.text.subdued};
+  cursor: pointer;
+
+  &:active:not(:disabled) {
+    background: ${({ theme }) => theme.colors.functional.background.active};
+    color: ${({ theme }) => theme.colors.functional.text.primary};
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+  }
+`;
+
+export const StatusTree = styled.ul`
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+`;
+
 export const ListCard = styled(Card)`
   && {
-    margin-top: 16px;
+    margin-top: 8px;
     overflow: hidden;
     border-color: ${({ theme }) => theme.colors.functional.border.cardBase};
     border-radius: ${({ theme }) => theme.radius.large};
@@ -92,48 +188,13 @@ export const ListCard = styled(Card)`
   }
 `;
 
-export const StatusRow = styled.li<{ $isDragging: boolean }>`
+export const StatusRow = styled.li`
   display: flex;
   align-items: stretch;
   min-width: 0;
-  opacity: ${({ $isDragging }) => ($isDragging ? 0.65 : 1)};
-  box-shadow: ${({ $isDragging }) =>
-    $isDragging
-      ? "var(--ant-box-shadow-secondary, 0 2px 8px rgba(0, 0, 0, 0.12))"
-      : "none"};
 
   &:not(:first-child) {
     border-top: 1px solid ${({ theme }) => theme.colors.functional.border.split};
-  }
-`;
-
-export const DragHandle = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: 0 0 auto;
-  width: 44px;
-  min-height: 48px;
-  margin: 0;
-  padding: 0;
-  border: none;
-  background: transparent;
-  color: ${({ theme }) => theme.colors.functional.text.subdued};
-  cursor: grab;
-  touch-action: none;
-
-  &:active {
-    cursor: grabbing;
-  }
-
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.45;
-  }
-
-  &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.functional.border.selected};
-    outline-offset: -2px;
   }
 `;
 
@@ -143,7 +204,7 @@ export const StatusItemButton = styled(Button)`
     min-width: 0;
     height: auto;
     min-height: 48px;
-    padding: 12px 12px 12px 0;
+    padding: 12px;
     border: 0;
     border-radius: 0;
     color: ${({ theme }) => theme.colors.functional.text.primary};
@@ -209,16 +270,6 @@ export const ItemTitle = styled(Typography.Text)`
   }
 `;
 
-export const DefaultBadge = styled(Typography.Text)`
-  && {
-    flex: 0 0 auto;
-    color: ${({ theme }) => theme.colors.functional.text.subdued};
-    font-size: ${({ theme }) => theme.fontSize.small};
-    line-height: 1.25;
-    white-space: nowrap;
-  }
-`;
-
 export const Caret = styled.span`
   display: inline-flex;
   align-items: center;
@@ -231,11 +282,4 @@ export const StateContainer = styled.div`
   min-width: 0;
   margin-top: 16px;
   padding: 24px 0;
-`;
-
-export const SortableList = styled.ul`
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  min-width: 0;
 `;
