@@ -1,23 +1,24 @@
-import { Empty, Typography } from "antd";
-import { useTranslation } from "react-i18next";
+import { Outlet } from "react-router";
 
-import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
+import { SettingsShell } from "@/components/settings/settings-shell/settings-shell";
+import { useIsMobileViewport } from "@/utils/use-media-query";
 
-const { Title } = Typography;
+import { AnalyticsSidebar } from "./components/analytics-sidebar";
 
 export const AnalyticsPage = () => {
-  const { t } = useTranslation();
+  const isMobileViewport = useIsMobileViewport();
+  const outlet = <Outlet />;
+
+  if (isMobileViewport) {
+    return outlet;
+  }
 
   return (
-    <PaneDetailLayout.Root inset>
-      <PaneDetailLayout.Header>
-        <Title level={4} style={{ marginTop: 0 }}>
-          {t("analytics.pageTitle")}
-        </Title>
-      </PaneDetailLayout.Header>
-      <PaneDetailLayout.Body>
-        <Empty description="Page under construction" />
-      </PaneDetailLayout.Body>
-    </PaneDetailLayout.Root>
+    <SettingsShell.Root>
+      <SettingsShell.Sidebar $customWidth={240}>
+        <AnalyticsSidebar />
+      </SettingsShell.Sidebar>
+      <SettingsShell.Content>{outlet}</SettingsShell.Content>
+    </SettingsShell.Root>
   );
 };

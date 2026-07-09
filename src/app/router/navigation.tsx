@@ -57,6 +57,10 @@ export type SectionNavItem = NavItemBase & {
   key: string;
 };
 
+export type AnalyticsSectionNavItem = SectionNavItem & {
+  pro?: boolean;
+};
+
 export type MobileNavItemKey = MainNavItem["key"] | "home" | "integrations";
 
 export type MobileNavItem = NavItemBase & {
@@ -235,6 +239,44 @@ export const teamSectionNavItems = [
     labelKey: "team.menu.roles",
   },
 ] as const satisfies readonly SectionNavItem[];
+
+export const analyticsSectionNavItems = [
+  {
+    key: "analytics-overview",
+    path: pagesMap.analyticsOverview,
+    labelKey: "analytics.menu.overview",
+  },
+  {
+    key: "analytics-sales",
+    path: pagesMap.analyticsSales,
+    labelKey: "analytics.menu.sales",
+    pro: true,
+  },
+  {
+    key: "analytics-products",
+    path: pagesMap.analyticsProducts,
+    labelKey: "analytics.menu.products",
+    pro: true,
+  },
+  {
+    key: "analytics-instagram",
+    path: pagesMap.analyticsInstagram,
+    labelKey: "analytics.menu.instagram",
+    pro: true,
+  },
+  {
+    key: "analytics-wishlist",
+    path: pagesMap.analyticsWishlist,
+    labelKey: "analytics.menu.wishlist",
+    pro: true,
+  },
+  {
+    key: "analytics-customers",
+    path: pagesMap.analyticsCustomers,
+    labelKey: "analytics.menu.customers",
+    pro: true,
+  },
+] as const satisfies readonly AnalyticsSectionNavItem[];
 
 export const clientsSectionNavItems: readonly SectionNavItem[] = [
   {

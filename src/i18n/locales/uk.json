@@ -94,6 +94,99 @@
   "analytics": {
     "pageTitle": "Аналітика",
     "placeholder": "Тут з'явиться аналітика.",
+    "menu": {
+      "overview": "Огляд",
+      "sales": "Аналітика продажів",
+      "products": "Аналітика товарів",
+      "instagram": "Instagram Analytics",
+      "wishlist": "Аналітика вішлиста",
+      "customers": "Аналітика клієнтів",
+      "proBadge": "PRO"
+    },
+    "descriptions": {
+      "overview": "Як почувається ваш бізнес прямо зараз",
+      "sales": "Динаміка обороту, воронка та менеджери",
+      "products": "Залишки та ефективність асортименту",
+      "instagram": "Повідомлення, ефективність контенту та конверсія в продажі",
+      "wishlist": "Попит клієнтів до поповнення залишків",
+      "customers": "Лояльність, повторні покупки та найцінніші клієнти"
+    },
+    "periodFilter": {
+      "presets": {
+        "7d": "7 днів",
+        "30d": "30 днів",
+        "quarter": "Квартал",
+        "year": "Рік"
+      },
+      "rangeFrom": "Початок",
+      "rangeTo": "Кінець",
+      "presetLabel": "За період: {{period}}",
+      "customRangeLabel": "За період: {{from}} — {{to}}"
+    },
+    "overview": {
+      "kpi": {
+        "revenue": "Виручка",
+        "orders": "Замовлення",
+        "averageOrderValue": "Середній чек",
+        "newClients": "Нові клієнти"
+      },
+      "revenueChart": {
+        "title": "Динаміка виручки",
+        "legend": "Виручка, ₴"
+      },
+      "salesStatus": {
+        "sectionTitle": "Стан продажів"
+      },
+      "salesChannels": {
+        "title": "Канали продажів",
+        "subtitle": "Розподіл замовлень",
+        "ordersLabel": "замовлень"
+      },
+      "ordersByStatus": {
+        "title": "Замовлення за статусами",
+        "subtitle": "Поточний розподіл"
+      },
+      "businessHighlights": {
+        "sectionTitle": "Головне про бізнес"
+      },
+      "topProducts": {
+        "title": "Найкращі товари",
+        "subtitle": "За виручкою та продажами",
+        "quantity": "{{count}} шт"
+      },
+      "topCustomers": {
+        "title": "Топ клієнтів",
+        "subtitle": "За сумою покупок",
+        "orders": "{{count}} зам."
+      },
+      "advancedAnalytics": {
+        "sectionTitle": "Розширена аналітика",
+        "availableOnPro": "Доступно на Pro",
+        "detailsLink": "Детальні звіти",
+        "reports": {
+          "sales": {
+            "title": "Аналітика продажів",
+            "description": "Динаміка виручки, воронка та менеджери"
+          },
+          "products": {
+            "title": "Аналітика товарів",
+            "description": "Залишки та ефективність позицій"
+          },
+          "customers": {
+            "title": "Аналітика клієнтів",
+            "description": "Повторні покупки, LTV, сегменти"
+          },
+          "instagram": {
+            "title": "Instagram-аналітика",
+            "description": "Воронка: розмова → замовлення"
+          },
+          "wishlist": {
+            "title": "Аналітика вішлиста",
+            "description": "Попит на товари до поповнення"
+          }
+        }
+      }
+    },
     "summary": {
       "revenue": "Виручка (30 днів)",
       "orders": "Замовлення",

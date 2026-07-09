@@ -69,7 +69,7 @@ export const OrderHistoryTab = observer(function OrderHistoryTab({
           </Flex>
         ),
       })),
-    [order.currency, order.items, sortedEvents, t],
+    [order.currency, order.items, sortedEvents, t, actorNamesByUserId],
   );
 
   return (

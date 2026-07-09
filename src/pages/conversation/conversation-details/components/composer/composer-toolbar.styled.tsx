@@ -1,9 +1,9 @@
-import styled, { css, keyframes } from 'styled-components';
+import styled, { css, keyframes } from "styled-components";
 
-import { dataQaAttrs } from '@/styled/data-qa-attrs';
+import { dataQaAttrs } from "@/styled/data-qa-attrs";
 
 export const Toolbar = styled.div.attrs(() =>
-  dataQaAttrs('layout-conversation-details-composer-toolbar'),
+  dataQaAttrs("layout-conversation-details-composer-toolbar"),
 )`
   display: flex;
   align-items: center;
@@ -177,7 +177,7 @@ const tabBase = css`
 
 export const Tab = styled.button<{ $active?: boolean; $disabled?: boolean }>`
   ${tabBase}
-  cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
+  cursor: ${({ $disabled }) => ($disabled ? "not-allowed" : "pointer")};
   color: ${({ $active, $disabled, theme }) => {
     if ($disabled) {
       return theme.colors.functional.text.subdued;
@@ -192,7 +192,7 @@ export const Tab = styled.button<{ $active?: boolean; $disabled?: boolean }>`
   opacity: ${({ $disabled }) => ($disabled ? 0.45 : 1)};
 
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     right: 0;
     bottom: 0;
@@ -200,7 +200,7 @@ export const Tab = styled.button<{ $active?: boolean; $disabled?: boolean }>`
     height: 2px;
     border-radius: 2px;
     background: ${({ $active, theme }) =>
-      $active ? theme.colors.semantic.primary : 'transparent'};
+      $active ? theme.colors.semantic.primary : "transparent"};
   }
 
   &:focus-visible {

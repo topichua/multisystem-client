@@ -94,6 +94,99 @@
   "analytics": {
     "pageTitle": "Analytics",
     "placeholder": "Analytics will appear here.",
+    "menu": {
+      "overview": "Overview",
+      "sales": "Sales analytics",
+      "products": "Product analytics",
+      "instagram": "Instagram Analytics",
+      "wishlist": "Wishlist analytics",
+      "customers": "Customer analytics",
+      "proBadge": "PRO"
+    },
+    "descriptions": {
+      "overview": "How your business is doing right now",
+      "sales": "Revenue dynamics, funnel and managers",
+      "products": "Stock levels and assortment performance",
+      "instagram": "Messages, content performance and sales conversion",
+      "wishlist": "Customer demand for restocking",
+      "customers": "Loyalty, repeat purchases and top clients"
+    },
+    "periodFilter": {
+      "presets": {
+        "7d": "7 days",
+        "30d": "30 days",
+        "quarter": "Quarter",
+        "year": "Year"
+      },
+      "rangeFrom": "Start",
+      "rangeTo": "End",
+      "presetLabel": "For period: {{period}}",
+      "customRangeLabel": "For period: {{from}} — {{to}}"
+    },
+    "overview": {
+      "kpi": {
+        "revenue": "Revenue",
+        "orders": "Orders",
+        "averageOrderValue": "Average order value",
+        "newClients": "New clients"
+      },
+      "revenueChart": {
+        "title": "Revenue dynamics",
+        "legend": "Revenue, UAH"
+      },
+      "salesStatus": {
+        "sectionTitle": "Sales status"
+      },
+      "salesChannels": {
+        "title": "Sales channels",
+        "subtitle": "Order distribution",
+        "ordersLabel": "orders"
+      },
+      "ordersByStatus": {
+        "title": "Orders by status",
+        "subtitle": "Current distribution"
+      },
+      "businessHighlights": {
+        "sectionTitle": "Business highlights"
+      },
+      "topProducts": {
+        "title": "Top products",
+        "subtitle": "By revenue and sales",
+        "quantity": "{{count}} pcs"
+      },
+      "topCustomers": {
+        "title": "Top customers",
+        "subtitle": "By purchase amount",
+        "orders": "{{count}} orders"
+      },
+      "advancedAnalytics": {
+        "sectionTitle": "Advanced analytics",
+        "availableOnPro": "Available on Pro",
+        "detailsLink": "Detailed reports",
+        "reports": {
+          "sales": {
+            "title": "Sales analytics",
+            "description": "Revenue dynamics, funnel and managers"
+          },
+          "products": {
+            "title": "Product analytics",
+            "description": "Stock levels and item performance"
+          },
+          "customers": {
+            "title": "Customer analytics",
+            "description": "Repeat purchases, LTV, segments"
+          },
+          "instagram": {
+            "title": "Instagram analytics",
+            "description": "Funnel: conversation → order"
+          },
+          "wishlist": {
+            "title": "Wishlist analytics",
+            "description": "Demand for restocking items"
+          }
+        }
+      }
+    },
     "summary": {
       "revenue": "Revenue (30 days)",
       "orders": "Orders",
