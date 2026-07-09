@@ -221,11 +221,6 @@ export const ordersSectionNavItems = [
     path: pagesMap.ordersList,
     labelKey: "orders.listTitle",
   },
-  {
-    key: "orders-statuses",
-    path: pagesMap.ordersStatuses,
-    labelKey: "orders.menu.statuses",
-  },
 ] as const satisfies readonly SectionNavItem[];
 
 export const teamSectionNavItems = [
@@ -259,6 +254,11 @@ export const settingsSectionNavItems = [
     key: "settings-templates",
     path: pagesMap.settingsTemplates,
     labelKey: "settings.menu.templates",
+  },
+  {
+    key: "settings-statuses",
+    path: pagesMap.settingsOrderStatuses,
+    labelKey: "settings.menu.statuses",
   },
   {
     key: "settings-user",

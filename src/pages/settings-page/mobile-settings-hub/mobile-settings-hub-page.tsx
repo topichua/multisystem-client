@@ -1,6 +1,7 @@
 import {
   CaretRightIcon,
   FileTextIcon,
+  FlowArrowIcon,
   GearSixIcon,
   GlobeIcon,
   UserCircleIcon,
@@ -51,6 +52,11 @@ const settingsMobilePresentationByKey = {
     section: "workspace",
     icon: <FileTextIcon />,
     descriptionKey: "settings.mobile.descriptions.templates",
+  },
+  "settings-statuses": {
+    section: "workspace",
+    icon: <FlowArrowIcon />,
+    descriptionKey: "settings.mobile.descriptions.statuses",
   },
   "settings-user": {
     section: "account",

@@ -74,9 +74,9 @@ export const MobileOrderStatusesListPage = observer(() => {
           <S.BackButton
             type="text"
             icon={<ArrowLeftIcon size={20} />}
-            aria-label={t("orderStatuses.mobile.backToOrdersAria")}
+            aria-label={t("orderStatuses.mobile.backToSettingsAria")}
             data-qa="orders-mobile-statuses-back"
-            onClick={() => navigate(pagesMap.orders)}
+            onClick={() => navigate(pagesMap.settings)}
           />
           <S.PageTitle level={3}>{t("orderStatuses.title")}</S.PageTitle>
           <S.HeaderCount data-qa="orders-mobile-statuses-total-count">

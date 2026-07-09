@@ -1,8 +1,4 @@
-import {
-  CaretRightIcon,
-  FlowArrowIcon,
-  ReceiptIcon,
-} from "@phosphor-icons/react";
+import { CaretRightIcon, ReceiptIcon } from "@phosphor-icons/react";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
@@ -22,10 +18,6 @@ const ordersMobilePresentationByKey = {
   "orders-list": {
     icon: <ReceiptIcon />,
     descriptionKey: "orders.mobile.descriptions.list",
-  },
-  "orders-statuses": {
-    icon: <FlowArrowIcon />,
-    descriptionKey: "orders.mobile.descriptions.statuses",
   },
 } satisfies Record<OrdersMobileItemKey, OrdersMobilePresentation>;
 

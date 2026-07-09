@@ -76,7 +76,7 @@ export function useOrderStatusEditor(statusId: string | undefined) {
     try {
       await store.deleteStatus(status.id);
       notification.success({ title: t("orderStatuses.deleted") });
-      navigate(pagesMap.ordersStatuses);
+      navigate(pagesMap.settingsOrderStatuses);
     } catch (e) {
       notification.error({
         title: getApiErrorMessage(e, t("orderStatuses.deleteError")),
@@ -94,6 +94,6 @@ export function useOrderStatusEditor(statusId: string | undefined) {
     isNotFound: !store.statusesLoading && !status,
     handleSave,
     handleDelete,
-    navigateToStatuses: () => navigate(pagesMap.ordersStatuses),
+    navigateToStatuses: () => navigate(pagesMap.settingsOrderStatuses),
   };
 }

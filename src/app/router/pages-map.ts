@@ -9,7 +9,6 @@ export const pagesMap = {
   productsCharacteristics: "/products/characteristics",
   orders: "/orders",
   ordersList: "/orders/list",
-  ordersStatuses: "/orders/statuses",
   analytics: "/analytics",
   clients: "/clients",
   team: "/team",
@@ -23,6 +22,7 @@ export const pagesMap = {
   settingsSystem: "/settings/system",
   settingsIntegrations: "/settings/integrations",
   settingsTemplates: "/settings/templates",
+  settingsOrderStatuses: "/settings/statuses",
   login: "/login",
   register: "/register",
   registerConfirm: "/register/confirm",
@@ -40,7 +40,7 @@ export const getTeamRolePath = (roleId: string | number) =>
   `${pagesMap.teamRoles}/${roleId}`;
 
 export const getOrderStatusPath = (statusId: string | number) =>
-  `${pagesMap.ordersStatuses}/${statusId}`;
+  `${pagesMap.settingsOrderStatuses}/${statusId}`;
 
 export const getOrderDetailsPath = (orderId: string | number): string =>
   `${pagesMap.orders}/${orderId}`;

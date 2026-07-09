@@ -57,7 +57,7 @@ export const OrderStatusesLayout = observer(() => {
 
     const match = matchPath(
       {
-        path: `${pagesMap.ordersStatuses}/:statusId`,
+        path: `${pagesMap.settingsOrderStatuses}/:statusId`,
         end: true,
       },
       location.pathname,

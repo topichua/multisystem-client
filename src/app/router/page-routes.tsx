@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from "react-router";
+import { Navigate, Route, Routes, useParams } from "react-router";
 import { HomePage } from "@/pages/home-page/home-page";
 import { QuickActionsPage } from "@/pages/home-page/quick-actions/quick-actions-page";
 import { InvitationPage } from "@/pages/invitation-page/invitation-page";
@@ -13,6 +13,9 @@ import { SettingsGroupsLayout } from "@/pages/settings-page/settings-groups/sett
 import { SettingsSystemRoute } from "@/pages/settings-page/settings-system-route";
 import { SettingsUserRoute } from "@/pages/settings-page/settings-user-route";
 import { SettingsIntegrationsRoute } from "@/pages/settings-page/settings-integrations/settings-integrations-route";
+import { OrderStatusDetailRoute } from "@/pages/settings-page/order-statuses/order-status-detail-route";
+import { OrderStatusesIndexRoute } from "@/pages/settings-page/order-statuses/order-statuses-index-route";
+import { OrderStatusesLayout } from "@/pages/settings-page/order-statuses/order-statuses-layout";
 import { SettingsTemplateDetailRoute } from "@/pages/settings-page/settings-templates/settings-template-detail-route";
 import { SettingsTemplatesIndexRoute } from "@/pages/settings-page/settings-templates/settings-templates-index-route";
 import { SettingsTemplatesLayout } from "@/pages/settings-page/settings-templates/settings-templates-layout";
@@ -32,13 +35,10 @@ import { ClientsListRoute } from "@/pages/clients-page/clients-list/clients-list
 import { ClientsPage } from "@/pages/clients-page/clients-page";
 import { OrdersIndexRoute } from "@/pages/orders-page/orders-index-route";
 import { OrdersPage } from "@/pages/orders-page/orders-page";
-import { OrderStatusDetailRoute } from "@/pages/orders-page/order-statuses/order-status-detail-route";
-import { OrderStatusesIndexRoute } from "@/pages/orders-page/order-statuses/order-statuses-index-route";
-import { OrderStatusesLayout } from "@/pages/orders-page/order-statuses/order-statuses-layout";
 import { OrdersListRoute } from "@/pages/orders-page/orders-list/orders-list-route";
 import { OrderDetailsPage } from "@/pages/orders-page/order-details/order-details-page";
 
-import { pagesMap } from "./pages-map";
+import { getOrderStatusPath, pagesMap } from "./pages-map";
 import { ProtectedRoute } from "./protected-route";
 import { PublicOnlyRoute } from "./public-only-route";
 import { AnalyticsPage } from "@/pages/analytics-page/analytics-page";
@@ -110,6 +110,10 @@ export const PageRoutes = () => {
                   element={<SettingsTemplateDetailRoute />}
                 />
               </Route>
+              <Route path="statuses" element={<OrderStatusesLayout />}>
+                <Route index element={<OrderStatusesIndexRoute />} />
+                <Route path=":statusId" element={<OrderStatusDetailRoute />} />
+              </Route>
             </Route>
           </Route>
           <Route path="products">
@@ -142,13 +146,17 @@ export const PageRoutes = () => {
           </Route>
           <Route path="orders">
             <Route index element={<OrdersIndexRoute />} />
+            <Route
+              path="statuses"
+              element={<Navigate to={pagesMap.settingsOrderStatuses} replace />}
+            />
+            <Route
+              path="statuses/:statusId"
+              element={<OrderStatusLegacyRedirect />}
+            />
             <Route element={<OrdersPage />}>
               <Route path="list" element={<OrdersListRoute />} />
               <Route path=":orderId" element={<OrderDetailsPage />} />
-              <Route path="statuses" element={<OrderStatusesLayout />}>
-                <Route index element={<OrderStatusesIndexRoute />} />
-                <Route path=":statusId" element={<OrderStatusDetailRoute />} />
-              </Route>
             </Route>
           </Route>
           <Route path="analytics" element={<AnalyticsPage />} />
@@ -177,5 +185,15 @@ export const PageRoutes = () => {
         element={<Navigate to={pagesMap.home} replace />}
       />
     </Routes>
+  );
+};
+
+const OrderStatusLegacyRedirect = () => {
+  const { statusId } = useParams<{ statusId: string }>();
+
+  return statusId ? (
+    <Navigate to={getOrderStatusPath(statusId)} replace />
+  ) : (
+    <Navigate to={pagesMap.settingsOrderStatuses} replace />
   );
 };

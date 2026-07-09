@@ -538,10 +538,11 @@
     "title": "Settings",
     "menu": {
       "groups": "Groups",
+      "templates": "Templates",
+      "statuses": "Order statuses",
       "user": "User",
       "system": "System",
-      "integrations": "Integrations",
-      "templates": "Templates"
+      "integrations": "Integrations"
     },
     "mobile": {
       "sections": {
@@ -552,6 +553,7 @@
       "descriptions": {
         "groups": "Create and manage conversation groups.",
         "templates": "Create and edit reusable replies.",
+        "statuses": "Configure order workflow statuses.",
         "integrations": "Connect channels and external services.",
         "user": "Update profile and account details.",
         "system": "Configure system preferences."
@@ -1492,6 +1494,7 @@
     "reorderError": "Could not reorder order statuses",
     "mobile": {
       "backToOrdersAria": "Back to orders",
+      "backToSettingsAria": "Back to settings",
       "backToStatusesAria": "Back to order statuses"
     }
   },
@@ -1499,17 +1502,13 @@
     "shellTitle": "Orders",
     "mobile": {
       "descriptions": {
-        "list": "View and manage customer orders.",
-        "statuses": "Configure order workflow statuses."
+        "list": "View and manage customer orders."
       },
       "backToOrdersAria": "Back to orders",
       "filtersAria": "Filters",
       "searchAria": "Search orders",
       "emptyOrders": "No orders found",
       "detailBackAria": "Back to all orders"
-    },
-    "menu": {
-      "statuses": "Order statuses"
     },
     "listTitle": "All orders",
     "allOrdersTitle": "All orders",
