@@ -1,6 +1,9 @@
-import { PlusIcon } from "@phosphor-icons/react";
+import { ArrowUpRightIcon, PlusIcon } from "@phosphor-icons/react";
 import { Button, Tooltip } from "antd";
 import { useTranslation } from "react-i18next";
+
+import type { ClientLastOrder } from "@/features/orders/model/order.types";
+import { formatMoney } from "@/features/orders/utils/format-money";
 
 import * as S from "./composer-toolbar.styled";
 
@@ -10,7 +13,10 @@ type ComposerToolbarProps = {
   activeTab: ComposerTab;
   hasLinkedClient: boolean;
   clientLookupLoading: boolean;
+  clientLastOrder: ClientLastOrder | null;
+  clientLastOrderLoading: boolean;
   onCreateOrderClick: () => void;
+  onLastOrderOpen: (orderId: number) => void;
   onTabChange: (tab: ComposerTab) => void;
 };
 
@@ -18,7 +24,10 @@ export function ComposerToolbar({
   activeTab,
   hasLinkedClient,
   clientLookupLoading,
+  clientLastOrder,
+  clientLastOrderLoading,
   onCreateOrderClick,
+  onLastOrderOpen,
   onTabChange,
 }: ComposerToolbarProps) {
   const { t } = useTranslation();
@@ -41,6 +50,39 @@ export function ComposerToolbar({
       {t("conversation.clientOrders.createOrder")}
     </Button>
   );
+
+  const lastOrderButton = clientLastOrder ? (
+    <S.LastOrderButton
+      type="button"
+      aria-label={t("conversation.clientOrders.openCurrentOrderAria", {
+        id: clientLastOrder.id,
+      })}
+      data-qa="layout-conversation-details-composer-last-order"
+      onClick={() => onLastOrderOpen(clientLastOrder.id)}
+    >
+      <S.LastOrderLabel>
+        {t("conversation.clientOrders.currentOrder")}
+      </S.LastOrderLabel>
+      <S.LastOrderNumber>#{clientLastOrder.id}</S.LastOrderNumber>
+      {clientLastOrder.status.name ? (
+        <S.LastOrderStatus>
+          <S.LastOrderStatusDot />
+          <S.LastOrderStatusName>
+            {clientLastOrder.status.name}
+          </S.LastOrderStatusName>
+        </S.LastOrderStatus>
+      ) : null}
+      <S.LastOrderTotal>
+        {formatMoney(clientLastOrder.totalPrice, "UAH")}
+      </S.LastOrderTotal>
+      <ArrowUpRightIcon size={13} aria-hidden="true" />
+    </S.LastOrderButton>
+  ) : clientLastOrderLoading && hasLinkedClient ? (
+    <S.LastOrderSkeleton
+      aria-hidden="true"
+      data-qa="layout-conversation-details-composer-last-order-loading"
+    />
+  ) : null;
 
   return (
     <S.Toolbar>
@@ -67,15 +109,19 @@ export function ComposerToolbar({
         </S.Tab>
       </S.Tabs>
 
-      {createOrderTooltip ? (
-        <Tooltip title={createOrderTooltip}>
-          <span style={{ display: "inline-flex", flexShrink: 0 }}>
-            {createOrderButton}
-          </span>
-        </Tooltip>
-      ) : (
-        createOrderButton
-      )}
+      <S.Actions>
+        {lastOrderButton}
+
+        {createOrderTooltip ? (
+          <Tooltip title={createOrderTooltip}>
+            <span style={{ display: "inline-flex", flexShrink: 0 }}>
+              {createOrderButton}
+            </span>
+          </Tooltip>
+        ) : (
+          createOrderButton
+        )}
+      </S.Actions>
     </S.Toolbar>
   );
 }

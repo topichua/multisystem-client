@@ -12,10 +12,8 @@ import type {
 import * as S from "./client-order-drawer.styled";
 import * as SearchS from "./client-order-product-search.styled";
 import { ClientOrderLinesTable } from "./client-order-lines-table";
-import {
-  buildGroupedSearchProducts,
-  GroupedProductSearchPopup,
-} from "./grouped-product-search-popup";
+import { GroupedProductSearchPopup } from "./grouped-product-search-popup";
+import { buildGroupedSearchProducts } from "./grouped-product-search-popup.utils";
 import { VariantSearchContent } from "./variant-search-content";
 import type {
   CategorySelectOptionData,

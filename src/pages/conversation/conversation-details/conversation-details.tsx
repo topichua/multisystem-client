@@ -1,10 +1,10 @@
 import { Drawer, Flex, Spin, Typography } from "antd";
 import { observer } from "mobx-react-lite";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router";
 
-import { pagesMap } from "@/app/router/pages-map";
+import { getOrderDetailsPath, pagesMap } from "@/app/router/pages-map";
 import { useUserStore } from "@/features/auth/model/use-user-store";
 import { clientsApi } from "@/features/clients/api/clients-api";
 import type {
@@ -14,6 +14,8 @@ import type {
 } from "@/features/clients/model/client.types";
 import { useConversationsStore } from "@/features/conversations/model/use-conversations-store";
 import type { SendMessagePayload } from "@/features/conversations/model/types";
+import { ordersApi } from "@/features/orders/api/orders-api";
+import type { ClientLastOrder } from "@/features/orders/model/order.types";
 import {
   resolveSelfAccountId,
   resolveTelegramSelfAccountId,
@@ -50,6 +52,10 @@ export const ConversationDetails = observer(() => {
   >();
   const [clientLookupLoading, setClientLookupLoading] = useState(false);
   const [orderDrawerOpen, setOrderDrawerOpen] = useState(false);
+  const [clientLastOrder, setClientLastOrder] =
+    useState<ClientLastOrder | null>(null);
+  const [clientLastOrderLoading, setClientLastOrderLoading] = useState(false);
+  const lastOrderRequestIdRef = useRef(0);
 
   const { conversations, sendConversationMessage, resendOutboundMessage } =
     useConversationsStore();
@@ -167,6 +173,8 @@ export const ConversationDetails = observer(() => {
     return clientLookup.client;
   }, [clientLookup]);
 
+  const linkedClientId = linkedClient?.id ?? null;
+
   const clientPanelTitle = useMemo(() => {
     const showNotLinkedHint =
       !clientLookupLoading && clientLookup && !clientLookup.associated;
@@ -205,6 +213,43 @@ export const ConversationDetails = observer(() => {
 
     setOrderDrawerOpen(true);
   }, [activeConversation, linkedClient]);
+
+  const loadClientLastOrder = useCallback((clientId: number) => {
+    const requestId = lastOrderRequestIdRef.current + 1;
+    lastOrderRequestIdRef.current = requestId;
+    setClientLastOrder(null);
+    setClientLastOrderLoading(true);
+
+    void ordersApi.getClientLastOrder(clientId).then(
+      (order) => {
+        if (lastOrderRequestIdRef.current === requestId) {
+          setClientLastOrder(order);
+          setClientLastOrderLoading(false);
+        }
+      },
+      () => {
+        if (lastOrderRequestIdRef.current === requestId) {
+          setClientLastOrder(null);
+          setClientLastOrderLoading(false);
+        }
+      },
+    );
+  }, []);
+
+  const handleOpenLastOrder = useCallback(
+    (orderId: number) => {
+      navigate(getOrderDetailsPath(orderId));
+    },
+    [navigate],
+  );
+
+  const handleOrderCreated = useCallback(() => {
+    if (linkedClientId == null) {
+      return;
+    }
+
+    loadClientLastOrder(linkedClientId);
+  }, [linkedClientId, loadClientLastOrder]);
 
   const handleCloseOrderDrawer = useCallback(() => {
     setOrderDrawerOpen(false);
@@ -295,6 +340,17 @@ export const ConversationDetails = observer(() => {
     };
   }, [clientLookupParams]);
 
+  useEffect(() => {
+    if (linkedClientId == null) {
+      lastOrderRequestIdRef.current += 1;
+      setClientLastOrder(null);
+      setClientLastOrderLoading(false);
+      return;
+    }
+
+    loadClientLastOrder(linkedClientId);
+  }, [linkedClientId, loadClientLastOrder]);
+
   if (!conversationId) {
     return null;
   }
@@ -355,10 +411,13 @@ export const ConversationDetails = observer(() => {
           canSend={canSend}
           hasLinkedClient={linkedClient != null}
           clientLookupLoading={clientLookupLoading}
+          clientLastOrder={clientLastOrder}
+          clientLastOrderLoading={clientLastOrderLoading}
           replyPreview={replyTarget}
           onCancelReply={handleCancelReply}
           onCreateOrderClick={handleCreateOrderClick}
           onDraftChange={setDraft}
+          onLastOrderOpen={handleOpenLastOrder}
           onSend={handleSend}
         />
       </S.ThreadColumn>
@@ -401,6 +460,7 @@ export const ConversationDetails = observer(() => {
           linkedClient={linkedClient}
           conversationId={activeConversation.id}
           clientPic={activeConversation.participant.profilePic ?? undefined}
+          onOrderCreated={handleOrderCreated}
         />
       ) : null}
     </S.Root>

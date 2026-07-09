@@ -991,6 +991,8 @@
       "totalLabel": "Total",
       "showMore": "Show more",
       "showLess": "Show less",
+      "currentOrder": "Current",
+      "openCurrentOrderAria": "Open current order #{{id}}",
       "createOrder": "Create order",
       "drawerTitle": "New order",
       "closeDrawerAria": "Close",

@@ -232,6 +232,18 @@ export type ClientOrderStats = {
   lastOrderAt: string | null;
 };
 
+export type ClientLastOrderStatus = {
+  id: number;
+  name: string;
+  category: OrderStatusCategory;
+};
+
+export type ClientLastOrder = {
+  id: number;
+  totalPrice: number;
+  status: ClientLastOrderStatus;
+};
+
 export type OrderDraftLine = {
   variantId: number;
   quantity: number;

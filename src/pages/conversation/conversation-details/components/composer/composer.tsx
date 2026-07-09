@@ -1,6 +1,8 @@
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 
+import type { ClientLastOrder } from "@/features/orders/model/order.types";
+
 import type { ReplyComposeTarget } from "../../reply-compose-target";
 
 import { ComposerToolbar, type ComposerTab } from "./composer-toolbar";
@@ -14,10 +16,13 @@ type ComposerProps = {
   canSend: boolean;
   hasLinkedClient: boolean;
   clientLookupLoading: boolean;
+  clientLastOrder: ClientLastOrder | null;
+  clientLastOrderLoading: boolean;
   replyPreview: ReplyComposeTarget | null;
   onCancelReply: () => void;
   onCreateOrderClick: () => void;
   onDraftChange: (value: string) => void;
+  onLastOrderOpen: (orderId: number) => void;
   onSend: () => void;
 };
 
@@ -28,10 +33,13 @@ export const Composer = observer(
     canSend,
     hasLinkedClient,
     clientLookupLoading,
+    clientLastOrder,
+    clientLastOrderLoading,
     replyPreview,
     onCancelReply,
     onCreateOrderClick,
     onDraftChange,
+    onLastOrderOpen,
     onSend,
   }: ComposerProps) => {
     const [activeTab, setActiveTab] = useState<ComposerTab>("messages");
@@ -48,7 +56,10 @@ export const Composer = observer(
           activeTab={activeTab}
           hasLinkedClient={hasLinkedClient}
           clientLookupLoading={clientLookupLoading}
+          clientLastOrder={clientLastOrder}
+          clientLastOrderLoading={clientLastOrderLoading}
           onCreateOrderClick={onCreateOrderClick}
+          onLastOrderOpen={onLastOrderOpen}
           onTabChange={setActiveTab}
         />
 

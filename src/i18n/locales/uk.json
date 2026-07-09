@@ -999,6 +999,8 @@
       "totalLabel": "Разом",
       "showMore": "Показати більше",
       "showLess": "Показати менше",
+      "currentOrder": "Поточне",
+      "openCurrentOrderAria": "Відкрити поточне замовлення №{{id}}",
       "createOrder": "Створити замовлення",
       "drawerTitle": "Нове замовлення",
       "closeDrawerAria": "Закрити",

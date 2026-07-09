@@ -1,15 +1,18 @@
 import { apiClient } from "@/api/api-client";
 
-import type {
-  ClientOrderStats,
-  OrderCreatePayload,
-  OrderDetails,
-  OrderListItem,
-  OrderStatus,
-  OrderStatusCreatePayload,
-  OrderStatusReorderPayload,
-  OrderStatusUpdatePayload,
-  OrdersListResponse,
+import {
+  ORDER_STATUS_CATEGORIES,
+  type ClientLastOrder,
+  type ClientOrderStats,
+  type OrderCreatePayload,
+  type OrderDetails,
+  type OrderListItem,
+  type OrderStatus,
+  type OrderStatusCategory,
+  type OrderStatusCreatePayload,
+  type OrderStatusReorderPayload,
+  type OrderStatusUpdatePayload,
+  type OrdersListResponse,
 } from "@/features/orders/model/order.types";
 
 const basePath = "/orders";
@@ -63,6 +66,61 @@ function normalizeClientOrderStats(
         ? record.averageOrderPrice
         : 0,
     lastOrderAt: normalizeLastOrderAt(record.lastOrderAt),
+  };
+}
+
+function getRecordNumber(
+  record: Record<string, unknown>,
+  keys: string[],
+): number | null {
+  for (const key of keys) {
+    const value = record[key];
+    if (typeof value === "number" && Number.isFinite(value)) {
+      return value;
+    }
+  }
+
+  return null;
+}
+
+function normalizeClientLastOrder(data: unknown): ClientLastOrder | null {
+  if (!data || typeof data !== "object") {
+    return null;
+  }
+
+  const record = data as Record<string, unknown>;
+  const id = getRecordNumber(record, ["id"]);
+  const totalPrice = getRecordNumber(record, ["total_price", "totalPrice"]);
+  const rawStatus = record.status;
+
+  if (
+    id == null ||
+    totalPrice == null ||
+    !rawStatus ||
+    typeof rawStatus !== "object"
+  ) {
+    return null;
+  }
+
+  const statusRecord = rawStatus as Record<string, unknown>;
+  const statusId = getRecordNumber(statusRecord, ["id"]);
+  const statusName =
+    typeof statusRecord.name === "string" ? statusRecord.name : "";
+  const rawCategory = statusRecord.category;
+  const statusCategory: OrderStatusCategory =
+    typeof rawCategory === "string" &&
+    ORDER_STATUS_CATEGORIES.includes(rawCategory as OrderStatusCategory)
+      ? (rawCategory as OrderStatusCategory)
+      : "new";
+
+  return {
+    id,
+    totalPrice,
+    status: {
+      id: statusId ?? 0,
+      name: statusName,
+      category: statusCategory,
+    },
   };
 }
 
@@ -181,6 +239,16 @@ export const ordersApi = {
     );
 
     return normalizeClientOrderStats(data, clientId);
+  },
+
+  getClientLastOrder: async (
+    clientId: number,
+  ): Promise<ClientLastOrder | null> => {
+    const { data } = await apiClient.get<unknown>(
+      `/clients/${clientId}/last-order`,
+    );
+
+    return normalizeClientLastOrder(data);
   },
 
   listStatuses: async (): Promise<OrderStatus[]> => {
