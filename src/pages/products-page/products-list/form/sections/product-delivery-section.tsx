@@ -21,7 +21,7 @@ export const ProductDeliverySection = ({
       <Text type="secondary">{t("products.delivery.description")}</Text>
 
       <Row gutter={isMobile ? [0, 0] : [24, 0]}>
-        <Col span={isMobile ? 24 : 12}>
+        <Col span={isMobile ? 24 : 6}>
           <Form.Item name="weightGrams" label={t("products.delivery.weight")}>
             <InputNumber
               min={0}
@@ -33,7 +33,7 @@ export const ProductDeliverySection = ({
           </Form.Item>
         </Col>
 
-        <Col span={isMobile ? 24 : 12}>
+        <Col span={isMobile ? 24 : 6}>
           <Form.Item name="lengthCm" label={t("products.delivery.length")}>
             <InputNumber
               min={0}
@@ -45,7 +45,7 @@ export const ProductDeliverySection = ({
           </Form.Item>
         </Col>
 
-        <Col span={isMobile ? 24 : 12}>
+        <Col span={isMobile ? 24 : 6}>
           <Form.Item name="widthCm" label={t("products.delivery.width")}>
             <InputNumber
               min={0}
@@ -57,7 +57,7 @@ export const ProductDeliverySection = ({
           </Form.Item>
         </Col>
 
-        <Col span={isMobile ? 24 : 12}>
+        <Col span={isMobile ? 24 : 6}>
           <Form.Item name="heightCm" label={t("products.delivery.height")}>
             <InputNumber
               min={0}

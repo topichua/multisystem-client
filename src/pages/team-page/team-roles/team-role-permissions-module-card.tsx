@@ -104,7 +104,7 @@ export const TeamRolePermissionsModuleCard = ({
         header: {
           minHeight: 50,
           padding: headerPadding,
-          background: "#f1eeff",
+          background: token.colorPrimaryBg,
           fontWeight: 700,
         },
       }}

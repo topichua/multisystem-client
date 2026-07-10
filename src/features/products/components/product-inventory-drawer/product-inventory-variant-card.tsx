@@ -80,7 +80,7 @@ export const ProductInventoryVariantCard = ({
     <Card
       size="small"
       style={{
-        background: expanded ? token.colorBgContainer : "rgb(242, 242, 242)",
+        background: expanded ? token.colorBgContainer : token.colorFillAlter,
         borderColor: expanded ? token.colorPrimary : token.colorBorderSecondary,
         transition: "background 0.2s ease, border-color 0.2s ease",
       }}
