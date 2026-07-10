@@ -24,7 +24,7 @@ export const BillingAiCreditsBanner = ({
   const isMobile = layout === "mobile";
 
   return (
-    <S.AiCreditsBanner data-qa="billing-ai-credits-banner">
+    <S.AiCreditsBanner $mobile={isMobile} data-qa="billing-ai-credits-banner">
       <S.AiCreditsBannerContent>
         <S.AiCreditsBannerIcon>
           <SparkleIcon size={18} weight="fill" />

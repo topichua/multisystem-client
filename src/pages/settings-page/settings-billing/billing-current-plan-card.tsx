@@ -4,9 +4,11 @@ import type { BillingSubscription } from "@/features/billing/model/billing.types
 import { formatBillingDate } from "@/features/billing/utils/billing-format";
 
 import * as S from "./settings-billing.styled";
+import type { BillingLayout } from "./settings-billing.styled";
 
 type BillingCurrentPlanCardProps = {
   subscription: BillingSubscription;
+  layout?: BillingLayout;
 };
 
 function getStatusVariant(
@@ -21,8 +23,10 @@ function getStatusVariant(
 
 export const BillingCurrentPlanCard = ({
   subscription,
+  layout = "desktop",
 }: BillingCurrentPlanCardProps) => {
   const { t } = useTranslation();
+  const isMobile = layout === "mobile";
   const planName =
     subscription.plan?.name ?? t("billing.currentPlan.unknownPlan");
   const periodEnd = subscription.periodEnd ?? subscription.paidUntil;
@@ -30,7 +34,7 @@ export const BillingCurrentPlanCard = ({
   const statusVariant = getStatusVariant(status);
 
   return (
-    <S.CurrentPlanCard data-qa="billing-current-plan-card">
+    <S.CurrentPlanCard $mobile={isMobile} data-qa="billing-current-plan-card">
       <S.CurrentPlanMain>
         <S.CurrentPlanTitleRow>
           <S.CurrentPlanName>{planName}</S.CurrentPlanName>

@@ -3,6 +3,8 @@ import { useTranslation } from "react-i18next";
 
 import type { BillingInvoice } from "@/features/billing/model/billing.types";
 
+import { BillingPaymentHistoryMobileList } from "./billing-payment-history-mobile-list";
+import type { BillingLayout } from "./settings-billing.styled";
 import * as S from "./settings-billing.styled";
 import { useBillingInvoiceTableColumns } from "./use-billing-invoice-table-columns";
 
@@ -13,6 +15,7 @@ type BillingPaymentHistoryTableProps = {
   pageSize: number;
   loading: boolean;
   payingInvoiceId?: string | null;
+  layout?: BillingLayout;
   onPageChange: (page: number) => void;
   onPayInvoice?: (invoiceId: string) => void;
 };
@@ -24,37 +27,53 @@ export const BillingPaymentHistoryTable = ({
   pageSize,
   loading,
   payingInvoiceId,
+  layout = "desktop",
   onPageChange,
   onPayInvoice,
 }: BillingPaymentHistoryTableProps) => {
   const { t } = useTranslation();
+  const isMobile = layout === "mobile";
   const columns = useBillingInvoiceTableColumns({
     onPayInvoice,
     payingInvoiceId,
   });
 
   return (
-    <S.HistoryCard data-qa="billing-payment-history">
-      <S.HistoryHeader>
+    <S.HistoryCard $mobile={isMobile} data-qa="billing-payment-history">
+      <S.HistoryHeader $mobile={isMobile}>
         <S.HistoryTitle level={5}>{t("billing.history.title")}</S.HistoryTitle>
       </S.HistoryHeader>
-      <S.HistoryTableWrap>
-        <Spin spinning={loading}>
-          <Table
-            rowKey="id"
-            columns={columns}
-            dataSource={invoices}
-            pagination={{
-              current: page,
-              pageSize,
-              total,
-              showSizeChanger: false,
-              onChange: onPageChange,
-            }}
-            locale={{ emptyText: t("billing.history.empty") }}
-          />
-        </Spin>
-      </S.HistoryTableWrap>
+
+      {isMobile ? (
+        <BillingPaymentHistoryMobileList
+          invoices={invoices}
+          total={total}
+          page={page}
+          pageSize={pageSize}
+          loading={loading}
+          payingInvoiceId={payingInvoiceId}
+          onPageChange={onPageChange}
+          onPayInvoice={onPayInvoice}
+        />
+      ) : (
+        <S.HistoryTableWrap>
+          <Spin spinning={loading}>
+            <Table
+              rowKey="id"
+              columns={columns}
+              dataSource={invoices}
+              pagination={{
+                current: page,
+                pageSize,
+                total,
+                showSizeChanger: false,
+                onChange: onPageChange,
+              }}
+              locale={{ emptyText: t("billing.history.empty") }}
+            />
+          </Spin>
+        </S.HistoryTableWrap>
+      )}
     </S.HistoryCard>
   );
 };

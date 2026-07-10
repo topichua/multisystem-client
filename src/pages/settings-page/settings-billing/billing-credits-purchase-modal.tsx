@@ -7,6 +7,7 @@ import {
   formatBillingAmount,
   formatBillingCurrencySymbol,
 } from "@/features/billing/utils/billing-format";
+import { useIsMobileViewport } from "@/utils/use-media-query";
 
 type BillingCreditsPurchaseModalProps = {
   open: boolean;
@@ -28,6 +29,7 @@ export const BillingCreditsPurchaseModal = ({
   onConfirm,
 }: BillingCreditsPurchaseModalProps) => {
   const { t } = useTranslation();
+  const isMobileViewport = useIsMobileViewport();
   const [form] = Form.useForm<CreditsPurchaseFormValues>();
   const creditsAmount = Form.useWatch("creditsAmount", form);
 
@@ -63,6 +65,8 @@ export const BillingCreditsPurchaseModal = ({
     <Modal
       open={open}
       title={t("billing.creditsModal.title")}
+      width={isMobileViewport ? "min(480px, calc(100vw - 32px))" : undefined}
+      centered={isMobileViewport}
       onCancel={onCancel}
       onOk={handleOk}
       confirmLoading={confirmLoading}

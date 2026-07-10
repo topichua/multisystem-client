@@ -11,6 +11,7 @@ import {
 } from "@/features/billing/utils/billing-payment";
 
 import { MonobankLogoMark } from "./monobank-logo";
+import type { BillingLayout } from "./settings-billing.styled";
 import * as S from "./settings-billing.styled";
 
 type BillingPaymentMethodCardProps = {
@@ -19,7 +20,7 @@ type BillingPaymentMethodCardProps = {
   plans: BillingPlan[];
   payLoading: boolean;
   onPay: () => void;
-  layout?: "desktop" | "mobile";
+  layout?: BillingLayout;
 };
 
 export const BillingPaymentMethodCard = ({
@@ -37,8 +38,8 @@ export const BillingPaymentMethodCard = ({
   });
 
   return (
-    <S.BillingCard data-qa="billing-payment-method-card">
-      <S.PaymentMethodRow>
+    <S.BillingCard $mobile={isMobile} data-qa="billing-payment-method-card">
+      <S.PaymentMethodRow $mobile={isMobile}>
         <S.PaymentMethodIdentity>
           <MonobankLogoMark />
           <S.PaymentMethodText>

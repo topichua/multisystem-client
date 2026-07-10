@@ -19,12 +19,14 @@ import {
 } from "@/features/billing/utils/billing-payment";
 
 import * as S from "./settings-billing.styled";
+import type { BillingLayout } from "./settings-billing.styled";
 
 type BillingPlansSectionProps = {
   plans: BillingPlan[];
   subscription: BillingSubscription;
   selectedBillingCycle: BillingCycle;
   changingPlanId: number | null;
+  layout?: BillingLayout;
   onBillingCycleChange: (cycle: BillingCycle) => void;
   onSelectPlan: (planId: number) => void;
 };
@@ -34,10 +36,12 @@ export const BillingPlansSection = ({
   subscription,
   selectedBillingCycle,
   changingPlanId,
+  layout = "desktop",
   onBillingCycleChange,
   onSelectPlan,
 }: BillingPlansSectionProps) => {
   const { t } = useTranslation();
+  const isMobile = layout === "mobile";
   const publicPlans = getPublicPlans(plans);
   const yearlyDiscount = getMaxYearlyDiscountPercent(publicPlans);
 
@@ -47,11 +51,12 @@ export const BillingPlansSection = ({
 
   return (
     <div data-qa="billing-plans-section">
-      <S.BillingCycleToggleWrap>
-        <S.BillingCycleToggle>
+      <S.BillingCycleToggleWrap $mobile={isMobile}>
+        <S.BillingCycleToggle $mobile={isMobile}>
           <S.BillingCycleOption
             type="button"
             $active={selectedBillingCycle === "monthly"}
+            $mobile={isMobile}
             onClick={() => onBillingCycleChange("monthly")}
             data-qa="billing-cycle-monthly"
           >
@@ -60,6 +65,7 @@ export const BillingPlansSection = ({
           <S.BillingCycleOption
             type="button"
             $active={selectedBillingCycle === "yearly"}
+            $mobile={isMobile}
             onClick={() => onBillingCycleChange("yearly")}
             data-qa="billing-cycle-yearly"
           >
@@ -73,7 +79,7 @@ export const BillingPlansSection = ({
         </S.BillingCycleToggle>
       </S.BillingCycleToggleWrap>
 
-      <S.PlansGrid style={{ marginTop: 16 }}>
+      <S.PlansGrid $mobile={isMobile} style={{ marginTop: isMobile ? 12 : 16 }}>
         {publicPlans.map((plan) => {
           const price = getPlanPrice(plan, selectedBillingCycle);
           const currencySymbol = formatBillingCurrencySymbol(plan.currency);
@@ -86,6 +92,7 @@ export const BillingPlansSection = ({
             <S.PlanCard
               key={plan.id}
               $highlighted={highlighted}
+              $mobile={isMobile}
               data-qa={`billing-plan-card-${plan.slug}`}
             >
               {highlighted ? (

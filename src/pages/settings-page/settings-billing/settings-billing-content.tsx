@@ -9,18 +9,20 @@ import { BillingInfoBar } from "./billing-info-bar";
 import { BillingPaymentHistoryTable } from "./billing-payment-history-table";
 import { BillingPaymentMethodCard } from "./billing-payment-method-card";
 import { BillingPlansSection } from "./billing-plans-section";
+import type { BillingLayout } from "./settings-billing.styled";
 import * as S from "./settings-billing.styled";
 import { useSettingsBillingPage } from "./use-settings-billing-page";
 
 const { Text } = Typography;
 
 type SettingsBillingContentProps = {
-  layout?: "desktop" | "mobile";
+  layout?: BillingLayout;
 };
 
 export const SettingsBillingContent = observer(
   ({ layout = "desktop" }: SettingsBillingContentProps) => {
     const { t } = useTranslation();
+    const isMobile = layout === "mobile";
     const {
       isOwner,
       billingStore,
@@ -58,14 +60,16 @@ export const SettingsBillingContent = observer(
     return (
       <S.BillingPageRoot>
         <Spin spinning={billingStore.pageLoading || billingStore.syncPaymentLoading}>
-          <S.BillingStack data-qa="billing-page-content">
+          <S.BillingStack $mobile={isMobile} data-qa="billing-page-content">
           {billingStore.pageError ? (
             <Text type="danger">{billingStore.pageError}</Text>
           ) : null}
 
           <BillingInfoBar />
 
-          {subscription ? <BillingCurrentPlanCard subscription={subscription} /> : null}
+          {subscription ? (
+            <BillingCurrentPlanCard subscription={subscription} layout={layout} />
+          ) : null}
 
           {subscription ? (
             <BillingPlansSection
@@ -73,6 +77,7 @@ export const SettingsBillingContent = observer(
               subscription={subscription}
               selectedBillingCycle={selectedBillingCycle}
               changingPlanId={billingStore.changingPlanId}
+              layout={layout}
               onBillingCycleChange={setSelectedBillingCycle}
               onSelectPlan={handleSelectPlan}
             />
@@ -106,6 +111,7 @@ export const SettingsBillingContent = observer(
             pageSize={billingStore.pageSize}
             loading={billingStore.pageLoading}
             payingInvoiceId={billingStore.payingInvoiceId}
+            layout={layout}
             onPageChange={handleInvoicesPageChange}
             onPayInvoice={handlePayOpenInvoice}
           />

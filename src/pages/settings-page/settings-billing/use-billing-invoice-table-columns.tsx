@@ -22,6 +22,8 @@ const STATUS_LABEL_KEYS: Record<BillingInvoiceStatus, string> = {
   refunded: "billing.invoiceStatus.refunded",
 };
 
+export const BILLING_INVOICE_STATUS_LABEL_KEYS = STATUS_LABEL_KEYS;
+
 type UseBillingInvoiceTableColumnsOptions = {
   onPayInvoice?: (invoiceId: string) => void;
   payingInvoiceId?: string | null;

@@ -15,20 +15,17 @@ export const MobileSettingsBillingPage = () => {
   return (
     <MobileS.Root {...dataQaAttrs("settings-mobile-billing-page")}>
       <MobileS.PageHeader>
-        <MobileS.BackButton
-          type="text"
-          icon={<ArrowLeftIcon size={16} />}
-          data-qa="settings-mobile-billing-back"
-          aria-label={t("billing.mobile.backToSettingsAria")}
-          onClick={() => navigate(pagesMap.settings)}
-        >
-          {t("settings.title")}
-        </MobileS.BackButton>
-
-        <MobileS.HeaderCopy>
+        <MobileS.TitleRow>
+          <MobileS.IconBackButton
+            type="text"
+            icon={<ArrowLeftIcon size={20} />}
+            data-qa="settings-mobile-billing-back"
+            aria-label={t("billing.mobile.backToSettingsAria")}
+            onClick={() => navigate(pagesMap.settings)}
+          />
           <MobileS.PageTitle level={3}>{t("billing.title")}</MobileS.PageTitle>
-          <MobileS.PageSubtitle>{t("billing.sectionHint")}</MobileS.PageSubtitle>
-        </MobileS.HeaderCopy>
+        </MobileS.TitleRow>
+        <MobileS.PageSubtitle>{t("billing.sectionHint")}</MobileS.PageSubtitle>
       </MobileS.PageHeader>
 
       <MobileS.ScrollRegion>

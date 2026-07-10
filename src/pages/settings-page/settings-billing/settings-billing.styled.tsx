@@ -1,35 +1,39 @@
 import { Button, Typography } from "antd";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
+
+export type BillingLayout = "desktop" | "mobile";
 
 export const BillingPageRoot = styled.div`
   box-sizing: border-box;
   width: 100%;
 `;
 
-export const BillingStack = styled.div`
+export const BillingStack = styled.div<{ $mobile?: boolean }>`
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: ${({ $mobile }) => ($mobile ? 12 : 16)}px;
   width: 100%;
-  max-width: 860px;
+  max-width: ${({ $mobile }) => ($mobile ? "none" : "860px")};
   margin: 0 auto;
 `;
 
-export const AiCreditsBanner = styled.div`
+export const AiCreditsBanner = styled.div<{ $mobile?: boolean }>`
   box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 16px 20px;
+  padding: ${({ $mobile }) => ($mobile ? "14px 16px" : "16px 20px")};
   border-radius: ${({ theme }) => theme.radius.semiLarge};
-  background: ${({ theme }) => theme.colors.base.violet[1]};
-  border: 1px solid ${({ theme }) => theme.colors.base.violet[3]};
+  background: ${({ theme }) => theme.colors.functional.background.promotion};
+  border: 1px solid ${({ theme }) => theme.colors.functional.border.primary};
 
-  @media (max-width: 767px) {
-    flex-direction: column;
-    align-items: stretch;
-  }
+  ${({ $mobile }) =>
+    $mobile &&
+    css`
+      flex-direction: column;
+      align-items: stretch;
+    `}
 `;
 
 export const AiCreditsBannerContent = styled.div`
@@ -69,24 +73,26 @@ export const AiCreditsBannerTitle = styled(Typography.Text)`
   }
 `;
 
-export const BillingCard = styled.div`
+export const BillingCard = styled.div<{ $mobile?: boolean }>`
   box-sizing: border-box;
-  padding: 20px 24px;
+  padding: ${({ $mobile }) => ($mobile ? "16px" : "20px 24px")};
   border: 1px solid ${({ theme }) => theme.colors.functional.border.cardBase};
   border-radius: ${({ theme }) => theme.radius.semiLarge};
   background: ${({ theme }) => theme.colors.functional.background.elevated};
 `;
 
-export const PaymentMethodRow = styled.div`
+export const PaymentMethodRow = styled.div<{ $mobile?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
 
-  @media (max-width: 767px) {
-    flex-direction: column;
-    align-items: stretch;
-  }
+  ${({ $mobile }) =>
+    $mobile &&
+    css`
+      flex-direction: column;
+      align-items: stretch;
+    `}
 `;
 
 export const PaymentMethodIdentity = styled.div`
@@ -119,8 +125,8 @@ export const HistoryCard = styled(BillingCard)`
   overflow: hidden;
 `;
 
-export const HistoryHeader = styled.div`
-  padding: 20px 24px 0;
+export const HistoryHeader = styled.div<{ $mobile?: boolean }>`
+  padding: ${({ $mobile }) => ($mobile ? "16px 16px 0" : "20px 24px 0")};
 `;
 
 export const HistoryTitle = styled(Typography.Title)`
@@ -180,13 +186,13 @@ export const StatusBadge = styled.span<{
     switch ($variant) {
       case "paid":
         return `
-          color: ${theme.colors.base.green[7]};
-          background: ${theme.colors.base.green[1]};
+          color: ${theme.colors.functional.text.success};
+          background: ${theme.colors.functional.background.success};
         `;
       case "open":
         return `
-          color: ${theme.colors.base.gold[7]};
-          background: ${theme.colors.base.gold[1]};
+          color: ${theme.colors.functional.text.warning};
+          background: ${theme.colors.functional.background.warning};
         `;
       default:
         return `
@@ -241,15 +247,11 @@ export const InfoBar = styled.div`
   line-height: 1.45;
 `;
 
-export const CurrentPlanCard = styled(BillingCard)`
+export const CurrentPlanCard = styled(BillingCard)<{ $mobile?: boolean }>`
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
-
-  @media (max-width: 767px) {
-    flex-direction: column;
-  }
 `;
 
 export const CurrentPlanMain = styled.div`
@@ -286,18 +288,18 @@ export const SubscriptionStatusBadge = styled.span<{
     switch ($variant) {
       case "active":
         return `
-          color: ${theme.colors.base.green[7]};
-          background: ${theme.colors.base.green[1]};
+          color: ${theme.colors.functional.text.success};
+          background: ${theme.colors.functional.background.success};
         `;
       case "trial":
         return `
-          color: ${theme.colors.base.violet[7]};
-          background: ${theme.colors.base.violet[1]};
+          color: ${theme.colors.semantic.upgrade};
+          background: ${theme.colors.functional.background.promotion};
         `;
       case "past_due":
         return `
-          color: ${theme.colors.base.volcano[7]};
-          background: ${theme.colors.base.volcano[1]};
+          color: ${theme.colors.functional.text.error};
+          background: ${theme.colors.functional.background.error};
         `;
       default:
         return `
@@ -319,23 +321,32 @@ export const ExpiredWarning = styled.div`
   color: ${({ theme }) => theme.colors.base.volcano[7]};
 `;
 
-export const BillingCycleToggleWrap = styled.div`
+export const BillingCycleToggleWrap = styled.div<{ $mobile?: boolean }>`
   display: flex;
-  justify-content: center;
+  justify-content: ${({ $mobile }) => ($mobile ? "stretch" : "center")};
+  width: 100%;
 `;
 
-export const BillingCycleToggle = styled.div`
+export const BillingCycleToggle = styled.div<{ $mobile?: boolean }>`
   display: inline-flex;
+  width: ${({ $mobile }) => ($mobile ? "100%" : "auto")};
   padding: 4px;
   border-radius: 999px;
   background: ${({ theme }) => theme.colors.functional.background.natural};
   border: 1px solid ${({ theme }) => theme.colors.functional.border.split};
 `;
 
-export const BillingCycleOption = styled.button<{ $active?: boolean }>`
+export const BillingCycleOption = styled.button<{
+  $active?: boolean;
+  $mobile?: boolean;
+}>`
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  flex: ${({ $mobile }) => ($mobile ? "1 1 0" : "0 0 auto")};
   gap: 8px;
+  min-width: 0;
+  flex-wrap: ${({ $mobile }) => ($mobile ? "wrap" : "nowrap")};
   padding: 8px 16px;
   border: 0;
   border-radius: 999px;
@@ -354,23 +365,27 @@ export const DiscountBadge = styled.span`
   align-items: center;
   padding: 2px 8px;
   border-radius: 999px;
-  background: ${({ theme }) => theme.colors.base.green[1]};
-  color: ${({ theme }) => theme.colors.base.green[7]};
+  background: ${({ theme }) => theme.colors.functional.background.success};
+  color: ${({ theme }) => theme.colors.functional.text.success};
   font-size: ${({ theme }) => theme.fontSize.xSmall};
   font-weight: 600;
 `;
 
-export const PlansGrid = styled.div`
+export const PlansGrid = styled.div<{ $mobile?: boolean }>`
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
+  grid-template-columns: ${({ $mobile }) =>
+    $mobile ? "1fr" : "repeat(3, minmax(0, 1fr))"};
+  gap: ${({ $mobile }) => ($mobile ? 12 : 16)}px;
 
   @media (max-width: 1023px) {
     grid-template-columns: 1fr;
   }
 `;
 
-export const PlanCard = styled(BillingCard)<{ $highlighted?: boolean }>`
+export const PlanCard = styled(BillingCard)<{
+  $highlighted?: boolean;
+  $mobile?: boolean;
+}>`
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -390,8 +405,8 @@ export const PlanPopularBadge = styled.span`
   right: 16px;
   padding: 2px 10px;
   border-radius: 999px;
-  background: ${({ theme }) => theme.colors.base.violet[1]};
-  color: ${({ theme }) => theme.colors.base.violet[7]};
+  background: ${({ theme }) => theme.colors.functional.background.promotion};
+  color: ${({ theme }) => theme.colors.semantic.upgrade};
   font-size: ${({ theme }) => theme.fontSize.xSmall};
   font-weight: 600;
 `;
@@ -453,5 +468,74 @@ export const PlanCtaButton = styled(Button)`
 
 export const PaymentBlockAnchor = styled.div`
   scroll-margin-top: 24px;
+`;
+
+export const HistoryMobileList = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+export const HistoryMobileItem = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px;
+  border-top: 1px solid
+    ${({ theme }) => theme.colors.functional.border.split};
+
+  &:first-child {
+    border-top: 0;
+  }
+`;
+
+export const HistoryMobileItemHeader = styled.div`
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+`;
+
+export const HistoryMobileItemMeta = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+`;
+
+export const HistoryMobileItemDate = styled.span`
+  font-size: ${({ theme }) => theme.fontSize.small};
+  color: ${({ theme }) => theme.colors.functional.text.subdued};
+`;
+
+export const HistoryMobileItemTariff = styled.span`
+  font-size: ${({ theme }) => theme.fontSize.small};
+  color: ${({ theme }) => theme.colors.functional.text.heading};
+  line-height: 1.35;
+`;
+
+export const HistoryMobileItemFooter = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+`;
+
+export const HistoryMobileAmount = styled.span`
+  font-size: ${({ theme }) => theme.fontSize.large};
+  font-weight: 600;
+  color: ${({ theme }) => theme.colors.functional.text.heading};
+`;
+
+export const HistoryMobilePagination = styled.div`
+  display: flex;
+  justify-content: center;
+  padding: 12px 16px 16px;
+`;
+
+export const HistoryMobileEmpty = styled.div`
+  padding: 24px 16px;
+  text-align: center;
+  font-size: ${({ theme }) => theme.fontSize.small};
+  color: ${({ theme }) => theme.colors.functional.text.subdued};
 `;
 
