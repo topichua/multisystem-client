@@ -45,6 +45,7 @@ export type ProductAddPageControllerReturn = {
   categoryOptions: Array<{ value: number; label: string }>;
   requiredMessage: string;
   showMainQuantityField: boolean;
+  showMainPriceField: boolean;
   showStatusField: boolean;
   labels: {
     name: string;
@@ -237,6 +238,7 @@ export const useProductAddPageController =
       requiredMessage,
       showMainQuantityField:
         isSimpleInventoryMode && variantsController.productType === "single",
+      showMainPriceField: variantsController.productType === "single",
       showStatusField: isEditMode,
       labels: {
         name: t("products.form.name"),
@@ -292,6 +294,8 @@ export const useProductAddPageController =
           variantsController.onUpdateManualVariantCustomField,
         deletingVariantKey: variantsController.deletingVariantKey,
         showQuantityField: isSimpleInventoryMode,
+        onApplyPriceToAllVariants:
+          variantsController.onApplyPriceToAllVariants,
       },
       submitButtonProps: {
         loading: isSavingProduct,

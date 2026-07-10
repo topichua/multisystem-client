@@ -27,8 +27,14 @@ export const OrderDetailsPage = () => {
   const invalidOrderIdError =
     orderId == null ? t("orders.invalidOrderId") : null;
 
-  const { order, loading, error, applyOrderStatusLocally } =
-    useOrderDetails(orderId);
+  const {
+    order,
+    loading,
+    error,
+    applyOrderStatusLocally,
+    createNovaPoshtaWaybill,
+    removeNovaPoshtaWaybill,
+  } = useOrderDetails(orderId);
 
   const handlePrint = () => {
     window.print();
@@ -54,7 +60,13 @@ export const OrderDetailsPage = () => {
             <Text type="secondary">{t("orders.notFound")}</Text>
           ) : null}
 
-          {order ? <OrderDetailsContent order={order} /> : null}
+          {order ? (
+            <OrderDetailsContent
+              order={order}
+              onCreateNovaPoshtaWaybill={createNovaPoshtaWaybill}
+              onRemoveNovaPoshtaWaybill={removeNovaPoshtaWaybill}
+            />
+          ) : null}
         </Spin>
       </PaneDetailLayout.Body>
     </>

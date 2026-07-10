@@ -3,21 +3,36 @@ import {
   CreditCardIcon,
   InstagramLogoIcon,
   PencilSimpleIcon,
+  PlusIcon,
+  TrashIcon,
   TruckIcon,
 } from "@phosphor-icons/react";
-import { Avatar, Button, Empty, Flex, Typography } from "antd";
+import {
+  Avatar,
+  Button,
+  Empty,
+  Flex,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  Typography,
+} from "antd";
 import { observer } from "mobx-react-lite";
 import type { ReactNode } from "react";
-import { useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { getApiErrorMessage } from "@/api/get-api-error-message";
 import { pagesMap } from "@/app/router/pages-map";
 import type {
   OrderDetails,
   OrderDetailsEvent,
+  OrderNovaPoshtaWaybillPayload,
 } from "@/features/orders/model/order.types";
 import { useWorkspaceMembersStore } from "@/features/workspace-members/model/use-workspace-members-store";
 import { getWorkspaceMemberName } from "@/features/workspace-members/utils/workspace-member-display";
+import { useNotification } from "@/shared/components/notification/use-notification";
 
 import * as S from "./order-details-content.styled";
 import { DeliveryStatusTag, PaymentStatusTag } from "./order-status-tags";
@@ -32,6 +47,7 @@ import {
   getEventDescription,
   getOrderSourceLabel,
   getVariantLabel,
+  isRecord,
 } from "../utils/order-details.utils";
 
 const { Text } = Typography;
@@ -42,6 +58,10 @@ type DeliveryInfo = OrderDetails["deliveryInfo"];
 
 type OrderDetailsContentProps = {
   order: OrderDetails;
+  onCreateNovaPoshtaWaybill: (
+    payload: OrderNovaPoshtaWaybillPayload,
+  ) => Promise<void>;
+  onRemoveNovaPoshtaWaybill: () => Promise<void>;
 };
 
 type InfoItem = {
@@ -59,6 +79,21 @@ type OrderSectionProps = {
 
 type CustomerSectionProps = OrderSectionProps & {
   customerName: string;
+};
+
+type DeliveryCardProps = CustomerSectionProps & {
+  onCreateNovaPoshtaWaybill: (
+    payload: OrderNovaPoshtaWaybillPayload,
+  ) => Promise<void>;
+  onRemoveNovaPoshtaWaybill: () => Promise<void>;
+};
+
+type WaybillFormValues = {
+  weightGrams?: number | null;
+  seatsAmount?: number | null;
+  seatsCount?: number | null;
+  description?: string;
+  declaredCost?: number | null;
 };
 
 const EVENT_META: Record<
@@ -170,6 +205,129 @@ const getDeliveryTypeLabel = (
 
 const getDeliveryDestination = (deliveryInfo: DeliveryInfo): string =>
   formatText(deliveryInfo?.warehouse || formatDeliveryAddress(deliveryInfo));
+
+const pickRecordNumber = (
+  sources: unknown[],
+  keys: string[],
+): number | null => {
+  for (const source of sources) {
+    if (!isRecord(source)) {
+      continue;
+    }
+
+    for (const key of keys) {
+      const value = source[key];
+      if (typeof value === "number" && Number.isFinite(value)) {
+        return value;
+      }
+    }
+  }
+
+  return null;
+};
+
+const pickRecordString = (
+  sources: unknown[],
+  keys: string[],
+): string | null => {
+  for (const source of sources) {
+    if (!isRecord(source)) {
+      continue;
+    }
+
+    for (const key of keys) {
+      const value = source[key];
+      if (typeof value === "string" && value.trim()) {
+        return value.trim();
+      }
+    }
+  }
+
+  return null;
+};
+
+const getWaybillDescriptionFallback = (
+  order: OrderDetails,
+  t: TranslationFn,
+): string => {
+  const description = order.items
+    .map((item) =>
+      [item.productTitleSnapshot, item.variantTitleSnapshot]
+        .map((part) => part?.trim())
+        .filter(Boolean)
+        .join(" / "),
+    )
+    .filter(Boolean)
+    .join(", ");
+
+  return description || `${t("orders.orderTitle")} #${order.id}`;
+};
+
+const buildWaybillInitialValues = (
+  order: OrderDetails,
+  t: TranslationFn,
+): WaybillFormValues => {
+  const sources = [order.deliveryInfo, order];
+
+  return {
+    weightGrams:
+      pickRecordNumber(sources, ["weightGrams", "weight_grams"]) ?? 1,
+    seatsAmount:
+      pickRecordNumber(sources, ["seatsAmount", "seats_amount"]) ?? 1,
+    seatsCount: pickRecordNumber(sources, ["seatsCount", "seats_count"]) ?? 1,
+    description:
+      pickRecordString(sources, ["description", "waybillDescription"]) ??
+      getWaybillDescriptionFallback(order, t),
+    declaredCost:
+      pickRecordNumber(sources, ["declaredCost", "declared_cost"]) ??
+      order.totalAmount,
+  };
+};
+
+const normalizePositiveInteger = (
+  value: number | null | undefined,
+  fallback: number,
+): number => {
+  if (typeof value !== "number" || !Number.isFinite(value)) {
+    return fallback;
+  }
+
+  return Math.max(1, Math.trunc(value));
+};
+
+const normalizeNonNegativeNumber = (
+  value: number | null | undefined,
+  fallback: number,
+): number => {
+  if (typeof value !== "number" || !Number.isFinite(value)) {
+    return fallback;
+  }
+
+  return Math.max(0, value);
+};
+
+const buildWaybillPayload = (
+  values: WaybillFormValues,
+  fallbackDescription: string,
+): OrderNovaPoshtaWaybillPayload => ({
+  weightGrams: normalizePositiveInteger(values.weightGrams, 1),
+  seatsAmount: normalizePositiveInteger(values.seatsAmount, 1),
+  seatsCount: normalizePositiveInteger(values.seatsCount, 1),
+  description: values.description?.trim() || fallbackDescription,
+  declaredCost: normalizeNonNegativeNumber(values.declaredCost, 0),
+});
+
+const hasNovaPoshtaDeliveryRefs = (deliveryInfo: DeliveryInfo): boolean => {
+  if (!deliveryInfo?.cityRef) {
+    return false;
+  }
+
+  if (deliveryInfo.deliveryType === "address" || deliveryInfo.streetRef) {
+    return Boolean(deliveryInfo.streetRef && deliveryInfo.building?.trim());
+  }
+
+  return Boolean(deliveryInfo.warehouseRef);
+};
 
 const InfoList = ({ items }: { items: InfoItem[] }) => (
   <S.InfoGrid>
@@ -416,12 +574,138 @@ const CustomerCard = ({ order, customerName, t }: CustomerSectionProps) => (
   </S.DetailsCard>
 );
 
-const DeliveryCard = ({ order, customerName, t }: CustomerSectionProps) => {
+const DeliveryCard = ({
+  order,
+  customerName,
+  t,
+  onCreateNovaPoshtaWaybill,
+  onRemoveNovaPoshtaWaybill,
+}: DeliveryCardProps) => {
   const primaryDeliveryInfo = order.deliveryInfo;
   const providerLabel = getDeliveryProviderLabel(
     t,
     primaryDeliveryInfo?.provider,
   );
+  const notification = useNotification();
+  const [waybillForm] = Form.useForm<WaybillFormValues>();
+  const [waybillActionLoading, setWaybillActionLoading] = useState(false);
+  const waybillInitialValues = useMemo(
+    () => buildWaybillInitialValues(order, t),
+    [order, t],
+  );
+  const deliveryStatus =
+    primaryDeliveryInfo?.deliveryStatus ?? order.deliveryStatus;
+  const hasTrackingNumber = Boolean(primaryDeliveryInfo?.trackingNumber);
+  const deliveryShipped = deliveryStatus === "shipped";
+  const canRemoveTracking =
+    order.canRemoveTracking && (primaryDeliveryInfo?.canRemoveTracking ?? true);
+  const createDisabledReason = (() => {
+    if (deliveryShipped) {
+      return t("orders.details.deliveryShippedLocked");
+    }
+
+    if (!primaryDeliveryInfo) {
+      return t("orders.details.waybillMissingDelivery");
+    }
+
+    if (primaryDeliveryInfo.provider !== "nova_poshta") {
+      return t("orders.details.waybillNovaPoshtaRequired");
+    }
+
+    if (order.items.length === 0) {
+      return t("orders.details.waybillItemsRequired");
+    }
+
+    if (!hasNovaPoshtaDeliveryRefs(primaryDeliveryInfo)) {
+      return t("orders.details.waybillRefsRequired");
+    }
+
+    return null;
+  })();
+  const removeDisabledReason = deliveryShipped
+    ? t("orders.details.deliveryShippedLocked")
+    : !canRemoveTracking
+      ? t("orders.details.removeWaybillUnavailable")
+      : null;
+  const canCreateWaybill = !hasTrackingNumber && createDisabledReason == null;
+  const canRemoveWaybill = hasTrackingNumber && removeDisabledReason == null;
+
+  useEffect(() => {
+    waybillForm.setFieldsValue(waybillInitialValues);
+  }, [waybillForm, waybillInitialValues]);
+
+  const handleCreateWaybill = useCallback(async () => {
+    if (!canCreateWaybill) {
+      return;
+    }
+
+    const values = await waybillForm.validateFields();
+    const payload = buildWaybillPayload(
+      values,
+      waybillInitialValues.description ??
+        getWaybillDescriptionFallback(order, t),
+    );
+
+    setWaybillActionLoading(true);
+
+    try {
+      await onCreateNovaPoshtaWaybill(payload);
+      notification.success({
+        title: t("orders.details.createWaybillSuccess"),
+      });
+    } catch (error) {
+      notification.error({
+        title: getApiErrorMessage(
+          error,
+          t("orders.details.createWaybillFailed"),
+        ),
+      });
+    } finally {
+      setWaybillActionLoading(false);
+    }
+  }, [
+    canCreateWaybill,
+    notification,
+    onCreateNovaPoshtaWaybill,
+    order,
+    t,
+    waybillForm,
+    waybillInitialValues.description,
+  ]);
+
+  const handleRemoveWaybill = useCallback(() => {
+    if (!canRemoveWaybill) {
+      return;
+    }
+
+    Modal.confirm({
+      title: t("orders.details.removeWaybillConfirmTitle"),
+      content: t("orders.details.removeWaybillConfirmText"),
+      okText: t("orders.details.removeWaybillConfirmOk"),
+      okType: "danger",
+      cancelText: t("orders.details.cancel"),
+      onOk: async () => {
+        setWaybillActionLoading(true);
+
+        try {
+          await onRemoveNovaPoshtaWaybill();
+          notification.success({
+            title: t("orders.details.removeWaybillSuccess"),
+          });
+        } catch (error) {
+          notification.error({
+            title: getApiErrorMessage(
+              error,
+              t("orders.details.removeWaybillFailed"),
+            ),
+          });
+          return Promise.reject(error);
+        } finally {
+          setWaybillActionLoading(false);
+        }
+      },
+    });
+  }, [canRemoveWaybill, notification, onRemoveNovaPoshtaWaybill, t]);
 
   return (
     <S.DetailsCard className="print-card section-delivery">
@@ -433,9 +717,25 @@ const DeliveryCard = ({ order, customerName, t }: CustomerSectionProps) => {
           <S.CardTitle level={3}>{t("orders.delivery")}</S.CardTitle>
         </Flex>
 
-        {primaryDeliveryInfo?.provider ? (
-          <S.ProviderTag color="red">{providerLabel}</S.ProviderTag>
-        ) : null}
+        <Flex align="center" gap={8} justify="end" wrap>
+          {primaryDeliveryInfo?.provider && (
+            <S.ProviderTag color="red">{providerLabel}</S.ProviderTag>
+          )}
+
+          {hasTrackingNumber ? (
+            <Button
+              className="no-print"
+              danger
+              disabled={!canRemoveWaybill || waybillActionLoading}
+              icon={<TrashIcon size={18} />}
+              loading={waybillActionLoading}
+              title={removeDisabledReason ?? undefined}
+              onClick={handleRemoveWaybill}
+            >
+              {t("orders.details.removeWaybill")}
+            </Button>
+          ) : null}
+        </Flex>
       </S.CardHeader>
 
       <S.TrackingPanel>
@@ -448,6 +748,124 @@ const DeliveryCard = ({ order, customerName, t }: CustomerSectionProps) => {
           <S.TrackingNumber>{EMPTY_VALUE}</S.TrackingNumber>
         )}
       </S.TrackingPanel>
+
+      {!hasTrackingNumber ? (
+        <S.WaybillForm className="no-print">
+          <Form
+            disabled={deliveryShipped || waybillActionLoading}
+            form={waybillForm}
+            initialValues={waybillInitialValues}
+            layout="vertical"
+          >
+            <S.WaybillFormGrid>
+              <Form.Item
+                label={t("orders.details.waybillWeight")}
+                name="weightGrams"
+                rules={[
+                  {
+                    required: true,
+                    message: t("orders.details.requiredField"),
+                  },
+                ]}
+              >
+                <InputNumber
+                  min={1}
+                  precision={0}
+                  controls={false}
+                  addonAfter={t("orders.create.shipment.grams")}
+                  style={{ width: "100%" }}
+                />
+              </Form.Item>
+
+              <Form.Item
+                label={t("orders.details.waybillSeatsAmount")}
+                name="seatsAmount"
+                rules={[
+                  {
+                    required: true,
+                    message: t("orders.details.requiredField"),
+                  },
+                ]}
+              >
+                <InputNumber
+                  min={1}
+                  precision={0}
+                  controls={false}
+                  style={{ width: "100%" }}
+                />
+              </Form.Item>
+
+              <Form.Item
+                label={t("orders.details.waybillSeatsCount")}
+                name="seatsCount"
+                rules={[
+                  {
+                    required: true,
+                    message: t("orders.details.requiredField"),
+                  },
+                ]}
+              >
+                <InputNumber
+                  min={1}
+                  precision={0}
+                  controls={false}
+                  style={{ width: "100%" }}
+                />
+              </Form.Item>
+
+              <Form.Item
+                label={t("orders.details.waybillDeclaredCost")}
+                name="declaredCost"
+                rules={[
+                  {
+                    required: true,
+                    message: t("orders.details.requiredField"),
+                  },
+                ]}
+              >
+                <InputNumber
+                  min={0}
+                  controls={false}
+                  addonAfter={order.currency}
+                  style={{ width: "100%" }}
+                />
+              </Form.Item>
+            </S.WaybillFormGrid>
+
+            <Form.Item
+              label={t("orders.details.waybillDescription")}
+              name="description"
+              rules={[
+                {
+                  required: true,
+                  whitespace: true,
+                  message: t("orders.details.requiredField"),
+                },
+              ]}
+            >
+              <Input.TextArea autoSize={{ minRows: 2, maxRows: 4 }} />
+            </Form.Item>
+
+            <S.WaybillActions>
+              {createDisabledReason ? (
+                <S.WaybillHint type="secondary">
+                  {createDisabledReason}
+                </S.WaybillHint>
+              ) : null}
+
+              <Button
+                type="primary"
+                disabled={!canCreateWaybill}
+                icon={<PlusIcon size={18} />}
+                loading={waybillActionLoading}
+                onClick={handleCreateWaybill}
+              >
+                {t("orders.details.createWaybill")}
+              </Button>
+            </S.WaybillActions>
+          </Form>
+        </S.WaybillForm>
+      ) : null}
 
       <S.DeliveryStatusBox>
         <DeliveryStatusTag value={primaryDeliveryInfo?.deliveryStatus} />
@@ -530,7 +948,11 @@ const PaymentCard = ({ order, t }: OrderSectionProps) => (
   </S.DetailsCard>
 );
 
-export const OrderDetailsContent = ({ order }: OrderDetailsContentProps) => {
+export const OrderDetailsContent = ({
+  order,
+  onCreateNovaPoshtaWaybill,
+  onRemoveNovaPoshtaWaybill,
+}: OrderDetailsContentProps) => {
   const { t } = useTranslation();
   const customerName = getCustomerName(order.customer);
 
@@ -548,7 +970,13 @@ export const OrderDetailsContent = ({ order }: OrderDetailsContentProps) => {
 
         <S.SideColumn>
           <CustomerCard order={order} customerName={customerName} t={t} />
-          <DeliveryCard order={order} customerName={customerName} t={t} />
+          <DeliveryCard
+            order={order}
+            customerName={customerName}
+            t={t}
+            onCreateNovaPoshtaWaybill={onCreateNovaPoshtaWaybill}
+            onRemoveNovaPoshtaWaybill={onRemoveNovaPoshtaWaybill}
+          />
           <PaymentCard order={order} t={t} />
         </S.SideColumn>
       </S.LayoutRoot>

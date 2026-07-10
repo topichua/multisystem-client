@@ -46,6 +46,7 @@ export type ProductFormProps = {
   categoryOptions: Array<{ value: number; label: string }>;
   requiredMessage: string;
   showMainQuantityField: boolean;
+  showMainPriceField?: boolean;
   showStatusField?: boolean;
   labels: {
     name: string;
@@ -94,6 +95,7 @@ export const ProductForm = ({
   categoryOptions,
   requiredMessage,
   showMainQuantityField,
+  showMainPriceField = true,
   showStatusField = true,
   labels,
   singleCharacteristicsProps,
@@ -163,6 +165,7 @@ export const ProductForm = ({
         categoryOptions={categoryOptions}
         requiredMessage={requiredMessage}
         showQuantityField={showMainQuantityField}
+        showPriceField={showMainPriceField}
         showStatusField={showStatusField}
         labels={labels}
         isMobile={isMobileViewport}
@@ -222,6 +225,7 @@ export const ProductForm = ({
           }
           deletingVariantKey={variantsProps.deletingVariantKey}
           showQuantityField={variantsProps.showQuantityField}
+          onApplyPriceToAllVariants={variantsProps.onApplyPriceToAllVariants}
           isMobile={isMobileViewport}
         />
       ) : null}

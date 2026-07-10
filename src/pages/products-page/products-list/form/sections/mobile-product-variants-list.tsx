@@ -8,6 +8,7 @@ import type { SelectedCharacteristic } from "../variants/generate-product-varian
 import type { ProductVariantUi } from "../variants/product-add-variant.types";
 import { EmptyVariantsState } from "./empty-variants-state";
 import { MobileProductVariantCard } from "./mobile-product-variant-card";
+import { VariantsBulkPriceBar } from "./variants-bulk-price-bar";
 
 const { Title, Text } = Typography;
 
@@ -25,6 +26,8 @@ type MobileProductVariantsListProps = {
   ) => void;
   showQuantityField: boolean;
   onAddManualVariant: () => void;
+  onApplyPriceToAllVariants: (price: number) => void;
+  isMobile?: boolean;
 };
 
 export function MobileProductVariantsList({
@@ -37,6 +40,8 @@ export function MobileProductVariantsList({
   onUpdateManualVariantCustomField,
   showQuantityField,
   onAddManualVariant,
+  onApplyPriceToAllVariants,
+  isMobile = false,
 }: MobileProductVariantsListProps) {
   const { t } = useTranslation();
 
@@ -53,6 +58,11 @@ export function MobileProductVariantsList({
         <EmptyVariantsState onAddManualVariant={onAddManualVariant} />
       ) : (
         <>
+          <VariantsBulkPriceBar
+            onApplyPriceToAll={onApplyPriceToAllVariants}
+            isMobile={isMobile}
+          />
+
           <Flex vertical gap={12}>
             {productVariants.map((variant, index) => (
               <MobileProductVariantCard

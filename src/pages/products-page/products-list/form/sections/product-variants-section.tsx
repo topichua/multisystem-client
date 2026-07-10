@@ -36,6 +36,7 @@ export type ProductVariantsSectionProps = {
   ) => void;
   deletingVariantKey: string | null;
   showQuantityField: boolean;
+  onApplyPriceToAllVariants: (price: number) => void;
   isMobile?: boolean;
 };
 
@@ -55,6 +56,7 @@ export const ProductVariantsSection = ({
   onUpdateManualVariantCustomField,
   deletingVariantKey,
   showQuantityField,
+  onApplyPriceToAllVariants,
   isMobile = false,
 }: ProductVariantsSectionProps) => {
   const { t } = useTranslation();
@@ -91,12 +93,15 @@ export const ProductVariantsSection = ({
             onUpdateManualVariantCustomField={onUpdateManualVariantCustomField}
             showQuantityField={showQuantityField}
             onAddManualVariant={onAddManualVariant}
+            onApplyPriceToAllVariants={onApplyPriceToAllVariants}
+            isMobile
           />
         ) : (
           <ProductVariantsTable
             productVariants={productVariants}
             variantTableColumns={variantTableColumns}
             onAddManualVariant={onAddManualVariant}
+            onApplyPriceToAllVariants={onApplyPriceToAllVariants}
           />
         )}
       </Flex>

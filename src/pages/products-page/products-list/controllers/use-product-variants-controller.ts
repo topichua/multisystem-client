@@ -370,6 +370,29 @@ export function useProductVariantsController({
     [form],
   );
 
+  const handleApplyPriceToAllVariants = useCallback(
+    (price: number) => {
+      const mergedVariants = mergeProductVariantsWithFormValues(
+        productVariantsRef.current,
+        form.getFieldValue("variants"),
+      );
+
+      if (mergedVariants.length === 0) {
+        return;
+      }
+
+      const nextVariants = mergedVariants.map((variant) => ({
+        ...variant,
+        price,
+      }));
+
+      setProductVariants(nextVariants);
+      syncProductVariantsToForm(form, nextVariants);
+      form.setFieldValue("price", price);
+    },
+    [form],
+  );
+
   return {
     productType,
     productVariants,
@@ -397,6 +420,7 @@ export function useProductVariantsController({
     onDeleteVariant: handleDeleteVariant,
     onAddManualVariant: handleAddManualVariant,
     onUpdateManualVariantCustomField: handleUpdateManualVariantCustomField,
+    onApplyPriceToAllVariants: handleApplyPriceToAllVariants,
   };
 }
 

@@ -12,7 +12,9 @@ import { useTranslation } from "react-i18next";
 import type { Product } from "@/features/products/model/product.types";
 import {
   formatProductPrice,
+  formatProductVariantListMetaLine,
   getProductPriceRange,
+  getSingleVariantListMeta,
   getVariantTitle,
   // productStatusToColor,
   // variantStatusToColor,
@@ -48,7 +50,8 @@ export const MobileProductCard = ({
 }: MobileProductCardProps) => {
   const { t } = useTranslation();
   const variantsCount = product.variants?.length ?? 0;
-  const hasVariants = variantsCount > 0;
+  const hasMultipleVariants = variantsCount > 1;
+  const singleVariantMeta = getSingleVariantListMeta(product);
   const [expanded, setExpanded] = useState(false);
 
   const priceLabel = getProductPriceRange(product) ?? t("products.noPrice");
@@ -61,9 +64,15 @@ export const MobileProductCard = ({
         : t("products.mobile.qty", { value: product.quantity })
     : null;
 
-  const secondaryMeta = hasVariants
-    ? t("products.table.variantsCount", { count: variantsCount })
-    : null;
+  const secondaryMeta =
+    variantsCount > 0
+      ? singleVariantMeta
+        ? formatProductVariantListMetaLine(
+            singleVariantMeta,
+            t("products.variant.fallbackName"),
+          )
+        : t("products.table.variantsCount", { count: variantsCount })
+      : null;
 
   const handleCardClick = (event: MouseEvent<HTMLElement>) => {
     const target = event.target as HTMLElement | null;
@@ -107,7 +116,7 @@ export const MobileProductCard = ({
           </Tag>
         </S.StatusWrap> */}
 
-        {hasVariants ? (
+        {hasMultipleVariants ? (
           <S.ExpandButton
             type="text"
             size="small"
@@ -138,7 +147,7 @@ export const MobileProductCard = ({
         ) : null}
       </S.CardBottomRow>
 
-      {hasVariants && expanded && (
+      {hasMultipleVariants && expanded && (
         <S.VariantsSection
           id={`products-mobile-variants-${product.id}`}
           data-qa={`products-mobile-variants-${product.id}`}

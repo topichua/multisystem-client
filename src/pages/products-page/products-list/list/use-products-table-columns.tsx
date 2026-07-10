@@ -12,7 +12,9 @@ import { useTranslation } from "react-i18next";
 
 import type { Product } from "@/features/products/model/product.types";
 import {
+  formatProductVariantListMetaLine,
   getProductPriceRange,
+  getSingleVariantListMeta,
   // productStatusToColor,
 } from "@/features/products/utils/product-display";
 
@@ -52,13 +54,22 @@ export const useProductsTableColumns = ({
         width: 360,
         render: (_, product) => {
           const variantsCount = product.variants?.length ?? 0;
-          const hasVariants = variantsCount > 0;
+          const hasMultipleVariants = variantsCount > 1;
+          const singleVariantMeta = getSingleVariantListMeta(product);
           const isExpanded =
-            hasVariants && expandedRowKeys.includes(product.id);
+            hasMultipleVariants && expandedRowKeys.includes(product.id);
+          const variantSecondaryLine = singleVariantMeta
+            ? formatProductVariantListMetaLine(
+                singleVariantMeta,
+                t("products.variant.fallbackName"),
+              )
+            : t("products.table.variantsCount", {
+                count: variantsCount,
+              });
 
           return (
             <Flex align="center" gap={4}>
-              {hasVariants ? (
+              {hasMultipleVariants ? (
                 <Button
                   type="text"
                   size="small"
@@ -118,11 +129,9 @@ export const useProductsTableColumns = ({
                   <Text strong ellipsis style={{ maxWidth: 260 }}>
                     {product.name}
                   </Text>
-                  {hasVariants && (
+                  {variantsCount > 0 && (
                     <Text italic type="secondary" ellipsis>
-                      {t("products.table.variantsCount", {
-                        count: variantsCount,
-                      })}
+                      {variantSecondaryLine}
                     </Text>
                   )}
                 </Flex>

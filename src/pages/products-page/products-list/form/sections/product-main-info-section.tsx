@@ -22,6 +22,7 @@ export type ProductMainInfoSectionProps = {
     status: string;
   };
   showQuantityField: boolean;
+  showPriceField?: boolean;
   showStatusField?: boolean;
   isMobile?: boolean;
 };
@@ -31,6 +32,7 @@ export const ProductMainInfoSection = ({
   requiredMessage,
   labels,
   showQuantityField,
+  showPriceField = true,
   showStatusField = true,
   isMobile = false,
 }: ProductMainInfoSectionProps) => {
@@ -99,29 +101,35 @@ export const ProductMainInfoSection = ({
             </Form.Item>
           </Col>
 
-          <Col span={isMobile ? 24 : 12}>
-            <Form.Item
-              name="price"
-              label={labels.price}
-              rules={[
-                {
-                  required: true,
-                  message: requiredMessage,
-                },
-                {
-                  type: "number",
-                  min: 0,
-                  message: requiredMessage,
-                },
-              ]}
-            >
-              <InputNumber
-                min={0}
-                placeholder="0.00"
-                style={{ width: "100%" }}
-              />
+          {showPriceField ? (
+            <Col span={isMobile ? 24 : 12}>
+              <Form.Item
+                name="price"
+                label={labels.price}
+                rules={[
+                  {
+                    required: true,
+                    message: requiredMessage,
+                  },
+                  {
+                    type: "number",
+                    min: 0,
+                    message: requiredMessage,
+                  },
+                ]}
+              >
+                <InputNumber
+                  min={0}
+                  placeholder="0.00"
+                  style={{ width: "100%" }}
+                />
+              </Form.Item>
+            </Col>
+          ) : (
+            <Form.Item name="price" hidden>
+              <Input />
             </Form.Item>
-          </Col>
+          )}
 
           {showQuantityField && (
             <Col span={isMobile ? 24 : 12}>

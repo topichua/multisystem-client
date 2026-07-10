@@ -500,6 +500,61 @@ export const TrackingNumber = styled(Text)`
   }
 `;
 
+export const WaybillForm = styled.div`
+  margin: -4px 0 18px;
+  padding: 16px;
+  border: 1px solid ${({ theme }) => theme.colors.functional.border.split};
+  border-radius: ${({ theme }) => theme.radius.large};
+  background: ${({ theme }) => theme.colors.functional.background.natural};
+
+  .ant-form-item {
+    margin-bottom: 14px;
+  }
+
+  .ant-form-item:last-child {
+    margin-bottom: 0;
+  }
+`;
+
+export const WaybillFormGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 12px;
+
+  @media (max-width: 520px) {
+    grid-template-columns: 1fr;
+  }
+
+  @media (max-width: 767px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+export const WaybillActions = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+
+  @media (max-width: 520px) {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  @media (max-width: 767px) {
+    align-items: stretch;
+    flex-direction: column;
+  }
+`;
+
+export const WaybillHint = styled(Text)`
+  && {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+`;
+
 export const DeliveryStatusBox = styled.div`
   display: flex;
   align-items: center;

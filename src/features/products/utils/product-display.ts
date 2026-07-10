@@ -58,6 +58,37 @@ export const getProductVariantTitle = (
 export const getVariantTitle = (variant: ProductVariant): string =>
   getProductVariantTitle(variant);
 
+export type ProductVariantListMeta = {
+  title: string;
+  sku: string | null;
+};
+
+export const getSingleVariantListMeta = (product: {
+  variants?: ProductVariant[] | null;
+}): ProductVariantListMeta | null => {
+  const variants = product.variants ?? [];
+
+  if (variants.length !== 1) {
+    return null;
+  }
+
+  const variant = variants[0];
+
+  return {
+    title: getVariantTitle(variant),
+    sku: variant.sku?.trim() || null,
+  };
+};
+
+export const formatProductVariantListMetaLine = (
+  meta: ProductVariantListMeta,
+  fallbackTitle: string,
+): string => {
+  const parts = [meta.title || fallbackTitle, meta.sku].filter(Boolean);
+
+  return parts.join(" · ");
+};
+
 export const getLinkedProductVariants = <
   TReferenceId extends ProductReferenceId,
   TVariant extends ProductLinkedVariant<TReferenceId>,

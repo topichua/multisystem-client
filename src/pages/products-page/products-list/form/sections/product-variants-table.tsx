@@ -6,6 +6,7 @@ import styled from "styled-components";
 
 import type { ProductVariantUi } from "../variants/product-add-variant.types";
 import { EmptyVariantsState } from "./empty-variants-state";
+import { VariantsBulkPriceBar } from "./variants-bulk-price-bar";
 
 const { Title, Text } = Typography;
 
@@ -27,12 +28,14 @@ type ProductVariantsTableProps = {
   productVariants: ProductVariantUi[];
   variantTableColumns: ColumnsType<ProductVariantUi>;
   onAddManualVariant: () => void;
+  onApplyPriceToAllVariants: (price: number) => void;
 };
 
 export function ProductVariantsTable({
   productVariants,
   variantTableColumns,
   onAddManualVariant,
+  onApplyPriceToAllVariants,
 }: ProductVariantsTableProps) {
   const { t } = useTranslation();
 
@@ -49,6 +52,10 @@ export function ProductVariantsTable({
         <EmptyVariantsState onAddManualVariant={onAddManualVariant} />
       ) : (
         <>
+          <VariantsBulkPriceBar
+            onApplyPriceToAll={onApplyPriceToAllVariants}
+          />
+
           <VariantsTableValidationScope>
             <Table<ProductVariantUi>
               rowKey="key"

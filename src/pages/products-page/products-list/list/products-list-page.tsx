@@ -271,7 +271,7 @@ export const ProductsListPage = observer(() => {
                   loading={productsStore.listLoading}
                   pagination={false}
                   rowClassName={(product) =>
-                    product.variants?.length &&
+                    (product.variants?.length ?? 0) > 1 &&
                     expandedRowKeys.includes(product.id)
                       ? "product-row-expanded"
                       : ""
@@ -285,7 +285,7 @@ export const ProductsListPage = observer(() => {
                     showExpandColumn: false,
                     expandedRowRender: renderExpandedRow,
                     rowExpandable: (product) =>
-                      Boolean(product.variants?.length),
+                      (product.variants?.length ?? 0) > 1,
                     expandedRowKeys,
                     onExpand: handleTableRowExpand,
                     expandRowByClick: false,

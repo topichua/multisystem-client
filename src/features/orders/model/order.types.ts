@@ -54,6 +54,20 @@ export type OrderCreatePayload = {
   delivery?: OrderDeliveryPayload;
 };
 
+export type OrderNovaPoshtaWaybillPayload = {
+  weightGrams: number;
+  seatsAmount: number;
+  seatsCount: number;
+  description: string;
+  declaredCost: number;
+};
+
+export type OrderNovaPoshtaWaybillResponse = {
+  orderId: number;
+  trackingNumber: string;
+  documentRef: string;
+};
+
 export type OrderStatusCategory =
   | "new"
   | "confirmed"
@@ -113,6 +127,22 @@ export type OrderCustomer = {
   workspaceId: number;
 };
 
+export type OrderCreatedBy = {
+  id: number;
+  firstName: string;
+  lastName: string;
+  avatar: string | null;
+};
+
+export type OrderListDelivery = {
+  id: number;
+  provider: string;
+  deliveryType: OrderDeliveryType | string | null;
+  city: string | null;
+  warehouse: string | null;
+  trackingNumber: string | null;
+};
+
 export type OrderListItem = {
   id: number;
   workspaceId: number;
@@ -123,10 +153,11 @@ export type OrderListItem = {
   statusId: number;
   status: OrderStatus;
   paymentStatus: string;
-  deliveryStatus: string;
+  deliveryStatus?: string;
   currency: string;
   subtotalAmount: number;
   discountAmount: number;
+  discountPercent: number | null;
   deliveryAmount: number;
   totalAmount: number;
   itemsCount?: number;
@@ -135,9 +166,13 @@ export type OrderListItem = {
   paidAt: string | null;
   paymentReference: string | null;
   createdById: number;
+  createdBy: OrderCreatedBy | null;
   updatedById: number;
   createdAt: string;
   updatedAt: string;
+  deliveryId: number | null;
+  deliveryType: string | null;
+  delivery: OrderListDelivery | null;
 };
 
 export type OrderConversation = {

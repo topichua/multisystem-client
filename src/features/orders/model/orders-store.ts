@@ -13,7 +13,9 @@ import type {
   BuildStandaloneOrderCreatePayloadInput,
   ClientOrderStats,
   OrderCreatePayload,
+  OrderDetails,
   OrderListItem,
+  OrderNovaPoshtaWaybillPayload,
   OrderStatus,
   OrderStatusCreatePayload,
   OrderStatusUpdatePayload,
@@ -91,6 +93,8 @@ export class OrdersStore {
   listLoading = false;
   listError: string | null = null;
   createLoading = false;
+  waybillCreateLoading = false;
+  waybillRemoveLoading = false;
 
   catalogSearchResults: CatalogVariant[] = [];
   catalogSearchProductGroups: CatalogSearchProductGroup[] = [];
@@ -618,6 +622,49 @@ export class OrdersStore {
     this.clientOrders = this.clientOrders.map((order) =>
       order.id === updated.id ? updated : order,
     );
+  };
+
+  createNovaPoshtaWaybill = async (
+    orderId: number,
+    payload: OrderNovaPoshtaWaybillPayload,
+  ): Promise<OrderDetails> => {
+    runInAction(() => {
+      this.waybillCreateLoading = true;
+    });
+
+    try {
+      await ordersApi.createNovaPoshtaWaybill(orderId, payload);
+      const updated = await ordersApi.getById(orderId);
+      runInAction(() => {
+        this.replaceOrderInLists(updated);
+      });
+
+      return updated;
+    } finally {
+      runInAction(() => {
+        this.waybillCreateLoading = false;
+      });
+    }
+  };
+
+  removeNovaPoshtaWaybill = async (orderId: number): Promise<OrderDetails> => {
+    runInAction(() => {
+      this.waybillRemoveLoading = true;
+    });
+
+    try {
+      await ordersApi.removeNovaPoshtaWaybill(orderId);
+      const updated = await ordersApi.getById(orderId);
+      runInAction(() => {
+        this.replaceOrderInLists(updated);
+      });
+
+      return updated;
+    } finally {
+      runInAction(() => {
+        this.waybillRemoveLoading = false;
+      });
+    }
   };
 
   updateOrderStatus = async (

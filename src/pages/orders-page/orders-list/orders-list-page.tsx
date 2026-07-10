@@ -10,6 +10,7 @@ import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
 import { PaneSectionTitle } from "@/components/layout/pane-frame";
 import type { OrderListItem } from "@/features/orders/model/order.types";
 import { useOrdersStore } from "@/features/orders/model/use-orders-store";
+import { useWorkspaceMembersStore } from "@/features/workspace-members/model/use-workspace-members-store";
 
 import { OrdersListActiveFilters } from "./orders-list-active-filters";
 import { OrdersListFiltersPanel } from "./orders-list-filters-panel";
@@ -22,7 +23,10 @@ const { Text } = Typography;
 export const OrdersListPage = observer(() => {
   const { t } = useTranslation();
   const store = useOrdersStore();
-  const columns = useOrdersTableColumns();
+  const workspaceMembersStore = useWorkspaceMembersStore();
+  const columns = useOrdersTableColumns({
+    members: workspaceMembersStore.members,
+  });
   const navigate = useNavigate();
   const [filtersOpen, setFiltersOpen] = useState(false);
 
@@ -31,6 +35,15 @@ export const OrdersListPage = observer(() => {
   useEffect(() => {
     void store.loadStatuses();
   }, [store]);
+
+  useEffect(() => {
+    if (
+      workspaceMembersStore.members.length === 0 &&
+      !workspaceMembersStore.listLoading
+    ) {
+      void workspaceMembersStore.loadMembers();
+    }
+  }, [workspaceMembersStore]);
 
   return (
     <PaneDetailLayout.Root inset>
@@ -84,7 +97,7 @@ export const OrdersListPage = observer(() => {
                   store.setListPage(page);
                 },
               }}
-              scroll={{ x: 1100 }}
+              scroll={{ x: 1400 }}
             />
           </Spin>
         </Flex>
