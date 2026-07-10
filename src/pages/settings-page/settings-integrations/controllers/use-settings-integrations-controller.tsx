@@ -418,7 +418,7 @@ export function useSettingsIntegrationsController() {
   }, []);
 
   const handleIntegrationUpdated = useCallback(() => {
-    void store.loadIntegrations({ silent: true });
+    void store.loadIntegrations({ silent: true, force: true });
   }, [store]);
 
   const handleNovaPoshtaWizardSubmit = useCallback(

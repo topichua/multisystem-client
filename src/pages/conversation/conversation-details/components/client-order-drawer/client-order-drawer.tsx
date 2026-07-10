@@ -37,32 +37,20 @@ export const ClientOrderDrawer = observer(
   }: ClientOrderDrawerProps) => {
     const { t } = useTranslation();
     const {
-      catalogSearchProductGroups,
-      categoriesLoading,
-      categorySelectOptions,
-      catalogSearchLoading,
-      catalogSearchMode,
+      catalogSearch,
       createLoading,
       form,
-      handleCatalogSearchClear,
-      handleCatalogSearchModeChange,
-      handleCategoryChange,
-      handleCatalogSearch,
       handleDrawerClose,
       handlePlaceOrder,
-      handleVariantSelect,
       handleWithoutDeliveryChange,
-      minSearchLength,
       novaPoshtaDelivery,
       orderLines,
       orderTotals,
-      productPickerKey,
       removeLine,
-      selectedCategoryId,
-      trimmedSearch,
+      selectedVariantIds,
       updateLineQuantity,
-      variantSelectOptions,
       withoutDelivery,
+      addVariantToOrder,
     } = useClientOrderCreateController({
       conversationId,
       linkedClient,
@@ -123,28 +111,16 @@ export const ClientOrderDrawer = observer(
           />
 
           <ClientOrderProductsSection
-            catalogSearchProductGroups={catalogSearchProductGroups}
-            categoriesLoading={categoriesLoading}
-            categorySelectOptions={categorySelectOptions}
-            catalogSearchLoading={catalogSearchLoading}
-            catalogSearchMode={catalogSearchMode}
-            minSearchLength={minSearchLength}
+            catalogSearch={catalogSearch}
             orderLines={orderLines}
-            productPickerKey={productPickerKey}
-            selectedCategoryId={selectedCategoryId}
+            selectedVariantIds={selectedVariantIds}
             title={sectionTitle(
               2,
               t("conversation.clientOrders.drawer.sectionProducts"),
             )}
-            trimmedSearch={trimmedSearch}
-            variantSelectOptions={variantSelectOptions}
-            onCategoryChange={handleCategoryChange}
-            onCatalogSearchClear={handleCatalogSearchClear}
-            onProductSearch={handleCatalogSearch}
-            onSearchModeChange={handleCatalogSearchModeChange}
             onQuantityChange={updateLineQuantity}
             onRemoveLine={removeLine}
-            onVariantSelect={handleVariantSelect}
+            onVariantSelect={addVariantToOrder}
           />
 
           <S.Section>

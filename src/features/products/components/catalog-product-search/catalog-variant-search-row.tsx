@@ -8,28 +8,29 @@ import {
   getCatalogVariantMeta,
 } from "@/features/products/utils/catalog-variant-display";
 
-import * as S from "./client-order-product-search.styled";
+import * as S from "./catalog-product-search.styled";
 
-type VariantSearchContentProps = {
+type CatalogVariantSearchRowProps = {
+  disabled?: boolean;
   selected: boolean;
   variant: CatalogVariant;
 };
 
-export function VariantSearchContent({
+export function CatalogVariantSearchRow({
+  disabled = false,
   selected,
   variant,
-}: VariantSearchContentProps) {
+}: CatalogVariantSearchRowProps) {
   const { t } = useTranslation();
   const meta = getCatalogVariantMeta(variant);
   const variantImageUrl = getCatalogVariantImageUrl(variant);
-  const outOfStockLabel = t(
-    "conversation.clientOrders.drawer.groupedOutOfStock",
-  );
-  const stockLabel = variant.inStock
-    ? t("conversation.clientOrders.drawer.variantInStock", {
-        count: variant.quantity,
-      })
-    : outOfStockLabel;
+  const stockLabel = selected
+    ? t("products.catalogSearch.alreadyAdded")
+    : variant.inStock
+      ? t("products.catalogSearch.variantInStock", {
+          count: variant.quantity,
+        })
+      : t("products.catalogSearch.outOfStock");
 
   return (
     <>
@@ -48,7 +49,10 @@ export function VariantSearchContent({
         <S.GroupedVariantPrice>
           {formatCatalogVariantPrice(variant)}
         </S.GroupedVariantPrice>
-        <S.GroupedVariantStock $available={variant.inStock}>
+        <S.GroupedVariantStock
+          $available={variant.inStock && !selected}
+          $muted={disabled}
+        >
           {stockLabel}
         </S.GroupedVariantStock>
       </S.GroupedVariantInventory>

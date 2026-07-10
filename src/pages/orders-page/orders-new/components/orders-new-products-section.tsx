@@ -2,48 +2,39 @@ import { CubeIcon } from "@phosphor-icons/react";
 import { Empty, Flex, Tag } from "antd";
 import { useTranslation } from "react-i18next";
 
+import { CatalogProductSearchPopover } from '@/features/products/components/catalog-product-search';
+import type { useCatalogProductSearch } from '@/features/products/components/catalog-product-search';
 import type { CatalogVariant } from "@/features/products/model/product.types";
 
 import * as S from "../orders-new-page.styled";
 import type { OrderNewLine } from "../orders-new.types";
 import { OrdersNewProductLine } from "./orders-new-product-line";
-import { SectionHeading } from "./section-heading";
-import { ProductSearchPopover } from "./orders-new-products-section/product-search-popover";
+import { SectionHeading } from './section-heading';
 
 type OrdersNewProductsSectionProps = {
-  catalogSearchLoading: boolean;
-  catalogSearchResults: CatalogVariant[];
+  catalogSearch: ReturnType<typeof useCatalogProductSearch>;
   onDiscountChange: (variantId: number, value: number | null) => void;
-  onProductSearchChange: (value: string) => void;
-  onProductSearchClose: () => void;
-  onProductSearchOpen: () => void;
+  onProductSearchOpenChange: (open: boolean) => void;
   onQuantityChange: (variantId: number, quantity: number) => void;
   onRemoveLine: (variantId: number) => void;
   onToggleDiscount: (variantId: number) => void;
   onVariantSelect: (variant: CatalogVariant) => void;
   orderLines: OrderNewLine[];
   productSearchOpen: boolean;
-  productSearchValue: string;
   selectedVariantIds: Set<number>;
-  trimmedProductSearch: string;
 };
 
 export function OrdersNewProductsSection({
-  catalogSearchLoading,
-  catalogSearchResults,
+  catalogSearch,
   onDiscountChange,
-  onProductSearchChange,
-  onProductSearchClose,
-  onProductSearchOpen,
+  onProductSearchOpenChange,
   onQuantityChange,
   onRemoveLine,
   onToggleDiscount,
   onVariantSelect,
   orderLines,
   productSearchOpen,
-  productSearchValue,
   selectedVariantIds,
-  trimmedProductSearch,
 }: OrdersNewProductsSectionProps) {
   const { t } = useTranslation();
   const hasOrderLines = orderLines.length > 0;
@@ -58,21 +49,30 @@ export function OrdersNewProductsSection({
       >
         <SectionHeading icon={<CubeIcon size={18} />}>
           <Flex align="center" gap={8}>
-            {t("orders.create.products.title")}
+            {t('orders.create.products.title')}
             <Tag>{orderLines.length}</Tag>
           </Flex>
         </SectionHeading>
 
-        <ProductSearchPopover
+        <CatalogProductSearchPopover
           open={productSearchOpen}
-          value={productSearchValue}
-          loading={catalogSearchLoading}
-          results={catalogSearchResults}
+          buttonLabel={t('orders.create.products.add')}
+          catalogSearchLoading={catalogSearch.catalogSearchLoading}
+          catalogSearchMode={catalogSearch.catalogSearchMode}
+          catalogSearchProductGroups={catalogSearch.catalogSearchProductGroups}
+          categoriesLoading={catalogSearch.categoriesLoading}
+          categorySelectOptions={catalogSearch.categorySelectOptions}
+          minSearchLength={catalogSearch.minSearchLength}
+          productPickerKey={catalogSearch.productPickerKey}
+          selectedCategoryId={catalogSearch.selectedCategoryId}
           selectedVariantIds={selectedVariantIds}
-          trimmedSearch={trimmedProductSearch}
-          onOpen={onProductSearchOpen}
-          onClose={onProductSearchClose}
-          onChange={onProductSearchChange}
+          trimmedSearch={catalogSearch.trimmedSearch}
+          variantSelectOptions={catalogSearch.variantSelectOptions}
+          onCategoryChange={catalogSearch.handleCategoryChange}
+          onClear={catalogSearch.handleClear}
+          onOpenChange={onProductSearchOpenChange}
+          onSearch={catalogSearch.handleSearch}
+          onSearchModeChange={catalogSearch.handleSearchModeChange}
           onVariantSelect={onVariantSelect}
         />
       </S.CardHeader>
@@ -93,7 +93,7 @@ export function OrdersNewProductsSection({
       ) : (
         <Empty
           image={<CubeIcon size={28} />}
-          description={t("orders.create.products.emptyState")}
+          description={t('orders.create.products.emptyState')}
         />
       )}
     </S.SectionCard>

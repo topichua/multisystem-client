@@ -28,6 +28,7 @@ import {
   type ConversationOwnershipContext,
   type ConversationSelfIds,
 } from "@/features/conversations/utils/conversation-message-ownership";
+import { useEnsureIntegrationsLoaded } from "@/features/integrations/model/use-ensure-integrations-loaded";
 import { useIntegrationsStore } from "@/features/integrations/model/use-integrations-store";
 import { useIsMobileViewport } from "@/utils/use-media-query";
 
@@ -72,6 +73,7 @@ export const ConversationDetails = observer(() => {
 
   const { company } = useUserStore();
   const integrationsStore = useIntegrationsStore();
+  useEnsureIntegrationsLoaded();
 
   const activeConversation = useMemo(
     () =>
@@ -332,10 +334,6 @@ export const ConversationDetails = observer(() => {
     },
     [thread.messagesScrollRef],
   );
-
-  useEffect(() => {
-    void integrationsStore.loadIntegrations({ silent: true });
-  }, [integrationsStore]);
 
   useEffect(() => {
     setReplyTarget(null);

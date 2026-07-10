@@ -1,0 +1,364 @@
+import { ListIcon, StackIcon } from "@phosphor-icons/react";
+import type { CSSProperties, ReactNode } from "react";
+import { useCallback, useMemo, useState } from "react";
+import { Flex, Segmented, Select, Spin, Tooltip, Typography } from "antd";
+import { useTranslation } from "react-i18next";
+
+import type { CatalogSearchMode } from "@/features/orders/model/orders-store";
+import type { CatalogSearchProductGroup } from "@/features/orders/model/orders-store";
+import type { CatalogVariant } from "@/features/products/model/product.types";
+
+import {
+  ALL_CATEGORIES_VALUE,
+  EMPTY_PRODUCT_PICKER_VALUE,
+} from "./catalog-product-search.constants";
+import * as S from "./catalog-product-search.styled";
+import type {
+  CategorySelectOptionData,
+  VariantSelectOption,
+  VariantSelectOptionData,
+} from "./catalog-product-search.types";
+import { CatalogVariantSearchRow } from "./catalog-variant-search-row";
+import { GroupedProductSearchPopup } from "./grouped-product-search-popup";
+import { buildGroupedSearchProducts } from "./grouped-product-search-popup.utils";
+
+const { Text } = Typography;
+
+const isVariantDisabled = (
+  variant: CatalogVariant,
+  selectedVariantIds: Set<number>,
+) => !variant.inStock || selectedVariantIds.has(variant.id);
+
+type CategorySelectOption = {
+  value: string;
+  label: string;
+  level: number;
+  searchLabel: string;
+};
+
+export type CatalogProductSearchPickerProps = {
+  autoFocus?: boolean;
+  dropdownOpen?: boolean;
+  catalogSearchLoading: boolean;
+  catalogSearchMode: CatalogSearchMode;
+  catalogSearchProductGroups: CatalogSearchProductGroup[];
+  categoriesLoading: boolean;
+  categorySelectOptions: CategorySelectOptionData[];
+  getPopupContainer?: (triggerNode: HTMLElement) => HTMLElement;
+  listHeight?: number;
+  minSearchLength: number;
+  productPickerKey?: number;
+  selectedCategoryId: number | null;
+  selectedVariantIds: Set<number>;
+  showAddLabel?: boolean;
+  showCategoryFilter?: boolean;
+  showSearchModeToggle?: boolean;
+  style?: CSSProperties;
+  trimmedSearch: string;
+  variantSelectOptions: VariantSelectOption[];
+  addLabel?: ReactNode;
+  onCategoryChange: (categoryId: number | null) => void;
+  onClear: () => void;
+  onSearch: (value: string) => void;
+  onSearchModeChange: (mode: CatalogSearchMode) => void;
+  onVariantSelect: (variant: CatalogVariant) => void;
+};
+
+export function CatalogProductSearchPicker({
+  autoFocus = false,
+  dropdownOpen,
+  catalogSearchLoading,
+  catalogSearchMode,
+  catalogSearchProductGroups,
+  categoriesLoading,
+  categorySelectOptions,
+  getPopupContainer,
+  listHeight = 320,
+  minSearchLength,
+  productPickerKey = 0,
+  selectedCategoryId,
+  selectedVariantIds,
+  showAddLabel = false,
+  showCategoryFilter = true,
+  showSearchModeToggle = true,
+  style,
+  trimmedSearch,
+  variantSelectOptions,
+  addLabel,
+  onCategoryChange,
+  onClear,
+  onSearch,
+  onSearchModeChange,
+  onVariantSelect,
+}: CatalogProductSearchPickerProps) {
+  const { t } = useTranslation();
+  const categoryOptions = useMemo<CategorySelectOption[]>(
+    () => [
+      {
+        value: ALL_CATEGORIES_VALUE,
+        label: t("products.catalogSearch.allCategories"),
+        level: 0,
+        searchLabel: t("products.catalogSearch.allCategories"),
+      },
+      ...categorySelectOptions.map((option) => ({
+        value: String(option.value),
+        label: option.label,
+        level: option.level,
+        searchLabel: option.label,
+      })),
+    ],
+    [categorySelectOptions, t],
+  );
+  const categoryValue =
+    selectedCategoryId == null
+      ? ALL_CATEGORIES_VALUE
+      : String(selectedCategoryId);
+  const categoryLabelById = useMemo(
+    () =>
+      new Map(
+        categorySelectOptions.map((option) => [option.value, option.label]),
+      ),
+    [categorySelectOptions],
+  );
+  const groupedProducts = useMemo(
+    () =>
+      catalogSearchMode === "grouped"
+        ? buildGroupedSearchProducts({
+            catalogSearchProductGroups,
+            categoryLabelById,
+            selectedVariantIds,
+          })
+        : [],
+    [
+      catalogSearchMode,
+      catalogSearchProductGroups,
+      categoryLabelById,
+      selectedVariantIds,
+    ],
+  );
+  const [expandedProductKeys, setExpandedProductKeys] = useState<Set<string>>(
+    () => new Set(),
+  );
+  const resetGroupedExpansion = useCallback(() => {
+    setExpandedProductKeys((current) =>
+      current.size === 0 ? current : new Set(),
+    );
+  }, []);
+  const toggleGroupedProduct = useCallback((productKey: string) => {
+    setExpandedProductKeys((current) => {
+      const next = new Set(current);
+
+      if (next.has(productKey)) {
+        next.delete(productKey);
+      } else {
+        next.add(productKey);
+      }
+
+      return next;
+    });
+  }, []);
+  const handleClear = useCallback(() => {
+    resetGroupedExpansion();
+    onClear();
+  }, [onClear, resetGroupedExpansion]);
+  const handleSearch = useCallback(
+    (value: string) => {
+      resetGroupedExpansion();
+      onSearch(value);
+    },
+    [onSearch, resetGroupedExpansion],
+  );
+  const handleCategoryChange = useCallback(
+    (categoryId: number | null) => {
+      resetGroupedExpansion();
+      onCategoryChange(categoryId);
+    },
+    [onCategoryChange, resetGroupedExpansion],
+  );
+  const handleSearchModeChange = useCallback(
+    (mode: CatalogSearchMode) => {
+      resetGroupedExpansion();
+      onSearchModeChange(mode);
+    },
+    [onSearchModeChange, resetGroupedExpansion],
+  );
+  const handleVariantSelect = useCallback(
+    (variantId: number) => {
+      const option = variantSelectOptions.find(
+        (item) => item.value === variantId,
+      );
+
+      if (!option || isVariantDisabled(option.variant, selectedVariantIds)) {
+        return;
+      }
+
+      onVariantSelect(option.variant);
+    },
+    [onVariantSelect, selectedVariantIds, variantSelectOptions],
+  );
+  const selectOptions = useMemo(
+    () =>
+      variantSelectOptions.map((option) => ({
+        ...option,
+        disabled: isVariantDisabled(option.variant, selectedVariantIds),
+      })),
+    [selectedVariantIds, variantSelectOptions],
+  );
+  const shouldRenderGroupedPopup =
+    catalogSearchMode === "grouped" &&
+    groupedProducts.length > 0 &&
+    trimmedSearch.length >= minSearchLength &&
+    !catalogSearchLoading;
+  const showToolbar = showCategoryFilter || showSearchModeToggle;
+
+  return (
+    <S.PickerRoot style={style}>
+      {showAddLabel ? (
+        <S.PickerAddLabel>
+          {addLabel ?? t("products.catalogSearch.addLabel")}
+        </S.PickerAddLabel>
+      ) : null}
+
+      {showToolbar ? (
+        <S.ProductSearchToolbar>
+          {showCategoryFilter ? (
+            <Select<string>
+              showSearch
+              value={categoryValue}
+              loading={categoriesLoading}
+              getPopupContainer={getPopupContainer}
+              aria-label={t("products.catalogSearch.categoryFilterAria")}
+              optionFilterProp="searchLabel"
+              filterOption={(input, option) =>
+                String(option?.searchLabel ?? "")
+                  .toLowerCase()
+                  .includes(input.trim().toLowerCase())
+              }
+              options={categoryOptions}
+              onChange={(value) =>
+                handleCategoryChange(
+                  value === ALL_CATEGORIES_VALUE ? null : Number(value),
+                )
+              }
+              optionRender={(option) => {
+                const data = option.data as CategorySelectOption | undefined;
+
+                return (
+                  <S.CategoryOption $level={data?.level ?? 0}>
+                    {data?.label ?? option.label}
+                  </S.CategoryOption>
+                );
+              }}
+            />
+          ) : (
+            <span />
+          )}
+
+          {showSearchModeToggle ? (
+            <Segmented<CatalogSearchMode>
+              value={catalogSearchMode}
+              aria-label={t("products.catalogSearch.searchModeAria")}
+              onChange={handleSearchModeChange}
+              options={[
+                {
+                  value: "flat",
+                  label: (
+                    <Tooltip
+                      title={t("products.catalogSearch.searchModeFlat")}
+                    >
+                      <S.SearchModeIconLabel>
+                        <ListIcon size={17} />
+                      </S.SearchModeIconLabel>
+                    </Tooltip>
+                  ),
+                },
+                {
+                  value: "grouped",
+                  label: (
+                    <Tooltip
+                      title={t("products.catalogSearch.searchModeGrouped")}
+                    >
+                      <S.SearchModeIconLabel>
+                        <StackIcon size={17} />
+                      </S.SearchModeIconLabel>
+                    </Tooltip>
+                  ),
+                },
+              ]}
+            />
+          ) : null}
+        </S.ProductSearchToolbar>
+      ) : null}
+
+      <Select<number[]>
+        key={productPickerKey}
+        mode="multiple"
+        autoFocus={autoFocus}
+        open={dropdownOpen}
+        getPopupContainer={getPopupContainer}
+        showSearch={{
+          searchValue: trimmedSearch,
+          autoClearSearchValue: false,
+          onSearch: handleSearch,
+          filterOption: false,
+        }}
+        value={EMPTY_PRODUCT_PICKER_VALUE}
+        allowClear
+        placeholder={t("products.catalogSearch.placeholder")}
+        loading={catalogSearchLoading}
+        style={{ width: "100%" }}
+        listHeight={listHeight}
+        options={selectOptions}
+        popupRender={(originNode) =>
+          shouldRenderGroupedPopup ? (
+            <GroupedProductSearchPopup
+              expandedProductKeys={expandedProductKeys}
+              groupedProducts={groupedProducts}
+              selectedVariantIds={selectedVariantIds}
+              onToggleProduct={toggleGroupedProduct}
+              onVariantSelect={onVariantSelect}
+            />
+          ) : (
+            originNode
+          )
+        }
+        onClear={handleClear}
+        onSelect={handleVariantSelect}
+        notFoundContent={
+          catalogSearchLoading ? (
+            <Flex justify="center" style={{ padding: 12 }}>
+              <Spin size="small" />
+            </Flex>
+          ) : trimmedSearch.length < minSearchLength ? (
+            <Text type="secondary">
+              {t("products.catalogSearch.searchMinChars", {
+                count: minSearchLength,
+              })}
+            </Text>
+          ) : (
+            t("products.catalogSearch.searchNoResults")
+          )
+        }
+        optionRender={(option) => {
+          const data = option.data as VariantSelectOptionData | undefined;
+          if (!data?.variant) {
+            return option.label;
+          }
+
+          const selected = selectedVariantIds.has(data.variant.id);
+          const disabled = isVariantDisabled(data.variant, selectedVariantIds);
+
+          return (
+            <S.ProductSearchVariantOption $disabled={disabled}>
+              <CatalogVariantSearchRow
+                disabled={disabled}
+                selected={selected}
+                variant={data.variant}
+              />
+            </S.ProductSearchVariantOption>
+          );
+        }}
+      />
+    </S.PickerRoot>
+  );
+}

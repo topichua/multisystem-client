@@ -1,8 +1,10 @@
 import { TagIcon } from "@phosphor-icons/react";
 import { Flex, Spin } from "antd";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import type { InstagramMediaItem } from "@/features/instagram/model/instagram.types";
+import { getLinkedProductVariants } from "@/features/products/utils/product-display";
 
 import type { InstagramPostPageController } from "../../controllers/use-instagram-post-page-controller";
 import { InstagramLinkProductPicker } from "./instagram-link-product-picker";
@@ -21,6 +23,15 @@ export const InstagramPostLinkedProductsSection = ({
   const { t } = useTranslation();
   const { linkedProducts, productCount, linkedProductsSectionLoading } =
     controller;
+  const linkedVariantIds = useMemo(
+    () =>
+      new Set(
+        linkedProducts.flatMap((product) =>
+          getLinkedProductVariants(product).map((variant) => Number(variant.id)),
+        ),
+      ),
+    [linkedProducts],
+  );
 
   return (
     <Flex vertical gap={10}>
@@ -32,6 +43,7 @@ export const InstagramPostLinkedProductsSection = ({
         </S.SectionTitle>
         <InstagramLinkProductPicker
           disabled={linkedProductsSectionLoading}
+          linkedVariantIds={linkedVariantIds}
           permalink={post.permalink}
           postId={post.id}
         />

@@ -12,6 +12,7 @@ import { useNavigate, useParams } from "react-router";
 
 import { pagesMap } from "@/app/router/pages-map";
 import { useEnsureConversationGroupsLoaded } from "@/features/conversation-groups/model/use-ensure-conversation-groups-loaded";
+import { useEnsureIntegrationsLoaded } from "@/features/integrations/model/use-ensure-integrations-loaded";
 import type { ConversationListSegment } from "@/features/conversations/model/conversation-store";
 import { useConversationsStore } from "@/features/conversations/model/use-conversations-store";
 import { useEnsureWorkspaceMembersLoaded } from "@/features/workspace-members/model/use-ensure-workspace-members-loaded";
@@ -43,6 +44,7 @@ export const Conversation = observer(
     const { conversationId } = useParams();
     useEnsureConversationGroupsLoaded();
     useEnsureWorkspaceMembersLoaded();
+    useEnsureIntegrationsLoaded();
 
     const {
       loadConversations,

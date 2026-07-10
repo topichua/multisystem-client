@@ -43,14 +43,6 @@ export const ConversationsRealtimeBootstrap = ({
 
   useEffect(() => {
     if (!isAuthenticated) {
-      return;
-    }
-
-    void integrationsStore.loadIntegrations({ silent: true });
-  }, [integrationsStore, isAuthenticated]);
-
-  useEffect(() => {
-    if (!isAuthenticated) {
       socketStore.disconnect();
       return;
     }

@@ -21,19 +21,14 @@ const OrderEditModalSession = observer(function OrderEditModalSession(
     saving,
     lines,
     productSearchOpen,
-    productSearchValue,
-    trimmedProductSearch,
     canEditItems,
     editItemsAllowed,
     hasUnpatchableLines,
     selectedVariantIds,
     initialFormValues,
-    catalogSearchLoading,
-    catalogSearchResults,
+    catalogSearch,
     modalTitle,
-    setProductSearchValue,
-    handleProductSearchOpen,
-    handleProductSearchClose,
+    handleProductSearchOpenChange,
     handleVariantSelect,
     updateLine,
     removeLine,
@@ -81,14 +76,9 @@ const OrderEditModalSession = observer(function OrderEditModalSession(
               lines={lines}
               hasUnpatchableLines={hasUnpatchableLines}
               productSearchOpen={productSearchOpen}
-              productSearchValue={productSearchValue}
-              trimmedProductSearch={trimmedProductSearch}
-              catalogSearchLoading={catalogSearchLoading}
-              catalogSearchResults={catalogSearchResults}
+              catalogSearch={catalogSearch}
               selectedVariantIds={selectedVariantIds}
-              onProductSearchOpen={handleProductSearchOpen}
-              onProductSearchClose={handleProductSearchClose}
-              onProductSearchChange={setProductSearchValue}
+              onProductSearchOpenChange={handleProductSearchOpenChange}
               onVariantSelect={handleVariantSelect}
               onUpdateLine={updateLine}
               onRemoveLine={removeLine}
