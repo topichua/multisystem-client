@@ -1,9 +1,11 @@
+import { Flex, Typography } from "antd";
+
 import { UserAvatar } from "@/components/user-avatar";
 import type { Client } from "@/features/clients/model/client.types";
 import type { Conversation } from "@/features/conversations/model/types";
 import { formatClientDisplayName } from "@/pages/clients-page/clients-list/client-display.utils";
 
-import * as S from "../conversation-client-info-panel.styled";
+const { Title } = Typography;
 
 type ClientProfileHeaderProps = {
   client: Client;
@@ -19,9 +21,11 @@ export function ClientProfileHeader({
     client.avatar_src ?? conversation.participant.profilePic ?? undefined;
 
   return (
-    <S.ProfileHeader>
-      <UserAvatar size={72} name={displayName} src={avatarSrc} />
-      <S.ProfileName>{displayName}</S.ProfileName>
-    </S.ProfileHeader>
+    <Flex align="center" gap={12}>
+      <UserAvatar size={40} name={displayName} src={avatarSrc} />
+      <Title level={5} style={{ margin: 0 }}>
+        {displayName}
+      </Title>
+    </Flex>
   );
 }

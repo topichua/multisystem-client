@@ -4,6 +4,7 @@ import { ordersApi } from "@/features/orders/api/orders-api";
 import type {
   OrderDetails,
   OrderNovaPoshtaWaybillPayload,
+  OrderUpdatePayload,
 } from "@/features/orders/model/order.types";
 import { useOrdersStore } from "@/features/orders/model/use-orders-store";
 import { throwLoadError } from "@/utils/throw-load-error";
@@ -95,6 +96,18 @@ export const useOrderDetails = (orderId: number | null) => {
     setOrder(updatedOrder);
   }, [orderId, ordersStore]);
 
+  const updateOrder = useCallback(
+    async (payload: OrderUpdatePayload): Promise<void> => {
+      if (orderId == null) {
+        return;
+      }
+
+      const updatedOrder = await ordersStore.updateOrder(orderId, payload);
+      setOrder(updatedOrder);
+    },
+    [orderId, ordersStore],
+  );
+
   return {
     order,
     loading,
@@ -102,5 +115,6 @@ export const useOrderDetails = (orderId: number | null) => {
     applyOrderStatusLocally,
     createNovaPoshtaWaybill,
     removeNovaPoshtaWaybill,
+    updateOrder,
   };
 };

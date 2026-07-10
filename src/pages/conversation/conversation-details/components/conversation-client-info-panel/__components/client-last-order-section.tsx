@@ -1,4 +1,4 @@
-import { Button, Flex, Typography } from "antd";
+import { Button, Card, Flex, Space, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
@@ -40,8 +40,16 @@ export const ClientLastOrderSection = observer(function ClientLastOrderSection({
 
   const lastOrder = ordersStore.clientOrders[0] ?? null;
 
+  const handleOpenOrder = () => {
+    if (!lastOrder) {
+      return;
+    }
+
+    navigate(getOrderDetailsPath(lastOrder.id));
+  };
+
   return (
-    <S.Section>
+    <S.Section style={{ gap: 8 }}>
       <Flex align="center" justify="space-between" gap={8}>
         <S.SectionLabel>
           {t("conversation.clientOrders.lastOrderSection")}
@@ -49,7 +57,7 @@ export const ClientLastOrderSection = observer(function ClientLastOrderSection({
         <Button
           type="link"
           size="small"
-          style={{ padding: 0, height: "auto" }}
+          style={{ padding: 0, height: "auto", fontSize: 13 }}
           onClick={() => navigate(getClientDetailsPath(clientId))}
         >
           {t("conversation.clientOrders.allOrders")}
@@ -57,44 +65,32 @@ export const ClientLastOrderSection = observer(function ClientLastOrderSection({
       </Flex>
 
       {ordersStore.clientOrdersLoading ? (
-        <CenteredSpinner minHeight={96} />
+        <CenteredSpinner minHeight={64} />
       ) : ordersStore.clientOrdersError ? (
         <Text type="danger">{ordersStore.clientOrdersError}</Text>
       ) : lastOrder ? (
-        <S.LastOrderCard
-          role="button"
-          tabIndex={0}
-          onClick={() => navigate(getOrderDetailsPath(lastOrder.id))}
-          onKeyDown={(event) => {
-            if (event.key === "Enter" || event.key === " ") {
-              event.preventDefault();
-              navigate(getOrderDetailsPath(lastOrder.id));
-            }
-          }}
+        <Card
+          size="small"
+          hoverable
+          onClick={handleOpenOrder}
+          styles={{ body: { padding: 10 } }}
         >
-          <Flex align="center" justify="space-between" gap={8}>
-            <Flex align="center" gap={8} style={{ minWidth: 0 }}>
-              <Text strong>
-                {t("conversation.clientOrders.orderNumber", {
-                  id: lastOrder.id,
-                })}
-              </Text>
+          <Space direction="vertical" size={6} style={{ width: "100%" }}>
+            <Flex align="center" justify="space-between" gap={8}>
+              <Text strong>#{lastOrder.id}</Text>
               <Text type="secondary" style={{ fontSize: 12 }}>
                 {formatDate(lastOrder.createdAt)}
               </Text>
             </Flex>
-            <Tag color={lastOrder.status.color}>{lastOrder.status.name}</Tag>
-          </Flex>
 
-          <Flex align="center" justify="space-between">
-            <Text type="secondary">
-              {t("conversation.clientOrders.totalLabel")}
-            </Text>
-            <Text strong>
-              {formatMoney(lastOrder.totalAmount, lastOrder.currency)}
-            </Text>
-          </Flex>
-        </S.LastOrderCard>
+            <Flex align="center" justify="space-between" gap={8}>
+              <Tag color={lastOrder.status.color}>{lastOrder.status.name}</Tag>
+              <Text strong>
+                {formatMoney(lastOrder.totalAmount, lastOrder.currency)}
+              </Text>
+            </Flex>
+          </Space>
+        </Card>
       ) : (
         <Text type="secondary">{t("conversation.clientOrders.emptyOrders")}</Text>
       )}

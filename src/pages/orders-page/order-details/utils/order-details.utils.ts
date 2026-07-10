@@ -146,6 +146,25 @@ export const getEventDescription = (
     case "order.payment_updated":
       return translate("orders.events.paymentUpdated");
 
+    case "order.discount_applied": {
+      const discountAmount = getRecordNumber(payload, "discountAmount");
+      const discountPercent = getRecordNumber(payload, "discountPercent");
+
+      if (discountPercent != null && discountPercent > 0) {
+        return translate("orders.events.discountAppliedPercent", {
+          percent: discountPercent,
+        });
+      }
+
+      if (discountAmount != null && discountAmount > 0) {
+        return translate("orders.events.discountAppliedAmount", {
+          amount: formatMoney(discountAmount, currency),
+        });
+      }
+
+      return translate("orders.events.discountApplied");
+    }
+
     case "order.status_updated":
     case "order.status_changed":
       return translate("orders.events.statusUpdated");

@@ -1,5 +1,5 @@
 import { XIcon } from "@phosphor-icons/react";
-import { Button, Typography } from "antd";
+import { Button, Flex, Typography } from "antd";
 import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -99,9 +99,10 @@ export function ClientContactsSection({
     <S.Section>
       <S.SectionLabel>{t("conversation.clientProfile.contacts")}</S.SectionLabel>
 
-      <S.PhoneRow>
-        <Text>{client.phone?.trim() || "—"}</Text>
-      </S.PhoneRow>
+      <Flex justify="space-between" align="center" gap={12}>
+        <Text type="secondary">{t("clients.phone")}</Text>
+        <Text strong>{client.phone?.trim() || "—"}</Text>
+      </Flex>
 
       {socialLinks.length > 0 ? (
         <S.SocialLinksList>

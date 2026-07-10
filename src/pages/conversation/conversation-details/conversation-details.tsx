@@ -1,5 +1,9 @@
 import { Button, Drawer, Flex, Spin, Typography } from "antd";
-import { PencilSimpleIcon } from "@phosphor-icons/react";
+import {
+  PencilSimpleIcon,
+  ArrowLineUpRightIcon,
+  CheckIcon,
+} from "@phosphor-icons/react";
 import { observer } from "mobx-react-lite";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -13,6 +17,7 @@ import type {
   ClientLookupResponse,
   ClientsLookupParams,
 } from "@/features/clients/model/client.types";
+import { useClientsStore } from "@/features/clients/model/use-clients-store";
 import { useConversationsStore } from "@/features/conversations/model/use-conversations-store";
 import type { SendMessagePayload } from "@/features/conversations/model/types";
 import { ordersApi } from "@/features/orders/api/orders-api";
@@ -28,6 +33,8 @@ import { useIsMobileViewport } from "@/utils/use-media-query";
 
 import * as S from "./conversation-details.styled";
 import { ClientOrderDrawer } from "./components/client-order-drawer/client-order-drawer";
+import { CONVERSATION_CLIENT_EDIT_FORM_ID } from "./components/conversation-client-info-panel/__components/client-profile-edit-form";
+import { ClientProfileHeader } from "./components/conversation-client-info-panel/__components/client-profile-header";
 import { ConversationClientInfoPanel } from "./components/conversation-client-info-panel/conversation-client-info-panel";
 import { Composer } from "./components/composer/composer";
 import { ConversationMessagesList } from "./components/conversation-messages-list/conversation-messages-list";
@@ -48,6 +55,7 @@ export const ConversationDetails = observer(() => {
     null,
   );
   const [clientInfoOpen, setClientInfoOpen] = useState(false);
+  const [clientDrawerEditMode, setClientDrawerEditMode] = useState(false);
   const [clientLookup, setClientLookup] = useState<
     ClientLookupResponse | undefined
   >();
@@ -60,6 +68,7 @@ export const ConversationDetails = observer(() => {
 
   const { conversations, sendConversationMessage, resendOutboundMessage } =
     useConversationsStore();
+  const clientsStore = useClientsStore();
 
   const { company } = useUserStore();
   const integrationsStore = useIntegrationsStore();
@@ -219,8 +228,17 @@ export const ConversationDetails = observer(() => {
       return;
     }
 
-    navigate(getClientDetailsPath(linkedClientId));
-  }, [linkedClientId, navigate]);
+    setClientDrawerEditMode(true);
+  }, [linkedClientId]);
+
+  const handleCloseClientPanel = useCallback(() => {
+    setClientInfoOpen(false);
+    setClientDrawerEditMode(false);
+  }, []);
+
+  const handleClientEditComplete = useCallback(() => {
+    setClientDrawerEditMode(false);
+  }, []);
 
   const handleCreateOrderClick = useCallback(() => {
     if (!activeConversation || !linkedClient) {
@@ -406,7 +424,7 @@ export const ConversationDetails = observer(() => {
             </Flex>
           ) : thread.messagesLength === 0 ? (
             <Flex justify="center">
-              <Text type="secondary">{t("conversations.noMessages")}</Text>
+              <Text type="secondary">{t('conversations.noMessages')}</Text>
             </Flex>
           ) : (
             <ConversationMessagesList
@@ -441,12 +459,21 @@ export const ConversationDetails = observer(() => {
       </S.ThreadColumn>
 
       <Drawer
-        title={linkedClient ? null : clientPanelTitle}
+        title={
+          linkedClient && activeConversation ? (
+            <ClientProfileHeader
+              client={linkedClient}
+              conversation={activeConversation}
+            />
+          ) : (
+            clientPanelTitle
+          )
+        }
         closable={{
-          "aria-label": t("conversation.closeClientPanelAria"),
+          'aria-label': t('conversation.closeClientPanelAria'),
         }}
         extra={
-          linkedClient ? (
+          linkedClient && !clientDrawerEditMode ? (
             <Button
               type="text"
               aria-label={t("conversation.clientProfile.editAria")}
@@ -455,19 +482,55 @@ export const ConversationDetails = observer(() => {
             />
           ) : null
         }
-        onClose={() => setClientInfoOpen(false)}
+        onClose={handleCloseClientPanel}
         open={clientInfoOpen}
-        placement={isMobileViewport ? "bottom" : "right"}
-        size={isMobileViewport ? undefined : 380}
+        placement={isMobileViewport ? 'bottom' : 'right'}
+        size={isMobileViewport ? undefined : 360}
         height={
           isMobileViewport
-            ? "calc(100dvh - env(safe-area-inset-top, 0px))"
+            ? 'calc(100dvh - env(safe-area-inset-top, 0px))'
             : undefined
         }
         destroyOnHidden
+        footer={
+          linkedClient ? (
+            clientDrawerEditMode ? (
+              <Flex gap={8} justify="flex-end">
+                <Button onClick={() => setClientDrawerEditMode(false)}>
+                  {t("conversation.clientProfile.cancelEdit")}
+                </Button>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  form={CONVERSATION_CLIENT_EDIT_FORM_ID}
+                  loading={clientsStore.saveLoading}
+                  icon={<CheckIcon size={16} />}
+                >
+                  {t("clients.save")}
+                </Button>
+              </Flex>
+            ) : (
+              <Button
+                variant="outlined"
+                block
+                icon={<ArrowLineUpRightIcon />}
+                onClick={() => navigate(getClientDetailsPath(linkedClient.id))}
+              >
+                {t("conversation.clientProfile.fullProfile")}
+              </Button>
+            )
+          ) : undefined
+        }
         styles={{
           body: {
-            overflowY: "auto",
+            overflowY: 'auto',
+            padding: '16px 18px',
+          },
+          header: {
+            padding: '16px 18px',
+          },
+          footer: {
+            padding: '16px 18px',
           },
         }}
       >
@@ -477,8 +540,10 @@ export const ConversationDetails = observer(() => {
           linkedClient={linkedClient}
           clientLookupLoading={clientLookupLoading}
           clientInfoOpen={clientInfoOpen}
+          editMode={clientDrawerEditMode}
           onClientCreated={handleClientCreated}
           onClientAssociationCleared={handleClientAssociationCleared}
+          onEditComplete={handleClientEditComplete}
         />
       </Drawer>
 

@@ -90,7 +90,7 @@ export const ProfileName = styled.h3`
 export const Section = styled.section`
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 `;
 
 export const SectionLabel = styled.span`

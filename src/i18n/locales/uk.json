@@ -1091,9 +1091,16 @@
       "fullProfile": "Повний профіль",
       "contacts": "Контакти",
       "editAria": "Редагувати клієнта",
+      "cancelEdit": "Скасувати",
       "unlinkAria": "Відв'язати акаунт",
       "unlinkSuccess": "Акаунт відв'язано",
-      "unlinkFailed": "Не вдалося відв'язати акаунт"
+      "unlinkFailed": "Не вдалося відв'язати акаунт",
+      "wishlist": {
+        "title": "Вішліст",
+        "add": "+ Додати",
+        "emptyTitle": "Клієнт ще нічого не очікує.",
+        "emptyDescription": "Додайте товар із референсів у чаті."
+      }
     },
     "clientOrders": {
       "delivery": "Доставка",

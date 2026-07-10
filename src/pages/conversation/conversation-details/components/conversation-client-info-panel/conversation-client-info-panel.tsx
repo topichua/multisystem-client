@@ -13,9 +13,14 @@ import type {
 import { useClientsStore } from "@/features/clients/model/use-clients-store";
 import type { Conversation } from "@/features/conversations/model/types";
 import { useNotification } from "@/shared/components/notification/use-notification";
+import { normalizeClientPhoneForInput } from "@/utils/phone-input";
 import { phoneFieldRules } from "@/utils/phone-input";
 
 import { ClientProfileDrawerView } from "./__components/client-profile-drawer-view";
+import {
+  ClientProfileEditForm,
+  type ClientProfileEditFormValues,
+} from "./__components/client-profile-edit-form";
 import { LinkExistingClientSection } from "./__components/link-existing-client-section";
 import { useConversationClientDetails } from "./hooks/use-conversation-client-details";
 import { useConversationLinkExistingClient } from "./hooks/use-conversation-link-existing-client";
@@ -65,8 +70,10 @@ type ConversationClientInfoPanelProps = {
   linkedClient: Client | undefined;
   clientLookupLoading: boolean;
   clientInfoOpen: boolean;
+  editMode: boolean;
   onClientCreated: (client: Client) => void;
   onClientAssociationCleared: () => void;
+  onEditComplete: () => void;
 };
 
 export const ConversationClientInfoPanel = observer(
@@ -76,13 +83,16 @@ export const ConversationClientInfoPanel = observer(
     linkedClient,
     clientLookupLoading,
     clientInfoOpen,
+    editMode,
     onClientCreated,
     onClientAssociationCleared,
+    onEditComplete,
   }: ConversationClientInfoPanelProps) => {
     const { t } = useTranslation();
     const notification = useNotification();
     const clientsStore = useClientsStore();
     const [form] = Form.useForm<ClientFormValues>();
+    const [editForm] = Form.useForm<ClientProfileEditFormValues>();
 
     const shouldLoadClientDetails =
       clientInfoOpen &&
@@ -162,6 +172,58 @@ export const ConversationClientInfoPanel = observer(
         form.setFieldsValue(initialCreateValues);
       }
     }, [conversation?.id, conversation, form, initialCreateValues]);
+
+    useEffect(() => {
+      if (!editMode || !displayClient) {
+        return;
+      }
+
+      editForm.setFieldsValue({
+        first_name: displayClient.firstName,
+        last_name: displayClient.lastName,
+        phone: normalizeClientPhoneForInput(displayClient.phone),
+      });
+    }, [displayClient, editForm, editMode]);
+
+    const handleUpdate = useCallback(
+      async (values: ClientProfileEditFormValues) => {
+        if (!displayClient) {
+          return;
+        }
+
+        try {
+          await clientsStore.updateClient(displayClient.id, {
+            first_name: values.first_name,
+            last_name: values.last_name,
+            phone: values.phone,
+            instagramUserIds: displayClient.instagramUserIds ?? [],
+            telegramUserIds: displayClient.telegramUserIds ?? [],
+          });
+
+          const updated = clientsStore.activeClient;
+          if (updated) {
+            onClientCreated(updated);
+            reload();
+          }
+
+          notification.success({ title: t("clients.updateSuccess") });
+          onEditComplete();
+        } catch (error) {
+          notification.error({
+            title: getApiErrorMessage(error, t("clients.requestFailed")),
+          });
+        }
+      },
+      [
+        clientsStore,
+        displayClient,
+        notification,
+        onClientCreated,
+        onEditComplete,
+        reload,
+        t,
+      ],
+    );
 
     const handleCreate = useCallback(async () => {
       if (!conversation) {
@@ -302,6 +364,8 @@ export const ConversationClientInfoPanel = observer(
           ) : displayClient && conversation ? (
             clientDetailsLoading ? (
               <CenteredSpinner minHeight={200} />
+            ) : editMode ? (
+              <ClientProfileEditForm form={editForm} onFinish={handleUpdate} />
             ) : (
               <ClientProfileDrawerView
                 client={displayClient}

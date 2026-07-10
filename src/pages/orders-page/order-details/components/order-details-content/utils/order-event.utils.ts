@@ -1,0 +1,69 @@
+import type { OrderDetailsEvent } from "@/features/orders/model/order.types";
+
+import type { EventTone, TranslationFn } from "../order-details-content.types";
+
+const EVENT_META: Record<
+  string,
+  {
+    tone: EventTone;
+    titleKey: string;
+  }
+> = {
+  "order.created": {
+    tone: "green",
+    titleKey: "orders.details.eventCreated",
+  },
+  "order.item_added": {
+    tone: "purple",
+    titleKey: "orders.details.eventItemAdded",
+  },
+  "order.totals_updated": {
+    tone: "gold",
+    titleKey: "orders.details.eventTotalsUpdated",
+  },
+  "order.delivery_updated": {
+    tone: "blue",
+    titleKey: "orders.details.eventDeliveryUpdated",
+  },
+  "order.payment_updated": {
+    tone: "gold",
+    titleKey: "orders.details.eventPaymentUpdated",
+  },
+  "order.discount_applied": {
+    tone: "gold",
+    titleKey: "orders.details.eventDiscountApplied",
+  },
+  "order.status_updated": {
+    tone: "blue",
+    titleKey: "orders.details.eventStatusUpdated",
+  },
+  "order.status_changed": {
+    tone: "blue",
+    titleKey: "orders.details.eventStatusUpdated",
+  },
+};
+
+export const getEventMeta = (event: OrderDetailsEvent) =>
+  EVENT_META[event.type] ?? {
+    tone: "gray" as const,
+    titleKey: "",
+  };
+
+export const getActorLabel = (
+  event: OrderDetailsEvent,
+  actorNamesByUserId: Map<number, string>,
+  t: TranslationFn,
+): string => {
+  if (event.userId != null) {
+    const userName = actorNamesByUserId.get(event.userId);
+    if (userName) {
+      return `${t("orders.actor")}: ${userName}`;
+    }
+  }
+
+  if (event.actorId != null) {
+    return `${t("orders.actor")}: #${event.actorId}`;
+  }
+
+  return t("orders.details.systemActor");
+};

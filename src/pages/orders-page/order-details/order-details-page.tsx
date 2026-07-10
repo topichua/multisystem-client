@@ -7,7 +7,7 @@ import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
 import { useEnsureWorkspaceMembersLoaded } from "@/features/workspace-members/model/use-ensure-workspace-members-loaded";
 import { useIsMobileViewport } from "@/utils/use-media-query";
 
-import { OrderDetailsContent } from "./components/order-details-content";
+import { OrderDetailsContent } from "./components/order-details-content/order-details-content";
 import { OrderDetailsHeader } from "./components/order-details-header";
 import { useOrderDetails } from "./hooks/use-order-details";
 import * as S from "./order-details-page.styled";
@@ -34,6 +34,7 @@ export const OrderDetailsPage = () => {
     applyOrderStatusLocally,
     createNovaPoshtaWaybill,
     removeNovaPoshtaWaybill,
+    updateOrder,
   } = useOrderDetails(orderId);
 
   const handlePrint = () => {
@@ -65,6 +66,7 @@ export const OrderDetailsPage = () => {
               order={order}
               onCreateNovaPoshtaWaybill={createNovaPoshtaWaybill}
               onRemoveNovaPoshtaWaybill={removeNovaPoshtaWaybill}
+              onUpdateOrder={updateOrder}
             />
           ) : null}
         </Spin>

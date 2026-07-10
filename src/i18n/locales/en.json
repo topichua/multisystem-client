@@ -1083,9 +1083,16 @@
       "fullProfile": "Full profile",
       "contacts": "Contacts",
       "editAria": "Edit client",
+      "cancelEdit": "Cancel",
       "unlinkAria": "Unlink account",
       "unlinkSuccess": "Account unlinked",
-      "unlinkFailed": "Failed to unlink account"
+      "unlinkFailed": "Failed to unlink account",
+      "wishlist": {
+        "title": "Wishlist",
+        "add": "+ Add",
+        "emptyTitle": "The client is not waiting for anything yet.",
+        "emptyDescription": "Add a product from references in the chat."
+      }
     },
     "clientOrders": {
       "delivery": "Delivery",

@@ -1,4 +1,4 @@
-import { Card, Typography } from "antd";
+import { Card, Divider, Flex, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -9,6 +9,15 @@ import { useOrdersStore } from "@/features/orders/model/use-orders-store";
 import * as S from "../conversation-client-info-panel.styled";
 
 const { Text } = Typography;
+
+const statLabelStyle = {
+  display: "block",
+  fontSize: 10,
+  fontWeight: 600,
+  letterSpacing: "0.04em",
+  textTransform: "uppercase" as const,
+  marginBottom: 2,
+};
 
 function formatUahAmount(amount: number): string {
   return `${amount.toLocaleString("uk-UA")} ₴`;
@@ -57,7 +66,7 @@ export const ClientOrdersSummary = observer(
     if (ordersStore.clientStatsLoading) {
       return (
         <S.Section>
-          <CenteredSpinner minHeight={96} />
+          <CenteredSpinner minHeight={64} />
         </S.Section>
       );
     }
@@ -67,25 +76,32 @@ export const ClientOrdersSummary = observer(
         {ordersStore.clientStatsError ? (
           <Text type="danger">{ordersStore.clientStatsError}</Text>
         ) : null}
-        <S.StatsGrid>
-          {stats.map(({ key, label, value }) => (
-            <Card
-              key={key}
-              size="small"
-              variant="outlined"
-              styles={{
-                body: {
-                  padding: "10px 12px",
-                },
-              }}
-            >
-              <S.StatLabel>{label}</S.StatLabel>
-              <Text strong style={{ fontSize: 18, lineHeight: 1.2 }}>
-                {value}
-              </Text>
-            </Card>
-          ))}
-        </S.StatsGrid>
+        <Card
+          size="small"
+          variant="outlined"
+          styles={{ body: { padding: "8px 0" } }}
+        >
+          <Flex align="center">
+            {stats.map((stat, index) => (
+              <Flex key={stat.key} align="center" style={{ flex: 1 }}>
+                {index > 0 ? (
+                  <Divider
+                    type="vertical"
+                    style={{ height: 28, margin: 0 }}
+                  />
+                ) : null}
+                <div style={{ flex: 1, textAlign: "center" }}>
+                  <Text type="secondary" style={statLabelStyle}>
+                    {stat.label}
+                  </Text>
+                  <Text strong style={{ fontSize: 16, lineHeight: 1.2 }}>
+                    {stat.value}
+                  </Text>
+                </div>
+              </Flex>
+            ))}
+          </Flex>
+        </Card>
       </S.Section>
     );
   },
