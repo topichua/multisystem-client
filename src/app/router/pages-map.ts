@@ -28,6 +28,7 @@ export const pagesMap = {
   settingsUser: "/settings/user",
   settingsSystem: "/settings/system",
   settingsIntegrations: "/settings/integrations",
+  settingsBilling: "/settings/billing",
   settingsTemplates: "/settings/templates",
   settingsOrderStatuses: "/settings/statuses",
   login: "/login",

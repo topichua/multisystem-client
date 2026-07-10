@@ -641,7 +641,8 @@
       "statuses": "Статуси замовлень",
       "user": "Користувач",
       "system": "Система",
-      "integrations": "Інтеграції"
+      "integrations": "Інтеграції",
+      "billing": "Білінг"
     },
     "mobile": {
       "sections": {
@@ -655,8 +656,117 @@
         "statuses": "Налаштовуйте статуси робочого процесу замовлень.",
         "integrations": "Підключайте канали й зовнішні сервіси.",
         "user": "Оновлюйте профіль і дані акаунта.",
-        "system": "Налаштовуйте системні параметри."
+        "system": "Налаштовуйте системні параметри.",
+        "billing": "Керуйте підпискою та оплатою."
       }
+    }
+  },
+  "billing": {
+    "title": "Білінг",
+    "sectionHint": "Підписка та оплата робочого простору.",
+    "placeholder": "Розділ білінгу скоро з'явиться",
+    "infoBar": {
+      "manualPayment": "Оплата вручну через Monobank. Автопродовження немає."
+    },
+    "accessDenied": {
+      "title": "Немає доступу",
+      "description": "Білінг доступний лише власнику робочого простору."
+    },
+    "currentPlan": {
+      "unknownPlan": "Поточний тариф",
+      "validUntil": "Оплата дійсна до {{date}}",
+      "manualRenewal": "Поновлення вручну — автоплатежу немає.",
+      "expiredWarning": "Термін підписки закінчився. Поновіть тариф, щоб продовжити роботу."
+    },
+    "subscriptionStatus": {
+      "active": "Активний",
+      "trial": "Пробний",
+      "past_due": "Прострочено"
+    },
+    "aiCreditsBanner": {
+      "copy": "Потрібно більше AI? Додайте <strong>{{credits}} AI-дій</strong> до будь-якого тарифу за <strong>{{currency}}{{price}}</strong> на місяць.",
+      "add": "Додати"
+    },
+    "paymentMethod": {
+      "title": "Спосіб оплати",
+      "subtitle": "Рахунок Monobank · оплата вручну, підтвердження в застосунку",
+      "payTariff": "Сплатити тариф",
+      "renewTariff": "Поновити тариф",
+      "paidUntil": "Оплачено до {{date}}",
+      "choosePlanBelow": "Оберіть тариф нижче"
+    },
+    "history": {
+      "title": "Історія платежів",
+      "empty": "Платежів поки немає",
+      "pay": "Сплатити",
+      "columns": {
+        "invoice": "Рахунок",
+        "date": "Дата",
+        "tariff": "Тариф",
+        "amount": "Сума",
+        "status": "Статус"
+      }
+    },
+    "invoiceStatus": {
+      "paid": "Оплачено",
+      "open": "Очікує оплати",
+      "void": "Скасовано",
+      "refunded": "Повернено"
+    },
+    "invoiceTariff": {
+      "subscription": "{{plan}} · {{cycle}}",
+      "creditPack": "{{count}} AI-дій"
+    },
+    "planNames": {
+      "start": "Старт",
+      "pro": "Про",
+      "ultimate": "Ультимейт"
+    },
+    "plans": {
+      "cycleMonthly": "Щомісяця",
+      "cycleYearly": "Щороку",
+      "yearlyDiscount": "-{{percent}}%",
+      "perMonth": "/ міс",
+      "perYear": "/ рік",
+      "popular": "Популярний",
+      "currentPlan": "Поточний тариф",
+      "tryFree": "Спробувати безкоштовно",
+      "choosePlan": "Обрати {{name}}",
+      "invoiceCreated": "Рахунок створено",
+      "planChanged": "Тариф оновлено",
+      "features": {
+        "socialAccounts": "{{count}} Instagram акаунтів",
+        "privateAccounts": "{{count}} Telegram каналів",
+        "aiCredits": "{{count}} AI-дій на місяць",
+        "users": "{{count}} користувачів",
+        "products": "До {{count}} товарів",
+        "wishlist": "Wishlist",
+        "advancedInventory": "Розширений склад",
+        "advancedAnalytics": "Аналітика",
+        "novaPoshta": "Інтеграція Nova Poshta"
+      }
+    },
+    "billingCycles": {
+      "month": "місяць",
+      "year": "рік"
+    },
+    "creditsModal": {
+      "title": "Додати AI-дії",
+      "amountLabel": "Кількість AI-дій",
+      "pricePreview": "До сплати: {{price}}",
+      "confirm": "Підтвердити",
+      "cancel": "Скасувати",
+      "required": "Обов'язкове поле",
+      "range": "Введіть значення від {{min}} до {{max}}"
+    },
+    "errors": {
+      "purchaseCredits": "Не вдалося створити рахунок на AI-дії",
+      "paySubscription": "Не вдалося перейти до оплати тарифу",
+      "syncPayment": "Не вдалося підтвердити оплату",
+      "changePlan": "Не вдалося змінити тариф"
+    },
+    "mobile": {
+      "backToSettingsAria": "До налаштувань"
     }
   },
   "templates": {

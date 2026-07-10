@@ -3,6 +3,7 @@ import type { ComponentType, ReactNode } from "react";
 import { AnalyticsProvider } from "@/features/analytics/model/analytics-provider";
 import { AuthProvider } from "@/features/auth/model/auth-provider";
 import { UserProvider } from "@/features/auth/model/user-provider";
+import { BillingProvider } from "@/features/billing/model/billing-provider";
 import { CategoriesProvider } from "@/features/categories/model/categories-provider";
 import { CharacteristicsProvider } from "@/features/characteristics/model/characteristics-provider";
 import { ClientsProvider } from "@/features/clients/model/clients-provider";
@@ -21,6 +22,7 @@ type ProviderComponent = ComponentType<{ children: ReactNode }>;
 const featureProviders: ProviderComponent[] = [
   AuthProvider,
   UserProvider,
+  BillingProvider,
   AnalyticsProvider,
   ConversationsProvider,
   CategoriesProvider,

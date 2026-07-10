@@ -23,6 +23,10 @@ export class UserStore {
     return this.session?.role ?? null;
   }
 
+  get isWorkspaceOwner() {
+    return this.session?.workspaceRole?.isOwner === true;
+  }
+
   get displayName(): string | null {
     const u = this.session?.user;
     if (!u) {

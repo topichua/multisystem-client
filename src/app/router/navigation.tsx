@@ -317,6 +317,11 @@ export const settingsSectionNavItems = [
     path: pagesMap.settingsIntegrations,
     labelKey: "settings.menu.integrations",
   },
+  {
+    key: "settings-billing",
+    path: pagesMap.settingsBilling,
+    labelKey: "settings.menu.billing",
+  },
 ] as const satisfies readonly SectionNavItem[];
 
 const findMainNavItem = (key: MainNavItem["key"]): MainNavItem => {

@@ -32,10 +32,15 @@ export type AuthCompany = {
   instagramAccountId: string;
 };
 
+export type AuthWorkspaceRole = {
+  isOwner: boolean;
+};
+
 export type AuthSessionResponse = {
   email: string;
   role: AuthUserRole;
   user: AuthUser;
   company: AuthCompany | null;
   companyName: string | null;
+  workspaceRole?: AuthWorkspaceRole | null;
 };

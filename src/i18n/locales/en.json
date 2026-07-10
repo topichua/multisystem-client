@@ -635,7 +635,8 @@
       "statuses": "Order statuses",
       "user": "User",
       "system": "System",
-      "integrations": "Integrations"
+      "integrations": "Integrations",
+      "billing": "Billing"
     },
     "mobile": {
       "sections": {
@@ -649,8 +650,117 @@
         "statuses": "Configure order workflow statuses.",
         "integrations": "Connect channels and external services.",
         "user": "Update profile and account details.",
-        "system": "Configure system preferences."
+        "system": "Configure system preferences.",
+        "billing": "Manage subscription and billing."
       }
+    }
+  },
+  "billing": {
+    "title": "Billing",
+    "sectionHint": "Workspace subscription and payments.",
+    "placeholder": "Billing section coming soon",
+    "infoBar": {
+      "manualPayment": "Manual payment via Monobank. No auto-renewal."
+    },
+    "accessDenied": {
+      "title": "Access denied",
+      "description": "Billing is available to the workspace owner only."
+    },
+    "currentPlan": {
+      "unknownPlan": "Current plan",
+      "validUntil": "Payment valid until {{date}}",
+      "manualRenewal": "Manual renewal — no auto-payment.",
+      "expiredWarning": "Your subscription has expired. Renew to continue."
+    },
+    "subscriptionStatus": {
+      "active": "Active",
+      "trial": "Trial",
+      "past_due": "Past due"
+    },
+    "aiCreditsBanner": {
+      "copy": "Need more AI? Add <strong>{{credits}} AI actions</strong> to any plan for <strong>{{currency}}{{price}}</strong> per month.",
+      "add": "Add"
+    },
+    "paymentMethod": {
+      "title": "Payment method",
+      "subtitle": "Monobank account · manual payment, confirmation in the app",
+      "payTariff": "Pay plan",
+      "renewTariff": "Renew plan",
+      "paidUntil": "Paid until {{date}}",
+      "choosePlanBelow": "Choose a plan below"
+    },
+    "history": {
+      "title": "Payment history",
+      "empty": "No payments yet",
+      "pay": "Pay",
+      "columns": {
+        "invoice": "Invoice",
+        "date": "Date",
+        "tariff": "Plan",
+        "amount": "Amount",
+        "status": "Status"
+      }
+    },
+    "invoiceStatus": {
+      "paid": "Paid",
+      "open": "Awaiting payment",
+      "void": "Cancelled",
+      "refunded": "Refunded"
+    },
+    "invoiceTariff": {
+      "subscription": "{{plan}} · {{cycle}}",
+      "creditPack": "{{count}} AI actions"
+    },
+    "planNames": {
+      "start": "Start",
+      "pro": "Pro",
+      "ultimate": "Ultimate"
+    },
+    "plans": {
+      "cycleMonthly": "Monthly",
+      "cycleYearly": "Yearly",
+      "yearlyDiscount": "-{{percent}}%",
+      "perMonth": "/ month",
+      "perYear": "/ year",
+      "popular": "Popular",
+      "currentPlan": "Current plan",
+      "tryFree": "Try for free",
+      "choosePlan": "Choose {{name}}",
+      "invoiceCreated": "Invoice created",
+      "planChanged": "Plan updated",
+      "features": {
+        "socialAccounts": "{{count}} Instagram accounts",
+        "privateAccounts": "{{count}} Telegram channels",
+        "aiCredits": "{{count}} AI actions per month",
+        "users": "{{count}} users",
+        "products": "Up to {{count}} products",
+        "wishlist": "Wishlist",
+        "advancedInventory": "Advanced inventory",
+        "advancedAnalytics": "Analytics",
+        "novaPoshta": "Nova Poshta integration"
+      }
+    },
+    "billingCycles": {
+      "month": "month",
+      "year": "year"
+    },
+    "creditsModal": {
+      "title": "Add AI actions",
+      "amountLabel": "Number of AI actions",
+      "pricePreview": "Total: {{price}}",
+      "confirm": "Confirm",
+      "cancel": "Cancel",
+      "required": "Required field",
+      "range": "Enter a value between {{min}} and {{max}}"
+    },
+    "errors": {
+      "purchaseCredits": "Could not create an AI credits invoice",
+      "paySubscription": "Could not start plan payment",
+      "syncPayment": "Could not confirm payment",
+      "changePlan": "Could not change plan"
+    },
+    "mobile": {
+      "backToSettingsAria": "Back to settings"
     }
   },
   "templates": {

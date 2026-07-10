@@ -10,6 +10,7 @@ import { SettingsIndexRoute } from "@/pages/settings-page/settings-index-route";
 import { SettingsGroupDetailRoute } from "@/pages/settings-page/settings-groups/settings-group-detail-route";
 import { SettingsGroupsIndexRoute } from "@/pages/settings-page/settings-groups/settings-groups-index-route";
 import { SettingsGroupsLayout } from "@/pages/settings-page/settings-groups/settings-groups-layout";
+import { SettingsBillingRoute } from "@/pages/settings-page/settings-billing-route";
 import { SettingsSystemRoute } from "@/pages/settings-page/settings-system-route";
 import { SettingsUserRoute } from "@/pages/settings-page/settings-user-route";
 import { SettingsIntegrationsRoute } from "@/pages/settings-page/settings-integrations/settings-integrations-route";
@@ -111,6 +112,7 @@ export const PageRoutes = () => {
                 path="integrations"
                 element={<SettingsIntegrationsRoute />}
               />
+              <Route path="billing" element={<SettingsBillingRoute />} />
               <Route path="templates" element={<SettingsTemplatesLayout />}>
                 <Route index element={<SettingsTemplatesIndexRoute />} />
                 <Route

@@ -1,5 +1,6 @@
 import {
   CaretRightIcon,
+  CreditCardIcon,
   FileTextIcon,
   FlowArrowIcon,
   GearSixIcon,
@@ -72,6 +73,11 @@ const settingsMobilePresentationByKey = {
     section: "workspace",
     icon: <GlobeIcon />,
     descriptionKey: "settings.mobile.descriptions.integrations",
+  },
+  "settings-billing": {
+    section: "account",
+    icon: <CreditCardIcon />,
+    descriptionKey: "settings.mobile.descriptions.billing",
   },
 } satisfies Record<SettingsMobileItemKey, SettingsMobilePresentation>;
 
