@@ -77,6 +77,12 @@ export type MobileNavSection = {
 
 export const mainNavItems: readonly MainNavItem[] = [
   {
+    key: "analytics",
+    path: pagesMap.analytics,
+    labelKey: "nav.analytics",
+    icon: <ChartLineUpIcon size={24} />,
+  },
+  {
     key: "chats",
     path: pagesMap.conversations,
     labelKey: "nav.chats",
@@ -99,12 +105,6 @@ export const mainNavItems: readonly MainNavItem[] = [
     path: pagesMap.orders,
     labelKey: "nav.orders",
     icon: <ReceiptIcon size={24} />,
-  },
-  {
-    key: "analytics",
-    path: pagesMap.analytics,
-    labelKey: "nav.analytics",
-    icon: <ChartLineUpIcon size={24} />,
   },
   {
     key: "clients",
@@ -352,6 +352,7 @@ export const mobileNavSections = [
     key: "daily-work",
     titleKey: "nav.mobileSections.dailyWork",
     items: [
+      findMainNavItem("analytics"),
       findMainNavItem("chats"),
       findMainNavItem("instagram"),
       findMainNavItem("products"),
@@ -363,7 +364,6 @@ export const mobileNavSections = [
     titleKey: "nav.mobileSections.customersWorkspace",
     items: [
       findMainNavItem("clients"),
-      findMainNavItem("analytics"),
       findMainNavItem("team"),
       {
         key: "integrations",
