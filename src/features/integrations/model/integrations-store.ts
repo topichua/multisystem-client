@@ -39,9 +39,10 @@ export class IntegrationsStore {
 
   connectLoadingType: IntegrationType | null = null;
   disconnectLoadingKey: string | null = null;
+  integrationsLoadPromise: Promise<void> | null = null;
 
   constructor() {
-    makeAutoObservable(this);
+    makeAutoObservable(this, { integrationsLoadPromise: false });
   }
 
   private disconnectKey(type: IntegrationType, id: number): string {
@@ -56,30 +57,53 @@ export class IntegrationsStore {
     return this.connectLoadingType === type;
   }
 
-  loadIntegrations = async (options?: { silent?: boolean }): Promise<void> => {
-    const silent = options?.silent === true;
-
-    if (!silent) {
-      runInAction(() => {
-        this.listLoading = true;
-      });
+  loadIntegrations = async (options?: {
+    silent?: boolean;
+    force?: boolean;
+  }): Promise<void> => {
+    if (this.items.length > 0 && options?.force !== true) {
+      return;
     }
 
-    try {
-      const data = await integrationsApi.list();
-      runInAction(() => {
-        this.items = Array.isArray(data.items) ? data.items : [];
-      });
-    } catch (e) {
-      runInAction(() => {
-        this.items = [];
-      });
-      throwLoadError("Failed to load integrations", e);
-    } finally {
+    if (this.integrationsLoadPromise) {
+      return this.integrationsLoadPromise;
+    }
+
+    const silent = options?.silent === true;
+
+    const loadPromise = (async () => {
       if (!silent) {
         runInAction(() => {
-          this.listLoading = false;
+          this.listLoading = true;
         });
+      }
+
+      try {
+        const data = await integrationsApi.list();
+        runInAction(() => {
+          this.items = Array.isArray(data.items) ? data.items : [];
+        });
+      } catch (e) {
+        runInAction(() => {
+          this.items = [];
+        });
+        throwLoadError("Failed to load integrations", e);
+      } finally {
+        if (!silent) {
+          runInAction(() => {
+            this.listLoading = false;
+          });
+        }
+      }
+    })();
+
+    this.integrationsLoadPromise = loadPromise;
+
+    try {
+      await loadPromise;
+    } finally {
+      if (this.integrationsLoadPromise === loadPromise) {
+        this.integrationsLoadPromise = null;
       }
     }
   };
@@ -102,7 +126,7 @@ export class IntegrationsStore {
         return created;
       }
 
-      await this.loadIntegrations({ silent: true });
+      await this.loadIntegrations({ silent: true, force: true });
       return created;
     } finally {
       runInAction(() => {
@@ -141,7 +165,7 @@ export class IntegrationsStore {
     try {
       const created =
         await integrationsApi.createNovaPoshtaIntegration(payload);
-      await this.loadIntegrations({ silent: true });
+      await this.loadIntegrations({ silent: true, force: true });
 
       return created;
     } finally {
@@ -160,7 +184,7 @@ export class IntegrationsStore {
     const result = await integrationsApi.confirmTelegramQrLogin(id, options);
 
     if (result.status === "active") {
-      await this.loadIntegrations({ silent: true });
+      await this.loadIntegrations({ silent: true, force: true });
     }
 
     return result;
@@ -178,7 +202,7 @@ export class IntegrationsStore {
     );
 
     if (result.status === "active") {
-      await this.loadIntegrations({ silent: true });
+      await this.loadIntegrations({ silent: true, force: true });
     }
 
     return result;
@@ -196,7 +220,7 @@ export class IntegrationsStore {
 
     try {
       await integrationsApi.delete(type, id);
-      await this.loadIntegrations({ silent: true });
+      await this.loadIntegrations({ silent: true, force: true });
     } finally {
       runInAction(() => {
         if (this.disconnectLoadingKey === loadingKey) {

@@ -119,9 +119,10 @@ export class OrdersStore {
   statusesError: string | null = null;
   statusSaveLoading = false;
   statusDeleteLoading = false;
+  statusesLoadPromise: Promise<void> | null = null;
 
   constructor() {
-    makeAutoObservable(this);
+    makeAutoObservable(this, { statusesLoadPromise: false });
   }
 
   get appliedUrlSnapshot(): OrdersListAppliedUrlState {
@@ -458,25 +459,41 @@ export class OrdersStore {
       return;
     }
 
-    runInAction(() => {
-      this.statusesLoading = true;
-      this.statusesError = null;
-    });
+    if (this.statusesLoadPromise) {
+      return this.statusesLoadPromise;
+    }
+
+    const loadPromise = (async () => {
+      runInAction(() => {
+        this.statusesLoading = true;
+        this.statusesError = null;
+      });
+
+      try {
+        const items = await ordersApi.listStatuses();
+        runInAction(() => {
+          this.statuses = items;
+        });
+      } catch (e) {
+        runInAction(() => {
+          this.statusesError = unknownErrorMessage(e);
+        });
+        throwLoadError("Failed to load order statuses", e);
+      } finally {
+        runInAction(() => {
+          this.statusesLoading = false;
+        });
+      }
+    })();
+
+    this.statusesLoadPromise = loadPromise;
 
     try {
-      const items = await ordersApi.listStatuses();
-      runInAction(() => {
-        this.statuses = items;
-      });
-    } catch (e) {
-      runInAction(() => {
-        this.statusesError = unknownErrorMessage(e);
-      });
-      throwLoadError("Failed to load order statuses", e);
+      await loadPromise;
     } finally {
-      runInAction(() => {
-        this.statusesLoading = false;
-      });
+      if (this.statusesLoadPromise === loadPromise) {
+        this.statusesLoadPromise = null;
+      }
     }
   };
 
