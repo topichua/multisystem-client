@@ -2,9 +2,11 @@ import { CaretDownIcon, CaretRightIcon } from "@phosphor-icons/react";
 import type { MouseEvent } from "react";
 import { useTranslation } from "react-i18next";
 
-import * as S from "./client-order-product-search.styled";
+import type { CatalogVariant } from "@/features/products/model/product.types";
+
+import { CatalogVariantSearchRow } from "./catalog-variant-search-row";
+import * as S from "./catalog-product-search.styled";
 import type { GroupedSearchProduct } from "./grouped-product-search-popup.utils";
-import { VariantSearchContent } from "./variant-search-content";
 
 const keepProductSearchPopupOpen = (event: MouseEvent<HTMLElement>) => {
   event.preventDefault();
@@ -16,7 +18,7 @@ type GroupedProductSearchPopupProps = {
   groupedProducts: GroupedSearchProduct[];
   selectedVariantIds: Set<number>;
   onToggleProduct: (productKey: string) => void;
-  onVariantSelect: (variantId: number) => void;
+  onVariantSelect: (variant: CatalogVariant) => void;
 };
 
 export function GroupedProductSearchPopup({
@@ -35,7 +37,7 @@ export function GroupedProductSearchPopup({
   return (
     <S.GroupedProductSearchPopup>
       <S.GroupedProductSearchSummary>
-        {t("conversation.clientOrders.drawer.groupedSearchSummary", {
+        {t("products.catalogSearch.groupedSearchSummary", {
           products: groupedProducts.length,
           variants: groupedVariantCount,
         })}
@@ -45,11 +47,11 @@ export function GroupedProductSearchPopup({
         const expanded = expandedProductKeys.has(product.productKey);
         const groupMeta = [
           product.categoryName,
-          t("conversation.clientOrders.drawer.groupedVariantCount", {
+          t("products.catalogSearch.groupedVariantCount", {
             count: product.variants.length,
           }),
           product.selectedCount > 0
-            ? t("conversation.clientOrders.drawer.groupedSelectedInOrder", {
+            ? t("products.catalogSearch.groupedSelected", {
                 count: product.selectedCount,
               })
             : null,
@@ -93,21 +95,24 @@ export function GroupedProductSearchPopup({
             {expanded
               ? product.variants.map((variant) => {
                   const selected = selectedVariantIds.has(variant.id);
+                  const disabled = !variant.inStock || selected;
 
                   return (
                     <S.GroupedVariantButton
                       key={variant.id}
                       type="button"
-                      aria-disabled={selected || !variant.inStock}
+                      disabled={disabled}
+                      $disabled={disabled}
                       $selected={selected}
                       onMouseDown={keepProductSearchPopupOpen}
                       onClick={() => {
-                        if (!selected && variant.inStock) {
-                          onVariantSelect(variant.id);
+                        if (!disabled) {
+                          onVariantSelect(variant);
                         }
                       }}
                     >
-                      <VariantSearchContent
+                      <CatalogVariantSearchRow
+                        disabled={disabled}
                         selected={selected}
                         variant={variant}
                       />

@@ -18,6 +18,7 @@ import type {
 } from "@/features/orders/model/order.types";
 import { useOrdersStore } from "@/features/orders/model/use-orders-store";
 import type { CatalogVariant } from "@/features/products/model/product.types";
+import { useCatalogProductSearch } from "@/features/products/components/catalog-product-search";
 import { getCatalogVariantUnitPrice } from "@/features/products/utils/catalog-variant-display";
 import { formatClientDisplayName } from "@/pages/clients-page/clients-list/client-display.utils";
 import { useClientOrderNovaPoshtaDelivery } from "@/pages/conversation/conversation-details/components/client-order-drawer/use-client-order-nova-poshta-delivery";
@@ -25,8 +26,6 @@ import { phoneFieldRules } from "@/utils/phone-input";
 import { useNotification } from "@/shared/components/notification/use-notification";
 
 import {
-  MIN_PRODUCT_SEARCH_LENGTH,
-  PRODUCT_SEARCH_DEBOUNCE_MS,
   SUMMARY_DELIVERY_AMOUNT,
   drawerKey,
 } from "./orders-new.constants";
@@ -56,7 +55,10 @@ export function useOrdersNewPage() {
   const [clientSearchValue, setClientSearchValue] = useState("");
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [productSearchOpen, setProductSearchOpen] = useState(false);
-  const [productSearchValue, setProductSearchValue] = useState("");
+  const catalogSearch = useCatalogProductSearch({
+    enabled: productSearchOpen,
+    loadCategories: true,
+  });
   const [orderLines, setOrderLines] = useState<OrderNewLine[]>([]);
   const [shipmentParamsOpen, setShipmentParamsOpen] = useState(false);
   const [shipmentDeclaredValueOverride, setShipmentDeclaredValueOverride] =
@@ -65,7 +67,6 @@ export function useOrdersNewPage() {
     useState(false);
   const [orderSource, setOrderSource] = useState<OrderSource>("manual");
   const [orderDiscountPercent, setOrderDiscountPercent] = useState(0);
-  const trimmedProductSearch = productSearchValue.trim();
   const novaPoshtaDelivery = useClientOrderNovaPoshtaDelivery({
     form: deliveryForm,
   });
@@ -312,29 +313,6 @@ export function useOrdersNewPage() {
     withoutDelivery,
   ]);
 
-  useEffect(() => {
-    if (!productSearchOpen) {
-      return;
-    }
-
-    if (trimmedProductSearch.length < MIN_PRODUCT_SEARCH_LENGTH) {
-      ordersStore.clearCatalogSearch();
-      return;
-    }
-
-    const timer = window.setTimeout(() => {
-      void ordersStore
-        .searchCatalog({
-          keyword: trimmedProductSearch,
-          categoryId: null,
-          mode: "flat",
-        })
-        .catch(() => undefined);
-    }, PRODUCT_SEARCH_DEBOUNCE_MS);
-
-    return () => window.clearTimeout(timer);
-  }, [ordersStore, productSearchOpen, trimmedProductSearch]);
-
   const handleClientModeChange = useCallback(
     (nextMode: ClientMode) => {
       setClientMode(nextMode);
@@ -368,15 +346,22 @@ export function useOrdersNewPage() {
     setClientSearchValue("");
   }, []);
 
-  const handleProductSearchOpen = useCallback(() => {
-    setProductSearchOpen(true);
-  }, []);
-
   const handleProductSearchClose = useCallback(() => {
     setProductSearchOpen(false);
-    setProductSearchValue("");
-    ordersStore.clearCatalogSearch();
-  }, [ordersStore]);
+    catalogSearch.reset();
+  }, [catalogSearch]);
+
+  const handleProductSearchOpenChange = useCallback(
+    (open: boolean) => {
+      if (open) {
+        setProductSearchOpen(true);
+        return;
+      }
+
+      handleProductSearchClose();
+    },
+    [handleProductSearchClose],
+  );
 
   const handleVariantSelect = useCallback(
     (variant: CatalogVariant) => {
@@ -574,8 +559,7 @@ export function useOrdersNewPage() {
 
   return {
     canCreateOrder,
-    catalogSearchLoading: ordersStore.catalogSearchLoading,
-    catalogSearchResults: ordersStore.catalogSearchResults,
+    catalogSearch,
     clientForm,
     clientMode,
     clientModeOptions,
@@ -596,7 +580,7 @@ export function useOrdersNewPage() {
     handleOrderDiscountChange,
     handlePaymentMethodChange,
     handleProductSearchClose,
-    handleProductSearchOpen,
+    handleProductSearchOpenChange,
     handleQuantityChange,
     handleRemoveLine,
     handleShipmentDeclaredValueChange,
@@ -617,16 +601,13 @@ export function useOrdersNewPage() {
     paymentMethodValue,
     phoneRules,
     productSearchOpen,
-    productSearchValue,
     selectedClient,
     selectedVariantIds,
     setClientSearchValue,
     setOrderSource,
-    setProductSearchValue,
     shipmentDeclaredValue,
     shipmentParamsOpen,
     toggleShipmentParams,
-    trimmedProductSearch,
     visibleClients,
     withoutDelivery,
   };

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const ProductsPanel = styled.div`
+export const PickerRoot = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -11,7 +11,7 @@ export const ProductsPanel = styled.div`
   }
 `;
 
-export const ProductsAddLabel = styled.div`
+export const PickerAddLabel = styled.div`
   font-size: 11px;
   line-height: 1.3;
   letter-spacing: 0.06em;
@@ -59,7 +59,7 @@ export const SearchModeIconLabel = styled.span`
   height: 28px;
 `;
 
-export const ProductSearchVariantOption = styled.div`
+export const ProductSearchVariantOption = styled.div<{ $disabled?: boolean }>`
   display: grid;
   grid-template-columns: 32px minmax(0, 1fr) auto 28px;
   align-items: center;
@@ -67,6 +67,8 @@ export const ProductSearchVariantOption = styled.div`
   width: 100%;
   min-height: 50px;
   min-width: 0;
+  cursor: ${({ $disabled }) => ($disabled ? "not-allowed" : "pointer")};
+  opacity: ${({ $disabled }) => ($disabled ? 0.58 : 1)};
 `;
 
 export const GroupedProductSearchPopup = styled.div`
@@ -168,7 +170,10 @@ export const GroupedProductMeta = styled.div`
   color: ${({ theme }) => theme.colors.functional.text.subdued};
 `;
 
-export const GroupedVariantButton = styled.button<{ $selected: boolean }>`
+export const GroupedVariantButton = styled.button<{
+  $disabled: boolean;
+  $selected: boolean;
+}>`
   display: grid;
   grid-template-columns: 32px minmax(0, 1fr) auto 28px;
   align-items: center;
@@ -182,17 +187,21 @@ export const GroupedVariantButton = styled.button<{ $selected: boolean }>`
   color: inherit;
   font: inherit;
   text-align: left;
-  cursor: ${({ $selected }) => ($selected ? "default" : "pointer")};
+  cursor: ${({ $disabled }) => ($disabled ? "not-allowed" : "pointer")};
+  opacity: ${({ $disabled, $selected }) =>
+    $disabled && !$selected ? 0.58 : $selected ? 0.82 : 1};
 
   &:hover {
-    background: ${({ $selected, theme }) =>
-      $selected
-        ? theme.colors.functional.background.base
-        : theme.colors.functional.background.hover};
+    background: ${({ $disabled, $selected, theme }) =>
+      $disabled && !$selected
+        ? "transparent"
+        : $selected
+          ? theme.colors.functional.background.base
+          : theme.colors.functional.background.hover};
   }
 
-  &[aria-disabled="true"] {
-    cursor: default;
+  &:disabled {
+    cursor: not-allowed;
   }
 `;
 
@@ -238,15 +247,20 @@ export const GroupedVariantPrice = styled.div`
   color: ${({ theme }) => theme.colors.functional.text.heading};
 `;
 
-export const GroupedVariantStock = styled.div<{ $available: boolean }>`
+export const GroupedVariantStock = styled.div<{
+  $available: boolean;
+  $muted?: boolean;
+}>`
   margin-top: 3px;
   font-size: 11px;
   font-weight: 700;
   line-height: 1.2;
-  color: ${({ $available, theme }) =>
-    $available
-      ? theme.colors.functional.text.success
-      : theme.colors.functional.text.subdued};
+  color: ${({ $available, $muted, theme }) =>
+    $muted
+      ? theme.colors.functional.text.subdued
+      : $available
+        ? theme.colors.functional.text.success
+        : theme.colors.functional.text.subdued};
 `;
 
 export const GroupedVariantAction = styled.span<{
@@ -267,4 +281,8 @@ export const GroupedVariantAction = styled.span<{
     $selected
       ? theme.colors.functional.text.success
       : theme.colors.semantic.primary};
+`;
+
+export const PopoverContent = styled.div<{ $width?: number }>`
+  width: ${({ $width }) => ($width == null ? "100%" : `${$width}px`)};
 `;

@@ -1,46 +1,32 @@
 import { Form } from "antd";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { getApiErrorMessage } from "@/api/get-api-error-message";
-import type { Category } from "@/features/categories/model/category.types";
-import { useCategoriesStore } from "@/features/categories/model/use-categories-store";
 import type { Client } from "@/features/clients/model/client.types";
 import type {
   OrderDraftLine,
   OrderFormValues,
 } from "@/features/orders/model/order.types";
-import type { CatalogSearchMode } from "@/features/orders/model/orders-store";
 import { useOrdersStore } from "@/features/orders/model/use-orders-store";
 import {
   calculateOrderDiscountAmount,
   normalizeOrderDiscountPercent,
 } from "@/features/orders/utils/order-discount";
 import type { CatalogVariant } from "@/features/products/model/product.types";
+import { useCatalogProductSearch } from "@/features/products/components/catalog-product-search";
 import { useNotification } from "@/shared/components/notification/use-notification";
 import { normalizeClientPhoneForInput } from "@/utils/phone-input";
 
 import { useClientOrderNovaPoshtaDelivery } from "./use-client-order-nova-poshta-delivery";
 
-const MIN_SEARCH_LENGTH = 3;
-const SEARCH_DEBOUNCE_MS = 300;
+export type {
+  CategorySelectOptionData,
+  VariantSelectOption,
+  VariantSelectOptionData,
+} from "@/features/products/components/catalog-product-search";
+
 const DEFAULT_CASH_ON_DELIVERY_AMOUNT = 110;
-
-export type CategorySelectOptionData = {
-  value: number;
-  label: string;
-  level: number;
-};
-
-export type VariantSelectOptionData = {
-  variant: CatalogVariant;
-};
-
-export type VariantSelectOption = {
-  label: string;
-  value: number;
-  variant: CatalogVariant;
-};
 
 type UseClientOrderCreateControllerParams = {
   conversationId: number;
@@ -48,15 +34,6 @@ type UseClientOrderCreateControllerParams = {
   onClose: () => void;
   onOrderCreated?: () => void;
 };
-
-const flattenCategoriesForSelect = (
-  categories: Category[],
-  level = 0,
-): CategorySelectOptionData[] =>
-  categories.flatMap((category) => [
-    { value: category.id, label: category.name, level },
-    ...flattenCategoriesForSelect(category.children ?? [], level + 1),
-  ]);
 
 export function useClientOrderCreateController({
   conversationId,
@@ -66,19 +43,10 @@ export function useClientOrderCreateController({
 }: UseClientOrderCreateControllerParams) {
   const { t } = useTranslation();
   const ordersStore = useOrdersStore();
-  const categoriesStore = useCategoriesStore();
   const notification = useNotification();
   const [form] = Form.useForm<OrderFormValues>();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
-    null,
-  );
-  const [catalogSearchMode, setCatalogSearchMode] =
-    useState<CatalogSearchMode>("flat");
-  const [productPickerKey, setProductPickerKey] = useState(0);
   const [orderLines, setOrderLines] = useState<OrderDraftLine[]>([]);
-  const categoryLoadRequestedRef = useRef(false);
-  const trimmedSearch = searchQuery.trim();
+  const catalogSearch = useCatalogProductSearch({ loadCategories: true });
   const withoutDelivery = Form.useWatch("withoutDelivery", form) === true;
   const isCashOnDelivery = Form.useWatch("isCashOnDelivery", form);
   const cashOnDeliveryAmount = Form.useWatch("cashOnDeliveryAmount", form);
@@ -105,37 +73,6 @@ export function useClientOrderCreateController({
 
   const novaPoshtaDelivery = useClientOrderNovaPoshtaDelivery({ form });
   const clearNovaPoshtaSelects = novaPoshtaDelivery.clearSelects;
-
-  useEffect(() => {
-    if (
-      categoryLoadRequestedRef.current ||
-      categoriesStore.categories.length > 0
-    ) {
-      return;
-    }
-
-    categoryLoadRequestedRef.current = true;
-    void categoriesStore.loadCategories().catch(() => undefined);
-  }, [categoriesStore, categoriesStore.categories.length]);
-
-  useEffect(() => {
-    if (trimmedSearch.length < MIN_SEARCH_LENGTH) {
-      ordersStore.clearCatalogSearch();
-      return;
-    }
-
-    const timer = window.setTimeout(() => {
-      void ordersStore
-        .searchCatalog({
-          keyword: trimmedSearch,
-          categoryId: selectedCategoryId,
-          mode: catalogSearchMode,
-        })
-        .catch(() => undefined);
-    }, SEARCH_DEBOUNCE_MS);
-
-    return () => window.clearTimeout(timer);
-  }, [catalogSearchMode, ordersStore, selectedCategoryId, trimmedSearch]);
 
   const orderTotals = useMemo(() => {
     const productCount = orderLines.reduce(
@@ -192,33 +129,11 @@ export function useClientOrderCreateController({
     form.setFieldValue("cashOnDeliveryAmount", DEFAULT_CASH_ON_DELIVERY_AMOUNT);
   }, [form, isCashOnDelivery, withoutDelivery]);
 
-  const categorySelectOptions = useMemo(
-    () => flattenCategoriesForSelect(categoriesStore.categories),
-    [categoriesStore.categories],
-  );
-
-  const variantSelectOptions = useMemo<VariantSelectOption[]>(
-    () =>
-      ordersStore.catalogSearchResults.map((variant) => ({
-        value: variant.id,
-        label: variant.label,
-        variant,
-      })),
-    [ordersStore.catalogSearchResults],
-  );
-
-  const variantsById = useMemo(
-    () =>
-      new Map(
-        ordersStore.catalogSearchResults.map((variant) => [
-          variant.id,
-          variant,
-        ]),
-      ),
-    [ordersStore.catalogSearchResults],
-  );
-
   const addVariantToOrder = useCallback((variant: CatalogVariant) => {
+    if (!variant.inStock) {
+      return;
+    }
+
     setOrderLines((prev) => {
       const existing = prev.find((line) => line.variantId === variant.id);
       if (existing) {
@@ -247,16 +162,12 @@ export function useClientOrderCreateController({
   }, []);
 
   const resetDrawerState = useCallback(() => {
-    setSearchQuery("");
-    setSelectedCategoryId(null);
-    setCatalogSearchMode("flat");
-    ordersStore.clearCatalogSearch();
+    catalogSearch.reset();
     clearNovaPoshtaSelects();
-    setProductPickerKey(0);
     setOrderLines([]);
     form.resetFields();
     form.setFieldsValue(initialFormValues);
-  }, [clearNovaPoshtaSelects, form, initialFormValues, ordersStore]);
+  }, [catalogSearch, clearNovaPoshtaSelects, form, initialFormValues]);
 
   const handleDrawerClose = useCallback(() => {
     resetDrawerState();
@@ -309,42 +220,6 @@ export function useClientOrderCreateController({
     t,
   ]);
 
-  const handleVariantSelect = useCallback(
-    (variantId: number) => {
-      const variant = variantsById.get(variantId);
-      if (variant?.inStock) {
-        addVariantToOrder(variant);
-      }
-    },
-    [addVariantToOrder, variantsById],
-  );
-
-  const handleCatalogSearch = useCallback(
-    (value: string) => {
-      setSearchQuery(value);
-      if (value.trim().length < MIN_SEARCH_LENGTH) {
-        ordersStore.clearCatalogSearch();
-      }
-    },
-    [ordersStore],
-  );
-
-  const handleCatalogSearchClear = useCallback(() => {
-    setSearchQuery("");
-    ordersStore.clearCatalogSearch();
-  }, [ordersStore]);
-
-  const handleCategoryChange = useCallback((categoryId: number | null) => {
-    setSelectedCategoryId(categoryId);
-  }, []);
-
-  const handleCatalogSearchModeChange = useCallback(
-    (mode: CatalogSearchMode) => {
-      setCatalogSearchMode(mode);
-    },
-    [],
-  );
-
   const handleWithoutDeliveryChange = useCallback(
     (checked: boolean) => {
       form.setFieldValue("withoutDelivery", checked);
@@ -356,30 +231,23 @@ export function useClientOrderCreateController({
     [clearNovaPoshtaSelects, form],
   );
 
+  const selectedVariantIds = useMemo(
+    () => new Set(orderLines.map((line) => line.variantId)),
+    [orderLines],
+  );
+
   return {
-    catalogSearchProductGroups: ordersStore.catalogSearchProductGroups,
-    categoriesLoading: categoriesStore.listLoading,
-    categorySelectOptions,
-    catalogSearchLoading: ordersStore.catalogSearchLoading,
-    catalogSearchMode,
+    catalogSearch,
     createLoading: ordersStore.createLoading,
     form,
     orderLines,
     orderTotals,
     novaPoshtaDelivery,
-    productPickerKey,
-    selectedCategoryId,
-    trimmedSearch,
-    variantSelectOptions,
+    selectedVariantIds,
     withoutDelivery,
-    minSearchLength: MIN_SEARCH_LENGTH,
-    handleCatalogSearchClear,
-    handleCatalogSearchModeChange,
-    handleCategoryChange,
-    handleCatalogSearch,
+    addVariantToOrder,
     handleDrawerClose,
     handlePlaceOrder,
-    handleVariantSelect,
     handleWithoutDeliveryChange,
     removeLine,
     updateLineQuantity,

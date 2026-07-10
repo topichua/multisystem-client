@@ -44,17 +44,12 @@ export const OrdersNewPage = observer(() => {
       />
 
       <OrdersNewProductsSection
-        catalogSearchLoading={controller.catalogSearchLoading}
-        catalogSearchResults={controller.catalogSearchResults}
+        catalogSearch={controller.catalogSearch}
         orderLines={controller.orderLines}
         productSearchOpen={controller.productSearchOpen}
-        productSearchValue={controller.productSearchValue}
         selectedVariantIds={controller.selectedVariantIds}
-        trimmedProductSearch={controller.trimmedProductSearch}
         onDiscountChange={controller.handleDiscountChange}
-        onProductSearchChange={controller.setProductSearchValue}
-        onProductSearchClose={controller.handleProductSearchClose}
-        onProductSearchOpen={controller.handleProductSearchOpen}
+        onProductSearchOpenChange={controller.handleProductSearchOpenChange}
         onQuantityChange={controller.handleQuantityChange}
         onRemoveLine={controller.handleRemoveLine}
         onToggleDiscount={controller.handleToggleDiscount}

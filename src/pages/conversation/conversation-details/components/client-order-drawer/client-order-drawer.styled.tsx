@@ -93,13 +93,7 @@ export const NoDeliveryToggle = styled.div`
   color: ${({ theme }) => theme.colors.functional.text.primary};
 `;
 
-export const SectionPanel = styled.div`
-  border: 1px solid ${({ theme }) => theme.colors.functional.border.cardBase};
-  background: ${({ theme }) => theme.colors.functional.background.natural};
-  border-radius: 8px;
-`;
-
-export const ClientPanel = styled(SectionPanel)`
+export const ClientPanel = styled.div`
   display: flex;
   align-items: center;
   gap: 12px;

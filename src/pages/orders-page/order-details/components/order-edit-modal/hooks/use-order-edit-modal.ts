@@ -6,10 +6,7 @@ import { getApiErrorMessage } from "@/api/get-api-error-message";
 import type { OrderUpdatePayload } from "@/features/orders/model/order.types";
 import { useOrdersStore } from "@/features/orders/model/use-orders-store";
 import type { CatalogVariant } from "@/features/products/model/product.types";
-import {
-  MIN_PRODUCT_SEARCH_LENGTH,
-  PRODUCT_SEARCH_DEBOUNCE_MS,
-} from "@/pages/orders-page/orders-new/orders-new.constants";
+import { useCatalogProductSearch } from "@/features/products/components/catalog-product-search";
 import { useNotification } from "@/shared/components/notification/use-notification";
 
 import type {
@@ -41,10 +38,12 @@ export const useOrderEditModal = ({
   const [saving, setSaving] = useState(false);
   const [lines, setLines] = useState(() => buildOrderEditLines(order));
   const [productSearchOpen, setProductSearchOpen] = useState(false);
-  const [productSearchValue, setProductSearchValue] = useState("");
-  const trimmedProductSearch = productSearchValue.trim();
   const canEditItems = order.status?.category === "new";
   const editItemsAllowed = mode === "items" && canEditItems;
+  const catalogSearch = useCatalogProductSearch({
+    enabled: productSearchOpen && editItemsAllowed,
+    loadCategories: true,
+  });
   const hasUnpatchableLines = lines.some((line) => !isLinePatchable(line));
   const initialFormValues = useMemo(
     () => buildOrderEditInitialFormValues(order),
@@ -73,43 +72,22 @@ export const useOrderEditModal = ({
     };
   }, [ordersStore]);
 
-  useEffect(() => {
-    if (!productSearchOpen || !editItemsAllowed) {
-      return;
-    }
-
-    if (trimmedProductSearch.length < MIN_PRODUCT_SEARCH_LENGTH) {
-      ordersStore.clearCatalogSearch();
-      return;
-    }
-
-    const timer = window.setTimeout(() => {
-      void ordersStore
-        .searchCatalog({
-          keyword: trimmedProductSearch,
-          categoryId: null,
-          mode: "flat",
-        })
-        .catch(() => undefined);
-    }, PRODUCT_SEARCH_DEBOUNCE_MS);
-
-    return () => window.clearTimeout(timer);
-  }, [
-    editItemsAllowed,
-    ordersStore,
-    productSearchOpen,
-    trimmedProductSearch,
-  ]);
-
-  const handleProductSearchOpen = useCallback(() => {
-    setProductSearchOpen(true);
-  }, []);
-
   const handleProductSearchClose = useCallback(() => {
     setProductSearchOpen(false);
-    setProductSearchValue("");
-    ordersStore.clearCatalogSearch();
-  }, [ordersStore]);
+    catalogSearch.reset();
+  }, [catalogSearch]);
+
+  const handleProductSearchOpenChange = useCallback(
+    (open: boolean) => {
+      if (open) {
+        setProductSearchOpen(true);
+        return;
+      }
+
+      handleProductSearchClose();
+    },
+    [handleProductSearchClose],
+  );
 
   const handleVariantSelect = useCallback(
     (variant: CatalogVariant) => {
@@ -214,19 +192,14 @@ export const useOrderEditModal = ({
     saving,
     lines,
     productSearchOpen,
-    productSearchValue,
-    trimmedProductSearch,
     canEditItems,
     editItemsAllowed,
     hasUnpatchableLines,
     selectedVariantIds,
     initialFormValues,
-    catalogSearchLoading: ordersStore.catalogSearchLoading,
-    catalogSearchResults: ordersStore.catalogSearchResults,
+    catalogSearch,
     modalTitle,
-    setProductSearchValue,
-    handleProductSearchOpen,
-    handleProductSearchClose,
+    handleProductSearchOpenChange,
     handleVariantSelect,
     updateLine,
     removeLine,

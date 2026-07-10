@@ -1,40 +1,36 @@
-import { Alert, Empty, Flex, Form, InputNumber, Typography } from 'antd';
-import type { FormInstance } from 'antd';
+import { Alert, Empty, Flex, Form, InputNumber, Typography } from "antd";
+import type { FormInstance } from "antd";
 
-import type { OrderDetails } from '@/features/orders/model/order.types';
-import { ProductSearchPopover } from '@/pages/orders-page/orders-new/components/orders-new-products-section/product-search-popover';
-import type { CatalogVariant } from '@/features/products/model/product.types';
+import type { OrderDetails } from "@/features/orders/model/order.types";
+import { CatalogProductSearchPopover } from "@/features/products/components/catalog-product-search";
+import type { useCatalogProductSearch } from "@/features/products/components/catalog-product-search";
+import type { CatalogVariant } from "@/features/products/model/product.types";
 
 import type {
   EditableOrderLine,
   OrderEditFormValues,
-} from '../order-edit-modal.types';
+} from "../order-edit-modal.types";
 import {
   normalizeDiscountPercent,
   normalizeNonNegativeNumber,
-} from '../utils/order-edit-modal.utils';
-import { OrderEditLine } from './order-edit-line';
-import * as S from '../../order-details-content/order-details-content.styled';
+} from "../utils/order-edit-modal.utils";
+import { OrderEditLine } from "./order-edit-line";
+import * as S from "../../order-details-content/order-details-content.styled";
 
 const { Text } = Typography;
 
 type OrderEditItemsSectionProps = {
   order: OrderDetails;
-  t: ReturnType<typeof import('react-i18next').useTranslation>['t'];
+  t: ReturnType<typeof import("react-i18next").useTranslation>["t"];
   form: FormInstance<OrderEditFormValues>;
   canEditItems: boolean;
   editItemsAllowed: boolean;
   lines: EditableOrderLine[];
   hasUnpatchableLines: boolean;
   productSearchOpen: boolean;
-  productSearchValue: string;
-  trimmedProductSearch: string;
-  catalogSearchLoading: boolean;
-  catalogSearchResults: CatalogVariant[];
+  catalogSearch: ReturnType<typeof useCatalogProductSearch>;
   selectedVariantIds: Set<number>;
-  onProductSearchOpen: () => void;
-  onProductSearchClose: () => void;
-  onProductSearchChange: (value: string) => void;
+  onProductSearchOpenChange: (open: boolean) => void;
   onVariantSelect: (variant: CatalogVariant) => void;
   onUpdateLine: (lineKey: string, patch: Partial<EditableOrderLine>) => void;
   onRemoveLine: (lineKey: string) => void;
@@ -49,14 +45,9 @@ export const OrderEditItemsSection = ({
   lines,
   hasUnpatchableLines,
   productSearchOpen,
-  productSearchValue,
-  trimmedProductSearch,
-  catalogSearchLoading,
-  catalogSearchResults,
+  catalogSearch,
   selectedVariantIds,
-  onProductSearchOpen,
-  onProductSearchClose,
-  onProductSearchChange,
+  onProductSearchOpenChange,
   onVariantSelect,
   onUpdateLine,
   onRemoveLine,
@@ -66,8 +57,8 @@ export const OrderEditItemsSection = ({
       <Alert
         type="info"
         showIcon
-        message={t('orders.details.itemsEditLockedTitle')}
-        description={t('orders.details.itemsEditLockedText')}
+        message={t("orders.details.itemsEditLockedTitle")}
+        description={t("orders.details.itemsEditLockedText")}
       />
     )}
 
@@ -75,20 +66,29 @@ export const OrderEditItemsSection = ({
       <S.EditSection>
         <S.EditSectionHeader>
           <Flex align="center" gap={8} wrap>
-            <Text strong>{t('orders.productsTab')}</Text>
+            <Text strong>{t("orders.productsTab")}</Text>
             <S.CountBadge>{lines.length}</S.CountBadge>
           </Flex>
 
-          <ProductSearchPopover
+          <CatalogProductSearchPopover
             open={productSearchOpen}
-            value={productSearchValue}
-            loading={catalogSearchLoading}
-            results={catalogSearchResults}
+            buttonLabel={t("orders.create.products.add")}
+            catalogSearchLoading={catalogSearch.catalogSearchLoading}
+            catalogSearchMode={catalogSearch.catalogSearchMode}
+            catalogSearchProductGroups={catalogSearch.catalogSearchProductGroups}
+            categoriesLoading={catalogSearch.categoriesLoading}
+            categorySelectOptions={catalogSearch.categorySelectOptions}
+            minSearchLength={catalogSearch.minSearchLength}
+            productPickerKey={catalogSearch.productPickerKey}
+            selectedCategoryId={catalogSearch.selectedCategoryId}
             selectedVariantIds={selectedVariantIds}
-            trimmedSearch={trimmedProductSearch}
-            onOpen={onProductSearchOpen}
-            onClose={onProductSearchClose}
-            onChange={onProductSearchChange}
+            trimmedSearch={catalogSearch.trimmedSearch}
+            variantSelectOptions={catalogSearch.variantSelectOptions}
+            onCategoryChange={catalogSearch.handleCategoryChange}
+            onClear={catalogSearch.handleClear}
+            onOpenChange={onProductSearchOpenChange}
+            onSearch={catalogSearch.handleSearch}
+            onSearchModeChange={catalogSearch.handleSearchModeChange}
             onVariantSelect={onVariantSelect}
           />
         </S.EditSectionHeader>
@@ -97,8 +97,8 @@ export const OrderEditItemsSection = ({
           <Alert
             type="warning"
             showIcon
-            title={t('orders.details.editItemsMissingRefs')}
-            description={t('orders.details.editItemsMissingRefsText')}
+            title={t("orders.details.editItemsMissingRefs")}
+            description={t("orders.details.editItemsMissingRefsText")}
           />
         )}
 
@@ -118,29 +118,29 @@ export const OrderEditItemsSection = ({
         )}
         <Empty
           image={Empty.PRESENTED_IMAGE_SIMPLE}
-          description={t('orders.create.products.emptyState')}
+          description={t("orders.create.products.emptyState")}
         />
 
         <S.EditDiscountGrid>
           <Form.Item
-            label={t('orders.details.discountAmount')}
+            label={t("orders.details.discountAmount")}
             name="discountAmount"
           >
             <InputNumber
               min={0}
               controls={false}
               addonAfter={order.currency}
-              style={{ width: '100%' }}
+              style={{ width: "100%" }}
               onChange={(value) => {
                 if (normalizeNonNegativeNumber(value) > 0) {
-                  form.setFieldValue('discountPercent', 0);
+                  form.setFieldValue("discountPercent", 0);
                 }
               }}
             />
           </Form.Item>
 
           <Form.Item
-            label={t('orders.details.discountPercent')}
+            label={t("orders.details.discountPercent")}
             name="discountPercent"
           >
             <InputNumber
@@ -149,10 +149,10 @@ export const OrderEditItemsSection = ({
               precision={0}
               controls={false}
               addonAfter="%"
-              style={{ width: '100%' }}
+              style={{ width: "100%" }}
               onChange={(value) => {
                 if (normalizeDiscountPercent(value) > 0) {
-                  form.setFieldValue('discountAmount', 0);
+                  form.setFieldValue("discountAmount", 0);
                 }
               }}
             />

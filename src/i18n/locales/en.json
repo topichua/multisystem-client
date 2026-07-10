@@ -1231,6 +1231,27 @@
       "inStock_other": "{{count}} pcs",
       "outOfStock": "Out of stock"
     },
+    "catalogSearch": {
+      "addLabel": "Add product",
+      "allCategories": "All categories",
+      "categoryFilterAria": "Product category",
+      "searchModeAria": "Product search result mode",
+      "searchModeFlat": "Flat variant list",
+      "searchModeGrouped": "Grouped by product",
+      "placeholder": "Search product, variant, or SKU",
+      "searchMinChars_one": "Enter at least {{count}} character to search",
+      "searchMinChars_other": "Enter at least {{count}} characters to search",
+      "searchNoResults": "No products found",
+      "groupedSearchSummary": "Found: {{variants}} in {{products}} products",
+      "groupedVariantCount_one": "{{count}} variant",
+      "groupedVariantCount_other": "{{count}} variants",
+      "groupedSelected_one": "{{count}} selected",
+      "groupedSelected_other": "{{count}} selected",
+      "variantInStock_one": "{{count}} pc",
+      "variantInStock_other": "{{count}} pcs",
+      "outOfStock": "Out of stock",
+      "alreadyAdded": "Already added"
+    },
     "pagination": {
       "summary": "Showing {{from}} to {{to}} of {{total}} products"
     },
