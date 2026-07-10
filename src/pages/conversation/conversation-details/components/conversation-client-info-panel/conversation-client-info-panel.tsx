@@ -1,10 +1,8 @@
-import { Avatar, Button, Col, Flex, Form, Input, Row, Typography } from "antd";
+import { Avatar, Button, Col, Form, Input, Row, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router";
 
-import { getClientDetailsPath } from "@/app/router/pages-map";
 import { getApiErrorMessage } from "@/api/get-api-error-message";
 import { ClientPhoneFormInput } from "@/components/client-phone-form-input";
 import { CenteredSpinner } from "@/components/loading/centered-spinner";
@@ -17,12 +15,11 @@ import type { Conversation } from "@/features/conversations/model/types";
 import { useNotification } from "@/shared/components/notification/use-notification";
 import { phoneFieldRules } from "@/utils/phone-input";
 
-import { ClientOrdersInfoBlock } from "./__components/client-order-info-block";
-import { ClientOrdersSummary } from "./__components/client-order-summary";
-import { ClientOrdersList } from "./__components/client-orders-list";
+import { ClientProfileDrawerView } from "./__components/client-profile-drawer-view";
+import { LinkExistingClientSection } from "./__components/link-existing-client-section";
 import { useConversationClientDetails } from "./hooks/use-conversation-client-details";
+import { useConversationLinkExistingClient } from "./hooks/use-conversation-link-existing-client";
 import * as S from "./conversation-client-info-panel.styled";
-import { ArrowLineUpRightIcon } from "@phosphor-icons/react";
 
 const { Text } = Typography;
 
@@ -69,6 +66,7 @@ type ConversationClientInfoPanelProps = {
   clientLookupLoading: boolean;
   clientInfoOpen: boolean;
   onClientCreated: (client: Client) => void;
+  onClientAssociationCleared: () => void;
 };
 
 export const ConversationClientInfoPanel = observer(
@@ -79,9 +77,9 @@ export const ConversationClientInfoPanel = observer(
     clientLookupLoading,
     clientInfoOpen,
     onClientCreated,
+    onClientAssociationCleared,
   }: ConversationClientInfoPanelProps) => {
     const { t } = useTranslation();
-    const navigate = useNavigate();
     const notification = useNotification();
     const clientsStore = useClientsStore();
     const [form] = Form.useForm<ClientFormValues>();
@@ -91,18 +89,58 @@ export const ConversationClientInfoPanel = observer(
       linkedClient != null &&
       clientLookup?.associated === true;
 
-    const { client: loadedClient, loading: clientDetailsLoading } =
+    const { client: loadedClient, loading: clientDetailsLoading, reload } =
       useConversationClientDetails(linkedClient?.id, shouldLoadClientDetails);
 
     const displayClient = loadedClient ?? linkedClient;
 
-    const handleOpenFullProfile = useCallback(() => {
-      if (displayClient == null) {
-        return;
+    const {
+      handleClearSelectedClient,
+      handleClientSelect,
+      handleCloseLinkSection,
+      handleLinkClient,
+      handleOpenLinkSection,
+      linkLoading,
+      linkSectionOpen,
+      searchError,
+      searchLoading,
+      searchRequested,
+      searchResults,
+      searchValue,
+      selectedClient,
+      setSearchValue,
+    } = useConversationLinkExistingClient({
+      conversation,
+      onClientLinked: onClientCreated,
+    });
+
+    const handleLinkExistingClient = useCallback(async () => {
+      const linked = await handleLinkClient();
+
+      if (linked) {
+        notification.success({
+          title: t("conversation.linkExistingClientSuccess"),
+        });
+        return true;
       }
 
-      navigate(getClientDetailsPath(displayClient.id));
-    }, [displayClient, navigate]);
+      notification.error({
+        title: t("conversation.linkExistingClientFailed"),
+      });
+      return false;
+    }, [handleLinkClient, notification, t]);
+
+    const handleClientUpdated = useCallback(
+      (client: Client) => {
+        onClientCreated(client);
+        reload();
+      },
+      [onClientCreated, reload],
+    );
+
+    const handleCurrentConversationUnlinked = useCallback(() => {
+      onClientAssociationCleared();
+    }, [onClientAssociationCleared]);
 
     const initialCreateValues = useMemo((): ClientFormValues => {
       if (!conversation) {
@@ -172,21 +210,28 @@ export const ConversationClientInfoPanel = observer(
 
     const renderParticipantPhoto = (avatarSize = 80) =>
       conversation ? (
-        <S.ParticipantPhoto>
-          <Avatar
-            size={avatarSize}
-            src={conversation.participant.profilePic || undefined}
-            alt={
-              conversation.participant.name ||
-              conversation.participant.username ||
-              ""
-            }
-          >
-            {!conversation.participant.profilePic
-              ? participantAvatarInitials(conversation, linkedClient)
-              : undefined}
-          </Avatar>
-        </S.ParticipantPhoto>
+        <>
+          <S.ParticipantPhoto>
+            <Avatar
+              size={avatarSize}
+              src={conversation.participant.profilePic || undefined}
+              alt={
+                conversation.participant.name ||
+                conversation.participant.username ||
+                ""
+              }
+            >
+              {!conversation.participant.profilePic
+                ? participantAvatarInitials(conversation, linkedClient)
+                : undefined}
+            </Avatar>
+            {conversation.participant.username ? (
+              <S.ParticipantUsername>
+                @{conversation.participant.username}
+              </S.ParticipantUsername>
+            ) : null}
+          </S.ParticipantPhoto>
+        </>
       ) : null;
 
     return (
@@ -237,27 +282,33 @@ export const ConversationClientInfoPanel = observer(
               >
                 {t("clients.createSubmit")}
               </Button>
+              <LinkExistingClientSection
+                linkSectionOpen={linkSectionOpen}
+                linkLoading={linkLoading}
+                searchValue={searchValue}
+                searchLoading={searchLoading}
+                searchRequested={searchRequested}
+                searchError={searchError}
+                searchResults={searchResults}
+                selectedClient={selectedClient}
+                onOpenLinkSection={handleOpenLinkSection}
+                onCloseLinkSection={handleCloseLinkSection}
+                onSearchChange={setSearchValue}
+                onClientSelect={handleClientSelect}
+                onClearSelectedClient={handleClearSelectedClient}
+                onLinkClient={handleLinkExistingClient}
+              />
             </Form>
           ) : displayClient && conversation ? (
             clientDetailsLoading ? (
               <CenteredSpinner minHeight={200} />
             ) : (
-              <Flex gap={24} vertical>
-                <ClientOrdersInfoBlock
-                  linkedClient={displayClient}
-                  conversation={conversation}
-                />
-                <ClientOrdersSummary clientId={displayClient.id} />
-                <ClientOrdersList clientId={displayClient.id} />
-                <Button
-                  variant="outlined"
-                  block
-                  onClick={handleOpenFullProfile}
-                  icon={<ArrowLineUpRightIcon />}
-                >
-                  {t("conversation.clientProfile.fullProfile")}
-                </Button>
-              </Flex>
+              <ClientProfileDrawerView
+                client={displayClient}
+                conversation={conversation}
+                onClientUpdated={handleClientUpdated}
+                onCurrentConversationUnlinked={handleCurrentConversationUnlinked}
+              />
             )
           ) : (
             <Text type="secondary">

@@ -3,6 +3,7 @@ import { apiClient } from "@/api/api-client";
 import type {
   Client,
   ClientCreatePayload,
+  ClientLinkPayload,
   ClientLookupResponse,
   ClientsGetParams,
   ClientsListQueryParams,
@@ -112,5 +113,21 @@ export const clientsApi = {
 
   delete: async (id: number): Promise<void> => {
     await apiClient.delete<unknown>(`${basePath}/${id}`);
+  },
+
+  createLink: async (
+    clientId: number,
+    payload: ClientLinkPayload,
+  ): Promise<void> => {
+    await apiClient.post<unknown>(`${basePath}/${clientId}/links`, payload);
+  },
+
+  deleteLink: async (
+    clientId: number,
+    payload: ClientLinkPayload,
+  ): Promise<void> => {
+    await apiClient.delete<unknown>(`${basePath}/${clientId}/links`, {
+      data: payload,
+    });
   },
 };

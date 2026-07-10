@@ -16,12 +16,20 @@ const { Text } = Typography;
 
 type HeaderProps = {
   clientInfoOpen?: boolean;
+  hasLinkedClient?: boolean;
+  clientLookupLoading?: boolean;
   onBackToList?: () => void;
   onClientInfoOpen?: () => void;
 };
 
 export const Header = observer(
-  ({ clientInfoOpen, onBackToList, onClientInfoOpen }: HeaderProps) => {
+  ({
+    clientInfoOpen,
+    hasLinkedClient,
+    clientLookupLoading,
+    onBackToList,
+    onClientInfoOpen,
+  }: HeaderProps) => {
     const { t } = useTranslation();
     const isMobileViewport = useIsMobileViewport();
     const { conversationId } = useParams();
@@ -73,6 +81,13 @@ export const Header = observer(
       </>
     );
 
+    const clientInfoLabel = hasLinkedClient
+      ? t("conversation.clientInfoTooltip")
+      : t("conversation.createClientTooltip");
+    const clientInfoAria = hasLinkedClient
+      ? t("conversation.clientInfoAria")
+      : t("conversation.createClientAria");
+
     return (
       <S.Header>
         {onBackToList ? (
@@ -114,12 +129,13 @@ export const Header = observer(
             color="default"
             variant={isMobileViewport ? "filled" : "link"}
             icon={<UserIcon />}
-            aria-label={t("conversation.clientInfoAria")}
+            aria-label={clientInfoAria}
             aria-pressed={clientInfoOpen}
+            loading={clientLookupLoading}
             data-qa="layout-conversation-details-client-info-toggle"
             onClick={onClientInfoOpen}
           >
-            {isMobileViewport ? null : t("conversation.clientInfoTooltip")}
+            {isMobileViewport ? null : clientInfoLabel}
             {isMobileViewport ? null : <CaretRightIcon />}
           </Button>
         </S.HeaderAside>

@@ -1,11 +1,12 @@
-import { Card, Flex, Typography } from "antd";
+import { Card, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import { CenteredSpinner } from "@/components/loading/centered-spinner";
 import { useOrdersStore } from "@/features/orders/model/use-orders-store";
-import { formatDate } from "@/utils/date-time";
+
+import * as S from "../conversation-client-info-panel.styled";
 
 const { Text } = Typography;
 
@@ -41,13 +42,8 @@ export const ClientOrdersSummary = observer(
           value: data ? String(data.orderCount) : emptyValue,
         },
         {
-          key: "lastOrder",
-          label: t("conversation.clientOrders.lastOrder"),
-          value: data?.lastOrderAt ? formatDate(data.lastOrderAt) : emptyValue,
-        },
-        {
           key: "spent",
-          label: t("conversation.clientOrders.spent"),
+          label: t("conversation.clientOrders.ordersSum"),
           value: data ? formatUahAmount(data.totalSpent) : emptyValue,
         },
         {
@@ -60,72 +56,37 @@ export const ClientOrdersSummary = observer(
 
     if (ordersStore.clientStatsLoading) {
       return (
-        <Flex vertical gap={4}>
-          <Text strong>{t("conversation.clientOrders.summaryTitle")}</Text>
+        <S.Section>
           <CenteredSpinner minHeight={96} />
-        </Flex>
+        </S.Section>
       );
     }
 
     return (
-      <Flex vertical gap={4}>
-        <Text strong>{t("conversation.clientOrders.summaryTitle")}</Text>
+      <S.Section>
         {ordersStore.clientStatsError ? (
           <Text type="danger">{ordersStore.clientStatsError}</Text>
         ) : null}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-            gap: 8,
-            width: 330,
-          }}
-        >
+        <S.StatsGrid>
           {stats.map(({ key, label, value }) => (
             <Card
               key={key}
               size="small"
               variant="outlined"
-              style={{
-                background: "transparent",
-                borderRadius: 10,
-              }}
               styles={{
                 body: {
-                  padding: "8px 10px",
-                },
-                root: {
-                  boxShadow: "0 2px 4px rgba(0,0,0,0.06)",
+                  padding: "10px 12px",
                 },
               }}
             >
-              <Text
-                type="secondary"
-                style={{
-                  fontSize: 12,
-                  lineHeight: 1.2,
-                  marginBottom: 4,
-                }}
-                ellipsis
-              >
-                {label}
-              </Text>
-
-              <Text
-                strong
-                style={{
-                  display: "block",
-                  fontSize: 15,
-                  lineHeight: 1.3,
-                }}
-                ellipsis
-              >
+              <S.StatLabel>{label}</S.StatLabel>
+              <Text strong style={{ fontSize: 18, lineHeight: 1.2 }}>
                 {value}
               </Text>
             </Card>
           ))}
-        </div>
-      </Flex>
+        </S.StatsGrid>
+      </S.Section>
     );
   },
 );

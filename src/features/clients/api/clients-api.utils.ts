@@ -2,6 +2,7 @@ import type {
   Client,
   ClientLookupResponse,
   ClientOrderStats,
+  ClientSocialLinkRecord,
   ClientsGetParams,
   ClientsListQueryParams,
   ClientsListResponse,
@@ -69,6 +70,8 @@ export function normalizeClient(value: unknown): Client | null {
     return null;
   }
 
+  const links = normalizeClientSocialLinks(value.links);
+
   return {
     id: value.id,
     firstName: typeof value.firstName === "string" ? value.firstName : "",
@@ -77,10 +80,47 @@ export function normalizeClient(value: unknown): Client | null {
     phone: typeof value.phone === "string" ? value.phone : "",
     instagramUserIds: normalizeStringArray(value.instagramUserIds),
     telegramUserIds: normalizeStringArray(value.telegramUserIds),
+    links: links.length > 0 ? links : undefined,
     workspaceId: typeof value.workspaceId === "number" ? value.workspaceId : 0,
     avatar_src: typeof value.avatar_src === "string" ? value.avatar_src : null,
     orderStats: normalizeClientOrderStats(value.orderStats),
   };
+}
+
+function normalizeClientSocialLinks(value: unknown): ClientSocialLinkRecord[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  const links: ClientSocialLinkRecord[] = [];
+
+  for (const item of value) {
+    if (!isRecord(item)) {
+      continue;
+    }
+
+    const provider = item.provider;
+    const externalId = item.externalId;
+
+    if (
+      (provider !== "instagram" && provider !== "telegram") ||
+      typeof externalId !== "string" ||
+      !externalId.trim()
+    ) {
+      continue;
+    }
+
+    links.push({
+      provider,
+      externalId: externalId.trim(),
+      username:
+        typeof item.username === "string" && item.username.trim()
+          ? item.username.trim()
+          : null,
+    });
+  }
+
+  return links;
 }
 
 export function normalizeClientsListResponse(
@@ -201,6 +241,11 @@ export function buildClientsGetQueryParams(
 
   if (listParams.include_order_stat === true) {
     query.include_order_stat = true;
+  }
+
+  const keyword = listParams.keyword?.trim();
+  if (keyword) {
+    query.keyword = keyword;
   }
 
   return query;

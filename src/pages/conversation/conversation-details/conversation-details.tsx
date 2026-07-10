@@ -1,10 +1,11 @@
-import { Drawer, Flex, Spin, Typography } from "antd";
+import { Button, Drawer, Flex, Spin, Typography } from "antd";
+import { PencilSimpleIcon } from "@phosphor-icons/react";
 import { observer } from "mobx-react-lite";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router";
 
-import { getOrderDetailsPath, pagesMap } from "@/app/router/pages-map";
+import { getOrderDetailsPath, getClientDetailsPath, pagesMap } from "@/app/router/pages-map";
 import { useUserStore } from "@/features/auth/model/use-user-store";
 import { clientsApi } from "@/features/clients/api/clients-api";
 import type {
@@ -206,6 +207,21 @@ export const ConversationDetails = observer(() => {
     });
   }, []);
 
+  const handleClientAssociationCleared = useCallback(() => {
+    setClientLookup({
+      associated: false,
+      status: "",
+    });
+  }, []);
+
+  const handleEditClient = useCallback(() => {
+    if (linkedClientId == null) {
+      return;
+    }
+
+    navigate(getClientDetailsPath(linkedClientId));
+  }, [linkedClientId, navigate]);
+
   const handleCreateOrderClick = useCallback(() => {
     if (!activeConversation || !linkedClient) {
       return;
@@ -360,6 +376,8 @@ export const ConversationDetails = observer(() => {
       <S.ThreadColumn>
         <Header
           clientInfoOpen={clientInfoOpen}
+          hasLinkedClient={linkedClient != null}
+          clientLookupLoading={clientLookupLoading}
           onBackToList={
             isMobileViewport
               ? () => navigate(pagesMap.conversations)
@@ -423,10 +441,20 @@ export const ConversationDetails = observer(() => {
       </S.ThreadColumn>
 
       <Drawer
-        title={clientPanelTitle}
+        title={linkedClient ? null : clientPanelTitle}
         closable={{
           "aria-label": t("conversation.closeClientPanelAria"),
         }}
+        extra={
+          linkedClient ? (
+            <Button
+              type="text"
+              aria-label={t("conversation.clientProfile.editAria")}
+              icon={<PencilSimpleIcon size={18} />}
+              onClick={handleEditClient}
+            />
+          ) : null
+        }
         onClose={() => setClientInfoOpen(false)}
         open={clientInfoOpen}
         placement={isMobileViewport ? "bottom" : "right"}
@@ -450,6 +478,7 @@ export const ConversationDetails = observer(() => {
           clientLookupLoading={clientLookupLoading}
           clientInfoOpen={clientInfoOpen}
           onClientCreated={handleClientCreated}
+          onClientAssociationCleared={handleClientAssociationCleared}
         />
       </Drawer>
 

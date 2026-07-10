@@ -19,6 +19,7 @@ import type {
   OrderStatus,
   OrderStatusCreatePayload,
   OrderStatusUpdatePayload,
+  OrderUpdatePayload,
 } from "@/features/orders/model/order.types";
 import { buildOrderCreatePayload } from "@/features/orders/utils/build-order-create-payload";
 import { buildStandaloneOrderCreatePayload } from "@/features/orders/utils/build-standalone-order-create-payload";
@@ -93,6 +94,7 @@ export class OrdersStore {
   listLoading = false;
   listError: string | null = null;
   createLoading = false;
+  orderUpdateLoading = false;
   waybillCreateLoading = false;
   waybillRemoveLoading = false;
 
@@ -663,6 +665,29 @@ export class OrdersStore {
     } finally {
       runInAction(() => {
         this.waybillRemoveLoading = false;
+      });
+    }
+  };
+
+  updateOrder = async (
+    orderId: number,
+    payload: OrderUpdatePayload,
+  ): Promise<OrderDetails> => {
+    runInAction(() => {
+      this.orderUpdateLoading = true;
+    });
+
+    try {
+      await ordersApi.update(orderId, payload);
+      const updated = await ordersApi.getById(orderId);
+      runInAction(() => {
+        this.replaceOrderInLists(updated);
+      });
+
+      return updated;
+    } finally {
+      runInAction(() => {
+        this.orderUpdateLoading = false;
       });
     }
   };

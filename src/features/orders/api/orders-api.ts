@@ -14,6 +14,7 @@ import {
   type OrderStatusCreatePayload,
   type OrderStatusReorderPayload,
   type OrderStatusUpdatePayload,
+  type OrderUpdatePayload,
   type OrdersListResponse,
 } from "@/features/orders/model/order.types";
 
@@ -214,6 +215,13 @@ export const ordersApi = {
     const { data } = await apiClient.post<OrderListItem>(basePath, payload);
 
     return data;
+  },
+
+  update: async (
+    orderId: number,
+    payload: OrderUpdatePayload,
+  ): Promise<void> => {
+    await apiClient.patch(`${basePath}/${orderId}`, payload);
   },
 
   createNovaPoshtaWaybill: async (

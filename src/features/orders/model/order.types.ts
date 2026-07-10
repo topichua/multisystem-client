@@ -54,6 +54,14 @@ export type OrderCreatePayload = {
   delivery?: OrderDeliveryPayload;
 };
 
+export type OrderUpdatePayload = {
+  items?: OrderCreateItemPayload[];
+  discountAmount?: number;
+  discountPercent?: number;
+  customerNote?: string;
+  internalNote?: string;
+};
+
 export type OrderNovaPoshtaWaybillPayload = {
   weightGrams: number;
   seatsAmount: number;

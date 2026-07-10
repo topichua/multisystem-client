@@ -13,15 +13,23 @@ export type Client = {
   phone: string;
   instagramUserIds: string[];
   telegramUserIds: string[];
+  links?: ClientSocialLinkRecord[];
   workspaceId: number;
   avatar_src?: string | null;
   orderStats?: ClientOrderStats;
+};
+
+export type ClientSocialLinkRecord = {
+  provider: ClientLinkProvider;
+  externalId: string;
+  username?: string | null;
 };
 
 export type ClientsListQueryParams = {
   page?: number;
   pageSize?: number;
   include_order_stat?: boolean;
+  keyword?: string;
   id?: never;
   instagramUserId?: never;
   instagramId?: never;
@@ -101,3 +109,10 @@ export type ClientCreatePayload = {
 };
 
 export type ClientUpdatePayload = Partial<ClientCreatePayload>;
+
+export type ClientLinkProvider = "telegram" | "instagram";
+
+export type ClientLinkPayload = {
+  provider: ClientLinkProvider;
+  externalId: string;
+};
