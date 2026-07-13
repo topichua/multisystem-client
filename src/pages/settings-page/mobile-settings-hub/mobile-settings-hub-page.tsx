@@ -5,6 +5,7 @@ import {
   FlowArrowIcon,
   GearSixIcon,
   GlobeIcon,
+  LightningIcon,
   UserCircleIcon,
   UsersThreeIcon,
 } from "@phosphor-icons/react";
@@ -58,6 +59,11 @@ const settingsMobilePresentationByKey = {
     section: "workspace",
     icon: <FlowArrowIcon />,
     descriptionKey: "settings.mobile.descriptions.statuses",
+  },
+  "settings-automation": {
+    section: "workspace",
+    icon: <LightningIcon />,
+    descriptionKey: "settings.mobile.descriptions.automation",
   },
   "settings-user": {
     section: "account",

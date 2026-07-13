@@ -12,6 +12,8 @@ import { SettingsIndexRoute } from "@/pages/settings-page/settings-index-route";
 import { SettingsGroupDetailRoute } from "@/pages/settings-page/settings-groups/settings-group-detail-route";
 import { SettingsGroupsIndexRoute } from "@/pages/settings-page/settings-groups/settings-groups-index-route";
 import { SettingsGroupsLayout } from "@/pages/settings-page/settings-groups/settings-groups-layout";
+import { SettingsAutomationEditorRoute } from "@/pages/settings-page/settings-automation/settings-automation-editor-route";
+import { SettingsAutomationListRoute } from "@/pages/settings-page/settings-automation/settings-automation-list-route";
 import { SettingsBillingRoute } from "@/pages/settings-page/settings-billing-route";
 import { SettingsSystemRoute } from "@/pages/settings-page/settings-system-route";
 import { SettingsUserRoute } from "@/pages/settings-page/settings-user-route";
@@ -131,6 +133,17 @@ export const PageRoutes = () => {
               <Route path="statuses" element={<OrderStatusesLayout />}>
                 <Route index element={<OrderStatusesIndexRoute />} />
                 <Route path=":statusId" element={<OrderStatusDetailRoute />} />
+              </Route>
+              <Route path="automation">
+                <Route index element={<SettingsAutomationListRoute />} />
+                <Route
+                  path="new"
+                  element={<SettingsAutomationEditorRoute />}
+                />
+                <Route
+                  path=":ruleId"
+                  element={<SettingsAutomationEditorRoute />}
+                />
               </Route>
             </Route>
           </Route>

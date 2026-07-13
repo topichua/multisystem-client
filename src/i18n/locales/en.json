@@ -633,6 +633,7 @@
       "groups": "Groups",
       "templates": "Templates",
       "statuses": "Order statuses",
+      "automation": "Automation",
       "user": "User",
       "system": "System",
       "integrations": "Integrations",
@@ -648,11 +649,100 @@
         "groups": "Create and manage conversation groups.",
         "templates": "Create and edit reusable replies.",
         "statuses": "Configure order workflow statuses.",
+        "automation": "Automatically update order status based on delivery or payment conditions.",
         "integrations": "Connect channels and external services.",
         "user": "Update profile and account details.",
         "system": "Configure system preferences.",
         "billing": "Manage subscription and billing."
       }
+    }
+  },
+  "automation": {
+    "title": "Automation",
+    "sectionHint": "Automatically change order status when delivery or payment conditions match. Currently only one action type is supported — changing the order status.",
+    "create": "Create automation",
+    "newTitle": "New automation",
+    "editTitle": "Edit automation",
+    "backToList": "Automations",
+    "active": "Active",
+    "save": "Save",
+    "delete": "Delete",
+    "deleteConfirmTitle": "Delete this automation?",
+    "empty": "No automations yet",
+    "ifBadge": "If",
+    "thenBadge": "Then",
+    "equals": "Equals",
+    "addCondition": "Add condition",
+    "removeConditionAria": "Remove condition",
+    "atBranchExtension": {
+      "add": "Add: “At the branch for more than N days” — rule extension",
+      "moreThan": "more than",
+      "days": "days",
+      "removeAria": "Remove extension"
+    },
+    "created": "Automation created",
+    "updated": "Automation updated",
+    "deleted": "Automation deleted",
+    "createError": "Could not create automation",
+    "updateError": "Could not update automation",
+    "deleteError": "Could not delete automation",
+    "loadError": "Could not load automation",
+    "loadListError": "Could not load automations",
+    "loadCriteriaError": "Could not load criteria",
+    "activeToggleError": "Could not update active state",
+    "invalidId": "Invalid automation id",
+    "notFoundTitle": "Automation not found",
+    "notFound": "This automation is no longer available.",
+    "fields": {
+      "name": "Name",
+      "type": "Automation type"
+    },
+    "placeholders": {
+      "name": "Automation name",
+      "sourceStatus": "Select value...",
+      "targetStatus": "Select status...",
+      "durationValue": "Value",
+      "durationUnit": "Unit"
+    },
+    "sourceType": {
+      "delivery": "Delivery status",
+      "payment": "Payment status"
+    },
+    "actionType": {
+      "changeOrderStatus": "Change order status"
+    },
+    "action": {
+      "changeOrderStatus": "Change order status"
+    },
+    "delay": {
+      "label": "Delay",
+      "summary": "{{value}} {{unit}}",
+      "units": {
+        "minutes": "min",
+        "hours": "h",
+        "days": "d",
+        "MINUTES": "min",
+        "HOURS": "h",
+        "DAYS": "d"
+      }
+    },
+    "summary": {
+      "condition": "If {{source}} = {{status}}",
+      "viaDelay": "after {{delay}}",
+      "or": "or",
+      "full": "{{conditions}} → {{target}}"
+    },
+    "validation": {
+      "name": "Enter a name",
+      "conditions": "Add at least one condition",
+      "sourceType": "Select condition type",
+      "sourceStatus": "Select a value",
+      "durationValue": "Enter a positive number",
+      "durationUnit": "Select a time unit",
+      "targetStatus": "Select an order status"
+    },
+    "mobile": {
+      "backToSettingsAria": "Back to settings"
     }
   },
   "billing": {
