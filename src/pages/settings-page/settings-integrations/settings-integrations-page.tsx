@@ -12,6 +12,8 @@ import { PaneNavSplitLayout } from "@/components/layout/pane-nav-split-layout";
 
 import { useSettingsIntegrationsController } from "./controllers/use-settings-integrations-controller";
 import { IntegrationTypeCard } from "./integration-type-card";
+import { ManualPaymentMethodsSetup } from "./manual-payment-methods";
+import { MonobankIntegrationForm } from "./monobank";
 import { NovaPoshtaIntegrationWizard } from "./nova-poshta";
 import { IntegrationTypeSidebar } from "./integration-type-sidebar";
 import * as S from "./settings-integrations.styled";
@@ -54,6 +56,9 @@ export const SettingsIntegrationsPage = observer(() => {
                     instagram: controller.integrationsByType.instagram.length,
                     telegram: controller.integrationsByType.telegram.length,
                     novaposhta: controller.integrationsByType.novaposhta.length,
+                    monobank: controller.integrationsByType.monobank.length,
+                    manualpayment:
+                      controller.integrationsByType.manualpayment.length,
                   }}
                   menuIntegrationTypes={controller.menuIntegrationTypes}
                   query={controller.query}
@@ -90,6 +95,23 @@ export const SettingsIntegrationsPage = observer(() => {
                                 onSubmit={
                                   controller.handleNovaPoshtaWizardSubmit
                                 }
+                              />
+                            ) : definition.type === "monobank" &&
+                              controller.monobankFormOpen ? (
+                              <MonobankIntegrationForm
+                                mode="connect"
+                                submitting={store.isConnecting("monobank")}
+                                onCancel={controller.closeMonobankForm}
+                                onSubmit={controller.handleMonobankSubmit}
+                              />
+                            ) : definition.type === "manualpayment" &&
+                              controller.manualPaymentFormOpen ? (
+                              <ManualPaymentMethodsSetup
+                                integrations={
+                                  controller.integrationsByType.manualpayment
+                                }
+                                onCancel={controller.closeManualPaymentForm}
+                                onUpdated={controller.handleIntegrationUpdated}
                               />
                             ) : undefined
                           }

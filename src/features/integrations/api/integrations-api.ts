@@ -6,9 +6,15 @@ import type {
   IntegrationCreatePayload,
   IntegrationItem,
   IntegrationsListResponse,
+  ManualPaymentMethod,
+  ManualPaymentMethodPayload,
+  ManualPaymentMethodsListResponse,
+  MonobankIntegrationPayload,
   NovaPoshtaIntegrationCreatePayload,
   NovaPoshtaIntegrationDetails,
   NovaPoshtaIntegrationUpdatePayload,
+  PaymentIntegration,
+  PaymentIntegrationsListResponse,
   NovaPoshtaSender,
   NovaPoshtaSettlement,
   NovaPoshtaStreet,
@@ -22,6 +28,8 @@ const basePath = "/integrations";
 const telegramIntegrationsBasePath = "/telegram-integrations";
 const novaPoshtaIntegrationsBasePath = "/novaposhta-integrations";
 const novaPoshtaSearchBasePath = "/nova-poshta";
+const paymentIntegrationsBasePath = "/workspace/payment-integrations";
+const manualPaymentMethodsBasePath = "/workspace/manual-payment-methods";
 const invalidTelegramQrLoginResponseError = new Error(
   "Invalid Telegram QR login response",
 );
@@ -208,6 +216,80 @@ export const integrationsApi = {
     id: number,
   ): Promise<void> => {
     await apiClient.delete(`${basePath}/${type}/${id}`);
+  },
+
+  listPaymentIntegrations:
+    async (): Promise<PaymentIntegrationsListResponse> => {
+      const { data } = await apiClient.get<PaymentIntegrationsListResponse>(
+        paymentIntegrationsBasePath,
+      );
+
+      return data;
+    },
+
+  connectMonobankIntegration: async (
+    payload: MonobankIntegrationPayload,
+  ): Promise<PaymentIntegration> => {
+    const { data } = await apiClient.post<PaymentIntegration>(
+      `${paymentIntegrationsBasePath}/monobank/connect`,
+      payload,
+    );
+
+    return data;
+  },
+
+  updateMonobankIntegration: async (
+    integrationId: PaymentIntegration["id"],
+    payload: MonobankIntegrationPayload,
+  ): Promise<PaymentIntegration> => {
+    const { data } = await apiClient.patch<PaymentIntegration>(
+      `${paymentIntegrationsBasePath}/monobank/${encodeURIComponent(
+        String(integrationId),
+      )}`,
+      payload,
+    );
+
+    return data;
+  },
+
+  listManualPaymentMethods:
+    async (): Promise<ManualPaymentMethodsListResponse> => {
+      const { data } = await apiClient.get<ManualPaymentMethodsListResponse>(
+        manualPaymentMethodsBasePath,
+      );
+
+      return data;
+    },
+
+  createManualPaymentMethod: async (
+    payload: ManualPaymentMethodPayload,
+  ): Promise<ManualPaymentMethod> => {
+    const { data } = await apiClient.post<ManualPaymentMethod>(
+      manualPaymentMethodsBasePath,
+      payload,
+    );
+
+    return data;
+  },
+
+  updateManualPaymentMethod: async (
+    id: ManualPaymentMethod["id"],
+    payload: ManualPaymentMethodPayload,
+  ): Promise<ManualPaymentMethod> => {
+    const { data } = await apiClient.patch<ManualPaymentMethod>(
+      `${manualPaymentMethodsBasePath}/${encodeURIComponent(String(id))}`,
+      payload,
+    );
+
+    return data;
+  },
+
+  deleteManualPaymentMethod: async (
+    id: ManualPaymentMethod["id"],
+  ): Promise<void> => {
+    await apiClient.delete(
+      `${manualPaymentMethodsBasePath}/${encodeURIComponent(String(id))}`,
+    );
   },
 
   startTelegramQrLogin: async (

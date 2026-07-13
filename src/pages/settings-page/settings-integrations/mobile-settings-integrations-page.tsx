@@ -10,6 +10,8 @@ import { dataQaAttrs } from "@/styled/data-qa-attrs";
 import * as MobileS from "../mobile-settings-page.styled";
 import { useSettingsIntegrationsController } from "./controllers/use-settings-integrations-controller";
 import { IntegrationTypeCard } from "./integration-type-card";
+import { ManualPaymentMethodsSetup } from "./manual-payment-methods";
+import { MonobankIntegrationForm } from "./monobank";
 import { NovaPoshtaIntegrationWizard } from "./nova-poshta";
 import { INTEGRATION_TYPES } from "./settings-integrations.definitions";
 import * as S from "./settings-integrations.styled";
@@ -74,6 +76,23 @@ export const MobileSettingsIntegrationsPage = observer(() => {
                           submitting={store.isConnecting("novaposhta")}
                           onCancel={controller.closeNovaPoshtaWizard}
                           onSubmit={controller.handleNovaPoshtaWizardSubmit}
+                        />
+                      ) : definition.type === "monobank" &&
+                        controller.monobankFormOpen ? (
+                        <MonobankIntegrationForm
+                          mode="connect"
+                          submitting={store.isConnecting("monobank")}
+                          onCancel={controller.closeMonobankForm}
+                          onSubmit={controller.handleMonobankSubmit}
+                        />
+                      ) : definition.type === "manualpayment" &&
+                        controller.manualPaymentFormOpen ? (
+                        <ManualPaymentMethodsSetup
+                          integrations={
+                            controller.integrationsByType.manualpayment
+                          }
+                          onCancel={controller.closeManualPaymentForm}
+                          onUpdated={controller.handleIntegrationUpdated}
                         />
                       ) : undefined
                     }

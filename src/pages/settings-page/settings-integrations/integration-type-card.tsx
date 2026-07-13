@@ -6,6 +6,8 @@ import { useTranslation } from "react-i18next";
 import type { IntegrationItem } from "@/features/integrations/model/integration.types";
 
 import { IntegrationAccountCard } from "./integration-account-card";
+import { ManualPaymentMethodCard } from "./manual-payment-methods";
+import { MonobankIntegrationCard } from "./monobank";
 import { NovaPoshtaIntegrationCard } from "./nova-poshta";
 import type {
   IntegrationDefinition,
@@ -40,8 +42,11 @@ export const IntegrationTypeCard = ({
   const hasConnections = integrations.length > 0;
   const hasSetupContent = setupContent != null;
   const isMobile = layout === "mobile";
+  const canConnectMore = definition.allowMultiple || !hasConnections;
+  const showConnectButton =
+    !hasSetupContent || definition.type === "manualpayment";
 
-  const connectButton = (
+  const connectButton = canConnectMore ? (
     <Button
       block={isMobile}
       icon={<PlusIcon />}
@@ -58,10 +63,23 @@ export const IntegrationTypeCard = ({
     >
       {t(definition.connectLabelKey)}
     </Button>
-  );
+  ) : null;
 
   const renderIntegrationCard = (integration: IntegrationItem) =>
-    integration.type === "novaposhta" ? (
+    integration.type === "manualpayment" ? (
+      <ManualPaymentMethodCard
+        key={`${integration.type}-${integration.id}-${integration.connectedAt}`}
+        integration={integration}
+        onUpdated={onIntegrationUpdated}
+      />
+    ) : integration.type === "monobank" ? (
+      <MonobankIntegrationCard
+        key={`${integration.type}-${integration.id}-${integration.connectedAt}`}
+        integration={integration}
+        layout={layout}
+        onUpdated={onIntegrationUpdated}
+      />
+    ) : integration.type === "novaposhta" ? (
       <NovaPoshtaIntegrationCard
         key={`${integration.type}-${integration.id}-${integration.connectedAt}`}
         integration={integration}
@@ -105,7 +123,7 @@ export const IntegrationTypeCard = ({
             </S.IntegrationCardText>
           </S.IntegrationCardIdentity>
 
-          {hasSetupContent ? null : connectButton}
+          {showConnectButton ? connectButton : null}
         </S.MobileIntegrationCardHeader>
 
         {hasSetupContent ? (
@@ -145,7 +163,9 @@ export const IntegrationTypeCard = ({
             </S.IntegrationCardDescription>
           </S.IntegrationCardText>
         </S.IntegrationCardIdentity>
-        {hasSetupContent ? null : <Flex flex="0 0 auto">{connectButton}</Flex>}
+        {!showConnectButton || !connectButton ? null : (
+          <Flex flex="0 0 auto">{connectButton}</Flex>
+        )}
       </S.IntegrationCardHeader>
 
       <S.IntegrationCardDivider />

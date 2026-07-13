@@ -1,4 +1,8 @@
-import { MagnifyingGlassIcon, SquaresFourIcon } from "@phosphor-icons/react";
+import {
+  CreditCardIcon,
+  MagnifyingGlassIcon,
+  SquaresFourIcon,
+} from "@phosphor-icons/react";
 import type { MenuProps } from "antd";
 import { Badge, Flex, Input, Menu, Typography } from "antd";
 import { useMemo } from "react";
@@ -9,11 +13,13 @@ import { InstagramLogoIcon } from "@/components/icons/instagram/instagram-logo-i
 import { NovaPostIcon } from "@/components/icons/nova-post/nova-post-icon";
 import { TelegramLogoIcon } from "@/components/icons/telegram/telegram-logo-icon";
 
+import { INTEGRATION_TYPE_GROUPS } from "./settings-integrations.definitions";
 import type {
   IntegrationDefinition,
   IntegrationFilter,
   IntegrationType,
 } from "./settings-integrations.definitions";
+import * as S from "./settings-integrations.styled";
 
 const SIDEBAR_ICON_SIZE = 24;
 
@@ -25,6 +31,10 @@ const getSidebarIcon = (type: IntegrationType) => {
       return <TelegramLogoIcon size={SIDEBAR_ICON_SIZE} />;
     case "novaposhta":
       return <NovaPostIcon size={SIDEBAR_ICON_SIZE} />;
+    case "monobank":
+      return <CreditCardIcon size={SIDEBAR_ICON_SIZE} weight="duotone" />;
+    case "manualpayment":
+      return <CreditCardIcon size={SIDEBAR_ICON_SIZE} weight="duotone" />;
   }
 };
 
@@ -50,7 +60,7 @@ export const IntegrationTypeSidebar = ({
   const { t } = useTranslation();
 
   const menuItems: MenuProps["items"] = useMemo(() => {
-    const typeItems = menuIntegrationTypes.map((item) => ({
+    const renderTypeItem = (item: IntegrationDefinition) => ({
       key: item.type,
       icon: getSidebarIcon(item.type),
       label: (
@@ -59,7 +69,28 @@ export const IntegrationTypeSidebar = ({
           <Badge count={integrationsCountByType[item.type]} showZero />
         </Flex>
       ),
-    }));
+    });
+
+    const groupItems = INTEGRATION_TYPE_GROUPS.map((group) => {
+      const children = menuIntegrationTypes
+        .filter((item) => item.groupKey === group.key)
+        .map(renderTypeItem);
+
+      if (children.length === 0) {
+        return null;
+      }
+
+      return {
+        key: `group-${group.key}`,
+        type: "group" as const,
+        label: (
+          <S.IntegrationSidebarGroupLabel>
+            {t(group.labelKey)}
+          </S.IntegrationSidebarGroupLabel>
+        ),
+        children,
+      };
+    }).filter((item): item is NonNullable<typeof item> => item !== null);
 
     return [
       {
@@ -74,7 +105,7 @@ export const IntegrationTypeSidebar = ({
           </Flex>
         ),
       },
-      ...typeItems,
+      ...groupItems,
     ];
   }, [integrationsCountByType, menuIntegrationTypes, totalCount, t]);
 

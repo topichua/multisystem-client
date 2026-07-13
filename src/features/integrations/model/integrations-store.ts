@@ -6,7 +6,11 @@ import { throwLoadError } from "@/utils/throw-load-error";
 import type {
   IntegrationItem,
   IntegrationType,
+  ManualPaymentMethod,
+  ManualPaymentMethodPayload,
+  MonobankIntegrationPayload,
   NovaPoshtaIntegrationCreatePayload,
+  PaymentIntegration,
   TelegramQrLoginSession,
 } from "./integration.types";
 
@@ -26,6 +30,36 @@ type ConnectableIntegrationType =
 type IntegrationRequestOptions = {
   signal?: AbortSignal;
 };
+
+const paymentIntegrationToIntegrationItem = (
+  integration: PaymentIntegration,
+): IntegrationItem => ({
+  type: integration.provider,
+  id: integration.id,
+  name: integration.displayName,
+  connectedAt: integration.createdAt,
+  paymentProvider: integration.provider,
+  displayName: integration.displayName,
+  status: integration.status,
+  isDefault: integration.isDefault,
+  credentialsMasked: integration.credentialsMasked,
+  lastConnectionCheckAt: integration.lastConnectionCheckAt,
+  lastError: integration.lastError,
+  updatedAt: integration.updatedAt,
+});
+
+const manualPaymentMethodToIntegrationItem = (
+  method: ManualPaymentMethod,
+): IntegrationItem => ({
+  type: "manualpayment",
+  id: method.id,
+  name: method.name,
+  connectedAt: method.createdAt,
+  manualPaymentMethodType: method.type,
+  manualPaymentValue: method.value,
+  manualPaymentDisplayValue: method.displayValue,
+  updatedAt: method.updatedAt,
+});
 
 export const isConnectableIntegrationType = (
   type: string,
@@ -79,15 +113,56 @@ export class IntegrationsStore {
       }
 
       try {
-        const data = await integrationsApi.list();
+        const [integrationsResult, paymentResult, manualPaymentResult] =
+          await Promise.allSettled([
+            integrationsApi.list(),
+            integrationsApi.listPaymentIntegrations(),
+            integrationsApi.listManualPaymentMethods(),
+          ]);
+
+        if (integrationsResult.status === "rejected") {
+          runInAction(() => {
+            this.items = [];
+          });
+          throwLoadError(
+            "Failed to load integrations",
+            integrationsResult.reason,
+          );
+        }
+
+        const integrationItems = Array.isArray(integrationsResult.value.items)
+          ? integrationsResult.value.items.filter(
+              (item) =>
+                item.type !== "monobank" && item.type !== "manualpayment",
+            )
+          : [];
+        const paymentItems =
+          paymentResult.status === "fulfilled" &&
+          Array.isArray(paymentResult.value.integrations)
+            ? paymentResult.value.integrations.map(
+                paymentIntegrationToIntegrationItem,
+              )
+            : [];
+        const manualPaymentItems =
+          manualPaymentResult.status === "fulfilled" &&
+          Array.isArray(manualPaymentResult.value.items)
+            ? manualPaymentResult.value.items.map(
+                manualPaymentMethodToIntegrationItem,
+              )
+            : [];
+
         runInAction(() => {
-          this.items = Array.isArray(data.items) ? data.items : [];
+          this.items = [
+            ...integrationItems,
+            ...paymentItems,
+            ...manualPaymentItems,
+          ];
         });
       } catch (e) {
         runInAction(() => {
           this.items = [];
         });
-        throwLoadError("Failed to load integrations", e);
+        throw e;
       } finally {
         if (!silent) {
           runInAction(() => {
@@ -175,6 +250,66 @@ export class IntegrationsStore {
         }
       });
     }
+  };
+
+  connectMonobankIntegration = async (
+    payload: MonobankIntegrationPayload,
+  ): Promise<PaymentIntegration> => {
+    runInAction(() => {
+      this.connectLoadingType = "monobank";
+    });
+
+    try {
+      const created = await integrationsApi.connectMonobankIntegration(payload);
+      await this.loadIntegrations({ silent: true, force: true });
+
+      return created;
+    } finally {
+      runInAction(() => {
+        if (this.connectLoadingType === "monobank") {
+          this.connectLoadingType = null;
+        }
+      });
+    }
+  };
+
+  updateMonobankIntegration = async (
+    integrationId: PaymentIntegration["id"],
+    payload: MonobankIntegrationPayload,
+  ): Promise<PaymentIntegration> => {
+    const updated = await integrationsApi.updateMonobankIntegration(
+      integrationId,
+      payload,
+    );
+    await this.loadIntegrations({ silent: true, force: true });
+
+    return updated;
+  };
+
+  createManualPaymentMethod = async (
+    payload: ManualPaymentMethodPayload,
+  ): Promise<ManualPaymentMethod> => {
+    const created = await integrationsApi.createManualPaymentMethod(payload);
+    await this.loadIntegrations({ silent: true, force: true });
+
+    return created;
+  };
+
+  updateManualPaymentMethod = async (
+    id: ManualPaymentMethod["id"],
+    payload: ManualPaymentMethodPayload,
+  ): Promise<ManualPaymentMethod> => {
+    const updated = await integrationsApi.updateManualPaymentMethod(id, payload);
+    await this.loadIntegrations({ silent: true, force: true });
+
+    return updated;
+  };
+
+  deleteManualPaymentMethod = async (
+    id: ManualPaymentMethod["id"],
+  ): Promise<void> => {
+    await integrationsApi.deleteManualPaymentMethod(id);
+    await this.loadIntegrations({ silent: true, force: true });
   };
 
   confirmTelegramQrLogin = async (

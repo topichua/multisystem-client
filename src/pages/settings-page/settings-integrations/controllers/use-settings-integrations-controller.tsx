@@ -10,6 +10,7 @@ import {
 } from "@/features/integrations/open-integration-auth";
 import type {
   IntegrationItem,
+  MonobankIntegrationPayload,
   NovaPoshtaIntegrationCreatePayload,
   TelegramQrLoginSession,
 } from "@/features/integrations/model/integration.types";
@@ -50,6 +51,8 @@ export function useSettingsIntegrationsController() {
   const [selectedFilter, setSelectedFilter] =
     useState<IntegrationFilter>("all");
   const [novaPoshtaWizardOpen, setNovaPoshtaWizardOpen] = useState(false);
+  const [monobankFormOpen, setMonobankFormOpen] = useState(false);
+  const [manualPaymentFormOpen, setManualPaymentFormOpen] = useState(false);
   const [telegramQrModal, setTelegramQrModal] = useState<TelegramQrModalState>({
     open: false,
     status: "idle",
@@ -384,6 +387,16 @@ export function useSettingsIntegrationsController() {
         return;
       }
 
+      if (type === "monobank") {
+        setMonobankFormOpen(true);
+        return;
+      }
+
+      if (type === "manualpayment") {
+        setManualPaymentFormOpen(true);
+        return;
+      }
+
       if (type === "telegram") {
         await startTelegramQrLogin();
         return;
@@ -417,6 +430,14 @@ export function useSettingsIntegrationsController() {
     setNovaPoshtaWizardOpen(false);
   }, []);
 
+  const closeMonobankForm = useCallback(() => {
+    setMonobankFormOpen(false);
+  }, []);
+
+  const closeManualPaymentForm = useCallback(() => {
+    setManualPaymentFormOpen(false);
+  }, []);
+
   const handleIntegrationUpdated = useCallback(() => {
     void store.loadIntegrations({ silent: true, force: true });
   }, [store]);
@@ -426,6 +447,21 @@ export function useSettingsIntegrationsController() {
       try {
         await store.createNovaPoshtaIntegration(payload);
         setNovaPoshtaWizardOpen(false);
+        notification.success({ title: t("integrations.connectSuccess") });
+      } catch (e) {
+        notification.error({
+          title: getApiErrorMessage(e, t("integrations.connectFailed")),
+        });
+      }
+    },
+    [notification, store, t],
+  );
+
+  const handleMonobankSubmit = useCallback(
+    async (payload: MonobankIntegrationPayload) => {
+      try {
+        await store.connectMonobankIntegration(payload);
+        setMonobankFormOpen(false);
         notification.success({ title: t("integrations.connectSuccess") });
       } catch (e) {
         notification.error({
@@ -452,6 +488,11 @@ export function useSettingsIntegrationsController() {
     novaPoshtaWizardOpen,
     closeNovaPoshtaWizard,
     handleNovaPoshtaWizardSubmit,
+    monobankFormOpen,
+    closeMonobankForm,
+    handleMonobankSubmit,
+    manualPaymentFormOpen,
+    closeManualPaymentForm,
     telegramQrModal,
     closeTelegramQrModal,
     retryTelegramQrLogin: startTelegramQrLogin,

@@ -15,8 +15,21 @@ export function useSettingsBillingPage() {
   const billingStore = useBillingStore();
   const paymentBlockRef = useRef<HTMLDivElement | null>(null);
   const [creditsModalOpen, setCreditsModalOpen] = useState(false);
+  const subscriptionBillingCycle = billingStore.subscription?.billingCycle;
   const [selectedBillingCycle, setSelectedBillingCycle] =
     useState<BillingCycle>("monthly");
+  const [prevSubscriptionBillingCycle, setPrevSubscriptionBillingCycle] =
+    useState(subscriptionBillingCycle);
+
+  if (subscriptionBillingCycle !== prevSubscriptionBillingCycle) {
+    setPrevSubscriptionBillingCycle(subscriptionBillingCycle);
+    if (
+      subscriptionBillingCycle === 'monthly' ||
+      subscriptionBillingCycle === 'yearly'
+    ) {
+      setSelectedBillingCycle(subscriptionBillingCycle);
+    }
+  }
 
   const isOwner = userStore.isWorkspaceOwner;
 
@@ -32,14 +45,6 @@ export function useSettingsBillingPage() {
   useEffect(() => {
     void loadPage();
   }, [loadPage]);
-
-  useEffect(() => {
-    const cycle = billingStore.subscription?.billingCycle;
-
-    if (cycle === "monthly" || cycle === "yearly") {
-      setSelectedBillingCycle(cycle);
-    }
-  }, [billingStore.subscription?.billingCycle]);
 
   useEffect(() => {
     if (!isOwner) {

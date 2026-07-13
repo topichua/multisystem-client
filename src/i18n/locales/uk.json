@@ -824,6 +824,11 @@
     "connectedTag": "Підключено",
     "typeLabel": "Тип: {{type}}",
     "addedLabel": "Додано: {{date}}",
+    "groups": {
+      "channels": "Канали звернень",
+      "delivery": "Доставка",
+      "payment": "Оплата"
+    },
     "mobile": {
       "backToSettingsAria": "До налаштувань",
       "connectedAccountsCount_one": "{{count}} підключений акаунт",
@@ -849,6 +854,18 @@
         "description": "Налаштування відділень і доставки.",
         "connectLabel": "Підключити",
         "empty": "Немає інтеграцій Нової Пошти"
+      },
+      "monobank": {
+        "label": "Monobank",
+        "description": "Платіжний еквайринг через Monobank.",
+        "connectLabel": "Підключити",
+        "empty": "Немає інтеграцій Monobank"
+      },
+      "manualpayment": {
+        "label": "Реквізити для переказу",
+        "description": "IBAN або номер картки, які менеджер надсилає клієнту для ручної оплати в замовленні.",
+        "connectLabel": "Додати",
+        "empty": "Немає реквізитів для переказу"
       }
     },
     "modal": {
@@ -988,6 +1005,81 @@
         "senderNameRequired": "Вкажіть відправника",
         "senderPhone": "Телефон відправника",
         "senderPhoneRequired": "Вкажіть телефон відправника"
+      }
+    },
+    "monobank": {
+      "defaultDisplayName": "Еквайринг Monobank",
+      "fields": {
+        "displayName": {
+          "label": "Назва інтеграції",
+          "placeholder": "Напр. Monobank · Основний мерчант",
+          "required": "Вкажіть назву інтеграції"
+        },
+        "merchantToken": {
+          "label": "Merchant token",
+          "placeholder": "Введіть merchant token",
+          "required": "Вкажіть merchant token"
+        }
+      },
+      "actions": {
+        "connect": "Підключити",
+        "edit": "Зберегти",
+        "cancel": "Скасувати"
+      }
+    },
+    "monobankDetails": {
+      "editAction": "Редагувати інтеграцію",
+      "updateSuccess": "Інтеграцію Monobank оновлено",
+      "updateFailed": "Не вдалося оновити інтеграцію Monobank",
+      "emptyValue": "Не вказано",
+      "fields": {
+        "merchantToken": "Merchant token",
+        "status": "Статус",
+        "lastConnectionCheck": "Остання перевірка підключення",
+        "lastError": "Остання помилка"
+      },
+      "status": {
+        "connected": "Підключено",
+        "unknown": "Невідомо"
+      }
+    },
+    "manualPayment": {
+      "createSuccess": "Реквізити збережено",
+      "createFailed": "Не вдалося зберегти реквізити",
+      "updateSuccess": "Реквізити оновлено",
+      "updateFailed": "Не вдалося оновити реквізити",
+      "deleteSuccess": "Реквізити видалено",
+      "deleteFailed": "Не вдалося видалити реквізити",
+      "deleteConfirmTitle": "Видалити реквізити?",
+      "deleteConfirmContent": "Видалити \"{{name}}\"?",
+      "types": {
+        "iban": "IBAN",
+        "card": "Картка"
+      },
+      "fields": {
+        "name": {
+          "label": "Назва",
+          "placeholder": "Напр. ФОП Романів О. В.",
+          "required": "Вкажіть назву"
+        },
+        "iban": {
+          "label": "IBAN",
+          "placeholder": "UA123456781234567890123456789",
+          "required": "Вкажіть IBAN",
+          "invalid": "IBAN має починатися з UA і містити 27 цифр після нього"
+        },
+        "cardNumber": {
+          "label": "Номер картки",
+          "placeholder": "0000 0000 0000 0000",
+          "required": "Вкажіть номер картки",
+          "invalid": "Номер картки має містити 16 цифр"
+        }
+      },
+      "actions": {
+        "save": "Зберегти",
+        "cancel": "Скасувати",
+        "edit": "Редагувати",
+        "delete": "Видалити"
       }
     },
     "telegramQr": {

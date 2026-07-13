@@ -82,6 +82,51 @@ export const IntegrationEmptyState = styled.p`
   line-height: 1.35;
 `;
 
+export const IntegrationSidebarGroupLabel = styled.span`
+  display: block;
+  text-transform: uppercase;
+  font-size: 11px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.colors.functional.text.subdued};
+`;
+
+export const ManualPaymentMethodsSetup = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+export const ManualPaymentMethodFormPanel = styled.div`
+  padding: 16px;
+  border-radius: ${({ theme }) => theme.radius.semiLarge};
+  width: 100%;
+
+  .ant-form-item {
+    margin-bottom: 12px;
+  }
+`;
+
+export const ManualPaymentMethodFormActions = styled.div<{ $single: boolean }>`
+  display: flex;
+  justify-content: ${({ $single }) => ($single ? 'stretch' : 'flex-end')};
+  gap: 8px;
+`;
+
+export const ManualPaymentMethodsList = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-top: 16px;
+`;
+
+export const ManualPaymentMethodRow = styled.div`
+  display: flex;
+  min-width: 0;
+  padding: 16px 0;
+
+  & + & {
+    border-top: 1px solid ${({ theme }) => theme.colors.functional.border.split};
+  }
+`;
+
 export const IntegrationAccountRow = styled.div`
   display: flex;
   align-items: center;

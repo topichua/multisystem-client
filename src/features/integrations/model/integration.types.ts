@@ -2,6 +2,8 @@ export type IntegrationType =
   | "instagram"
   | "telegram"
   | "novaposhta"
+  | "monobank"
+  | "manualpayment"
   | (string & {});
 
 export type IntegrationItem = {
@@ -16,6 +18,17 @@ export type IntegrationItem = {
   postsCount?: number;
   page?: string;
   url?: string;
+  paymentProvider?: PaymentIntegrationProviderType;
+  displayName?: string;
+  status?: PaymentIntegrationStatus;
+  isDefault?: boolean;
+  credentialsMasked?: string | null;
+  lastConnectionCheckAt?: string | null;
+  lastError?: string | null;
+  manualPaymentMethodType?: ManualPaymentMethodType;
+  manualPaymentValue?: string;
+  manualPaymentDisplayValue?: string;
+  updatedAt?: string;
 };
 
 export type IntegrationsListResponse = {
@@ -25,6 +38,64 @@ export type IntegrationsListResponse = {
 
 export type IntegrationCreatePayload = {
   integration_type: IntegrationType;
+};
+
+export type PaymentIntegrationProviderType = "monobank" | (string & {});
+
+export type PaymentIntegrationProvider = {
+  provider: PaymentIntegrationProviderType;
+  label: string;
+  connected: boolean;
+};
+
+export type PaymentIntegrationStatus = "connected" | (string & {});
+
+export type PaymentIntegration = {
+  id: number;
+  workspaceId: number;
+  provider: PaymentIntegrationProviderType;
+  displayName: string;
+  status: PaymentIntegrationStatus;
+  isDefault: boolean;
+  credentialsMasked: string | null;
+  lastConnectionCheckAt: string | null;
+  lastError: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type PaymentIntegrationsListResponse = {
+  availableProviders: PaymentIntegrationProvider[];
+  integrations: PaymentIntegration[];
+};
+
+export type MonobankIntegrationPayload = {
+  merchantToken: string;
+  displayName: string;
+};
+
+export type ManualPaymentMethodType = "iban" | "card" | (string & {});
+
+export type ManualPaymentMethod = {
+  id: number;
+  workspaceId: number;
+  name: string;
+  type: ManualPaymentMethodType;
+  value: string;
+  displayValue: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type ManualPaymentMethodsListResponse = {
+  workspaceId: number;
+  items: ManualPaymentMethod[];
+};
+
+export type ManualPaymentMethodPayload = {
+  name: string;
+  type: ManualPaymentMethodType;
+  value: string;
 };
 
 export type NovaPoshtaSenderType = "warehouse" | "address";

@@ -818,6 +818,11 @@
     "connectedTag": "Connected",
     "typeLabel": "Type: {{type}}",
     "addedLabel": "Added: {{date}}",
+    "groups": {
+      "channels": "Contact channels",
+      "delivery": "Delivery",
+      "payment": "Payment"
+    },
     "mobile": {
       "backToSettingsAria": "Back to settings",
       "connectedAccountsCount_one": "{{count}} connected account",
@@ -841,6 +846,18 @@
         "description": "Warehouse and delivery settings.",
         "connectLabel": "Connect",
         "empty": "No Nova Poshta integrations"
+      },
+      "monobank": {
+        "label": "Monobank",
+        "description": "Payment acquiring through Monobank.",
+        "connectLabel": "Connect",
+        "empty": "No Monobank integrations"
+      },
+      "manualpayment": {
+        "label": "Transfer details",
+        "description": "IBAN or card number that managers can send to clients for manual order payments.",
+        "connectLabel": "Add",
+        "empty": "No transfer details"
       }
     },
     "modal": {
@@ -980,6 +997,81 @@
         "senderNameRequired": "Enter sender",
         "senderPhone": "Sender phone",
         "senderPhoneRequired": "Enter sender phone"
+      }
+    },
+    "monobank": {
+      "defaultDisplayName": "Monobank Acquiring",
+      "fields": {
+        "displayName": {
+          "label": "Integration name",
+          "placeholder": "E.g. Monobank · Main merchant",
+          "required": "Enter integration name"
+        },
+        "merchantToken": {
+          "label": "Merchant token",
+          "placeholder": "Enter merchant token",
+          "required": "Enter merchant token"
+        }
+      },
+      "actions": {
+        "connect": "Connect",
+        "edit": "Save",
+        "cancel": "Cancel"
+      }
+    },
+    "monobankDetails": {
+      "editAction": "Edit integration",
+      "updateSuccess": "Monobank integration updated",
+      "updateFailed": "Failed to update Monobank integration",
+      "emptyValue": "Not set",
+      "fields": {
+        "merchantToken": "Merchant token",
+        "status": "Status",
+        "lastConnectionCheck": "Last connection check",
+        "lastError": "Last error"
+      },
+      "status": {
+        "connected": "Connected",
+        "unknown": "Unknown"
+      }
+    },
+    "manualPayment": {
+      "createSuccess": "Transfer details saved",
+      "createFailed": "Failed to save transfer details",
+      "updateSuccess": "Transfer details updated",
+      "updateFailed": "Failed to update transfer details",
+      "deleteSuccess": "Transfer details deleted",
+      "deleteFailed": "Failed to delete transfer details",
+      "deleteConfirmTitle": "Delete transfer details?",
+      "deleteConfirmContent": "Delete \"{{name}}\"?",
+      "types": {
+        "iban": "IBAN",
+        "card": "Card"
+      },
+      "fields": {
+        "name": {
+          "label": "Name",
+          "placeholder": "E.g. Sole proprietor Romaniv O. V.",
+          "required": "Enter name"
+        },
+        "iban": {
+          "label": "IBAN",
+          "placeholder": "UA123456781234567890123456789",
+          "required": "Enter IBAN",
+          "invalid": "IBAN must start with UA and contain 27 digits after it"
+        },
+        "cardNumber": {
+          "label": "Card number",
+          "placeholder": "0000 0000 0000 0000",
+          "required": "Enter card number",
+          "invalid": "Card number must contain 16 digits"
+        }
+      },
+      "actions": {
+        "save": "Save",
+        "cancel": "Cancel",
+        "edit": "Edit",
+        "delete": "Delete"
       }
     },
     "telegramQr": {
