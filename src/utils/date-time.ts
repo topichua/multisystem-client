@@ -1,7 +1,7 @@
 // https://day.js.org/docs/en/plugin/loading-into-nodejs
 // day.js config
 import i18n from "@/i18n";
-import dayjs from "dayjs";
+import dayjs, { type Dayjs } from "dayjs";
 import calendar from "dayjs/plugin/calendar";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
@@ -33,6 +33,12 @@ export const formatDate = (date: Date | string) => {
 
   return parsed.isValid() ? parsed.format("ll") : "";
 };
+
+export function formatApiDate(date: Date | string | Dayjs): string {
+  const parsed = dayjs(date);
+
+  return parsed.isValid() ? parsed.format("YYYY-MM-DD") : "";
+}
 
 export const fromNow = (date: Date | string, skipSuffix?: boolean) =>
   dayjs(date).fromNow(skipSuffix);

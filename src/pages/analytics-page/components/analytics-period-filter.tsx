@@ -9,6 +9,7 @@ import {
   type AnalyticsPeriodPreset,
 } from "@/features/analytics/model/analytics-period.constants";
 import { useAnalyticsStore } from "@/features/analytics/model/use-analytics-store";
+import { formatApiDate } from "@/utils/date-time";
 
 import * as S from "./analytics-period-filter.styled";
 
@@ -61,8 +62,8 @@ export const AnalyticsPeriodFilter = observer(() => {
           onChange={(dates) => {
             if (dates?.[0] && dates[1]) {
               void store.applyCustomDateRange(
-                dates[0].format("YYYY-MM-DD"),
-                dates[1].format("YYYY-MM-DD"),
+                formatApiDate(dates[0]),
+                formatApiDate(dates[1]),
               );
               return;
             }

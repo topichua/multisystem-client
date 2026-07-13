@@ -1443,10 +1443,76 @@
       "descriptions": {
         "list": "Browse and manage your product catalog.",
         "categories": "Organize your product categories.",
-        "characteristics": "Manage product attributes and options."
+        "characteristics": "Manage product attributes and options.",
+        "inventoryHistory": "View stock movement history."
       }
     },
     "listTitle": "Products list",
+    "inventoryHistoryTitle": "Inventory history",
+    "inventoryHistory": {
+      "emptyState": "Stock movement history will appear here.",
+      "loadError": "Failed to load inventory history.",
+      "viewDetails": "View",
+      "searchPlaceholder": "Search by product, SKU, or manager...",
+      "searchAria": "Search inventory history",
+      "filters": {
+        "title": "Filters",
+        "openAria": "Open filters",
+        "movementType": "Movement type",
+        "period": "Period",
+        "dateFrom": "Date from",
+        "dateTo": "Date to",
+        "manager": "By",
+        "allManagers": "All managers",
+        "clear": "Clear",
+        "apply": "Apply",
+        "types": {
+          "all": "All"
+        }
+      },
+      "supplyGroupTitle": "Supply - {{count}} products",
+      "supplyPreview": "{{product}}, {{variant}} and {{count}} more",
+      "positionsCount": "{{count}} positions",
+      "variousPrices": "Various",
+      "pricePerUnit": "{{price}}/pc",
+      "badges": {
+        "initial_stock": "Initial stock",
+        "purchase": "Supply",
+        "order_sale": "Sale",
+        "order_cancel": "Cancellation",
+        "return": "Return",
+        "correction": "Write-off",
+        "inventory": "Inventory",
+        "simple_adjustment": "Adjustment",
+        "simple_order_sale": "Sale",
+        "simple_order_cancel": "Cancellation",
+        "supply": "Supply",
+        "order_reserve": "Reservation",
+        "order_release": "Release",
+        "fallback": "Stock movement"
+      },
+      "table": {
+        "date": "Date",
+        "details": "Product / details",
+        "type": "Type",
+        "product": "Product",
+        "variant": "Variant",
+        "change": "Change",
+        "stock": "Stock",
+        "price": "Price",
+        "user": "Manager",
+        "comment": "Comment"
+      },
+      "drawer": {
+        "positions": "Positions",
+        "units": "Units",
+        "purchaseTotal": "Purchase total",
+        "productVariant": "Product / variant",
+        "quantity": "Qty",
+        "stock": "Stock",
+        "price": "Price"
+      }
+    },
     "catalogVariant": {
       "inStock_one": "{{count}} pc",
       "inStock_other": "{{count}} pcs",
@@ -1716,6 +1782,8 @@
         "simple_adjustment": "Quantity adjustment",
         "simple_order_sale": "Order sale",
         "simple_order_cancel": "Order cancellation",
+        "order_reserve": "Order reservation",
+        "order_release": "Reservation release",
         "fallback": "Stock movement"
       }
     },

@@ -1459,10 +1459,76 @@
       "descriptions": {
         "list": "Переглядайте та керуйте каталогом товарів.",
         "categories": "Організуйте категорії товарів.",
-        "characteristics": "Керуйте атрибутами та опціями товарів."
+        "characteristics": "Керуйте атрибутами та опціями товарів.",
+        "inventoryHistory": "Переглядайте історію рухів залишків."
       }
     },
     "listTitle": "Список товарів",
+    "inventoryHistoryTitle": "Історія залишків",
+    "inventoryHistory": {
+      "emptyState": "Тут з'явиться історія рухів залишків.",
+      "loadError": "Не вдалося завантажити історію залишків.",
+      "viewDetails": "Подивитись",
+      "searchPlaceholder": "Пошук за товаром, SKU або менеджером...",
+      "searchAria": "Пошук історії залишків",
+      "filters": {
+        "title": "Фільтри",
+        "openAria": "Відкрити фільтри",
+        "movementType": "Тип руху",
+        "period": "Період",
+        "dateFrom": "Дата від",
+        "dateTo": "Дата до",
+        "manager": "Ким",
+        "allManagers": "Усі менеджери",
+        "clear": "Очистити",
+        "apply": "Застосувати",
+        "types": {
+          "all": "Усі"
+        }
+      },
+      "supplyGroupTitle": "Поставка - {{count}} товарів",
+      "supplyPreview": "{{product}}, {{variant}} та ще {{count}}",
+      "positionsCount": "{{count}} позицій",
+      "variousPrices": "різна",
+      "pricePerUnit": "{{price}}/шт",
+      "badges": {
+        "initial_stock": "Початковий залишок",
+        "purchase": "Поставка",
+        "order_sale": "Продаж",
+        "order_cancel": "Скасування",
+        "return": "Повернення",
+        "correction": "Списання",
+        "inventory": "Інвентаризація",
+        "simple_adjustment": "Коригування",
+        "simple_order_sale": "Продаж",
+        "simple_order_cancel": "Скасування",
+        "supply": "Поставка",
+        "order_reserve": "Резерв",
+        "order_release": "Зняття резерву",
+        "fallback": "Рух залишку"
+      },
+      "table": {
+        "date": "Дата",
+        "details": "Товар / деталі",
+        "type": "Тип",
+        "product": "Товар",
+        "variant": "Варіант",
+        "change": "Зміна",
+        "stock": "Залишок",
+        "price": "Ціна",
+        "user": "Менеджер",
+        "comment": "Коментар"
+      },
+      "drawer": {
+        "positions": "Позицій",
+        "units": "Одиниць",
+        "purchaseTotal": "Сума закупки",
+        "productVariant": "Товар / варіант",
+        "quantity": "К-сть",
+        "stock": "Залишок",
+        "price": "Ціна"
+      }
+    },
     "catalogVariant": {
       "inStock_one": "{{count}} шт",
       "inStock_few": "{{count}} шт",
@@ -1744,6 +1810,8 @@
         "simple_adjustment": "Коригування кількості",
         "simple_order_sale": "Продаж із замовлення",
         "simple_order_cancel": "Скасування замовлення",
+        "order_reserve": "Резерв під замовлення",
+        "order_release": "Зняття резерву",
         "fallback": "Рух залишку"
       }
     },

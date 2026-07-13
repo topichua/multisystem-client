@@ -21,6 +21,7 @@ import {
 } from "@/features/orders/model/order-list.constants";
 import { useOrdersStore } from "@/features/orders/model/use-orders-store";
 import { BRAND_PRIMARY } from "@/styled/brand";
+import { formatApiDate } from "@/utils/date-time";
 import { useIsMobileViewport } from "@/utils/use-media-query";
 
 const { Text } = Typography;
@@ -225,7 +226,7 @@ export const OrdersListFiltersPanel = observer(
               }
               onChange={(value) => {
                 ordersStore.setDraftCreatedFrom(
-                  value ? value.format("YYYY-MM-DD") : null,
+                  value ? formatApiDate(value) : null,
                 );
               }}
             />
@@ -240,7 +241,7 @@ export const OrdersListFiltersPanel = observer(
               }
               onChange={(value) => {
                 ordersStore.setDraftCreatedTo(
-                  value ? value.format("YYYY-MM-DD") : null,
+                  value ? formatApiDate(value) : null,
                 );
               }}
             />

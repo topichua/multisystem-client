@@ -5,7 +5,6 @@ import { useTranslation } from "react-i18next";
 
 import type {
   BillingInvoice,
-  BillingInvoiceStatus,
 } from "@/features/billing/model/billing.types";
 import {
   formatBillingAmount,
@@ -14,15 +13,7 @@ import {
 } from "@/features/billing/utils/billing-format";
 
 import * as S from "./settings-billing.styled";
-
-const STATUS_LABEL_KEYS: Record<BillingInvoiceStatus, string> = {
-  paid: "billing.invoiceStatus.paid",
-  open: "billing.invoiceStatus.open",
-  void: "billing.invoiceStatus.void",
-  refunded: "billing.invoiceStatus.refunded",
-};
-
-export const BILLING_INVOICE_STATUS_LABEL_KEYS = STATUS_LABEL_KEYS;
+import { BILLING_INVOICE_STATUS_LABEL_KEYS } from "./billing-invoice-table.constants";
 
 type UseBillingInvoiceTableColumnsOptions = {
   onPayInvoice?: (invoiceId: string) => void;
@@ -65,7 +56,7 @@ export function useBillingInvoiceTableColumns(
         key: "status",
         render: (_value, record) => (
           <S.StatusBadge $variant={record.status}>
-            {t(STATUS_LABEL_KEYS[record.status])}
+            {t(BILLING_INVOICE_STATUS_LABEL_KEYS[record.status])}
           </S.StatusBadge>
         ),
       },

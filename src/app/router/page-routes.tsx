@@ -32,6 +32,7 @@ import { ProductsCharacteristicsIndexRoute } from "@/pages/products-page/product
 import { ProductCharacteristicDetailRoute } from "@/pages/products-page/products-characteristics/product-characteristic-detail-route";
 import { ProductAddPage } from "@/pages/products-page/products-list/pages/product-add-page";
 import { ProductsListRoute } from "@/pages/products-page/products-list/list/products-list-route";
+import { ProductsInventoryHistoryRoute } from "@/pages/products-page/products-inventory-history/products-inventory-history-route";
 import { ClientsIndexRoute } from "@/pages/clients-page/clients-index-route";
 import { ClientDetailRoute } from "@/pages/clients-page/client-details/client-detail-route";
 import { ClientsListRoute } from "@/pages/clients-page/clients-list/clients-list-route";
@@ -159,6 +160,10 @@ export const PageRoutes = () => {
                   element={<ProductCharacteristicDetailRoute />}
                 />
               </Route>
+              <Route
+                path="inventory-history"
+                element={<ProductsInventoryHistoryRoute />}
+              />
             </Route>
           </Route>
           <Route path="orders">

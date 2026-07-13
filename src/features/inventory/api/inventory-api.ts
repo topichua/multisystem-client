@@ -9,7 +9,14 @@ import {
   type CreateStockPurchaseResponse,
   type CreateStockSupplyRequest,
   type CreateStockSupplyResponse,
+  type GetInventoryHistoryMovementsParams,
+  INVENTORY_HISTORY_MOVEMENTS_DEFAULT_LIMIT,
   INVENTORY_MOVEMENTS_DEFAULT_LIMIT,
+  type InventoryHistoryItem,
+  type InventoryHistoryMovementsResponse,
+  type InventoryHistoryMovement,
+  type InventoryHistorySupplyItem,
+  type InventoryHistorySupplyLine,
   type InventoryMovementsResponse,
   type InventoryVariantMovementsQuery,
 } from "../model/inventory.types";
@@ -32,6 +39,110 @@ function normalizeInventoryMovements(
   return { items, total };
 }
 
+function normalizeInventoryHistorySupplyLine(
+  raw: unknown,
+): InventoryHistorySupplyLine | null {
+  if (!raw || typeof raw !== "object") {
+    return null;
+  }
+
+  const record = raw as Record<string, unknown>;
+
+  return {
+    productId: Number(record.productId ?? 0),
+    productName: String(record.productName ?? ""),
+    variantId: Number(record.variantId ?? 0),
+    variantName: String(record.variantName ?? ""),
+    sku: typeof record.sku === "string" ? record.sku : null,
+    quantityChange: Number(record.quantityChange ?? 0),
+    purchasePrice:
+      typeof record.purchasePrice === "number" ? record.purchasePrice : null,
+    stockBefore: Number(record.stockBefore ?? 0),
+    stockAfter: Number(record.stockAfter ?? 0),
+  };
+}
+
+function normalizeInventoryHistoryItem(raw: unknown): InventoryHistoryItem | null {
+  if (!raw || typeof raw !== "object") {
+    return null;
+  }
+
+  const record = raw as Record<string, unknown>;
+  const kind = record.kind === "supply" ? "supply" : "movement";
+
+  if (kind === "supply") {
+    const items = Array.isArray(record.items)
+      ? record.items
+          .map(normalizeInventoryHistorySupplyLine)
+          .filter((item): item is InventoryHistorySupplyLine => item != null)
+      : [];
+
+    return {
+      kind: "supply",
+      id: Number(record.id ?? 0),
+      type: "supply",
+      createdAt: String(record.createdAt ?? ""),
+      comment: typeof record.comment === "string" ? record.comment : null,
+      user:
+        record.user && typeof record.user === "object"
+          ? (record.user as InventoryHistorySupplyItem["user"])
+          : null,
+      itemsCount: Number(record.itemsCount ?? items.length),
+      totalQuantityChange: Number(record.totalQuantityChange ?? 0),
+      totalPurchaseCost:
+        typeof record.totalPurchaseCost === "number"
+          ? record.totalPurchaseCost
+          : null,
+      previewText:
+        typeof record.previewText === "string" ? record.previewText : null,
+      items,
+    };
+  }
+
+  return {
+    kind: "movement",
+    id: Number(record.id ?? 0),
+    type: String(record.type ?? "simple_adjustment") as InventoryHistoryMovement["type"],
+    createdAt: String(record.createdAt ?? ""),
+    reason: typeof record.reason === "string" ? record.reason : null,
+    comment: typeof record.comment === "string" ? record.comment : null,
+    user:
+      record.user && typeof record.user === "object"
+        ? (record.user as InventoryHistoryMovement["user"])
+        : null,
+    productId: Number(record.productId ?? 0),
+    productName: String(record.productName ?? ""),
+    variantId: Number(record.variantId ?? 0),
+    variantName: String(record.variantName ?? ""),
+    sku: typeof record.sku === "string" ? record.sku : null,
+    quantityChange: Number(record.quantityChange ?? 0),
+    purchasePrice:
+      typeof record.purchasePrice === "number" ? record.purchasePrice : null,
+    totalCostChange:
+      typeof record.totalCostChange === "number" ? record.totalCostChange : null,
+    stockBefore: Number(record.stockBefore ?? 0),
+    stockAfter: Number(record.stockAfter ?? 0),
+  };
+}
+
+function normalizeInventoryHistoryMovements(
+  data: unknown,
+): InventoryHistoryMovementsResponse {
+  if (!data || typeof data !== "object") {
+    return { items: [], total: 0 };
+  }
+
+  const record = data as Record<string, unknown>;
+  const items = Array.isArray(record.items)
+    ? record.items
+        .map(normalizeInventoryHistoryItem)
+        .filter((item): item is InventoryHistoryItem => item != null)
+    : [];
+  const total = typeof record.total === "number" ? record.total : items.length;
+
+  return { items, total };
+}
+
 export const inventoryApi = {
   listVariantMovements: async ({
     variantId,
@@ -45,6 +156,22 @@ export const inventoryApi = {
     );
 
     return normalizeInventoryMovements(data);
+  },
+
+  listHistoryMovements: async (
+    params: GetInventoryHistoryMovementsParams = {},
+  ): Promise<InventoryHistoryMovementsResponse> => {
+    const { data } = await apiClient.get<unknown>(
+      `${basePath}/history-movements`,
+      {
+        params: {
+          limit: INVENTORY_HISTORY_MOVEMENTS_DEFAULT_LIMIT,
+          ...params,
+        },
+      },
+    );
+
+    return normalizeInventoryHistoryMovements(data);
   },
 
   createInitialStock: async (

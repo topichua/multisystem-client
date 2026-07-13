@@ -7,6 +7,7 @@ export const pagesMap = {
   productsListAdd: "/products/list/add",
   productsCategories: "/products/categories",
   productsCharacteristics: "/products/characteristics",
+  productsInventoryHistory: "/products/inventory-history",
   orders: "/orders",
   ordersList: "/orders/list",
   ordersNew: "/orders/new",

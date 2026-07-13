@@ -8,9 +8,7 @@ import {
   formatInvoiceTariff,
 } from "@/features/billing/utils/billing-format";
 
-import {
-  BILLING_INVOICE_STATUS_LABEL_KEYS,
-} from "./use-billing-invoice-table-columns";
+import { BILLING_INVOICE_STATUS_LABEL_KEYS } from "./billing-invoice-table.constants";
 import * as S from "./settings-billing.styled";
 
 type BillingPaymentHistoryMobileListProps = {
