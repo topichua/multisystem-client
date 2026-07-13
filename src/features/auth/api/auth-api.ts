@@ -7,6 +7,15 @@ export type LoginRequest = {
   password: string;
 };
 
+export type ForgotPasswordRequest = {
+  email: string;
+};
+
+export type ResetPasswordRequest = {
+  token: string;
+  password: string;
+};
+
 type LoginResponse = {
   access_token: string;
 };
@@ -73,6 +82,14 @@ export const authApi = {
     );
 
     return data;
+  },
+
+  forgotPassword: async (payload: ForgotPasswordRequest) => {
+    await apiClient.post("/auth/forgot-password", payload);
+  },
+
+  resetPassword: async (payload: ResetPasswordRequest) => {
+    await apiClient.post("/auth/reset-password", payload);
   },
 
   getSession: async () => {

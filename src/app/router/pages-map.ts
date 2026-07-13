@@ -32,6 +32,8 @@ export const pagesMap = {
   settingsTemplates: "/settings/templates",
   settingsOrderStatuses: "/settings/statuses",
   login: "/login",
+  forgotPassword: "/forgot-password",
+  resetPassword: "/reset-password",
   register: "/register",
   registerConfirm: "/register/confirm",
   invitation: "/invitation",

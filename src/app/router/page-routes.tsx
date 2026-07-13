@@ -3,6 +3,8 @@ import { HomePage } from "@/pages/home-page/home-page";
 import { QuickActionsPage } from "@/pages/home-page/quick-actions/quick-actions-page";
 import { InvitationPage } from "@/pages/invitation-page/invitation-page";
 import { LoginPage } from "@/pages/login-page/login-page";
+import { ForgotPasswordPage } from "@/pages/password-reset-page/forgot-password-page";
+import { ResetPasswordPage } from "@/pages/password-reset-page/reset-password-page";
 import { RegisterConfirmPage } from "@/pages/register-page/register-confirm-page";
 import { RegisterPage } from "@/pages/register-page/register-page";
 import { SettingsPage } from "@/pages/settings-page/settings-page";
@@ -68,6 +70,11 @@ export const PageRoutes = () => {
     <Routes>
       <Route element={<PublicOnlyRoute />}>
         <Route path={pagesMap.login} element={<LoginPage />} />
+        <Route
+          path={pagesMap.forgotPassword}
+          element={<ForgotPasswordPage />}
+        />
+        <Route path={pagesMap.resetPassword} element={<ResetPasswordPage />} />
         <Route path={pagesMap.register} element={<RegisterPage />} />
         <Route
           path={pagesMap.registerConfirm}

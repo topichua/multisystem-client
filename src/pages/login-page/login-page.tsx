@@ -1,12 +1,14 @@
 import { Button, Form, Input } from "antd";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router";
 
+import { pagesMap } from "@/app/router/pages-map";
 import { authApi, type LoginRequest } from "@/features/auth/api/auth-api";
 import { useAuth } from "@/features/auth/model/use-auth";
+import { useNotification } from "@/shared/components/notification/use-notification";
 
 import * as S from "./login-page.styled";
-import { useNotification } from "@/shared/components/notification/use-notification";
 
 type LoginFormValues = LoginRequest;
 
@@ -74,6 +76,12 @@ export const LoginPage = () => {
                 autoComplete="current-password"
               />
             </Form.Item>
+
+            <S.ForgotPasswordRow>
+              <Link to={pagesMap.forgotPassword}>
+                {t("login.forgotPassword")}
+              </Link>
+            </S.ForgotPasswordRow>
 
             <S.FormActions>
               <Button
