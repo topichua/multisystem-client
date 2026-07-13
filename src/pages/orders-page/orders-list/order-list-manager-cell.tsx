@@ -25,8 +25,7 @@ export function OrderListManagerCell({
 
   const member = memberByUserId.get(createdBy.id);
   const name = formatOrderCreatedByName(createdBy);
-  const avatarSrc =
-    member?.user.avatar_src ?? createdBy.avatar ?? undefined;
+  const avatarSrc = member?.user.avatar_src ?? createdBy.avatar ?? undefined;
 
   return (
     <Flex align="center" gap={8} style={{ minWidth: 0 }}>

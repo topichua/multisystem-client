@@ -4,7 +4,7 @@ import {
   FolderIcon,
   ListChecksIcon,
   PackageIcon,
-} from '@phosphor-icons/react';
+} from "@phosphor-icons/react";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
@@ -21,21 +21,21 @@ type ProductsMobilePresentation = {
 };
 
 const productsMobilePresentationByKey = {
-  'products-list': {
+  "products-list": {
     icon: <PackageIcon />,
-    descriptionKey: 'products.mobile.descriptions.list',
+    descriptionKey: "products.mobile.descriptions.list",
   },
-  'products-inventory-history': {
+  "products-inventory-history": {
     icon: <ClockCounterClockwiseIcon />,
-    descriptionKey: 'products.mobile.descriptions.inventoryHistory',
+    descriptionKey: "products.mobile.descriptions.inventoryHistory",
   },
-  'products-categories': {
+  "products-categories": {
     icon: <FolderIcon />,
-    descriptionKey: 'products.mobile.descriptions.categories',
+    descriptionKey: "products.mobile.descriptions.categories",
   },
-  'products-characteristics': {
+  "products-characteristics": {
     icon: <ListChecksIcon />,
-    descriptionKey: 'products.mobile.descriptions.characteristics',
+    descriptionKey: "products.mobile.descriptions.characteristics",
   },
 } satisfies Record<ProductsMobileItemKey, ProductsMobilePresentation>;
 

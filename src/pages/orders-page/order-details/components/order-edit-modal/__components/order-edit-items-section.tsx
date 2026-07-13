@@ -75,7 +75,9 @@ export const OrderEditItemsSection = ({
             buttonLabel={t("orders.create.products.add")}
             catalogSearchLoading={catalogSearch.catalogSearchLoading}
             catalogSearchMode={catalogSearch.catalogSearchMode}
-            catalogSearchProductGroups={catalogSearch.catalogSearchProductGroups}
+            catalogSearchProductGroups={
+              catalogSearch.catalogSearchProductGroups
+            }
             categoriesLoading={catalogSearch.categoriesLoading}
             categorySelectOptions={catalogSearch.categorySelectOptions}
             minSearchLength={catalogSearch.minSearchLength}

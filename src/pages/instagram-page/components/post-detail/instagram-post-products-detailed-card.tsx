@@ -1,25 +1,25 @@
-import { CaretDownIcon, CaretRightIcon, XIcon } from '@phosphor-icons/react';
-import { Avatar, Button, Card, Empty, Flex, Typography } from 'antd';
-import { observer } from 'mobx-react-lite';
-import { useCallback, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { CaretDownIcon, CaretRightIcon, XIcon } from "@phosphor-icons/react";
+import { Avatar, Button, Card, Empty, Flex, Typography } from "antd";
+import { observer } from "mobx-react-lite";
+import { useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
 
-import { getApiErrorMessage } from '@/api/get-api-error-message';
+import { getApiErrorMessage } from "@/api/get-api-error-message";
 
 import type {
   InstagramIntegrationId,
   InstagramPostProduct,
-} from '@/features/instagram/model/instagram.types';
-import { useInstagramStore } from '@/features/instagram/model/use-instagram-store';
+} from "@/features/instagram/model/instagram.types";
+import { useInstagramStore } from "@/features/instagram/model/use-instagram-store";
 import {
   formatProductPrice,
   getLinkedProductVariants,
   getProductPriceRange,
   getProductRowUnlinkReferenceId,
   getProductVariantTitle,
-} from '@/features/products/utils/product-display';
-import { Tag } from '@/components/tag/tag';
-import { useNotification } from '@/shared/components/notification/use-notification';
+} from "@/features/products/utils/product-display";
+import { Tag } from "@/components/tag/tag";
+import { useNotification } from "@/shared/components/notification/use-notification";
 
 const { Text } = Typography;
 
@@ -51,14 +51,14 @@ export const InstagramPostProductsDetailedCard = observer(
           })
           .then(() => {
             notification.success({
-              title: t('instagram.unlinkProductSuccess'),
+              title: t("instagram.unlinkProductSuccess"),
             });
           })
           .catch((error: unknown) => {
             notification.error({
               title: getApiErrorMessage(
                 error,
-                t('instagram.unlinkProductFailed'),
+                t("instagram.unlinkProductFailed"),
               ),
             });
           });
@@ -77,7 +77,7 @@ export const InstagramPostProductsDetailedCard = observer(
         return (
           <Button
             type="text"
-            aria-label={t('instagram.unlinkProductAria')}
+            aria-label={t("instagram.unlinkProductAria")}
             icon={<XIcon size={18} />}
             loading={isUnlinking}
             disabled={store.unlinkProductReferenceId != null && !isUnlinking}
@@ -113,8 +113,8 @@ export const InstagramPostProductsDetailedCard = observer(
 
       if (!product.variants?.length) {
         return (
-          <Text type="secondary" style={{ display: 'block', padding: 16 }}>
-            {t('products.table.noVariants')}
+          <Text type="secondary" style={{ display: "block", padding: 16 }}>
+            {t("products.table.noVariants")}
           </Text>
         );
       }
@@ -139,10 +139,10 @@ export const InstagramPostProductsDetailedCard = observer(
                   <Flex vertical gap={0}>
                     <Text strong>
                       {title ||
-                        `${t('products.variant.fallbackName')} #${variant.id}`}
+                        `${t("products.variant.fallbackName")} #${variant.id}`}
                     </Text>
                     <Text type="secondary" style={{ width: 100 }}>
-                      {variant.sku || '—'}
+                      {variant.sku || "—"}
                     </Text>
                   </Flex>
                   <Flex align="center" gap={12}>
@@ -152,14 +152,14 @@ export const InstagramPostProductsDetailedCard = observer(
 
                     <Flex gap={8} align="baseline" style={{ width: 100 }}>
                       <Text type="secondary">
-                        {t('products.variant.quantity')}
+                        {t("products.variant.quantity")}
                       </Text>
 
                       <Text
-                        type={variant.quantity === 0 ? 'danger' : undefined}
+                        type={variant.quantity === 0 ? "danger" : undefined}
                         strong
                       >
-                        {variant.quantity ?? '—'}
+                        {variant.quantity ?? "—"}
                       </Text>
                     </Flex>
 
@@ -180,7 +180,7 @@ export const InstagramPostProductsDetailedCard = observer(
         {products.length === 0 ? (
           <Empty
             image={Empty.PRESENTED_IMAGE_SIMPLE}
-            description={t('instagram.noLinkedProducts')}
+            description={t("instagram.noLinkedProducts")}
           />
         ) : (
           <Flex vertical gap={8}>
@@ -194,7 +194,7 @@ export const InstagramPostProductsDetailedCard = observer(
 
               const availabilityTag =
                 product.inStock === false ? (
-                  <Tag color="error">{t('products.outOfStock')}</Tag>
+                  <Tag color="error">{t("products.outOfStock")}</Tag>
                 ) : product.quantity != null ? (
                   <Tag color="success">{product.quantity} шт.</Tag>
                 ) : null;
@@ -217,8 +217,8 @@ export const InstagramPostProductsDetailedCard = observer(
                           size="small"
                           aria-label={
                             isExpanded
-                              ? t('products.table.collapseRowAria')
-                              : t('products.table.expandRowAria')
+                              ? t("products.table.collapseRowAria")
+                              : t("products.table.expandRowAria")
                           }
                           aria-expanded={isExpanded}
                           aria-controls={`product-variants-${productKey}`}
@@ -234,7 +234,7 @@ export const InstagramPostProductsDetailedCard = observer(
                       ) : (
                         <span
                           aria-hidden
-                          style={{ display: 'block', width: 24 }}
+                          style={{ display: "block", width: 24 }}
                         />
                       )}
 
@@ -262,7 +262,7 @@ export const InstagramPostProductsDetailedCard = observer(
                           <Flex align="center" gap={4}>
                             {hasVariants && (
                               <Text type="secondary" ellipsis>
-                                {t('products.table.variantsCount', {
+                                {t("products.table.variantsCount", {
                                   count: variantsCount,
                                 })}
                               </Text>

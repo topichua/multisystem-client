@@ -2,14 +2,14 @@ import { CubeIcon } from "@phosphor-icons/react";
 import { Empty, Flex, Tag } from "antd";
 import { useTranslation } from "react-i18next";
 
-import { CatalogProductSearchPopover } from '@/features/products/components/catalog-product-search';
-import type { useCatalogProductSearch } from '@/features/products/components/catalog-product-search';
+import { CatalogProductSearchPopover } from "@/features/products/components/catalog-product-search";
+import type { useCatalogProductSearch } from "@/features/products/components/catalog-product-search";
 import type { CatalogVariant } from "@/features/products/model/product.types";
 
 import * as S from "../orders-new-page.styled";
 import type { OrderNewLine } from "../orders-new.types";
 import { OrdersNewProductLine } from "./orders-new-product-line";
-import { SectionHeading } from './section-heading';
+import { SectionHeading } from "./section-heading";
 
 type OrdersNewProductsSectionProps = {
   catalogSearch: ReturnType<typeof useCatalogProductSearch>;
@@ -49,14 +49,14 @@ export function OrdersNewProductsSection({
       >
         <SectionHeading icon={<CubeIcon size={18} />}>
           <Flex align="center" gap={8}>
-            {t('orders.create.products.title')}
+            {t("orders.create.products.title")}
             <Tag>{orderLines.length}</Tag>
           </Flex>
         </SectionHeading>
 
         <CatalogProductSearchPopover
           open={productSearchOpen}
-          buttonLabel={t('orders.create.products.add')}
+          buttonLabel={t("orders.create.products.add")}
           catalogSearchLoading={catalogSearch.catalogSearchLoading}
           catalogSearchMode={catalogSearch.catalogSearchMode}
           catalogSearchProductGroups={catalogSearch.catalogSearchProductGroups}
@@ -93,7 +93,7 @@ export function OrdersNewProductsSection({
       ) : (
         <Empty
           image={<CubeIcon size={28} />}
-          description={t('orders.create.products.emptyState')}
+          description={t("orders.create.products.emptyState")}
         />
       )}
     </S.SectionCard>

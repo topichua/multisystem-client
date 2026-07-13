@@ -43,9 +43,15 @@ export function VariantsBulkPriceBar({
       wrap={isMobile ? "wrap" : undefined}
       vertical={isMobile}
     >
-      <Text type="secondary">{t("products.variantsForm.editSkuAndPriceHint")}</Text>
+      <Text type="secondary">
+        {t("products.variantsForm.editSkuAndPriceHint")}
+      </Text>
 
-      <Flex align="center" gap={8} style={isMobile ? { width: "100%" } : undefined}>
+      <Flex
+        align="center"
+        gap={8}
+        style={isMobile ? { width: "100%" } : undefined}
+      >
         <InputNumber
           min={0}
           value={bulkPrice}
@@ -54,7 +60,10 @@ export function VariantsBulkPriceBar({
           })}
           onChange={(value) => setBulkPrice(value)}
           disabled={disabled}
-          style={{ width: isMobile ? "100%" : 160, flex: isMobile ? 1 : undefined }}
+          style={{
+            width: isMobile ? "100%" : 160,
+            flex: isMobile ? 1 : undefined,
+          }}
         />
 
         <Button

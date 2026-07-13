@@ -53,10 +53,14 @@ export const BillingCurrentPlanCard = ({
           </S.CurrentPlanMeta>
         ) : null}
 
-        <S.CurrentPlanMeta>{t("billing.currentPlan.manualRenewal")}</S.CurrentPlanMeta>
+        <S.CurrentPlanMeta>
+          {t("billing.currentPlan.manualRenewal")}
+        </S.CurrentPlanMeta>
 
         {subscription.isExpired ? (
-          <S.ExpiredWarning>{t("billing.currentPlan.expiredWarning")}</S.ExpiredWarning>
+          <S.ExpiredWarning>
+            {t("billing.currentPlan.expiredWarning")}
+          </S.ExpiredWarning>
         ) : null}
       </S.CurrentPlanMain>
     </S.CurrentPlanCard>

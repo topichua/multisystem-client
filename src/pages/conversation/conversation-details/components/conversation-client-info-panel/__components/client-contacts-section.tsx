@@ -59,7 +59,10 @@ export function ClientContactsSection({
         await clientsApi.deleteLink(client.id, { provider, externalId });
 
         const updatedClient = await clientsApi.getById(client.id);
-        const remainingLinks = getClientSocialLinks(updatedClient, conversation);
+        const remainingLinks = getClientSocialLinks(
+          updatedClient,
+          conversation,
+        );
         const removedCurrentConversation = isCurrentConversationLink(
           { provider, externalId },
           conversation,
@@ -97,7 +100,9 @@ export function ClientContactsSection({
 
   return (
     <S.Section>
-      <S.SectionLabel>{t("conversation.clientProfile.contacts")}</S.SectionLabel>
+      <S.SectionLabel>
+        {t("conversation.clientProfile.contacts")}
+      </S.SectionLabel>
 
       <Flex justify="space-between" align="center" gap={12}>
         <Text type="secondary">{t("clients.phone")}</Text>

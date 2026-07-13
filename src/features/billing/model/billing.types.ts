@@ -14,7 +14,11 @@ export type BillingEntitlements = {
 
 export type BillingInvoiceStatus = "paid" | "open" | "void" | "refunded";
 
-export type BillingSubscriptionStatus = "active" | "trial" | "past_due" | string;
+export type BillingSubscriptionStatus =
+  | "active"
+  | "trial"
+  | "past_due"
+  | string;
 
 export type BillingCycle = "monthly" | "yearly";
 

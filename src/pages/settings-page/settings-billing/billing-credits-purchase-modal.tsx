@@ -101,10 +101,7 @@ export const BillingCreditsPurchaseModal = ({
         </Form.Item>
         <Typography.Text type="secondary">
           {t("billing.creditsModal.pricePreview", {
-            price: formatBillingAmount(
-              calculatedPrice,
-              creditPricing.currency,
-            ),
+            price: formatBillingAmount(calculatedPrice, creditPricing.currency),
             symbol: formatBillingCurrencySymbol(creditPricing.currency),
           })}
         </Typography.Text>

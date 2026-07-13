@@ -15,9 +15,7 @@ import { useMemo, type CSSProperties } from "react";
 import { useTranslation } from "react-i18next";
 import type { WorkspaceMember } from "@/features/workspace-members/model/workspace-member.types";
 import { getWorkspaceMemberName } from "@/features/workspace-members/utils/workspace-member-display";
-import {
-  getMovementTitle,
-} from "@/features/products/components/product-inventory-drawer/product-inventory-movements-history/product-inventory-movements-history.utils";
+import { getMovementTitle } from "@/features/products/components/product-inventory-drawer/product-inventory-movements-history/product-inventory-movements-history.utils";
 import { BRAND_PRIMARY } from "@/styled/brand";
 import { formatApiDate } from "@/utils/date-time";
 import { useIsMobileViewport } from "@/utils/use-media-query";

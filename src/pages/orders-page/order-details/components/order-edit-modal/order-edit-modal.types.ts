@@ -1,4 +1,7 @@
-import type { OrderDetails, OrderUpdatePayload } from "@/features/orders/model/order.types";
+import type {
+  OrderDetails,
+  OrderUpdatePayload,
+} from "@/features/orders/model/order.types";
 
 import type { OrderEditMode } from "@/pages/orders-page/order-details/order-details.types";
 

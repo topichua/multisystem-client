@@ -203,24 +203,24 @@ export const quickActionNavItems: readonly QuickActionNavItem[] = [
 
 export const productsSectionNavItems = [
   {
-    key: 'products-list',
+    key: "products-list",
     path: pagesMap.productsList,
-    labelKey: 'products.listTitle',
+    labelKey: "products.listTitle",
   },
   {
-    key: 'products-inventory-history',
+    key: "products-inventory-history",
     path: pagesMap.productsInventoryHistory,
-    labelKey: 'products.inventoryHistoryTitle',
+    labelKey: "products.inventoryHistoryTitle",
   },
   {
-    key: 'products-categories',
+    key: "products-categories",
     path: pagesMap.productsCategories,
-    labelKey: 'categories.title',
+    labelKey: "categories.title",
   },
   {
-    key: 'products-characteristics',
+    key: "products-characteristics",
     path: pagesMap.productsCharacteristics,
-    labelKey: 'characteristics.title',
+    labelKey: "characteristics.title",
   },
 ] as const satisfies readonly SectionNavItem[];
 

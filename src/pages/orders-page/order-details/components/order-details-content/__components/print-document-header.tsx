@@ -1,4 +1,7 @@
-import { formatDate, getOrderSourceLabel } from "../../../utils/order-details.utils";
+import {
+  formatDate,
+  getOrderSourceLabel,
+} from "../../../utils/order-details.utils";
 
 import type { OrderSectionProps } from "../order-details-content.types";
 import * as S from "../order-details-content.styled";

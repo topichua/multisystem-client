@@ -34,21 +34,23 @@ export const ItemTitle = styled(Typography.Text)`
   }
 `;
 
-const badgeToneStyles: Record<InventoryHistoryBadgeTone, ReturnType<typeof css>> =
-  {
-    success: css`
-      color: ${({ theme }) => theme.colors.functional.text.success};
-      background: ${({ theme }) => theme.colors.functional.background.success};
-    `,
-    error: css`
-      color: ${({ theme }) => theme.colors.functional.text.error};
-      background: ${({ theme }) => theme.colors.functional.background.error};
-    `,
-    neutral: css`
-      color: ${({ theme }) => theme.colors.functional.text.subdued};
-      background: ${({ theme }) => theme.colors.functional.background.elevated};
-    `,
-  };
+const badgeToneStyles: Record<
+  InventoryHistoryBadgeTone,
+  ReturnType<typeof css>
+> = {
+  success: css`
+    color: ${({ theme }) => theme.colors.functional.text.success};
+    background: ${({ theme }) => theme.colors.functional.background.success};
+  `,
+  error: css`
+    color: ${({ theme }) => theme.colors.functional.text.error};
+    background: ${({ theme }) => theme.colors.functional.background.error};
+  `,
+  neutral: css`
+    color: ${({ theme }) => theme.colors.functional.text.subdued};
+    background: ${({ theme }) => theme.colors.functional.background.elevated};
+  `,
+};
 
 export const TypeBadge = styled.span<{
   $tone: InventoryHistoryBadgeTone;

@@ -88,9 +88,7 @@ export const InventoryHistoryMobileCard = ({
         </Flex>
 
         <Flex justify="space-between" align="center" gap={8} wrap="wrap">
-          <Text>
-            {getInventoryHistoryStockLabel(item, t, formatNumber)}
-          </Text>
+          <Text>{getInventoryHistoryStockLabel(item, t, formatNumber)}</Text>
           <Text>{getInventoryHistoryPriceLabel(item, currency, t)}</Text>
         </Flex>
 

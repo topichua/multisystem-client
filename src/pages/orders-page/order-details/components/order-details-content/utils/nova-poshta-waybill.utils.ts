@@ -1,8 +1,14 @@
-import type { OrderDetails, OrderNovaPoshtaWaybillPayload } from "@/features/orders/model/order.types";
+import type {
+  OrderDetails,
+  OrderNovaPoshtaWaybillPayload,
+} from "@/features/orders/model/order.types";
 
 import { isRecord } from "../../../utils/order-details.utils";
 
-import type { DeliveryInfo, TranslationFn } from "../order-details-content.types";
+import type {
+  DeliveryInfo,
+  TranslationFn,
+} from "../order-details-content.types";
 
 export type WaybillFormValues = {
   weightGrams?: number | null;

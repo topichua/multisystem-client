@@ -86,7 +86,11 @@ export const BillingPlansSection = ({
           const features = getPlanFeatures(plan.entitlements, t);
           const cta = getPlanCta(subscription, plan, selectedBillingCycle, t);
           const highlighted = plan.slug === "pro";
-          const current = isCurrentPlan(subscription, plan, selectedBillingCycle);
+          const current = isCurrentPlan(
+            subscription,
+            plan,
+            selectedBillingCycle,
+          );
 
           return (
             <S.PlanCard
@@ -96,7 +100,9 @@ export const BillingPlansSection = ({
               data-qa={`billing-plan-card-${plan.slug}`}
             >
               {highlighted ? (
-                <S.PlanPopularBadge>{t("billing.plans.popular")}</S.PlanPopularBadge>
+                <S.PlanPopularBadge>
+                  {t("billing.plans.popular")}
+                </S.PlanPopularBadge>
               ) : null}
 
               <S.PlanName>{plan.name}</S.PlanName>

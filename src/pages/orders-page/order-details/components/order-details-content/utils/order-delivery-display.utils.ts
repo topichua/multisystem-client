@@ -4,7 +4,11 @@ import {
   getVariantLabel,
 } from "../../../utils/order-details.utils";
 
-import type { DeliveryInfo, OrderItem, TranslationFn } from "../order-details-content.types";
+import type {
+  DeliveryInfo,
+  OrderItem,
+  TranslationFn,
+} from "../order-details-content.types";
 
 export const formatDeliveryAddress = (deliveryInfo: DeliveryInfo): string => {
   const parts = [

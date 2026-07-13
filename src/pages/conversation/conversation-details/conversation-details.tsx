@@ -9,7 +9,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router";
 
-import { getOrderDetailsPath, getClientDetailsPath, pagesMap } from "@/app/router/pages-map";
+import {
+  getOrderDetailsPath,
+  getClientDetailsPath,
+  pagesMap,
+} from "@/app/router/pages-map";
 import { useUserStore } from "@/features/auth/model/use-user-store";
 import { clientsApi } from "@/features/clients/api/clients-api";
 import type {
@@ -422,7 +426,7 @@ export const ConversationDetails = observer(() => {
             </Flex>
           ) : thread.messagesLength === 0 ? (
             <Flex justify="center">
-              <Text type="secondary">{t('conversations.noMessages')}</Text>
+              <Text type="secondary">{t("conversations.noMessages")}</Text>
             </Flex>
           ) : (
             <ConversationMessagesList
@@ -468,7 +472,7 @@ export const ConversationDetails = observer(() => {
           )
         }
         closable={{
-          'aria-label': t('conversation.closeClientPanelAria'),
+          "aria-label": t("conversation.closeClientPanelAria"),
         }}
         extra={
           linkedClient && !clientDrawerEditMode ? (
@@ -482,11 +486,11 @@ export const ConversationDetails = observer(() => {
         }
         onClose={handleCloseClientPanel}
         open={clientInfoOpen}
-        placement={isMobileViewport ? 'bottom' : 'right'}
+        placement={isMobileViewport ? "bottom" : "right"}
         size={isMobileViewport ? undefined : 360}
         height={
           isMobileViewport
-            ? 'calc(100dvh - env(safe-area-inset-top, 0px))'
+            ? "calc(100dvh - env(safe-area-inset-top, 0px))"
             : undefined
         }
         destroyOnHidden
@@ -521,14 +525,14 @@ export const ConversationDetails = observer(() => {
         }
         styles={{
           body: {
-            overflowY: 'auto',
-            padding: '16px 18px',
+            overflowY: "auto",
+            padding: "16px 18px",
           },
           header: {
-            padding: '16px 18px',
+            padding: "16px 18px",
           },
           footer: {
-            padding: '16px 18px',
+            padding: "16px 18px",
           },
         }}
       >

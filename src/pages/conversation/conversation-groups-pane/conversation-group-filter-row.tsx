@@ -1,6 +1,6 @@
-import type { Icon } from '@phosphor-icons/react';
+import type { Icon } from "@phosphor-icons/react";
 
-import * as S from './conversation-groups-pane.styled';
+import * as S from "./conversation-groups-pane.styled";
 
 type ConversationGroupFilterRowProps = {
   color?: string;
@@ -31,7 +31,7 @@ export const ConversationGroupFilterRow = ({
           <IconComponent size={16} />
         </S.GroupIcon>
       ) : (
-        <S.GroupDot $color={color ?? 'transparent'} aria-hidden="true" />
+        <S.GroupDot $color={color ?? "transparent"} aria-hidden="true" />
       )}
       <S.GroupName>{name}</S.GroupName>
     </S.GroupIdentity>

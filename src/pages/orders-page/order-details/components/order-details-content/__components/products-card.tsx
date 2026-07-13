@@ -1,10 +1,7 @@
 import { PencilSimpleIcon } from "@phosphor-icons/react";
 import { Button, Empty, Flex, Typography } from "antd";
 
-import {
-  formatMoney,
-  formatText,
-} from "../../../utils/order-details.utils";
+import { formatMoney, formatText } from "../../../utils/order-details.utils";
 
 import type { EditableSectionProps } from "../order-details-content.types";
 import {

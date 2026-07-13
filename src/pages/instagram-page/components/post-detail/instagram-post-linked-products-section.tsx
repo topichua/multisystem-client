@@ -27,7 +27,9 @@ export const InstagramPostLinkedProductsSection = ({
     () =>
       new Set(
         linkedProducts.flatMap((product) =>
-          getLinkedProductVariants(product).map((variant) => Number(variant.id)),
+          getLinkedProductVariants(product).map((variant) =>
+            Number(variant.id),
+          ),
         ),
       ),
     [linkedProducts],

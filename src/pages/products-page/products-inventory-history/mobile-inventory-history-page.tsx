@@ -53,7 +53,11 @@ export const MobileInventoryHistoryPage = observer(() => {
   );
 
   const showInitialSpinner =
-    loading && items.length === 0 && !error && !keyword && appliedFilterCount === 0;
+    loading &&
+    items.length === 0 &&
+    !error &&
+    !keyword &&
+    appliedFilterCount === 0;
 
   return (
     <S.Root>

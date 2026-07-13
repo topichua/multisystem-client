@@ -47,7 +47,12 @@ export const ProductsInventoryHistoryPage = observer(() => {
     onOpenSupply: setSelectedSupply,
   });
 
-  const showInitialSpinner = loading && items.length === 0 && !error && !keyword && appliedFilterCount === 0;
+  const showInitialSpinner =
+    loading &&
+    items.length === 0 &&
+    !error &&
+    !keyword &&
+    appliedFilterCount === 0;
 
   return (
     <PaneDetailLayout.Root inset>

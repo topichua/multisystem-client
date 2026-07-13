@@ -17,7 +17,9 @@ import {
 type UseNovaPoshtaWaybillParams = {
   order: OrderDetails;
   t: TranslationFn;
-  onCreateNovaPoshtaWaybill: (payload: ReturnType<typeof buildWaybillPayload>) => Promise<void>;
+  onCreateNovaPoshtaWaybill: (
+    payload: ReturnType<typeof buildWaybillPayload>,
+  ) => Promise<void>;
   onRemoveNovaPoshtaWaybill: () => Promise<void>;
 };
 

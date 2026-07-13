@@ -99,8 +99,11 @@ export const ConversationClientInfoPanel = observer(
       linkedClient != null &&
       clientLookup?.associated === true;
 
-    const { client: loadedClient, loading: clientDetailsLoading, reload } =
-      useConversationClientDetails(linkedClient?.id, shouldLoadClientDetails);
+    const {
+      client: loadedClient,
+      loading: clientDetailsLoading,
+      reload,
+    } = useConversationClientDetails(linkedClient?.id, shouldLoadClientDetails);
 
     const displayClient = loadedClient ?? linkedClient;
 
@@ -371,7 +374,9 @@ export const ConversationClientInfoPanel = observer(
                 client={displayClient}
                 conversation={conversation}
                 onClientUpdated={handleClientUpdated}
-                onCurrentConversationUnlinked={handleCurrentConversationUnlinked}
+                onCurrentConversationUnlinked={
+                  handleCurrentConversationUnlinked
+                }
               />
             )
           ) : (

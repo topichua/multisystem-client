@@ -51,10 +51,7 @@ export const StockSupplySelectedSection = ({
       <span />
     </S.SelectedHeader>
 
-    <Flex
-      vertical
-      style={{ minHeight: 70, flex: "0 0 auto" }}
-    >
+    <Flex vertical style={{ minHeight: 70, flex: "0 0 auto" }}>
       {selectedLines.length === 0 ? (
         <Empty
           image={Empty.PRESENTED_IMAGE_SIMPLE}

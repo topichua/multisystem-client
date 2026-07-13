@@ -10,20 +10,21 @@ import { formatMoney } from "@/features/orders/utils/format-money";
 
 export type InventoryHistoryBadgeTone = "success" | "error" | "neutral";
 
-export const INVENTORY_HISTORY_BADGE_LABEL_TYPES = new Set<InventoryHistoryMovementType>([
-  "supply",
-  "purchase",
-  "initial_stock",
-  "return",
-  "order_sale",
-  "simple_order_sale",
-  "order_cancel",
-  "simple_order_cancel",
-  "order_reserve",
-  "order_release",
-  "correction",
-  "inventory",
-]);
+export const INVENTORY_HISTORY_BADGE_LABEL_TYPES =
+  new Set<InventoryHistoryMovementType>([
+    "supply",
+    "purchase",
+    "initial_stock",
+    "return",
+    "order_sale",
+    "simple_order_sale",
+    "order_cancel",
+    "simple_order_cancel",
+    "order_reserve",
+    "order_release",
+    "correction",
+    "inventory",
+  ]);
 
 export function isInventoryHistorySupplyItem(
   item: InventoryHistoryItem,

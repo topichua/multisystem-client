@@ -49,9 +49,7 @@ export function ClientWishlistSection() {
           ),
           children: (
             <Empty
-              image={
-                <HeartIcon size={40} color={heartColor} />
-              }
+              image={<HeartIcon size={40} color={heartColor} />}
               description={
                 <Space orientation="vertical" size={4}>
                   <Text type="secondary">
@@ -66,13 +64,11 @@ export function ClientWishlistSection() {
           ),
         },
       ]}
-      styles={
-        {
-          header: {
-            padding: 0
-          }
-        }
-      }
+      styles={{
+        header: {
+          padding: 0,
+        },
+      }}
     />
   );
 }

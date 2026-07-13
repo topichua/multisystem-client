@@ -104,10 +104,7 @@ export function useOrdersTableColumns({
         key: "manager",
         width: 180,
         render: (_, order) => (
-          <OrderListManagerCell
-            order={order}
-            memberByUserId={memberByUserId}
-          />
+          <OrderListManagerCell order={order} memberByUserId={memberByUserId} />
         ),
       },
       {

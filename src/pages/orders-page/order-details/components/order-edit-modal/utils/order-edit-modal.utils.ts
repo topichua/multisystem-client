@@ -1,4 +1,7 @@
-import type { OrderCreateItemPayload, OrderDetails } from "@/features/orders/model/order.types";
+import type {
+  OrderCreateItemPayload,
+  OrderDetails,
+} from "@/features/orders/model/order.types";
 import { normalizeOrderDiscountPercent } from "@/features/orders/utils/order-discount";
 import type { CatalogVariant } from "@/features/products/model/product.types";
 import {
@@ -70,8 +73,7 @@ export const buildOrderEditInitialFormValues = (
   return {
     customerNote: order.customerNote ?? "",
     internalNote: order.internalNote ?? "",
-    discountAmount:
-      orderDiscountPercent > 0 ? 0 : (order.discountAmount ?? 0),
+    discountAmount: orderDiscountPercent > 0 ? 0 : (order.discountAmount ?? 0),
     discountPercent: orderDiscountPercent,
   };
 };
@@ -155,15 +157,13 @@ export const buildLineFromOrderItem = (
     imageUrl: item.imageUrlSnapshot,
     quantity: normalizePositiveInteger(item.quantity),
     unitPriceAmount: normalizeNonNegativeNumber(item.unitPriceAmount),
-    discountAmount:
-      discountPercent > 0 ? 0 : getOrderItemDiscountAmount(item),
+    discountAmount: discountPercent > 0 ? 0 : getOrderItemDiscountAmount(item),
     discountPercent,
   };
 };
 
-export const buildOrderEditLines = (
-  order: OrderDetails,
-): EditableOrderLine[] => order.items.map(buildLineFromOrderItem);
+export const buildOrderEditLines = (order: OrderDetails): EditableOrderLine[] =>
+  order.items.map(buildLineFromOrderItem);
 
 export const buildLineFromVariant = (
   variant: CatalogVariant,

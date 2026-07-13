@@ -18,10 +18,11 @@ import {
 import type { useCategoriesStore } from "@/features/categories/model/use-categories-store";
 import type { CatalogVariant } from "@/features/products/model/product.types";
 
-import {
-  ALL_CATEGORIES_VALUE,
-} from "../hooks/use-stock-supply-modal";
-import type { SupplyPickerMode, VariantGroup } from "../stock-supply-modal.types";
+import { ALL_CATEGORIES_VALUE } from "../hooks/use-stock-supply-modal";
+import type {
+  SupplyPickerMode,
+  VariantGroup,
+} from "../stock-supply-modal.types";
 import * as S from "../stock-supply-modal.styled";
 import { SupplyVariantRow } from "./supply-variant-row";
 
@@ -118,21 +119,13 @@ export const StockSupplyVariantsPicker = ({
 
     <S.VariantsList>
       {variantsLoading ? (
-        <Flex
-          align="center"
-          justify="center"
-          style={{ minHeight: 220 }}
-        >
+        <Flex align="center" justify="center" style={{ minHeight: 220 }}>
           <Spin />
         </Flex>
       ) : loadError ? (
         <Alert type="error" message={loadError} showIcon />
       ) : filteredAvailableVariants.length === 0 ? (
-        <Flex
-          align="center"
-          justify="center"
-          style={{ minHeight: 220 }}
-        >
+        <Flex align="center" justify="center" style={{ minHeight: 220 }}>
           <Empty
             image={Empty.PRESENTED_IMAGE_SIMPLE}
             description={t("products.stockSupply.emptyVariants")}

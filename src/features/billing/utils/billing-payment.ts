@@ -250,7 +250,9 @@ export function isFreeSubscriptionPlan(
     return true;
   }
 
-  const currentPlan = plans.find((plan) => plan.id === subscription.planTemplateId);
+  const currentPlan = plans.find(
+    (plan) => plan.id === subscription.planTemplateId,
+  );
   return (
     currentPlan != null &&
     currentPlan.priceMonthly === 0 &&

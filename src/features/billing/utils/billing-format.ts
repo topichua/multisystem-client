@@ -17,10 +17,7 @@ export function formatBillingDate(value: string | null | undefined): string {
   return parsed.isValid() ? parsed.format("DD.MM.YYYY") : "—";
 }
 
-export function formatBillingAmount(
-  amount: number,
-  currency = "UAH",
-): string {
+export function formatBillingAmount(amount: number, currency = "UAH"): string {
   const formatted = new Intl.NumberFormat("uk-UA", {
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,

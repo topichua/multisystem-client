@@ -3,9 +3,7 @@ import type { TableColumnsType } from "antd";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
-import type {
-  BillingInvoice,
-} from "@/features/billing/model/billing.types";
+import type { BillingInvoice } from "@/features/billing/model/billing.types";
 import {
   formatBillingAmount,
   formatBillingDate,

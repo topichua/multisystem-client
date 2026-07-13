@@ -59,73 +59,78 @@ export const SettingsBillingContent = observer(
 
     return (
       <S.BillingPageRoot>
-        <Spin spinning={billingStore.pageLoading || billingStore.syncPaymentLoading}>
+        <Spin
+          spinning={billingStore.pageLoading || billingStore.syncPaymentLoading}
+        >
           <S.BillingStack $mobile={isMobile} data-qa="billing-page-content">
-          {billingStore.pageError ? (
-            <Text type="danger">{billingStore.pageError}</Text>
-          ) : null}
+            {billingStore.pageError ? (
+              <Text type="danger">{billingStore.pageError}</Text>
+            ) : null}
 
-          <BillingInfoBar />
+            <BillingInfoBar />
 
-          {subscription ? (
-            <BillingCurrentPlanCard subscription={subscription} layout={layout} />
-          ) : null}
-
-          {subscription ? (
-            <BillingPlansSection
-              plans={billingStore.plans}
-              subscription={subscription}
-              selectedBillingCycle={selectedBillingCycle}
-              changingPlanId={billingStore.changingPlanId}
-              layout={layout}
-              onBillingCycleChange={setSelectedBillingCycle}
-              onSelectPlan={handleSelectPlan}
-            />
-          ) : null}
-
-          {showAiCreditsBanner && creditPricing ? (
-            <BillingAiCreditsBanner
-              creditPricing={creditPricing}
-              onAdd={handleOpenCreditsModal}
-              layout={layout}
-            />
-          ) : null}
-
-          <S.PaymentBlockAnchor ref={paymentBlockRef}>
             {subscription ? (
-              <BillingPaymentMethodCard
+              <BillingCurrentPlanCard
                 subscription={subscription}
-                invoices={billingStore.invoices}
-                plans={billingStore.plans}
-                payLoading={billingStore.subscriptionPaymentLoading}
-                onPay={handlePaySubscription}
                 layout={layout}
               />
             ) : null}
-          </S.PaymentBlockAnchor>
 
-          <BillingPaymentHistoryTable
-            invoices={billingStore.invoices}
-            total={billingStore.total}
-            page={billingStore.page}
-            pageSize={billingStore.pageSize}
-            loading={billingStore.pageLoading}
-            payingInvoiceId={billingStore.payingInvoiceId}
-            layout={layout}
-            onPageChange={handleInvoicesPageChange}
-            onPayInvoice={handlePayOpenInvoice}
-          />
-        </S.BillingStack>
+            {subscription ? (
+              <BillingPlansSection
+                plans={billingStore.plans}
+                subscription={subscription}
+                selectedBillingCycle={selectedBillingCycle}
+                changingPlanId={billingStore.changingPlanId}
+                layout={layout}
+                onBillingCycleChange={setSelectedBillingCycle}
+                onSelectPlan={handleSelectPlan}
+              />
+            ) : null}
 
-        {billingStore.creditPricing ? (
-          <BillingCreditsPurchaseModal
-            open={creditsModalOpen}
-            creditPricing={billingStore.creditPricing}
-            confirmLoading={billingStore.creditsPurchaseLoading}
-            onCancel={handleCloseCreditsModal}
-            onConfirm={handlePurchaseCredits}
-          />
-        ) : null}
+            {showAiCreditsBanner && creditPricing ? (
+              <BillingAiCreditsBanner
+                creditPricing={creditPricing}
+                onAdd={handleOpenCreditsModal}
+                layout={layout}
+              />
+            ) : null}
+
+            <S.PaymentBlockAnchor ref={paymentBlockRef}>
+              {subscription ? (
+                <BillingPaymentMethodCard
+                  subscription={subscription}
+                  invoices={billingStore.invoices}
+                  plans={billingStore.plans}
+                  payLoading={billingStore.subscriptionPaymentLoading}
+                  onPay={handlePaySubscription}
+                  layout={layout}
+                />
+              ) : null}
+            </S.PaymentBlockAnchor>
+
+            <BillingPaymentHistoryTable
+              invoices={billingStore.invoices}
+              total={billingStore.total}
+              page={billingStore.page}
+              pageSize={billingStore.pageSize}
+              loading={billingStore.pageLoading}
+              payingInvoiceId={billingStore.payingInvoiceId}
+              layout={layout}
+              onPageChange={handleInvoicesPageChange}
+              onPayInvoice={handlePayOpenInvoice}
+            />
+          </S.BillingStack>
+
+          {billingStore.creditPricing ? (
+            <BillingCreditsPurchaseModal
+              open={creditsModalOpen}
+              creditPricing={billingStore.creditPricing}
+              confirmLoading={billingStore.creditsPurchaseLoading}
+              onCancel={handleCloseCreditsModal}
+              onConfirm={handlePurchaseCredits}
+            />
+          ) : null}
         </Spin>
       </S.BillingPageRoot>
     );

@@ -480,8 +480,7 @@ export const HistoryMobileItem = styled.div`
   flex-direction: column;
   gap: 10px;
   padding: 14px 16px;
-  border-top: 1px solid
-    ${({ theme }) => theme.colors.functional.border.split};
+  border-top: 1px solid ${({ theme }) => theme.colors.functional.border.split};
 
   &:first-child {
     border-top: 0;
@@ -538,4 +537,3 @@ export const HistoryMobileEmpty = styled.div`
   font-size: ${({ theme }) => theme.fontSize.small};
   color: ${({ theme }) => theme.colors.functional.text.subdued};
 `;
-

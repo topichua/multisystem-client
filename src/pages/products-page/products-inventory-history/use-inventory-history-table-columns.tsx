@@ -1,20 +1,20 @@
-import { EyeIcon } from '@phosphor-icons/react';
-import type { TableColumnsType } from 'antd';
-import { Button, Typography } from 'antd';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
+import { EyeIcon } from "@phosphor-icons/react";
+import type { TableColumnsType } from "antd";
+import { Button, Typography } from "antd";
+import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
 import type {
   InventoryHistoryItem,
   InventoryHistorySupplyItem,
-} from '@/features/inventory/model/inventory.types';
-import { formatNumber } from '@/features/products/components/product-inventory-drawer/product-inventory-drawer.utils';
-import { formatQuantityChange } from '@/features/products/components/product-inventory-drawer/product-inventory-movements-history/product-inventory-movements-history.utils';
-import type { WorkspaceMember } from '@/features/workspace-members/model/workspace-member.types';
-import { useWorkspaceSettingsStore } from '@/features/workspace-settings/model/use-workspace-settings-store';
+} from "@/features/inventory/model/inventory.types";
+import { formatNumber } from "@/features/products/components/product-inventory-drawer/product-inventory-drawer.utils";
+import { formatQuantityChange } from "@/features/products/components/product-inventory-drawer/product-inventory-movements-history/product-inventory-movements-history.utils";
+import type { WorkspaceMember } from "@/features/workspace-members/model/workspace-member.types";
+import { useWorkspaceSettingsStore } from "@/features/workspace-settings/model/use-workspace-settings-store";
 
-import { InventoryHistoryUserCell } from './inventory-history-user-cell';
-import * as S from './inventory-history-table-cells.styled';
+import { InventoryHistoryUserCell } from "./inventory-history-user-cell";
+import * as S from "./inventory-history-table-cells.styled";
 import {
   formatInventoryHistoryDate,
   formatInventoryHistoryTime,
@@ -26,7 +26,7 @@ import {
   getInventoryHistoryQuantityChange,
   getInventoryHistoryStockLabel,
   isInventoryHistorySupplyItem,
-} from './products-inventory-history.utils';
+} from "./products-inventory-history.utils";
 
 const { Text } = Typography;
 
@@ -41,7 +41,7 @@ export function useInventoryHistoryTableColumns({
 }: UseInventoryHistoryTableColumnsParams): TableColumnsType<InventoryHistoryItem> {
   const { t } = useTranslation();
   const workspaceSettingsStore = useWorkspaceSettingsStore();
-  const currency = workspaceSettingsStore.currency ?? 'UAH';
+  const currency = workspaceSettingsStore.currency ?? "UAH";
 
   const memberByUserId = useMemo(
     () => new Map(members.map((member) => [member.user.id, member])),
@@ -51,9 +51,9 @@ export function useInventoryHistoryTableColumns({
   return useMemo(
     () => [
       {
-        title: t('products.inventoryHistory.table.date'),
-        dataIndex: 'createdAt',
-        key: 'createdAt',
+        title: t("products.inventoryHistory.table.date"),
+        dataIndex: "createdAt",
+        key: "createdAt",
         width: 120,
         render: (value: string) => (
           <S.DateCell>
@@ -63,8 +63,8 @@ export function useInventoryHistoryTableColumns({
         ),
       },
       {
-        title: t('products.inventoryHistory.table.details'),
-        key: 'details',
+        title: t("products.inventoryHistory.table.details"),
+        key: "details",
         ellipsis: true,
         render: (_, item) => {
           const { title, subtitle, isSupply } = getInventoryHistoryItemDetails(
@@ -85,19 +85,21 @@ export function useInventoryHistoryTableColumns({
                 </Text>
               ) : null}
 
-              {isSupply && onOpenSupply && isInventoryHistorySupplyItem(item) ? (
+              {isSupply &&
+              onOpenSupply &&
+              isInventoryHistorySupplyItem(item) ? (
                 <Button
                   type="link"
                   icon={<EyeIcon size={16} />}
                   data-qa={`products-inventory-history-view-${item.id}`}
                   style={{
-                    alignSelf: 'flex-start',
+                    alignSelf: "flex-start",
                     padding: 0,
-                    height: 'auto',
+                    height: "auto",
                   }}
                   onClick={() => onOpenSupply(item)}
                 >
-                  {t('products.inventoryHistory.viewDetails')}
+                  {t("products.inventoryHistory.viewDetails")}
                 </Button>
               ) : null}
             </S.DetailsCell>
@@ -105,19 +107,19 @@ export function useInventoryHistoryTableColumns({
         },
       },
       {
-        title: t('products.inventoryHistory.table.type'),
-        dataIndex: 'type',
-        key: 'type',
+        title: t("products.inventoryHistory.table.type"),
+        dataIndex: "type",
+        key: "type",
         width: 180,
-        render: (type: InventoryHistoryItem['type']) => (
+        render: (type: InventoryHistoryItem["type"]) => (
           <S.TypeBadge $tone={getInventoryHistoryBadgeTone(type)}>
             {getInventoryHistoryBadgeLabel(type, t)}
           </S.TypeBadge>
         ),
       },
       {
-        title: t('products.inventoryHistory.table.change'),
-        key: 'change',
+        title: t("products.inventoryHistory.table.change"),
+        key: "change",
         width: 90,
         render: (_, item) => {
           const quantityChange = getInventoryHistoryQuantityChange(item);
@@ -130,8 +132,8 @@ export function useInventoryHistoryTableColumns({
         },
       },
       {
-        title: t('products.inventoryHistory.table.stock'),
-        key: 'stock',
+        title: t("products.inventoryHistory.table.stock"),
+        key: "stock",
         width: 120,
         render: (_, item) => {
           if (isInventoryHistorySupplyItem(item)) {
@@ -144,23 +146,23 @@ export function useInventoryHistoryTableColumns({
 
           return (
             <>
-              <Text type="secondary">{formatNumber(item.stockBefore)}</Text> →{' '}
+              <Text type="secondary">{formatNumber(item.stockBefore)}</Text> →{" "}
               <Text strong>{formatNumber(item.stockAfter)}</Text>
             </>
           );
         },
       },
       {
-        title: t('products.inventoryHistory.table.price'),
-        key: 'price',
+        title: t("products.inventoryHistory.table.price"),
+        key: "price",
         width: 110,
         render: (_, item) => (
           <Text>{getInventoryHistoryPriceLabel(item, currency, t)}</Text>
         ),
       },
       {
-        title: t('products.inventoryHistory.table.user'),
-        key: 'user',
+        title: t("products.inventoryHistory.table.user"),
+        key: "user",
         width: 180,
         ellipsis: true,
         render: (_, item) => (
@@ -173,4 +175,4 @@ export function useInventoryHistoryTableColumns({
     ],
     [currency, memberByUserId, onOpenSupply, t],
   );
-};
+}

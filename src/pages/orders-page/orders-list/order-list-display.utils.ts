@@ -26,8 +26,10 @@ export function formatOrderCreatedByName(
   }
 
   return (
-    [createdBy.firstName, createdBy.lastName].filter(Boolean).join(" ").trim() ||
-    "—"
+    [createdBy.firstName, createdBy.lastName]
+      .filter(Boolean)
+      .join(" ")
+      .trim() || "—"
   );
 }
 
@@ -43,7 +45,10 @@ export function formatOrderListDelivery(
   translate: TranslateFn,
 ): string {
   if (order.delivery) {
-    const provider = getDeliveryProviderLabel(translate, order.delivery.provider);
+    const provider = getDeliveryProviderLabel(
+      translate,
+      order.delivery.provider,
+    );
     const location = order.delivery.warehouse ?? order.delivery.city;
 
     return [provider, location].filter(Boolean).join(" · ") || provider;

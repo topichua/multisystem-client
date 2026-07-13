@@ -54,9 +54,9 @@ function normalizeInvoiceId(
   return String(value).trim();
 }
 
-export function normalizeInvoiceReference(
-  data: BillingInvoiceReferenceDto,
-): { id: string } {
+export function normalizeInvoiceReference(data: BillingInvoiceReferenceDto): {
+  id: string;
+} {
   const nestedId = normalizeInvoiceId(data.invoice?.id);
 
   if (nestedId) {
@@ -208,7 +208,9 @@ export function normalizeBillingEntitlements(
   };
 }
 
-export function normalizeBillingInvoice(data: BillingInvoiceDto): BillingInvoice {
+export function normalizeBillingInvoice(
+  data: BillingInvoiceDto,
+): BillingInvoice {
   return {
     id: normalizeInvoiceId(data.id),
     number: data.number ?? "",

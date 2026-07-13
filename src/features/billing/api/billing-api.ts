@@ -65,10 +65,12 @@ export const billingApi = {
     return normalizeBillingSubscription(data);
   },
 
-  listInvoices: async (params: {
-    page?: number;
-    pageSize?: number;
-  } = {}): Promise<BillingInvoicesListResponse> => {
+  listInvoices: async (
+    params: {
+      page?: number;
+      pageSize?: number;
+    } = {},
+  ): Promise<BillingInvoicesListResponse> => {
     const { data } = await apiClient.get<BillingInvoicesListDto>(
       `${workspaceBillingPath}/invoices`,
       {

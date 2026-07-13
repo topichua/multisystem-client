@@ -299,7 +299,10 @@ export class IntegrationsStore {
     id: ManualPaymentMethod["id"],
     payload: ManualPaymentMethodPayload,
   ): Promise<ManualPaymentMethod> => {
-    const updated = await integrationsApi.updateManualPaymentMethod(id, payload);
+    const updated = await integrationsApi.updateManualPaymentMethod(
+      id,
+      payload,
+    );
     await this.loadIntegrations({ silent: true, force: true });
 
     return updated;

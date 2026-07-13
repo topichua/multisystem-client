@@ -23,7 +23,9 @@ export function InventoryHistoryUserCell({
   }
 
   const member = memberByUserId.get(user.id);
-  const name = member ? getWorkspaceMemberName(member) : user.name?.trim() || "—";
+  const name = member
+    ? getWorkspaceMemberName(member)
+    : user.name?.trim() || "—";
   const avatarSrc = member?.user.avatar_src ?? undefined;
 
   return (

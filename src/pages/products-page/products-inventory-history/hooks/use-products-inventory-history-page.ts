@@ -44,9 +44,13 @@ export function useProductsInventoryHistoryPage() {
   const [page, setPage] = useState(1);
   const [keyword, setKeyword] = useState("");
   const [appliedFilters, setAppliedFilters] =
-    useState<InventoryHistoryPanelFilters>(EMPTY_INVENTORY_HISTORY_PANEL_FILTERS);
+    useState<InventoryHistoryPanelFilters>(
+      EMPTY_INVENTORY_HISTORY_PANEL_FILTERS,
+    );
   const [draftFilters, setDraftFilters] =
-    useState<InventoryHistoryPanelFilters>(EMPTY_INVENTORY_HISTORY_PANEL_FILTERS);
+    useState<InventoryHistoryPanelFilters>(
+      EMPTY_INVENTORY_HISTORY_PANEL_FILTERS,
+    );
 
   const pageSize = INVENTORY_HISTORY_MOVEMENTS_DEFAULT_LIMIT;
   const appliedFilterCount = countInventoryHistoryPanelFilters(appliedFilters);

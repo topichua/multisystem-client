@@ -37,7 +37,9 @@ export const BillingPaymentHistoryMobileList = ({
   return (
     <Spin spinning={loading}>
       {invoices.length === 0 ? (
-        <S.HistoryMobileEmpty>{t("billing.history.empty")}</S.HistoryMobileEmpty>
+        <S.HistoryMobileEmpty>
+          {t("billing.history.empty")}
+        </S.HistoryMobileEmpty>
       ) : (
         <S.HistoryMobileList>
           {invoices.map((invoice) => (

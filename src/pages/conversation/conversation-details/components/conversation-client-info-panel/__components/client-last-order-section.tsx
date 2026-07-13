@@ -4,7 +4,10 @@ import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 
-import { getClientDetailsPath, getOrderDetailsPath } from "@/app/router/pages-map";
+import {
+  getClientDetailsPath,
+  getOrderDetailsPath,
+} from "@/app/router/pages-map";
 import { CenteredSpinner } from "@/components/loading/centered-spinner";
 import { Tag } from "@/components/tag/tag";
 import { useOrdersStore } from "@/features/orders/model/use-orders-store";
@@ -92,7 +95,9 @@ export const ClientLastOrderSection = observer(function ClientLastOrderSection({
           </Space>
         </Card>
       ) : (
-        <Text type="secondary">{t("conversation.clientOrders.emptyOrders")}</Text>
+        <Text type="secondary">
+          {t("conversation.clientOrders.emptyOrders")}
+        </Text>
       )}
     </S.Section>
   );

@@ -263,9 +263,7 @@ export function CatalogProductSearchPicker({
                 {
                   value: "flat",
                   label: (
-                    <Tooltip
-                      title={t("products.catalogSearch.searchModeFlat")}
-                    >
+                    <Tooltip title={t("products.catalogSearch.searchModeFlat")}>
                       <S.SearchModeIconLabel>
                         <ListIcon size={17} />
                       </S.SearchModeIconLabel>

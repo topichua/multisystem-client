@@ -1,16 +1,16 @@
-import type { ReactNode } from 'react';
-import { useTranslation } from 'react-i18next';
+import type { ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 
-import type { OrderDraftLine } from '@/features/orders/model/order.types';
+import type { OrderDraftLine } from "@/features/orders/model/order.types";
 import {
   CatalogProductSearchPicker,
   type useCatalogProductSearch,
-} from '@/features/products/components/catalog-product-search';
-import type { CatalogVariant } from '@/features/products/model/product.types';
+} from "@/features/products/components/catalog-product-search";
+import type { CatalogVariant } from "@/features/products/model/product.types";
 
-import * as S from './client-order-drawer.styled';
-import { ClientOrderLinesTable } from './client-order-lines-table';
-import { Flex } from 'antd';
+import * as S from "./client-order-drawer.styled";
+import { ClientOrderLinesTable } from "./client-order-lines-table";
+import { Flex } from "antd";
 
 type ClientOrderProductsSectionProps = {
   catalogSearch: ReturnType<typeof useCatalogProductSearch>;
@@ -38,7 +38,7 @@ export function ClientOrderProductsSection({
       <S.SectionHeader>
         {title}
         <S.SectionCount>
-          {t('conversation.clientOrders.drawer.selectedCount', {
+          {t("conversation.clientOrders.drawer.selectedCount", {
             count: orderLines.length,
           })}
         </S.SectionCount>
@@ -47,7 +47,7 @@ export function ClientOrderProductsSection({
       <Flex vertical gap={12}>
         <CatalogProductSearchPicker
           showAddLabel
-          addLabel={t('conversation.clientOrders.drawer.addProductDivider')}
+          addLabel={t("conversation.clientOrders.drawer.addProductDivider")}
           catalogSearchLoading={catalogSearch.catalogSearchLoading}
           catalogSearchMode={catalogSearch.catalogSearchMode}
           catalogSearchProductGroups={catalogSearch.catalogSearchProductGroups}

@@ -38,10 +38,10 @@ export const SettingsUserView = observer(() => {
       <PaneDetailLayout.Root inset data-qa="layout-settings-user">
         <PaneDetailLayout.Header data-qa="layout-settings-user-header">
           <Title level={4} style={{ marginTop: 0 }}>
-            {t('userSettings.title')}
+            {t("userSettings.title")}
           </Title>
           <PaneSectionHint style={{ marginTop: 0 }}>
-            {t('userSettings.subtitle')}
+            {t("userSettings.subtitle")}
           </PaneSectionHint>
         </PaneDetailLayout.Header>
         <PaneDetailLayout.Body data-qa="layout-settings-user-body">
@@ -64,9 +64,9 @@ export const SettingsUserView = observer(() => {
                 <ImgCrop
                   aspect={1}
                   cropShape="round"
-                  modalCancel={t('userSettings.cropAvatarCancel')}
-                  modalOk={t('userSettings.cropAvatarOk')}
-                  modalTitle={t('userSettings.cropAvatarTitle')}
+                  modalCancel={t("userSettings.cropAvatarCancel")}
+                  modalOk={t("userSettings.cropAvatarOk")}
+                  modalTitle={t("userSettings.cropAvatarTitle")}
                   quality={0.9}
                   rotationSlider
                   showReset
@@ -79,7 +79,7 @@ export const SettingsUserView = observer(() => {
                     showUploadList={false}
                   >
                     <Button loading={avatarUploading}>
-                      {t('userSettings.changePhoto')}
+                      {t("userSettings.changePhoto")}
                     </Button>
                   </Upload>
                 </ImgCrop>
@@ -96,12 +96,12 @@ export const SettingsUserView = observer(() => {
                 <S.FormGrid>
                   <Form.Item
                     name="firstName"
-                    label={t('userSettings.firstName')}
+                    label={t("userSettings.firstName")}
                     rules={[
                       {
                         required: true,
                         whitespace: true,
-                        message: t('userSettings.firstNameRequired'),
+                        message: t("userSettings.firstNameRequired"),
                       },
                     ]}
                   >
@@ -109,27 +109,27 @@ export const SettingsUserView = observer(() => {
                   </Form.Item>
                   <Form.Item
                     name="lastName"
-                    label={t('userSettings.lastName')}
+                    label={t("userSettings.lastName")}
                     rules={[
                       {
                         required: true,
                         whitespace: true,
-                        message: t('userSettings.lastNameRequired'),
+                        message: t("userSettings.lastNameRequired"),
                       },
                     ]}
                   >
                     <Input autoComplete="family-name" />
                   </Form.Item>
-                  <Form.Item name="email" label={t('userSettings.email')}>
+                  <Form.Item name="email" label={t("userSettings.email")}>
                     <Input autoComplete="email" disabled />
                   </Form.Item>
-                  <Form.Item name="phone" label={t('userSettings.phone')}>
+                  <Form.Item name="phone" label={t("userSettings.phone")}>
                     <ClientPhoneFormInput
                       autoComplete="tel"
-                      placeholder={t('userSettings.phonePlaceholder')}
+                      placeholder={t("userSettings.phonePlaceholder")}
                     />
                   </Form.Item>
-                  <Form.Item label={t('userSettings.role')}>
+                  <Form.Item label={t("userSettings.role")}>
                     <Input disabled value={roleLabel} />
                   </Form.Item>
                 </S.FormGrid>
@@ -142,7 +142,7 @@ export const SettingsUserView = observer(() => {
                     htmlType="submit"
                     loading={profileSaving}
                   >
-                    {t('userSettings.saveChanges')}
+                    {t("userSettings.saveChanges")}
                   </Button>
                 </S.FormFooter>
               </Form>
@@ -150,7 +150,7 @@ export const SettingsUserView = observer(() => {
 
             <FormCard>
               <S.FormSectionTitle level={5}>
-                {t('userSettings.changeEmailTitle')}
+                {t("userSettings.changeEmailTitle")}
               </S.FormSectionTitle>
 
               <Form
@@ -162,16 +162,16 @@ export const SettingsUserView = observer(() => {
                 <S.FormGrid>
                   <Form.Item
                     name="newEmail"
-                    label={t('userSettings.newEmail')}
+                    label={t("userSettings.newEmail")}
                     rules={[
                       {
                         required: true,
                         whitespace: true,
-                        message: t('userSettings.newEmailRequired'),
+                        message: t("userSettings.newEmailRequired"),
                       },
                       {
-                        type: 'email',
-                        message: t('userSettings.newEmailInvalid'),
+                        type: "email",
+                        message: t("userSettings.newEmailInvalid"),
                       },
                     ]}
                   >
@@ -179,11 +179,11 @@ export const SettingsUserView = observer(() => {
                   </Form.Item>
                   <Form.Item
                     name="existingPassword"
-                    label={t('userSettings.currentPassword')}
+                    label={t("userSettings.currentPassword")}
                     rules={[
                       {
                         required: true,
-                        message: t('userSettings.currentPasswordRequired'),
+                        message: t("userSettings.currentPasswordRequired"),
                       },
                     ]}
                   >
@@ -194,8 +194,12 @@ export const SettingsUserView = observer(() => {
                 <FormDivider />
 
                 <S.FormFooter>
-                  <Button type="primary" htmlType="submit" loading={emailSaving}>
-                    {t('userSettings.saveEmail')}
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    loading={emailSaving}
+                  >
+                    {t("userSettings.saveEmail")}
                   </Button>
                 </S.FormFooter>
               </Form>
@@ -203,7 +207,7 @@ export const SettingsUserView = observer(() => {
 
             <FormCard>
               <S.FormSectionTitle level={5}>
-                {t('userSettings.changePasswordTitle')}
+                {t("userSettings.changePasswordTitle")}
               </S.FormSectionTitle>
 
               <Form
@@ -215,11 +219,11 @@ export const SettingsUserView = observer(() => {
                 <S.FormGrid>
                   <Form.Item
                     name="existingPassword"
-                    label={t('userSettings.currentPassword')}
+                    label={t("userSettings.currentPassword")}
                     rules={[
                       {
                         required: true,
-                        message: t('userSettings.currentPasswordRequired'),
+                        message: t("userSettings.currentPasswordRequired"),
                       },
                     ]}
                   >
@@ -227,15 +231,15 @@ export const SettingsUserView = observer(() => {
                   </Form.Item>
                   <Form.Item
                     name="newPassword"
-                    label={t('userSettings.newPassword')}
+                    label={t("userSettings.newPassword")}
                     rules={[
                       {
                         required: true,
-                        message: t('userSettings.newPasswordRequired'),
+                        message: t("userSettings.newPasswordRequired"),
                       },
                       {
                         min: 8,
-                        message: t('userSettings.newPasswordMin'),
+                        message: t("userSettings.newPasswordMin"),
                       },
                     ]}
                   >
@@ -243,21 +247,24 @@ export const SettingsUserView = observer(() => {
                   </Form.Item>
                   <Form.Item
                     name="confirmPassword"
-                    label={t('userSettings.confirmNewPassword')}
-                    dependencies={['newPassword']}
+                    label={t("userSettings.confirmNewPassword")}
+                    dependencies={["newPassword"]}
                     rules={[
                       {
                         required: true,
-                        message: t('userSettings.confirmNewPasswordRequired'),
+                        message: t("userSettings.confirmNewPasswordRequired"),
                       },
                       ({ getFieldValue }) => ({
                         validator(_, value: string | undefined) {
-                          if (!value || value === getFieldValue('newPassword')) {
+                          if (
+                            !value ||
+                            value === getFieldValue("newPassword")
+                          ) {
                             return Promise.resolve();
                           }
 
                           return Promise.reject(
-                            new Error(t('userSettings.passwordMismatch')),
+                            new Error(t("userSettings.passwordMismatch")),
                           );
                         },
                       }),
@@ -275,7 +282,7 @@ export const SettingsUserView = observer(() => {
                     htmlType="submit"
                     loading={passwordSaving}
                   >
-                    {t('userSettings.savePassword')}
+                    {t("userSettings.savePassword")}
                   </Button>
                 </S.FormFooter>
               </Form>

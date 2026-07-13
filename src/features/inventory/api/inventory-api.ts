@@ -62,7 +62,9 @@ function normalizeInventoryHistorySupplyLine(
   };
 }
 
-function normalizeInventoryHistoryItem(raw: unknown): InventoryHistoryItem | null {
+function normalizeInventoryHistoryItem(
+  raw: unknown,
+): InventoryHistoryItem | null {
   if (!raw || typeof raw !== "object") {
     return null;
   }
@@ -102,7 +104,9 @@ function normalizeInventoryHistoryItem(raw: unknown): InventoryHistoryItem | nul
   return {
     kind: "movement",
     id: Number(record.id ?? 0),
-    type: String(record.type ?? "simple_adjustment") as InventoryHistoryMovement["type"],
+    type: String(
+      record.type ?? "simple_adjustment",
+    ) as InventoryHistoryMovement["type"],
     createdAt: String(record.createdAt ?? ""),
     reason: typeof record.reason === "string" ? record.reason : null,
     comment: typeof record.comment === "string" ? record.comment : null,
@@ -119,7 +123,9 @@ function normalizeInventoryHistoryItem(raw: unknown): InventoryHistoryItem | nul
     purchasePrice:
       typeof record.purchasePrice === "number" ? record.purchasePrice : null,
     totalCostChange:
-      typeof record.totalCostChange === "number" ? record.totalCostChange : null,
+      typeof record.totalCostChange === "number"
+        ? record.totalCostChange
+        : null,
     stockBefore: Number(record.stockBefore ?? 0),
     stockAfter: Number(record.stockAfter ?? 0),
   };

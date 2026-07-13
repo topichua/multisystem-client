@@ -24,8 +24,8 @@ export function useSettingsBillingPage() {
   if (subscriptionBillingCycle !== prevSubscriptionBillingCycle) {
     setPrevSubscriptionBillingCycle(subscriptionBillingCycle);
     if (
-      subscriptionBillingCycle === 'monthly' ||
-      subscriptionBillingCycle === 'yearly'
+      subscriptionBillingCycle === "monthly" ||
+      subscriptionBillingCycle === "yearly"
     ) {
       setSelectedBillingCycle(subscriptionBillingCycle);
     }
@@ -89,7 +89,10 @@ export function useSettingsBillingPage() {
         setCreditsModalOpen(false);
       } catch (error) {
         notification.error({
-          message: getApiErrorMessage(error, t("billing.errors.purchaseCredits")),
+          message: getApiErrorMessage(
+            error,
+            t("billing.errors.purchaseCredits"),
+          ),
         });
       }
     },
@@ -112,7 +115,10 @@ export function useSettingsBillingPage() {
         await billingStore.payOpenInvoice(invoiceId);
       } catch (error) {
         notification.error({
-          message: getApiErrorMessage(error, t("billing.errors.paySubscription")),
+          message: getApiErrorMessage(
+            error,
+            t("billing.errors.paySubscription"),
+          ),
         });
       }
     },

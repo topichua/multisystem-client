@@ -162,9 +162,7 @@ export function ManualPaymentMethodCard({
               {t(`integrations.manualPayment.types.${methodType}`)}
             </Tag>
           </Space>
-          <Text>
-            {displayValue}
-          </Text>
+          <Text>{displayValue}</Text>
         </Flex>
 
         <Space>

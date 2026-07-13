@@ -107,7 +107,7 @@ export const ManualPaymentMethodFormPanel = styled.div`
 
 export const ManualPaymentMethodFormActions = styled.div<{ $single: boolean }>`
   display: flex;
-  justify-content: ${({ $single }) => ($single ? 'stretch' : 'flex-end')};
+  justify-content: ${({ $single }) => ($single ? "stretch" : "flex-end")};
   gap: 8px;
 `;
 

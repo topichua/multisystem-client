@@ -294,8 +294,7 @@ export const useProductAddPageController =
           variantsController.onUpdateManualVariantCustomField,
         deletingVariantKey: variantsController.deletingVariantKey,
         showQuantityField: isSimpleInventoryMode,
-        onApplyPriceToAllVariants:
-          variantsController.onApplyPriceToAllVariants,
+        onApplyPriceToAllVariants: variantsController.onApplyPriceToAllVariants,
       },
       submitButtonProps: {
         loading: isSavingProduct,

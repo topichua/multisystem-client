@@ -52,9 +52,7 @@ export function ProductVariantsTable({
         <EmptyVariantsState onAddManualVariant={onAddManualVariant} />
       ) : (
         <>
-          <VariantsBulkPriceBar
-            onApplyPriceToAll={onApplyPriceToAllVariants}
-          />
+          <VariantsBulkPriceBar onApplyPriceToAll={onApplyPriceToAllVariants} />
 
           <VariantsTableValidationScope>
             <Table<ProductVariantUi>

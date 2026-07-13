@@ -25,10 +25,7 @@ import { useClientOrderNovaPoshtaDelivery } from "@/pages/conversation/conversat
 import { phoneFieldRules } from "@/utils/phone-input";
 import { useNotification } from "@/shared/components/notification/use-notification";
 
-import {
-  SUMMARY_DELIVERY_AMOUNT,
-  drawerKey,
-} from "./orders-new.constants";
+import { SUMMARY_DELIVERY_AMOUNT, drawerKey } from "./orders-new.constants";
 import type {
   ClientMode,
   NewClientFormValues,

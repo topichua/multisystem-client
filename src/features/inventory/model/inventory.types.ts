@@ -125,39 +125,39 @@ export type CreateStockSupplyResponse = {
 };
 
 export const INVENTORY_HISTORY_MOVEMENTS_ENDPOINT =
-  '/inventory/history-movements';
+  "/inventory/history-movements";
 
 export const INVENTORY_HISTORY_MOVEMENTS_DEFAULT_LIMIT = 20;
 
 export type InventoryHistoryMovementType =
-  | 'initial_stock'
-  | 'purchase'
-  | 'order_sale'
-  | 'order_cancel'
-  | 'return'
-  | 'correction'
-  | 'inventory'
-  | 'simple_adjustment'
-  | 'simple_order_sale'
-  | 'simple_order_cancel'
-  | 'supply'
-  | 'order_reserve'
-  | 'order_release';
+  | "initial_stock"
+  | "purchase"
+  | "order_sale"
+  | "order_cancel"
+  | "return"
+  | "correction"
+  | "inventory"
+  | "simple_adjustment"
+  | "simple_order_sale"
+  | "simple_order_cancel"
+  | "supply"
+  | "order_reserve"
+  | "order_release";
 
 export const INVENTORY_HISTORY_MOVEMENT_TYPES = [
-  'supply',
-  'purchase',
-  'initial_stock',
-  'return',
-  'order_sale',
-  'simple_order_sale',
-  'order_cancel',
-  'simple_order_cancel',
-  'order_reserve',
-  'order_release',
-  'correction',
-  'inventory',
-  'simple_adjustment',
+  "supply",
+  "purchase",
+  "initial_stock",
+  "return",
+  "order_sale",
+  "simple_order_sale",
+  "order_cancel",
+  "simple_order_cancel",
+  "order_reserve",
+  "order_release",
+  "correction",
+  "inventory",
+  "simple_adjustment",
 ] as const satisfies readonly InventoryHistoryMovementType[];
 
 export type GetInventoryHistoryMovementsParams = {
@@ -170,10 +170,10 @@ export type GetInventoryHistoryMovementsParams = {
   offset?: number;
 };
 
-export type InventoryHistoryItemKind = 'movement' | 'supply';
+export type InventoryHistoryItemKind = "movement" | "supply";
 
 export type InventoryHistoryMovement = {
-  kind: 'movement';
+  kind: "movement";
   id: number;
   type: InventoryHistoryMovementType;
   createdAt: string;
@@ -205,9 +205,9 @@ export type InventoryHistorySupplyLine = {
 };
 
 export type InventoryHistorySupplyItem = {
-  kind: 'supply';
+  kind: "supply";
   id: number;
-  type: 'supply';
+  type: "supply";
   createdAt: string;
   comment: string | null;
   user: InventoryMovementUser | null;

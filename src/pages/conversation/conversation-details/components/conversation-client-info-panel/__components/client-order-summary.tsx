@@ -85,10 +85,7 @@ export const ClientOrdersSummary = observer(
             {stats.map((stat, index) => (
               <Flex key={stat.key} align="center" style={{ flex: 1 }}>
                 {index > 0 ? (
-                  <Divider
-                    type="vertical"
-                    style={{ height: 28, margin: 0 }}
-                  />
+                  <Divider type="vertical" style={{ height: 28, margin: 0 }} />
                 ) : null}
                 <div style={{ flex: 1, textAlign: "center" }}>
                   <Text type="secondary" style={statLabelStyle}>

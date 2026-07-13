@@ -49,7 +49,7 @@ export const UserProfile = observer(
     return (
       <Popover
         placement={menuPlacement}
-        trigger={["click", "hover"]}
+        trigger={["click"]}
         arrow={false}
         destroyOnHidden
         styles={{ container: { padding: 4 } }}

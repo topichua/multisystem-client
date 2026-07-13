@@ -68,12 +68,7 @@ export function StockSupplyModal({
       afterOpenChange={handleAfterOpenChange}
       onCancel={handleClose}
       footer={
-        <Flex
-          align="center"
-          justify="space-between"
-          gap={16}
-          wrap="wrap"
-        >
+        <Flex align="center" justify="space-between" gap={16} wrap="wrap">
           <Text type="secondary">
             {t("products.stockSupply.summary", {
               count: selectedLines.length,
