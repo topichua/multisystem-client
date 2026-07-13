@@ -1,3 +1,4 @@
+import { Typography } from "antd";
 import styled from "styled-components";
 
 import { UserAvatar } from "@/components/user-avatar";
@@ -50,6 +51,19 @@ export const FormGrid = styled.div`
 
   @media (max-width: 767px) {
     grid-template-columns: minmax(0, 1fr);
+  }
+`;
+
+export const CardsStack = styled.div`
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`;
+
+export const FormSectionTitle = styled(Typography.Title)`
+  && {
+    margin: 0 0 16px;
   }
 `;
 

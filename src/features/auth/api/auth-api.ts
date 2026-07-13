@@ -17,6 +17,20 @@ export type UpdateAuthProfileRequest = {
   phone?: string;
 };
 
+export type SetAuthEmailRequest = {
+  new_email: string;
+  existing_password: string;
+};
+
+export type ChangeAuthPasswordRequest = {
+  existing_password: string;
+  new_password: string;
+};
+
+type ChangeAuthPasswordResponse = {
+  changed: boolean;
+};
+
 export type RegisterStartRequest = {
   companyName: string;
   firstName: string;
@@ -84,6 +98,24 @@ export const authApi = {
       "/auth/avatar",
       formData,
       axiosMultipartFormDataConfig(),
+    );
+
+    return data;
+  },
+
+  setEmail: async (payload: SetAuthEmailRequest) => {
+    const { data } = await apiClient.post<AuthSessionResponse>(
+      "/auth/set-email",
+      payload,
+    );
+
+    return data;
+  },
+
+  changePassword: async (payload: ChangeAuthPasswordRequest) => {
+    const { data } = await apiClient.post<ChangeAuthPasswordResponse>(
+      "/auth/change-password",
+      payload,
     );
 
     return data;

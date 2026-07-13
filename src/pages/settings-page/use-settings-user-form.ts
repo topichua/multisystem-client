@@ -17,6 +17,17 @@ export type UserSettingsFormValues = {
   email: string;
 };
 
+export type ChangeEmailFormValues = {
+  newEmail: string;
+  existingPassword: string;
+};
+
+export type ChangePasswordFormValues = {
+  existingPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+};
+
 export function getRoleLabel(t: TFunction, role: AuthUserRole | null): string {
   if (!role) {
     return "";
@@ -38,7 +49,11 @@ export function useSettingsUserForm() {
   const userStore = useUserStore();
   const notification = useNotification();
   const [form] = Form.useForm<UserSettingsFormValues>();
+  const [emailForm] = Form.useForm<ChangeEmailFormValues>();
+  const [passwordForm] = Form.useForm<ChangePasswordFormValues>();
   const [profileSaving, setProfileSaving] = useState(false);
+  const [emailSaving, setEmailSaving] = useState(false);
+  const [passwordSaving, setPasswordSaving] = useState(false);
   const [avatarUploading, setAvatarUploading] = useState(false);
 
   const displayName = userStore.displayName ?? t("profile.user");
@@ -121,15 +136,71 @@ export function useSettingsUserForm() {
     [notification, t, userStore],
   );
 
+  const handleEmailSubmit = useCallback(
+    async (values: ChangeEmailFormValues) => {
+      setEmailSaving(true);
+
+      try {
+        await authApi.setEmail({
+          new_email: values.newEmail.trim(),
+          existing_password: values.existingPassword,
+        });
+        await userStore.loadAuth();
+        emailForm.resetFields();
+        notification.success({ title: t("userSettings.emailUpdateSuccess") });
+      } catch (error) {
+        notification.error({
+          title: getApiErrorMessage(error, t("userSettings.emailUpdateError")),
+        });
+      } finally {
+        setEmailSaving(false);
+      }
+    },
+    [emailForm, notification, t, userStore],
+  );
+
+  const handlePasswordSubmit = useCallback(
+    async (values: ChangePasswordFormValues) => {
+      setPasswordSaving(true);
+
+      try {
+        await authApi.changePassword({
+          existing_password: values.existingPassword,
+          new_password: values.newPassword,
+        });
+        passwordForm.resetFields();
+        notification.success({
+          title: t("userSettings.passwordUpdateSuccess"),
+        });
+      } catch (error) {
+        notification.error({
+          title: getApiErrorMessage(
+            error,
+            t("userSettings.passwordUpdateError"),
+          ),
+        });
+      } finally {
+        setPasswordSaving(false);
+      }
+    },
+    [notification, passwordForm, t],
+  );
+
   return {
     form,
+    emailForm,
+    passwordForm,
     displayName,
     avatarSrc,
     profileSubtitle,
     roleLabel,
     profileSaving,
+    emailSaving,
+    passwordSaving,
     avatarUploading,
     handleProfileSubmit,
+    handleEmailSubmit,
+    handlePasswordSubmit,
     handleAvatarBeforeUpload,
   };
 }
