@@ -149,6 +149,13 @@ export const GroupDot = styled.span<{ $color: string }>`
   background: ${({ $color }) => $color};
 `;
 
+export const GroupIcon = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: currentColor;
+`;
+
 export const GroupName = styled.span`
   min-width: 0;
   overflow: hidden;
@@ -173,4 +180,10 @@ export const GroupCount = styled.span`
   line-height: 1;
   color: ${(props) => props.theme.colors.functional.text.subdued};
   background: ${(props) => props.theme.colors.functional.background.elevated};
+`;
+
+export const GroupListDivider = styled.div`
+  height: 1px;
+  margin: 8px 0 2px;
+  background: ${(props) => props.theme.colors.functional.border.cardBase};
 `;

@@ -1,12 +1,19 @@
 import {
+  ArchiveIcon,
   CaretDoubleLeftIcon,
   CaretDoubleRightIcon,
+  WarningIcon,
 } from "@phosphor-icons/react";
+import type { Icon } from "@phosphor-icons/react";
 import { Empty, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
 
 import { CenteredSpinner } from "@/components/loading/centered-spinner";
+import {
+  type FooterSystemGroupKey,
+  isFooterSystemGroup,
+} from "@/features/conversation-groups/model/system-groups";
 import { useConversationGroupsStore } from "@/features/conversation-groups/model/use-conversation-groups-store";
 import { useEnsureConversationGroupsLoaded } from "@/features/conversation-groups/model/use-ensure-conversation-groups-loaded";
 import { useConversationsStore } from "@/features/conversations/model/use-conversations-store";
@@ -16,6 +23,11 @@ import { ConversationGroupFilterRow } from "./conversation-group-filter-row";
 import * as S from "./conversation-groups-pane.styled";
 
 const { Text, Title } = Typography;
+
+const footerSystemGroupIcons: Record<FooterSystemGroupKey, Icon> = {
+  archived: ArchiveIcon,
+  spam: WarningIcon,
+};
 
 type ConversationGroupsPaneProps = {
   collapsed: boolean;
@@ -35,6 +47,10 @@ export const ConversationGroupsPane = observer(
     const sortedGroups = [...groupsStore.groups].sort(
       (firstGroup, secondGroup) => firstGroup.sortOrder - secondGroup.sortOrder,
     );
+    const regularGroups = sortedGroups.filter(
+      (group) => !isFooterSystemGroup(group),
+    );
+    const footerSystemGroups = sortedGroups.filter(isFooterSystemGroup);
 
     const selectedGroupId =
       conversationsStore.conversationListGroupFilterIds[0] ?? null;
@@ -101,16 +117,34 @@ export const ConversationGroupsPane = observer(
                   style={{ marginTop: 16 }}
                 />
               ) : (
-                sortedGroups.map((group) => (
-                  <ConversationGroupFilterRow
-                    key={group.id}
-                    color={group.color}
-                    count={group.counter}
-                    name={group.name}
-                    selected={selectedGroupId === group.id}
-                    onClick={() => handleSelectGroup(group.id)}
-                  />
-                ))
+                <>
+                  {regularGroups.map((group) => (
+                    <ConversationGroupFilterRow
+                      key={group.id}
+                      color={group.color}
+                      count={group.counter}
+                      name={group.name}
+                      selected={selectedGroupId === group.id}
+                      onClick={() => handleSelectGroup(group.id)}
+                    />
+                  ))}
+
+                  {footerSystemGroups.length > 0 && (
+                    <>
+                      <S.GroupListDivider />
+                      {footerSystemGroups.map((group) => (
+                        <ConversationGroupFilterRow
+                          key={group.id}
+                          count={group.counter}
+                          icon={footerSystemGroupIcons[group.systemKey]}
+                          name={group.name}
+                          selected={selectedGroupId === group.id}
+                          onClick={() => handleSelectGroup(group.id)}
+                        />
+                      ))}
+                    </>
+                  )}
+                </>
               )}
             </S.GroupList>
           )}

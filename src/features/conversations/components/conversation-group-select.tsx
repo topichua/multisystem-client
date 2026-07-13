@@ -1,3 +1,5 @@
+import { ArchiveIcon, WarningIcon } from "@phosphor-icons/react";
+import type { Icon } from "@phosphor-icons/react";
 import { Select, Space } from "antd";
 import { observer } from "mobx-react-lite";
 import { useCallback, useMemo, useState } from "react";
@@ -8,16 +10,24 @@ import { getApiErrorMessage } from "@/api/get-api-error-message";
 import {
   GroupColoredNameTag,
   GroupColorSwatch,
+  GroupIconMark,
+  GroupOptionDivider,
   GroupOptionWithSwatch,
 } from "@/features/conversation-groups/components/group-select-visuals";
 import {
   type GroupSelectOptionData,
   toGroupSelectOptions,
 } from "@/features/conversation-groups/group-select-options";
+import type { FooterSystemGroupKey } from "@/features/conversation-groups/model/system-groups";
 import { useEnsureConversationGroupsLoaded } from "@/features/conversation-groups/model/use-ensure-conversation-groups-loaded";
 import { useConversationGroupsStore } from "@/features/conversation-groups/model/use-conversation-groups-store";
 import { useConversationsStore } from "@/features/conversations/model/use-conversations-store";
 import { useNotification } from "@/shared/components/notification/use-notification";
+
+const footerSystemGroupIcons: Record<FooterSystemGroupKey, Icon> = {
+  archived: ArchiveIcon,
+  spam: WarningIcon,
+};
 
 type ConversationGroupSelectProps = {
   conversationId: string | undefined;
@@ -49,6 +59,26 @@ export const ConversationGroupSelect = observer(
       () => toGroupSelectOptions(groupsStore.groups),
       [groupsStore.groups],
     );
+    const selectOptions = useMemo(() => {
+      const regularOptions = options.filter(
+        (option) => !option.footerSystemKey,
+      );
+      const footerSystemOptions = options.filter(
+        (option) => option.footerSystemKey,
+      );
+
+      if (footerSystemOptions.length === 0) {
+        return regularOptions;
+      }
+
+      return [
+        ...regularOptions,
+        {
+          label: <GroupOptionDivider />,
+          options: footerSystemOptions,
+        },
+      ];
+    }, [options]);
 
     const applyGroup = useCallback(
       async (next: number | null) => {
@@ -102,7 +132,14 @@ export const ConversationGroupSelect = observer(
           loading={loading}
           disabled={selectDisabled}
           value={groupId === null ? undefined : groupId}
-          options={options}
+          options={selectOptions}
+          styles={{
+            popup: {
+              listItem: {
+                paddingInlineStart: 12,
+              },
+            },
+          }}
           optionRender={(option) => {
             const data = option.data as GroupSelectOptionData;
 
@@ -110,6 +147,11 @@ export const ConversationGroupSelect = observer(
               <GroupOptionWithSwatch
                 label={data.label}
                 color={data.color}
+                icon={
+                  data.footerSystemKey
+                    ? footerSystemGroupIcons[data.footerSystemKey]
+                    : undefined
+                }
                 showPlainLabels={showPlainLabels}
               />
             );
@@ -129,6 +171,21 @@ export const ConversationGroupSelect = observer(
 
             if (!g) {
               return String(id);
+            }
+
+            const footerSystemKey = options.find(
+              (option) => option.value === id,
+            )?.footerSystemKey;
+
+            if (footerSystemKey) {
+              return (
+                <Space size={8} align="center">
+                  <GroupIconMark
+                    icon={footerSystemGroupIcons[footerSystemKey]}
+                  />
+                  {g.name}
+                </Space>
+              );
             }
 
             return (
