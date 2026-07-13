@@ -9,6 +9,7 @@ export type InventoryMovementType =
   | "return"
   | "correction"
   | "inventory"
+  | "supply"
   | "simple_adjustment"
   | "simple_order_sale"
   | "simple_order_cancel";
@@ -28,6 +29,7 @@ export type InventoryMovement = {
   comment: string | null;
   orderId: number | null;
   orderItemId: number | null;
+  supplyId?: number | null;
   user: InventoryMovementUser | null;
   createdAt: string;
 };
@@ -91,3 +93,33 @@ export type StockCorrectionValues = Omit<
 >;
 
 export type CreateStockCorrectionResponse = CreateStockMovementResponse;
+
+export type CreateStockSupplyItem = {
+  productId: number;
+  productVariantId: number;
+  quantity: number;
+  buyPrice: number;
+};
+
+export type CreateStockSupplyRequest = {
+  items: CreateStockSupplyItem[];
+  comment: string;
+};
+
+export type StockSupply = {
+  id: number;
+  comment: string | null;
+  createdAt: string;
+  items: CreateStockSupplyItem[];
+};
+
+export type CreateStockSupplyLine = {
+  item: CreateStockSupplyItem;
+  movement: InventoryMovement;
+  stock: InventoryStock;
+};
+
+export type CreateStockSupplyResponse = {
+  supply: StockSupply;
+  lines: CreateStockSupplyLine[];
+};

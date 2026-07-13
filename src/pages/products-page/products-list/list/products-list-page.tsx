@@ -9,6 +9,7 @@ import { useLocation, useNavigate } from "react-router";
 import { getProductEditPath, pagesMap } from "@/app/router/pages-map";
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
 import { PaneSectionTitle } from "@/components/layout/pane-frame";
+import { StockSupplyModal } from "@/features/inventory/components/stock-supply-modal/stock-supply-modal";
 import { ProductInventoryDrawer } from "@/features/products/components/product-inventory-drawer/product-inventory-drawer";
 import type { Product } from "@/features/products/model/product.types";
 import {
@@ -40,6 +41,7 @@ export const ProductsListPage = observer(() => {
   const navigate = useNavigate();
   const location = useLocation();
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [stockSupplyModalOpen, setStockSupplyModalOpen] = useState(false);
   const {
     productsStore,
     categoryNameById,
@@ -243,12 +245,21 @@ export const ProductsListPage = observer(() => {
       <PaneDetailLayout.Header data-qa="layout-products-list-header">
         <Flex justify="space-between" align="center" gap={16} wrap="wrap">
           <PaneSectionTitle>{t("products.listTitle")}</PaneSectionTitle>
-          <Button
-            type="primary"
-            onClick={() => navigate(pagesMap.productsListAdd)}
-          >
-            {t("products.addProductCta")}
-          </Button>
+          <Flex align="center" gap={8} wrap="wrap">
+            <Button
+              icon={<CubeIcon size={16} />}
+              data-qa="products-list-add-supply"
+              onClick={() => setStockSupplyModalOpen(true)}
+            >
+              {t("products.addSupplyCta")}
+            </Button>
+            <Button
+              type="primary"
+              onClick={() => navigate(pagesMap.productsListAdd)}
+            >
+              {t("products.addProductCta")}
+            </Button>
+          </Flex>
         </Flex>
       </PaneDetailLayout.Header>
       <PaneDetailLayout.Body data-qa="layout-products-table-scroll">
@@ -319,6 +330,11 @@ export const ProductsListPage = observer(() => {
         <ProductsListFiltersPanel
           open={filtersOpen}
           onClose={() => setFiltersOpen(false)}
+        />
+        <StockSupplyModal
+          open={stockSupplyModalOpen}
+          onClose={() => setStockSupplyModalOpen(false)}
+          onSuccess={() => productsStore.loadProducts({ silent: true })}
         />
         <ProductInventoryDrawer
           open={showInventoryManagement && inventoryDrawerProduct != null}

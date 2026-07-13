@@ -7,6 +7,8 @@ import {
   type CreateStockCorrectionResponse,
   type CreateStockPurchaseRequest,
   type CreateStockPurchaseResponse,
+  type CreateStockSupplyRequest,
+  type CreateStockSupplyResponse,
   INVENTORY_MOVEMENTS_DEFAULT_LIMIT,
   type InventoryMovementsResponse,
   type InventoryVariantMovementsQuery,
@@ -72,6 +74,17 @@ export const inventoryApi = {
   ): Promise<CreateStockCorrectionResponse> => {
     const { data } = await apiClient.post<CreateStockCorrectionResponse>(
       `${basePath}/stock/correction`,
+      payload,
+    );
+
+    return data;
+  },
+
+  createStockSupply: async (
+    payload: CreateStockSupplyRequest,
+  ): Promise<CreateStockSupplyResponse> => {
+    const { data } = await apiClient.post<CreateStockSupplyResponse>(
+      `${basePath}/stock/supplies`,
       payload,
     );
 

@@ -1,4 +1,4 @@
-import { ArrowLeftIcon, PlusIcon } from "@phosphor-icons/react";
+import { ArrowLeftIcon, CubeIcon, PlusIcon } from "@phosphor-icons/react";
 import { Empty, Pagination, Spin } from "antd";
 import { observer } from "mobx-react-lite";
 import { useCallback, useState } from "react";
@@ -7,6 +7,7 @@ import { useLocation, useNavigate } from "react-router";
 
 import { getProductEditPath, pagesMap } from "@/app/router/pages-map";
 import { CenteredSpinner } from "@/components/loading/centered-spinner";
+import { StockSupplyModal } from "@/features/inventory/components/stock-supply-modal/stock-supply-modal";
 import { ProductInventoryDrawer } from "@/features/products/components/product-inventory-drawer/product-inventory-drawer";
 import type { Product } from "@/features/products/model/product.types";
 
@@ -29,6 +30,7 @@ export const MobileProductsListPage = observer(() => {
   const navigate = useNavigate();
   const location = useLocation();
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [stockSupplyModalOpen, setStockSupplyModalOpen] = useState(false);
   const {
     productsStore,
     categoryNameById,
@@ -94,17 +96,29 @@ export const MobileProductsListPage = observer(() => {
           />
           <S.PageTitle level={3}>{t("products.listTitle")}</S.PageTitle>
         </S.TitleCluster>
-        <S.CreateButton
-          type="primary"
-          icon={<PlusIcon size={16} />}
-          aria-label={t("products.mobile.addProductAria")}
-          data-qa="products-mobile-list-add"
-          onClick={() => navigate(pagesMap.productsListAdd)}
-        >
-          <S.CreateButtonLabel>
-            {t("products.addProductCta")}
-          </S.CreateButtonLabel>
-        </S.CreateButton>
+        <S.HeaderActions>
+          <S.CreateButton
+            icon={<CubeIcon size={16} />}
+            aria-label={t("products.addSupplyCta")}
+            data-qa="products-mobile-list-add-supply"
+            onClick={() => setStockSupplyModalOpen(true)}
+          >
+            <S.CreateButtonLabel>
+              {t("products.addSupplyCta")}
+            </S.CreateButtonLabel>
+          </S.CreateButton>
+          <S.CreateButton
+            type="primary"
+            icon={<PlusIcon size={16} />}
+            aria-label={t("products.mobile.addProductAria")}
+            data-qa="products-mobile-list-add"
+            onClick={() => navigate(pagesMap.productsListAdd)}
+          >
+            <S.CreateButtonLabel>
+              {t("products.addProductCta")}
+            </S.CreateButtonLabel>
+          </S.CreateButton>
+        </S.HeaderActions>
       </S.Header>
 
       <S.ScrollRegion>
@@ -169,6 +183,11 @@ export const MobileProductsListPage = observer(() => {
         <ProductsListFiltersPanel
           open={filtersOpen}
           onClose={() => setFiltersOpen(false)}
+        />
+        <StockSupplyModal
+          open={stockSupplyModalOpen}
+          onClose={() => setStockSupplyModalOpen(false)}
+          onSuccess={() => productsStore.loadProducts({ silent: true })}
         />
         <ProductInventoryDrawer
           open={showInventoryManagement && inventoryDrawerProduct != null}
