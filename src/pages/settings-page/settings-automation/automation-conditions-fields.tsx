@@ -6,7 +6,6 @@ import {
   type FormInstance,
   type FormListFieldData,
 } from "antd";
-import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import type { AutomationCriteria } from "@/features/automation/model/automation.types";
@@ -97,8 +96,6 @@ const ConditionBlock = ({
     form,
   ) as number | null | undefined;
 
-  const [isAtBranchExtensionOpen, setIsAtBranchExtensionOpen] = useState(false);
-
   const sourceTypeOptions = [
     {
       value: "DELIVERY_STATUS",
@@ -121,26 +118,15 @@ const ConditionBlock = ({
       sourceType,
       sourceStatus,
     });
-
-  useEffect(() => {
-    if (!showAtBranchExtensionUi) {
-      setIsAtBranchExtensionOpen(false);
-      return;
-    }
-
-    if (durationValue != null) {
-      setIsAtBranchExtensionOpen(true);
-    }
-  }, [durationValue, showAtBranchExtensionUi]);
+  const isAtBranchExtensionOpen =
+    showAtBranchExtensionUi && durationValue != null;
 
   const clearExtension = () => {
     form.setFieldValue(["conditions", field.name, "durationValue"], null);
-    setIsAtBranchExtensionOpen(false);
   };
 
   const openExtension = () => {
     form.setFieldValue(["conditions", field.name, "durationValue"], 3);
-    setIsAtBranchExtensionOpen(true);
   };
 
   return (

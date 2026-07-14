@@ -6,15 +6,7 @@ export const FormRoot = styled.div`
   width: 100%;
   min-width: 0;
   max-width: 960px;
-`;
-
-export const BackButton = styled(Button)`
-  && {
-    align-self: flex-start;
-    padding-inline: 0;
-    height: auto;
-    margin-bottom: 8px;
-  }
+  margin: 0 auto;
 `;
 
 export const HeaderTitle = styled(Typography.Title)`
@@ -26,8 +18,27 @@ export const HeaderTitle = styled(Typography.Title)`
 export const HeaderActions = styled.div`
   display: flex;
   align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
   gap: 16px;
   flex-shrink: 0;
+`;
+
+export const MobileEditorActions = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+
+  @media (max-width: 420px) {
+    align-items: stretch;
+    flex-direction: column;
+
+    .ant-btn {
+      width: 100%;
+    }
+  }
 `;
 
 export const ActiveLabel = styled.span`
