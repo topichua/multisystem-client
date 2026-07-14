@@ -509,31 +509,6 @@ export const PaymentFormPanel = styled.div`
   }
 `;
 
-export const ShipmentParamsBody = styled.div`
-  margin-top: 16px;
-
-  .ant-input-number,
-  .ant-input-number-group-addon {
-    border-radius: ${({ theme }) => theme.radius.medium};
-  }
-
-  .ant-space-compact {
-    width: 100%;
-  }
-`;
-
-export const ShipmentGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px 16px;
-  min-width: 0;
-
-  @media (max-width: 767px) {
-    grid-template-columns: 1fr;
-    gap: 14px;
-  }
-`;
-
 export const SummaryAside = styled.aside`
   position: sticky;
   top: 4px;

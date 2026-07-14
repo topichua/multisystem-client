@@ -11,7 +11,6 @@ import { OrdersNewDeliverySection } from "./components/orders-new-delivery-secti
 import { OrdersNewHeader } from "./components/orders-new-header";
 import { OrdersNewPaymentSection } from "./components/orders-new-payment-section";
 import { OrdersNewProductsSection } from "./components/orders-new-products-section";
-import { OrdersNewShipmentSection } from "./components/orders-new-shipment-section";
 import { OrdersNewSummaryAside } from "./components/orders-new-summary-aside";
 import * as S from "./orders-new-page.styled";
 import { useOrdersNewPage } from "./use-orders-new-page";
@@ -72,13 +71,6 @@ export const OrdersNewPage = observer(() => {
         paymentMethodValue={controller.paymentMethodValue}
         withoutDelivery={controller.withoutDelivery}
         onPaymentMethodChange={controller.handlePaymentMethodChange}
-      />
-
-      <OrdersNewShipmentSection
-        declaredValue={controller.shipmentDeclaredValue}
-        open={controller.shipmentParamsOpen}
-        onDeclaredValueChange={controller.handleShipmentDeclaredValueChange}
-        onToggle={controller.toggleShipmentParams}
       />
 
       <OrdersNewCommentSection deliveryForm={controller.deliveryForm} />

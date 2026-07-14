@@ -57,11 +57,6 @@ export function useOrdersNewPage() {
     loadCategories: true,
   });
   const [orderLines, setOrderLines] = useState<OrderNewLine[]>([]);
-  const [shipmentParamsOpen, setShipmentParamsOpen] = useState(false);
-  const [shipmentDeclaredValueOverride, setShipmentDeclaredValueOverride] =
-    useState<number | null>(null);
-  const [shipmentDeclaredValueTouched, setShipmentDeclaredValueTouched] =
-    useState(false);
   const [orderSource, setOrderSource] = useState<OrderSource>("manual");
   const [orderDiscountPercent, setOrderDiscountPercent] = useState(0);
   const novaPoshtaDelivery = useClientOrderNovaPoshtaDelivery({
@@ -236,12 +231,6 @@ export function useOrdersNewPage() {
     0,
     orderDiscountBase - orderDiscountAmount,
   );
-  const autoShipmentDeclaredValue =
-    orderProductsTotal > 0 ? Math.round(orderProductsTotal) : null;
-  const shipmentDeclaredValue = shipmentDeclaredValueTouched
-    ? shipmentDeclaredValueOverride
-    : autoShipmentDeclaredValue;
-
   const hasNewClientDraft =
     typeof newClientFirstName === "string" &&
     newClientFirstName.trim().length > 0 &&
@@ -542,18 +531,6 @@ export function useOrdersNewPage() {
     [deliveryForm, orderProductsTotal, withoutDelivery],
   );
 
-  const handleShipmentDeclaredValueChange = useCallback(
-    (value: number | null) => {
-      setShipmentDeclaredValueOverride(value);
-      setShipmentDeclaredValueTouched(true);
-    },
-    [],
-  );
-
-  const toggleShipmentParams = useCallback(() => {
-    setShipmentParamsOpen((current) => !current);
-  }, []);
-
   return {
     canCreateOrder,
     catalogSearch,
@@ -580,7 +557,6 @@ export function useOrdersNewPage() {
     handleProductSearchOpenChange,
     handleQuantityChange,
     handleRemoveLine,
-    handleShipmentDeclaredValueChange,
     handleToggleDiscount,
     handleVariantSelect,
     handleWithoutDeliveryChange,
@@ -602,9 +578,6 @@ export function useOrdersNewPage() {
     selectedVariantIds,
     setClientSearchValue,
     setOrderSource,
-    shipmentDeclaredValue,
-    shipmentParamsOpen,
-    toggleShipmentParams,
     visibleClients,
     withoutDelivery,
   };
