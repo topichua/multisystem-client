@@ -308,6 +308,11 @@ export const settingsSectionNavItems = [
     labelKey: "settings.menu.statuses",
   },
   {
+    key: "settings-automation",
+    path: pagesMap.settingsAutomation,
+    labelKey: "settings.menu.automation",
+  },
+  {
     key: "settings-user",
     path: pagesMap.settingsUser,
     labelKey: "settings.menu.user",

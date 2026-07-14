@@ -32,6 +32,8 @@ export const pagesMap = {
   settingsBilling: "/settings/billing",
   settingsTemplates: "/settings/templates",
   settingsOrderStatuses: "/settings/statuses",
+  settingsAutomation: "/settings/automation",
+  settingsAutomationNew: "/settings/automation/new",
   login: "/login",
   forgotPassword: "/forgot-password",
   resetPassword: "/reset-password",
@@ -52,6 +54,9 @@ export const getTeamRolePath = (roleId: string | number) =>
 
 export const getOrderStatusPath = (statusId: string | number) =>
   `${pagesMap.settingsOrderStatuses}/${statusId}`;
+
+export const getSettingsAutomationPath = (ruleId: string | number) =>
+  `${pagesMap.settingsAutomation}/${ruleId}`;
 
 export const getOrderDetailsPath = (orderId: string | number): string =>
   `${pagesMap.orders}/${orderId}`;

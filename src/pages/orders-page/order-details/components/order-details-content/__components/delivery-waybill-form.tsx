@@ -61,30 +61,6 @@ export const DeliveryWaybillForm = ({
         <Form.Item
           label={t("orders.details.waybillSeatsAmount")}
           name="seatsAmount"
-          rules={[
-            {
-              required: true,
-              message: t("orders.details.requiredField"),
-            },
-          ]}
-        >
-          <InputNumber
-            min={1}
-            precision={0}
-            controls={false}
-            style={{ width: "100%" }}
-          />
-        </Form.Item>
-
-        <Form.Item
-          label={t("orders.details.waybillSeatsCount")}
-          name="seatsCount"
-          rules={[
-            {
-              required: true,
-              message: t("orders.details.requiredField"),
-            },
-          ]}
         >
           <InputNumber
             min={1}

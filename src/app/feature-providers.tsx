@@ -12,6 +12,7 @@ import { ConversationsProvider } from "@/features/conversations/model/conversati
 import { InstagramProvider } from "@/features/instagram/model/instagram-provider";
 import { InventoryProvider } from "@/features/inventory/model/inventory-provider";
 import { MessageTemplatesProvider } from "@/features/message-templates/model/message-templates-provider";
+import { AutomationProvider } from "@/features/automation/model/automation-provider";
 import { OrdersProvider } from "@/features/orders/model/orders-provider";
 import { ProductsProvider } from "@/features/products/model/products-provider";
 import { WorkspaceMembersProvider } from "@/features/workspace-members/model/workspace-members-provider";
@@ -34,6 +35,7 @@ const featureProviders: ProviderComponent[] = [
   OrdersProvider,
   ConversationGroupsProvider,
   MessageTemplatesProvider,
+  AutomationProvider,
   WorkspaceMembersProvider,
   WorkspaceRolesProvider,
 ];

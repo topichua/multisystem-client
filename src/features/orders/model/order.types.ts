@@ -65,7 +65,6 @@ export type OrderUpdatePayload = {
 export type OrderNovaPoshtaWaybillPayload = {
   weightGrams: number;
   seatsAmount: number;
-  seatsCount: number;
   description: string;
   declaredCost: number;
 };
