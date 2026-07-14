@@ -2,6 +2,8 @@ import { PlusIcon } from "@phosphor-icons/react";
 import { Badge, Button, Card, Flex, Tag, Typography, theme } from "antd";
 import { useTranslation } from "react-i18next";
 
+import { VariantWishlistBadge } from "@/features/products/components/variant-wishlist-badge/variant-wishlist-badge";
+
 import type {
   InitialStockValues,
   InventoryMovementsResponse,
@@ -93,7 +95,13 @@ export const ProductInventoryVariantCard = ({
       <Flex vertical gap={12}>
         <Flex align="flex-start" justify="space-between" gap={16}>
           <Flex vertical gap={2} style={{ minWidth: 0 }}>
-            <Text strong>{variantName}</Text>
+            <Flex align="center" gap={8} style={{ minWidth: 0 }}>
+              <VariantWishlistBadge
+                count={detailVariant?.wishlistCount ?? 0}
+                compact
+              />
+              <Text strong>{variantName}</Text>
+            </Flex>
             <Text type="secondary" style={{ fontSize: 12 }}>
               {sku}
             </Text>

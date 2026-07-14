@@ -5,7 +5,7 @@ import { useParams } from "react-router";
 
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
 import { CenteredSpinner } from "@/components/loading/centered-spinner";
-import * as S from "@/components/layout/form-card.styled";
+import { FormCard } from "@/components/layout/form-card";
 
 import { GroupFormFields } from "./group-form-fields";
 import { useSettingsGroupEditor } from "./use-settings-group-editor";
@@ -88,14 +88,14 @@ export const SettingsGroupDetailView = observer(() => {
           </Flex>
         </PaneDetailLayout.Header>
         <PaneDetailLayout.Body data-qa="layout-settings-group-detail-body">
-          <S.FormCard>
+          <FormCard>
             <Form form={form} layout="vertical" onFinish={handleSave}>
               <GroupFormFields
                 groups={store.groups}
                 editingGroupId={group.id}
               />
             </Form>
-          </S.FormCard>
+          </FormCard>
         </PaneDetailLayout.Body>
       </PaneDetailLayout.Root>
     </>

@@ -8,6 +8,8 @@ import {
 import { Button, Flex, InputNumber, Space, Typography } from "antd";
 import { useTranslation } from "react-i18next";
 
+import { VariantWishlistBadge } from "@/features/products/components/variant-wishlist-badge/variant-wishlist-badge";
+
 import {
   formatCatalogVariantCurrency,
   getCatalogVariantMeta,
@@ -54,9 +56,15 @@ export function OrdersNewProductLine({
       <S.ProductLine>
         <VariantImage variant={line.variant} />
         <Flex vertical style={{ minWidth: 0 }}>
-          <Text strong ellipsis>
-            {line.variant.product.name}
-          </Text>
+          <Flex align="center" gap={8} style={{ minWidth: 0 }}>
+            <VariantWishlistBadge
+              count={line.variant.wishlistCount}
+              compact
+            />
+            <Text strong ellipsis>
+              {line.variant.product.name}
+            </Text>
+          </Flex>
           {meta ? (
             <Text type="secondary" ellipsis>
               {line.variant.sku ? `${line.variant.sku} · ` : null}

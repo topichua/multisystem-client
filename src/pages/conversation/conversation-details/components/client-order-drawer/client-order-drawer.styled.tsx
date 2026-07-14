@@ -172,6 +172,13 @@ export const ProductCopy = styled.div`
   flex: 1;
 `;
 
+export const ProductNameRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+`;
+
 export const ProductName = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
@@ -180,6 +187,7 @@ export const ProductName = styled.div`
   font-weight: 700;
   line-height: 1.35;
   color: ${({ theme }) => theme.colors.functional.text.heading};
+  min-width: 0;
 `;
 
 export const ProductMeta = styled.div`

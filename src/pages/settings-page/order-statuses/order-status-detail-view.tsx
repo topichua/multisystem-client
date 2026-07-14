@@ -5,7 +5,7 @@ import { useParams } from "react-router";
 
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
 import { CenteredSpinner } from "@/components/loading/centered-spinner";
-import * as S from "@/components/layout/form-card.styled";
+import { FormCard } from "@/components/layout/form-card";
 
 import { OrderStatusFormFields } from "./order-status-form-fields";
 import { OrderStatusSystemBadge } from "./order-status-system-badge";
@@ -82,7 +82,7 @@ export const OrderStatusDetailView = observer(() => {
         </Flex>
       </PaneDetailLayout.Header>
       <PaneDetailLayout.Body data-qa="layout-order-status-detail-body">
-        <S.FormCard>
+        <FormCard>
           <Form form={form} layout="vertical" onFinish={handleSave}>
             <OrderStatusFormFields
               statuses={store.statuses}
@@ -93,7 +93,7 @@ export const OrderStatusDetailView = observer(() => {
               deleteDataQa={`order-status-delete-${status.id}`}
             />
           </Form>
-        </S.FormCard>
+        </FormCard>
       </PaneDetailLayout.Body>
     </PaneDetailLayout.Root>
   );

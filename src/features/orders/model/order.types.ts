@@ -287,6 +287,7 @@ export type ClientOrderStats = {
 export type ClientLastOrderStatus = {
   id: number;
   name: string;
+  color: string;
   category: OrderStatusCategory;
 };
 

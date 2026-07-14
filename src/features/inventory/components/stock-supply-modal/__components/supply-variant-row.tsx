@@ -2,6 +2,7 @@ import { PlusIcon } from "@phosphor-icons/react";
 import { Avatar, Flex, Typography } from "antd";
 import { useTranslation } from "react-i18next";
 
+import { VariantWishlistBadge } from "@/features/products/components/variant-wishlist-badge/variant-wishlist-badge";
 import type { CatalogVariant } from "@/features/products/model/product.types";
 import { getCatalogVariantImageUrl } from "@/features/products/utils/catalog-variant-display";
 
@@ -36,9 +37,12 @@ export const SupplyVariantRow = ({ variant, onAdd }: SupplyVariantRowProps) => {
         style={{ flexShrink: 0 }}
       />
       <Flex vertical style={{ minWidth: 0 }}>
-        <Text strong ellipsis>
-          {variant.product.name}
-        </Text>
+        <Flex align="center" gap={8} style={{ minWidth: 0 }}>
+          <VariantWishlistBadge count={variant.wishlistCount} compact />
+          <Text strong ellipsis>
+            {variant.product.name}
+          </Text>
+        </Flex>
         {meta ? (
           <Text type="secondary" ellipsis style={{ fontSize: 12 }}>
             {meta}

@@ -17,6 +17,7 @@ import { OrdersProvider } from "@/features/orders/model/orders-provider";
 import { ProductsProvider } from "@/features/products/model/products-provider";
 import { WorkspaceMembersProvider } from "@/features/workspace-members/model/workspace-members-provider";
 import { WorkspaceRolesProvider } from "@/features/workspace-roles/model/workspace-roles-provider";
+import { WishlistProvider } from "@/features/wishlist/model/wishlist-provider";
 
 type ProviderComponent = ComponentType<{ children: ReactNode }>;
 
@@ -29,6 +30,7 @@ const featureProviders: ProviderComponent[] = [
   CategoriesProvider,
   CharacteristicsProvider,
   ClientsProvider,
+  WishlistProvider,
   ProductsProvider,
   InventoryProvider,
   InstagramProvider,

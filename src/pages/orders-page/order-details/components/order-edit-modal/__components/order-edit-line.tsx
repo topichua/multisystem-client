@@ -1,5 +1,7 @@
 import { TrashIcon } from "@phosphor-icons/react";
-import { Button, InputNumber, Typography } from "antd";
+import { Button, Flex, InputNumber, Typography } from "antd";
+
+import { VariantWishlistBadge } from "@/features/products/components/variant-wishlist-badge/variant-wishlist-badge";
 
 import type { OrderDetails } from "@/features/orders/model/order.types";
 
@@ -44,7 +46,10 @@ export const OrderEditLine = ({
       </S.EditLineImage>
 
       <S.EditLineInfo>
-        <S.EditLineName>{line.title}</S.EditLineName>
+        <Flex align="center" gap={8} style={{ minWidth: 0 }}>
+          <VariantWishlistBadge count={line.wishlistCount ?? 0} compact />
+          <S.EditLineName>{line.title}</S.EditLineName>
+        </Flex>
         <S.EditLineMeta>
           {patchable ? line.meta : t("orders.details.editItemMissingRefs")}
         </S.EditLineMeta>

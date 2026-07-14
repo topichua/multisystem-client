@@ -2,6 +2,7 @@ import { CheckIcon, PlusIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 
 import type { CatalogVariant } from "@/features/products/model/product.types";
+import { VariantWishlistBadge } from "@/features/products/components/variant-wishlist-badge/variant-wishlist-badge";
 import {
   formatCatalogVariantPrice,
   getCatalogVariantImageUrl,
@@ -41,7 +42,10 @@ export function CatalogVariantSearchRow({
       )}
 
       <S.GroupedVariantCopy>
-        <S.GroupedVariantName>{variant.product.name}</S.GroupedVariantName>
+        <S.GroupedVariantNameRow>
+          <VariantWishlistBadge count={variant.wishlistCount} compact />
+          <S.GroupedVariantName>{variant.product.name}</S.GroupedVariantName>
+        </S.GroupedVariantNameRow>
         {meta ? <S.GroupedVariantMeta>{meta}</S.GroupedVariantMeta> : null}
       </S.GroupedVariantCopy>
 

@@ -1,26 +1,26 @@
-import { Card, Divider, Flex, Typography } from "antd";
-import { observer } from "mobx-react-lite";
-import { useEffect, useMemo } from "react";
-import { useTranslation } from "react-i18next";
+import { Card, Divider, Flex, Typography } from 'antd';
+import { observer } from 'mobx-react-lite';
+import { useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
-import { CenteredSpinner } from "@/components/loading/centered-spinner";
-import { useOrdersStore } from "@/features/orders/model/use-orders-store";
+import { CenteredSpinner } from '@/components/loading/centered-spinner';
+import { useOrdersStore } from '@/features/orders/model/use-orders-store';
 
-import * as S from "../conversation-client-info-panel.styled";
+import * as S from '../conversation-client-info-panel.styled';
 
 const { Text } = Typography;
 
 const statLabelStyle = {
-  display: "block",
+  display: 'block',
   fontSize: 10,
   fontWeight: 600,
-  letterSpacing: "0.04em",
-  textTransform: "uppercase" as const,
+  letterSpacing: '0.04em',
+  textTransform: 'uppercase' as const,
   marginBottom: 2,
 };
 
 function formatUahAmount(amount: number): string {
-  return `${amount.toLocaleString("uk-UA")} ₴`;
+  return `${amount.toLocaleString('uk-UA')} ₴`;
 }
 
 type ClientOrdersSummaryProps = {
@@ -42,22 +42,22 @@ export const ClientOrdersSummary = observer(
 
     const stats = useMemo(() => {
       const data = ordersStore.clientStats;
-      const emptyValue = "—";
+      const emptyValue = '—';
 
       return [
         {
-          key: "ordersCount",
-          label: t("conversation.clientOrders.ordersCount"),
+          key: 'ordersCount',
+          label: t('conversation.clientOrders.ordersCount'),
           value: data ? String(data.orderCount) : emptyValue,
         },
         {
-          key: "spent",
-          label: t("conversation.clientOrders.ordersSum"),
+          key: 'spent',
+          label: t('conversation.clientOrders.ordersSum'),
           value: data ? formatUahAmount(data.totalSpent) : emptyValue,
         },
         {
-          key: "averageBill",
-          label: t("conversation.clientOrders.averageBill"),
+          key: 'averageBill',
+          label: t('conversation.clientOrders.averageBill'),
           value: data ? formatUahAmount(data.averageOrderPrice) : emptyValue,
         },
       ];
@@ -73,21 +73,27 @@ export const ClientOrdersSummary = observer(
 
     return (
       <S.Section>
-        {ordersStore.clientStatsError ? (
+        {ordersStore.clientStatsError && (
           <Text type="danger">{ordersStore.clientStatsError}</Text>
-        ) : null}
+        )}
+        <S.SectionLabel>
+          {t('conversation.clientOrders.overviewOrderSummary')}
+        </S.SectionLabel>
         <Card
           size="small"
           variant="outlined"
-          styles={{ body: { padding: "8px 0" } }}
+          styles={{ body: { padding: '8px 0' } }}
         >
           <Flex align="center">
             {stats.map((stat, index) => (
               <Flex key={stat.key} align="center" style={{ flex: 1 }}>
-                {index > 0 ? (
-                  <Divider type="vertical" style={{ height: 28, margin: 0 }} />
-                ) : null}
-                <div style={{ flex: 1, textAlign: "center" }}>
+                {index > 0 && (
+                  <Divider
+                    orientation="vertical"
+                    style={{ height: 28, margin: 0 }}
+                  />
+                )}
+                <div style={{ flex: 1, textAlign: 'center' }}>
                   <Text type="secondary" style={statLabelStyle}>
                     {stat.label}
                   </Text>

@@ -43,9 +43,7 @@ type OrderOverviewTabProps = {
  * @deprecated Kept temporarily for the legacy tabbed order details layout.
  * Use OrderDetailsContent for the current order details design.
  */
-export const OrderOverviewTab = observer(function OrderOverviewTab({
-  order,
-}: OrderOverviewTabProps) {
+export const OrderOverviewTab = observer(({ order }: OrderOverviewTabProps) => {
   const { t } = useTranslation();
   const membersStore = useWorkspaceMembersStore();
   const orderItems = order.items;
@@ -70,7 +68,7 @@ export const OrderOverviewTab = observer(function OrderOverviewTab({
     [order.events],
   );
 
-  const historyItems = useMemo<TimelineProps["items"]>(
+  const historyItems = useMemo<TimelineProps['items']>(
     () =>
       sortedEvents.map((event) => ({
         key: event.id,
@@ -82,7 +80,7 @@ export const OrderOverviewTab = observer(function OrderOverviewTab({
             </Text>
 
             <Text type="secondary">
-              {t("orders.actor")}{" "}
+              {t('orders.actor')}{' '}
               {event.userId != null
                 ? (actorNamesByUserId.get(event.userId) ??
                   `#${event.actorId ?? event.userId}`)
@@ -94,68 +92,68 @@ export const OrderOverviewTab = observer(function OrderOverviewTab({
     [actorNamesByUserId, order.currency, order.items, sortedEvents, t],
   );
 
-  const orderInfoItems: DescriptionsProps["items"] = [
+  const orderInfoItems: DescriptionsProps['items'] = [
     {
-      key: "id",
-      label: t("orders.orderId"),
+      key: 'id',
+      label: t('orders.orderId'),
       children: order.id,
     },
     {
-      key: "createdAt",
-      label: t("orders.createdAt"),
+      key: 'createdAt',
+      label: t('orders.createdAt'),
       children: formatDate(order.createdAt),
     },
     {
-      key: "source",
-      label: t("orders.source"),
+      key: 'source',
+      label: t('orders.source'),
       children: getOrderSourceLabel(t, order.source),
     },
     {
-      key: "currency",
-      label: t("orders.currency"),
+      key: 'currency',
+      label: t('orders.currency'),
       children: order.currency,
     },
   ];
 
-  const paymentInfoItems: DescriptionsProps["items"] = [
+  const paymentInfoItems: DescriptionsProps['items'] = [
     {
-      key: "paymentStatus",
-      label: t("orders.paymentStatusLabel"),
+      key: 'paymentStatus',
+      label: t('orders.paymentStatusLabel'),
       children: <PaymentStatusTag value={order.paymentStatus} />,
     },
     {
-      key: "paidAt",
-      label: t("orders.paidAt"),
+      key: 'paidAt',
+      label: t('orders.paidAt'),
       children: formatDate(order.paidAt),
     },
     {
-      key: "paymentReference",
-      label: t("orders.paymentReference"),
+      key: 'paymentReference',
+      label: t('orders.paymentReference'),
       children: formatText(order.paymentReference),
     },
   ];
 
-  const deliveryInfoItems: DescriptionsProps["items"] = [
+  const deliveryInfoItems: DescriptionsProps['items'] = [
     {
-      key: "deliveryStatus",
-      label: t("orders.deliveryStatusLabel"),
+      key: 'deliveryStatus',
+      label: t('orders.deliveryStatusLabel'),
       children: (
         <DeliveryStatusTag value={primaryDeliveryInfo?.deliveryStatus} />
       ),
     },
     {
-      key: "provider",
-      label: t("orders.deliveryProvider"),
+      key: 'provider',
+      label: t('orders.deliveryProvider'),
       children: getDeliveryProviderLabel(t, primaryDeliveryInfo?.provider),
     },
     {
-      key: "recipientName",
-      label: t("orders.recipientName"),
+      key: 'recipientName',
+      label: t('orders.recipientName'),
       children: formatText(primaryDeliveryInfo?.recipientName),
     },
     {
-      key: "phone",
-      label: t("orders.phone"),
+      key: 'phone',
+      label: t('orders.phone'),
       children: primaryDeliveryInfo?.phone ? (
         <Typography.Link href={`tel:${primaryDeliveryInfo.phone}`}>
           {primaryDeliveryInfo.phone}
@@ -165,18 +163,18 @@ export const OrderOverviewTab = observer(function OrderOverviewTab({
       ),
     },
     {
-      key: "city",
-      label: t("orders.city"),
+      key: 'city',
+      label: t('orders.city'),
       children: formatText(primaryDeliveryInfo?.city),
     },
     {
-      key: "warehouse",
-      label: t("orders.warehouse"),
+      key: 'warehouse',
+      label: t('orders.warehouse'),
       children: formatText(primaryDeliveryInfo?.warehouse),
     },
     {
-      key: "address",
-      label: t("orders.address"),
+      key: 'address',
+      label: t('orders.address'),
       children: formatText(
         [
           primaryDeliveryInfo?.street,
@@ -185,12 +183,12 @@ export const OrderOverviewTab = observer(function OrderOverviewTab({
         ]
           .map((part) => part?.trim())
           .filter((part): part is string => Boolean(part))
-          .join(", ") || null,
+          .join(', ') || null,
       ),
     },
     {
-      key: "trackingNumber",
-      label: t("orders.trackingNumber"),
+      key: 'trackingNumber',
+      label: t('orders.trackingNumber'),
       children: primaryDeliveryInfo?.trackingNumber ? (
         <Text copyable>{primaryDeliveryInfo.trackingNumber}</Text>
       ) : (
@@ -199,15 +197,15 @@ export const OrderOverviewTab = observer(function OrderOverviewTab({
     },
   ];
 
-  const customerInfoItems: DescriptionsProps["items"] = [
+  const customerInfoItems: DescriptionsProps['items'] = [
     {
-      key: "customerId",
-      label: t("orders.customerId"),
+      key: 'customerId',
+      label: t('orders.customerId'),
       children: order.customer.id,
     },
     {
-      key: "phone",
-      label: t("orders.phone"),
+      key: 'phone',
+      label: t('orders.phone'),
       children: order.customer.phone ? (
         <Typography.Link href={`tel:${order.customer.phone}`}>
           {order.customer.phone}
@@ -217,31 +215,31 @@ export const OrderOverviewTab = observer(function OrderOverviewTab({
       ),
     },
     {
-      key: "createdAt",
-      label: t("orders.customerCreatedAt"),
+      key: 'createdAt',
+      label: t('orders.customerCreatedAt'),
       children: formatDate(order.customer.createdAt),
     },
   ];
 
-  const totalsInfoItems: DescriptionsProps["items"] = [
+  const totalsInfoItems: DescriptionsProps['items'] = [
     {
-      key: "subtotalAmount",
-      label: t("orders.subtotal"),
+      key: 'subtotalAmount',
+      label: t('orders.subtotal'),
       children: formatMoney(order.subtotalAmount, order.currency),
     },
     {
-      key: "discountAmount",
-      label: t("orders.discount"),
+      key: 'discountAmount',
+      label: t('orders.discount'),
       children: formatMoney(order.discountAmount, order.currency),
     },
     {
-      key: "deliveryAmount",
-      label: t("orders.deliveryAmount"),
+      key: 'deliveryAmount',
+      label: t('orders.deliveryAmount'),
       children: formatMoney(order.deliveryAmount, order.currency),
     },
     {
-      key: "totalAmount",
-      label: <Text strong>{t("orders.total")}</Text>,
+      key: 'totalAmount',
+      label: <Text strong>{t('orders.total')}</Text>,
       children: (
         <Text strong>{formatMoney(order.totalAmount, order.currency)}</Text>
       ),
@@ -254,13 +252,13 @@ export const OrderOverviewTab = observer(function OrderOverviewTab({
         <Flex vertical gap={16}>
           <Row gutter={[16, 16]}>
             <Col xs={24} lg={12}>
-              <Card size="small" title={t("orders.orderInfo")}>
+              <Card size="small" title={t('orders.orderInfo')}>
                 <Descriptions size="small" column={1} items={orderInfoItems} />
               </Card>
             </Col>
 
             <Col xs={24} lg={12}>
-              <Card size="small" title={t("orders.delivery")}>
+              <Card size="small" title={t('orders.delivery')}>
                 <Descriptions
                   size="small"
                   column={1}
@@ -270,7 +268,7 @@ export const OrderOverviewTab = observer(function OrderOverviewTab({
             </Col>
 
             <Col xs={24} lg={12}>
-              <Card size="small" title={t("orders.payment")}>
+              <Card size="small" title={t('orders.payment')}>
                 <Descriptions
                   size="small"
                   column={1}
@@ -280,24 +278,24 @@ export const OrderOverviewTab = observer(function OrderOverviewTab({
             </Col>
 
             <Col xs={24} lg={12}>
-              <Card size="small" title={t("orders.source")}>
+              <Card size="small" title={t('orders.source')}>
                 <Descriptions
                   size="small"
                   column={1}
                   items={[
                     {
-                      key: "source",
-                      label: t("orders.source"),
+                      key: 'source',
+                      label: t('orders.source'),
                       children: getOrderSourceLabel(t, order.source),
                     },
                     {
-                      key: "conversationId",
-                      label: t("orders.conversationId"),
+                      key: 'conversationId',
+                      label: t('orders.conversationId'),
                       children: formatText(order.conversationId),
                     },
                     {
-                      key: "conversationUpdatedAt",
-                      label: t("orders.conversationUpdatedAt"),
+                      key: 'conversationUpdatedAt',
+                      label: t('orders.conversationUpdatedAt'),
                       children: formatDate(order.conversation?.instUpdatedAt),
                     },
                   ]}
@@ -308,7 +306,7 @@ export const OrderOverviewTab = observer(function OrderOverviewTab({
 
           <Card
             size="small"
-            title={t("orders.products", { count: orderItems.length })}
+            title={t('orders.products', { count: orderItems.length })}
           >
             <OrderProductsTable items={orderItems} currency={order.currency} />
 
@@ -321,7 +319,7 @@ export const OrderOverviewTab = observer(function OrderOverviewTab({
 
       <Col xs={24} xl={8}>
         <Flex vertical gap={16}>
-          <Card size="small" title={t("orders.customer")}>
+          <Card size="small" title={t('orders.customer')}>
             <Flex align="center" gap={12}>
               <Avatar size={48}>{getCustomerInitials(order.customer)}</Avatar>
 
@@ -338,34 +336,34 @@ export const OrderOverviewTab = observer(function OrderOverviewTab({
             <Descriptions size="small" column={1} items={customerInfoItems} />
           </Card>
 
-          <Card size="small" title={t("orders.notes")}>
+          <Card size="small" title={t('orders.notes')}>
             {!order.customerNote && !order.internalNote ? (
               <Empty
                 image={Empty.PRESENTED_IMAGE_SIMPLE}
-                description={t("orders.noNotes")}
+                description={t('orders.noNotes')}
               />
             ) : (
               <Flex vertical gap={12}>
                 <div>
-                  <Text type="secondary">{t("orders.customerNote")}</Text>
+                  <Text type="secondary">{t('orders.customerNote')}</Text>
                   <Paragraph>{formatText(order.customerNote)}</Paragraph>
                 </div>
 
                 <div>
-                  <Text type="secondary">{t("orders.internalNote")}</Text>
+                  <Text type="secondary">{t('orders.internalNote')}</Text>
                   <Paragraph>{formatText(order.internalNote)}</Paragraph>
                 </div>
               </Flex>
             )}
           </Card>
 
-          <Card size="small" title={t("orders.history")}>
+          <Card size="small" title={t('orders.history')}>
             {historyItems?.length ? (
               <Timeline items={historyItems.slice(-5)} />
             ) : (
               <Empty
                 image={Empty.PRESENTED_IMAGE_SIMPLE}
-                description={t("orders.noHistory")}
+                description={t('orders.noHistory')}
               />
             )}
           </Card>

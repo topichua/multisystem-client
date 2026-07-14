@@ -1,11 +1,11 @@
-import type { Client } from "@/features/clients/model/client.types";
-import type { Conversation } from "@/features/conversations/model/types";
+import type { Client } from '@/features/clients/model/client.types';
+import type { Conversation } from '@/features/conversations/model/types';
 
-import { ClientContactsSection } from "./client-contacts-section";
-import { ClientLastOrderSection } from "./client-last-order-section";
-import { ClientOrdersSummary } from "./client-order-summary";
-import { ClientWishlistSection } from "./client-wishlist-section";
-import * as S from "../conversation-client-info-panel.styled";
+import { ClientContactsSection } from './client-contacts-section';
+import { ClientLastOrderSection } from './client-last-order-section';
+import { ClientOrdersSummary } from './client-order-summary';
+import { ClientWishlistSection } from '../client-wishlist/client-wishlist-section';
+import { Divider, Flex } from 'antd';
 
 type ClientProfileDrawerViewProps = {
   client: Client;
@@ -21,7 +21,7 @@ export function ClientProfileDrawerView({
   onCurrentConversationUnlinked,
 }: ClientProfileDrawerViewProps) {
   return (
-    <S.ProfileDrawerContent>
+    <Flex vertical>
       <ClientContactsSection
         client={client}
         conversation={conversation}
@@ -29,11 +29,20 @@ export function ClientProfileDrawerView({
         onCurrentConversationUnlinked={onCurrentConversationUnlinked}
       />
 
-      <ClientWishlistSection />
+      <Divider />
+
+      <ClientWishlistSection
+        clientId={client.id}
+        conversationId={conversation.id}
+      />
+
+      <Divider />
 
       <ClientOrdersSummary clientId={client.id} />
 
+      <Divider />
+
       <ClientLastOrderSection clientId={client.id} />
-    </S.ProfileDrawerContent>
+    </Flex>
   );
 }

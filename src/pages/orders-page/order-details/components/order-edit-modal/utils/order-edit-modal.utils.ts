@@ -183,6 +183,7 @@ export const buildLineFromVariant = (
     unitPriceAmount: getCatalogVariantUnitPrice(variant),
     discountAmount: 0,
     discountPercent: 0,
+    wishlistCount: variant.wishlistCount,
   };
 };
 

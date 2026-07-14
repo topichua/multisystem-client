@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
 
 import { ClientPhoneFormInput } from "@/components/client-phone-form-input";
-import { FormCard, FormDivider } from "@/components/layout/form-card.styled";
+import { FormCard, FormDivider } from "@/components/layout/form-card";
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
 import { PaneSectionHint } from "@/components/layout/pane-frame";
 

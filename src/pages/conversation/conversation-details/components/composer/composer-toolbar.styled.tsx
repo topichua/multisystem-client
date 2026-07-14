@@ -111,12 +111,13 @@ export const LastOrderStatus = styled.span`
   font-weight: 500;
 `;
 
-export const LastOrderStatusDot = styled.span`
+export const LastOrderStatusDot = styled.span<{ $statusColor: string }>`
   flex: 0 0 auto;
   width: 8px;
   height: 8px;
   border-radius: 999px;
-  background: #4ebe7d;
+  background: ${({ $statusColor }) =>
+    $statusColor ? $statusColor : '#4ebe7d'};
 `;
 
 export const LastOrderStatusName = styled.span`

@@ -15,9 +15,11 @@ export type WorkspaceSettings = {
   workspaceId: number;
   currency: WorkspaceCurrency;
   inventoryMode: InventoryMode;
+  wishlistEnabled: boolean;
 };
 
 export type WorkspaceSettingsUpdatePayload = {
   currency: WorkspaceCurrency;
   inventoryMode?: InventoryMode;
+  wishlistEnabled?: boolean;
 };

@@ -26,21 +26,6 @@ export const VariantTitleGroup = styled.div`
   flex: 1 1 auto;
 `;
 
-export const WishlistBadge = styled.span`
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  flex-shrink: 0;
-  min-height: 24px;
-  padding: 2px 8px;
-  border-radius: 999px;
-  background: ${({ theme }) => theme.colors.functional.background.error};
-  color: ${({ theme }) => theme.colors.base.red[7]};
-  font-size: 13px;
-  font-weight: 600;
-  line-height: 1.2;
-`;
-
 export const VariantTitle = styled(Typography.Text)`
   && {
     min-width: 0;

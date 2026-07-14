@@ -13,6 +13,7 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 
+import { VariantWishlistBadge } from "@/features/products/components/variant-wishlist-badge/variant-wishlist-badge";
 import type { VariantCustomField } from "@/features/products/model/product-create-api.types";
 
 import type { SelectedCharacteristic } from "./generate-product-variants";
@@ -235,6 +236,14 @@ export function useProductAddVariantTableColumns({
             </Flex>
           );
         },
+      },
+      {
+        title: t("products.variant.wishlist"),
+        key: "wishlist",
+        width: 88,
+        render: (_: unknown, record: ProductVariantUi) => (
+          <VariantWishlistBadge count={record.wishlistCount ?? 0} compact />
+        ),
       },
       ...characteristicColumns,
       {

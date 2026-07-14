@@ -146,6 +146,7 @@ export type CatalogVariant = {
   imageUrl: string | null;
   inStock: boolean;
   quantity: number;
+  wishlistCount: number;
   status: ProductStatus;
   label: string;
   product: CatalogVariantProduct;

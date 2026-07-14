@@ -274,7 +274,7 @@ export const ConversationClientInfoPanel = observer(
     );
 
     const renderParticipantPhoto = (avatarSize = 80) =>
-      conversation ? (
+      conversation && (
         <>
           <S.ParticipantPhoto>
             <Avatar
@@ -283,21 +283,21 @@ export const ConversationClientInfoPanel = observer(
               alt={
                 conversation.participant.name ||
                 conversation.participant.username ||
-                ""
+                ''
               }
             >
               {!conversation.participant.profilePic
                 ? participantAvatarInitials(conversation, linkedClient)
                 : undefined}
             </Avatar>
-            {conversation.participant.username ? (
+            {conversation.participant.username && (
               <S.ParticipantUsername>
                 @{conversation.participant.username}
               </S.ParticipantUsername>
-            ) : null}
+            )}
           </S.ParticipantPhoto>
         </>
-      ) : null;
+      );
 
     return (
       <S.Root aria-label={t("conversation.clientPanelAria")}>

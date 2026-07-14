@@ -7,11 +7,13 @@ import { unknownErrorMessage } from "@/utils/unknown-error-message";
 import type {
   InventoryMode,
   WorkspaceCurrency,
+  WorkspaceSettings,
 } from "./workspace-settings.types";
 
 export class WorkspaceSettingsStore {
   currency: WorkspaceCurrency | null = null;
   inventoryMode: InventoryMode | null = null;
+  wishlistEnabled: boolean | null = null;
 
   initialized = false;
   loadLoading = false;
@@ -19,9 +21,16 @@ export class WorkspaceSettingsStore {
 
   currencySaveLoading = false;
   inventoryModeSaveLoading = false;
+  wishlistEnabledSaveLoading = false;
 
   constructor() {
     makeAutoObservable(this);
+  }
+
+  private applySettings(data: WorkspaceSettings): void {
+    this.currency = data.currency;
+    this.inventoryMode = data.inventoryMode;
+    this.wishlistEnabled = data.wishlistEnabled;
   }
 
   loadSettings = async (options?: { silent?: boolean }): Promise<void> => {
@@ -38,8 +47,7 @@ export class WorkspaceSettingsStore {
       const data = await workspaceSettingsApi.get();
 
       runInAction(() => {
-        this.currency = data.currency;
-        this.inventoryMode = data.inventoryMode;
+        this.applySettings(data);
         this.initialized = true;
         this.loadError = null;
       });
@@ -74,8 +82,7 @@ export class WorkspaceSettingsStore {
 
       runInAction(() => {
         if (data) {
-          this.currency = data.currency;
-          this.inventoryMode = data.inventoryMode;
+          this.applySettings(data);
         } else {
           this.currency = currency;
         }
@@ -113,8 +120,7 @@ export class WorkspaceSettingsStore {
 
       runInAction(() => {
         if (data) {
-          this.inventoryMode = data.inventoryMode;
-          this.currency = data.currency;
+          this.applySettings(data);
         } else {
           this.inventoryMode = inventoryMode;
         }
@@ -127,6 +133,44 @@ export class WorkspaceSettingsStore {
     } finally {
       runInAction(() => {
         this.inventoryModeSaveLoading = false;
+      });
+    }
+  };
+
+  updateWishlistEnabled = async (wishlistEnabled: boolean): Promise<void> => {
+    if (this.wishlistEnabled === wishlistEnabled || !this.currency) {
+      return;
+    }
+
+    const previousWishlistEnabled = this.wishlistEnabled;
+    const currency = this.currency;
+
+    runInAction(() => {
+      this.wishlistEnabled = wishlistEnabled;
+      this.wishlistEnabledSaveLoading = true;
+    });
+
+    try {
+      const data = await workspaceSettingsApi.update({
+        currency,
+        wishlistEnabled,
+      });
+
+      runInAction(() => {
+        if (data) {
+          this.applySettings(data);
+        } else {
+          this.wishlistEnabled = wishlistEnabled;
+        }
+      });
+    } catch (e) {
+      runInAction(() => {
+        this.wishlistEnabled = previousWishlistEnabled;
+      });
+      throw e;
+    } finally {
+      runInAction(() => {
+        this.wishlistEnabledSaveLoading = false;
       });
     }
   };

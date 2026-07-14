@@ -20,7 +20,9 @@ function isWorkspaceSettings(value: unknown): value is WorkspaceSettings {
     (WORKSPACE_CURRENCIES as readonly string[]).includes(value.currency) &&
     "inventoryMode" in value &&
     typeof value.inventoryMode === "string" &&
-    (INVENTORY_MODE_VALUES as readonly string[]).includes(value.inventoryMode)
+    (INVENTORY_MODE_VALUES as readonly string[]).includes(value.inventoryMode) &&
+    "wishlistEnabled" in value &&
+    typeof value.wishlistEnabled === "boolean"
   );
 }
 

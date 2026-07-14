@@ -23,9 +23,7 @@ type OrderHistoryTabProps = {
  * @deprecated Kept temporarily for the legacy tabbed order details layout.
  * Use OrderDetailsContent for the current order details design.
  */
-export const OrderHistoryTab = observer(function OrderHistoryTab({
-  order,
-}: OrderHistoryTabProps) {
+export const OrderHistoryTab = observer(({ order }: OrderHistoryTabProps) => {
   const { t } = useTranslation();
   const membersStore = useWorkspaceMembersStore();
   const actorNamesByUserId = useMemo(
@@ -48,7 +46,7 @@ export const OrderHistoryTab = observer(function OrderHistoryTab({
     [order.events],
   );
 
-  const historyItems = useMemo<TimelineProps["items"]>(
+  const historyItems = useMemo<TimelineProps['items']>(
     () =>
       sortedEvents.map((event) => ({
         key: event.id,
@@ -60,7 +58,7 @@ export const OrderHistoryTab = observer(function OrderHistoryTab({
             </Text>
 
             <Text type="secondary">
-              {t("orders.actor")}{" "}
+              {t('orders.actor')}{' '}
               {event.userId != null
                 ? (actorNamesByUserId.get(event.userId) ??
                   `#${event.actorId ?? event.userId}`)
@@ -79,7 +77,7 @@ export const OrderHistoryTab = observer(function OrderHistoryTab({
       ) : (
         <Empty
           image={Empty.PRESENTED_IMAGE_SIMPLE}
-          description={t("orders.noHistory")}
+          description={t('orders.noHistory')}
         />
       )}
     </Card>

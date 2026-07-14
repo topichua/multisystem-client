@@ -2,6 +2,7 @@ import type { CatalogVariant } from "@/features/products/model/product.types";
 import { MinusIcon, PlusIcon, TrashIcon } from "@phosphor-icons/react";
 import { Button, Image, theme } from "antd";
 
+import { VariantWishlistBadge } from "@/features/products/components/variant-wishlist-badge/variant-wishlist-badge";
 import {
   formatCatalogVariantCurrency,
   getCatalogVariantImageUrl,
@@ -50,7 +51,10 @@ export const OrderProductLine = ({
       />
 
       <S.ProductCopy>
-        <S.ProductName>{variant.label}</S.ProductName>
+        <S.ProductNameRow>
+          <VariantWishlistBadge count={variant.wishlistCount} compact />
+          <S.ProductName>{variant.label}</S.ProductName>
+        </S.ProductNameRow>
         {meta ? <S.ProductMeta>{meta}</S.ProductMeta> : null}
       </S.ProductCopy>
 

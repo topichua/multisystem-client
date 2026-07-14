@@ -139,6 +139,7 @@ function normalizeCatalogVariant(raw: unknown): CatalogVariant {
       getString(record, ["variantImageUrl", "variant_image_url"]),
     inStock,
     quantity,
+    wishlistCount: getNumber(record, ["wishlistCount", "wishlist_count"]) ?? 0,
     status: getString(record, ["status"]) ?? "active",
     label: label || `#${variantId}`,
     product: {
@@ -240,7 +241,7 @@ function normalizeProductVariant(raw: unknown): ProductVariant {
   };
 }
 
-function normalizeProduct(raw: unknown): Product {
+export function normalizeProduct(raw: unknown): Product {
   const record = asRecord(raw);
   const variants = Array.isArray(record.variants)
     ? record.variants.map(normalizeProductVariant)

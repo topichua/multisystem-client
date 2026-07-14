@@ -65,12 +65,6 @@ export const LinkExistingClientList = styled.div`
   overflow: auto;
 `;
 
-export const ProfileDrawerContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-`;
-
 export const ProfileHeader = styled.div`
   display: flex;
   flex-direction: column;
@@ -160,4 +154,83 @@ export const LastOrderCard = styled.div`
   &:hover {
     border-color: ${({ theme }) => theme.colors.functional.border.selected};
   }
+`;
+
+export const WishlistItemRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 8px 10px;
+  border: 1px solid ${({ theme }) => theme.colors.functional.border.cardBase};
+  border-radius: 12px;
+  background: ${({ theme }) => theme.colors.functional.background.natural};
+`;
+
+export const WishlistItemCopy = styled.div`
+  min-width: 0;
+  flex: 1;
+`;
+
+export const WishlistItemName = styled.div`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: ${({ theme }) => theme.colors.functional.text.heading};
+`;
+
+export const WishlistItemMeta = styled.div`
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+  line-height: 1.35;
+  color: ${({ theme }) => theme.colors.functional.text.subdued};
+`;
+
+export const WishlistItemRemoveButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: ${({ theme }) => theme.colors.functional.text.subdued};
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background: ${({ theme }) => theme.colors.functional.background.hover};
+    color: ${({ theme }) => theme.colors.functional.text.heading};
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+`;
+
+export const WishlistAddPanel = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 12px;
+  background: ${({ theme }) => theme.colors.functional.background.elevated};
+`;
+
+export const WishlistAddHint = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: ${({ theme }) => theme.colors.functional.text.subdued};
 `;

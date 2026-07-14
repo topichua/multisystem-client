@@ -3,9 +3,10 @@ import { useTranslation } from "react-i18next";
 
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
 
-import * as FormS from "@/components/layout/form-card.styled";
+import { FormCard } from "@/components/layout/form-card";
 import { SettingsInventorySection } from "./settings-inventory-section";
 import { SettingsSystemPreferences } from "./settings-system-preferences";
+import { SettingsWishlistSection } from "./settings-wishlist-section";
 import * as S from "./settings-system-view.styled";
 
 export const SettingsSystemView = observer(() => {
@@ -20,12 +21,15 @@ export const SettingsSystemView = observer(() => {
         </PaneDetailLayout.Header>
         <PaneDetailLayout.Body data-qa="layout-settings-system-body">
           <S.CardsStack>
-            <FormS.FormCard>
+            <FormCard>
               <SettingsInventorySection />
-            </FormS.FormCard>
-            <FormS.FormCard>
+            </FormCard>
+            <FormCard>
               <SettingsSystemPreferences layout="desktop" />
-            </FormS.FormCard>
+            </FormCard>
+            <FormCard>
+              <SettingsWishlistSection />
+            </FormCard>
           </S.CardsStack>
         </PaneDetailLayout.Body>
       </PaneDetailLayout.Root>

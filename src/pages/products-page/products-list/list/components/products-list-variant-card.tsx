@@ -1,8 +1,9 @@
-import { CubeIcon, HeartIcon, PencilSimpleIcon } from "@phosphor-icons/react";
+import { CubeIcon, PencilSimpleIcon } from "@phosphor-icons/react";
 import { Tooltip } from "antd";
 import type { MouseEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { useTheme } from "styled-components";
+
+import { VariantWishlistBadge } from "@/features/products/components/variant-wishlist-badge/variant-wishlist-badge";
 
 import type {
   Product,
@@ -34,7 +35,6 @@ export function ProductsListVariantCard({
   onEdit,
 }: ProductsListVariantCardProps) {
   const { t } = useTranslation();
-  const { colors } = useTheme();
   const title =
     getVariantTitle(variant) ||
     `${t("products.variant.fallbackName")} #${variant.id}`;
@@ -47,14 +47,7 @@ export function ProductsListVariantCard({
     <S.VariantCard data-qa={`products-list-variant-${variant.id}`}>
       <S.VariantTopRow>
         <S.VariantTitleGroup>
-          <S.WishlistBadge
-            aria-label={t("products.variant.wishlistCountAria", {
-              count: variant.wishlistCount,
-            })}
-          >
-            <HeartIcon size={14} color={colors.base.red[5]} />
-            {variant.wishlistCount}
-          </S.WishlistBadge>
+          <VariantWishlistBadge count={variant.wishlistCount} />
           <S.VariantTitle ellipsis={{ tooltip: title }}>{title}</S.VariantTitle>
         </S.VariantTitleGroup>
 

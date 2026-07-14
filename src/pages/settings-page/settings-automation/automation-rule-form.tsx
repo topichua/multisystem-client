@@ -3,7 +3,7 @@ import type { FormInstance } from "antd/es/form";
 import { useTranslation } from "react-i18next";
 
 import type { AutomationCriteria } from "@/features/automation/model/automation.types";
-import { FormCard } from "@/components/layout/form-card.styled";
+import { FormCard } from "@/components/layout/form-card";
 
 import { AutomationConditionsFields } from "./automation-conditions-fields";
 import type { AutomationRuleFormValues } from "./automation-rule-form.utils";

@@ -215,6 +215,13 @@ export const GroupedVariantCopy = styled.div`
   min-width: 0;
 `;
 
+export const GroupedVariantNameRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+`;
+
 export const GroupedVariantName = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
@@ -223,6 +230,7 @@ export const GroupedVariantName = styled.div`
   font-weight: 700;
   line-height: 1.3;
   color: ${({ theme }) => theme.colors.functional.text.heading};
+  min-width: 0;
 `;
 
 export const GroupedVariantMeta = styled.div`

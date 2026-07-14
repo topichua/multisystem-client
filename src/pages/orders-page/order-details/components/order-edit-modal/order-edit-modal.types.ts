@@ -35,6 +35,7 @@ export type EditableOrderLine = {
   unitPriceAmount: number;
   discountAmount: number;
   discountPercent: number;
+  wishlistCount?: number;
 };
 
 export type DiscountType = "amount" | "percent";

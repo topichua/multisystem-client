@@ -12,6 +12,7 @@ import {
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 
+import { VariantWishlistBadge } from "@/features/products/components/variant-wishlist-badge/variant-wishlist-badge";
 import type { VariantCustomField } from "@/features/products/model/product-create-api.types";
 import { getProductVariantTitle } from "@/features/products/utils/product-display";
 
@@ -114,9 +115,12 @@ export function MobileProductVariantCard({
       styles={{ body: { padding: 12 } }}
     >
       <Flex vertical gap={12}>
-        <Text strong>
-          {title || `${t("products.variant.fallbackName")} #${variantQaId}`}
-        </Text>
+        <Flex align="center" gap={8}>
+          <VariantWishlistBadge count={variant.wishlistCount ?? 0} compact />
+          <Text strong>
+            {title || `${t("products.variant.fallbackName")} #${variantQaId}`}
+          </Text>
+        </Flex>
 
         {characteristicColumns.map((column) => {
           const currentValue =

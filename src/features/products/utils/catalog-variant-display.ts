@@ -69,6 +69,7 @@ export function productVariantToCatalogVariant(
     imageUrl: variant.imageUrl,
     inStock,
     quantity,
+    wishlistCount: variant.wishlistCount ?? 0,
     status: variant.status ?? product.status,
     label: buildCatalogVariantLabelFromVariant(product.name, variant),
     product: {

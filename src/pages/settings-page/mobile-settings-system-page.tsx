@@ -8,6 +8,7 @@ import { dataQaAttrs } from "@/styled/data-qa-attrs";
 import * as MobileS from "./mobile-settings-page.styled";
 import { SettingsInventorySection } from "./settings-inventory-section";
 import { SettingsSystemPreferences } from "./settings-system-preferences";
+import { SettingsWishlistSection } from "./settings-wishlist-section";
 
 export const MobileSettingsSystemPage = () => {
   const { t } = useTranslation();
@@ -39,6 +40,10 @@ export const MobileSettingsSystemPage = () => {
           <MobileS.MobileFormDivider />
 
           <SettingsSystemPreferences layout="mobile" />
+
+          <MobileS.MobileFormDivider />
+
+          <SettingsWishlistSection layout="mobile" />
         </MobileS.ContentSection>
       </MobileS.ScrollRegion>
     </MobileS.Root>

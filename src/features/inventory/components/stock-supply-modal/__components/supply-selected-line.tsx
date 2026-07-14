@@ -2,6 +2,7 @@ import { XIcon } from "@phosphor-icons/react";
 import { Button, Flex, InputNumber, Typography } from "antd";
 import { useTranslation } from "react-i18next";
 
+import { VariantWishlistBadge } from "@/features/products/components/variant-wishlist-badge/variant-wishlist-badge";
 import { formatCatalogVariantCurrency } from "@/features/products/utils/catalog-variant-display";
 
 import * as S from "../stock-supply-modal.styled";
@@ -31,9 +32,12 @@ export const SupplySelectedLine = ({
   return (
     <S.SelectedLineRow>
       <Flex vertical style={{ minWidth: 0 }}>
-        <Text strong ellipsis>
-          {line.variant.product.name}
-        </Text>
+        <Flex align="center" gap={8} style={{ minWidth: 0 }}>
+          <VariantWishlistBadge count={line.variant.wishlistCount} compact />
+          <Text strong ellipsis>
+            {line.variant.product.name}
+          </Text>
+        </Flex>
         {meta ? (
           <Text type="secondary" ellipsis style={{ fontSize: 12 }}>
             {meta}

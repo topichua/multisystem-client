@@ -1224,6 +1224,7 @@
     "title": "System",
     "sectionHint": "Workspace currency is saved on the server. Language and appearance are saved in this browser.",
     "currency": "Currency",
+    "currencyDescription": "Default currency for prices and orders in this workspace.",
     "currencyPlaceholder": "Select currency",
     "currencySaveError": "Could not update currency",
     "settingsLoadError": "Could not load workspace settings",
@@ -1232,7 +1233,9 @@
       "USD": "USD"
     },
     "language": "Language",
+    "languageDescription": "Interface language saved in this browser.",
     "theme": "Theme",
+    "themeDescription": "Appearance saved in this browser.",
     "light": "Light",
     "dark": "Dark",
     "themeAuto": "System",
@@ -1246,6 +1249,17 @@
       "advancedTitle": "Advanced",
       "advancedDescription": "Deliveries with purchase price, defects, write-offs, change history.",
       "saveError": "Could not update inventory mode"
+    },
+    "preferences": {
+      "title": "Workspace",
+      "description": "Currency is saved on the server. Language and appearance are saved in this browser."
+    },
+    "wishlist": {
+      "title": "Waiting for products",
+      "description": "Manage customer interest in products that are currently out of stock.",
+      "rowTitle": "Product demand collection",
+      "rowDescription": "Add out-of-stock products to the wishlist and view customers waiting for them to return.",
+      "saveError": "Could not update wishlist setting"
     },
     "mobile": {
       "backToSettingsAria": "Back to settings",
@@ -1430,8 +1444,15 @@
       "wishlist": {
         "title": "Wishlist",
         "add": "+ Add",
+        "close": "Close",
+        "searchPlaceholder": "Search product, variant, or SKU...",
+        "zeroStockHint": "Only products with zero stock can be added to the wishlist.",
         "emptyTitle": "The client is not waiting for anything yet.",
-        "emptyDescription": "Add a product from references in the chat."
+        "emptyDescription": "Add a product from references in the chat.",
+        "addError": "Could not add product to wishlist",
+        "pending": "Waiting",
+        "removeAria": "Remove from wishlist",
+        "removeError": "Could not remove product from wishlist"
       }
     },
     "clientOrders": {
@@ -1441,6 +1462,7 @@
       "ordersCount": "Orders",
       "ordersSum": "Total",
       "lastOrder": "Last order",
+      "overviewOrderSummary": "Overview",
       "lastOrderSection": "Last order",
       "allOrders": "All orders",
       "spent": "Spent",
@@ -2002,6 +2024,7 @@
       "quantity": "Quantity",
       "reserved": "Reserved",
       "available": "Available",
+      "wishlist": "Wishlist",
       "wishlistCountAria": "{{count}} in wishlist",
       "sku": "SKU",
       "imagePickerTitle": "Variant image",

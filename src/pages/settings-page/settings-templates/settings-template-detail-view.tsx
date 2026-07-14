@@ -5,7 +5,7 @@ import { useParams } from "react-router";
 
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
 import { CenteredSpinner } from "@/components/loading/centered-spinner";
-import * as S from "@/components/layout/form-card.styled";
+import { FormCard } from "@/components/layout/form-card";
 
 import { getTemplateCharacterCount } from "./settings-templates.utils";
 import { TemplateDetailHeader } from "./template-detail-header";
@@ -70,7 +70,7 @@ export const SettingsTemplateDetailView = observer(() => {
           />
         </PaneDetailLayout.Header>
         <PaneDetailLayout.Body data-qa="layout-settings-template-detail-body">
-          <S.FormCard>
+          <FormCard>
             <Form
               form={form}
               layout="vertical"
@@ -95,7 +95,7 @@ export const SettingsTemplateDetailView = observer(() => {
                 <Input.TextArea rows={8} />
               </Form.Item>
             </Form>
-          </S.FormCard>
+          </FormCard>
         </PaneDetailLayout.Body>
       </PaneDetailLayout.Root>
     </>
