@@ -3,8 +3,9 @@ import { Alert, Button, Col, Flex, Form, Input, Row } from "antd";
 import { useTranslation } from "react-i18next";
 
 import { HiddenFields } from "../components/hidden-fields";
-import { PayerTypeField } from "../components/payer-type-field";
-import { SenderStep } from "../components/sender-step";
+import { DeliveryDefaultsFields } from "../components/delivery-defaults-fields";
+import { ReservePackagingFields } from "../components/reserve-packaging-fields";
+import { SenderSectionFields } from "../components/sender-section-fields";
 import type { NovaPoshtaIntegrationEditFormProps } from "./nova-poshta-integration-card.types";
 
 export function NovaPoshtaIntegrationEditForm({
@@ -68,7 +69,7 @@ export function NovaPoshtaIntegrationEditForm({
         <Alert showIcon type="error" title={senderSelect.error} />
       ) : null}
 
-      <SenderStep
+      <SenderSectionFields
         columnBreakpoint="md"
         senderTypeLabel="senderPlace"
         cityOptions={locationSelects.cityOptions}
@@ -89,11 +90,9 @@ export function NovaPoshtaIntegrationEditForm({
         onWarehouseChange={locationSelects.onWarehouseChange}
       />
 
-      <Row gutter={12}>
-        <Col xs={24} md={12}>
-          <PayerTypeField />
-        </Col>
-      </Row>
+      <DeliveryDefaultsFields columnBreakpoint="md" />
+
+      <ReservePackagingFields columnBreakpoint="md" />
 
       <Flex justify="flex-end" gap={8} wrap>
         <Button icon={<XIcon />} onClick={onCancel}>

@@ -145,9 +145,8 @@ export type NovaPoshtaStreet = {
   streetType?: string;
 };
 
-export type NovaPoshtaIntegrationCreatePayload = {
+export type NovaPoshtaIntegrationFields = {
   name: string;
-  api_key: string;
   sender_name: string;
   sender_phone: string;
   sender_ref: string;
@@ -157,58 +156,84 @@ export type NovaPoshtaIntegrationCreatePayload = {
   sender_type: NovaPoshtaSenderType;
   payment_method: NovaPoshtaPayerType;
   payer_type: NovaPoshtaPayerType;
-  sender_warehouse_ref?: string;
-  sender_warehouse_name?: string;
-  sender_street_ref?: string;
-  sender_street_name?: string;
-  sender_building?: string;
-  sender_flat?: string;
-};
-
-export type NovaPoshtaIntegrationDetails = {
-  id: number;
-  workspaceId: number;
-  name: string;
-  connectedAt: string;
-  createdAt: string;
-  updatedAt: string;
-  apiKeyConfigured: boolean;
-  sender_name: string;
-  sender_phone: string;
-  sender_city_ref: string;
-  sender_city_name: string;
-  sender_type: NovaPoshtaSenderType;
   sender_warehouse_ref: string | null;
   sender_warehouse_name: string | null;
   sender_street_ref: string | null;
   sender_street_name: string | null;
   sender_building: string | null;
   sender_flat: string | null;
-  sender_ref: string;
-  sender_contact_ref: string;
-  payment_method: NovaPoshtaPayerType;
-  payer_type: NovaPoshtaPayerType;
+  cod_commission_payer: NovaPoshtaPayerType | null;
+  default_weight_kg: number | null;
+  default_width_cm: number | null;
+  default_height_cm: number | null;
+  default_length_cm: number | null;
+  payment_purpose: string | null;
+  on_created_order_status_id: number | null;
+  on_in_transit_order_status_id: number | null;
+  on_arrived_order_status_id: number | null;
+  on_delivered_order_status_id: number | null;
+  on_returned_order_status_id: number | null;
+  on_delivery_failed_order_status_id: number | null;
 };
 
-export type NovaPoshtaIntegrationUpdatePayload = {
-  name?: string;
-  api_key?: string;
-  sender_name?: string;
-  sender_phone?: string;
-  sender_ref?: string;
-  sender_contact_ref?: string;
-  sender_city_ref?: string;
-  sender_city_name?: string;
-  sender_type?: NovaPoshtaSenderType;
-  payment_method?: NovaPoshtaPayerType;
-  payer_type?: NovaPoshtaPayerType;
-  sender_warehouse_ref?: string | null;
-  sender_warehouse_name?: string | null;
-  sender_street_ref?: string | null;
-  sender_street_name?: string | null;
-  sender_building?: string | null;
-  sender_flat?: string | null;
+type NovaPoshtaIntegrationCreateRequiredFieldKeys =
+  | "name"
+  | "sender_name"
+  | "sender_phone"
+  | "sender_ref"
+  | "sender_contact_ref"
+  | "sender_city_ref"
+  | "sender_city_name"
+  | "sender_type"
+  | "payment_method"
+  | "payer_type";
+
+type NovaPoshtaIntegrationCreateOptionalFieldKeys =
+  | "cod_commission_payer"
+  | "default_weight_kg"
+  | "default_width_cm"
+  | "default_height_cm"
+  | "default_length_cm"
+  | "payment_purpose"
+  | "on_created_order_status_id"
+  | "on_in_transit_order_status_id"
+  | "on_arrived_order_status_id"
+  | "on_delivered_order_status_id"
+  | "on_returned_order_status_id"
+  | "on_delivery_failed_order_status_id";
+
+export type NovaPoshtaIntegrationDetails = NovaPoshtaIntegrationFields & {
+  id: number;
+  workspaceId: number;
+  connectedAt: string;
+  createdAt: string;
+  updatedAt: string;
+  apiKeyConfigured: boolean;
 };
+
+export type NovaPoshtaIntegrationCreatePayload = Pick<
+  NovaPoshtaIntegrationFields,
+  NovaPoshtaIntegrationCreateRequiredFieldKeys
+> & {
+  api_key: string;
+  sender_warehouse_ref?: string;
+  sender_warehouse_name?: string;
+  sender_street_ref?: string;
+  sender_street_name?: string;
+  sender_building?: string;
+  sender_flat?: string;
+} & Partial<
+  Pick<
+    NovaPoshtaIntegrationFields,
+    NovaPoshtaIntegrationCreateOptionalFieldKeys
+  >
+>;
+
+export type NovaPoshtaIntegrationUpdatePayload = Partial<
+  NovaPoshtaIntegrationFields & {
+    api_key: string;
+  }
+>;
 
 export type TelegramQrLoginSession = {
   id: number | string;

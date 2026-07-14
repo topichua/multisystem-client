@@ -992,6 +992,10 @@
         "sender": "Sender details",
         "payment": "Payment details"
       },
+      "sections": {
+        "deliveryDefaults": "Default delivery parameters",
+        "reservePackaging": "Reserve packaging parameters"
+      },
       "fields": {
         "name": {
           "label": "Integration name",
@@ -1017,7 +1021,7 @@
           "label": "Sender type"
         },
         "warehouse": {
-          "label": "Warehouse",
+          "label": "Branch / Parcel locker",
           "placeholder": "Start typing number or address",
           "required": "Select warehouse"
         },
@@ -1036,13 +1040,37 @@
           "placeholder": "E.g. 24"
         },
         "payerType": {
-          "label": "Delivery payment",
+          "label": "Delivery payer",
           "placeholder": "Select payer",
           "required": "Select payer"
+        },
+        "codCommissionPayer": {
+          "label": "COD commission payer",
+          "placeholder": "Select payer"
+        },
+        "paymentPurpose": {
+          "label": "Shipment description",
+          "placeholder": "E.g. Clothing and accessories"
+        },
+        "defaultWeightKg": {
+          "label": "Reserve weight, kg",
+          "placeholder": "0.5"
+        },
+        "defaultLengthCm": {
+          "label": "Reserve length, cm",
+          "placeholder": "30"
+        },
+        "defaultWidthCm": {
+          "label": "Reserve width, cm",
+          "placeholder": "20"
+        },
+        "defaultHeightCm": {
+          "label": "Reserve height, cm",
+          "placeholder": "10"
         }
       },
       "senderTypes": {
-        "warehouse": "Warehouse",
+        "warehouse": "Warehouse / Branch",
         "address": "Address"
       },
       "payerTypes": {
@@ -1050,6 +1078,7 @@
         "recipient": "Recipient"
       },
       "senderStepNote": "This information is used as the sender on new waybills.",
+      "reservePackagingNote": "Used only when products do not have their own weight and dimensions.",
       "apiKeyHint": "The key is available in Nova Poshta cabinet → Settings → Security → API.",
       "discoverFailed": "Could not load senders",
       "noSenders": "No sender contacts found for this API key",

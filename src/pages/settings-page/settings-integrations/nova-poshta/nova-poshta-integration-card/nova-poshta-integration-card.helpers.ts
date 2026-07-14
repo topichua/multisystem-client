@@ -12,6 +12,20 @@ import type {
 } from "../types";
 import type { NovaPoshtaIntegrationEditFormValues } from "./nova-poshta-integration-card.types";
 
+function optionalNumber(
+  value: number | null | undefined,
+): number | null | undefined {
+  if (value === undefined) {
+    return undefined;
+  }
+
+  if (value === null) {
+    return null;
+  }
+
+  return Number.isFinite(value) ? value : null;
+}
+
 export function findNovaPoshtaIntegrationDetails(
   items: NovaPoshtaIntegrationDetails[],
   integrationId: string | number,
@@ -26,6 +40,14 @@ export function compactValue(parts: Array<string | null | undefined>): string {
     .map((part) => part?.trim())
     .filter((part): part is string => Boolean(part))
     .join(", ");
+}
+
+export function formatOptionalNumber(value: number | null | undefined): string {
+  if (value == null || !Number.isFinite(value)) {
+    return "";
+  }
+
+  return String(value);
 }
 
 export function mergeCurrentOption<TOption extends { value: string }>(
@@ -128,6 +150,12 @@ export function buildInitialValues(
     sender_building: details.sender_building ?? undefined,
     sender_flat: details.sender_flat ?? undefined,
     payer_type: details.payer_type,
+    cod_commission_payer: details.cod_commission_payer ?? undefined,
+    payment_purpose: details.payment_purpose ?? undefined,
+    default_weight_kg: details.default_weight_kg ?? undefined,
+    default_length_cm: details.default_length_cm ?? undefined,
+    default_width_cm: details.default_width_cm ?? undefined,
+    default_height_cm: details.default_height_cm ?? undefined,
   };
 }
 
@@ -149,6 +177,8 @@ export function buildUpdatePayload(
     sender_type: senderType,
     payment_method: payerType,
     payer_type: payerType,
+    cod_commission_payer: values.cod_commission_payer ?? null,
+    payment_purpose: trimOptional(values.payment_purpose ?? undefined) ?? null,
     sender_warehouse_ref:
       senderType === "warehouse" ? (values.warehouse_ref ?? null) : null,
     sender_warehouse_name:
@@ -165,6 +195,10 @@ export function buildUpdatePayload(
       senderType === "address"
         ? (trimOptional(values.sender_flat) ?? null)
         : null,
+    default_weight_kg: optionalNumber(values.default_weight_kg),
+    default_length_cm: optionalNumber(values.default_length_cm),
+    default_width_cm: optionalNumber(values.default_width_cm),
+    default_height_cm: optionalNumber(values.default_height_cm),
   };
 
   if (apiKey) {

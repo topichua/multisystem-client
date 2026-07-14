@@ -19,6 +19,12 @@ export type NovaPoshtaWizardFormValues = {
   sender_building?: string;
   sender_flat?: string;
   payer_type?: NovaPoshtaPayerType;
+  cod_commission_payer?: NovaPoshtaPayerType | null;
+  payment_purpose?: string | null;
+  default_weight_kg?: number | null;
+  default_width_cm?: number | null;
+  default_height_cm?: number | null;
+  default_length_cm?: number | null;
 };
 
 export type SenderOption = {

@@ -7,7 +7,7 @@ import * as S from "../settings-integrations.styled";
 import { ApiKeyStep } from "./components/api-key-step";
 import { HiddenFields } from "./components/hidden-fields";
 import { PaymentStep } from "./components/payment-step";
-import { SenderStep } from "./components/sender-step";
+import { SenderSectionFields } from "./components/sender-section-fields";
 import { WizardFooter } from "./components/wizard-footer";
 import type {
   NovaPoshtaIntegrationWizardProps,
@@ -70,7 +70,7 @@ export function NovaPoshtaIntegrationWizard({
         {controller.currentStep === 0 ? <ApiKeyStep /> : null}
 
         {controller.currentStep === 1 ? (
-          <SenderStep
+          <SenderSectionFields
             citySelect={controller.citySelect}
             selectedCityRef={controller.selectedCityRef}
             selectedSenderType={controller.selectedSenderType}

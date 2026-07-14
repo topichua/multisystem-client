@@ -1,5 +1,11 @@
-import { PayerTypeField } from "./payer-type-field";
+import { DeliveryDefaultsFields } from "./delivery-defaults-fields";
+import { ReservePackagingFields } from "./reserve-packaging-fields";
 
 export function PaymentStep() {
-  return <PayerTypeField />;
+  return (
+    <>
+      <DeliveryDefaultsFields />
+      <ReservePackagingFields />
+    </>
+  );
 }

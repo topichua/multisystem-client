@@ -226,6 +226,27 @@ export const NovaPoshtaWizardStepNote = styled.div`
   }
 `;
 
+export const NovaPoshtaSectionTitle = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.colors.functional.text.heading};
+
+  svg {
+    flex: 0 0 auto;
+    color: ${({ theme }) => theme.colors.functional.text.subdued};
+  }
+`;
+
+export const NovaPoshtaFormSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+`;
+
 export const NovaPoshtaWizardHint = styled.div`
   display: flex;
   align-items: flex-start;

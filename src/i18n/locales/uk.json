@@ -1000,6 +1000,10 @@
         "sender": "Дані відправника",
         "payment": "Дані про оплату"
       },
+      "sections": {
+        "deliveryDefaults": "Параметри доставки за замовчуванням",
+        "reservePackaging": "Резервні параметри упаковки"
+      },
       "fields": {
         "name": {
           "label": "Назва інтеграції",
@@ -1025,7 +1029,7 @@
           "label": "Тип відправлення"
         },
         "warehouse": {
-          "label": "Відділення",
+          "label": "Відділення / Поштомат",
           "placeholder": "Почніть вводити номер або адресу",
           "required": "Оберіть відділення"
         },
@@ -1044,13 +1048,37 @@
           "placeholder": "Напр. 24"
         },
         "payerType": {
-          "label": "Оплата за доставку",
+          "label": "Платник доставки",
           "placeholder": "Оберіть платника",
           "required": "Оберіть платника"
+        },
+        "codCommissionPayer": {
+          "label": "Платник комісії післяплати",
+          "placeholder": "Оберіть платника"
+        },
+        "paymentPurpose": {
+          "label": "Опис відправлення",
+          "placeholder": "Напр. Одяг та аксесуари"
+        },
+        "defaultWeightKg": {
+          "label": "Резервна вага, кг",
+          "placeholder": "0.5"
+        },
+        "defaultLengthCm": {
+          "label": "Резервна довжина, см",
+          "placeholder": "30"
+        },
+        "defaultWidthCm": {
+          "label": "Резервна ширина, см",
+          "placeholder": "20"
+        },
+        "defaultHeightCm": {
+          "label": "Резервна висота, см",
+          "placeholder": "10"
         }
       },
       "senderTypes": {
-        "warehouse": "Відділення",
+        "warehouse": "Склад / Відділення",
         "address": "Адреса"
       },
       "payerTypes": {
@@ -1058,6 +1086,7 @@
         "recipient": "Отримувач"
       },
       "senderStepNote": "Ці дані використовуються як відправник у нових накладних.",
+      "reservePackagingNote": "Використовуються лише якщо товари не мають власних ваги та габаритів.",
       "apiKeyHint": "Ключ доступний у кабінеті Нової Пошти → Налаштування → Безпека → API.",
       "discoverFailed": "Не вдалося завантажити відправників",
       "noSenders": "Для цього API ключа не знайдено контактів відправника",
