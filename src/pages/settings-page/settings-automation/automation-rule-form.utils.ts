@@ -1,4 +1,5 @@
 import type {
+  AutomationConditionType,
   AutomationRule,
   AutomationRuleConditionPayload,
   AutomationRuleCreatePayload,
@@ -17,6 +18,7 @@ export type AutomationRuleFormValues = {
   name: string;
   isActive: boolean;
   actionType: "CHANGE_ORDER_STATUS";
+  conditionType: AutomationConditionType;
   conditions: AutomationConditionFormValue[];
   targetOrderStatusId?: number;
 };
@@ -38,6 +40,7 @@ export const createDefaultAutomationFormValues =
     name: "",
     isActive: true,
     actionType: "CHANGE_ORDER_STATUS",
+    conditionType: "OR",
     conditions: [createEmptyCondition()],
     targetOrderStatusId: undefined,
   });
@@ -48,6 +51,7 @@ export const mapRuleToFormValues = (
   name: rule.name,
   isActive: rule.isActive,
   actionType: "CHANGE_ORDER_STATUS",
+  conditionType: rule.conditionType,
   conditions:
     rule.conditions.length > 0
       ? rule.conditions.map((condition) => {
@@ -71,6 +75,7 @@ export const buildAutomationCreatePayload = (
 ): AutomationRuleCreatePayload => ({
   name: values.name.trim(),
   isActive: values.isActive,
+  conditionType: values.conditionType,
   conditions: values.conditions.map(
     (condition): AutomationRuleConditionPayload => {
       const payload: AutomationRuleConditionPayload = {

@@ -730,7 +730,13 @@
       "condition": "If {{source}} = {{status}}",
       "viaDelay": "after {{delay}}",
       "or": "or",
+      "and": "and",
       "full": "{{conditions}} → {{target}}"
+    },
+    "logic": {
+      "or": "Or",
+      "and": "And",
+      "toggleAria": "Toggle between And and Or"
     },
     "validation": {
       "name": "Enter a name",

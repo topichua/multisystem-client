@@ -2,6 +2,8 @@ export type AutomationActionType = "CHANGE_ORDER_STATUS";
 
 export type AutomationSourceType = "DELIVERY_STATUS" | "PAYMENT_STATUS";
 
+export type AutomationConditionType = "AND" | "OR";
+
 export type AutomationDurationUnit = "MINUTES" | "HOURS" | "DAYS";
 
 export type AutomationCriteriaOption = {
@@ -41,6 +43,7 @@ export type AutomationRule = {
   name: string;
   isActive: boolean;
   actionType: AutomationActionType;
+  conditionType: AutomationConditionType;
   targetOrderStatusId: number;
   targetOrderStatus?: AutomationTargetOrderStatus | null;
   conditions: AutomationRuleCondition[];
@@ -59,6 +62,7 @@ export type AutomationRuleCreatePayload = {
   name: string;
   isActive: boolean;
   conditions: AutomationRuleConditionPayload[];
+  conditionType: AutomationConditionType;
   actionType: AutomationActionType;
   targetOrderStatusId: number;
 };
@@ -67,6 +71,7 @@ export type AutomationRuleUpdatePayload = Partial<{
   name: string;
   isActive: boolean;
   conditions: AutomationRuleConditionPayload[];
+  conditionType: AutomationConditionType;
   actionType: AutomationActionType;
   targetOrderStatusId: number;
 }>;

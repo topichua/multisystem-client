@@ -59,6 +59,10 @@ export const AutomationRuleFormFields = ({
 
         <S.SectionDivider />
 
+        <Form.Item name="conditionType" hidden>
+          <Input />
+        </Form.Item>
+
         <Form.List
           name="conditions"
           rules={[

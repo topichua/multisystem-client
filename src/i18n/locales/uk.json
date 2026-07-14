@@ -736,7 +736,13 @@
       "condition": "Якщо {{source}} = {{status}}",
       "viaDelay": "через {{delay}}",
       "or": "або",
+      "and": "і",
       "full": "{{conditions}} → {{target}}"
+    },
+    "logic": {
+      "or": "Або",
+      "and": "І",
+      "toggleAria": "Перемкнути між І та Або"
     },
     "validation": {
       "name": "Вкажіть назву",

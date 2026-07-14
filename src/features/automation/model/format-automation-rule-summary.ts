@@ -62,7 +62,13 @@ export const formatAutomationRuleSummary = (
         ? `${base} ${t("automation.summary.viaDelay", { delay })}`
         : base;
     })
-    .join(` ${t("automation.summary.or")} `);
+    .join(
+      ` ${t(
+        rule.conditionType === "AND"
+          ? "automation.summary.and"
+          : "automation.summary.or",
+      )} `,
+    );
 
   const targetName =
     rule.targetOrderStatus?.name ??

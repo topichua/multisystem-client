@@ -8,7 +8,10 @@ import {
 } from "antd";
 import { useTranslation } from "react-i18next";
 
-import type { AutomationCriteria } from "@/features/automation/model/automation.types";
+import type {
+  AutomationConditionType,
+  AutomationCriteria,
+} from "@/features/automation/model/automation.types";
 
 import type { AutomationConditionFormValue } from "./automation-rule-form.utils";
 import {
@@ -34,6 +37,14 @@ export const AutomationConditionsFields = ({
   remove,
 }: AutomationConditionsFieldsProps) => {
   const { t } = useTranslation();
+  const conditionType = (Form.useWatch("conditionType", form) ??
+    "OR") as AutomationConditionType;
+
+  const toggleConditionType = () => {
+    const nextType: AutomationConditionType =
+      conditionType === "OR" ? "AND" : "OR";
+    form.setFieldsValue({ conditionType: nextType });
+  };
 
   return (
     <>
@@ -48,6 +59,8 @@ export const AutomationConditionsFields = ({
             index={index}
             canRemove={fields.length > 1}
             criteria={criteria}
+            conditionType={conditionType}
+            onToggleType={toggleConditionType}
             onRemove={() => remove(field.name)}
           />
         ))}
@@ -71,6 +84,8 @@ type ConditionBlockProps = {
   index: number;
   canRemove: boolean;
   criteria: AutomationCriteria | null;
+  conditionType: AutomationConditionType;
+  onToggleType: () => void;
   onRemove: () => void;
 };
 
@@ -80,6 +95,8 @@ const ConditionBlock = ({
   index,
   canRemove,
   criteria,
+  conditionType,
+  onToggleType,
   onRemove,
 }: ConditionBlockProps) => {
   const { t } = useTranslation();
@@ -132,7 +149,18 @@ const ConditionBlock = ({
   return (
     <S.ConditionBlock>
       {index > 0 ? (
-        <S.OrConnector>{t("automation.summary.or")}</S.OrConnector>
+        <S.OrConnector
+          type="button"
+          onClick={onToggleType}
+          aria-label={t("automation.logic.toggleAria")}
+          data-qa="settings-automation-condition-type"
+        >
+          {t(
+            conditionType === "AND"
+              ? "automation.logic.and"
+              : "automation.logic.or",
+          )}
+        </S.OrConnector>
       ) : null}
 
       <S.ConditionRow>

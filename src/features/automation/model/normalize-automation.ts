@@ -1,5 +1,6 @@
 import type {
   AutomationActionType,
+  AutomationConditionType,
   AutomationCriteria,
   AutomationCriteriaOption,
   AutomationDurationUnit,
@@ -53,10 +54,18 @@ const DURATION_UNITS = new Set<AutomationDurationUnit>([
   "DAYS",
 ]);
 
+const CONDITION_TYPES = new Set<AutomationConditionType>(["AND", "OR"]);
+
 const normalizeActionType = (value: unknown): AutomationActionType =>
   typeof value === "string" && ACTION_TYPES.has(value as AutomationActionType)
     ? (value as AutomationActionType)
     : "CHANGE_ORDER_STATUS";
+
+const normalizeConditionType = (value: unknown): AutomationConditionType =>
+  typeof value === "string" &&
+  CONDITION_TYPES.has(value as AutomationConditionType)
+    ? (value as AutomationConditionType)
+    : "OR";
 
 const normalizeSourceType = (value: unknown): AutomationSourceType | null => {
   if (
@@ -209,6 +218,9 @@ export const normalizeAutomationRule = (
     name,
     isActive: data.isActive === true,
     actionType: normalizeActionType(data.actionType),
+    conditionType: normalizeConditionType(
+      data.conditionType ?? data.condition_type,
+    ),
     targetOrderStatusId,
     targetOrderStatus: normalizeTargetOrderStatus(data.targetOrderStatus),
     conditions,

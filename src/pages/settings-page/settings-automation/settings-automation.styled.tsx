@@ -100,11 +100,33 @@ export const ConditionBlock = styled.div`
   gap: 8px;
 `;
 
-export const OrConnector = styled.div`
-  color: ${({ theme }) => theme.colors.functional.text.subdued};
+export const OrConnector = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  min-width: 36px;
+  min-height: 24px;
+  margin: 0;
+  padding: 2px 10px;
+  border: 1px solid ${({ theme }) => theme.colors.semantic.primary};
+  border-radius: 999px;
+  background: ${({ theme }) => theme.colors.base.violet[1]};
+  color: ${({ theme }) => theme.colors.semantic.primary};
   font-size: ${({ theme }) => theme.fontSize.small};
-  font-weight: 500;
-  padding-inline-start: 4px;
+  font-weight: 600;
+  line-height: 1.2;
+  cursor: pointer;
+  user-select: none;
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.base.violet[2]};
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.semantic.primary};
+    outline-offset: 2px;
+  }
 `;
 
 export const ConditionRow = styled.div`
