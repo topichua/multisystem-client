@@ -2030,6 +2030,9 @@
     "variant": {
       "price": "Ціна",
       "quantity": "Кількість",
+      "reserved": "Резерв",
+      "available": "Доступно",
+      "wishlistCountAria": "{{count}} у вішлисті",
       "sku": "SKU",
       "imagePickerTitle": "Зображення варіанта",
       "images": "Зображення",

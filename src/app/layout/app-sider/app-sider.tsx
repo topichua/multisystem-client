@@ -1,5 +1,5 @@
 import { CaretLeftIcon } from "@phosphor-icons/react";
-import { Typography } from "antd";
+import { Tooltip, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -41,27 +41,37 @@ const SiderNavItems = observer(({ showLabel, items }: MenuSiderProps) => {
       {items.map((item) => {
         const isActive = isNavItemActive(item, location.pathname);
         const qaKey = item.path.replace(/\//g, "_").replace(/^_/, "") || "root";
+        const label = t(item.labelKey);
 
         return (
-          <S.Button
+          <Tooltip
             key={item.path}
-            icon={item.icon}
-            className={isActive ? "active" : ""}
-            onClick={() => {
-              navigate(item.path);
-            }}
-            block
-            data-qa={
-              showLabel
-                ? `fullWidth_menu_sider_${qaKey}`
-                : `menu_sider_${qaKey}`
-            }
-            $showLabel={showLabel}
+            placement="right"
+            title={showLabel ? undefined : label}
+            trigger={["hover", "focus"]}
           >
-            {showLabel ? (
-              <Text className="common-button-text">{t(item.labelKey)}</Text>
-            ) : undefined}
-          </S.Button>
+            <S.NavTooltipTarget>
+              <S.Button
+                icon={item.icon}
+                className={isActive ? "active" : ""}
+                aria-label={showLabel ? undefined : label}
+                onClick={() => {
+                  navigate(item.path);
+                }}
+                block
+                data-qa={
+                  showLabel
+                    ? `fullWidth_menu_sider_${qaKey}`
+                    : `menu_sider_${qaKey}`
+                }
+                $showLabel={showLabel}
+              >
+                {showLabel ? (
+                  <Text className="common-button-text">{label}</Text>
+                ) : undefined}
+              </S.Button>
+            </S.NavTooltipTarget>
+          </Tooltip>
         );
       })}
     </>

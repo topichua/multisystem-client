@@ -2000,6 +2000,9 @@
     "variant": {
       "price": "Price",
       "quantity": "Quantity",
+      "reserved": "Reserved",
+      "available": "Available",
+      "wishlistCountAria": "{{count}} in wishlist",
       "sku": "SKU",
       "imagePickerTitle": "Variant image",
       "images": "Images",

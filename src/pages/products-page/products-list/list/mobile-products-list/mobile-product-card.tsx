@@ -4,26 +4,26 @@ import {
   PencilSimpleIcon,
   TrashIcon,
 } from "@phosphor-icons/react";
-import { Button, Flex, Modal } from "antd";
+import { Button, Modal } from "antd";
 // import { Tag } from "@/components/tag/tag";
 import { useState, type MouseEvent } from "react";
 import { useTranslation } from "react-i18next";
 
 import type { Product } from "@/features/products/model/product.types";
 import {
-  formatProductPrice,
   formatProductVariantListMetaLine,
   getProductPriceRange,
   getSingleVariantListMeta,
-  getVariantTitle,
   // productStatusToColor,
   // variantStatusToColor,
 } from "@/features/products/utils/product-display";
 
+import { ProductsListVariantCard } from "../components/products-list-variant-card";
+
 import * as S from "./mobile-products-list-page.styled";
 
 const CARD_NAVIGATION_BLOCKER_SELECTOR =
-  "a,button,input,select,textarea,[role='button'],[role='combobox'],.ant-select,.rc-select,.ant-select-selector,.ant-modal-wrap,.ant-popover,.ant-popconfirm,[data-qa^='products-mobile-action-'],[data-qa^='products-mobile-expand-'],[data-qa^='products-mobile-variant-inventory-']";
+  "a,button,input,select,textarea,[role='button'],[role='combobox'],.ant-select,.rc-select,.ant-select-selector,.ant-modal-wrap,.ant-popover,.ant-popconfirm,[data-qa^='products-mobile-action-'],[data-qa^='products-mobile-expand-'],[data-qa^='products-list-variant-']";
 
 type MobileProductCardProps = {
   product: Product;
@@ -157,61 +157,21 @@ export const MobileProductCard = ({
               count: variantsCount,
             })}
           </S.VariantsSectionTitle>
-          {product.variants?.map((variant) => {
-            const title = getVariantTitle(variant);
-            const variantName =
-              title || `${t("products.variant.fallbackName")} #${variant.id}`;
-            const variantPrice = formatProductPrice(
-              variant.price,
-              product.currency,
-            );
-            const variantQuantity =
-              showInventoryQuantity && variant.quantity != null
-                ? String(variant.quantity)
-                : "—";
-            const variantDetails = [
-              variantPrice,
-              showInventoryQuantity
-                ? `${t("products.variant.quantity")} ${variantQuantity}`
-                : null,
-              variant.sku || null,
-            ]
-              .filter(Boolean)
-              .join(" · ");
-
-            return (
-              <S.VariantRow
-                key={variant.id}
-                data-qa={`products-mobile-variant-${variant.id}`}
-              >
-                <Flex align="flex-start" justify="space-between" gap={8}>
-                  <div style={{ minWidth: 0, flex: 1 }}>
-                    <S.VariantName>{variantName}</S.VariantName>
-                    <S.VariantDetails>
-                      {variantDetails ? variantDetails : null}
-                    </S.VariantDetails>
-                  </div>
-                  {showInventoryManagement ? (
-                    <Button
-                      type="text"
-                      size="small"
-                      icon={<CubeIcon size={16} />}
-                      aria-label={t(
-                        "products.inventoryDrawer.openVariantStockAria",
-                      )}
-                      data-qa={`products-mobile-variant-inventory-${variant.id}`}
-                      onClick={(event) => {
-                        stopCardNavigation(event);
-                        onOpenVariantInventory(product, variant.id);
-                      }}
-                      onMouseDown={stopCardNavigation}
-                      onPointerDown={stopCardNavigation}
-                    />
-                  ) : null}
-                </Flex>
-              </S.VariantRow>
-            );
-          })}
+          {product.variants?.map((variant) => (
+            <S.VariantRow
+              key={variant.id}
+              data-qa={`products-mobile-variant-${variant.id}`}
+            >
+              <ProductsListVariantCard
+                product={product}
+                variant={variant}
+                showInventoryQuantity={showInventoryQuantity}
+                showInventoryManagement={showInventoryManagement}
+                onOpenInventory={onOpenVariantInventory}
+                onEdit={onEdit}
+              />
+            </S.VariantRow>
+          ))}
         </S.VariantsSection>
       )}
 

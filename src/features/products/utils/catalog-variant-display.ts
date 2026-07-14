@@ -5,9 +5,17 @@ import type {
 } from "@/features/products/model/product.types";
 import { getVariantTitle } from "@/features/products/utils/product-display";
 
+function getVariantCustomFieldValue(
+  variant: ProductVariant,
+  key: string,
+): string | null {
+  const field = variant.customFields.find((item) => item.key === key);
+  return field?.value?.trim() || null;
+}
+
 export function getVariantDescriptor(variant: ProductVariant): string {
   const customFieldTitle = getVariantTitle(variant);
-  const parts = [customFieldTitle, variant.color, variant.size, variant.sku]
+  const parts = [customFieldTitle, variant.sku]
     .map((value) => value?.trim())
     .filter((value): value is string => Boolean(value));
 
@@ -54,8 +62,8 @@ export function productVariantToCatalogVariant(
   return {
     id: variant.id,
     productId: product.id,
-    color: variant.color ?? null,
-    size: variant.size ?? null,
+    color: getVariantCustomFieldValue(variant, "color"),
+    size: getVariantCustomFieldValue(variant, "size"),
     sku: variant.sku ?? null,
     unitPrice,
     imageUrl: variant.imageUrl,

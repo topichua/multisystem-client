@@ -1,5 +1,5 @@
 import { CubeIcon } from "@phosphor-icons/react";
-import { Button, Card, Flex, Table, Tooltip, Typography } from "antd";
+import { Button, Flex, Table, Typography } from "antd";
 // import { Tag } from "@/components/tag/tag";
 import { observer } from "mobx-react-lite";
 import { useCallback, useState, type Key, type MouseEvent } from "react";
@@ -12,11 +12,8 @@ import { PaneSectionTitle } from "@/components/layout/pane-frame";
 import { StockSupplyModal } from "@/features/inventory/components/stock-supply-modal/stock-supply-modal";
 import { ProductInventoryDrawer } from "@/features/products/components/product-inventory-drawer/product-inventory-drawer";
 import type { Product } from "@/features/products/model/product.types";
-import {
-  formatProductPrice,
-  getVariantTitle,
-  // variantStatusToColor,
-} from "@/features/products/utils/product-display";
+
+import { ProductsListVariantCard } from "./components/products-list-variant-card";
 
 import { ProductsListActiveFilters } from "./products-list-active-filters";
 import { ProductsListFiltersPanel } from "./products-list-filters-panel";
@@ -158,81 +155,22 @@ export const ProductsListPage = observer(() => {
 
       return (
         <Flex vertical gap={8} style={{ paddingLeft: "5%" }}>
-          {product.variants.map((variant) => {
-            const title = getVariantTitle(variant);
-
-            return (
-              <Card
-                key={variant.id}
-                styles={{
-                  body: {
-                    padding: 12,
-                  },
-                }}
-              >
-                <Flex align="center" justify="space-between" gap={16}>
-                  <Text strong style={{ flex: "1 1 auto", minWidth: 240 }}>
-                    {title ||
-                      `${t("products.variant.fallbackName")} #${variant.id}`}
-                  </Text>
-
-                  <Flex align="center" gap={24} style={{ flexShrink: 0 }}>
-                    {/* <Tag color={variantStatusToColor(variant.status)}>
-                      {variant.status}
-                    </Tag> */}
-
-                    <Text type="secondary" style={{ minWidth: 110 }}>
-                      {variant.sku || "—"}
-                    </Text>
-
-                    <Text strong style={{ minWidth: 90 }}>
-                      {formatProductPrice(variant.price, product.currency)}
-                    </Text>
-
-                    {showInventoryQuantity ? (
-                      <Flex gap={8} align="center" style={{ minWidth: 80 }}>
-                        <Text type="secondary">
-                          {t("products.variant.quantity")}
-                        </Text>
-                        <Text
-                          type={variant.quantity === 0 ? "danger" : undefined}
-                          strong
-                        >
-                          {variant.quantity ?? "—"}
-                        </Text>
-                        {showInventoryManagement ? (
-                          <Tooltip
-                            title={t(
-                              "products.inventoryDrawer.openVariantStockAria",
-                            )}
-                          >
-                            <Button
-                              type="text"
-                              size="small"
-                              icon={<CubeIcon size={16} />}
-                              aria-label={t(
-                                "products.inventoryDrawer.openVariantStockAria",
-                              )}
-                              onClick={(event) => {
-                                event.stopPropagation();
-                                handleOpenVariantInventory(product, variant.id);
-                              }}
-                              onMouseDown={(event) => event.stopPropagation()}
-                              onPointerDown={(event) => event.stopPropagation()}
-                            />
-                          </Tooltip>
-                        ) : null}
-                      </Flex>
-                    ) : null}
-                  </Flex>
-                </Flex>
-              </Card>
-            );
-          })}
+          {product.variants.map((variant) => (
+            <ProductsListVariantCard
+              key={variant.id}
+              product={product}
+              variant={variant}
+              showInventoryQuantity={showInventoryQuantity}
+              showInventoryManagement={showInventoryManagement}
+              onOpenInventory={handleOpenVariantInventory}
+              onEdit={handleOpenProduct}
+            />
+          ))}
         </Flex>
       );
     },
     [
+      handleOpenProduct,
       handleOpenVariantInventory,
       showInventoryManagement,
       showInventoryQuantity,

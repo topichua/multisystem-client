@@ -18,6 +18,9 @@ import type {
   Product,
   ProductDetails,
   ProductInventoryResponse,
+  ProductMediaItem,
+  ProductVariant,
+  ProductVariantCustomField,
   ProductsListResponse,
   ProductsListSort,
 } from "@/features/products/model/product.types";
@@ -178,6 +181,105 @@ function normalizeCatalogVariantsList(
   return { items, total, page, pageSize };
 }
 
+function normalizeProductVariantCustomField(
+  raw: unknown,
+): ProductVariantCustomField {
+  const record = asRecord(raw);
+
+  return {
+    fieldId: getNumber(record, ["fieldId", "field_id"]) ?? 0,
+    key: getString(record, ["key"]) ?? "",
+    label: getString(record, ["label"]) ?? "",
+    type: getString(record, ["type"]) ?? "text",
+    value: getString(record, ["value"]) ?? "",
+    order: getNumber(record, ["order"]) ?? 0,
+  };
+}
+
+function normalizeProductMediaItem(raw: unknown): ProductMediaItem {
+  const record = asRecord(raw);
+
+  return {
+    id: getNumber(record, ["id"]) ?? 0,
+    uploadMediaId: getNumber(record, ["uploadMediaId", "upload_media_id"]),
+    productId: getNumber(record, ["productId", "product_id"]),
+    url: getString(record, ["url"]) ?? "",
+    type: getString(record, ["type"]),
+    sourceUrl: getString(record, ["sourceUrl", "source_url"]),
+    sortOrder: getNumber(record, ["sortOrder", "sort_order"]),
+    variantId: getNumber(record, ["variantId", "variant_id"]),
+  };
+}
+
+function normalizeProductVariant(raw: unknown): ProductVariant {
+  const record = asRecord(raw);
+  const customFields = Array.isArray(record.customFields)
+    ? record.customFields.map(normalizeProductVariantCustomField)
+    : [];
+  const media = Array.isArray(record.media)
+    ? record.media.map(normalizeProductMediaItem)
+    : [];
+
+  return {
+    id: getNumber(record, ["id"]) ?? 0,
+    customFields,
+    price: getNumber(record, ["price"]),
+    inStock: getBoolean(record, ["inStock", "in_stock"]),
+    quantity: getNumber(record, ["quantity"]),
+    reservedQuantity:
+      getNumber(record, ["reservedQuantity", "reserved_quantity"]) ?? 0,
+    availableQuantity:
+      getNumber(record, ["availableQuantity", "available_quantity"]) ?? 0,
+    wishlistCount: getNumber(record, ["wishlistCount", "wishlist_count"]) ?? 0,
+    imageUrl: getString(record, ["imageUrl", "image_url"]),
+    sku: getString(record, ["sku"]),
+    status: getString(record, ["status"]) ?? "active",
+    createdAt: getString(record, ["createdAt", "created_at"]) ?? "",
+    updatedAt: getString(record, ["updatedAt", "updated_at"]) ?? "",
+    media,
+  };
+}
+
+function normalizeProduct(raw: unknown): Product {
+  const record = asRecord(raw);
+  const variants = Array.isArray(record.variants)
+    ? record.variants.map(normalizeProductVariant)
+    : undefined;
+  const sizes = record.sizes;
+
+  return {
+    id: getNumber(record, ["id"]) ?? 0,
+    name: getString(record, ["name"]) ?? "",
+    productType: getString(record, ["productType", "product_type"]) ?? "single",
+    description: getString(record, ["description"]),
+    status: getString(record, ["status"]) ?? "active",
+    price: getNumber(record, ["price"]),
+    currency: getString(record, ["currency"]) ?? "UAH",
+    inStock: getBoolean(record, ["inStock", "in_stock"]),
+    quantity: getNumber(record, ["quantity"]),
+    wishlistCount: getNumber(record, ["wishlistCount", "wishlist_count"]) ?? 0,
+    mainImageUrl: getString(record, ["mainImageUrl", "main_image_url"]),
+    sourceType: getString(record, ["sourceType", "source_type"]) ?? undefined,
+    sourceId: getString(record, ["sourceId", "source_id"]),
+    referenceGroupId: getNumber(record, [
+      "referenceGroupId",
+      "reference_group_id",
+    ]),
+    categoryId: getNumber(record, ["categoryId", "category_id"]),
+    weightGrams: getNumber(record, ["weightGrams", "weight_grams"]),
+    lengthCm: getNumber(record, ["lengthCm", "length_cm"]),
+    widthCm: getNumber(record, ["widthCm", "width_cm"]),
+    heightCm: getNumber(record, ["heightCm", "height_cm"]),
+    createdAt: getString(record, ["createdAt", "created_at"]) ?? "",
+    updatedAt: getString(record, ["updatedAt", "updated_at"]) ?? "",
+    sizes:
+      typeof sizes === "string" || Array.isArray(sizes)
+        ? (sizes as string | string[])
+        : null,
+    variants,
+  };
+}
+
 function normalizeProductsList(data: unknown): ProductsListResponse {
   if (!data || typeof data !== "object") {
     return {
@@ -185,11 +287,15 @@ function normalizeProductsList(data: unknown): ProductsListResponse {
       total: 0,
       page: 1,
       pageSize: PRODUCTS_DEFAULT_PAGE_SIZE,
+      limit: PRODUCTS_DEFAULT_PAGE_SIZE,
+      offset: 0,
     };
   }
 
   const record = data as Record<string, unknown>;
-  const items = Array.isArray(record.items) ? (record.items as Product[]) : [];
+  const items = Array.isArray(record.items)
+    ? record.items.map(normalizeProduct)
+    : [];
   const total = typeof record.total === "number" ? record.total : items.length;
   const pageSize =
     typeof record.pageSize === "number"
@@ -197,17 +303,22 @@ function normalizeProductsList(data: unknown): ProductsListResponse {
       : typeof record.limit === "number"
         ? record.limit
         : PRODUCTS_DEFAULT_PAGE_SIZE;
+  const limit =
+    typeof record.limit === "number" ? record.limit : pageSize;
+  const offset =
+    typeof record.offset === "number"
+      ? record.offset
+      : typeof record.page === "number" && pageSize > 0
+        ? (record.page - 1) * pageSize
+        : 0;
   const page =
     typeof record.page === "number"
       ? record.page
-      : typeof record.limit === "number" && record.limit > 0
-        ? Math.floor(
-            (typeof record.offset === "number" ? record.offset : 0) /
-              record.limit,
-          ) + 1
+      : limit > 0
+        ? Math.floor(offset / limit) + 1
         : 1;
 
-  return { items, total, page, pageSize };
+  return { items, total, page, pageSize, limit, offset };
 }
 
 function axiosMultipartFormDataConfig() {

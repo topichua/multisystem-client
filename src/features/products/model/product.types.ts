@@ -4,13 +4,14 @@ export type ProductType = "single" | "variants" | string;
 export type Product = {
   id: number;
   name: string;
-  productType?: ProductType;
+  productType: ProductType;
   description?: string | null;
   status: ProductStatus;
   price: number | null;
   currency: string;
   inStock: boolean | null;
   quantity: number | null;
+  wishlistCount: number;
   mainImageUrl: string | null;
   sourceType?: string;
   sourceId?: string | null;
@@ -35,11 +36,12 @@ export type ProductCategoryRef = {
 export type ProductVariant = {
   id: number;
   customFields: ProductVariantCustomField[];
-  color?: string | null;
-  size?: string | null;
   price: number | null;
   inStock: boolean | null;
   quantity: number | null;
+  reservedQuantity: number;
+  availableQuantity: number;
+  wishlistCount: number;
   imageUrl: string | null;
   sku: string | null;
   createdAt: string;
@@ -120,8 +122,8 @@ export type ProductsListResponse = {
   total: number;
   page: number;
   pageSize: number;
-  limit?: number;
-  offset?: number;
+  limit: number;
+  offset: number;
 };
 
 export type CatalogVariantProduct = {

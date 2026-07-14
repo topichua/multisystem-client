@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 import { dataQaAttrs } from "@/styled/data-qa-attrs";
 
-const collapsedSiderWidth = '64px';
+const collapsedSiderWidth = "64px";
 const expandedSiderWidth = "222px";
 
 // const panelPadding = "8px";
@@ -49,6 +49,11 @@ export const MenuSider = styled.div.attrs(() =>
   gap: 8px;
   padding: 8px 0 0;
   box-sizing: border-box;
+`;
+
+export const NavTooltipTarget = styled.span`
+  display: block;
+  width: 100%;
 `;
 
 export const Button = styled(CommonButton)<{ $showLabel: boolean }>`
@@ -116,7 +121,7 @@ export const Button = styled(CommonButton)<{ $showLabel: boolean }>`
 `;
 
 export const MenuSiderPanel = styled.div.attrs(() =>
-  dataQaAttrs('layout-app-sider-panel'),
+  dataQaAttrs("layout-app-sider-panel"),
 )<{
   $isExpanded: boolean;
 }>`
