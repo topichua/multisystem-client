@@ -116,6 +116,9 @@ function normalizeClientLastOrder(data: unknown): ClientLastOrder | null {
       ? (rawCategory as OrderStatusCategory)
       : "new";
 
+  const statusColor =
+    typeof statusRecord.color === 'string' ? statusRecord.color : '';
+
   return {
     id,
     totalPrice,
@@ -123,6 +126,7 @@ function normalizeClientLastOrder(data: unknown): ClientLastOrder | null {
       id: statusId ?? 0,
       name: statusName,
       category: statusCategory,
+      color: statusColor,
     },
   };
 }
