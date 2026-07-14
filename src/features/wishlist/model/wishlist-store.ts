@@ -65,7 +65,11 @@ export class WishlistStore {
     const silent = options?.silent === true;
     const cached = this.productsByClientId.get(clientId);
 
-    if (!options?.force && cached != null && !this.isProductsLoading(clientId)) {
+    if (
+      !options?.force &&
+      cached != null &&
+      !this.isProductsLoading(clientId)
+    ) {
       return cached;
     }
 

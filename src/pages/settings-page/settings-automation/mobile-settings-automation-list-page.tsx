@@ -6,10 +6,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 
 import { getApiErrorMessage } from "@/api/get-api-error-message";
-import {
-  getSettingsAutomationPath,
-  pagesMap,
-} from "@/app/router/pages-map";
+import { getSettingsAutomationPath, pagesMap } from "@/app/router/pages-map";
 import { CenteredSpinner } from "@/components/loading/centered-spinner";
 import { formatAutomationRuleSummary } from "@/features/automation/model/format-automation-rule-summary";
 import { useAutomationStore } from "@/features/automation/model/use-automation-store";
@@ -55,9 +52,13 @@ export const MobileSettingsAutomationListPage = observer(() => {
             aria-label={t("automation.mobile.backToSettingsAria")}
             onClick={() => navigate(pagesMap.settings)}
           />
-          <MobileS.PageTitle level={3}>{t("automation.title")}</MobileS.PageTitle>
+          <MobileS.PageTitle level={3}>
+            {t("automation.title")}
+          </MobileS.PageTitle>
         </MobileS.TitleRow>
-        <MobileS.PageSubtitle>{t("automation.sectionHint")}</MobileS.PageSubtitle>
+        <MobileS.PageSubtitle>
+          {t("automation.sectionHint")}
+        </MobileS.PageSubtitle>
         <Button
           type="primary"
           block

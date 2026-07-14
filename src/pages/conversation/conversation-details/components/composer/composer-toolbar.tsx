@@ -30,7 +30,7 @@ export function ComposerToolbar({
   onLastOrderOpen,
   onTabChange,
 }: ComposerToolbarProps) {
-  console.log('🚀 ~ ComposerToolbar ~ clientLastOrder:', clientLastOrder);
+  console.log("🚀 ~ ComposerToolbar ~ clientLastOrder:", clientLastOrder);
   const { t } = useTranslation();
 
   const createOrderDisabled = clientLookupLoading || !hasLinkedClient;
@@ -55,14 +55,14 @@ export function ComposerToolbar({
   const lastOrderButton = clientLastOrder ? (
     <S.LastOrderButton
       type="button"
-      aria-label={t('conversation.clientOrders.openCurrentOrderAria', {
+      aria-label={t("conversation.clientOrders.openCurrentOrderAria", {
         id: clientLastOrder.id,
       })}
       data-qa="layout-conversation-details-composer-last-order"
       onClick={() => onLastOrderOpen(clientLastOrder.id)}
     >
       <S.LastOrderLabel>
-        {t('conversation.clientOrders.currentOrder')}
+        {t("conversation.clientOrders.currentOrder")}
       </S.LastOrderLabel>
       <S.LastOrderNumber>#{clientLastOrder.id}</S.LastOrderNumber>
       {clientLastOrder.status.name && (
@@ -74,7 +74,7 @@ export function ComposerToolbar({
         </S.LastOrderStatus>
       )}
       <S.LastOrderTotal>
-        {formatMoney(clientLastOrder.totalPrice, 'UAH')}
+        {formatMoney(clientLastOrder.totalPrice, "UAH")}
       </S.LastOrderTotal>
       <ArrowUpRightIcon size={13} aria-hidden="true" />
     </S.LastOrderButton>

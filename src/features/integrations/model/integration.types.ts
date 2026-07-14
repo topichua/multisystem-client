@@ -223,11 +223,11 @@ export type NovaPoshtaIntegrationCreatePayload = Pick<
   sender_building?: string;
   sender_flat?: string;
 } & Partial<
-  Pick<
-    NovaPoshtaIntegrationFields,
-    NovaPoshtaIntegrationCreateOptionalFieldKeys
-  >
->;
+    Pick<
+      NovaPoshtaIntegrationFields,
+      NovaPoshtaIntegrationCreateOptionalFieldKeys
+    >
+  >;
 
 export type NovaPoshtaIntegrationUpdatePayload = Partial<
   NovaPoshtaIntegrationFields & {

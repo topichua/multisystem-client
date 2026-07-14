@@ -304,8 +304,7 @@ function normalizeProductsList(data: unknown): ProductsListResponse {
       : typeof record.limit === "number"
         ? record.limit
         : PRODUCTS_DEFAULT_PAGE_SIZE;
-  const limit =
-    typeof record.limit === "number" ? record.limit : pageSize;
+  const limit = typeof record.limit === "number" ? record.limit : pageSize;
   const offset =
     typeof record.offset === "number"
       ? record.offset

@@ -78,10 +78,7 @@ export const buildAutomationCreatePayload = (
         sourceStatus: condition.sourceStatus ?? "",
       };
 
-      if (
-        isAtBranchCondition(condition) &&
-        condition.durationValue != null
-      ) {
+      if (isAtBranchCondition(condition) && condition.durationValue != null) {
         payload.durationValue = condition.durationValue;
         payload.durationUnit = "DAYS";
       }

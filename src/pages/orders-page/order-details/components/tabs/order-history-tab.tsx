@@ -46,7 +46,7 @@ export const OrderHistoryTab = observer(({ order }: OrderHistoryTabProps) => {
     [order.events],
   );
 
-  const historyItems = useMemo<TimelineProps['items']>(
+  const historyItems = useMemo<TimelineProps["items"]>(
     () =>
       sortedEvents.map((event) => ({
         key: event.id,
@@ -58,7 +58,7 @@ export const OrderHistoryTab = observer(({ order }: OrderHistoryTabProps) => {
             </Text>
 
             <Text type="secondary">
-              {t('orders.actor')}{' '}
+              {t("orders.actor")}{" "}
               {event.userId != null
                 ? (actorNamesByUserId.get(event.userId) ??
                   `#${event.actorId ?? event.userId}`)
@@ -77,7 +77,7 @@ export const OrderHistoryTab = observer(({ order }: OrderHistoryTabProps) => {
       ) : (
         <Empty
           image={Empty.PRESENTED_IMAGE_SIMPLE}
-          description={t('orders.noHistory')}
+          description={t("orders.noHistory")}
         />
       )}
     </Card>

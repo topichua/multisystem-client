@@ -283,7 +283,7 @@ export const ConversationClientInfoPanel = observer(
               alt={
                 conversation.participant.name ||
                 conversation.participant.username ||
-                ''
+                ""
               }
             >
               {!conversation.participant.profilePic

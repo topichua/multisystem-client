@@ -86,17 +86,11 @@ export const SettingsSystemPreferences = observer(
       () => [
         {
           value: "light",
-          label: segmentedOptionLabel(
-            <SunIcon size={16} />,
-            t("system.light"),
-          ),
+          label: segmentedOptionLabel(<SunIcon size={16} />, t("system.light")),
         },
         {
           value: "dark",
-          label: segmentedOptionLabel(
-            <MoonIcon size={16} />,
-            t("system.dark"),
-          ),
+          label: segmentedOptionLabel(<MoonIcon size={16} />, t("system.dark")),
         },
         {
           value: "system",
@@ -199,7 +193,8 @@ export const SettingsSystemPreferences = observer(
       return (
         <Spin
           spinning={
-            workspaceSettingsStore.loadLoading && !workspaceSettingsStore.initialized
+            workspaceSettingsStore.loadLoading &&
+            !workspaceSettingsStore.initialized
           }
         >
           {loadErrorAlert}
@@ -209,7 +204,9 @@ export const SettingsSystemPreferences = observer(
               {t("system.preferences.title")}
             </MobileS.SectionTitle>
             <MobileS.PreferenceBlock>
-              <Text type="secondary">{t("system.preferences.description")}</Text>
+              <Text type="secondary">
+                {t("system.preferences.description")}
+              </Text>
               {preferenceRows}
             </MobileS.PreferenceBlock>
           </MobileS.SectionGroup>
@@ -218,7 +215,12 @@ export const SettingsSystemPreferences = observer(
     }
 
     return (
-      <Spin spinning={workspaceSettingsStore.loadLoading && !workspaceSettingsStore.initialized}>
+      <Spin
+        spinning={
+          workspaceSettingsStore.loadLoading &&
+          !workspaceSettingsStore.initialized
+        }
+      >
         {loadErrorAlert}
 
         <SettingsSectionHeader

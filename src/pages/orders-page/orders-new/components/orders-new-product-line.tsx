@@ -57,10 +57,7 @@ export function OrdersNewProductLine({
         <VariantImage variant={line.variant} />
         <Flex vertical style={{ minWidth: 0 }}>
           <Flex align="center" gap={8} style={{ minWidth: 0 }}>
-            <VariantWishlistBadge
-              count={line.variant.wishlistCount}
-              compact
-            />
+            <VariantWishlistBadge count={line.variant.wishlistCount} compact />
             <Text strong ellipsis>
               {line.variant.product.name}
             </Text>

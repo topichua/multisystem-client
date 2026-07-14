@@ -1,9 +1,5 @@
 import { Col, Divider, Flex, Row, Typography } from "antd";
-import {
-  CreditCardIcon,
-  MapPinIcon,
-  PackageIcon,
-} from "@phosphor-icons/react";
+import { CreditCardIcon, MapPinIcon, PackageIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 
 import type { NovaPoshtaPayerType } from "@/features/integrations/model/integration.types";
@@ -96,7 +92,9 @@ export function NovaPoshtaIntegrationDetailsView({
           {details.sender_type === "warehouse" ? (
             <Col xs={24}>
               <DetailField
-                label={t("integrations.novaPoshtaWizard.fields.warehouse.label")}
+                label={t(
+                  "integrations.novaPoshtaWizard.fields.warehouse.label",
+                )}
                 value={details.sender_warehouse_name}
                 fallback={emptyValue}
               />

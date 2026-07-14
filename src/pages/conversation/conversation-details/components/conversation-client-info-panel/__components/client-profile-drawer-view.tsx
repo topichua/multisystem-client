@@ -1,11 +1,11 @@
-import type { Client } from '@/features/clients/model/client.types';
-import type { Conversation } from '@/features/conversations/model/types';
+import type { Client } from "@/features/clients/model/client.types";
+import type { Conversation } from "@/features/conversations/model/types";
 
-import { ClientContactsSection } from './client-contacts-section';
-import { ClientLastOrderSection } from './client-last-order-section';
-import { ClientOrdersSummary } from './client-order-summary';
-import { ClientWishlistSection } from '../client-wishlist/client-wishlist-section';
-import { Divider, Flex } from 'antd';
+import { ClientContactsSection } from "./client-contacts-section";
+import { ClientLastOrderSection } from "./client-last-order-section";
+import { ClientOrdersSummary } from "./client-order-summary";
+import { ClientWishlistSection } from "../client-wishlist/client-wishlist-section";
+import { Divider, Flex } from "antd";
 
 type ClientProfileDrawerViewProps = {
   client: Client;

@@ -45,7 +45,7 @@ const OrderEditModalSession = observer((props: OrderEditModalSessionProps) => {
       onCancel={handleCancel}
       footer={[
         <Button key="cancel" disabled={saving} onClick={handleCancel}>
-          {t('orders.details.cancel')}
+          {t("orders.details.cancel")}
         </Button>,
         <Button
           key="save"
@@ -53,7 +53,7 @@ const OrderEditModalSession = observer((props: OrderEditModalSessionProps) => {
           loading={saving}
           onClick={() => void handleSave()}
         >
-          {t('orders.details.save')}
+          {t("orders.details.save")}
         </Button>,
       ]}
     >
@@ -64,7 +64,7 @@ const OrderEditModalSession = observer((props: OrderEditModalSessionProps) => {
         initialValues={initialFormValues}
       >
         <S.EditModalStack>
-          {mode === 'items' && (
+          {mode === "items" && (
             <OrderEditItemsSection
               order={order}
               t={t}
@@ -90,24 +90,20 @@ const OrderEditModalSession = observer((props: OrderEditModalSessionProps) => {
   );
 });
 
-export const OrderEditModal = observer(({
-  open,
-  order,
-  mode,
-  onClose,
-  onUpdateOrder,
-}: OrderEditModalProps) => {
-  if (!open) {
-    return null;
-  }
+export const OrderEditModal = observer(
+  ({ open, order, mode, onClose, onUpdateOrder }: OrderEditModalProps) => {
+    if (!open) {
+      return null;
+    }
 
-  return (
-    <OrderEditModalSession
-      key={`${order.id}-${mode}-${order.updatedAt}`}
-      order={order}
-      mode={mode}
-      onClose={onClose}
-      onUpdateOrder={onUpdateOrder}
-    />
-  );
-});
+    return (
+      <OrderEditModalSession
+        key={`${order.id}-${mode}-${order.updatedAt}`}
+        order={order}
+        mode={mode}
+        onClose={onClose}
+        onUpdateOrder={onUpdateOrder}
+      />
+    );
+  },
+);

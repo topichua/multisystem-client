@@ -136,10 +136,7 @@ export const PageRoutes = () => {
               </Route>
               <Route path="automation">
                 <Route index element={<SettingsAutomationListRoute />} />
-                <Route
-                  path="new"
-                  element={<SettingsAutomationEditorRoute />}
-                />
+                <Route path="new" element={<SettingsAutomationEditorRoute />} />
                 <Route
                   path=":ruleId"
                   element={<SettingsAutomationEditorRoute />}

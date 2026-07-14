@@ -58,10 +58,11 @@ const normalizeActionType = (value: unknown): AutomationActionType =>
     ? (value as AutomationActionType)
     : "CHANGE_ORDER_STATUS";
 
-const normalizeSourceType = (
-  value: unknown,
-): AutomationSourceType | null => {
-  if (typeof value === "string" && SOURCE_TYPES.has(value as AutomationSourceType)) {
+const normalizeSourceType = (value: unknown): AutomationSourceType | null => {
+  if (
+    typeof value === "string" &&
+    SOURCE_TYPES.has(value as AutomationSourceType)
+  ) {
     return value as AutomationSourceType;
   }
 
@@ -161,9 +162,7 @@ const normalizeTargetOrderStatus = (
   };
 };
 
-const normalizeCondition = (
-  value: unknown,
-): AutomationRuleCondition | null => {
+const normalizeCondition = (value: unknown): AutomationRuleCondition | null => {
   if (!isRecord(value)) {
     return null;
   }

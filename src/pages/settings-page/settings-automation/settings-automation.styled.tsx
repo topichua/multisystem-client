@@ -82,13 +82,9 @@ export const LogicBadge = styled.span<{ $tone: "if" | "then" }>`
   font-weight: 600;
   line-height: 1.2;
   color: ${({ theme, $tone }) =>
-    $tone === "if"
-      ? theme.colors.base.yellow[8]
-      : theme.colors.base.green[8]};
+    $tone === "if" ? theme.colors.base.yellow[8] : theme.colors.base.green[8]};
   background: ${({ theme, $tone }) =>
-    $tone === "if"
-      ? theme.colors.base.yellow[2]
-      : theme.colors.base.green[2]};
+    $tone === "if" ? theme.colors.base.yellow[2] : theme.colors.base.green[2]};
 `;
 
 export const ConditionsStack = styled.div`

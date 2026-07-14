@@ -117,7 +117,7 @@ export const LastOrderStatusDot = styled.span<{ $statusColor: string }>`
   height: 8px;
   border-radius: 999px;
   background: ${({ $statusColor }) =>
-    $statusColor ? $statusColor : '#4ebe7d'};
+    $statusColor ? $statusColor : "#4ebe7d"};
 `;
 
 export const LastOrderStatusName = styled.span`

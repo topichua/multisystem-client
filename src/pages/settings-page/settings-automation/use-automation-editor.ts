@@ -4,10 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router";
 
 import { getApiErrorMessage } from "@/api/get-api-error-message";
-import {
-  getSettingsAutomationPath,
-  pagesMap,
-} from "@/app/router/pages-map";
+import { getSettingsAutomationPath, pagesMap } from "@/app/router/pages-map";
 import { useAutomationStore } from "@/features/automation/model/use-automation-store";
 import { useNotification } from "@/shared/components/notification/use-notification";
 
@@ -66,7 +63,11 @@ export const useAutomationEditor = () => {
           notification.error({
             message: getApiErrorMessage(
               error,
-              t(isCreate ? "automation.loadCriteriaError" : "automation.loadError"),
+              t(
+                isCreate
+                  ? "automation.loadCriteriaError"
+                  : "automation.loadError",
+              ),
             ),
           });
         }

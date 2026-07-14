@@ -56,7 +56,15 @@ export const ClientWishlistItem = observer(function ClientWishlistItem({
         ),
       });
     }
-  }, [clientId, notification, removing, t, variant.id, variant.productId, wishlistStore]);
+  }, [
+    clientId,
+    notification,
+    removing,
+    t,
+    variant.id,
+    variant.productId,
+    wishlistStore,
+  ]);
 
   return (
     <S.WishlistItemRow>

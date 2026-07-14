@@ -1,10 +1,10 @@
 import { HeartIcon } from "@phosphor-icons/react";
-import { observer } from 'mobx-react-lite';
-import { useEffect } from 'react';
+import { observer } from "mobx-react-lite";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components";
 
-import { useWorkspaceSettingsStore } from '@/features/workspace-settings/model/use-workspace-settings-store';
+import { useWorkspaceSettingsStore } from "@/features/workspace-settings/model/use-workspace-settings-store";
 
 import * as S from "./variant-wishlist-badge.styled";
 
@@ -38,7 +38,7 @@ export const VariantWishlistBadge = observer(
       <S.WishlistBadge
         className={className}
         $compact={compact}
-        aria-label={t('products.variant.wishlistCountAria', {
+        aria-label={t("products.variant.wishlistCountAria", {
           count: safeCount,
         })}
       >

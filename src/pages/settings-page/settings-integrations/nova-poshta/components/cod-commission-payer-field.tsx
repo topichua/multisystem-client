@@ -22,9 +22,7 @@ export function CodCommissionPayerField() {
 
   return (
     <Form.Item
-      label={t(
-        "integrations.novaPoshtaWizard.fields.codCommissionPayer.label",
-      )}
+      label={t("integrations.novaPoshtaWizard.fields.codCommissionPayer.label")}
       name="cod_commission_payer"
     >
       <Select<NovaPoshtaPayerType>

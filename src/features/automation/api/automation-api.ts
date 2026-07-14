@@ -62,7 +62,10 @@ export const automationApi = {
     id: number,
     payload: AutomationRuleUpdatePayload,
   ): Promise<AutomationRule> => {
-    const { data } = await apiClient.patch<unknown>(`${basePath}/${id}`, payload);
+    const { data } = await apiClient.patch<unknown>(
+      `${basePath}/${id}`,
+      payload,
+    );
     const rule = normalizeAutomationRule(data);
 
     if (!rule) {
@@ -73,9 +76,12 @@ export const automationApi = {
   },
 
   setActive: async (id: number, isActive: boolean): Promise<AutomationRule> => {
-    const { data } = await apiClient.patch<unknown>(`${basePath}/${id}/active`, {
-      isActive,
-    });
+    const { data } = await apiClient.patch<unknown>(
+      `${basePath}/${id}/active`,
+      {
+        isActive,
+      },
+    );
     const rule = normalizeAutomationRule(data);
 
     if (!rule) {

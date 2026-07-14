@@ -1,19 +1,19 @@
-import { Button, Card, Flex, Space, Typography } from 'antd';
-import { observer } from 'mobx-react-lite';
-import { useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router';
+import { Button, Card, Flex, Space, Typography } from "antd";
+import { observer } from "mobx-react-lite";
+import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router";
 
 import {
   getClientDetailsPath,
   getOrderDetailsPath,
-} from '@/app/router/pages-map';
-import { CenteredSpinner } from '@/components/loading/centered-spinner';
-import { Tag } from '@/components/tag/tag';
-import { useOrdersStore } from '@/features/orders/model/use-orders-store';
-import { formatDate } from '@/utils/date-time';
+} from "@/app/router/pages-map";
+import { CenteredSpinner } from "@/components/loading/centered-spinner";
+import { Tag } from "@/components/tag/tag";
+import { useOrdersStore } from "@/features/orders/model/use-orders-store";
+import { formatDate } from "@/utils/date-time";
 
-import * as S from '../conversation-client-info-panel.styled';
+import * as S from "../conversation-client-info-panel.styled";
 
 const { Text } = Typography;
 
@@ -22,8 +22,8 @@ type ClientLastOrderSectionProps = {
 };
 
 function formatMoney(amount: number, currency: string): string {
-  const suffix = currency === 'UAH' ? '₴' : currency;
-  return `${amount.toLocaleString('uk-UA')} ${suffix}`;
+  const suffix = currency === "UAH" ? "₴" : currency;
+  return `${amount.toLocaleString("uk-UA")} ${suffix}`;
 }
 
 export const ClientLastOrderSection = observer(
@@ -54,15 +54,15 @@ export const ClientLastOrderSection = observer(
       <S.Section style={{ gap: 8 }}>
         <Flex align="center" justify="space-between" gap={8}>
           <S.SectionLabel>
-            {t('conversation.clientOrders.lastOrderSection')}
+            {t("conversation.clientOrders.lastOrderSection")}
           </S.SectionLabel>
           <Button
             type="link"
             size="small"
-            style={{ padding: 0, height: 'auto', fontSize: 13 }}
+            style={{ padding: 0, height: "auto", fontSize: 13 }}
             onClick={() => navigate(getClientDetailsPath(clientId))}
           >
-            {t('conversation.clientOrders.allOrders')}
+            {t("conversation.clientOrders.allOrders")}
           </Button>
         </Flex>
 
@@ -76,7 +76,7 @@ export const ClientLastOrderSection = observer(
             onClick={handleOpenOrder}
             styles={{ body: { padding: 10 } }}
           >
-            <Space orientation="vertical" size={6} style={{ width: '100%' }}>
+            <Space orientation="vertical" size={6} style={{ width: "100%" }}>
               <Flex align="center" justify="space-between" gap={8}>
                 <Text strong>#{lastOrder.id}</Text>
                 <Text type="secondary" style={{ fontSize: 12 }}>
@@ -96,7 +96,7 @@ export const ClientLastOrderSection = observer(
           </Card>
         ) : (
           <Text type="secondary">
-            {t('conversation.clientOrders.emptyOrders')}
+            {t("conversation.clientOrders.emptyOrders")}
           </Text>
         )}
       </S.Section>

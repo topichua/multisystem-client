@@ -7,7 +7,9 @@ export const useAutomationStore = (): AutomationStore => {
   const store = useContext(AutomationStoreContext);
 
   if (!store) {
-    throw new Error("useAutomationStore must be used within AutomationProvider");
+    throw new Error(
+      "useAutomationStore must be used within AutomationProvider",
+    );
   }
 
   return store;

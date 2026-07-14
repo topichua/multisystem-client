@@ -6,10 +6,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 
 import { getApiErrorMessage } from "@/api/get-api-error-message";
-import {
-  getSettingsAutomationPath,
-  pagesMap,
-} from "@/app/router/pages-map";
+import { getSettingsAutomationPath, pagesMap } from "@/app/router/pages-map";
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
 import { PaneSectionHint } from "@/components/layout/pane-frame";
 import { CenteredSpinner } from "@/components/loading/centered-spinner";
@@ -77,7 +74,10 @@ export const SettingsAutomationListView = observer(() => {
         {store.listLoading && store.rules.length === 0 ? (
           <CenteredSpinner />
         ) : store.rules.length === 0 ? (
-          <Empty description={t("automation.empty")} style={{ marginTop: 48 }} />
+          <Empty
+            description={t("automation.empty")}
+            style={{ marginTop: 48 }}
+          />
         ) : (
           <>
             <S.ListStack>
