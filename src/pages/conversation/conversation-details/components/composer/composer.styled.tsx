@@ -6,7 +6,6 @@ export const Composer = styled.footer.attrs(() =>
   dataQaAttrs("layout-conversation-details-composer"),
 )`
   flex-shrink: 0;
-  padding: 16px 24px;
   border-top: 1px solid
     ${({ theme }) => theme.colors.functional.border.cardBase};
   background: ${({ theme }) => theme.colors.functional.background.base};
@@ -14,6 +13,10 @@ export const Composer = styled.footer.attrs(() =>
   @media (max-width: 767px) {
     padding: 10px 12px calc(12px + env(safe-area-inset-bottom, 0px));
   }
+`;
+
+export const ComposerContent = styled.div`
+  padding: 16px 24px;
 `;
 
 export const ReplyBanner = styled.div`

@@ -1,4 +1,5 @@
 import type { Client } from "@/features/clients/model/client.types";
+import type { CatalogVariant } from "@/features/products/model/product.types";
 import { observer } from "mobx-react-lite";
 import { Drawer, Switch } from "antd";
 import { useTranslation } from "react-i18next";
@@ -16,6 +17,9 @@ type ClientOrderDrawerProps = {
   linkedClient: Client;
   conversationId: number;
   clientPic?: string;
+  suggestedVariantToAdd?: CatalogVariant | null;
+  onOrderDraftVariantIdsChange?: (variantIds: Set<number>) => void;
+  onSuggestedVariantConsumed?: () => void;
   onOrderCreated?: () => void;
 };
 
@@ -33,6 +37,9 @@ export const ClientOrderDrawer = observer(
     linkedClient,
     conversationId,
     clientPic,
+    suggestedVariantToAdd,
+    onOrderDraftVariantIdsChange,
+    onSuggestedVariantConsumed,
     onOrderCreated,
   }: ClientOrderDrawerProps) => {
     const { t } = useTranslation();
@@ -54,8 +61,11 @@ export const ClientOrderDrawer = observer(
     } = useClientOrderCreateController({
       conversationId,
       linkedClient,
+      suggestedVariantToAdd,
       onClose,
+      onOrderDraftVariantIdsChange,
       onOrderCreated,
+      onSuggestedVariantConsumed,
     });
 
     return (

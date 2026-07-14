@@ -6,9 +6,9 @@ import type { ClientLastOrder } from "@/features/orders/model/order.types";
 import type { ReplyComposeTarget } from "../../reply-compose-target";
 
 import { ComposerToolbar, type ComposerTab } from "./composer-toolbar";
+import * as S from "./composer.styled";
 import { MessageComposer } from "./message-composer";
 import { NoteComposer } from "./note-composer";
-import * as S from "./composer.styled";
 
 type ComposerProps = {
   conversationId: string;
@@ -51,7 +51,7 @@ export const Composer = observer(
     }, [conversationId]);
 
     return (
-      <S.Composer>
+      <S.ComposerContent>
         <ComposerToolbar
           activeTab={activeTab}
           hasLinkedClient={hasLinkedClient}
@@ -75,7 +75,7 @@ export const Composer = observer(
             onSend={onSend}
           />
         )}
-      </S.Composer>
+      </S.ComposerContent>
     );
   },
 );

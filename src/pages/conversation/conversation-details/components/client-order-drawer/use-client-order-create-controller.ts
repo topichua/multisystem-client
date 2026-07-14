@@ -1,5 +1,5 @@
 import { Form } from "antd";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { getApiErrorMessage } from "@/api/get-api-error-message";
@@ -31,21 +31,28 @@ const DEFAULT_CASH_ON_DELIVERY_AMOUNT = 110;
 type UseClientOrderCreateControllerParams = {
   conversationId: number;
   linkedClient: Client;
+  suggestedVariantToAdd?: CatalogVariant | null;
   onClose: () => void;
+  onOrderDraftVariantIdsChange?: (variantIds: Set<number>) => void;
   onOrderCreated?: () => void;
+  onSuggestedVariantConsumed?: () => void;
 };
 
 export function useClientOrderCreateController({
   conversationId,
   linkedClient,
+  suggestedVariantToAdd,
   onClose,
+  onOrderDraftVariantIdsChange,
   onOrderCreated,
+  onSuggestedVariantConsumed,
 }: UseClientOrderCreateControllerParams) {
   const { t } = useTranslation();
   const ordersStore = useOrdersStore();
   const notification = useNotification();
   const [form] = Form.useForm<OrderFormValues>();
   const [orderLines, setOrderLines] = useState<OrderDraftLine[]>([]);
+  const handledSuggestedVariantIdRef = useRef<number | null>(null);
   const catalogSearch = useCatalogProductSearch({ loadCategories: true });
   const withoutDelivery = Form.useWatch("withoutDelivery", form) === true;
   const isCashOnDelivery = Form.useWatch("isCashOnDelivery", form);
@@ -129,20 +136,77 @@ export function useClientOrderCreateController({
     form.setFieldValue("cashOnDeliveryAmount", DEFAULT_CASH_ON_DELIVERY_AMOUNT);
   }, [form, isCashOnDelivery, withoutDelivery]);
 
-  const addVariantToOrder = useCallback((variant: CatalogVariant) => {
-    if (!variant.inStock) {
+  const tryAddVariantToOrderLines = useCallback(
+    (variant: CatalogVariant): "added" | "already_added" | "out_of_stock" => {
+      if (!variant.inStock) {
+        return "out_of_stock";
+      }
+
+      let result: "added" | "already_added" = "already_added";
+
+      setOrderLines((prev) => {
+        if (prev.some((line) => line.variantId === variant.id)) {
+          return prev;
+        }
+
+        result = "added";
+        return [...prev, { variantId: variant.id, quantity: 1, variant }];
+      });
+
+      return result;
+    },
+    [],
+  );
+
+  const addVariantToOrder = useCallback(
+    (variant: CatalogVariant) => {
+      tryAddVariantToOrderLines(variant);
+    },
+    [tryAddVariantToOrderLines],
+  );
+
+  useEffect(() => {
+    if (suggestedVariantToAdd == null) {
+      handledSuggestedVariantIdRef.current = null;
       return;
     }
 
-    setOrderLines((prev) => {
-      const existing = prev.find((line) => line.variantId === variant.id);
-      if (existing) {
-        return prev;
-      }
+    if (handledSuggestedVariantIdRef.current === suggestedVariantToAdd.id) {
+      return;
+    }
 
-      return [...prev, { variantId: variant.id, quantity: 1, variant }];
+    handledSuggestedVariantIdRef.current = suggestedVariantToAdd.id;
+
+    const addResult = tryAddVariantToOrderLines(suggestedVariantToAdd);
+
+    if (addResult === "out_of_stock") {
+      notification.warning({
+        title: t("conversation.clientOrders.suggestedVariantOutOfStock"),
+      });
+      onSuggestedVariantConsumed?.();
+      return;
+    }
+
+    if (addResult === "already_added") {
+      notification.info({
+        title: t("conversation.clientOrders.suggestedVariantAlreadyAdded"),
+      });
+      onSuggestedVariantConsumed?.();
+      return;
+    }
+
+    notification.success({
+      title: t("conversation.clientOrders.suggestedVariantAdded"),
+      description: suggestedVariantToAdd.label,
     });
-  }, []);
+    onSuggestedVariantConsumed?.();
+  }, [
+    notification,
+    onSuggestedVariantConsumed,
+    suggestedVariantToAdd,
+    t,
+    tryAddVariantToOrderLines,
+  ]);
 
   const updateLineQuantity = useCallback(
     (variantId: number, quantity: number) => {
@@ -235,6 +299,10 @@ export function useClientOrderCreateController({
     () => new Set(orderLines.map((line) => line.variantId)),
     [orderLines],
   );
+
+  useEffect(() => {
+    onOrderDraftVariantIdsChange?.(selectedVariantIds);
+  }, [onOrderDraftVariantIdsChange, selectedVariantIds]);
 
   return {
     catalogSearch,

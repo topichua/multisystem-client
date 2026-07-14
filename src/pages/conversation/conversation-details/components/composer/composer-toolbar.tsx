@@ -30,7 +30,6 @@ export function ComposerToolbar({
   onLastOrderOpen,
   onTabChange,
 }: ComposerToolbarProps) {
-  console.log("🚀 ~ ComposerToolbar ~ clientLastOrder:", clientLastOrder);
   const { t } = useTranslation();
 
   const createOrderDisabled = clientLookupLoading || !hasLinkedClient;

@@ -1490,6 +1490,26 @@
         "removeError": "Не вдалося видалити товар з вішлисту"
       }
     },
+    "productSuggestions": {
+      "title": "Запропоновані товари",
+      "expand": "Показати",
+      "collapse": "Згорнути",
+      "empty": "Запропонованих товарів немає",
+      "emptyVariants": "Варіантів немає",
+      "variantCount_one": "{{count}} варіант",
+      "variantCount_few": "{{count}} варіанти",
+      "variantCount_many": "{{count}} варіантів",
+      "variantCount_other": "{{count}} варіанта",
+      "quantityCount_one": "{{count}} шт",
+      "quantityCount_few": "{{count}} шт",
+      "quantityCount_many": "{{count}} шт",
+      "quantityCount_other": "{{count}} шт",
+      "addToOrder": "В замовлення",
+      "addedToOrder": "Додано",
+      "addToWishlist": "У вішліст",
+      "inWishlist": "У вішлісті",
+      "wishlistAddFailed": "Не вдалося додати товар до вішлисту"
+    },
     "clientOrders": {
       "delivery": "Доставка",
       "clientSince": "Клієнт з",
@@ -1515,6 +1535,9 @@
       "closeDrawerAria": "Закрити",
       "placeOrderSuccess": "Замовлення створено",
       "placeOrderFailed": "Не вдалося створити замовлення",
+      "suggestedVariantAdded": "Додано в замовлення",
+      "suggestedVariantAlreadyAdded": "Варіант уже є в замовленні",
+      "suggestedVariantOutOfStock": "Цього варіанта немає в наявності",
       "drawer": {
         "footerAmountOfProducts": "Кількість товарів",
         "footerDelivery": "Доставка",

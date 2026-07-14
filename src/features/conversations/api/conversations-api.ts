@@ -3,6 +3,7 @@ import { apiClient } from "@/api/api-client";
 import type {
   Conversation,
   ConversationChannel,
+  ConversationProductSuggestionsResponse,
   ConversationSource,
   ConversationMessage,
   ConversationUpdatePayload,
@@ -434,6 +435,17 @@ export const conversationsApi = {
       messages: data.data ?? [],
       paging: data.paging,
     };
+  },
+
+  getProductSuggestions: async (
+    conversationId: string,
+  ): Promise<ConversationProductSuggestionsResponse> => {
+    const { data } =
+      await apiClient.get<ConversationProductSuggestionsResponse>(
+        `${basePath}/${conversationId}/suggestions`,
+      );
+
+    return data;
   },
 
   sendMessage: async (

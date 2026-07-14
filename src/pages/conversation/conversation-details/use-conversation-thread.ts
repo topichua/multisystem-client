@@ -24,6 +24,7 @@ export const useConversationThread = (
 ) => {
   const {
     loadConversationMessages,
+    loadConversationProductSuggestions,
     loadOlderConversationMessages,
     messagesByConversationId,
     messagesError,
@@ -86,6 +87,14 @@ export const useConversationThread = (
 
     void loadConversationMessages(conversationId);
   }, [conversationId, loadConversationMessages]);
+
+  useEffect(() => {
+    if (!conversationId) {
+      return;
+    }
+
+    void loadConversationProductSuggestions(conversationId);
+  }, [conversationId, loadConversationProductSuggestions]);
 
   useEffect(() => {
     if (!conversationId) {

@@ -189,3 +189,69 @@ export type SendMessageApiResponse = {
   message_id: string;
   recipient_id?: string;
 };
+
+export type ConversationProductSuggestionCustomField = {
+  fieldId: number;
+  key: string;
+  label: string;
+  type: "options" | "text" | string;
+  value: string;
+  order: number;
+};
+
+export type ConversationProductSuggestionMedia = {
+  id: number;
+  productId: number;
+  variantId: number;
+  uploadMediaId: number;
+  url: string;
+  type: string;
+  sourceUrl: string;
+  sortOrder: number;
+};
+
+export type ConversationProductSuggestionVariant = {
+  id: number;
+  customFields: ConversationProductSuggestionCustomField[];
+  price: number;
+  inStock: boolean;
+  quantity: number;
+  reservedQuantity: number;
+  availableQuantity: number;
+  imageUrl: string | null;
+  sku: string | null;
+  status: "draft" | "active" | "archived" | string;
+  wishlistCount: number;
+  createdAt: string;
+  updatedAt: string;
+  media: ConversationProductSuggestionMedia[];
+  referenceId: number;
+};
+
+export type ConversationProductSuggestionProduct = {
+  id: number;
+  name: string;
+  productType: "single" | "variants" | string;
+  status: "draft" | "active" | "archived" | string;
+  price: number;
+  currency: string;
+  inStock: boolean;
+  quantity: number;
+  wishlistCount: number;
+  mainImageUrl: string;
+  categoryId: number;
+  weightGrams: number;
+  lengthCm: number;
+  widthCm: number;
+  heightCm: number;
+  createdAt: string;
+  updatedAt: string;
+  variants: ConversationProductSuggestionVariant[];
+};
+
+export type ConversationProductSuggestionsResponse = {
+  conversationId: number;
+  postId: string;
+  businessAccountId: string;
+  items: ConversationProductSuggestionProduct[];
+};

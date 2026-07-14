@@ -1482,6 +1482,22 @@
         "removeError": "Could not remove product from wishlist"
       }
     },
+    "productSuggestions": {
+      "title": "Suggested products",
+      "expand": "Show",
+      "collapse": "Collapse",
+      "empty": "No suggested products",
+      "emptyVariants": "No variants",
+      "variantCount_one": "{{count}} variant",
+      "variantCount_other": "{{count}} variants",
+      "quantityCount_one": "{{count}} pc",
+      "quantityCount_other": "{{count}} pcs",
+      "addToOrder": "Add to order",
+      "addedToOrder": "Added",
+      "addToWishlist": "To wishlist",
+      "inWishlist": "In wishlist",
+      "wishlistAddFailed": "Could not add product to wishlist"
+    },
     "clientOrders": {
       "delivery": "Delivery",
       "clientSince": "Client since",
@@ -1507,6 +1523,9 @@
       "closeDrawerAria": "Close",
       "placeOrderSuccess": "Order created",
       "placeOrderFailed": "Could not create order",
+      "suggestedVariantAdded": "Added to order",
+      "suggestedVariantAlreadyAdded": "Variant is already in the order",
+      "suggestedVariantOutOfStock": "This variant is out of stock",
       "drawer": {
         "footerAmountOfProducts": "Amount of products",
         "footerDelivery": "Delivery",

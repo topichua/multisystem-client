@@ -26,6 +26,7 @@ import { useConversationsStore } from "@/features/conversations/model/use-conver
 import type { SendMessagePayload } from "@/features/conversations/model/types";
 import { ordersApi } from "@/features/orders/api/orders-api";
 import type { ClientLastOrder } from "@/features/orders/model/order.types";
+import type { CatalogVariant } from "@/features/products/model/product.types";
 import {
   resolveSelfAccountId,
   resolveTelegramSelfAccountId,
@@ -42,11 +43,27 @@ import { CONVERSATION_CLIENT_EDIT_FORM_ID } from "./components/conversation-clie
 import { ClientProfileHeader } from "./components/conversation-client-info-panel/__components/client-profile-header";
 import { ConversationClientInfoPanel } from "./components/conversation-client-info-panel/conversation-client-info-panel";
 import { Composer } from "./components/composer/composer";
+import * as ComposerS from "./components/composer/composer.styled";
 import { ConversationMessagesList } from "./components/conversation-messages-list/conversation-messages-list";
 import { Header } from "./components/header/header";
+import { ProductSuggestionsPanel } from "./components/product-suggestions/product-suggestions-panel";
 import type { ReplyComposeTarget } from "./reply-compose-target";
 import { scrollMessageAnchorIntoView } from "./scroll-to-message-anchor";
 import { useConversationThread } from "./use-conversation-thread";
+
+function areVariantIdSetsEqual(a: Set<number>, b: Set<number>): boolean {
+  if (a.size !== b.size) {
+    return false;
+  }
+
+  for (const id of a) {
+    if (!b.has(id)) {
+      return false;
+    }
+  }
+
+  return true;
+}
 
 const { Text } = Typography;
 
@@ -66,6 +83,11 @@ export const ConversationDetails = observer(() => {
   >();
   const [clientLookupLoading, setClientLookupLoading] = useState(false);
   const [orderDrawerOpen, setOrderDrawerOpen] = useState(false);
+  const [suggestedOrderVariant, setSuggestedOrderVariant] =
+    useState<CatalogVariant | null>(null);
+  const [orderDraftVariantIds, setOrderDraftVariantIds] = useState<Set<number>>(
+    () => new Set(),
+  );
   const [clientLastOrder, setClientLastOrder] =
     useState<ClientLastOrder | null>(null);
   const [clientLastOrderLoading, setClientLastOrderLoading] = useState(false);
@@ -254,6 +276,34 @@ export const ConversationDetails = observer(() => {
     setOrderDrawerOpen(true);
   }, [activeConversation, linkedClient]);
 
+  const handleAddSuggestedVariantToOrder = useCallback(
+    (variant: CatalogVariant) => {
+      if (!activeConversation || !linkedClient) {
+        return;
+      }
+
+      setSuggestedOrderVariant(variant);
+    },
+    [activeConversation, linkedClient],
+  );
+
+  const handleSuggestedVariantConsumed = useCallback(() => {
+    setSuggestedOrderVariant(null);
+  }, []);
+
+  const handleOrderDraftVariantIdsChange = useCallback(
+    (variantIds: Set<number>) => {
+      setOrderDraftVariantIds((prev) => {
+        if (areVariantIdSetsEqual(prev, variantIds)) {
+          return prev;
+        }
+
+        return new Set(variantIds);
+      });
+    },
+    [],
+  );
+
   const loadClientLastOrder = useCallback((clientId: number) => {
     const requestId = lastOrderRequestIdRef.current + 1;
     lastOrderRequestIdRef.current = requestId;
@@ -292,6 +342,8 @@ export const ConversationDetails = observer(() => {
   }, [linkedClientId, loadClientLastOrder]);
 
   const handleCloseOrderDrawer = useCallback(() => {
+    setSuggestedOrderVariant(null);
+    setOrderDraftVariantIds(new Set());
     setOrderDrawerOpen(false);
   }, []);
 
@@ -343,7 +395,13 @@ export const ConversationDetails = observer(() => {
     setReplyTarget(null);
     setClientInfoOpen(false);
     setOrderDrawerOpen(false);
+    setSuggestedOrderVariant(null);
+    setOrderDraftVariantIds(new Set());
   }, [conversationId]);
+
+  useEffect(() => {
+    setOrderDraftVariantIds(new Set());
+  }, [linkedClientId]);
 
   useEffect(() => {
     if (!clientLookupParams) {
@@ -443,21 +501,30 @@ export const ConversationDetails = observer(() => {
           )}
         </S.MessagesScroll>
 
-        <Composer
-          conversationId={conversationId}
-          draft={draft}
-          canSend={canSend}
-          hasLinkedClient={linkedClient != null}
-          clientLookupLoading={clientLookupLoading}
-          clientLastOrder={clientLastOrder}
-          clientLastOrderLoading={clientLastOrderLoading}
-          replyPreview={replyTarget}
-          onCancelReply={handleCancelReply}
-          onCreateOrderClick={handleCreateOrderClick}
-          onDraftChange={setDraft}
-          onLastOrderOpen={handleOpenLastOrder}
-          onSend={handleSend}
-        />
+        <ComposerS.Composer>
+          <ProductSuggestionsPanel
+            conversationId={conversationId}
+            clientId={linkedClientId}
+            orderDraftVariantIds={orderDraftVariantIds}
+            onAddToOrder={handleAddSuggestedVariantToOrder}
+          />
+
+          <Composer
+            conversationId={conversationId}
+            draft={draft}
+            canSend={canSend}
+            hasLinkedClient={linkedClient != null}
+            clientLookupLoading={clientLookupLoading}
+            clientLastOrder={clientLastOrder}
+            clientLastOrderLoading={clientLastOrderLoading}
+            replyPreview={replyTarget}
+            onCancelReply={handleCancelReply}
+            onCreateOrderClick={handleCreateOrderClick}
+            onDraftChange={setDraft}
+            onLastOrderOpen={handleOpenLastOrder}
+            onSend={handleSend}
+          />
+        </ComposerS.Composer>
       </S.ThreadColumn>
 
       <Drawer
@@ -549,16 +616,19 @@ export const ConversationDetails = observer(() => {
         />
       </Drawer>
 
-      {activeConversation && linkedClient ? (
+      {activeConversation && linkedClient && (
         <ClientOrderDrawer
           onClose={handleCloseOrderDrawer}
           open={orderDrawerOpen}
           linkedClient={linkedClient}
           conversationId={activeConversation.id}
           clientPic={activeConversation.participant.profilePic ?? undefined}
+          suggestedVariantToAdd={suggestedOrderVariant}
+          onOrderDraftVariantIdsChange={handleOrderDraftVariantIdsChange}
+          onSuggestedVariantConsumed={handleSuggestedVariantConsumed}
           onOrderCreated={handleOrderCreated}
         />
-      ) : null}
+      )}
     </S.Root>
   );
 });

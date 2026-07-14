@@ -26,6 +26,7 @@ import { sortConversationsByInstUpdatedAt } from "./sort-conversations";
 import type {
   Conversation,
   ConversationMessage,
+  ConversationProductSuggestionsResponse,
   MessageParticipant,
   MessagesPaging,
   SendMessagePayload,
@@ -150,6 +151,10 @@ export class ConversationStore {
   messagesByConversationId: Record<string, ConversationMessage[]> = {};
   messagesPagingByConversationId: Record<string, MessagesPaging | undefined> =
     {};
+  productSuggestionsByConversationId: Record<
+    string,
+    ConversationProductSuggestionsResponse | undefined
+  > = {};
 
   listLoading = false;
   listError: string | null = null;
@@ -157,10 +162,15 @@ export class ConversationStore {
   messagesLoadingConversationId: string | null = null;
   messagesLoadingMoreConversationId: string | null = null;
   messagesError: string | null = null;
+  productSuggestionsLoadingConversationId: string | null = null;
+  productSuggestionsErrorByConversationId: Record<string, string | undefined> =
+    {};
 
   _messageListMutationGeneration = new Map<string, number>();
   _messagesRequestIdByConversationId = new Map<string, number>();
   _messagesRequestSeq = 0;
+  _productSuggestionsRequestIdByConversationId = new Map<string, number>();
+  _productSuggestionsRequestSeq = 0;
 
   selfInstagramAccountId: string | null = null;
   selfTelegramAccountId: string | null = null;
@@ -170,6 +180,8 @@ export class ConversationStore {
       _messageListMutationGeneration: false,
       _messagesRequestIdByConversationId: false,
       _messagesRequestSeq: false,
+      _productSuggestionsRequestIdByConversationId: false,
+      _productSuggestionsRequestSeq: false,
     });
   }
 
@@ -234,6 +246,28 @@ export class ConversationStore {
   ): boolean => {
     return (
       this._messagesRequestIdByConversationId.get(conversationId) === requestId
+    );
+  };
+
+  createProductSuggestionsRequestId = (conversationId: string): number => {
+    const requestId = this._productSuggestionsRequestSeq + 1;
+
+    this._productSuggestionsRequestSeq = requestId;
+    this._productSuggestionsRequestIdByConversationId.set(
+      conversationId,
+      requestId,
+    );
+
+    return requestId;
+  };
+
+  isLatestProductSuggestionsRequest = (
+    conversationId: string,
+    requestId: number,
+  ): boolean => {
+    return (
+      this._productSuggestionsRequestIdByConversationId.get(conversationId) ===
+      requestId
     );
   };
 
@@ -453,6 +487,63 @@ export class ConversationStore {
         runInAction(() => {
           if (this.messagesLoadingConversationId === conversationId) {
             this.messagesLoadingConversationId = null;
+          }
+        });
+      })
+      .then(() => undefined);
+  };
+
+  loadConversationProductSuggestions = (
+    conversationId: string,
+  ): Promise<void> => {
+    const requestId = this.createProductSuggestionsRequestId(conversationId);
+
+    runInAction(() => {
+      this.productSuggestionsLoadingConversationId = conversationId;
+      this.productSuggestionsErrorByConversationId = {
+        ...this.productSuggestionsErrorByConversationId,
+        [conversationId]: undefined,
+      };
+    });
+
+    return conversationsApi
+      .getProductSuggestions(conversationId)
+      .then((suggestions) => {
+        if (
+          !this.isLatestProductSuggestionsRequest(conversationId, requestId)
+        ) {
+          return;
+        }
+
+        runInAction(() => {
+          this.productSuggestionsByConversationId = {
+            ...this.productSuggestionsByConversationId,
+            [conversationId]: suggestions,
+          };
+        });
+      })
+      .catch((e) => {
+        if (
+          !this.isLatestProductSuggestionsRequest(conversationId, requestId)
+        ) {
+          return;
+        }
+
+        runInAction(() => {
+          this.productSuggestionsErrorByConversationId = {
+            ...this.productSuggestionsErrorByConversationId,
+            [conversationId]: unknownErrorMessage(e),
+          };
+        });
+        console.error(
+          `Failed to load product suggestions for conversation ${conversationId}:`,
+          e,
+        );
+      })
+      .finally(() => {
+        runInAction(() => {
+          if (this.productSuggestionsLoadingConversationId === conversationId) {
+            this.productSuggestionsLoadingConversationId = null;
           }
         });
       })
