@@ -1,6 +1,6 @@
 import type { NovaPoshtaIntegrationCreatePayload } from "@/features/integrations/model/integration.types";
 
-import { trimOptional } from "./helpers";
+import { buildEstimatedDeliveryPricePayload, trimOptional } from "./helpers";
 import type { NovaPoshtaWizardFormValues, SenderOption } from "./types";
 
 function optionalNumber(
@@ -21,6 +21,8 @@ function appendDeliveryDefaults(
   payload: NovaPoshtaIntegrationCreatePayload,
   values: NovaPoshtaWizardFormValues,
 ): void {
+  payload.payment_method = values.payment_method ?? null;
+
   if (values.cod_commission_payer != null) {
     payload.cod_commission_payer = values.cod_commission_payer;
   }
@@ -29,6 +31,8 @@ function appendDeliveryDefaults(
   if (paymentPurpose) {
     payload.payment_purpose = paymentPurpose;
   }
+
+  payload.estimated_delivery_price = buildEstimatedDeliveryPricePayload(values);
 }
 
 function appendPackagingDefaults(
@@ -76,7 +80,6 @@ export function buildNovaPoshtaPayload(
     sender_city_ref: values.sender_city_ref ?? "",
     sender_city_name: values.sender_city_name ?? "",
     sender_type: senderType,
-    payment_method: payerType,
     payer_type: payerType,
   };
 

@@ -1,4 +1,13 @@
-import type { NovaPoshtaWizardFormValues } from "./types";
+import type {
+  NovaPoshtaEstimatedDeliveryPrice,
+  NovaPoshtaIntegrationDetails,
+  NovaPoshtaPaymentMethod,
+} from "@/features/integrations/model/integration.types";
+
+import type {
+  NovaPoshtaEstimatedDeliveryPriceMode,
+  NovaPoshtaWizardFormValues,
+} from "./types";
 
 export function firstOption<TOption>(
   option: TOption | TOption[] | undefined,
@@ -48,4 +57,59 @@ export function getClearCityAndLocationFieldsValues(): Pick<
     sender_settlement_ref: undefined,
     ...getClearLocationFieldsValues(),
   };
+}
+
+export function parsePaymentMethodFromDetails(
+  paymentMethod: NovaPoshtaIntegrationDetails["payment_method"],
+): NovaPoshtaPaymentMethod | undefined {
+  if (paymentMethod === "cash" || paymentMethod === "non_cash") {
+    return paymentMethod;
+  }
+
+  return undefined;
+}
+
+export function parseEstimatedDeliveryPriceMode(
+  estimatedDeliveryPrice: NovaPoshtaIntegrationDetails["estimated_delivery_price"],
+): NovaPoshtaEstimatedDeliveryPriceMode {
+  if (estimatedDeliveryPrice?.takeFromOrder === false) {
+    return "fixed";
+  }
+
+  return "order_amount";
+}
+
+export function buildEstimatedDeliveryPricePayload(
+  values: Pick<
+    NovaPoshtaWizardFormValues,
+    "estimated_delivery_price_mode" | "estimated_delivery_price_fixed"
+  >,
+): NovaPoshtaEstimatedDeliveryPrice {
+  if (values.estimated_delivery_price_mode === "fixed") {
+    const fixed = optionalNumber(values.estimated_delivery_price_fixed);
+
+    return {
+      fixed: fixed ?? null,
+      takeFromOrder: false,
+    };
+  }
+
+  return {
+    fixed: null,
+    takeFromOrder: true,
+  };
+}
+
+function optionalNumber(
+  value: number | null | undefined,
+): number | null | undefined {
+  if (value === undefined) {
+    return undefined;
+  }
+
+  if (value === null) {
+    return null;
+  }
+
+  return Number.isFinite(value) ? value : null;
 }

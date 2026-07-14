@@ -1048,9 +1048,21 @@
           "label": "COD commission payer",
           "placeholder": "Select payer"
         },
+        "paymentMethod": {
+          "label": "Default payment method",
+          "placeholder": "Select payment method"
+        },
         "paymentPurpose": {
           "label": "Shipment description",
           "placeholder": "E.g. Clothing and accessories"
+        },
+        "estimatedDeliveryPrice": {
+          "label": "Declared value"
+        },
+        "estimatedDeliveryPriceFixed": {
+          "label": "Fixed amount",
+          "placeholder": "0.00",
+          "required": "Enter fixed amount"
         },
         "defaultWeightKg": {
           "label": "Reserve weight, kg",
@@ -1076,6 +1088,15 @@
       "payerTypes": {
         "sender": "Sender",
         "recipient": "Recipient"
+      },
+      "paymentMethods": {
+        "unset": "Not set — specify in order",
+        "cash": "Cash payment",
+        "nonCash": "Non-cash payment"
+      },
+      "estimatedDeliveryPrice": {
+        "orderAmount": "Order amount",
+        "fixedAmount": "Fixed amount"
       },
       "senderStepNote": "This information is used as the sender on new waybills.",
       "reservePackagingNote": "Used only when products do not have their own weight and dimensions.",

@@ -1,8 +1,11 @@
 import type {
   NovaPoshtaIntegrationCreatePayload,
+  NovaPoshtaPaymentMethod,
   NovaPoshtaPayerType,
   NovaPoshtaSenderType,
 } from "@/features/integrations/model/integration.types";
+
+export type NovaPoshtaEstimatedDeliveryPriceMode = "order_amount" | "fixed";
 
 export type NovaPoshtaWizardFormValues = {
   name?: string;
@@ -20,7 +23,10 @@ export type NovaPoshtaWizardFormValues = {
   sender_flat?: string;
   payer_type?: NovaPoshtaPayerType;
   cod_commission_payer?: NovaPoshtaPayerType | null;
+  payment_method?: NovaPoshtaPaymentMethod | null;
   payment_purpose?: string | null;
+  estimated_delivery_price_mode?: NovaPoshtaEstimatedDeliveryPriceMode;
+  estimated_delivery_price_fixed?: number | null;
   default_weight_kg?: number | null;
   default_width_cm?: number | null;
   default_height_cm?: number | null;

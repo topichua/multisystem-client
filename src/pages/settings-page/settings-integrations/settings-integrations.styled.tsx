@@ -214,7 +214,6 @@ export const NovaPoshtaWizardStepNote = styled.div`
   display: flex;
   align-items: flex-start;
   gap: 6px;
-  margin-top: 16px;
   font-size: ${({ theme }) => theme.fontSize.small};
   color: ${({ theme }) => theme.colors.functional.text.subdued};
   line-height: 1.4;
@@ -230,7 +229,6 @@ export const NovaPoshtaSectionTitle = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 12px;
   font-weight: 600;
   color: ${({ theme }) => theme.colors.functional.text.heading};
 

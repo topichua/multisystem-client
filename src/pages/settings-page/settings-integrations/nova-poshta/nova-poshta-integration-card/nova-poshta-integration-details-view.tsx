@@ -2,7 +2,11 @@ import { Col, Divider, Flex, Row, Typography } from "antd";
 import { CreditCardIcon, MapPinIcon, PackageIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 
-import type { NovaPoshtaPayerType } from "@/features/integrations/model/integration.types";
+import type {
+  NovaPoshtaIntegrationDetails,
+  NovaPoshtaPayerType,
+  NovaPoshtaPaymentMethod,
+} from "@/features/integrations/model/integration.types";
 
 import * as S from "../../settings-integrations.styled";
 import {
@@ -51,6 +55,38 @@ function formatPayerTypeLabel(
   }
 
   return "";
+}
+
+function formatPaymentMethodLabel(
+  paymentMethod: NovaPoshtaPaymentMethod | null | undefined,
+  t: (key: string) => string,
+): string {
+  if (paymentMethod === "cash") {
+    return t("integrations.novaPoshtaWizard.paymentMethods.cash");
+  }
+
+  if (paymentMethod === "non_cash") {
+    return t("integrations.novaPoshtaWizard.paymentMethods.nonCash");
+  }
+
+  return "";
+}
+
+function formatEstimatedDeliveryPriceLabel(
+  estimatedDeliveryPrice: NovaPoshtaIntegrationDetails["estimated_delivery_price"],
+  t: (key: string) => string,
+): string {
+  if (estimatedDeliveryPrice?.takeFromOrder === false) {
+    const fixedValue = formatOptionalNumber(estimatedDeliveryPrice.fixed);
+
+    return fixedValue
+      ? `${t(
+          "integrations.novaPoshtaWizard.estimatedDeliveryPrice.fixedAmount",
+        )}: ${fixedValue}`
+      : t("integrations.novaPoshtaWizard.estimatedDeliveryPrice.fixedAmount");
+  }
+
+  return t("integrations.novaPoshtaWizard.estimatedDeliveryPrice.orderAmount");
 }
 
 export function NovaPoshtaIntegrationDetailsView({
@@ -143,12 +179,31 @@ export function NovaPoshtaIntegrationDetailsView({
             value={formatPayerTypeLabel(details.cod_commission_payer, t)}
             fallback={emptyValue}
           />
+          <DetailColumn
+            label={t(
+              "integrations.novaPoshtaWizard.fields.paymentMethod.label",
+            )}
+            value={formatPaymentMethodLabel(details.payment_method, t)}
+            fallback={emptyValue}
+          />
           <Col xs={24}>
             <DetailField
               label={t(
                 "integrations.novaPoshtaWizard.fields.paymentPurpose.label",
               )}
               value={details.payment_purpose}
+              fallback={emptyValue}
+            />
+          </Col>
+          <Col xs={24}>
+            <DetailField
+              label={t(
+                "integrations.novaPoshtaWizard.fields.estimatedDeliveryPrice.label",
+              )}
+              value={formatEstimatedDeliveryPriceLabel(
+                details.estimated_delivery_price,
+                t,
+              )}
               fallback={emptyValue}
             />
           </Col>

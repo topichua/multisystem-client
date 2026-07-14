@@ -193,7 +193,7 @@ export function useNovaPoshtaWizard({ onSubmit }: UseNovaPoshtaWizardParams) {
 
   const handleFinish = useCallback(async () => {
     setFormError(null);
-    await form.validateFields(["payer_type"]);
+    await form.validateFields();
     await onSubmit(
       buildNovaPoshtaPayload(form.getFieldsValue(true), senderOptionsByRef),
     );

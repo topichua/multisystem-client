@@ -1,5 +1,5 @@
 import { InfoIcon, PackageIcon } from "@phosphor-icons/react";
-import { Col, Form, InputNumber, Row } from "antd";
+import { Col, Flex, Form, InputNumber, Row, Tooltip } from "antd";
 import { useTranslation } from "react-i18next";
 
 import * as S from "../../settings-integrations.styled";
@@ -17,12 +17,19 @@ export function ReservePackagingFields({
 
   return (
     <S.NovaPoshtaFormSection>
-      <S.NovaPoshtaSectionTitle>
-        <PackageIcon size={16} />
-        <span>
-          {t("integrations.novaPoshtaWizard.sections.reservePackaging")}
-        </span>
-      </S.NovaPoshtaSectionTitle>
+      <Flex gap={4} vertical>
+        <S.NovaPoshtaSectionTitle>
+          <PackageIcon size={16} />
+          <span>
+            {t("integrations.novaPoshtaWizard.sections.reservePackaging")}
+          </span>
+          <Tooltip
+            title={t("integrations.novaPoshtaWizard.reservePackagingNote")}
+          >
+            <InfoIcon size={16} />
+          </Tooltip>
+        </S.NovaPoshtaSectionTitle>
+      </Flex>
 
       <Row gutter={12}>
         <Col xs={24} {...columnProps}>
@@ -102,11 +109,6 @@ export function ReservePackagingFields({
           </Form.Item>
         </Col>
       </Row>
-
-      <S.NovaPoshtaWizardStepNote>
-        <InfoIcon size={14} />
-        <span>{t("integrations.novaPoshtaWizard.reservePackagingNote")}</span>
-      </S.NovaPoshtaWizardStepNote>
     </S.NovaPoshtaFormSection>
   );
 }

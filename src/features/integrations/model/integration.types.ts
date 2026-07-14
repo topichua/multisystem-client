@@ -102,6 +102,13 @@ export type NovaPoshtaSenderType = "warehouse" | "address";
 
 export type NovaPoshtaPayerType = "sender" | "recipient";
 
+export type NovaPoshtaPaymentMethod = "cash" | "non_cash";
+
+export type NovaPoshtaEstimatedDeliveryPrice = {
+  fixed: number | null;
+  takeFromOrder: boolean;
+};
+
 export type NovaPoshtaContactPerson = {
   ref: string;
   description?: string;
@@ -154,7 +161,7 @@ export type NovaPoshtaIntegrationFields = {
   sender_city_ref: string;
   sender_city_name: string;
   sender_type: NovaPoshtaSenderType;
-  payment_method: NovaPoshtaPayerType;
+  payment_method: NovaPoshtaPaymentMethod | null;
   payer_type: NovaPoshtaPayerType;
   sender_warehouse_ref: string | null;
   sender_warehouse_name: string | null;
@@ -168,6 +175,8 @@ export type NovaPoshtaIntegrationFields = {
   default_height_cm: number | null;
   default_length_cm: number | null;
   payment_purpose: string | null;
+  default_delivery_description: string | null;
+  estimated_delivery_price: NovaPoshtaEstimatedDeliveryPrice | null;
   on_created_order_status_id: number | null;
   on_in_transit_order_status_id: number | null;
   on_arrived_order_status_id: number | null;
@@ -185,16 +194,18 @@ type NovaPoshtaIntegrationCreateRequiredFieldKeys =
   | "sender_city_ref"
   | "sender_city_name"
   | "sender_type"
-  | "payment_method"
   | "payer_type";
 
 type NovaPoshtaIntegrationCreateOptionalFieldKeys =
+  | "payment_method"
   | "cod_commission_payer"
   | "default_weight_kg"
   | "default_width_cm"
   | "default_height_cm"
   | "default_length_cm"
   | "payment_purpose"
+  | "default_delivery_description"
+  | "estimated_delivery_price"
   | "on_created_order_status_id"
   | "on_in_transit_order_status_id"
   | "on_arrived_order_status_id"

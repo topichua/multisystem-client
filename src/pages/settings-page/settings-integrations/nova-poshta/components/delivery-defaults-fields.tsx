@@ -4,6 +4,8 @@ import { useTranslation } from "react-i18next";
 
 import * as S from "../../settings-integrations.styled";
 import { CodCommissionPayerField } from "./cod-commission-payer-field";
+import { EstimatedDeliveryPriceField } from "./estimated-delivery-price-field";
+import { PaymentMethodField } from "./payment-method-field";
 import { PayerTypeField } from "./payer-type-field";
 
 type DeliveryDefaultsFieldsProps = {
@@ -35,6 +37,8 @@ export function DeliveryDefaultsFields({
         </Col>
       </Row>
 
+      <PaymentMethodField />
+
       <Form.Item
         label={t("integrations.novaPoshtaWizard.fields.paymentPurpose.label")}
         name="payment_purpose"
@@ -45,6 +49,8 @@ export function DeliveryDefaultsFields({
           )}
         />
       </Form.Item>
+
+      <EstimatedDeliveryPriceField columnBreakpoint={columnBreakpoint} />
     </S.NovaPoshtaFormSection>
   );
 }

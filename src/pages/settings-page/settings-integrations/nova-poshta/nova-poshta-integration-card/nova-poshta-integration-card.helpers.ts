@@ -3,7 +3,12 @@ import type {
   NovaPoshtaIntegrationUpdatePayload,
 } from "@/features/integrations/model/integration.types";
 
-import { trimOptional } from "../helpers";
+import {
+  buildEstimatedDeliveryPricePayload,
+  parseEstimatedDeliveryPriceMode,
+  parsePaymentMethodFromDetails,
+  trimOptional,
+} from "../helpers";
 import type {
   CityOption,
   SenderOption,
@@ -151,7 +156,13 @@ export function buildInitialValues(
     sender_flat: details.sender_flat ?? undefined,
     payer_type: details.payer_type,
     cod_commission_payer: details.cod_commission_payer ?? undefined,
+    payment_method: parsePaymentMethodFromDetails(details.payment_method),
     payment_purpose: details.payment_purpose ?? undefined,
+    estimated_delivery_price_mode: parseEstimatedDeliveryPriceMode(
+      details.estimated_delivery_price,
+    ),
+    estimated_delivery_price_fixed:
+      details.estimated_delivery_price?.fixed ?? undefined,
     default_weight_kg: details.default_weight_kg ?? undefined,
     default_length_cm: details.default_length_cm ?? undefined,
     default_width_cm: details.default_width_cm ?? undefined,
@@ -175,10 +186,11 @@ export function buildUpdatePayload(
     sender_city_ref: values.sender_city_ref ?? details.sender_city_ref,
     sender_city_name: values.sender_city_name ?? details.sender_city_name,
     sender_type: senderType,
-    payment_method: payerType,
+    payment_method: values.payment_method ?? null,
     payer_type: payerType,
     cod_commission_payer: values.cod_commission_payer ?? null,
     payment_purpose: trimOptional(values.payment_purpose ?? undefined) ?? null,
+    estimated_delivery_price: buildEstimatedDeliveryPricePayload(values),
     sender_warehouse_ref:
       senderType === "warehouse" ? (values.warehouse_ref ?? null) : null,
     sender_warehouse_name:

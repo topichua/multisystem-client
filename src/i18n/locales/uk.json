@@ -1056,9 +1056,21 @@
           "label": "Платник комісії післяплати",
           "placeholder": "Оберіть платника"
         },
+        "paymentMethod": {
+          "label": "Спосіб оплати за замовчуванням",
+          "placeholder": "Оберіть спосіб оплати"
+        },
         "paymentPurpose": {
           "label": "Опис відправлення",
           "placeholder": "Напр. Одяг та аксесуари"
+        },
+        "estimatedDeliveryPrice": {
+          "label": "Оціночна вартість"
+        },
+        "estimatedDeliveryPriceFixed": {
+          "label": "Фіксована сума",
+          "placeholder": "0.00",
+          "required": "Вкажіть фіксовану суму"
         },
         "defaultWeightKg": {
           "label": "Резервна вага, кг",
@@ -1084,6 +1096,15 @@
       "payerTypes": {
         "sender": "Відправник",
         "recipient": "Отримувач"
+      },
+      "paymentMethods": {
+        "unset": "Не задано — задавати в замовленні",
+        "cash": "Готівковий розрахунок",
+        "nonCash": "Безготівковий розрахунок"
+      },
+      "estimatedDeliveryPrice": {
+        "orderAmount": "Сума замовлення",
+        "fixedAmount": "Фіксована сума"
       },
       "senderStepNote": "Ці дані використовуються як відправник у нових накладних.",
       "reservePackagingNote": "Використовуються лише якщо товари не мають власних ваги та габаритів.",

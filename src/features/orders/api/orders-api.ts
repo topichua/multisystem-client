@@ -117,7 +117,7 @@ function normalizeClientLastOrder(data: unknown): ClientLastOrder | null {
       : "new";
 
   const statusColor =
-    typeof statusRecord.color === 'string' ? statusRecord.color : '';
+    typeof statusRecord.color === "string" ? statusRecord.color : "";
 
   return {
     id,
