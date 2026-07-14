@@ -13,7 +13,6 @@ import type {
 export type WaybillFormValues = {
   weightGrams?: number | null;
   seatsAmount?: number | null;
-  seatsCount?: number | null;
   description?: string;
   declaredCost?: number | null;
 };
@@ -86,7 +85,6 @@ export const buildWaybillInitialValues = (
       pickRecordNumber(sources, ["weightGrams", "weight_grams"]) ?? 1,
     seatsAmount:
       pickRecordNumber(sources, ["seatsAmount", "seats_amount"]) ?? 1,
-    seatsCount: pickRecordNumber(sources, ["seatsCount", "seats_count"]) ?? 1,
     description:
       pickRecordString(sources, ["description", "waybillDescription"]) ??
       getWaybillDescriptionFallback(order, t),
@@ -124,7 +122,6 @@ export const buildWaybillPayload = (
 ): OrderNovaPoshtaWaybillPayload => ({
   weightGrams: normalizePositiveInteger(values.weightGrams, 1),
   seatsAmount: normalizePositiveInteger(values.seatsAmount, 1),
-  seatsCount: normalizePositiveInteger(values.seatsCount, 1),
   description: values.description?.trim() || fallbackDescription,
   declaredCost: normalizeNonNegativeNumber(values.declaredCost, 0),
 });
