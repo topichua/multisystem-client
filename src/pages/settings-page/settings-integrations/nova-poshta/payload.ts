@@ -23,6 +23,10 @@ function appendDeliveryDefaults(
 ): void {
   payload.payment_method = values.payment_method ?? null;
 
+  if (values.delivery_type != null) {
+    payload.delivery_type = values.delivery_type;
+  }
+
   if (values.cod_commission_payer != null) {
     payload.cod_commission_payer = values.cod_commission_payer;
   }

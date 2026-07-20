@@ -5,6 +5,7 @@ import type {
 
 import {
   buildEstimatedDeliveryPricePayload,
+  parseDeliveryTypeFromDetails,
   parseEstimatedDeliveryPriceMode,
   parsePaymentMethodFromDetails,
   trimOptional,
@@ -157,6 +158,7 @@ export function buildInitialValues(
     payer_type: details.payer_type,
     cod_commission_payer: details.cod_commission_payer ?? undefined,
     payment_method: parsePaymentMethodFromDetails(details.payment_method),
+    delivery_type: parseDeliveryTypeFromDetails(details.delivery_type),
     payment_purpose: details.payment_purpose ?? undefined,
     estimated_delivery_price_mode: parseEstimatedDeliveryPriceMode(
       details.estimated_delivery_price,
@@ -187,6 +189,9 @@ export function buildUpdatePayload(
     sender_city_name: values.sender_city_name ?? details.sender_city_name,
     sender_type: senderType,
     payment_method: values.payment_method ?? null,
+    ...(values.delivery_type != null
+      ? { delivery_type: values.delivery_type }
+      : {}),
     payer_type: payerType,
     cod_commission_payer: values.cod_commission_payer ?? null,
     payment_purpose: trimOptional(values.payment_purpose ?? undefined) ?? null,

@@ -3,6 +3,7 @@ import { CreditCardIcon, MapPinIcon, PackageIcon } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 
 import type {
+  NovaPoshtaDeliveryType,
   NovaPoshtaIntegrationDetails,
   NovaPoshtaPayerType,
   NovaPoshtaPaymentMethod,
@@ -67,6 +68,29 @@ function formatPaymentMethodLabel(
 
   if (paymentMethod === "non_cash") {
     return t("integrations.novaPoshtaWizard.paymentMethods.nonCash");
+  }
+
+  return "";
+}
+
+function formatDeliveryTypeLabel(
+  deliveryType: NovaPoshtaDeliveryType | null | undefined,
+  t: (key: string) => string,
+): string {
+  if (deliveryType === "cargo") {
+    return t("integrations.novaPoshtaWizard.deliveryTypes.cargo");
+  }
+
+  if (deliveryType === "documents") {
+    return t("integrations.novaPoshtaWizard.deliveryTypes.documents");
+  }
+
+  if (deliveryType === "tires_wheels") {
+    return t("integrations.novaPoshtaWizard.deliveryTypes.tiresWheels");
+  }
+
+  if (deliveryType === "pallet") {
+    return t("integrations.novaPoshtaWizard.deliveryTypes.pallet");
   }
 
   return "";
@@ -185,6 +209,13 @@ export function NovaPoshtaIntegrationDetailsView({
             )}
             value={formatPaymentMethodLabel(details.payment_method, t)}
             fallback={emptyValue}
+          />
+          <DetailColumn
+            label={t(
+              "integrations.novaPoshtaWizard.fields.deliveryType.label",
+            )}
+            value={formatDeliveryTypeLabel(details.delivery_type, t)}
+            fallback={t("integrations.novaPoshtaWizard.deliveryTypes.cargo")}
           />
           <Col xs={24}>
             <DetailField

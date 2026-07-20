@@ -1058,6 +1058,10 @@
           "label": "Default payment method",
           "placeholder": "Select payment method"
         },
+        "deliveryType": {
+          "label": "Default delivery type",
+          "placeholder": "Select delivery type"
+        },
         "paymentPurpose": {
           "label": "Shipment description",
           "placeholder": "E.g. Clothing and accessories"
@@ -1099,6 +1103,13 @@
         "unset": "Not set — specify in order",
         "cash": "Cash payment",
         "nonCash": "Non-cash payment"
+      },
+      "deliveryTypes": {
+        "unset": "Not set — Parcel (default)",
+        "cargo": "Parcel",
+        "documents": "Documents",
+        "tiresWheels": "Tires and wheels",
+        "pallet": "Pallet"
       },
       "estimatedDeliveryPrice": {
         "orderAmount": "Order amount",

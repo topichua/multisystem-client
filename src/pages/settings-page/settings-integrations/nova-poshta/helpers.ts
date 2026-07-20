@@ -1,4 +1,5 @@
 import type {
+  NovaPoshtaDeliveryType,
   NovaPoshtaEstimatedDeliveryPrice,
   NovaPoshtaIntegrationDetails,
   NovaPoshtaPaymentMethod,
@@ -64,6 +65,21 @@ export function parsePaymentMethodFromDetails(
 ): NovaPoshtaPaymentMethod | undefined {
   if (paymentMethod === "cash" || paymentMethod === "non_cash") {
     return paymentMethod;
+  }
+
+  return undefined;
+}
+
+export function parseDeliveryTypeFromDetails(
+  deliveryType: NovaPoshtaIntegrationDetails["delivery_type"],
+): NovaPoshtaDeliveryType | undefined {
+  if (
+    deliveryType === "cargo" ||
+    deliveryType === "documents" ||
+    deliveryType === "tires_wheels" ||
+    deliveryType === "pallet"
+  ) {
+    return deliveryType;
   }
 
   return undefined;

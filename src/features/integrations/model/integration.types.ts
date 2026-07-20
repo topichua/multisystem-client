@@ -104,6 +104,12 @@ export type NovaPoshtaPayerType = "sender" | "recipient";
 
 export type NovaPoshtaPaymentMethod = "cash" | "non_cash";
 
+export type NovaPoshtaDeliveryType =
+  | "cargo"
+  | "documents"
+  | "tires_wheels"
+  | "pallet";
+
 export type NovaPoshtaEstimatedDeliveryPrice = {
   fixed: number | null;
   takeFromOrder: boolean;
@@ -162,6 +168,7 @@ export type NovaPoshtaIntegrationFields = {
   sender_city_name: string;
   sender_type: NovaPoshtaSenderType;
   payment_method: NovaPoshtaPaymentMethod | null;
+  delivery_type: NovaPoshtaDeliveryType | null;
   payer_type: NovaPoshtaPayerType;
   sender_warehouse_ref: string | null;
   sender_warehouse_name: string | null;
@@ -198,6 +205,7 @@ type NovaPoshtaIntegrationCreateRequiredFieldKeys =
 
 type NovaPoshtaIntegrationCreateOptionalFieldKeys =
   | "payment_method"
+  | "delivery_type"
   | "cod_commission_payer"
   | "default_weight_kg"
   | "default_width_cm"
