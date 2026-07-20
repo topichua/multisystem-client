@@ -14,7 +14,7 @@ import {
   normalizeNonNegativeNumber,
   normalizePositiveInteger,
 } from "../utils/order-edit-modal.utils";
-import * as S from "../../order-details-content/order-details-content.styled";
+import * as S from "../order-edit-modal.styled";
 
 const { Text } = Typography;
 

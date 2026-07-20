@@ -18,19 +18,27 @@ const EVENT_META: Record<
     titleKey: "orders.details.eventItemAdded",
   },
   "order.totals_updated": {
-    tone: "gold",
+    tone: "orange",
     titleKey: "orders.details.eventTotalsUpdated",
   },
   "order.delivery_updated": {
     tone: "blue",
     titleKey: "orders.details.eventDeliveryUpdated",
   },
+  "order.waybill_created": {
+    tone: "green",
+    titleKey: "orders.details.eventWaybillCreated",
+  },
+  "order.waybill_removed": {
+    tone: "orange",
+    titleKey: "orders.details.eventWaybillRemoved",
+  },
   "order.payment_updated": {
-    tone: "gold",
+    tone: "orange",
     titleKey: "orders.details.eventPaymentUpdated",
   },
   "order.discount_applied": {
-    tone: "gold",
+    tone: "orange",
     titleKey: "orders.details.eventDiscountApplied",
   },
   "order.status_updated": {

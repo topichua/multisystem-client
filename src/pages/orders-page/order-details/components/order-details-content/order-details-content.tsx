@@ -1,3 +1,4 @@
+import { Col, Flex, Row } from "antd";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -19,6 +20,8 @@ export const OrderDetailsContent = ({
   order,
   onCreateNovaPoshtaWaybill,
   onRemoveNovaPoshtaWaybill,
+  onUpdateDelivery,
+  onAttachDeliveryTracking,
   onUpdateOrder,
 }: OrderDetailsContentProps) => {
   const { t } = useTranslation();
@@ -28,30 +31,44 @@ export const OrderDetailsContent = ({
   return (
     <>
       <S.PrintStyles />
+      <Row
+        className="print-content"
+        gutter={[24, 24]}
+        style={{
+          maxWidth: 1300,
+          margin: "0 auto",
+          paddingBottom: 50,
+        }}
+      >
+        <Col span={24}>
+          <PrintDocumentHeader order={order} t={t} />
+        </Col>
 
-      <S.LayoutRoot className="print-content">
-        <PrintDocumentHeader order={order} t={t} />
+        <Col xs={24} lg={16}>
+          <Flex vertical gap={24}>
+            <CustomerCard order={order} customerName={customerName} t={t} />
+            <ProductsCard order={order} t={t} onEdit={setEditMode} />
+            <DeliveryCard
+              order={order}
+              t={t}
+              onCreateNovaPoshtaWaybill={onCreateNovaPoshtaWaybill}
+              onRemoveNovaPoshtaWaybill={onRemoveNovaPoshtaWaybill}
+              onUpdateDelivery={onUpdateDelivery}
+              onAttachDeliveryTracking={onAttachDeliveryTracking}
+            />
+          </Flex>
+        </Col>
 
-        <S.MainColumn>
-          <ProductsCard order={order} t={t} onEdit={setEditMode} />
-          <HistoryCard order={order} t={t} />
-        </S.MainColumn>
+        <Col xs={24} lg={8}>
+          <Flex vertical gap={24}>
+            <PaymentCard order={order} t={t} />
+            <NotesCard order={order} t={t} onEdit={setEditMode} />
+            <HistoryCard order={order} t={t} />
+          </Flex>
+        </Col>
+      </Row>
 
-        <S.SideColumn>
-          <CustomerCard order={order} customerName={customerName} t={t} />
-          <NotesCard order={order} t={t} onEdit={setEditMode} />
-          <DeliveryCard
-            order={order}
-            customerName={customerName}
-            t={t}
-            onCreateNovaPoshtaWaybill={onCreateNovaPoshtaWaybill}
-            onRemoveNovaPoshtaWaybill={onRemoveNovaPoshtaWaybill}
-          />
-          <PaymentCard order={order} t={t} />
-        </S.SideColumn>
-      </S.LayoutRoot>
-
-      {editMode ? (
+      {editMode && (
         <OrderEditModal
           order={order}
           open
@@ -59,7 +76,7 @@ export const OrderDetailsContent = ({
           onClose={() => setEditMode(null)}
           onUpdateOrder={onUpdateOrder}
         />
-      ) : null}
+      )}
     </>
   );
 };

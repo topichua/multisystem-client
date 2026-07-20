@@ -34,6 +34,8 @@ export const OrderDetailsPage = () => {
     applyOrderStatusLocally,
     createNovaPoshtaWaybill,
     removeNovaPoshtaWaybill,
+    updateDelivery,
+    attachDeliveryTracking,
     updateOrder,
   } = useOrderDetails(orderId);
 
@@ -53,22 +55,24 @@ export const OrderDetailsPage = () => {
 
       <PaneDetailLayout.Body data-qa="layout-order-details-body">
         <Spin spinning={loading}>
-          {invalidOrderIdError || error ? (
+          {(invalidOrderIdError || error) && (
             <Alert type="error" showIcon title={invalidOrderIdError || error} />
-          ) : null}
+          )}
 
-          {!invalidOrderIdError && !error && !loading && !order ? (
+          {!invalidOrderIdError && !error && !loading && !order && (
             <Text type="secondary">{t("orders.notFound")}</Text>
-          ) : null}
+          )}
 
-          {order ? (
+          {order && (
             <OrderDetailsContent
               order={order}
               onCreateNovaPoshtaWaybill={createNovaPoshtaWaybill}
               onRemoveNovaPoshtaWaybill={removeNovaPoshtaWaybill}
+              onUpdateDelivery={updateDelivery}
+              onAttachDeliveryTracking={attachDeliveryTracking}
               onUpdateOrder={updateOrder}
             />
-          ) : null}
+          )}
         </Spin>
       </PaneDetailLayout.Body>
     </>

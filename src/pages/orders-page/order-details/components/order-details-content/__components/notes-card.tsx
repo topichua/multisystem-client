@@ -1,11 +1,10 @@
 import { PencilSimpleIcon } from "@phosphor-icons/react";
-import { Button, Empty, Typography } from "antd";
+import { Button, Card, Empty, Typography } from "antd";
 
 import { formatText } from "../../../utils/order-details.utils";
 
 import type { EditableSectionProps } from "../order-details-content.types";
 import { InfoList } from "./info-list";
-import * as S from "../order-details-content.styled";
 
 const { Paragraph } = Typography;
 
@@ -15,10 +14,10 @@ export const NotesCard = ({ order, t, onEdit }: EditableSectionProps) => {
   );
 
   return (
-    <S.DetailsCard className="print-card section-notes">
-      <S.CardHeader>
-        <S.CardTitle level={3}>{t("orders.notes")}</S.CardTitle>
-
+    <Card
+      className="print-card"
+      title={t("orders.notes")}
+      extra={
         <Button
           className="no-print"
           icon={<PencilSimpleIcon size={18} />}
@@ -26,8 +25,8 @@ export const NotesCard = ({ order, t, onEdit }: EditableSectionProps) => {
         >
           {t("orders.details.editNotes")}
         </Button>
-      </S.CardHeader>
-
+      }
+    >
       {hasNotes ? (
         <InfoList
           items={[
@@ -57,6 +56,6 @@ export const NotesCard = ({ order, t, onEdit }: EditableSectionProps) => {
           description={t("orders.noNotes")}
         />
       )}
-    </S.DetailsCard>
+    </Card>
   );
 };

@@ -1,4 +1,5 @@
-import { Empty } from "antd";
+import type { TimelineProps } from "antd";
+import { Card, Empty, Flex, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { useMemo } from "react";
 
@@ -12,7 +13,10 @@ import {
 
 import type { OrderSectionProps } from "../order-details-content.types";
 import { getActorLabel, getEventMeta } from "../utils/order-event.utils";
+
 import * as S from "../order-details-content.styled";
+
+const { Text } = Typography;
 
 export const HistoryCard = observer(({ order, t }: OrderSectionProps) => {
   const membersStore = useWorkspaceMembersStore();
@@ -36,55 +40,71 @@ export const HistoryCard = observer(({ order, t }: OrderSectionProps) => {
     [order.events],
   );
 
-  return (
-    <S.DetailsCard className="no-print print-card section-history">
-      <S.CardHeader>
-        <S.CardTitle level={3}>{t("orders.details.statusHistory")}</S.CardTitle>
-      </S.CardHeader>
+  const historyItems = useMemo<TimelineProps["items"]>(
+    () =>
+      sortedEvents.map((event, index) => {
+        const eventMeta = getEventMeta(event);
+        const color = eventMeta.tone;
+        const eventTitle = eventMeta.titleKey
+          ? t(eventMeta.titleKey)
+          : event.type;
 
-      {sortedEvents.length ? (
-        <S.HistoryList>
-          {sortedEvents.map((event, index) => {
-            const eventMeta = getEventMeta(event);
-            const eventTitle = eventMeta.titleKey
-              ? t(eventMeta.titleKey)
-              : event.type;
-
-            return (
-              <S.HistoryItem
-                key={event.id}
-                $isLast={index === sortedEvents.length - 1}
-              >
-                <S.HistoryMarker $tone={eventMeta.tone} />
-
-                <S.HistoryContent>
-                  <S.StatusPill $tone={eventMeta.tone}>
-                    <S.StatusDot />
+        return {
+          key: event.id,
+          className: index === 0 ? "history-timeline-current-item" : undefined,
+          color,
+          styles: {
+            icon: {
+              backgroundColor: color,
+              borderColor: color,
+              width: 14,
+              height: 14,
+              marginLeft: -2,
+            },
+          },
+          content: (
+            <Flex vertical gap={2}>
+              <Flex align="baseline" justify="space-between" gap={12}>
+                <Flex align="center" gap={4}>
+                  <Text strong style={{ color }}>
                     {eventTitle}
-                  </S.StatusPill>
-
-                  <S.HistoryDescription>
-                    {getEventDescription(event, order.items, order.currency, t)}
-                  </S.HistoryDescription>
-
-                  <S.HistoryActor type="secondary">
-                    {getActorLabel(event, actorNamesByUserId, t)}
-                  </S.HistoryActor>
-                </S.HistoryContent>
-
-                <S.HistoryDate type="secondary">
+                  </Text>
+                </Flex>
+                <Text
+                  type="secondary"
+                  style={{ whiteSpace: "nowrap", fontSize: 11 }}
+                >
                   {formatDate(event.createdAt)}
-                </S.HistoryDate>
-              </S.HistoryItem>
-            );
-          })}
-        </S.HistoryList>
+                </Text>
+              </Flex>
+
+              <Text>
+                {getEventDescription(event, order.items, order.currency, t)}
+              </Text>
+
+              <Text type="secondary">
+                {getActorLabel(event, actorNamesByUserId, t)}
+              </Text>
+            </Flex>
+          ),
+        };
+      }),
+    [actorNamesByUserId, order.currency, order.items, sortedEvents, t],
+  );
+
+  return (
+    <Card
+      className="no-print print-card"
+      title={t("orders.details.statusHistory")}
+    >
+      {historyItems?.length ? (
+        <S.Timeline variant="filled" items={historyItems} />
       ) : (
         <Empty
           image={Empty.PRESENTED_IMAGE_SIMPLE}
           description={t("orders.noHistory")}
         />
       )}
-    </S.DetailsCard>
+    </Card>
   );
 });

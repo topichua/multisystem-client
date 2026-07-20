@@ -1,24 +1,26 @@
 import { CreditCardIcon } from "@phosphor-icons/react";
-import { Flex } from "antd";
+import { Card, Flex, Typography } from "antd";
 
 import { formatMoney } from "../../../utils/order-details.utils";
 import { PaymentStatusTag } from "../../order-status-tags";
 
 import type { OrderSectionProps } from "../order-details-content.types";
 import { InfoList } from "./info-list";
-import * as S from "../order-details-content.styled";
+
+const { Text } = Typography;
 
 export const PaymentCard = ({ order, t }: OrderSectionProps) => (
-  <S.DetailsCard className="no-print print-card section-payment">
-    <S.CardHeader>
-      <Flex align="center" gap={10}>
-        <S.MutedIcon>
+  <Card
+    className="no-print print-card"
+    title={
+      <Flex align="center" justify="space-between">
+        <Flex align="center" gap={10}>
           <CreditCardIcon size={20} />
-        </S.MutedIcon>
-        <S.CardTitle level={3}>{t("orders.payment")}</S.CardTitle>
+          <span>{t("orders.payment")}</span>
+        </Flex>
       </Flex>
-    </S.CardHeader>
-
+    }
+  >
     <InfoList
       items={[
         {
@@ -35,12 +37,12 @@ export const PaymentCard = ({ order, t }: OrderSectionProps) => (
           key: "amount",
           label: t("orders.details.amountToPay"),
           value: (
-            <S.AmountDue>
+            <Text strong style={{ fontSize: 16 }}>
               {formatMoney(order.totalAmount, order.currency)}
-            </S.AmountDue>
+            </Text>
           ),
         },
       ]}
     />
-  </S.DetailsCard>
+  </Card>
 );

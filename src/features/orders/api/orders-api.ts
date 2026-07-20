@@ -7,6 +7,8 @@ import {
   type OrderCreatePayload,
   type OrderDetails,
   type OrderListItem,
+  type OrderDeliveryPayload,
+  type OrderDeliveryTrackingPayload,
   type OrderNovaPoshtaWaybillPayload,
   type OrderNovaPoshtaWaybillResponse,
   type OrderStatus,
@@ -226,6 +228,20 @@ export const ordersApi = {
     payload: OrderUpdatePayload,
   ): Promise<void> => {
     await apiClient.patch(`${basePath}/${orderId}`, payload);
+  },
+
+  updateDelivery: async (
+    orderId: number,
+    payload: OrderDeliveryPayload,
+  ): Promise<void> => {
+    await apiClient.patch(`${basePath}/${orderId}/delivery`, payload);
+  },
+
+  attachDeliveryTracking: async (
+    orderId: number,
+    payload: OrderDeliveryTrackingPayload,
+  ): Promise<void> => {
+    await apiClient.post(`${basePath}/${orderId}/delivery/tracking`, payload);
   },
 
   createNovaPoshtaWaybill: async (

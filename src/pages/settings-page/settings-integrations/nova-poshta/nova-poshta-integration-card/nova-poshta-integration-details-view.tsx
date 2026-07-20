@@ -211,9 +211,7 @@ export function NovaPoshtaIntegrationDetailsView({
             fallback={emptyValue}
           />
           <DetailColumn
-            label={t(
-              "integrations.novaPoshtaWizard.fields.deliveryType.label",
-            )}
+            label={t("integrations.novaPoshtaWizard.fields.deliveryType.label")}
             value={formatDeliveryTypeLabel(details.delivery_type, t)}
             fallback={t("integrations.novaPoshtaWizard.deliveryTypes.cargo")}
           />

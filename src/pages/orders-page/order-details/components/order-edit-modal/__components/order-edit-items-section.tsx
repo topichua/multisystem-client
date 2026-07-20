@@ -1,4 +1,4 @@
-import { Alert, Empty, Flex, Form, InputNumber, Typography } from "antd";
+import { Alert, Badge, Empty, Flex, Form, InputNumber, Typography } from "antd";
 import type { FormInstance } from "antd";
 
 import type { OrderDetails } from "@/features/orders/model/order.types";
@@ -15,7 +15,7 @@ import {
   normalizeNonNegativeNumber,
 } from "../utils/order-edit-modal.utils";
 import { OrderEditLine } from "./order-edit-line";
-import * as S from "../../order-details-content/order-details-content.styled";
+import * as S from "../order-edit-modal.styled";
 
 const { Text } = Typography;
 
@@ -67,7 +67,7 @@ export const OrderEditItemsSection = ({
         <S.EditSectionHeader>
           <Flex align="center" gap={8} wrap>
             <Text strong>{t("orders.productsTab")}</Text>
-            <S.CountBadge>{lines.length}</S.CountBadge>
+            <Badge count={lines.length} showZero />
           </Flex>
 
           <CatalogProductSearchPopover

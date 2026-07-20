@@ -3,7 +3,10 @@ import { Form } from "antd";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { integrationsApi } from "@/features/integrations/api/integrations-api";
-import type { NovaPoshtaIntegrationDetails } from "@/features/integrations/model/integration.types";
+import type {
+  NovaPoshtaDeliveryType,
+  NovaPoshtaIntegrationDetails,
+} from "@/features/integrations/model/integration.types";
 import type {
   OrderDeliveryType,
   OrderFormValues,
@@ -13,6 +16,7 @@ import {
   STREET_MIN_SEARCH_LENGTH,
   WAREHOUSE_MIN_SEARCH_LENGTH,
 } from "@/pages/settings-page/settings-integrations/nova-poshta/constants";
+import { parseDeliveryTypeFromDetails } from "@/pages/settings-page/settings-integrations/nova-poshta/helpers";
 import {
   settlementsToOptions,
   streetsToOptions,
@@ -44,6 +48,7 @@ export type ClientOrderNovaPoshtaDeliveryState = {
   providerOptions: SelectOption[];
   selectedDeliveryType: OrderDeliveryType;
   selectedSettlementRef?: string;
+  selectedShipmentType: NovaPoshtaDeliveryType;
   streetOptions: StreetOption[];
   streetSelect: RemoteSelectState<StreetOption>;
   warehouseOptions: WarehouseOption[];
@@ -154,7 +159,6 @@ export function useClientOrderNovaPoshtaDelivery({
     form.setFieldsValue({
       deliveryMethod: "nova_poshta",
       novaPoshtaIntegrationId: firstIntegration.id,
-      ...clearCityAndLocationValues(),
     });
   }, [form, integrations, selectedIntegrationId]);
 
@@ -166,6 +170,10 @@ export function useClientOrderNovaPoshtaDelivery({
       ) ?? null,
     [integrations, selectedIntegrationId],
   );
+
+  const selectedShipmentType =
+    parseDeliveryTypeFromDetails(selectedIntegration?.delivery_type ?? null) ??
+    "cargo";
 
   const loadCityOptions = useCallback(
     async (query: string, signal: AbortSignal) => {
@@ -367,6 +375,7 @@ export function useClientOrderNovaPoshtaDelivery({
     providerOptions,
     selectedDeliveryType,
     selectedSettlementRef,
+    selectedShipmentType,
     streetOptions: streetSelect.options,
     streetSelect,
     warehouseOptions: warehouseSelect.options,

@@ -13,6 +13,8 @@ import type {
   BuildStandaloneOrderCreatePayloadInput,
   ClientOrderStats,
   OrderCreatePayload,
+  OrderDeliveryPayload,
+  OrderDeliveryTrackingPayload,
   OrderDetails,
   OrderListItem,
   OrderNovaPoshtaWaybillPayload,
@@ -707,6 +709,42 @@ export class OrdersStore {
         this.orderUpdateLoading = false;
       });
     }
+  };
+
+  updateDelivery = async (
+    orderId: number,
+    payload: OrderDeliveryPayload,
+  ): Promise<OrderDetails> => {
+    runInAction(() => {
+      this.orderUpdateLoading = true;
+    });
+
+    try {
+      await ordersApi.updateDelivery(orderId, payload);
+      const updated = await ordersApi.getById(orderId);
+      runInAction(() => {
+        this.replaceOrderInLists(updated);
+      });
+
+      return updated;
+    } finally {
+      runInAction(() => {
+        this.orderUpdateLoading = false;
+      });
+    }
+  };
+
+  attachDeliveryTracking = async (
+    orderId: number,
+    payload: OrderDeliveryTrackingPayload,
+  ): Promise<OrderDetails> => {
+    await ordersApi.attachDeliveryTracking(orderId, payload);
+    const updated = await ordersApi.getById(orderId);
+    runInAction(() => {
+      this.replaceOrderInLists(updated);
+    });
+
+    return updated;
   };
 
   updateOrderStatus = async (

@@ -1,63 +1,69 @@
-import { ArrowSquareOutIcon, InstagramLogoIcon } from "@phosphor-icons/react";
-import { Avatar } from "antd";
+import { ArrowSquareOutIcon } from "@phosphor-icons/react";
+import { Button, Card, Flex, Typography } from "antd";
+import { observer } from "mobx-react-lite";
 
 import { pagesMap } from "@/app/router/pages-map";
-
-import {
-  getCustomerInitials,
-  getOrderSourceLabel,
-} from "../../../utils/order-details.utils";
+import { UserAvatar } from "@/components/user-avatar";
+import { useClientDetails } from "@/pages/clients-page/client-details/hooks/use-client-details";
+import { formatClientDisplayName } from "@/pages/clients-page/clients-list/client-display.utils";
 
 import type { CustomerSectionProps } from "../order-details-content.types";
-import { CopyableText, InfoList } from "./info-list";
-import * as S from "../order-details-content.styled";
 
-export const CustomerCard = ({
-  order,
-  customerName,
-  t,
-}: CustomerSectionProps) => (
-  <S.DetailsCard className="print-card section-customer">
-    <S.CardHeader>
-      <S.CardTitle level={3}>{t("orders.customer")}</S.CardTitle>
-    </S.CardHeader>
+const { Text } = Typography;
 
-    <S.CustomerHeader>
-      <Avatar size={44}>{getCustomerInitials(order.customer)}</Avatar>
+export const CustomerCard = observer(
+  ({ order, customerName, t }: CustomerSectionProps) => {
+    const { client } = useClientDetails(order.customerId);
+    const avatarName = client ? formatClientDisplayName(client) : customerName;
+    const conversationId =
+      order.conversationId ?? order.conversation?.id ?? null;
+    const conversationHref =
+      conversationId != null
+        ? `${pagesMap.conversations}/${conversationId}`
+        : undefined;
 
-      <S.CustomerIdentity>
-        <S.CustomerName>{customerName}</S.CustomerName>
+    return (
+      <Card className="print-card" title={t("orders.customer")}>
+        <Flex align="center" justify="space-between" gap={14} wrap>
+          <Flex gap={12} style={{ minWidth: 0 }}>
+            <UserAvatar
+              size={44}
+              name={avatarName}
+              src={client?.avatar_src || undefined}
+              style={{ flexShrink: 0 }}
+            />
+            <Flex vertical style={{ minWidth: 0 }}>
+              <Text strong style={{ fontSize: 16 }}>
+                {customerName}
+              </Text>
+              <Text type="secondary">{order.customer.phone}</Text>
+            </Flex>
+          </Flex>
 
-        <S.CustomerSource>
-          <InstagramLogoIcon size={16} />
-          {getOrderSourceLabel(t, order.source)}
-        </S.CustomerSource>
-      </S.CustomerIdentity>
-    </S.CustomerHeader>
+          <Flex gap={8} wrap>
+            {conversationHref && (
+              <Button
+                type="link"
+                className="no-print"
+                href={conversationHref}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {t("orders.details.openClientChat")}
+              </Button>
+            )}
 
-    <InfoList
-      items={[
-        {
-          key: "phone",
-          label: t("orders.phone"),
-          value: <CopyableText value={order.customer.phone} />,
-        },
-        {
-          key: "source",
-          label: t("orders.source"),
-          value: getOrderSourceLabel(t, order.source),
-        },
-        {
-          key: "customerId",
-          label: t("orders.customerId"),
-          value: order.customer.id,
-        },
-      ]}
-    />
-
-    <S.ProfileLink className="no-print" href={pagesMap.clientsWorkspace}>
-      <ArrowSquareOutIcon size={16} />
-      {t("orders.details.clientProfile")}
-    </S.ProfileLink>
-  </S.DetailsCard>
+            <Button
+              type="link"
+              className="no-print"
+              icon={<ArrowSquareOutIcon size={16} />}
+              href={pagesMap.clientsWorkspace}
+            >
+              {t("orders.details.clientProfile")}
+            </Button>
+          </Flex>
+        </Flex>
+      </Card>
+    );
+  },
 );

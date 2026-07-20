@@ -134,13 +134,70 @@ export const getEventDescription = (
     }
 
     case "order.delivery_updated": {
-      const trackingNumber = payload.trackingNumber;
+      const trackingNumber =
+        typeof payload.trackingNumber === "string" &&
+        payload.trackingNumber.trim()
+          ? payload.trackingNumber.trim()
+          : null;
+      const deliveryStatus =
+        typeof payload.deliveryStatus === "string" &&
+        payload.deliveryStatus.trim()
+          ? payload.deliveryStatus.trim()
+          : null;
+      const statusLabel = deliveryStatus
+        ? translate(`orders.deliveryStatus.${deliveryStatus}`, {
+            defaultValue: deliveryStatus,
+          })
+        : null;
+
+      if (trackingNumber && statusLabel) {
+        return translate("orders.events.deliveryUpdatedWithTrackingAndStatus", {
+          trackingNumber,
+          status: statusLabel,
+        });
+      }
+
+      if (trackingNumber) {
+        return translate("orders.events.deliveryUpdatedWithTracking", {
+          trackingNumber,
+        });
+      }
+
+      if (statusLabel) {
+        return translate("orders.events.deliveryUpdatedWithStatus", {
+          status: statusLabel,
+        });
+      }
+
+      return translate("orders.events.deliveryUpdated");
+    }
+
+    case "order.waybill_created": {
+      const trackingNumber =
+        typeof payload.trackingNumber === "string" &&
+        payload.trackingNumber.trim()
+          ? payload.trackingNumber.trim()
+          : null;
 
       return trackingNumber
-        ? translate("orders.events.deliveryUpdatedWithTracking", {
-            trackingNumber: String(trackingNumber),
+        ? translate("orders.events.waybillCreatedWithTracking", {
+            trackingNumber,
           })
-        : translate("orders.events.deliveryUpdated");
+        : translate("orders.events.waybillCreated");
+    }
+
+    case "order.waybill_removed": {
+      const trackingNumber =
+        typeof payload.trackingNumber === "string" &&
+        payload.trackingNumber.trim()
+          ? payload.trackingNumber.trim()
+          : null;
+
+      return trackingNumber
+        ? translate("orders.events.waybillRemovedWithTracking", {
+            trackingNumber,
+          })
+        : translate("orders.events.waybillRemoved");
     }
 
     case "order.payment_updated":
@@ -166,8 +223,16 @@ export const getEventDescription = (
     }
 
     case "order.status_updated":
-    case "order.status_changed":
-      return translate("orders.events.statusUpdated");
+    case "order.status_changed": {
+      const statusName =
+        typeof payload.statusName === "string" && payload.statusName.trim()
+          ? payload.statusName.trim()
+          : null;
+
+      return statusName
+        ? translate("orders.events.statusUpdatedTo", { status: statusName })
+        : translate("orders.events.statusUpdated");
+    }
 
     default:
       return event.type;

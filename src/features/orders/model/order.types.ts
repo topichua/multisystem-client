@@ -17,8 +17,10 @@ export type OrderCustomerNewPayload = {
 
 export type OrderDeliveryType = "warehouse" | "address";
 
+export type OrderDeliveryPayerType = "sender" | "recipient";
+
 export type OrderDeliveryPayload = {
-  provider: string;
+  provider?: string;
   providerId?: number;
   deliveryStatus?: string;
   recipientName?: string;
@@ -38,6 +40,14 @@ export type OrderDeliveryPayload = {
   providerDocumentRef?: string;
   isCashOnDelivery?: boolean;
   cashOnDeliveryAmount?: number;
+  payerType?: OrderDeliveryPayerType;
+};
+
+export type OrderDeliveryTrackingPayload = {
+  provider: string;
+  trackingNumber: string;
+  providerId?: number;
+  phone?: string;
 };
 
 export type OrderCreatePayload = {
@@ -60,13 +70,16 @@ export type OrderUpdatePayload = {
   discountPercent?: number;
   customerNote?: string;
   internalNote?: string;
+  delivery?: OrderDeliveryPayload;
 };
 
 export type OrderNovaPoshtaWaybillPayload = {
-  weightGrams: number;
-  seatsAmount: number;
-  description: string;
-  declaredCost: number;
+  default_weight_kg: number;
+  default_width_cm: number;
+  default_height_cm: number;
+  default_length_cm: number;
+  payer_type: OrderDeliveryPayerType;
+  seats_amount: number;
 };
 
 export type OrderNovaPoshtaWaybillResponse = {
@@ -324,6 +337,7 @@ export type OrderFormValues = {
   billingMethod?: string;
   isCashOnDelivery?: boolean;
   cashOnDeliveryAmount?: number;
+  payerType?: OrderDeliveryPayerType;
   comment?: string;
   discountPercent?: number;
 };

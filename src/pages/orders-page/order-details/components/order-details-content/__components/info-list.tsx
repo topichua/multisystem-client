@@ -1,30 +1,18 @@
-import { Typography } from "antd";
-
-import { EMPTY_VALUE } from "../../../utils/order-details.utils";
+import { Descriptions } from "antd";
+import type { DescriptionsProps } from "antd";
 
 import type { InfoItem } from "../order-details-content.types";
-import * as S from "../order-details-content.styled";
-
-const { Text } = Typography;
 
 type InfoListProps = {
   items: InfoItem[];
 };
 
-export const InfoList = ({ items }: InfoListProps) => (
-  <S.InfoGrid>
-    {items.map((item) => (
-      <S.InfoPair key={item.key}>
-        <S.InfoLabel>{item.label}</S.InfoLabel>
-        <S.InfoValue>{item.value}</S.InfoValue>
-      </S.InfoPair>
-    ))}
-  </S.InfoGrid>
-);
+export const InfoList = ({ items }: InfoListProps) => {
+  const descriptionItems: DescriptionsProps["items"] = items.map((item) => ({
+    key: item.key,
+    label: item.label,
+    children: item.value,
+  }));
 
-type CopyableTextProps = {
-  value: string | null | undefined;
+  return <Descriptions column={1} size="small" items={descriptionItems} />;
 };
-
-export const CopyableText = ({ value }: CopyableTextProps) =>
-  value ? <Text copyable>{value}</Text> : EMPTY_VALUE;

@@ -1,152 +1,94 @@
-import { TrashIcon, TruckIcon } from "@phosphor-icons/react";
-import { Button, Flex } from "antd";
+import { useCallback, useState } from "react";
+import { Card, Flex, Tag } from "antd";
+import { TruckIcon } from "@phosphor-icons/react";
 
 import {
   EMPTY_VALUE,
-  formatMoney,
-  formatText,
   getDeliveryProviderLabel,
 } from "../../../utils/order-details.utils";
-import { DeliveryStatusTag } from "../../order-status-tags";
 
 import type { DeliveryCardProps } from "../order-details-content.types";
 import { useNovaPoshtaWaybill } from "../hooks/use-nova-poshta-waybill";
-import {
-  getDeliveryDestination,
-  getDeliveryTypeLabel,
-} from "../utils/order-delivery-display.utils";
-import { DeliveryWaybillForm } from "./delivery-waybill-form";
-import { CopyableText, InfoList } from "./info-list";
-import * as S from "../order-details-content.styled";
+import { DeliveryAddPanel } from "./delivery-card/delivery-add-panel";
+import { DeliveryEmptyState } from "./delivery-card/delivery-empty-state";
+import { DeliverySummary } from "./delivery-card/delivery-summary";
 
 export const DeliveryCard = ({
   order,
-  customerName,
   t,
   onCreateNovaPoshtaWaybill,
   onRemoveNovaPoshtaWaybill,
+  onUpdateDelivery,
+  onAttachDeliveryTracking,
 }: DeliveryCardProps) => {
-  const {
-    primaryDeliveryInfo,
-    waybillForm,
-    waybillInitialValues,
-    waybillActionLoading,
-    hasTrackingNumber,
-    deliveryShipped,
-    createDisabledReason,
-    removeDisabledReason,
-    canCreateWaybill,
-    canRemoveWaybill,
-    handleCreateWaybill,
-    handleRemoveWaybill,
-  } = useNovaPoshtaWaybill({
-    order,
+  const [addDeliveryOpen, setAddDeliveryOpen] = useState(false);
+  const { waybillActionLoading, handleRemoveWaybill } = useNovaPoshtaWaybill({
     t,
-    onCreateNovaPoshtaWaybill,
     onRemoveNovaPoshtaWaybill,
   });
 
+  const primaryDeliveryInfo = order.deliveryInfo;
+  const trackingNumber = primaryDeliveryInfo?.trackingNumber;
+  const hasDelivery = Boolean(primaryDeliveryInfo);
+  const hasTracking = Boolean(trackingNumber);
+  const showForm =
+    (!hasDelivery && addDeliveryOpen) || (hasDelivery && !hasTracking);
   const providerLabel = getDeliveryProviderLabel(
     t,
     primaryDeliveryInfo?.provider,
   );
+  const showProvider = hasDelivery && providerLabel !== EMPTY_VALUE;
+
+  const handleCopyTrackingNumber = useCallback(() => {
+    if (!trackingNumber) {
+      return;
+    }
+
+    void navigator.clipboard?.writeText(trackingNumber);
+  }, [trackingNumber]);
 
   return (
-    <S.DetailsCard className="print-card section-delivery">
-      <S.CardHeader>
+    <Card
+      className="print-card"
+      title={
         <Flex align="center" gap={10}>
-          <S.MutedIcon>
-            <TruckIcon size={20} />
-          </S.MutedIcon>
-          <S.CardTitle level={3}>{t("orders.delivery")}</S.CardTitle>
+          <TruckIcon size={20} />
+          <span>{t("orders.delivery")}</span>
         </Flex>
+      }
+      extra={
+        showProvider && (
+          <Tag color="red" style={{ marginInlineEnd: 0, borderRadius: 999 }}>
+            {providerLabel}
+          </Tag>
+        )
+      }
+    >
+      {!hasDelivery && !addDeliveryOpen && (
+        <DeliveryEmptyState t={t} onAdd={() => setAddDeliveryOpen(true)} />
+      )}
 
-        <Flex align="center" gap={8} justify="end" wrap>
-          {primaryDeliveryInfo?.provider ? (
-            <S.ProviderTag color="red">{providerLabel}</S.ProviderTag>
-          ) : null}
-
-          {hasTrackingNumber ? (
-            <Button
-              className="no-print"
-              danger
-              disabled={!canRemoveWaybill || waybillActionLoading}
-              icon={<TrashIcon size={18} />}
-              loading={waybillActionLoading}
-              title={removeDisabledReason ?? undefined}
-              onClick={handleRemoveWaybill}
-            >
-              {t("orders.details.removeWaybill")}
-            </Button>
-          ) : null}
-        </Flex>
-      </S.CardHeader>
-
-      <S.TrackingPanel>
-        <S.TrackingLabel>{t("orders.details.waybillNumber")}</S.TrackingLabel>
-        {primaryDeliveryInfo?.trackingNumber ? (
-          <S.TrackingNumber copyable>
-            {primaryDeliveryInfo.trackingNumber}
-          </S.TrackingNumber>
-        ) : (
-          <S.TrackingNumber>{EMPTY_VALUE}</S.TrackingNumber>
-        )}
-      </S.TrackingPanel>
-
-      {!hasTrackingNumber ? (
-        <DeliveryWaybillForm
-          order={order}
+      {showForm && (
+        <DeliveryAddPanel
+          primaryDeliveryInfo={primaryDeliveryInfo}
           t={t}
-          waybillForm={waybillForm}
-          waybillInitialValues={waybillInitialValues}
-          deliveryShipped={deliveryShipped}
-          waybillActionLoading={waybillActionLoading}
-          createDisabledReason={createDisabledReason}
-          canCreateWaybill={canCreateWaybill}
-          onCreateWaybill={() => void handleCreateWaybill()}
+          onCreateNovaPoshtaWaybill={onCreateNovaPoshtaWaybill}
+          onUpdateDelivery={onUpdateDelivery}
+          onAttachDeliveryTracking={onAttachDeliveryTracking}
         />
-      ) : null}
+      )}
 
-      <S.DeliveryStatusBox>
-        <DeliveryStatusTag value={primaryDeliveryInfo?.deliveryStatus} />
-      </S.DeliveryStatusBox>
-
-      <InfoList
-        items={[
-          {
-            key: "type",
-            label: t("orders.details.deliveryType"),
-            value: getDeliveryTypeLabel(primaryDeliveryInfo, t),
-          },
-          {
-            key: "city",
-            label: t("orders.city"),
-            value: formatText(primaryDeliveryInfo?.city),
-          },
-          {
-            key: "warehouse",
-            label: t("orders.warehouse"),
-            value: getDeliveryDestination(primaryDeliveryInfo),
-          },
-          {
-            key: "recipient",
-            label: t("orders.recipientName"),
-            value: formatText(
-              primaryDeliveryInfo?.recipientName || customerName,
-            ),
-          },
-          {
-            key: "phone",
-            label: t("orders.phone"),
-            value: <CopyableText value={primaryDeliveryInfo?.phone} />,
-          },
-          {
-            key: "cost",
-            label: t("orders.price"),
-            value: formatMoney(order.deliveryAmount, order.currency),
-          },
-        ]}
-      />
-    </S.DetailsCard>
+      {hasTracking && primaryDeliveryInfo && (
+        <DeliverySummary
+          currency={order.currency}
+          primaryDeliveryInfo={primaryDeliveryInfo}
+          providerLabel={providerLabel}
+          t={t}
+          waybillActionLoading={waybillActionLoading}
+          onCopyTrackingNumber={handleCopyTrackingNumber}
+          onRemoveWaybill={handleRemoveWaybill}
+        />
+      )}
+    </Card>
   );
 };

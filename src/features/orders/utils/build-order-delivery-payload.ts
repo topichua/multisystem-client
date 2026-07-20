@@ -3,11 +3,12 @@ import type {
   OrderDeliveryPayload,
   OrderFormValues,
 } from "@/features/orders/model/order.types";
-
-function trimmed(value: string | undefined): string | undefined {
-  const nextValue = value?.trim();
-  return nextValue ? nextValue : undefined;
-}
+import {
+  assignDeliveryLocationFields,
+  assignDeliveryProviderId,
+  normalizeOrderDeliveryPayerType,
+  trimmed,
+} from "@/features/orders/utils/order-delivery-fields";
 
 type DeliveryClientFallback = Pick<Client, "firstName" | "lastName" | "phone">;
 
@@ -33,44 +34,22 @@ export function buildOrderDeliveryPayload(
     isCashOnDelivery: formValues.isCashOnDelivery ?? false,
   };
 
-  if (typeof formValues.novaPoshtaIntegrationId === "number") {
-    delivery.providerId = formValues.novaPoshtaIntegrationId;
+  assignDeliveryProviderId(delivery, formValues.novaPoshtaIntegrationId);
+
+  const payerType = normalizeOrderDeliveryPayerType(formValues.payerType);
+  if (payerType) {
+    delivery.payerType = payerType;
   }
   if (recipientName) {
     delivery.recipientName = recipientName;
   }
-  if (recipientPhone?.trim()) {
-    delivery.phone = recipientPhone.trim();
+  const phone = trimmed(recipientPhone);
+  if (phone) {
+    delivery.phone = phone;
   }
-  if (trimmed(formValues.city)) {
-    delivery.city = trimmed(formValues.city);
-  }
-  if (trimmed(formValues.cityRef)) {
-    delivery.cityRef = trimmed(formValues.cityRef);
-  }
-  if (deliveryType === "warehouse") {
-    const warehouse =
-      trimmed(formValues.warehouse) ?? trimmed(formValues.postAddress);
-    if (warehouse) {
-      delivery.warehouse = warehouse;
-    }
-    if (trimmed(formValues.warehouseRef)) {
-      delivery.warehouseRef = trimmed(formValues.warehouseRef);
-    }
-  } else {
-    if (trimmed(formValues.street)) {
-      delivery.street = trimmed(formValues.street);
-    }
-    if (trimmed(formValues.streetRef)) {
-      delivery.streetRef = trimmed(formValues.streetRef);
-    }
-    if (trimmed(formValues.building)) {
-      delivery.building = trimmed(formValues.building);
-    }
-    if (trimmed(formValues.flat)) {
-      delivery.flat = trimmed(formValues.flat);
-    }
-  }
+
+  assignDeliveryLocationFields(delivery, formValues, deliveryType);
+
   if (
     delivery.isCashOnDelivery &&
     typeof formValues.cashOnDeliveryAmount === "number"

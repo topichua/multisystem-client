@@ -13,8 +13,13 @@ const PAYMENT_STATUS_COLORS: Record<string, string> = {
 
 const DELIVERY_STATUS_COLORS: Record<string, string> = {
   pending: "blue",
+  waybill_created: "cyan",
   shipped: "processing",
+  at_branch: "orange",
   delivered: "green",
+  delivery_failed: "red",
+  failed: "red",
+  returned: "purple",
   cancelled: "red",
   canceled: "red",
 };

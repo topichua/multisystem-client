@@ -8,7 +8,7 @@ import type {
   OrderEditModalProps,
   OrderEditModalSessionProps,
 } from "./order-edit-modal.types";
-import * as S from "../order-details-content/order-details-content.styled";
+import * as S from "./order-edit-modal.styled";
 
 export type { OrderEditMode } from "./order-edit-modal.types";
 

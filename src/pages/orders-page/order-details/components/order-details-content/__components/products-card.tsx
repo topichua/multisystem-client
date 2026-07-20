@@ -1,5 +1,5 @@
 import { PencilSimpleIcon } from "@phosphor-icons/react";
-import { Button, Empty, Flex, Typography } from "antd";
+import { Badge, Button, Card, Divider, Empty, Flex, Typography } from "antd";
 
 import { formatMoney, formatText } from "../../../utils/order-details.utils";
 
@@ -14,34 +14,34 @@ const { Text } = Typography;
 
 export const ProductsCard = ({ order, t, onEdit }: EditableSectionProps) => {
   const discountDisplayValue = getDiscountDisplayValue(order.discountAmount);
-  const statusAllowsItemEdit = order.status?.category === "new";
-  const canEditItems = statusAllowsItemEdit;
-  const editDisabledReason = statusAllowsItemEdit
-    ? t("orders.details.editUnavailable")
+  const canEditItems = order.status?.category === "new";
+  const editDisabledReason = canEditItems
+    ? undefined
     : t("orders.details.itemsEditLockedText");
 
   return (
-    <S.DetailsCard className="print-card section-products">
-      <S.CardHeader>
-        <Flex align="center" gap={10} wrap>
-          <S.CardTitle level={3}>{t("orders.productsTab")}</S.CardTitle>
-          <S.CountBadge>{order.items.length}</S.CountBadge>
+    <Card
+      className="print-card"
+      title={
+        <Flex align="center" gap={10}>
+          <span>{t("orders.productsTab")}</span>
+          <Badge count={order.items.length} showZero />
         </Flex>
-
-        <Flex align="center" gap={8} wrap className="no-print">
-          <Button
-            disabled={!canEditItems}
-            icon={<PencilSimpleIcon size={18} />}
-            title={!canEditItems ? editDisabledReason : undefined}
-            onClick={() => onEdit("items")}
-          >
-            {t("orders.details.edit")}
-          </Button>
-        </Flex>
-      </S.CardHeader>
-
+      }
+      extra={
+        <Button
+          className="no-print"
+          disabled={!canEditItems}
+          icon={<PencilSimpleIcon size={18} />}
+          title={!canEditItems ? editDisabledReason : undefined}
+          onClick={() => onEdit("items")}
+        >
+          {t("orders.details.edit")}
+        </Button>
+      }
+    >
       {order.items.length ? (
-        <S.ProductsList>
+        <Flex vertical>
           {order.items.map((item) => (
             <S.ProductRow key={item.id}>
               <S.ProductImage
@@ -52,12 +52,22 @@ export const ProductsCard = ({ order, t, onEdit }: EditableSectionProps) => {
                 {formatText(item.productTitleSnapshot).slice(0, 1)}
               </S.ProductImage>
 
-              <S.ProductInfo>
-                <S.ProductName>
+              <div style={{ minWidth: 0 }}>
+                <Text strong style={{ display: "block", fontSize: 16 }}>
                   {formatText(item.productTitleSnapshot)}
-                </S.ProductName>
-                <S.ProductMeta>{getProductMeta(item)}</S.ProductMeta>
-              </S.ProductInfo>
+                </Text>
+                <Text
+                  type="secondary"
+                  style={{
+                    display: "block",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {getProductMeta(item)}
+                </Text>
+              </div>
 
               <S.ProductPrice>
                 <Text type="secondary">
@@ -71,7 +81,7 @@ export const ProductsCard = ({ order, t, onEdit }: EditableSectionProps) => {
               </S.ProductTotal>
             </S.ProductRow>
           ))}
-        </S.ProductsList>
+        </Flex>
       ) : (
         <Empty
           image={Empty.PRESENTED_IMAGE_SIMPLE}
@@ -79,31 +89,35 @@ export const ProductsCard = ({ order, t, onEdit }: EditableSectionProps) => {
         />
       )}
 
-      <S.TotalsList>
-        <S.TotalRow>
+      <Flex vertical gap={12} style={{ paddingTop: 20 }}>
+        <Flex justify="space-between" gap={16}>
           <Text type="secondary">{t("orders.subtotal")}</Text>
           <Text>{formatMoney(order.subtotalAmount, order.currency)}</Text>
-        </S.TotalRow>
+        </Flex>
 
-        <S.TotalRow>
+        <Flex justify="space-between" gap={16}>
           <Text type="secondary">{t("orders.deliveryAmount")}</Text>
           <Text>{formatMoney(order.deliveryAmount, order.currency)}</Text>
-        </S.TotalRow>
+        </Flex>
 
-        <S.TotalRow>
-          <S.DiscountText>{t("orders.discount")}</S.DiscountText>
-          <S.DiscountText strong>
+        <Flex justify="space-between" gap={16}>
+          <Text type="success">{t("orders.discount")}</Text>
+          <Text type="success" strong>
             {formatMoney(discountDisplayValue, order.currency)}
-          </S.DiscountText>
-        </S.TotalRow>
+          </Text>
+        </Flex>
 
-        <S.GrandTotalRow>
-          <S.GrandTotalLabel>{t("orders.total")}</S.GrandTotalLabel>
-          <S.GrandTotalValue>
+        <Divider style={{ margin: "8px 0 0" }} />
+
+        <Flex justify="space-between" gap={16} align="center">
+          <Text strong style={{ fontSize: 16 }}>
+            {t("orders.total")}
+          </Text>
+          <Text strong style={{ fontSize: 22 }}>
             {formatMoney(order.totalAmount, order.currency)}
-          </S.GrandTotalValue>
-        </S.GrandTotalRow>
-      </S.TotalsList>
-    </S.DetailsCard>
+          </Text>
+        </Flex>
+      </Flex>
+    </Card>
   );
 };

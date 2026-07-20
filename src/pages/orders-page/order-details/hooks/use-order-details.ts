@@ -2,6 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 
 import { ordersApi } from "@/features/orders/api/orders-api";
 import type {
+  OrderDeliveryPayload,
+  OrderDeliveryTrackingPayload,
   OrderDetails,
   OrderNovaPoshtaWaybillPayload,
   OrderUpdatePayload,
@@ -96,6 +98,33 @@ export const useOrderDetails = (orderId: number | null) => {
     setOrder(updatedOrder);
   }, [orderId, ordersStore]);
 
+  const updateDelivery = useCallback(
+    async (payload: OrderDeliveryPayload): Promise<void> => {
+      if (orderId == null) {
+        return;
+      }
+
+      const updatedOrder = await ordersStore.updateDelivery(orderId, payload);
+      setOrder(updatedOrder);
+    },
+    [orderId, ordersStore],
+  );
+
+  const attachDeliveryTracking = useCallback(
+    async (payload: OrderDeliveryTrackingPayload): Promise<void> => {
+      if (orderId == null) {
+        return;
+      }
+
+      const updatedOrder = await ordersStore.attachDeliveryTracking(
+        orderId,
+        payload,
+      );
+      setOrder(updatedOrder);
+    },
+    [orderId, ordersStore],
+  );
+
   const updateOrder = useCallback(
     async (payload: OrderUpdatePayload): Promise<void> => {
       if (orderId == null) {
@@ -115,6 +144,8 @@ export const useOrderDetails = (orderId: number | null) => {
     applyOrderStatusLocally,
     createNovaPoshtaWaybill,
     removeNovaPoshtaWaybill,
+    updateDelivery,
+    attachDeliveryTracking,
     updateOrder,
   };
 };
