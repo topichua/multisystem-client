@@ -129,6 +129,14 @@ export const IntegrationTypeCard = ({
         {hasSetupContent ? (
           <>
             <S.IntegrationCardDivider />
+            {definition.type === "instagram" && hasConnections ? (
+              <>
+                <S.IntegrationAccountsList>
+                  {integrations.map(renderIntegrationCard)}
+                </S.IntegrationAccountsList>
+                <S.IntegrationCardDivider />
+              </>
+            ) : null}
             {setupContent}
           </>
         ) : hasConnections ? (
@@ -171,7 +179,17 @@ export const IntegrationTypeCard = ({
       <S.IntegrationCardDivider />
 
       {hasSetupContent ? (
-        setupContent
+        <>
+          {definition.type === "instagram" && hasConnections ? (
+            <>
+              <S.IntegrationAccountsList>
+                {integrations.map(renderIntegrationCard)}
+              </S.IntegrationAccountsList>
+              <S.IntegrationCardDivider />
+            </>
+          ) : null}
+          {setupContent}
+        </>
       ) : hasConnections ? (
         <S.IntegrationAccountsList>
           {integrations.map(renderIntegrationCard)}

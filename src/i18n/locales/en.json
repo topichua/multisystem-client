@@ -1256,6 +1256,20 @@
       "passwordRequired": "Enter your Telegram password",
       "submit": "Continue",
       "submitFailed": "Could not verify Telegram password"
+    },
+    "instagramSetup": {
+      "facebookHint": "Log in with Facebook to grant access to Instagram Business pages.",
+      "continueWithFacebook": "Continue with Facebook",
+      "awaitingOauth": "Complete Facebook login in the popup. This page updates automatically.",
+      "pageLabel": "Page",
+      "pagePlaceholder": "Select",
+      "cancel": "Cancel",
+      "connect": "Connect",
+      "sessionExpired": "This connection session has expired. Start again to continue.",
+      "restart": "Start again",
+      "noPages": "No Instagram Business pages were found for this Facebook account.",
+      "oauthFailed": "Facebook login did not complete. Try again.",
+      "loadPagesFailed": "Could not load Instagram pages"
     }
   },
   "system": {

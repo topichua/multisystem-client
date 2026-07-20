@@ -18,6 +18,7 @@ export type IntegrationItem = {
   postsCount?: number;
   page?: string;
   url?: string;
+  sessionId?: string;
   paymentProvider?: PaymentIntegrationProviderType;
   displayName?: string;
   status?: PaymentIntegrationStatus;

@@ -1264,6 +1264,20 @@
       "passwordRequired": "Введіть пароль Telegram",
       "submit": "Продовжити",
       "submitFailed": "Не вдалося підтвердити пароль Telegram"
+    },
+    "instagramSetup": {
+      "facebookHint": "Увійдіть через Facebook, щоб надати доступ до сторінок Instagram Business.",
+      "continueWithFacebook": "Continue with Facebook",
+      "awaitingOauth": "Завершіть вхід через Facebook у вікні. Ця сторінка оновиться автоматично.",
+      "pageLabel": "Сторінка",
+      "pagePlaceholder": "Обрати",
+      "cancel": "Скасувати",
+      "connect": "Підключити",
+      "sessionExpired": "Сесія підключення закінчилась. Почніть знову, щоб продовжити.",
+      "restart": "Почати знову",
+      "noPages": "Для цього Facebook-акаунта не знайдено сторінок Instagram Business.",
+      "oauthFailed": "Вхід через Facebook не завершився. Спробуйте ще раз.",
+      "loadPagesFailed": "Не вдалося завантажити сторінки Instagram"
     }
   },
   "system": {

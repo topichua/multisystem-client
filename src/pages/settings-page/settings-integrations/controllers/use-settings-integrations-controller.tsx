@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { getApiErrorMessage } from "@/api/get-api-error-message";
+import { isInstagramOAuthSessionExpiredError } from "@/features/integrations/is-instagram-oauth-session-expired";
 import {
   closeIntegrationAuthWindow,
   navigateIntegrationAuthUrl,
@@ -14,10 +15,12 @@ import type {
   NovaPoshtaIntegrationCreatePayload,
   TelegramQrLoginSession,
 } from "@/features/integrations/model/integration.types";
+import type { InstagramOAuthPage } from "@/features/integrations/model/instagram-oauth.types";
 import { isIntegrationNotAvailableError } from "@/features/integrations/model/integrations-store";
 import { useIntegrationsStore } from "@/features/integrations/model/use-integrations-store";
 import { useNotification } from "@/shared/components/notification/use-notification";
 
+import type { InstagramSetupStage } from "../instagram";
 import {
   createEmptyIntegrationsByType,
   INTEGRATION_TYPES,
@@ -29,6 +32,7 @@ import {
 import type { TelegramQrLoginModalStatus } from "../telegram-qr-login-modal";
 
 const TELEGRAM_QR_LOGIN_TIMEOUT_MS = 90_000;
+const INSTAGRAM_OAUTH_POLL_INTERVAL_MS = 2_500;
 
 type TelegramQrModalState = {
   open: boolean;
@@ -43,6 +47,32 @@ type TelegramPasswordModalState = {
   submitting: boolean;
 };
 
+type InstagramSetupState = {
+  open: boolean;
+  stage: InstagramSetupStage;
+  sessionId: string | null;
+  pages: InstagramOAuthPage[];
+  expiresAt: string | null;
+  connecting: boolean;
+  awaitingOauth: boolean;
+  confirming: boolean;
+  sessionExpired: boolean;
+  errorMessage: string | null;
+};
+
+const initialInstagramSetupState: InstagramSetupState = {
+  open: false,
+  stage: "facebook_login",
+  sessionId: null,
+  pages: [],
+  expiresAt: null,
+  connecting: false,
+  awaitingOauth: false,
+  confirming: false,
+  sessionExpired: false,
+  errorMessage: null,
+};
+
 export function useSettingsIntegrationsController() {
   const store = useIntegrationsStore();
   const notification = useNotification();
@@ -53,6 +83,9 @@ export function useSettingsIntegrationsController() {
   const [novaPoshtaWizardOpen, setNovaPoshtaWizardOpen] = useState(false);
   const [monobankFormOpen, setMonobankFormOpen] = useState(false);
   const [manualPaymentFormOpen, setManualPaymentFormOpen] = useState(false);
+  const [instagramSetup, setInstagramSetup] = useState<InstagramSetupState>(
+    initialInstagramSetupState,
+  );
   const [telegramQrModal, setTelegramQrModal] = useState<TelegramQrModalState>({
     open: false,
     status: "idle",
@@ -68,6 +101,11 @@ export function useSettingsIntegrationsController() {
   const telegramQrRunIdRef = useRef(0);
   const telegramQrAbortControllerRef = useRef<AbortController | null>(null);
   const telegramQrTimeoutRef = useRef<number | null>(null);
+  const instagramAuthWindowRef = useRef<Window | null>(null);
+  const instagramOauthPollRef = useRef<number | null>(null);
+  const instagramOauthPollInFlightRef = useRef(false);
+  const instagramOauthSessionIdRef = useRef<string | null>(null);
+  const instagramOauthRunIdRef = useRef(0);
 
   useEffect(() => {
     void store.loadIntegrations();
@@ -85,6 +123,153 @@ export function useSettingsIntegrationsController() {
     telegramQrAbortControllerRef.current?.abort();
     telegramQrAbortControllerRef.current = null;
   }, [clearTelegramQrTimeout]);
+
+  const closeInstagramAuthPopup = useCallback(() => {
+    closeIntegrationAuthWindow(instagramAuthWindowRef.current);
+    instagramAuthWindowRef.current = null;
+  }, []);
+
+  const stopInstagramOauthPoll = useCallback(
+    (options?: { closePopup?: boolean }) => {
+      if (instagramOauthPollRef.current != null) {
+        window.clearInterval(instagramOauthPollRef.current);
+        instagramOauthPollRef.current = null;
+      }
+
+      instagramOauthPollInFlightRef.current = false;
+      instagramOauthSessionIdRef.current = null;
+
+      if (options?.closePopup) {
+        closeInstagramAuthPopup();
+      }
+    },
+    [closeInstagramAuthPopup],
+  );
+
+  const closeInstagramSetup = useCallback(() => {
+    instagramOauthRunIdRef.current += 1;
+    stopInstagramOauthPoll({ closePopup: true });
+    setInstagramSetup(initialInstagramSetupState);
+  }, [stopInstagramOauthPoll]);
+
+  const pollInstagramOAuthSession = useCallback(
+    async (sessionId: string, runId: number) => {
+      if (
+        instagramOauthPollInFlightRef.current ||
+        instagramOauthRunIdRef.current !== runId ||
+        instagramOauthSessionIdRef.current !== sessionId
+      ) {
+        return;
+      }
+
+      instagramOauthPollInFlightRef.current = true;
+
+      try {
+        const result = await store.getInstagramOAuthPages(sessionId);
+
+        if (
+          instagramOauthRunIdRef.current !== runId ||
+          instagramOauthSessionIdRef.current !== sessionId
+        ) {
+          return;
+        }
+
+        if (result.status === "awaiting_facebook") {
+          return;
+        }
+
+        if (result.status === "select_page") {
+          stopInstagramOauthPoll({ closePopup: true });
+          setInstagramSetup({
+            open: true,
+            stage: "select_page",
+            sessionId: result.sessionId || sessionId,
+            pages: result.pages,
+            expiresAt: result.expiresAt ?? null,
+            connecting: false,
+            awaitingOauth: false,
+            confirming: false,
+            sessionExpired: false,
+            errorMessage: null,
+          });
+          return;
+        }
+
+        if (result.status === "failed") {
+          stopInstagramOauthPoll({ closePopup: true });
+          setInstagramSetup({
+            open: true,
+            stage: "facebook_login",
+            sessionId: null,
+            pages: [],
+            expiresAt: null,
+            connecting: false,
+            awaitingOauth: false,
+            confirming: false,
+            sessionExpired: false,
+            errorMessage:
+              result.error || t("integrations.instagramSetup.oauthFailed"),
+          });
+        }
+      } catch (e) {
+        if (
+          instagramOauthRunIdRef.current !== runId ||
+          instagramOauthSessionIdRef.current !== sessionId
+        ) {
+          return;
+        }
+
+        if (isInstagramOAuthSessionExpiredError(e)) {
+          stopInstagramOauthPoll({ closePopup: true });
+          setInstagramSetup({
+            open: true,
+            stage: "facebook_login",
+            sessionId: null,
+            pages: [],
+            expiresAt: null,
+            connecting: false,
+            awaitingOauth: false,
+            confirming: false,
+            sessionExpired: true,
+            errorMessage: t("integrations.instagramSetup.sessionExpired"),
+          });
+          return;
+        }
+
+        // Transient poll errors — keep waiting while popup/session may still succeed.
+      } finally {
+        if (instagramOauthSessionIdRef.current === sessionId) {
+          instagramOauthPollInFlightRef.current = false;
+        }
+      }
+    },
+    [stopInstagramOauthPoll, store, t],
+  );
+
+  const startInstagramOauthPoll = useCallback(
+    (sessionId: string, authWindow: Window | null) => {
+      const runId = instagramOauthRunIdRef.current + 1;
+      instagramOauthRunIdRef.current = runId;
+
+      stopInstagramOauthPoll();
+      instagramAuthWindowRef.current = authWindow;
+      instagramOauthSessionIdRef.current = sessionId;
+
+      void pollInstagramOAuthSession(sessionId, runId);
+
+      instagramOauthPollRef.current = window.setInterval(() => {
+        void pollInstagramOAuthSession(sessionId, runId);
+      }, INSTAGRAM_OAUTH_POLL_INTERVAL_MS);
+    },
+    [pollInstagramOAuthSession, stopInstagramOauthPoll],
+  );
+
+  useEffect(() => {
+    return () => {
+      instagramOauthRunIdRef.current += 1;
+      stopInstagramOauthPoll({ closePopup: true });
+    };
+  }, [stopInstagramOauthPoll]);
 
   const waitForTelegramQrConfirmation = useCallback(
     async (session: TelegramQrLoginSession, runId: number) => {
@@ -289,6 +474,135 @@ export function useSettingsIntegrationsController() {
     };
   }, [abortTelegramQrRequest]);
 
+  const openInstagramSetup = useCallback(() => {
+    instagramOauthRunIdRef.current += 1;
+    stopInstagramOauthPoll({ closePopup: true });
+    setInstagramSetup({
+      ...initialInstagramSetupState,
+      open: true,
+      stage: "facebook_login",
+    });
+  }, [stopInstagramOauthPoll]);
+
+  const startInstagramFacebookLogin = useCallback(async () => {
+    instagramOauthRunIdRef.current += 1;
+    stopInstagramOauthPoll({ closePopup: true });
+
+    setInstagramSetup((current) => ({
+      ...current,
+      open: true,
+      stage: "facebook_login",
+      sessionId: null,
+      pages: [],
+      connecting: true,
+      awaitingOauth: false,
+      confirming: false,
+      sessionExpired: false,
+      errorMessage: null,
+    }));
+
+    const authWindow = openIntegrationAuthWindow({
+      keepOpener: true,
+      popup: true,
+    });
+
+    try {
+      const created = await store.connectIntegration("instagram");
+      const createdRecord = created as IntegrationItem & {
+        session_id?: unknown;
+      };
+      const sessionIdCandidate =
+        createdRecord.sessionId ?? createdRecord.session_id;
+      const sessionId =
+        typeof sessionIdCandidate === "string" && sessionIdCandidate.trim()
+          ? sessionIdCandidate.trim()
+          : null;
+
+      if (created.url && sessionId) {
+        navigateIntegrationAuthUrl(created.url, authWindow, { popup: true });
+        setInstagramSetup((current) => ({
+          ...current,
+          sessionId,
+          connecting: false,
+          awaitingOauth: true,
+          errorMessage: null,
+        }));
+        startInstagramOauthPoll(sessionId, authWindow);
+        return;
+      }
+
+      closeIntegrationAuthWindow(authWindow);
+      setInstagramSetup((current) => ({
+        ...current,
+        connecting: false,
+        awaitingOauth: false,
+        errorMessage: t("integrations.instagramSetup.oauthFailed"),
+      }));
+    } catch (e) {
+      closeIntegrationAuthWindow(authWindow);
+      setInstagramSetup((current) => ({
+        ...current,
+        connecting: false,
+        awaitingOauth: false,
+        errorMessage: isIntegrationNotAvailableError(e)
+          ? t("integrations.notAvailableYet")
+          : getApiErrorMessage(e, t("integrations.connectFailed")),
+      }));
+    }
+  }, [startInstagramOauthPoll, stopInstagramOauthPoll, store, t]);
+
+  const confirmInstagramPage = useCallback(
+    async (pageId: string) => {
+      const sessionId = instagramSetup.sessionId;
+
+      if (!sessionId) {
+        setInstagramSetup((current) => ({
+          ...current,
+          sessionExpired: true,
+          errorMessage: t("integrations.instagramSetup.sessionExpired"),
+        }));
+        return;
+      }
+
+      setInstagramSetup((current) => ({
+        ...current,
+        confirming: true,
+        errorMessage: null,
+        sessionExpired: false,
+      }));
+
+      try {
+        await store.confirmInstagramOAuth({ sessionId, pageId });
+        stopInstagramOauthPoll({ closePopup: true });
+        setInstagramSetup(initialInstagramSetupState);
+        notification.success({ title: t("integrations.connectSuccess") });
+      } catch (e) {
+        if (isInstagramOAuthSessionExpiredError(e)) {
+          setInstagramSetup((current) => ({
+            ...current,
+            confirming: false,
+            sessionExpired: true,
+            errorMessage: t("integrations.instagramSetup.sessionExpired"),
+          }));
+          return;
+        }
+
+        setInstagramSetup((current) => ({
+          ...current,
+          confirming: false,
+          errorMessage: getApiErrorMessage(e, t("integrations.connectFailed")),
+        }));
+      }
+    },
+    [
+      instagramSetup.sessionId,
+      notification,
+      stopInstagramOauthPoll,
+      store,
+      t,
+    ],
+  );
+
   const normalizedQuery = useMemo(() => query.trim().toLowerCase(), [query]);
 
   const integrationsByType = useMemo(() => {
@@ -402,28 +716,14 @@ export function useSettingsIntegrationsController() {
         return;
       }
 
-      const authWindow = openIntegrationAuthWindow();
-
-      try {
-        const created = await store.connectIntegration(type);
-
-        if (created.url) {
-          navigateIntegrationAuthUrl(created.url, authWindow);
-          return;
-        }
-
-        closeIntegrationAuthWindow(authWindow);
-        notification.success({ title: t("integrations.connectSuccess") });
-      } catch (e) {
-        closeIntegrationAuthWindow(authWindow);
-        notification.error({
-          title: isIntegrationNotAvailableError(e)
-            ? t("integrations.notAvailableYet")
-            : getApiErrorMessage(e, t("integrations.connectFailed")),
-        });
+      if (type === "instagram") {
+        openInstagramSetup();
+        return;
       }
+
+      notification.error({ title: t("integrations.notAvailableYet") });
     },
-    [notification, startTelegramQrLogin, store, t],
+    [notification, openInstagramSetup, startTelegramQrLogin, t],
   );
 
   const closeNovaPoshtaWizard = useCallback(() => {
@@ -493,6 +793,11 @@ export function useSettingsIntegrationsController() {
     handleMonobankSubmit,
     manualPaymentFormOpen,
     closeManualPaymentForm,
+    instagramSetup,
+    closeInstagramSetup,
+    startInstagramFacebookLogin,
+    confirmInstagramPage,
+    restartInstagramSetup: openInstagramSetup,
     telegramQrModal,
     closeTelegramQrModal,
     retryTelegramQrLogin: startTelegramQrLogin,

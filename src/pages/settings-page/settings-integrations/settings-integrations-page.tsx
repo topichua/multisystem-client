@@ -11,6 +11,7 @@ import {
 import { PaneNavSplitLayout } from "@/components/layout/pane-nav-split-layout";
 
 import { useSettingsIntegrationsController } from "./controllers/use-settings-integrations-controller";
+import { InstagramIntegrationSetup } from "./instagram";
 import { IntegrationTypeCard } from "./integration-type-card";
 import { ManualPaymentMethodsSetup } from "./manual-payment-methods";
 import { MonobankIntegrationForm } from "./monobank";
@@ -112,6 +113,35 @@ export const SettingsIntegrationsPage = observer(() => {
                                 }
                                 onCancel={controller.closeManualPaymentForm}
                                 onUpdated={controller.handleIntegrationUpdated}
+                              />
+                            ) : definition.type === "instagram" &&
+                              controller.instagramSetup.open ? (
+                              <InstagramIntegrationSetup
+                                stage={controller.instagramSetup.stage}
+                                pages={controller.instagramSetup.pages}
+                                connecting={
+                                  controller.instagramSetup.connecting
+                                }
+                                awaitingOauth={
+                                  controller.instagramSetup.awaitingOauth
+                                }
+                                confirming={
+                                  controller.instagramSetup.confirming
+                                }
+                                sessionExpired={
+                                  controller.instagramSetup.sessionExpired
+                                }
+                                errorMessage={
+                                  controller.instagramSetup.errorMessage
+                                }
+                                onContinueWithFacebook={() => {
+                                  void controller.startInstagramFacebookLogin();
+                                }}
+                                onConfirm={(pageId) => {
+                                  void controller.confirmInstagramPage(pageId);
+                                }}
+                                onCancel={controller.closeInstagramSetup}
+                                onRestart={controller.restartInstagramSetup}
                               />
                             ) : undefined
                           }

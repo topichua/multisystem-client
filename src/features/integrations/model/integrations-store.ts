@@ -13,6 +13,10 @@ import type {
   PaymentIntegration,
   TelegramQrLoginSession,
 } from "./integration.types";
+import type {
+  InstagramOAuthConfirmPayload,
+  InstagramOAuthPagesResponse,
+} from "./instagram-oauth.types";
 
 const INTEGRATION_NOT_AVAILABLE_ERROR = "INTEGRATION_NOT_AVAILABLE";
 
@@ -197,7 +201,8 @@ export class IntegrationsStore {
     try {
       const created = await integrationsApi.create({ integration_type });
 
-      if (created.url) {
+      // Instagram OAuth finishes only after page confirm — do not reload as connected.
+      if (created.url || integration_type === "instagram") {
         return created;
       }
 
@@ -206,6 +211,37 @@ export class IntegrationsStore {
     } finally {
       runInAction(() => {
         if (this.connectLoadingType === integration_type) {
+          this.connectLoadingType = null;
+        }
+      });
+    }
+  };
+
+  getInstagramOAuthPages = async (
+    sessionId: string,
+    options?: IntegrationRequestOptions,
+  ): Promise<InstagramOAuthPagesResponse> => {
+    return integrationsApi.getInstagramOAuthPages(sessionId, options);
+  };
+
+  confirmInstagramOAuth = async (
+    payload: InstagramOAuthConfirmPayload,
+    options?: IntegrationRequestOptions,
+  ) => {
+    runInAction(() => {
+      this.connectLoadingType = "instagram";
+    });
+
+    try {
+      const result = await integrationsApi.confirmInstagramOAuth(
+        payload,
+        options,
+      );
+      await this.loadIntegrations({ silent: true, force: true });
+      return result;
+    } finally {
+      runInAction(() => {
+        if (this.connectLoadingType === "instagram") {
           this.connectLoadingType = null;
         }
       });

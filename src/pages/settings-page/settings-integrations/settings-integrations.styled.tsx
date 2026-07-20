@@ -1,3 +1,4 @@
+import { Button } from "antd";
 import styled from "styled-components";
 
 export const IntegrationsStack = styled.div`
@@ -337,4 +338,62 @@ export const MobileIntegrationAccountStatusRow = styled.div`
   flex-wrap: wrap;
   align-items: center;
   gap: 8px 16px;
+`;
+
+export const InstagramSetup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 20px;
+`;
+
+export const FacebookContinueButton = styled(Button)`
+  && {
+    height: 36px;
+    margin-top: 4px;
+    border: 0;
+    background: #1877f2;
+    color: #fff;
+    font-weight: 500;
+    font-size: ${({ theme }) => theme.fontSize.small};
+    box-shadow: none;
+  }
+
+  &&:hover,
+  &&:focus {
+    background: #166fe5 !important;
+    color: #fff !important;
+    box-shadow: none;
+  }
+
+  &&:disabled {
+    background: #1877f2;
+    color: #fff;
+    opacity: 0.65;
+  }
+`;
+
+export const InstagramPageField = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  .ant-select {
+    width: 100%;
+  }
+`;
+
+export const InstagramSetupFooter = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+
+  @media (max-width: 575px) {
+    flex-direction: column-reverse;
+
+    .ant-btn {
+      width: 100%;
+    }
+  }
 `;

@@ -23,6 +23,12 @@ import type {
   TelegramQrLoginStartResponse,
   TelegramQrLoginSession,
 } from "../model/integration.types";
+import type {
+  InstagramOAuthConfirmPayload,
+  InstagramOAuthConfirmResponse,
+  InstagramOAuthPagesResponse,
+} from "../model/instagram-oauth.types";
+import { parseInstagramOAuthPagesResponse } from "../model/instagram-oauth.types";
 
 const basePath = "/integrations";
 const telegramIntegrationsBasePath = "/telegram-integrations";
@@ -216,6 +222,37 @@ export const integrationsApi = {
     id: number,
   ): Promise<void> => {
     await apiClient.delete(`${basePath}/${type}/${id}`);
+  },
+
+  getInstagramOAuthPages: async (
+    sessionId: string,
+    config?: AxiosRequestConfig,
+  ): Promise<InstagramOAuthPagesResponse> => {
+    const { data } = await apiClient.get<unknown>(
+      `${basePath}/instagram/oauth/pages`,
+      withParams(config, { sessionId }),
+    );
+
+    const parsed = parseInstagramOAuthPagesResponse(data, sessionId);
+
+    if (parsed == null) {
+      throw new Error("Invalid Instagram OAuth pages response");
+    }
+
+    return parsed;
+  },
+
+  confirmInstagramOAuth: async (
+    payload: InstagramOAuthConfirmPayload,
+    config?: AxiosRequestConfig,
+  ): Promise<InstagramOAuthConfirmResponse> => {
+    const { data } = await apiClient.post<InstagramOAuthConfirmResponse>(
+      `${basePath}/instagram/oauth/confirm`,
+      payload,
+      config,
+    );
+
+    return data;
   },
 
   listPaymentIntegrations:
