@@ -290,7 +290,7 @@ export const clientsSectionNavItems: readonly SectionNavItem[] = [
     labelKey: "clients.pageTitle",
   },
 ] as const;
-
+//test
 export const settingsSectionNavItems = [
   {
     key: "settings-groups",
