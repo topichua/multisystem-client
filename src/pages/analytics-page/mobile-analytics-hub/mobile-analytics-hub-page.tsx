@@ -31,9 +31,9 @@ export const MobileAnalyticsHubPage = () => {
                 <S.ItemTitle>{t(item.labelKey)}</S.ItemTitle>
               </S.ItemCopy>
               <Flex align="center" gap={8}>
-                {"pro" in item && item.pro ? (
+                {"pro" in item && item.pro && (
                   <S.ProBadge>{t("analytics.menu.proBadge")}</S.ProBadge>
-                ) : null}
+                )}
                 <S.Caret aria-hidden="true">
                   <CaretRightIcon size={18} />
                 </S.Caret>

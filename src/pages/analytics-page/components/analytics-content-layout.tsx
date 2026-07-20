@@ -12,7 +12,7 @@ export const AnalyticsContentLayout = ({
   children,
 }: AnalyticsContentLayoutProps) => (
   <S.Root>
-    {toolbar ? <S.ToolbarRow>{toolbar}</S.ToolbarRow> : null}
+    {toolbar && <S.ToolbarRow>{toolbar}</S.ToolbarRow>}
     <S.Content>{children}</S.Content>
   </S.Root>
 );

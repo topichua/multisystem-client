@@ -102,12 +102,12 @@ export function MobileTeamMemberCard({
 
       <S.CardFooter align="center" gap={8} wrap="wrap">
         <Tag color={status.color}>{t(status.labelKey)}</Tag>
-        {joinedLabel ? (
+        {joinedLabel && (
           <>
             <S.FooterSeparator aria-hidden="true">·</S.FooterSeparator>
             <S.JoinedText>{joinedLabel}</S.JoinedText>
           </>
-        ) : null}
+        )}
       </S.CardFooter>
     </S.MemberCard>
   );

@@ -56,9 +56,9 @@ export const SettingsUserView = observer(() => {
                   />
                   <S.ProfileText>
                     <S.ProfileName>{displayName}</S.ProfileName>
-                    {profileSubtitle ? (
+                    {profileSubtitle && (
                       <S.ProfileSubtitle>{profileSubtitle}</S.ProfileSubtitle>
-                    ) : null}
+                    )}
                   </S.ProfileText>
                 </S.ProfileIdentity>
                 <ImgCrop

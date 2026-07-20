@@ -71,7 +71,7 @@ export const ProductInventoryInitialStockForm = ({
           </Text>
         </Flex>
 
-        {error ? <Alert type="error" showIcon description={error} /> : null}
+        {error && <Alert type="error" showIcon description={error} />}
 
         <div
           style={{

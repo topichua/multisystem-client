@@ -65,9 +65,9 @@ export function NovaPoshtaIntegrationEditForm({
         </Col>
       </Row>
 
-      {senderSelect.error ? (
+      {senderSelect.error && (
         <Alert showIcon type="error" title={senderSelect.error} />
-      ) : null}
+      )}
 
       <SenderSectionFields
         columnBreakpoint="md"

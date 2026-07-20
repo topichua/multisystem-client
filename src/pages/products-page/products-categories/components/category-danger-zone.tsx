@@ -21,7 +21,7 @@ export const CategoryDangerZone = ({
 
   return (
     <>
-      {deleteBlockedByApi ? (
+      {deleteBlockedByApi && (
         <Alert
           type="error"
           showIcon
@@ -29,7 +29,7 @@ export const CategoryDangerZone = ({
           description={t("categories.deleteBlockedHasChildren")}
           closable
         />
-      ) : null}
+      )}
 
       <Popconfirm
         title={t("categories.deleteConfirm")}

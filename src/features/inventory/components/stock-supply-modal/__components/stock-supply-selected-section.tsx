@@ -36,11 +36,11 @@ export const StockSupplySelectedSection = ({
         {t("products.stockSupply.inSupply")}{" "}
         <S.CountPill>{selectedLines.length}</S.CountPill>
       </Text>
-      {selectedLines.length > 0 ? (
+      {selectedLines.length > 0 && (
         <Button type="link" size="small" onClick={onClear}>
           {t("products.stockSupply.clear")}
         </Button>
-      ) : null}
+      )}
     </Flex>
 
     <S.SelectedHeader>

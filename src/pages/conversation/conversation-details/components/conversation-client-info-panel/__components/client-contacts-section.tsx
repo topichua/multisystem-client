@@ -109,7 +109,7 @@ export function ClientContactsSection({
         <Text strong>{client.phone?.trim() || "—"}</Text>
       </Flex>
 
-      {socialLinks.length > 0 ? (
+      {socialLinks.length > 0 && (
         <S.SocialLinksList>
           {socialLinks.map((link) => {
             const unlinkKey = `${link.provider}:${link.externalId}`;
@@ -135,7 +135,7 @@ export function ClientContactsSection({
             );
           })}
         </S.SocialLinksList>
-      ) : null}
+      )}
     </S.Section>
   );
 }

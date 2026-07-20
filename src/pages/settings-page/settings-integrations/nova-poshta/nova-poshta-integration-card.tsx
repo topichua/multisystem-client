@@ -125,14 +125,14 @@ export function NovaPoshtaIntegrationCard({
       <S.IntegrationConnectedStatus>
         {t("integrations.connectedTag")}
       </S.IntegrationConnectedStatus>
-      {integration.connectedAt ? (
+      {integration.connectedAt && (
         <Flex align="center" gap={4}>
           <ClockIcon />
           <Text type="secondary">
             {formatDateTime(integration.connectedAt)}
           </Text>
         </Flex>
-      ) : null}
+      )}
     </S.MobileIntegrationAccountStatusRow>
   );
 

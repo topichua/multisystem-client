@@ -85,7 +85,7 @@ export function OrdersNewSummaryAside({
             </Text>
           </Flex>
 
-          {orderPositionDiscountTotal > 0 ? (
+          {orderPositionDiscountTotal > 0 && (
             <Flex justify="space-between" align="center" gap={12}>
               <Text>{t("orders.create.summary.positionDiscounts")}</Text>
               <Text strong>
@@ -96,7 +96,7 @@ export function OrdersNewSummaryAside({
                 )}
               </Text>
             </Flex>
-          ) : null}
+          )}
 
           <Flex justify="space-between" align="center" gap={12}>
             <Text>{t("orders.create.summary.delivery")}</Text>

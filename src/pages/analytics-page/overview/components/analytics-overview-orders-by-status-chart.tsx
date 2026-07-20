@@ -59,7 +59,7 @@ export const AnalyticsOverviewOrdersByStatusChart = ({
       isEmpty={!options}
       chartHeight={chartHeight}
     >
-      {options ? (
+      {options && (
         <ReactECharts
           option={options}
           notMerge
@@ -67,7 +67,7 @@ export const AnalyticsOverviewOrdersByStatusChart = ({
           style={{ width: "100%", height: "100%" }}
           opts={{ renderer: "canvas" }}
         />
-      ) : null}
+      )}
     </AnalyticsOverviewReportCard>
   );
 };

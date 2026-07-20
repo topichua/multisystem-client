@@ -124,9 +124,9 @@ export const MobileProductsListPage = observer(() => {
       <S.ScrollRegion>
         <ProductsListToolbar onToggleFilters={() => setFiltersOpen(true)} />
         <ProductsListActiveFilters categoryNameById={categoryNameById} />
-        {productsStore.listError ? (
+        {productsStore.listError && (
           <S.ErrorText type="danger">{productsStore.listError}</S.ErrorText>
-        ) : null}
+        )}
 
         {showInitialLoader ? (
           <S.StateContainer>
@@ -163,7 +163,7 @@ export const MobileProductsListPage = observer(() => {
                 />
               ))}
             </S.ProductList>
-            {productsStore.total > productsStore.pageSize ? (
+            {productsStore.total > productsStore.pageSize && (
               <S.PaginationWrap>
                 <Pagination
                   current={productsStore.currentPage}
@@ -176,7 +176,7 @@ export const MobileProductsListPage = observer(() => {
                   }}
                 />
               </S.PaginationWrap>
-            ) : null}
+            )}
           </Spin>
         )}
 

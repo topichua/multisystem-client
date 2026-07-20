@@ -108,7 +108,7 @@ export const OrdersListToolbar = observer(
           <Flex align="center" gap={8}>
             <FunnelSimpleIcon size={18} />
             {t("orders.toolbar.filters")}
-            {filterCount > 0 ? (
+            {filterCount > 0 && (
               <Tag
                 style={{
                   margin: 0,
@@ -121,7 +121,7 @@ export const OrdersListToolbar = observer(
               >
                 {filterCount}
               </Tag>
-            ) : null}
+            )}
           </Flex>
         </Button>
       </Flex>

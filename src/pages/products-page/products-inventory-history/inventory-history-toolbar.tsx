@@ -60,7 +60,7 @@ export const InventoryHistoryToolbar = ({
       <Flex align="center" gap={8}>
         <FunnelSimpleIcon size={18} />
         {t("products.inventoryHistory.filters.title")}
-        {filterCount > 0 ? (
+        {filterCount > 0 && (
           <Tag
             style={{
               margin: 0,
@@ -73,7 +73,7 @@ export const InventoryHistoryToolbar = ({
           >
             {filterCount}
           </Tag>
-        ) : null}
+        )}
       </Flex>
     </Button>
   );

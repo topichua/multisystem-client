@@ -59,9 +59,9 @@ export const MobileOrdersListPage = observer(() => {
       <S.ScrollRegion>
         <OrdersListToolbar onToggleFilters={() => setFiltersOpen(true)} />
         <OrdersListActiveFilters />
-        {store.listError ? (
+        {store.listError && (
           <S.ErrorText type="danger">{store.listError}</S.ErrorText>
-        ) : null}
+        )}
 
         {showInitialLoader ? (
           <S.StateContainer>
@@ -81,7 +81,7 @@ export const MobileOrdersListPage = observer(() => {
                 <MobileOrderCard key={order.id} order={order} />
               ))}
             </S.OrderList>
-            {store.total > store.pageSize ? (
+            {store.total > store.pageSize && (
               <S.PaginationWrap>
                 <Pagination
                   current={store.page}
@@ -94,7 +94,7 @@ export const MobileOrdersListPage = observer(() => {
                   }}
                 />
               </S.PaginationWrap>
-            ) : null}
+            )}
           </Spin>
         )}
 

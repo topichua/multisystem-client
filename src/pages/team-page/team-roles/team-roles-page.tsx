@@ -68,7 +68,7 @@ export const TeamRolesPage = observer(() => {
               <Text ellipsis style={{ lineHeight: 1.3 }}>
                 {role.name}
               </Text>
-              {role.membersCount != null ? (
+              {role.membersCount != null && (
                 <Text
                   type="secondary"
                   style={{ fontSize: 12, lineHeight: 1.2 }}
@@ -77,7 +77,7 @@ export const TeamRolesPage = observer(() => {
                     count: role.membersCount,
                   })}
                 </Text>
-              ) : null}
+              )}
             </Flex>
           </Flex>
         ),

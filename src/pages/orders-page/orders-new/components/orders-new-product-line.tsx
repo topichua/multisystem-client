@@ -64,7 +64,7 @@ export function OrdersNewProductLine({
           </Flex>
           {meta ? (
             <Text type="secondary" ellipsis>
-              {line.variant.sku ? `${line.variant.sku} · ` : null}
+              {line.variant.sku && `${line.variant.sku} · `}
               {meta}
             </Text>
           ) : line.variant.sku ? (

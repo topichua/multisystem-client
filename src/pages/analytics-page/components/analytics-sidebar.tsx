@@ -39,9 +39,9 @@ export const AnalyticsSidebar = () => {
                 onClick={() => navigate(item.path)}
               >
                 <S.NavItemLabel>{t(item.labelKey)}</S.NavItemLabel>
-                {"pro" in item && item.pro ? (
+                {"pro" in item && item.pro && (
                   <S.ProBadge>{t("analytics.menu.proBadge")}</S.ProBadge>
-                ) : null}
+                )}
               </S.NavItem>
             );
           })}

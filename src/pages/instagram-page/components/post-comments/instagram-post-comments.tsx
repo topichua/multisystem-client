@@ -308,11 +308,11 @@ export const InstagramPostComments = observer(
           </S.List>
         )}
 
-        {error && comments.length > 0 ? (
+        {error && comments.length > 0 && (
           <Alert type="error" showIcon message={error} />
-        ) : null}
+        )}
 
-        {canLoadMore ? (
+        {canLoadMore && (
           <Button
             block
             loading={loadingMore}
@@ -320,7 +320,7 @@ export const InstagramPostComments = observer(
           >
             {t("instagram.loadMoreComments")}
           </Button>
-        ) : null}
+        )}
       </S.Body>
     );
   },

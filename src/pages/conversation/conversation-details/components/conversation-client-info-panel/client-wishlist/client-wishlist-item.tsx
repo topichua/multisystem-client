@@ -85,7 +85,7 @@ export const ClientWishlistItem = observer(function ClientWishlistItem({
       <S.WishlistItemCopy>
         <S.WishlistItemName>{variant.label}</S.WishlistItemName>
         <Space size={4} separator="·">
-          {meta ? <S.WishlistItemMeta>{meta}</S.WishlistItemMeta> : null}
+          {meta && <S.WishlistItemMeta>{meta}</S.WishlistItemMeta>}
           <S.WishlistItemMeta>
             {formatCatalogVariantPrice(variant)}
           </S.WishlistItemMeta>

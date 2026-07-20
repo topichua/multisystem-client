@@ -122,9 +122,9 @@ export const ProductInstagramPostAnalyzeView = ({
               {t("products.instagram.ai.analyzePostButton")}
             </Button>
 
-            {analyzeError ? (
+            {analyzeError && (
               <Alert type="error" showIcon title={analyzeError} />
-            ) : null}
+            )}
           </Flex>
         </Card>
       )}

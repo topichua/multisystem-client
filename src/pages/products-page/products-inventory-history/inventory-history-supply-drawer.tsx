@@ -150,14 +150,14 @@ export const InventoryHistorySupplyDrawer = ({
       <Flex vertical gap={16}>
         <Text type="secondary">{meta}</Text>
 
-        {item.comment?.trim() ? (
+        {item.comment?.trim() && (
           <Alert
             type="info"
             showIcon
             icon={<InfoIcon size={18} />}
             title={item.comment}
           />
-        ) : null}
+        )}
 
         <Flex gap={12}>
           <Flex vertical gap={4} style={summaryCardStyle}>

@@ -212,13 +212,13 @@ export const InstagramPostProductsTable = observer(
                     <Text strong ellipsis style={{ maxWidth: 260 }}>
                       {product.name}
                     </Text>
-                    {hasVariants ? (
+                    {hasVariants && (
                       <Text italic type="secondary" ellipsis>
                         {t("products.table.variantsCount", {
                           count: variantsCount,
                         })}
                       </Text>
-                    ) : null}
+                    )}
                   </Flex>
                 </Flex>
               </Flex>
@@ -349,9 +349,7 @@ export const InstagramPostProductsTable = observer(
                       </Text>
                     </Flex>
 
-                    {referenceId != null && showVariantUnlinkButtons
-                      ? renderUnlinkButton(product.id, referenceId)
-                      : null}
+                    {referenceId != null && showVariantUnlinkButtons && renderUnlinkButton(product.id, referenceId)}
                   </Flex>
                 </Flex>
               </Card>

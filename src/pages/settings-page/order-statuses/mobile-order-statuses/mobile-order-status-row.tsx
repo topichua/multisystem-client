@@ -25,7 +25,7 @@ export const MobileOrderStatusRow = ({
           <S.ColorDot $color={status.color} aria-hidden="true" />
           <S.ItemCopy align="center" gap={8}>
             <S.ItemTitle>{status.name}</S.ItemTitle>
-            {status.isSystem ? <OrderStatusSystemBadge /> : null}
+            {status.isSystem && <OrderStatusSystemBadge />}
           </S.ItemCopy>
           <S.Caret aria-hidden="true">
             <CaretRightIcon size={18} />

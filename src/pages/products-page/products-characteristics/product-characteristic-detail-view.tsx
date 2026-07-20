@@ -123,7 +123,7 @@ export const CharacteristicTextValuesSection = ({
         <Flex vertical>
           {rows.map((row, index) => (
             <div key={`${row.value}-${index}`}>
-              {index > 0 ? <Divider style={{ margin: 0 }} /> : null}
+              {index > 0 && <Divider style={{ margin: 0 }} />}
               <Flex
                 align="center"
                 justify="space-between"

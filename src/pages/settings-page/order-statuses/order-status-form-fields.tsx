@@ -86,7 +86,7 @@ export const OrderStatusFormFields = ({
         />
       </Form.Item>
 
-      {!isSystem && onDelete ? (
+      {!isSystem && onDelete && (
         <>
           <Divider />
           <Popconfirm
@@ -114,7 +114,7 @@ export const OrderStatusFormFields = ({
             </Button>
           </Popconfirm>
         </>
-      ) : null}
+      )}
     </>
   );
 };

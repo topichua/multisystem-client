@@ -197,7 +197,7 @@ export const useProductsTableColumns = ({
             onMouseDown={(e) => e.stopPropagation()}
             onPointerDown={(e) => e.stopPropagation()}
           >
-            {showInventoryManagement ? (
+            {showInventoryManagement && (
               <Tooltip title={t("system.inventory.title")}>
                 <Button
                   type="text"
@@ -207,7 +207,7 @@ export const useProductsTableColumns = ({
                   onClick={() => onOpenInventory(product)}
                 />
               </Tooltip>
-            ) : null}
+            )}
             <Tooltip title={t("products.edit")}>
               <Button
                 type="text"

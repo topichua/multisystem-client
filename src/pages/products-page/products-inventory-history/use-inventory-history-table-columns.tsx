@@ -79,15 +79,15 @@ export function useInventoryHistoryTableColumns({
 
               <Text type="secondary">{subtitle}</Text>
 
-              {movementNote ? (
+              {movementNote && (
                 <Text type="secondary" italic>
                   {movementNote}
                 </Text>
-              ) : null}
+              )}
 
               {isSupply &&
               onOpenSupply &&
-              isInventoryHistorySupplyItem(item) ? (
+              isInventoryHistorySupplyItem(item) && (
                 <Button
                   type="link"
                   icon={<EyeIcon size={16} />}
@@ -101,7 +101,7 @@ export function useInventoryHistoryTableColumns({
                 >
                   {t("products.inventoryHistory.viewDetails")}
                 </Button>
-              ) : null}
+              )}
             </S.DetailsCell>
           );
         },

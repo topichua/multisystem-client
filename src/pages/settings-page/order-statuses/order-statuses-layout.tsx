@@ -119,14 +119,14 @@ export const OrderStatusesLayout = observer(() => {
           </PaneSectionTitle>
         </PaneSectionHeaderStack>
         <PaneScrollRegion data-qa="layout-order-statuses-nav-scroll">
-          {store.statusesError ? (
+          {store.statusesError && (
             <Alert
               type="error"
               title={store.statusesError}
               showIcon
               style={{ margin: 16 }}
             />
-          ) : null}
+          )}
           {store.statusesLoading && store.statuses.length === 0 ? (
             <CenteredSpinner minHeight={160} />
           ) : (

@@ -49,7 +49,7 @@ export const InstagramPostCommentRepliesSection = ({
 
         return (
           <S.Replies>
-            {replies.length === 0 ? (
+            {replies.length === 0 && (
               <Button
                 size="small"
                 type="link"
@@ -60,18 +60,18 @@ export const InstagramPostCommentRepliesSection = ({
                   count: comment.reply_count ?? 0,
                 })}
               </Button>
-            ) : null}
+            )}
 
-            {repliesError ? (
+            {repliesError && (
               <Alert type="error" showIcon message={repliesError} />
-            ) : null}
+            )}
 
             {replies.map((reply) => {
               const ownReply = isOwnReply(reply, ownIdentity);
 
               return (
                 <S.ReplyItem $optimistic={reply.optimistic} key={reply.id}>
-                  {!ownReply ? (
+                  {!ownReply && (
                     <S.ReplyAvatar>
                       {getCommentAvatarUrl(reply) ? (
                         <S.AvatarImage
@@ -82,7 +82,7 @@ export const InstagramPostCommentRepliesSection = ({
                         getAvatarLabel(getCommentAuthor(reply))
                       )}
                     </S.ReplyAvatar>
-                  ) : null}
+                  )}
                   <S.ReplyContent>
                     <Text strong>
                       {getReplyAuthorLabel(
@@ -97,7 +97,7 @@ export const InstagramPostCommentRepliesSection = ({
               );
             })}
 
-            {canLoadMoreReplies ? (
+            {canLoadMoreReplies && (
               <Button
                 size="small"
                 type="link"
@@ -108,7 +108,7 @@ export const InstagramPostCommentRepliesSection = ({
               >
                 {t("instagram.loadMoreReplies")}
               </Button>
-            ) : null}
+            )}
           </S.Replies>
         );
       }}

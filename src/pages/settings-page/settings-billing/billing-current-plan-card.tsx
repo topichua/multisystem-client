@@ -45,23 +45,23 @@ export const BillingCurrentPlanCard = ({
           </S.SubscriptionStatusBadge>
         </S.CurrentPlanTitleRow>
 
-        {periodEnd ? (
+        {periodEnd && (
           <S.CurrentPlanMeta>
             {t("billing.currentPlan.validUntil", {
               date: formatBillingDate(periodEnd),
             })}
           </S.CurrentPlanMeta>
-        ) : null}
+        )}
 
         <S.CurrentPlanMeta>
           {t("billing.currentPlan.manualRenewal")}
         </S.CurrentPlanMeta>
 
-        {subscription.isExpired ? (
+        {subscription.isExpired && (
           <S.ExpiredWarning>
             {t("billing.currentPlan.expiredWarning")}
           </S.ExpiredWarning>
-        ) : null}
+        )}
       </S.CurrentPlanMain>
     </S.CurrentPlanCard>
   );

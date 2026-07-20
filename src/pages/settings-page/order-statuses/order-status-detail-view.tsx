@@ -67,7 +67,7 @@ export const OrderStatusDetailView = observer(() => {
               <Title level={4} style={{ margin: 0 }}>
                 {status.name}
               </Title>
-              {status.isSystem ? <OrderStatusSystemBadge /> : null}
+              {status.isSystem && <OrderStatusSystemBadge />}
             </Flex>
             <Text type="secondary">{t("orderStatuses.editHint")}</Text>
           </Flex>

@@ -60,7 +60,7 @@ export const TeamMemberCell = ({
       <S.MemberText>
         <S.MemberNameRow>
           <S.MemberName>{name}</S.MemberName>
-          {isCurrentUser ? <S.YouTag>{youLabel}</S.YouTag> : null}
+          {isCurrentUser && <S.YouTag>{youLabel}</S.YouTag>}
         </S.MemberNameRow>
         <S.MemberEmail>{email}</S.MemberEmail>
       </S.MemberText>

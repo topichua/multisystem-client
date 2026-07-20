@@ -227,11 +227,11 @@ export function CatalogProductSearchPicker({
     <S.PickerRoot style={style}>
       {showAddLabel && (
         <S.PickerAddLabel>
-          {addLabel ?? t("products.catalogSearch.addLabel")}
+          {addLabel ?? t('products.catalogSearch.addLabel')}
         </S.PickerAddLabel>
       )}
 
-      {showToolbar ? (
+      {showToolbar && (
         <S.ProductSearchToolbar>
           {showCategoryFilter && (
             <Select<string>
@@ -239,10 +239,10 @@ export function CatalogProductSearchPicker({
               value={categoryValue}
               loading={categoriesLoading}
               getPopupContainer={getPopupContainer}
-              aria-label={t("products.catalogSearch.categoryFilterAria")}
+              aria-label={t('products.catalogSearch.categoryFilterAria')}
               optionFilterProp="searchLabel"
               filterOption={(input, option) =>
-                String(option?.searchLabel ?? "")
+                String(option?.searchLabel ?? '')
                   .toLowerCase()
                   .includes(input.trim().toLowerCase())
               }
@@ -264,16 +264,16 @@ export function CatalogProductSearchPicker({
             />
           )}
 
-          {showSearchModeToggle ? (
+          {showSearchModeToggle && (
             <Segmented<CatalogSearchMode>
               value={catalogSearchMode}
-              aria-label={t("products.catalogSearch.searchModeAria")}
+              aria-label={t('products.catalogSearch.searchModeAria')}
               onChange={handleSearchModeChange}
               options={[
                 {
-                  value: "flat",
+                  value: 'flat',
                   label: (
-                    <Tooltip title={t("products.catalogSearch.searchModeFlat")}>
+                    <Tooltip title={t('products.catalogSearch.searchModeFlat')}>
                       <S.SearchModeIconLabel>
                         <ListIcon size={17} />
                       </S.SearchModeIconLabel>
@@ -281,10 +281,10 @@ export function CatalogProductSearchPicker({
                   ),
                 },
                 {
-                  value: "grouped",
+                  value: 'grouped',
                   label: (
                     <Tooltip
-                      title={t("products.catalogSearch.searchModeGrouped")}
+                      title={t('products.catalogSearch.searchModeGrouped')}
                     >
                       <S.SearchModeIconLabel>
                         <StackIcon size={17} />
@@ -294,9 +294,9 @@ export function CatalogProductSearchPicker({
                 },
               ]}
             />
-          ) : null}
+          )}
         </S.ProductSearchToolbar>
-      ) : null}
+      )}
 
       <Select<number[]>
         key={productPickerKey}
@@ -312,9 +312,9 @@ export function CatalogProductSearchPicker({
         }}
         value={EMPTY_PRODUCT_PICKER_VALUE}
         allowClear
-        placeholder={placeholder ?? t("products.catalogSearch.placeholder")}
+        placeholder={placeholder ?? t('products.catalogSearch.placeholder')}
         loading={catalogSearchLoading}
-        style={{ width: "100%" }}
+        style={{ width: '100%' }}
         listHeight={listHeight}
         options={selectOptions}
         popupRender={(originNode) =>
@@ -339,12 +339,12 @@ export function CatalogProductSearchPicker({
             </Flex>
           ) : trimmedSearch.length < minSearchLength ? (
             <Text type="secondary">
-              {t("products.catalogSearch.searchMinChars", {
+              {t('products.catalogSearch.searchMinChars', {
                 count: minSearchLength,
               })}
             </Text>
           ) : (
-            t("products.catalogSearch.searchNoResults")
+            t('products.catalogSearch.searchNoResults')
           )
         }
         optionRender={(option) => {

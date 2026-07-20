@@ -67,7 +67,7 @@ export const OrderDetailsHeader = ({
               </S.TitleRow>
             </S.TitleBlock>
 
-            {order ? (
+            {order && (
               <S.MobileStatusSection className="no-print">
                 <S.StatusFieldLabel>
                   {t("orders.table.status")}
@@ -76,9 +76,9 @@ export const OrderDetailsHeader = ({
                   {statusSelect}
                 </S.StatusSelectSlot>
               </S.MobileStatusSection>
-            ) : null}
+            )}
 
-            {order ? (
+            {order && (
               <S.MetaLine>
                 <S.MetaItem>
                   <TagIcon size={18} />
@@ -97,7 +97,7 @@ export const OrderDetailsHeader = ({
                   {t("orders.updatedAt")} {formatDate(order.updatedAt)}
                 </S.MetaItem>
               </S.MetaLine>
-            ) : null}
+            )}
           </>
         ) : (
           <>
@@ -116,15 +116,15 @@ export const OrderDetailsHeader = ({
                     {(order?.id ?? orderId) ? `#${order?.id ?? orderId}` : ""}
                   </S.Title>
 
-                  {order?.status ? (
+                  {order?.status && (
                     <S.StatusBadge $color={order.status.color}>
                       <S.StatusDot />
                       {order.status.name}
                     </S.StatusBadge>
-                  ) : null}
+                  )}
                 </S.TitleRow>
 
-                {order ? (
+                {order && (
                   <S.MetaLine>
                     <S.MetaItem>
                       <TagIcon size={18} />
@@ -143,11 +143,11 @@ export const OrderDetailsHeader = ({
                       {t("orders.updatedAt")} {formatDate(order.updatedAt)}
                     </S.MetaItem>
                   </S.MetaLine>
-                ) : null}
+                )}
               </S.TitleBlock>
             </S.LeftCluster>
 
-            {order ? (
+            {order && (
               <S.Actions className="no-print">
                 <S.PrintButton
                   className="no-print"
@@ -159,7 +159,7 @@ export const OrderDetailsHeader = ({
 
                 <S.StatusSelectSlot>{statusSelect}</S.StatusSelectSlot>
               </S.Actions>
-            ) : null}
+            )}
           </>
         )}
       </S.HeaderRoot>

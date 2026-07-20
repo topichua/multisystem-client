@@ -91,7 +91,7 @@ export const ProductInstagramPostMediaPreview = ({
                 ))}
               </Carousel>
 
-              {mediaItems.length > 1 ? (
+              {mediaItems.length > 1 && (
                 <>
                   <Button
                     shape="circle"
@@ -128,7 +128,7 @@ export const ProductInstagramPostMediaPreview = ({
                     }}
                   />
                 </>
-              ) : null}
+              )}
             </>
           ) : (
             <Card>
@@ -149,7 +149,7 @@ export const ProductInstagramPostMediaPreview = ({
         </div>
       </Flex>
 
-      {mediaItems.length > 1 ? (
+      {mediaItems.length > 1 && (
         <Flex justify="center" gap={12} wrap="wrap">
           {mediaItems.map((media, index) => (
             <Button
@@ -167,7 +167,7 @@ export const ProductInstagramPostMediaPreview = ({
             </Button>
           ))}
         </Flex>
-      ) : null}
+      )}
     </>
   );
 };

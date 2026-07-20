@@ -75,12 +75,12 @@ export const MobileOrderCard = ({ order }: MobileOrderCardProps) => {
           </S.StatusControl>
         </S.StatusSection>
 
-        {internalNote ? (
+        {internalNote && (
           <S.NoteSection>
             <S.FieldLabel>{t("orders.table.internalNote")}</S.FieldLabel>
             <S.InternalNote>{internalNote}</S.InternalNote>
           </S.NoteSection>
-        ) : null}
+        )}
       </S.CardBody>
     </S.OrderCard>
   );

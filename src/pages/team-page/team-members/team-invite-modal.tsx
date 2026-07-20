@@ -139,15 +139,15 @@ export const TeamInviteModal = ({
                     />
                     <S.RoleOptionContent>
                       <Text strong>{role.name}</Text>
-                      {role.description ? (
+                      {role.description && (
                         <>
                           <br />
                           <Text type="secondary">{role.description}</Text>
                         </>
-                      ) : null}
+                      )}
                     </S.RoleOptionContent>
                     <S.RoleCheck $selected={selected}>
-                      {selected ? <CheckIcon size={12} weight="bold" /> : null}
+                      {selected && <CheckIcon size={12} weight="bold" />}
                     </S.RoleCheck>
                   </S.RoleOptionCard>
                 );

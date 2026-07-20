@@ -9,7 +9,7 @@ export function HiddenFields({
 }: HiddenFieldsProps) {
   return (
     <>
-      {includeSenderFields ? (
+      {includeSenderFields && (
         <>
           <Form.Item name="sender_ref" hidden>
             <Input />
@@ -21,7 +21,7 @@ export function HiddenFields({
             <Input />
           </Form.Item>
         </>
-      ) : null}
+      )}
       <Form.Item name="sender_city_name" hidden>
         <Input />
       </Form.Item>

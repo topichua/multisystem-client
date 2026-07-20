@@ -199,11 +199,11 @@ export const ProductInventoryMovementsHistory = observer(
             currency={currency}
             userNameByUserId={userNameByUserId}
           />
-          {hasMoreHistory ? (
+          {hasMoreHistory && (
             <Button type="link" block onClick={() => setFullHistoryOpen(true)}>
               {t("products.inventoryDrawer.showFullHistory")}
             </Button>
-          ) : null}
+          )}
         </Flex>
       );
     }
@@ -220,7 +220,7 @@ export const ProductInventoryMovementsHistory = observer(
         <Flex align="center" justify="space-between" gap={12} wrap="wrap">
           <Text strong>{t("products.inventoryDrawer.historyTitle")}</Text>
           <Flex align="center" justify="flex-end" gap={8} wrap="wrap">
-            {stockActionFormKind && !stockActionFormVisible ? (
+            {stockActionFormKind && !stockActionFormVisible && (
               <Button
                 type="primary"
                 size="small"
@@ -233,7 +233,7 @@ export const ProductInventoryMovementsHistory = observer(
                     : "products.inventoryDrawer.stockMovement.cta",
                 )}
               </Button>
-            ) : null}
+            )}
           </Flex>
         </Flex>
 

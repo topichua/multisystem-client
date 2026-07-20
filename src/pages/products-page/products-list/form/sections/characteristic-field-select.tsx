@@ -226,14 +226,14 @@ export function CharacteristicFieldSelect({
       }}
       popupRender={(menu) => (
         <>
-          {!canCreate ? (
+          {!canCreate && (
             <>
               <DropdownHeader>
                 {t("products.characteristics.savedCharacteristics")}
               </DropdownHeader>
               {menu}
             </>
-          ) : null}
+          )}
           <CreatePanel>
             {canCreate ? (
               <Flex vertical gap={12}>
@@ -303,7 +303,7 @@ export function CharacteristicFieldSelect({
               <Text>{data.field?.label ?? data.label}</Text>
             </Flex>
             <Flex align="center" gap={8}>
-              {data.createType === "OPTION" ? (
+              {data.createType === "OPTION" && (
                 <Tooltip
                   title={
                     data.disabled && disableOptionCharacteristics
@@ -317,7 +317,7 @@ export function CharacteristicFieldSelect({
                     })}
                   </Text>
                 </Tooltip>
-              ) : null}
+              )}
               <Tag color="volcano">
                 <Flex align="center" gap={4} style={{ width: "40px" }}>
                   {data.createType === "OPTION" ? (

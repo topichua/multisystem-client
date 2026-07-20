@@ -39,7 +39,7 @@ const OrderStatusNavItem = ({
       >
         <S.StatusDot $color={status.color} aria-hidden="true" />
         <S.StatusName>{status.name}</S.StatusName>
-        {status.isSystem ? <OrderStatusSystemBadge /> : null}
+        {status.isSystem && <OrderStatusSystemBadge />}
       </S.StatusButton>
     </S.StatusItem>
   );
@@ -90,7 +90,7 @@ const OrderStatusCategorySection = ({
         </S.CategoryAddButton>
       </S.CategoryHeader>
 
-      {group.statuses.length > 0 ? (
+      {group.statuses.length > 0 && (
         <S.StatusTree role="list">
           {group.statuses.map((status) => (
             <OrderStatusNavItem
@@ -101,7 +101,7 @@ const OrderStatusCategorySection = ({
             />
           ))}
         </S.StatusTree>
-      ) : null}
+      )}
     </S.CategorySection>
   );
 };

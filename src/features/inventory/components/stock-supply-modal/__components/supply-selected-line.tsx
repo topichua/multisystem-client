@@ -38,11 +38,11 @@ export const SupplySelectedLine = ({
             {line.variant.product.name}
           </Text>
         </Flex>
-        {meta ? (
+        {meta && (
           <Text type="secondary" ellipsis style={{ fontSize: 12 }}>
             {meta}
           </Text>
-        ) : null}
+        )}
       </Flex>
       <Text strong style={{ textAlign: "right" }}>
         {t("products.stockSupply.stockCount", {

@@ -72,7 +72,7 @@ export function ClientOrderDrawerFooter({
               {formattedProductsTotal} {orderTotals.currency}
             </span>
           </S.SummaryRow>
-          {orderTotals.discountPercent > 0 ? (
+          {orderTotals.discountPercent > 0 && (
             <S.SummaryDiscount>
               <span>
                 {t("conversation.clientOrders.drawer.footerDiscount", {
@@ -83,8 +83,8 @@ export function ClientOrderDrawerFooter({
                 -{formattedDiscountAmount} {orderTotals.currency}
               </span>
             </S.SummaryDiscount>
-          ) : null}
-          {orderTotals.hasCashOnDelivery ? (
+          )}
+          {orderTotals.hasCashOnDelivery && (
             <S.SummaryRow>
               <span>
                 {t("conversation.clientOrders.drawer.footerDelivery")}
@@ -93,7 +93,7 @@ export function ClientOrderDrawerFooter({
                 {formattedDeliveryAmount} {orderTotals.currency}
               </span>
             </S.SummaryRow>
-          ) : null}
+          )}
           <Divider style={{ margin: 0 }} />
           <S.SummaryTotal>
             <span>{t("conversation.clientOrders.drawer.footerTotal")}</span>

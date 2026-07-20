@@ -72,9 +72,9 @@ export const MobileSettingsAutomationListPage = observer(() => {
 
       <MobileS.ScrollRegion>
         <MobileS.ContentSection>
-          {store.listError ? (
+          {store.listError && (
             <Alert type="error" title={store.listError} showIcon />
-          ) : null}
+          )}
 
           {store.listLoading && store.rules.length === 0 ? (
             <CenteredSpinner />

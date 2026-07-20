@@ -212,7 +212,7 @@ export function ClientDetailsOrdersSection({
         <Tag style={{ marginInlineEnd: 0 }}>{orderCount}</Tag>
       </Space>
 
-      {error ? (
+      {error && (
         <Alert
           type="error"
           showIcon
@@ -223,7 +223,7 @@ export function ClientDetailsOrdersSection({
             </Button>
           }
         />
-      ) : null}
+      )}
 
       {renderOrdersContent()}
     </Flex>

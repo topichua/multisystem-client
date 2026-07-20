@@ -41,7 +41,7 @@ export const InstagramPostDetailContent = ({
   return (
     <S.Content data-qa="instagram-post-detail-content">
       <S.Layout $commentsOpen={!isMobile && commentsOpen} $variant={variant}>
-        {!isMobile ? (
+        {!isMobile && (
           <>
             <InstagramPostDetailNavigation controller={controller} />
             <InstagramPostCommentsPanel
@@ -51,10 +51,10 @@ export const InstagramPostDetailContent = ({
               postId={post.id}
             />
           </>
-        ) : null}
+        )}
 
         <S.Main $variant={variant}>
-          {store.postProductVariantsError ? (
+          {store.postProductVariantsError && (
             <S.WarningAlert>
               <Alert
                 type="warning"
@@ -62,7 +62,7 @@ export const InstagramPostDetailContent = ({
                 title={store.postProductVariantsError}
               />
             </S.WarningAlert>
-          ) : null}
+          )}
 
           <Spin spinning={productVariantsLoading}>
             <Flex vertical gap={isMobile ? 16 : 24}>
@@ -81,7 +81,7 @@ export const InstagramPostDetailContent = ({
         </S.Main>
       </S.Layout>
 
-      {isMobile ? (
+      {isMobile && (
         <Drawer
           destroyOnHidden
           closable={false}
@@ -105,7 +105,7 @@ export const InstagramPostDetailContent = ({
             <InstagramPostComments controller={controller} postId={post.id} />
           </S.MobileCommentsDrawerBody>
         </Drawer>
-      ) : null}
+      )}
     </S.Content>
   );
 };

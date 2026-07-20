@@ -90,7 +90,7 @@ export const ProductsListGrid = ({
                       justifyContent: "center",
                     }}
                   >
-                    {product.mainImageUrl ? (
+                    {product.mainImageUrl && (
                       <img
                         src={product.mainImageUrl}
                         alt=""
@@ -100,7 +100,7 @@ export const ProductsListGrid = ({
                           objectFit: "cover",
                         }}
                       />
-                    ) : null}
+                    )}
                   </div>
                 }
               >
@@ -121,7 +121,7 @@ export const ProductsListGrid = ({
                       t("products.noPrice"),
                     )}
                   </Text>
-                  {showInventoryQuantity ? (
+                  {showInventoryQuantity && (
                     <Text type="secondary" style={{ fontSize: 12 }}>
                       {product.inStock === false
                         ? t("products.outOfStock")
@@ -129,7 +129,7 @@ export const ProductsListGrid = ({
                           ? t("products.unknownQuantity")
                           : String(product.quantity)}
                     </Text>
-                  ) : null}
+                  )}
                   <Tag
                     color={productStatusToColor(product.status)}
                     style={{ width: "fit-content" }}
@@ -142,7 +142,7 @@ export const ProductsListGrid = ({
                     align="center"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    {showInventoryManagement ? (
+                    {showInventoryManagement && (
                       <Tooltip title={t("system.inventory.title")}>
                         <Button
                           type="text"
@@ -152,7 +152,7 @@ export const ProductsListGrid = ({
                           onClick={() => onOpenInventory(product)}
                         />
                       </Tooltip>
-                    ) : null}
+                    )}
                     <Button
                       type="text"
                       size="small"

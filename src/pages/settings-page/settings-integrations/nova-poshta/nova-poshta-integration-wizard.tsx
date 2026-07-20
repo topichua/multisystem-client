@@ -39,22 +39,22 @@ export function NovaPoshtaIntegrationWizard({
           items={stepItems}
           size="small"
         />
-        {controller.currentStep === 1 ? (
+        {controller.currentStep === 1 && (
           <S.NovaPoshtaWizardStepNote>
             <InfoIcon size={14} />
             <span>{t("integrations.novaPoshtaWizard.senderStepNote")}</span>
           </S.NovaPoshtaWizardStepNote>
-        ) : null}
+        )}
       </S.NovaPoshtaWizardSteps>
 
-      {controller.formError ? (
+      {controller.formError && (
         <Alert
           type="error"
           showIcon
           message={controller.formError}
           style={{ marginBottom: 16 }}
         />
-      ) : null}
+      )}
 
       <Form<NovaPoshtaWizardFormValues>
         form={controller.form}
@@ -67,9 +67,9 @@ export function NovaPoshtaIntegrationWizard({
       >
         <HiddenFields />
 
-        {controller.currentStep === 0 ? <ApiKeyStep /> : null}
+        {controller.currentStep === 0 && <ApiKeyStep />}
 
-        {controller.currentStep === 1 ? (
+        {controller.currentStep === 1 && (
           <SenderSectionFields
             citySelect={controller.citySelect}
             selectedCityRef={controller.selectedCityRef}
@@ -83,9 +83,9 @@ export function NovaPoshtaIntegrationWizard({
             onStreetChange={controller.handleStreetChange}
             onWarehouseChange={controller.handleWarehouseChange}
           />
-        ) : null}
+        )}
 
-        {controller.currentStep === 2 ? <PaymentStep /> : null}
+        {controller.currentStep === 2 && <PaymentStep />}
       </Form>
 
       <WizardFooter

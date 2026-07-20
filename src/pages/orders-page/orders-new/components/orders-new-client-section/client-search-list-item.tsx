@@ -36,9 +36,9 @@ export function ClientSearchListItem({
               {formatClientDisplayName(client)}
             </Text>
 
-            {isVipClient(client) ? (
+            {isVipClient(client) && (
               <Tag color="gold">{t("orders.create.client.vip")}</Tag>
-            ) : null}
+            )}
           </Flex>
         }
         description={renderClientMeta(client)}

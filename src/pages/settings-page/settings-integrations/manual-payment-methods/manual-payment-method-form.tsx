@@ -226,11 +226,11 @@ export function ManualPaymentMethodForm({
         <S.ManualPaymentMethodFormActions
           $single={mode === "create" && !onCancel}
         >
-          {onCancel ? (
+          {onCancel && (
             <Button icon={<XIcon />} onClick={onCancel}>
               {t("integrations.manualPayment.actions.cancel")}
             </Button>
-          ) : null}
+          )}
           <Button
             block={mode === "create"}
             htmlType="submit"

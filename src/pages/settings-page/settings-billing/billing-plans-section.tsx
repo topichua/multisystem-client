@@ -70,11 +70,11 @@ export const BillingPlansSection = ({
             data-qa="billing-cycle-yearly"
           >
             {t("billing.plans.cycleYearly")}
-            {yearlyDiscount > 0 ? (
+            {yearlyDiscount > 0 && (
               <S.DiscountBadge>
                 {t("billing.plans.yearlyDiscount", { percent: yearlyDiscount })}
               </S.DiscountBadge>
-            ) : null}
+            )}
           </S.BillingCycleOption>
         </S.BillingCycleToggle>
       </S.BillingCycleToggleWrap>
@@ -99,11 +99,11 @@ export const BillingPlansSection = ({
               $mobile={isMobile}
               data-qa={`billing-plan-card-${plan.slug}`}
             >
-              {highlighted ? (
+              {highlighted && (
                 <S.PlanPopularBadge>
                   {t("billing.plans.popular")}
                 </S.PlanPopularBadge>
-              ) : null}
+              )}
 
               <S.PlanName>{plan.name}</S.PlanName>
 

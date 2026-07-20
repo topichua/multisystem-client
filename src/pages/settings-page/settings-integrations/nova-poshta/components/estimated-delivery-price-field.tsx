@@ -50,7 +50,7 @@ export function EstimatedDeliveryPriceField({
         </Form.Item>
       </Col>
 
-      {isFixedMode ? (
+      {isFixedMode && (
         <Col xs={24} {...columnProps}>
           <Form.Item
             label={t(
@@ -77,7 +77,7 @@ export function EstimatedDeliveryPriceField({
             />
           </Form.Item>
         </Col>
-      ) : null}
+      )}
     </Row>
   );
 }

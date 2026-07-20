@@ -123,14 +123,14 @@ export function MonobankIntegrationCard({
       ) : (
         <Text type="secondary">{statusLabel}</Text>
       )}
-      {integration.connectedAt ? (
+      {integration.connectedAt && (
         <Flex align="center" gap={4}>
           <ClockIcon />
           <Text type="secondary">
             {formatDateTime(integration.connectedAt)}
           </Text>
         </Flex>
-      ) : null}
+      )}
     </S.MobileIntegrationAccountStatusRow>
   );
 
@@ -155,14 +155,14 @@ export function MonobankIntegrationCard({
         }
         fallback={emptyValue}
       />
-      {integration.lastError ? (
+      {integration.lastError && (
         <DetailColumn
           label={t("integrations.monobankDetails.fields.lastError")}
           value={integration.lastError}
           fallback={emptyValue}
           danger
         />
-      ) : null}
+      )}
     </Row>
   );
 

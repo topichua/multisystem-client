@@ -39,11 +39,11 @@ export const OrderProductsTable = ({
               <Text strong>{formatText(item.productTitleSnapshot)}</Text>
               <Text type="secondary">{getVariantLabel(item)}</Text>
 
-              {item.skuSnapshot ? (
+              {item.skuSnapshot && (
                 <Text type="secondary">
                   {t("orders.sku")}: {item.skuSnapshot}
                 </Text>
-              ) : null}
+              )}
             </Flex>
           </Space>
         ),

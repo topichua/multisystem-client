@@ -59,7 +59,7 @@ const MobileOrderStatusCategorySection = ({
         </S.CategoryAddButton>
       </S.CategoryHeader>
 
-      {group.statuses.length > 0 ? (
+      {group.statuses.length > 0 && (
         <S.ListCard>
           <S.StatusTree role="list">
             {group.statuses.map((status) => (
@@ -71,7 +71,7 @@ const MobileOrderStatusCategorySection = ({
             ))}
           </S.StatusTree>
         </S.ListCard>
-      ) : null}
+      )}
     </S.CategorySection>
   );
 };

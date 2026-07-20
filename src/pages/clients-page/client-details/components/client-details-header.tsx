@@ -29,7 +29,7 @@ function ClientSourceTags({ client }: { client: Client }) {
 
   return (
     <>
-      {hasClientInstagramSource(client) ? (
+      {hasClientInstagramSource(client) && (
         <Tag
           icon={<InstagramLogoIcon size={14} />}
           style={{ marginInlineEnd: 0 }}
@@ -37,13 +37,13 @@ function ClientSourceTags({ client }: { client: Client }) {
           {t("clients.source.instagram")}
           {instagramId ? ` · ${instagramId}` : ""}
         </Tag>
-      ) : null}
-      {hasClientTelegramSource(client) ? (
+      )}
+      {hasClientTelegramSource(client) && (
         <Tag style={{ marginInlineEnd: 0 }}>
           {t("clients.source.telegram")}
           {telegramId ? ` · ${telegramId}` : ""}
         </Tag>
-      ) : null}
+      )}
     </>
   );
 }

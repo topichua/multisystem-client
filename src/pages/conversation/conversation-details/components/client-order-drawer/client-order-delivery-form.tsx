@@ -111,7 +111,7 @@ export function ClientOrderDeliveryForm({
       </Form.Item>
 
       <Flex vertical gap={12}>
-        {withoutDelivery ? (
+        {withoutDelivery && (
           <Alert
             showIcon
             className="client-order-no-delivery-alert"
@@ -119,7 +119,7 @@ export function ClientOrderDeliveryForm({
             message={t(drawerKey("withoutDeliveryAlertTitle"))}
             description={t(drawerKey("withoutDeliveryAlertDescription"))}
           />
-        ) : null}
+        )}
 
         <Row gutter={12}>
           <Col span={12}>
@@ -141,7 +141,7 @@ export function ClientOrderDeliveryForm({
           />
         </Form.Item>
 
-        {!withoutDelivery ? (
+        {!withoutDelivery && (
           <>
             <Form.Item
               label={t(drawerKey("deliveryProviderLabel"))}
@@ -303,7 +303,7 @@ export function ClientOrderDeliveryForm({
               <Segmented block options={paymentMethodOptions} />
             </Form.Item>
 
-            {isCashOnDelivery !== false ? (
+            {isCashOnDelivery !== false && (
               <Form.Item
                 label={t(drawerKey("cashOnDeliveryAmountLabel"))}
                 name="cashOnDeliveryAmount"
@@ -317,9 +317,9 @@ export function ClientOrderDeliveryForm({
                   style={{ width: "100%" }}
                 />
               </Form.Item>
-            ) : null}
+            )}
           </>
-        ) : null}
+        )}
 
         <Form.Item
           label={

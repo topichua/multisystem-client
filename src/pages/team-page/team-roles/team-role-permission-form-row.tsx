@@ -84,11 +84,11 @@ export const TeamRolePermissionFormRow = ({
     return (
       <div key={row.item.key} style={rowStyle}>
         <Flex vertical gap={16}>
-          {integrationGrantsError ? (
+          {integrationGrantsError && (
             <Text type="danger">
               {t("team.rolesIntegrationGrantsError")}: {integrationGrantsError}
             </Text>
-          ) : null}
+          )}
           {integrationGrantsLoading ? (
             <Spin />
           ) : integrationGrants.length === 0 ? (

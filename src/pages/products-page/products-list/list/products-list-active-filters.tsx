@@ -62,7 +62,7 @@ export const ProductsListActiveFilters = observer(
           {t("products.listFilters.activeTitle")}
         </Text>
         <Flex gap={8} wrap="wrap" align="center">
-          {hasKeyword ? (
+          {hasKeyword && (
             <Tag
               closable
               onClose={() => {
@@ -74,8 +74,8 @@ export const ProductsListActiveFilters = observer(
                 keyword: productsStore.listKeyword,
               })}
             </Tag>
-          ) : null}
-          {hasSort ? (
+          )}
+          {hasSort && (
             <Tag
               closable
               onClose={() => {
@@ -87,7 +87,7 @@ export const ProductsListActiveFilters = observer(
                 label: t(`products.listSort.${productsStore.listSort}`),
               })}
             </Tag>
-          ) : null}
+          )}
           {productsStore.listCategoryIds.map((id) => (
             <Tag
               key={id}
@@ -104,7 +104,7 @@ export const ProductsListActiveFilters = observer(
               })}
             </Tag>
           ))}
-          {hasStatus && productsStore.listStatus ? (
+          {hasStatus && productsStore.listStatus && (
             <Tag
               closable
               onClose={() => {
@@ -116,8 +116,8 @@ export const ProductsListActiveFilters = observer(
                 label: productStatusFilterLabel(t, productsStore.listStatus),
               })}
             </Tag>
-          ) : null}
-          {hasPrice ? (
+          )}
+          {hasPrice && (
             <Tag
               closable
               onClose={() => {
@@ -127,7 +127,7 @@ export const ProductsListActiveFilters = observer(
             >
               {priceLabel}
             </Tag>
-          ) : null}
+          )}
           <Button
             type="link"
             size="small"

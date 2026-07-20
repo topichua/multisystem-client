@@ -57,11 +57,11 @@ export const InstagramPostCommentItem = ({
             <S.InlineText>{comment.text}</S.InlineText>
           </S.Line>
           <S.ActionRow>
-            {comment.timestamp ? (
+            {comment.timestamp && (
               <Text type="secondary">
                 {formatRelativeTimeShort(comment.timestamp)}
               </Text>
-            ) : null}
+            )}
             <Button
               type="link"
               size="small"

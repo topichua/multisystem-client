@@ -30,16 +30,16 @@ export function IntegrationAccountCard({
       <Title level={5} style={{ margin: 0 }}>
         {integration.name}
       </Title>
-      {integration.userName ? (
+      {integration.userName && (
         <Text type="secondary">@{integration.userName}</Text>
-      ) : null}
-      {integration.postsCount != null ? (
+      )}
+      {integration.postsCount != null && (
         <Text type="secondary">
           {t("instagram.postsCount", {
             count: integration.postsCount,
           })}
         </Text>
-      ) : null}
+      )}
     </>
   );
 
@@ -48,14 +48,14 @@ export function IntegrationAccountCard({
       <S.IntegrationConnectedStatus>
         {t("integrations.connectedTag")}
       </S.IntegrationConnectedStatus>
-      {integration.connectedAt ? (
+      {integration.connectedAt && (
         <Flex align="center" gap={4}>
           <ClockIcon />
           <Text type="secondary">
             {formatDateTime(integration.connectedAt)}
           </Text>
         </Flex>
-      ) : null}
+      )}
     </S.MobileIntegrationAccountStatusRow>
   );
 
@@ -103,11 +103,11 @@ export function IntegrationAccountCard({
             </S.IntegrationConnectedStatus>
             <Flex align="center" gap={4}>
               <ClockIcon />
-              {integration.connectedAt ? (
+              {integration.connectedAt && (
                 <Text type="secondary">
                   {formatDateTime(integration.connectedAt)}
                 </Text>
-              ) : null}
+              )}
             </Flex>
           </Flex>
         </Flex>

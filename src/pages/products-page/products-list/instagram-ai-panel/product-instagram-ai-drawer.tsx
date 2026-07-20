@@ -65,12 +65,12 @@ export const ProductInstagramAiDrawer = ({
         header: isMobile ? { padding: "12px 16px" } : undefined,
       }}
     >
-      {open ? (
+      {open && (
         <ProductInstagramAiDrawerContent
           categoryOptions={categoryOptions}
           onFillProductForm={onFillProductForm}
         />
-      ) : null}
+      )}
     </Drawer>
   );
 };

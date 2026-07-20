@@ -45,14 +45,14 @@ export const MobileTeamRolesListPage = observer(() => {
       </S.Header>
 
       <S.ScrollRegion>
-        {store.listError ? (
+        {store.listError && (
           <Alert
             type="error"
             title={store.listError}
             showIcon
             style={{ marginTop: 16 }}
           />
-        ) : null}
+        )}
 
         {store.listLoading && roles.length === 0 ? (
           <S.StateContainer>
@@ -81,13 +81,13 @@ export const MobileTeamRolesListPage = observer(() => {
                   </S.ColorIconSlot>
                   <S.ItemCopy vertical gap={role.membersCount != null ? 2 : 0}>
                     <S.ItemTitle>{role.name}</S.ItemTitle>
-                    {role.membersCount != null ? (
+                    {role.membersCount != null && (
                       <S.ItemPreview>
                         {t("team.roleMembersCount", {
                           count: role.membersCount,
                         })}
                       </S.ItemPreview>
-                    ) : null}
+                    )}
                   </S.ItemCopy>
                   <S.Caret aria-hidden="true">
                     <CaretRightIcon size={18} />

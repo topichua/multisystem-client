@@ -75,9 +75,9 @@ export const MobileTeamMembersPage = observer(() => {
           </Space>
         </S.Summary>
 
-        {store.listError ? (
+        {store.listError && (
           <Alert type="error" title={store.listError} showIcon />
-        ) : null}
+        )}
 
         {store.listLoading && members.length === 0 ? (
           <S.StateContainer>

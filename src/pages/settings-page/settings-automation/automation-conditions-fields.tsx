@@ -148,7 +148,7 @@ const ConditionBlock = ({
 
   return (
     <S.ConditionBlock>
-      {index > 0 ? (
+      {index > 0 && (
         <S.OrConnector
           type="button"
           onClick={onToggleType}
@@ -161,7 +161,7 @@ const ConditionBlock = ({
               : "automation.logic.or",
           )}
         </S.OrConnector>
-      ) : null}
+      )}
 
       <S.ConditionRow>
         <Form.Item
@@ -225,7 +225,7 @@ const ConditionBlock = ({
         </S.RemoveConditionButton>
       </S.ConditionRow>
 
-      {showAtBranchExtensionUi && !isAtBranchExtensionOpen ? (
+      {showAtBranchExtensionUi && !isAtBranchExtensionOpen && (
         <S.AtBranchExtensionCta
           type="button"
           data-qa="settings-automation-add-at-branch-extension"
@@ -234,9 +234,9 @@ const ConditionBlock = ({
           <PlusIcon size={16} />
           {t("automation.atBranchExtension.add")}
         </S.AtBranchExtensionCta>
-      ) : null}
+      )}
 
-      {showAtBranchExtensionUi && isAtBranchExtensionOpen ? (
+      {showAtBranchExtensionUi && isAtBranchExtensionOpen && (
         <S.AtBranchExtensionRow>
           <S.AtBranchExtensionPrefix>
             <PlusIcon size={14} />
@@ -282,7 +282,7 @@ const ConditionBlock = ({
             <XIcon size={16} />
           </S.RemoveConditionButton>
         </S.AtBranchExtensionRow>
-      ) : null}
+      )}
     </S.ConditionBlock>
   );
 };

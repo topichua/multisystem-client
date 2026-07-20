@@ -141,7 +141,7 @@ export const ProductInventoryStockMovementForm = ({
           onChange={handleModeChange}
         />
 
-        {error ? <Alert type="error" showIcon message={error} /> : null}
+        {error && <Alert type="error" showIcon message={error} />}
 
         <div
           style={{

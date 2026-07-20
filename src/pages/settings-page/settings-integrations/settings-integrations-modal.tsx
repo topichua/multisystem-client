@@ -202,14 +202,14 @@ export const AddIntegrationModal = ({
                                 {t(item.titleKey)}
                               </Typography.Text>
 
-                              {!isConnectable ? (
+                              {!isConnectable && (
                                 <Tag
                                   color="default"
                                   style={{ marginInlineEnd: 0 }}
                                 >
                                   {t("integrations.modal.comingSoon")}
                                 </Tag>
-                              ) : null}
+                              )}
                             </Space>
 
                             <Typography.Paragraph

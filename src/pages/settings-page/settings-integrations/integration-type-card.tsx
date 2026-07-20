@@ -113,17 +113,17 @@ export const IntegrationTypeCard = ({
               <S.IntegrationCardDescription>
                 {t(definition.descriptionKey)}
               </S.IntegrationCardDescription>
-              {hasConnections ? (
+              {hasConnections && (
                 <S.MobileConnectedCount>
                   {t("integrations.mobile.connectedAccountsCount", {
                     count: integrations.length,
                   })}
                 </S.MobileConnectedCount>
-              ) : null}
+              )}
             </S.IntegrationCardText>
           </S.IntegrationCardIdentity>
 
-          {showConnectButton ? connectButton : null}
+          {showConnectButton && connectButton}
         </S.MobileIntegrationCardHeader>
 
         {hasSetupContent ? (

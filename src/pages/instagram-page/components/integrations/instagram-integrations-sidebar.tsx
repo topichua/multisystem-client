@@ -69,22 +69,22 @@ export const InstagramIntegrationsSidebar = ({
                   {(postsCount != null ||
                     integration.followers_count != null) && (
                     <Flex gap={6} align="center">
-                      {postsCount != null ? (
+                      {postsCount != null && (
                         <Text type="secondary">
                           {formatCompactNumber(postsCount)}{" "}
                           {t("instagram.postsLabel")}
                         </Text>
-                      ) : null}
+                      )}
                       {postsCount != null &&
-                      integration.followers_count != null ? (
+                      integration.followers_count != null && (
                         <Text>·</Text>
-                      ) : null}
-                      {integration.followers_count != null ? (
+                      )}
+                      {integration.followers_count != null && (
                         <Text type="secondary">
                           {formatCompactNumber(integration.followers_count)}{" "}
                           {t("instagram.followersLabel")}
                         </Text>
-                      ) : null}
+                      )}
                     </Flex>
                   )}
                 </Flex>

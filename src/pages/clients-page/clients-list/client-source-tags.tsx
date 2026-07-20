@@ -23,16 +23,16 @@ export function ClientSourceTags({ client }: ClientSourceTagsProps) {
 
   return (
     <Flex gap={4} wrap="wrap">
-      {showInstagram ? (
+      {showInstagram && (
         <Tag style={{ margin: 0, borderRadius: 999 }}>
           {t("clients.source.instagram")}
         </Tag>
-      ) : null}
-      {showTelegram ? (
+      )}
+      {showTelegram && (
         <Tag style={{ margin: 0, borderRadius: 999 }}>
           {t("clients.source.telegram")}
         </Tag>
-      ) : null}
+      )}
     </Flex>
   );
 }

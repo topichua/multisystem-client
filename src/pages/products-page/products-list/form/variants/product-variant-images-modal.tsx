@@ -465,7 +465,7 @@ function ProductVariantImagesModalInner({
             </Dragger>
           </Spin>
 
-          {draftMedia.length > 0 ? (
+          {draftMedia.length > 0 && (
             <DndContext
               sensors={sensors}
               collisionDetection={closestCenter}
@@ -489,7 +489,7 @@ function ProductVariantImagesModalInner({
                 </Flex>
               </SortableContext>
             </DndContext>
-          ) : null}
+          )}
         </Flex>
       </Flex>
     </Modal>

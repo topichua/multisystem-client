@@ -25,14 +25,14 @@ export const InstagramIntegrationGate = observer(
 
     return (
       <>
-        {store.listError ? (
+        {store.listError && (
           <Alert
             type="error"
             showIcon
             title={store.listError}
             style={{ marginBottom: 16 }}
           />
-        ) : null}
+        )}
 
         {initialListLoading ? (
           <S.CenteredState>

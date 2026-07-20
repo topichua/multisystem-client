@@ -49,11 +49,11 @@ export const BillingPaymentMethodCard = ({
             <S.PaymentMethodSubtitle>
               {t("billing.paymentMethod.subtitle")}
             </S.PaymentMethodSubtitle>
-            {buttonState.helperKey ? (
+            {buttonState.helperKey && (
               <S.PaidUntilText>
                 {t(buttonState.helperKey, buttonState.helperValues)}
               </S.PaidUntilText>
-            ) : null}
+            )}
           </S.PaymentMethodText>
         </S.PaymentMethodIdentity>
         <S.MobileActionButton

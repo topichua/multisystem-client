@@ -30,7 +30,7 @@ export const ProductsTablePagination = ({
       <PaginationSummary>
         {t("products.pagination.summary", { from, to, total })}
       </PaginationSummary>
-      {total > 0 ? (
+      {total > 0 && (
         <StyledPaginationWrap>
           <Pagination
             current={current}
@@ -41,7 +41,7 @@ export const ProductsTablePagination = ({
             onChange={onChange}
           />
         </StyledPaginationWrap>
-      ) : null}
+      )}
     </PaginationBar>
   );
 };

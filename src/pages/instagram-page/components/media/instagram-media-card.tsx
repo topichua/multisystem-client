@@ -58,12 +58,12 @@ export const InstagramMediaCard = ({
       onKeyDown={handlePostKeyDown}
     >
       <S.PostMedia>
-        {linkedToProduct ? (
+        {linkedToProduct && (
           <S.ProductBadge>
             <CheckIcon size={14} />
             {t("instagram.productBadge")}
           </S.ProductBadge>
-        ) : null}
+        )}
 
         <InstagramPostMediaPreview
           post={post}
@@ -89,9 +89,9 @@ export const InstagramMediaCard = ({
               {formatCompactNumber(post.comments_count)}
             </Flex>
           </S.PostMetric>
-          {productIds.length > 0 ? (
+          {productIds.length > 0 && (
             <S.FilterCount $active>{productIds.length}</S.FilterCount>
-          ) : null}
+          )}
           <S.SelectPostButton type="button" onClick={handleSelectClick}>
             {t("instagram.choosePost")}
             <CaretRightIcon size={14} />
@@ -101,7 +101,7 @@ export const InstagramMediaCard = ({
           <span>{formatPostDate(post.timestamp)}</span>
         </S.PostMetaRow>
         <S.PostMetaRow style={{ marginTop: 20 }}>
-          {post.permalink ? (
+          {post.permalink && (
             <S.ExternalPostLink
               target="_blank"
               rel="noopener noreferrer"
@@ -111,7 +111,7 @@ export const InstagramMediaCard = ({
               {t("instagram.openOnInstagram")}
               <ArrowSquareOutIcon size={14} />
             </S.ExternalPostLink>
-          ) : null}
+          )}
         </S.PostMetaRow>
       </S.PostBody>
     </S.PostCard>

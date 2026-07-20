@@ -194,11 +194,11 @@ export function TelegramQrLoginModal({
           )}
         </Flex>
 
-        {showRetry ? (
+        {showRetry && (
           <Button type="primary" onClick={onRetry}>
             {t("integrations.telegramQr.retry")}
           </Button>
-        ) : null}
+        )}
       </Flex>
     </Modal>
   );

@@ -67,7 +67,7 @@ export const BillingPaymentHistoryMobileList = ({
                 <S.HistoryMobileAmount>
                   {formatBillingAmount(invoice.amount, invoice.currency)}
                 </S.HistoryMobileAmount>
-                {invoice.status === "open" && onPayInvoice ? (
+                {invoice.status === "open" && onPayInvoice && (
                   <Button
                     size="small"
                     loading={payingInvoiceId === invoice.id}
@@ -76,14 +76,14 @@ export const BillingPaymentHistoryMobileList = ({
                   >
                     {t("billing.history.pay")}
                   </Button>
-                ) : null}
+                )}
               </S.HistoryMobileItemFooter>
             </S.HistoryMobileItem>
           ))}
         </S.HistoryMobileList>
       )}
 
-      {total > pageSize ? (
+      {total > pageSize && (
         <S.HistoryMobilePagination>
           <Pagination
             simple
@@ -93,7 +93,7 @@ export const BillingPaymentHistoryMobileList = ({
             onChange={onPageChange}
           />
         </S.HistoryMobilePagination>
-      ) : null}
+      )}
     </Spin>
   );
 };

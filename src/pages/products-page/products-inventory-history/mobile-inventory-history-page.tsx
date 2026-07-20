@@ -92,7 +92,7 @@ export const MobileInventoryHistoryPage = observer(() => {
             }}
           />
 
-          {error ? <S.ErrorText type="danger">{error}</S.ErrorText> : null}
+          {error && <S.ErrorText type="danger">{error}</S.ErrorText>}
 
           <Spin spinning={loading}>
             {items.length === 0 ? (

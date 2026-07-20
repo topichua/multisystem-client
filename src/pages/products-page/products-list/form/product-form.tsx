@@ -147,13 +147,13 @@ export const ProductForm = ({
 
   const formSections = (
     <>
-      {!isMobileViewport ? (
+      {!isMobileViewport && (
         <ProductFormHeader
           title={title}
           subtitle={subtitle}
           onInstagramAiClick={openInstagramAiDrawer}
         />
-      ) : null}
+      )}
 
       <ProductTypeSection
         value={productType}
@@ -183,7 +183,7 @@ export const ProductForm = ({
         isMobile={isMobileViewport}
       />
 
-      {productType === "single" ? (
+      {productType === "single" && (
         <SingleProductCharacteristicsSection
           form={form}
           watchedSingleCharacteristics={
@@ -198,9 +198,9 @@ export const ProductForm = ({
           }
           isMobile={isMobileViewport}
         />
-      ) : null}
+      )}
 
-      {productType === "variants" ? (
+      {productType === "variants" && (
         <ProductVariantsSection
           productVariants={variantsProps.productVariants}
           variantTableColumns={variantsProps.variantTableColumns}
@@ -228,7 +228,7 @@ export const ProductForm = ({
           onApplyPriceToAllVariants={variantsProps.onApplyPriceToAllVariants}
           isMobile={isMobileViewport}
         />
-      ) : null}
+      )}
     </>
   );
 

@@ -59,18 +59,18 @@ export const InstagramPostMediaPreview = ({
 
   return (
     <>
-      {showCarousel ? (
+      {showCarousel && (
         <S.MediaTypeBadge>
           <ImagesIcon size={15} />
           {slides.length}
         </S.MediaTypeBadge>
-      ) : null}
+      )}
 
-      {showSingleVideoBadge ? (
+      {showSingleVideoBadge && (
         <S.MediaTypeBadge>
           <VideoIcon size={15} />
         </S.MediaTypeBadge>
-      ) : null}
+      )}
 
       {slides.length > 0 ? (
         showCarousel ? (

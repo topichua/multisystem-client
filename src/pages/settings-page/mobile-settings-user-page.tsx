@@ -62,11 +62,11 @@ export const MobileSettingsUserPage = observer(() => {
               />
               <UserS.ProfileText>
                 <UserS.ProfileName>{displayName}</UserS.ProfileName>
-                {profileSubtitle ? (
+                {profileSubtitle && (
                   <UserS.ProfileSubtitle>
                     {profileSubtitle}
                   </UserS.ProfileSubtitle>
-                ) : null}
+                )}
               </UserS.ProfileText>
             </UserS.ProfileIdentity>
 

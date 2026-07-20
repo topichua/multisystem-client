@@ -185,9 +185,9 @@ export function MobileProductVariantCard({
             <FieldBlock key={column.fieldStableKey}>
               <FieldLabel>{column.fieldLabel}</FieldLabel>
               <Flex align="center" gap={8}>
-                {swatchColor ? (
+                {swatchColor && (
                   <ColorSwatch $color={swatchColor} aria-hidden />
-                ) : null}
+                )}
                 <Text>{displayValue}</Text>
               </Flex>
             </FieldBlock>
@@ -197,9 +197,9 @@ export function MobileProductVariantCard({
         <FieldBlock>
           <FieldLabel>{t("products.variant.images")}</FieldLabel>
           <Flex align="center" gap={12} wrap="wrap">
-            {mainImage ? (
+            {mainImage && (
               <VariantImageThumb src={mainImage.src} alt="" />
-            ) : null}
+            )}
             <Flex vertical gap={4} style={{ minWidth: 0 }}>
               <Text type="secondary" style={{ fontSize: 12 }}>
                 {t("products.variant.imageCount", {
@@ -244,7 +244,7 @@ export function MobileProductVariantCard({
           </Form.Item>
         </FieldBlock>
 
-        {showQuantityField ? (
+        {showQuantityField && (
           <FieldBlock>
             <FieldLabel>
               {t("products.variant.quantity")} <Text type="danger">*</Text>
@@ -257,7 +257,7 @@ export function MobileProductVariantCard({
               <InputNumber min={0} placeholder="0" style={{ width: "100%" }} />
             </Form.Item>
           </FieldBlock>
-        ) : null}
+        )}
 
         <FieldBlock>
           <FieldLabel>{t("products.variant.discountPrice")}</FieldLabel>

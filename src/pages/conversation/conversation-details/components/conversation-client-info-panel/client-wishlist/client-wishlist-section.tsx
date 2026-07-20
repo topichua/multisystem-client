@@ -80,13 +80,13 @@ export const ClientWishlistSection = observer(
 
     const content = (
       <Flex vertical gap={12}>
-        {addOpen ? (
+        {addOpen && (
           <ClientWishlistAddSearch
             clientId={clientId}
             conversationId={conversationId}
             wishlistedVariantIds={wishlistedVariantIds}
           />
-        ) : null}
+        )}
 
         <ClientWishlistContent
           clientId={clientId}

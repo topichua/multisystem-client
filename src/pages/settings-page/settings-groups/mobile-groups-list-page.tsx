@@ -77,9 +77,9 @@ export const MobileGroupsListPage = observer(() => {
                   </S.ColorIconSlot>
                   <S.ItemCopy vertical gap={secondaryLine ? 2 : 0}>
                     <S.ItemTitle>{group.name}</S.ItemTitle>
-                    {secondaryLine ? (
+                    {secondaryLine && (
                       <S.ItemPreview>{secondaryLine}</S.ItemPreview>
-                    ) : null}
+                    )}
                   </S.ItemCopy>
                   <S.Caret aria-hidden="true">
                     <CaretRightIcon size={18} />

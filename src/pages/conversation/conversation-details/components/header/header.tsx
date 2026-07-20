@@ -90,7 +90,7 @@ export const Header = observer(
 
     return (
       <S.Header>
-        {onBackToList ? (
+        {onBackToList && (
           <S.BackButton
             type="text"
             icon={<ArrowLeftIcon size={20} />}
@@ -98,7 +98,7 @@ export const Header = observer(
             data-qa="conversations-mobile-detail-back"
             onClick={onBackToList}
           />
-        ) : null}
+        )}
 
         {participantAvatar}
 

@@ -31,7 +31,7 @@ export const MobileInstagramPage = observer(() => {
 
       <S.Content>
         <InstagramIntegrationGate controller={controller}>
-          {selectedIntegration ? (
+          {selectedIntegration && (
             <>
               <S.ProfilePanel>
                 <InstagramProfileHeader
@@ -46,7 +46,7 @@ export const MobileInstagramPage = observer(() => {
                 />
               </S.MediaPanel>
             </>
-          ) : null}
+          )}
         </InstagramIntegrationGate>
       </S.Content>
     </S.Root>

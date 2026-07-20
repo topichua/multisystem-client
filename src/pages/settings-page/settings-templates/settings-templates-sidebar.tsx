@@ -50,14 +50,14 @@ export const SettingsTemplatesSidebar = ({
       </PaneSectionHeaderStack>
 
       <PaneScrollRegion data-qa="layout-settings-templates-nav-scroll">
-        {listError ? (
+        {listError && (
           <Alert
             type="error"
             title={listError}
             showIcon
             style={{ margin: "0 8px 12px" }}
           />
-        ) : null}
+        )}
         {listLoading && templates.length === 0 ? (
           <CenteredSpinner minHeight={160} />
         ) : (

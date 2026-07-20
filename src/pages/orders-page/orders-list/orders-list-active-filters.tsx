@@ -66,7 +66,7 @@ export const OrdersListActiveFilters = observer(() => {
         {t("orders.listFilters.activeTitle")}
       </Text>
       <Flex gap={8} wrap="wrap" align="center">
-        {hasKeyword ? (
+        {hasKeyword && (
           <Tag
             closable
             onClose={() => {
@@ -78,7 +78,7 @@ export const OrdersListActiveFilters = observer(() => {
               keyword: ordersStore.listKeyword,
             })}
           </Tag>
-        ) : null}
+        )}
         {ordersStore.listStatusIds.map((statusId) => {
           const status = ordersStore.statusById.get(statusId);
           if (status) {
@@ -122,7 +122,7 @@ export const OrdersListActiveFilters = observer(() => {
             })}
           </Tag>
         ))}
-        {hasTotal ? (
+        {hasTotal && (
           <Tag
             closable
             onClose={() => {
@@ -132,8 +132,8 @@ export const OrdersListActiveFilters = observer(() => {
           >
             {totalLabel}
           </Tag>
-        ) : null}
-        {hasCreated ? (
+        )}
+        {hasCreated && (
           <Tag
             closable
             onClose={() => {
@@ -143,7 +143,7 @@ export const OrdersListActiveFilters = observer(() => {
           >
             {createdLabel}
           </Tag>
-        ) : null}
+        )}
         <Button
           type="link"
           size="small"

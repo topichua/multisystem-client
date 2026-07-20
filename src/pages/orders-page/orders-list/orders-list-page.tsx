@@ -63,11 +63,11 @@ export const OrdersListPage = observer(() => {
       <PaneDetailLayout.Body data-qa="layout-orders-table-scroll">
         <OrdersListToolbar onToggleFilters={() => setFiltersOpen(true)} />
         <OrdersListActiveFilters />
-        {store.listError ? (
+        {store.listError && (
           <Text type="danger" style={{ display: "block", marginBottom: 8 }}>
             {store.listError}
           </Text>
-        ) : null}
+        )}
         <Flex vertical gap={16} style={{ minHeight: 200 }}>
           <Spin spinning={store.listLoading}>
             <Table

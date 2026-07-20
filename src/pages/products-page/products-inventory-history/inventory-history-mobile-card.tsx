@@ -72,11 +72,11 @@ export const InventoryHistoryMobileCard = ({
           </Text>
         </Flex>
 
-        {movementNote ? (
+        {movementNote && (
           <Text type="secondary" italic style={{ fontSize: 13 }}>
             {movementNote}
           </Text>
-        ) : null}
+        )}
 
         <Flex align="center" justify="space-between" gap={8} wrap="wrap">
           <S.TypeBadge $compact $tone={getInventoryHistoryBadgeTone(item.type)}>
@@ -98,7 +98,7 @@ export const InventoryHistoryMobileCard = ({
           avatarSize={24}
         />
 
-        {isSupply && onOpenSupply && isInventoryHistorySupplyItem(item) ? (
+        {isSupply && onOpenSupply && isInventoryHistorySupplyItem(item) && (
           <Button
             type="link"
             icon={<EyeIcon size={16} />}
@@ -107,7 +107,7 @@ export const InventoryHistoryMobileCard = ({
           >
             {t("products.inventoryHistory.viewDetails")}
           </Button>
-        ) : null}
+        )}
       </Flex>
     </MobileCard>
   );

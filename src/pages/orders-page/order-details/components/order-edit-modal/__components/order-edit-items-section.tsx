@@ -104,7 +104,7 @@ export const OrderEditItemsSection = ({
           />
         )}
 
-        {lines.length && (
+        {lines.length > 0 && (
           <S.EditLines>
             {lines.map((line) => (
               <OrderEditLine

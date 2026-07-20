@@ -92,7 +92,7 @@ export const MobileOrderStatusEditorPage = observer(() => {
         <S.HeaderRow align="center" gap={8}>
           <S.ColorDot $color={status.color} aria-hidden="true" />
           <S.PageTitle level={4}>{pageTitle}</S.PageTitle>
-          {status.isSystem ? <OrderStatusSystemBadge /> : null}
+          {status.isSystem && <OrderStatusSystemBadge />}
         </S.HeaderRow>
       </S.PageHeader>
 

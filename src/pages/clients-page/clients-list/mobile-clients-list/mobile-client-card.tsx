@@ -60,7 +60,7 @@ export function MobileClientCard({
           </S.ClientAvatar>
           <S.ClientText>
             <S.ClientName>{displayName}</S.ClientName>
-            {phone ? <S.ClientPhone>{phone}</S.ClientPhone> : null}
+            {phone && <S.ClientPhone>{phone}</S.ClientPhone>}
           </S.ClientText>
         </S.ClientIdentity>
         <MobileClientCardActions

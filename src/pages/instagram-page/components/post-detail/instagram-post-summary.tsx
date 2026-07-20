@@ -52,7 +52,7 @@ export const InstagramPostSummary = ({
           </S.SummaryAccountCopy>
         </S.SummaryAccount>
 
-        {post.permalink ? (
+        {post.permalink && (
           <S.ExternalButton
             type="text"
             href={post.permalink}
@@ -62,7 +62,7 @@ export const InstagramPostSummary = ({
             {t("instagram.openOnInstagram")}
             <ArrowSquareOutIcon size={18} />
           </S.ExternalButton>
-        ) : null}
+        )}
       </S.SummaryHeader>
 
       <S.SummaryBody>

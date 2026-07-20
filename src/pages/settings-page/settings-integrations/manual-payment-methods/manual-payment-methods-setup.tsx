@@ -70,7 +70,7 @@ export function ManualPaymentMethodsSetup({
         onSubmit={(payload) => void handleSubmit(payload)}
       />
 
-      {integrations.length > 0 ? (
+      {integrations.length > 0 && (
         <S.ManualPaymentMethodsList>
           {integrations.map((integration) => (
             <ManualPaymentMethodCard
@@ -80,7 +80,7 @@ export function ManualPaymentMethodsSetup({
             />
           ))}
         </S.ManualPaymentMethodsList>
-      ) : null}
+      )}
     </S.ManualPaymentMethodsSetup>
   );
 }

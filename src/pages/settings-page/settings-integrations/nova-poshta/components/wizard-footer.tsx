@@ -53,7 +53,7 @@ export function WizardFooter({
           {currentStep === 2
             ? t("integrations.novaPoshtaWizard.actions.finish")
             : t("integrations.novaPoshtaWizard.actions.next")}
-          {currentStep !== 2 ? <CaretRightIcon /> : null}
+          {currentStep !== 2 && <CaretRightIcon />}
         </Flex>
       </Button>
     </S.NovaPoshtaWizardFooter>

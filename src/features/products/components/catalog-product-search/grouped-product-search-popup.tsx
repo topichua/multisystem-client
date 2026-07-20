@@ -92,8 +92,7 @@ export function GroupedProductSearchPopup({
               </S.GroupedProductCopy>
             </S.GroupedProductHeaderButton>
 
-            {expanded
-              ? product.variants.map((variant) => {
+            {expanded && product.variants.map((variant) => {
                   const selected = selectedVariantIds.has(variant.id);
                   const disabled = !variant.inStock || selected;
 
@@ -118,8 +117,7 @@ export function GroupedProductSearchPopup({
                       />
                     </S.GroupedVariantButton>
                   );
-                })
-              : null}
+                })}
           </S.GroupedProductSearchGroup>
         );
       })}

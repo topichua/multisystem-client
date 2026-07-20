@@ -86,14 +86,14 @@ export const MobileOrderStatusesListPage = observer(() => {
       </S.Header>
 
       <S.ScrollRegion>
-        {store.statusesError ? (
+        {store.statusesError && (
           <Alert
             type="error"
             title={store.statusesError}
             showIcon
             style={{ marginTop: 16 }}
           />
-        ) : null}
+        )}
 
         {store.statusesLoading && store.statuses.length === 0 ? (
           <S.StateContainer>

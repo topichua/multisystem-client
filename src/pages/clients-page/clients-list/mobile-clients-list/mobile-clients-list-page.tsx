@@ -48,9 +48,9 @@ export const MobileClientsListPage = observer(() => {
           </S.CreateButton>
         </S.Header>
 
-        {store.listError ? (
+        {store.listError && (
           <Alert type="error" title={store.listError} showIcon />
-        ) : null}
+        )}
 
         {store.listLoading && clients.length === 0 ? (
           <S.StateContainer>

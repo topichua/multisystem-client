@@ -67,9 +67,9 @@ export const SettingsAutomationListView = observer(() => {
       </PaneDetailLayout.Header>
 
       <PaneDetailLayout.Body data-qa="layout-settings-automation-body">
-        {store.listError ? (
+        {store.listError && (
           <Alert type="error" title={store.listError} showIcon />
-        ) : null}
+        )}
 
         {store.listLoading && store.rules.length === 0 ? (
           <CenteredSpinner />

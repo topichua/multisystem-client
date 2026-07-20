@@ -187,7 +187,7 @@ export const MobileTeamRoleEditorPage = observer(() => {
           </S.StateContainer>
         )}
 
-        {store.catalog ? (
+        {store.catalog && (
           <S.StickyFooter>
             <S.FooterActions vertical gap={8}>
               <Button
@@ -225,7 +225,7 @@ export const MobileTeamRoleEditorPage = observer(() => {
               </Popconfirm>
             </S.FooterActions>
           </S.StickyFooter>
-        ) : null}
+        )}
       </S.ScrollRegion>
     </S.Root>
   );

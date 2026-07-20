@@ -104,11 +104,11 @@ const SortableProductMediaPreview = ({
         maxWidth: isMobile ? 160 : undefined,
       }}
     >
-      {isMain ? (
+      {isMain && (
         <Tag className="uploaded-media-main-tag" color="purple">
           {texts.mainImageLabel}
         </Tag>
-      ) : null}
+      )}
 
       {!isMobile ? (
         <Button

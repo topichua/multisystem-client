@@ -141,14 +141,14 @@ export const ProductInventoryMovementsFullHistoryDrawer = observer(
         ) : (
           <Flex vertical gap={12}>
             {movements &&
-            displayableMovementsTotal > displayableMovements.length ? (
+            displayableMovementsTotal > displayableMovements.length && (
               <Text type="secondary" style={{ fontSize: 12 }}>
                 {t("products.inventoryDrawer.historyLoadedCount", {
                   count: displayableMovements.length,
                   total: displayableMovementsTotal,
                 })}
               </Text>
-            ) : null}
+            )}
             <ProductInventoryMovementsList
               movementTransitions={movementTransitions}
               currency={currency}

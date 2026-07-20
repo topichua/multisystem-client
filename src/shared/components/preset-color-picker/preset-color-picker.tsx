@@ -74,7 +74,7 @@ export const PresetColorPicker = ({
                 boxSizing: "border-box",
               }}
             >
-              {selected ? (
+              {selected && (
                 <CheckIcon
                   size={16}
                   weight="bold"
@@ -85,7 +85,7 @@ export const PresetColorPicker = ({
                   }}
                   aria-hidden
                 />
-              ) : null}
+              )}
             </button>
           </Tooltip>
         );

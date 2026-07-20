@@ -13,11 +13,11 @@ export const PrintDocumentHeader = ({ order, t }: OrderSectionProps) => (
     </S.PrintDocumentTitle>
 
     <S.PrintDocumentMeta>
-      {order.status ? (
+      {order.status && (
         <span>
           {t("orders.table.status")}: {order.status.name}
         </span>
-      ) : null}
+      )}
       <span>
         {t("orders.createdAt")} {formatDate(order.createdAt)}
       </span>

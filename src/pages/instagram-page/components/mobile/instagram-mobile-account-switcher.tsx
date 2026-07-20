@@ -75,9 +75,9 @@ export const InstagramMobileAccountSwitcher = ({
               <S.AccountName>
                 {formatHandle(integration.username ?? integration.name)}
               </S.AccountName>
-              {metaParts.length > 0 ? (
+              {metaParts.length > 0 && (
                 <S.AccountMeta>{metaParts.join(" · ")}</S.AccountMeta>
-              ) : null}
+              )}
             </S.AccountCopy>
           </S.AccountChip>
         );

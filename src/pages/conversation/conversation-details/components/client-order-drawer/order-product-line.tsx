@@ -55,7 +55,7 @@ export const OrderProductLine = ({
           <VariantWishlistBadge count={variant.wishlistCount} compact />
           <S.ProductName>{variant.label}</S.ProductName>
         </S.ProductNameRow>
-        {meta ? <S.ProductMeta>{meta}</S.ProductMeta> : null}
+        {meta && <S.ProductMeta>{meta}</S.ProductMeta>}
       </S.ProductCopy>
 
       <S.QuantityStepper>

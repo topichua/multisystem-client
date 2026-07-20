@@ -52,7 +52,7 @@ export function OrdersNewPaymentSection({
             onChange={onPaymentMethodChange}
           />
 
-          {paymentMethodValue === "cash_on_delivery" && !withoutDelivery ? (
+          {paymentMethodValue === "cash_on_delivery" && !withoutDelivery && (
             <Form.Item
               label={t(drawerKey("cashOnDeliveryAmountLabel"))}
               name="cashOnDeliveryAmount"
@@ -65,7 +65,7 @@ export function OrdersNewPaymentSection({
                 style={{ width: "100%" }}
               />
             </Form.Item>
-          ) : null}
+          )}
         </Form>
       </S.PaymentFormPanel>
     </S.SectionCard>

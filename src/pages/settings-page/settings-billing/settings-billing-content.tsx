@@ -63,20 +63,20 @@ export const SettingsBillingContent = observer(
           spinning={billingStore.pageLoading || billingStore.syncPaymentLoading}
         >
           <S.BillingStack $mobile={isMobile} data-qa="billing-page-content">
-            {billingStore.pageError ? (
+            {billingStore.pageError && (
               <Text type="danger">{billingStore.pageError}</Text>
-            ) : null}
+            )}
 
             <BillingInfoBar />
 
-            {subscription ? (
+            {subscription && (
               <BillingCurrentPlanCard
                 subscription={subscription}
                 layout={layout}
               />
-            ) : null}
+            )}
 
-            {subscription ? (
+            {subscription && (
               <BillingPlansSection
                 plans={billingStore.plans}
                 subscription={subscription}
@@ -86,18 +86,18 @@ export const SettingsBillingContent = observer(
                 onBillingCycleChange={setSelectedBillingCycle}
                 onSelectPlan={handleSelectPlan}
               />
-            ) : null}
+            )}
 
-            {showAiCreditsBanner && creditPricing ? (
+            {showAiCreditsBanner && creditPricing && (
               <BillingAiCreditsBanner
                 creditPricing={creditPricing}
                 onAdd={handleOpenCreditsModal}
                 layout={layout}
               />
-            ) : null}
+            )}
 
             <S.PaymentBlockAnchor ref={paymentBlockRef}>
-              {subscription ? (
+              {subscription && (
                 <BillingPaymentMethodCard
                   subscription={subscription}
                   invoices={billingStore.invoices}
@@ -106,7 +106,7 @@ export const SettingsBillingContent = observer(
                   onPay={handlePaySubscription}
                   layout={layout}
                 />
-              ) : null}
+              )}
             </S.PaymentBlockAnchor>
 
             <BillingPaymentHistoryTable
@@ -122,7 +122,7 @@ export const SettingsBillingContent = observer(
             />
           </S.BillingStack>
 
-          {billingStore.creditPricing ? (
+          {billingStore.creditPricing && (
             <BillingCreditsPurchaseModal
               open={creditsModalOpen}
               creditPricing={billingStore.creditPricing}
@@ -130,7 +130,7 @@ export const SettingsBillingContent = observer(
               onCancel={handleCloseCreditsModal}
               onConfirm={handlePurchaseCredits}
             />
-          ) : null}
+          )}
         </Spin>
       </S.BillingPageRoot>
     );

@@ -116,7 +116,7 @@ export const MobileProductCard = ({
           </Tag>
         </S.StatusWrap> */}
 
-        {hasMultipleVariants ? (
+        {hasMultipleVariants && (
           <S.ExpandButton
             type="text"
             size="small"
@@ -144,7 +144,7 @@ export const MobileProductCard = ({
             onMouseDown={stopCardNavigation}
             onPointerDown={stopCardNavigation}
           />
-        ) : null}
+        )}
       </S.CardBottomRow>
 
       {hasMultipleVariants && expanded && (
@@ -183,7 +183,7 @@ export const MobileProductCard = ({
         onMouseDown={stopCardNavigation}
         onPointerDown={stopCardNavigation}
       >
-        {showInventoryManagement ? (
+        {showInventoryManagement && (
           <Button
             type="text"
             size="small"
@@ -192,7 +192,7 @@ export const MobileProductCard = ({
             data-qa={`products-mobile-action-inventory-${product.id}`}
             onClick={() => onOpenInventory(product)}
           />
-        ) : null}
+        )}
         <Button
           type="text"
           size="small"

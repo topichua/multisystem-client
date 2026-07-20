@@ -75,7 +75,7 @@ function renderGeneratedCharacteristicValue(
 
   return (
     <Flex align="center" gap={8}>
-      {swatchColor ? <ColorSwatch $color={swatchColor} aria-hidden /> : null}
+      {swatchColor && <ColorSwatch $color={swatchColor} aria-hidden />}
       <Text>{displayValue}</Text>
     </Flex>
   );
@@ -213,9 +213,9 @@ export function useProductAddVariantTableColumns({
 
           return (
             <Flex align="center" gap={8}>
-              {mainImage ? (
+              {mainImage && (
                 <VariantImageThumb src={mainImage.src} alt="" />
-              ) : null}
+              )}
 
               <Flex vertical gap={4} style={{ minWidth: 0 }}>
                 <Text type="secondary" style={{ fontSize: 12 }}>
