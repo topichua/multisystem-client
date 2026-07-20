@@ -197,9 +197,7 @@ export function MobileProductVariantCard({
         <FieldBlock>
           <FieldLabel>{t("products.variant.images")}</FieldLabel>
           <Flex align="center" gap={12} wrap="wrap">
-            {mainImage && (
-              <VariantImageThumb src={mainImage.src} alt="" />
-            )}
+            {mainImage && <VariantImageThumb src={mainImage.src} alt="" />}
             <Flex vertical gap={4} style={{ minWidth: 0 }}>
               <Text type="secondary" style={{ fontSize: 12 }}>
                 {t("products.variant.imageCount", {

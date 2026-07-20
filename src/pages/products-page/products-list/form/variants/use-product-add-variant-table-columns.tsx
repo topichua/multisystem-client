@@ -213,9 +213,7 @@ export function useProductAddVariantTableColumns({
 
           return (
             <Flex align="center" gap={8}>
-              {mainImage && (
-                <VariantImageThumb src={mainImage.src} alt="" />
-              )}
+              {mainImage && <VariantImageThumb src={mainImage.src} alt="" />}
 
               <Flex vertical gap={4} style={{ minWidth: 0 }}>
                 <Text type="secondary" style={{ fontSize: 12 }}>

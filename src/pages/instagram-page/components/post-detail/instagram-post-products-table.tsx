@@ -349,7 +349,9 @@ export const InstagramPostProductsTable = observer(
                       </Text>
                     </Flex>
 
-                    {referenceId != null && showVariantUnlinkButtons && renderUnlinkButton(product.id, referenceId)}
+                    {referenceId != null &&
+                      showVariantUnlinkButtons &&
+                      renderUnlinkButton(product.id, referenceId)}
                   </Flex>
                 </Flex>
               </Card>

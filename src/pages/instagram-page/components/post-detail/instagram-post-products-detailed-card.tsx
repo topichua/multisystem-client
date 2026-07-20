@@ -163,7 +163,9 @@ export const InstagramPostProductsDetailedCard = observer(
                       </Text>
                     </Flex>
 
-                    {referenceId != null && showVariantUnlinkButtons && renderUnlinkButton(product.id, referenceId)}
+                    {referenceId != null &&
+                      showVariantUnlinkButtons &&
+                      renderUnlinkButton(product.id, referenceId)}
                   </Flex>
                 </Flex>
               </Card>
@@ -282,7 +284,8 @@ export const InstagramPostProductsDetailedCard = observer(
                       </Flex>
 
                       <Flex align="center" gap={4} style={{ flexShrink: 0 }}>
-                        {referenceId != null && renderUnlinkButton(product.id, referenceId)}
+                        {referenceId != null &&
+                          renderUnlinkButton(product.id, referenceId)}
                       </Flex>
                     </Flex>
 

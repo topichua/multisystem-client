@@ -92,32 +92,33 @@ export function GroupedProductSearchPopup({
               </S.GroupedProductCopy>
             </S.GroupedProductHeaderButton>
 
-            {expanded && product.variants.map((variant) => {
-                  const selected = selectedVariantIds.has(variant.id);
-                  const disabled = !variant.inStock || selected;
+            {expanded &&
+              product.variants.map((variant) => {
+                const selected = selectedVariantIds.has(variant.id);
+                const disabled = !variant.inStock || selected;
 
-                  return (
-                    <S.GroupedVariantButton
-                      key={variant.id}
-                      type="button"
+                return (
+                  <S.GroupedVariantButton
+                    key={variant.id}
+                    type="button"
+                    disabled={disabled}
+                    $disabled={disabled}
+                    $selected={selected}
+                    onMouseDown={keepProductSearchPopupOpen}
+                    onClick={() => {
+                      if (!disabled) {
+                        onVariantSelect(variant);
+                      }
+                    }}
+                  >
+                    <CatalogVariantSearchRow
                       disabled={disabled}
-                      $disabled={disabled}
-                      $selected={selected}
-                      onMouseDown={keepProductSearchPopupOpen}
-                      onClick={() => {
-                        if (!disabled) {
-                          onVariantSelect(variant);
-                        }
-                      }}
-                    >
-                      <CatalogVariantSearchRow
-                        disabled={disabled}
-                        selected={selected}
-                        variant={variant}
-                      />
-                    </S.GroupedVariantButton>
-                  );
-                })}
+                      selected={selected}
+                      variant={variant}
+                    />
+                  </S.GroupedVariantButton>
+                );
+              })}
           </S.GroupedProductSearchGroup>
         );
       })}

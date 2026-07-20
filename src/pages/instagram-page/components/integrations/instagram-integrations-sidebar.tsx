@@ -76,9 +76,7 @@ export const InstagramIntegrationsSidebar = ({
                         </Text>
                       )}
                       {postsCount != null &&
-                      integration.followers_count != null && (
-                        <Text>·</Text>
-                      )}
+                        integration.followers_count != null && <Text>·</Text>}
                       {integration.followers_count != null && (
                         <Text type="secondary">
                           {formatCompactNumber(integration.followers_count)}{" "}

@@ -78,9 +78,7 @@ export const InstagramPostCommentReplyComposer = ({
         />
       </S.ReplyTarget>
 
-      {submitError && (
-        <Alert type="error" showIcon message={submitError} />
-      )}
+      {submitError && <Alert type="error" showIcon message={submitError} />}
 
       <S.EditorShell>
         <Input.TextArea

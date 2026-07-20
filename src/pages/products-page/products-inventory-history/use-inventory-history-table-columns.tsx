@@ -86,22 +86,22 @@ export function useInventoryHistoryTableColumns({
               )}
 
               {isSupply &&
-              onOpenSupply &&
-              isInventoryHistorySupplyItem(item) && (
-                <Button
-                  type="link"
-                  icon={<EyeIcon size={16} />}
-                  data-qa={`products-inventory-history-view-${item.id}`}
-                  style={{
-                    alignSelf: "flex-start",
-                    padding: 0,
-                    height: "auto",
-                  }}
-                  onClick={() => onOpenSupply(item)}
-                >
-                  {t("products.inventoryHistory.viewDetails")}
-                </Button>
-              )}
+                onOpenSupply &&
+                isInventoryHistorySupplyItem(item) && (
+                  <Button
+                    type="link"
+                    icon={<EyeIcon size={16} />}
+                    data-qa={`products-inventory-history-view-${item.id}`}
+                    style={{
+                      alignSelf: "flex-start",
+                      padding: 0,
+                      height: "auto",
+                    }}
+                    onClick={() => onOpenSupply(item)}
+                  >
+                    {t("products.inventoryHistory.viewDetails")}
+                  </Button>
+                )}
             </S.DetailsCell>
           );
         },
