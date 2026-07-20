@@ -1,22 +1,21 @@
 import { Select, Space } from "antd";
 import { observer } from "mobx-react-lite";
-import { startTransition, useCallback, useMemo, useOptimistic } from "react";
 import type { CSSProperties } from "react";
+import { startTransition, useCallback, useMemo, useOptimistic } from "react";
 import { useTranslation } from "react-i18next";
 
 import { getApiErrorMessage } from "@/api/get-api-error-message";
 import {
-  GroupColoredNameTag,
   GroupColorSwatch,
   GroupOptionWithSwatch,
 } from "@/features/conversation-groups/components/group-select-visuals";
 import { useEnsureOrderStatusesLoaded } from "@/features/orders/model/use-ensure-order-statuses-loaded";
 import { useOrdersStore } from "@/features/orders/model/use-orders-store";
-import { useNotification } from "@/shared/components/notification/use-notification";
 import {
   type OrderStatusSelectOptionData,
   toOrderStatusSelectOptions,
 } from "@/features/orders/order-status-select-options";
+import { useNotification } from "@/shared/components/notification/use-notification";
 
 type OrderStatusSelectProps = {
   orderId: number;
@@ -116,8 +115,8 @@ export const OrderStatusSelect = observer(
 
             return (
               <Space size={8} align="center">
-                <GroupColorSwatch color={status.color} />
-                <GroupColoredNameTag name={status.name} color={status.color} />
+                <GroupColorSwatch shape="circle" color={status.color} />
+                <span style={{ color: status.color }}>{status.name}</span>
               </Space>
             );
           }}

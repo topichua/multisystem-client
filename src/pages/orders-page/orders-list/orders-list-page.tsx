@@ -73,6 +73,7 @@ export const OrdersListPage = observer(() => {
             <Table
               rowKey="id"
               columns={columns}
+              size="middle"
               dataSource={store.orders}
               onRow={(record: OrderListItem) => ({
                 style: { cursor: "pointer" },

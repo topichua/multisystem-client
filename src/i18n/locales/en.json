@@ -2296,11 +2296,13 @@
       "status": "Status",
       "total": "Total",
       "source": "Source",
+      "paymentStatus": "Payment",
       "manager": "Manager",
       "note": "Note",
       "delivery": "Delivery",
       "internalNote": "Internal note",
       "openClientAria": "Open client profile for {{name}} in a new tab",
+      "seeClientOrders": "See all orders for this client",
       "createdAt": "Created"
     },
     "invalidOrderId": "Invalid order ID",

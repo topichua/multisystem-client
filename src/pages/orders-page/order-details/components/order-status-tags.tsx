@@ -5,21 +5,9 @@ import { EMPTY_VALUE } from "../utils/order-details.utils";
 
 const PAYMENT_STATUS_COLORS: Record<string, string> = {
   paid: "green",
-  unpaid: "gold",
+  unpaid: "red",
+  partially_paid: "orange",
   refunded: "purple",
-  cancelled: "red",
-  canceled: "red",
-};
-
-const DELIVERY_STATUS_COLORS: Record<string, string> = {
-  pending: "blue",
-  waybill_created: "cyan",
-  shipped: "processing",
-  at_branch: "orange",
-  delivered: "green",
-  delivery_failed: "red",
-  failed: "red",
-  returned: "purple",
   cancelled: "red",
   canceled: "red",
 };
@@ -38,20 +26,6 @@ export const PaymentStatusTag = ({ value }: StatusTagProps) => {
   return (
     <Tag color={PAYMENT_STATUS_COLORS[value] ?? "default"}>
       {t(`orders.paymentStatus.${value}`, { defaultValue: value })}
-    </Tag>
-  );
-};
-
-export const DeliveryStatusTag = ({ value }: StatusTagProps) => {
-  const { t } = useTranslation();
-
-  if (!value) {
-    return <Typography.Text type="secondary">{EMPTY_VALUE}</Typography.Text>;
-  }
-
-  return (
-    <Tag color={DELIVERY_STATUS_COLORS[value] ?? "default"}>
-      {t(`orders.deliveryStatus.${value}`, { defaultValue: value })}
     </Tag>
   );
 };

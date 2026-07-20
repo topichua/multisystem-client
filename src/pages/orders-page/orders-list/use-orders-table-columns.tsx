@@ -1,10 +1,11 @@
 import type { TableColumnsType } from "antd";
-import { Typography } from "antd";
-import { Tag } from "@/components/tag/tag";
+import { Flex, Tooltip, Typography, Tag } from "antd";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import { getClientDetailsPath } from "@/app/router/pages-map";
+import { DeliveryStatusTag } from "@/features/orders/components/order-delivery-status";
+import { OrderPaymentStatusLabel } from "@/features/orders/components/order-payment-status";
 import { OrderStatusSelect } from "@/features/orders/components/order-status-select";
 import type { OrderListItem } from "@/features/orders/model/order.types";
 import { formatMoney } from "@/features/orders/utils/format-money";
@@ -13,12 +14,12 @@ import { formatDateTime } from "@/utils/date-time";
 
 import {
   formatOrderCustomerName,
-  formatOrderListDelivery,
   formatOrderListSource,
 } from "./order-list-display.utils";
 import { OrderListManagerCell } from "./order-list-manager-cell";
+import { ArrowUpRightIcon } from "@phosphor-icons/react";
 
-const { Text } = Typography;
+const { Text, Link } = Typography;
 
 type UseOrdersTableColumnsParams = {
   members: WorkspaceMember[];
@@ -39,45 +40,43 @@ export function useOrdersTableColumns({
         title: t("orders.table.id"),
         dataIndex: "id",
         key: "id",
-        width: 90,
+        width: 70,
         fixed: "left",
         render: (_, order) => <Text>#{order.id}</Text>,
       },
       {
         title: t("orders.table.customer"),
         key: "customer",
-        width: 180,
         ellipsis: true,
         render: (_, order) => (
-          <Typography.Link
-            href={getClientDetailsPath(order.customerId)}
-            target="_blank"
-            rel="noopener noreferrer"
-            ellipsis
-            aria-label={t("orders.table.openClientAria", {
-              name: formatOrderCustomerName(order),
-            })}
-            onClick={(event) => event.stopPropagation()}
-            onMouseDown={(event) => event.stopPropagation()}
-            style={{ display: "block", minWidth: 0 }}
-          >
+          <Flex align="center" justify="space-between">
             {formatOrderCustomerName(order)}
-          </Typography.Link>
+            <Tooltip title={t("orders.table.seeClientOrders")}>
+              <Link
+                href={getClientDetailsPath(order.customerId)}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={t("orders.table.seeClientOrders")}
+                onClick={(event) => event.stopPropagation()}
+                onMouseDown={(event) => event.stopPropagation()}
+              >
+                <ArrowUpRightIcon size={16} />
+              </Link>
+            </Tooltip>
+          </Flex>
         ),
       },
       {
         title: t("orders.table.source"),
         dataIndex: "source",
         key: "source",
-        width: 120,
-        render: (_, order) => (
-          <Tag color="blue">{formatOrderListSource(order, t)}</Tag>
-        ),
+        width: 100,
+        render: (_, order) => <Tag>{formatOrderListSource(order, t)}</Tag>,
       },
       {
         title: t("orders.table.total"),
         key: "total",
-        width: 130,
+        width: 100,
         render: (_, order) => (
           <Text strong>{formatMoney(order.totalAmount, order.currency)}</Text>
         ),
@@ -100,6 +99,14 @@ export function useOrdersTableColumns({
         ),
       },
       {
+        title: t("orders.table.paymentStatus"),
+        key: "paymentStatus",
+        width: 140,
+        render: (_, order) => (
+          <OrderPaymentStatusLabel status={order.payment.status} />
+        ),
+      },
+      {
         title: t("orders.table.manager"),
         key: "manager",
         width: 180,
@@ -108,20 +115,12 @@ export function useOrdersTableColumns({
         ),
       },
       {
-        title: t("orders.table.note"),
-        dataIndex: "internalNote",
-        key: "internalNote",
-        width: 180,
-        ellipsis: true,
-        render: (value: string | null) => value?.trim() || "—",
-      },
-      {
         title: t("orders.table.delivery"),
         key: "delivery",
         width: 160,
         ellipsis: true,
         render: (_, order) => (
-          <Text ellipsis>{formatOrderListDelivery(order, t)}</Text>
+          <DeliveryStatusTag value={order.delivery?.deliveryStatus} />
         ),
       },
       {

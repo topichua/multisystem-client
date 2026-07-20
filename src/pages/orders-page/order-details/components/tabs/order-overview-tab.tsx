@@ -31,7 +31,8 @@ import {
   getOrderSourceLabel,
 } from "../../utils/order-details.utils";
 import { OrderProductsTable } from "../order-products-table";
-import { DeliveryStatusTag, PaymentStatusTag } from "../order-status-tags";
+import { PaymentStatusTag } from "../order-status-tags";
+import { DeliveryStatusTag } from "@/features/orders/components/order-delivery-status";
 
 const { Text, Paragraph } = Typography;
 
@@ -119,17 +120,17 @@ export const OrderOverviewTab = observer(({ order }: OrderOverviewTabProps) => {
     {
       key: "paymentStatus",
       label: t("orders.paymentStatusLabel"),
-      children: <PaymentStatusTag value={order.paymentStatus} />,
+      children: <PaymentStatusTag value={order.payment.status} />,
     },
     {
       key: "paidAt",
       label: t("orders.paidAt"),
-      children: formatDate(order.paidAt),
+      children: formatDate(order.payment.paidAt),
     },
     {
       key: "paymentReference",
       label: t("orders.paymentReference"),
-      children: formatText(order.paymentReference),
+      children: formatText(order.payment.reference),
     },
   ];
 

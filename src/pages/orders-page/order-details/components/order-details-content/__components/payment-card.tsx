@@ -31,7 +31,7 @@ export const PaymentCard = ({ order, t }: OrderSectionProps) => (
         {
           key: "status",
           label: t("orders.details.paymentStatusField"),
-          value: <PaymentStatusTag value={order.paymentStatus} />,
+          value: <PaymentStatusTag value={order.payment.status} />,
         },
         {
           key: "amount",

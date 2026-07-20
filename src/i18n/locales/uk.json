@@ -2334,11 +2334,13 @@
       "status": "Статус",
       "total": "Сума",
       "source": "Джерело",
+      "paymentStatus": "Оплата",
       "manager": "Менеджер",
       "note": "Нотатка",
       "delivery": "Доставка",
       "internalNote": "Внутрішня нотатка",
       "openClientAria": "Відкрити профіль клієнта {{name}} у новій вкладці",
+      "seeClientOrders": "Переглянути всі замовлення цього клієнта",
       "createdAt": "Створено"
     },
     "invalidOrderId": "Невірний ID замовлення",

@@ -155,12 +155,30 @@ export type OrderCreatedBy = {
 };
 
 export type OrderListDelivery = {
-  id: number;
-  provider: string;
-  deliveryType: OrderDeliveryType | string | null;
-  city: string | null;
-  warehouse: string | null;
+  deliveryStatus: string;
+  deliveryStatusAt: string | null;
   trackingNumber: string | null;
+  deliveryStatusCode: string | null;
+  deliveryStatusText: string | null;
+};
+
+export const ORDER_PAYMENT_STATUSES = [
+  "unpaid",
+  "paid",
+  "partially_paid",
+] as const;
+
+export type OrderPaymentStatus = (typeof ORDER_PAYMENT_STATUSES)[number];
+
+export type OrderListPayment = {
+  manualPaymentMethodId: string | null;
+  paidAmount: number;
+  paidAt: string | null;
+  payments: unknown[] | null;
+  reference: string | null;
+  remainingAmount: number | null;
+  status: OrderPaymentStatus;
+  statusAt: string | null;
 };
 
 export type OrderListItem = {
@@ -169,11 +187,10 @@ export type OrderListItem = {
   customerId: number;
   customer: OrderCustomer;
   conversationId: number | null;
+  integrationId: number | null;
   source: string;
   statusId: number;
   status: OrderStatus;
-  paymentStatus: string;
-  deliveryStatus?: string;
   currency: string;
   subtotalAmount: number;
   discountAmount: number;
@@ -183,8 +200,6 @@ export type OrderListItem = {
   itemsCount?: number;
   customerNote: string | null;
   internalNote: string | null;
-  paidAt: string | null;
-  paymentReference: string | null;
   createdById: number;
   createdBy: OrderCreatedBy | null;
   updatedById: number;
@@ -193,6 +208,8 @@ export type OrderListItem = {
   deliveryId: number | null;
   deliveryType: string | null;
   delivery: OrderListDelivery | null;
+  deliveryInfo: OrderDeliveryInfo | null;
+  payment: OrderListPayment;
 };
 
 export type OrderConversation = {
@@ -214,6 +231,7 @@ export type OrderDeliveryInfo = {
   provider: string;
   providerId: number | null;
   deliveryStatus: string | null;
+  deliveryStatusAt?: string | null;
   recipientName: string | null;
   phone: string | null;
   city: string | null;
@@ -231,7 +249,10 @@ export type OrderDeliveryInfo = {
   providerDocumentRef: string | null;
   isCashOnDelivery: boolean;
   cashOnDeliveryAmount: number | null;
-  canRemoveTracking: boolean;
+  payerType?: OrderDeliveryPayerType | null;
+  deliveryPrice?: number | null;
+  syncedFromTrackingManually?: boolean;
+  canRemoveTracking?: boolean;
   createdAt: string;
   updatedAt: string;
 };
@@ -273,10 +294,7 @@ export type OrderDetailsEvent = {
 
 export type OrderDetails = OrderListItem & {
   conversation: OrderConversation | null;
-  deliveryId: number | null;
-  deliveryType: string | null;
   items: OrderDetailsItem[];
-  deliveryInfo: OrderDeliveryInfo | null;
   canRemoveTracking: boolean;
   canEditItems: boolean;
   events: OrderDetailsEvent[];

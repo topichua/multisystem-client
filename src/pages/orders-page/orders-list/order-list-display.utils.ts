@@ -2,10 +2,7 @@ import type {
   OrderCreatedBy,
   OrderListItem,
 } from "@/features/orders/model/order.types";
-import {
-  getDeliveryProviderLabel,
-  getOrderSourceLabel,
-} from "@/pages/orders-page/order-details/utils/order-details.utils";
+import { getOrderSourceLabel } from "@/pages/orders-page/order-details/utils/order-details.utils";
 
 type TranslateFn = (key: string, options?: Record<string, unknown>) => string;
 
@@ -38,25 +35,4 @@ export function formatOrderListSource(
   translate: TranslateFn,
 ): string {
   return getOrderSourceLabel(translate, order.source);
-}
-
-export function formatOrderListDelivery(
-  order: OrderListItem,
-  translate: TranslateFn,
-): string {
-  if (order.delivery) {
-    const provider = getDeliveryProviderLabel(
-      translate,
-      order.delivery.provider,
-    );
-    const location = order.delivery.warehouse ?? order.delivery.city;
-
-    return [provider, location].filter(Boolean).join(" · ") || provider;
-  }
-
-  if (order.deliveryId != null && order.deliveryType) {
-    return getDeliveryProviderLabel(translate, order.deliveryType);
-  }
-
-  return "—";
 }

@@ -14,7 +14,7 @@ type SwatchProps = {
 
 export const GroupColorSwatch = ({
   color,
-  size = 10,
+  size = 8,
   shape = "square",
 }: SwatchProps) => (
   <span
@@ -24,7 +24,6 @@ export const GroupColorSwatch = ({
       height: size,
       borderRadius: shape === "circle" ? "50%" : size > 12 ? 4 : 2,
       background: color,
-      border: "1px solid rgba(0,0,0,0.12)",
       flexShrink: 0,
     }}
   />
