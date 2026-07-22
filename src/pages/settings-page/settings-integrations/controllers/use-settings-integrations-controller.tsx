@@ -594,13 +594,7 @@ export function useSettingsIntegrationsController() {
         }));
       }
     },
-    [
-      instagramSetup.sessionId,
-      notification,
-      stopInstagramOauthPoll,
-      store,
-      t,
-    ],
+    [instagramSetup.sessionId, notification, stopInstagramOauthPoll, store, t],
   );
 
   const normalizedQuery = useMemo(() => query.trim().toLowerCase(), [query]);

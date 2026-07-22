@@ -22,8 +22,14 @@ function buildPopupFeatures(width: number, height: number): string {
     window.innerHeight ??
     document.documentElement.clientHeight ??
     window.screen.height;
-  const left = Math.max(0, Math.round(dualScreenLeft + (viewportWidth - width) / 2));
-  const top = Math.max(0, Math.round(dualScreenTop + (viewportHeight - height) / 2));
+  const left = Math.max(
+    0,
+    Math.round(dualScreenLeft + (viewportWidth - width) / 2),
+  );
+  const top = Math.max(
+    0,
+    Math.round(dualScreenTop + (viewportHeight - height) / 2),
+  );
 
   return [
     `width=${width}`,
@@ -41,7 +47,8 @@ export function openIntegrationAuthWindow(
 ): Window | null {
   const width = options?.width ?? DEFAULT_POPUP_WIDTH;
   const height = options?.height ?? DEFAULT_POPUP_HEIGHT;
-  const features = options?.popup === true ? buildPopupFeatures(width, height) : undefined;
+  const features =
+    options?.popup === true ? buildPopupFeatures(width, height) : undefined;
   const target = options?.popup === true ? "integration-oauth" : "_blank";
   const authWindow = window.open("about:blank", target, features);
 
@@ -55,7 +62,10 @@ export function openIntegrationAuthWindow(
 export function navigateIntegrationAuthUrl(
   url: string,
   authWindow: Window | null,
-  options?: Pick<OpenIntegrationAuthWindowOptions, "popup" | "width" | "height">,
+  options?: Pick<
+    OpenIntegrationAuthWindowOptions,
+    "popup" | "width" | "height"
+  >,
 ): void {
   if (authWindow && !authWindow.closed) {
     authWindow.location.href = url;
@@ -66,7 +76,9 @@ export function navigateIntegrationAuthUrl(
   const width = options?.width ?? DEFAULT_POPUP_WIDTH;
   const height = options?.height ?? DEFAULT_POPUP_HEIGHT;
   const features =
-    options?.popup === true ? buildPopupFeatures(width, height) : "noopener,noreferrer";
+    options?.popup === true
+      ? buildPopupFeatures(width, height)
+      : "noopener,noreferrer";
   const target = options?.popup === true ? "integration-oauth" : "_blank";
 
   window.open(url, target, features);

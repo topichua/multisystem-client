@@ -6,10 +6,10 @@ import type { OrderEditMode } from "@/pages/orders-page/order-details/order-deta
 import { OrderEditModal } from "@/pages/orders-page/order-details/components/order-edit-modal/order-edit-modal";
 
 import { CustomerCard } from "./__components/customer-card";
-import { DeliveryCard } from "./__components/delivery-card";
+import { DeliveryCard } from "./__components/delivery-card/delivery-card";
 import { HistoryCard } from "./__components/history-card";
 import { NotesCard } from "./__components/notes-card";
-import { PaymentCard } from "./__components/payment-card";
+import { PaymentCard } from "./__components/payment-card/payment-card";
 import { PrintDocumentHeader } from "./__components/print-document-header";
 import { ProductsCard } from "./__components/products-card";
 import type { OrderDetailsContentProps } from "./order-details-content.types";
@@ -23,6 +23,11 @@ export const OrderDetailsContent = ({
   onUpdateDelivery,
   onAttachDeliveryTracking,
   onUpdateOrder,
+  onCreateManualPayment,
+  onCreateOnlinePayment,
+  onConfirmPaymentTransaction,
+  onDeletePayment,
+  onRefreshOrder,
 }: OrderDetailsContentProps) => {
   const { t } = useTranslation();
   const [editMode, setEditMode] = useState<OrderEditMode | null>(null);
@@ -61,7 +66,15 @@ export const OrderDetailsContent = ({
 
         <Col xs={24} lg={8}>
           <Flex vertical gap={24}>
-            <PaymentCard order={order} t={t} />
+            <PaymentCard
+              order={order}
+              t={t}
+              onCreateManualPayment={onCreateManualPayment}
+              onCreateOnlinePayment={onCreateOnlinePayment}
+              onConfirmPaymentTransaction={onConfirmPaymentTransaction}
+              onDeletePayment={onDeletePayment}
+              onRefreshOrder={onRefreshOrder}
+            />
             <NotesCard order={order} t={t} onEdit={setEditMode} />
             <HistoryCard order={order} t={t} />
           </Flex>

@@ -5,7 +5,9 @@ import type {
   OrderDeliveryPayload,
   OrderDeliveryTrackingPayload,
   OrderDetails,
+  OrderManualPaymentPayload,
   OrderNovaPoshtaWaybillPayload,
+  OrderOnlinePaymentPayload,
   OrderUpdatePayload,
 } from "@/features/orders/model/order.types";
 
@@ -27,6 +29,11 @@ export type OrderDetailsContentProps = {
     payload: OrderDeliveryTrackingPayload,
   ) => Promise<void>;
   onUpdateOrder: (payload: OrderUpdatePayload) => Promise<void>;
+  onCreateManualPayment: (payload: OrderManualPaymentPayload) => Promise<void>;
+  onCreateOnlinePayment: (payload: OrderOnlinePaymentPayload) => Promise<void>;
+  onConfirmPaymentTransaction: (transactionId: number) => Promise<void>;
+  onDeletePayment: (paymentId: number) => Promise<void>;
+  onRefreshOrder: () => Promise<void>;
 };
 
 export type InfoItem = {
@@ -57,4 +64,12 @@ export type DeliveryCardProps = OrderSectionProps & {
   onAttachDeliveryTracking: (
     payload: OrderDeliveryTrackingPayload,
   ) => Promise<void>;
+};
+
+export type PaymentCardProps = OrderSectionProps & {
+  onCreateManualPayment: (payload: OrderManualPaymentPayload) => Promise<void>;
+  onCreateOnlinePayment: (payload: OrderOnlinePaymentPayload) => Promise<void>;
+  onConfirmPaymentTransaction: (transactionId: number) => Promise<void>;
+  onDeletePayment: (paymentId: number) => Promise<void>;
+  onRefreshOrder: () => Promise<void>;
 };

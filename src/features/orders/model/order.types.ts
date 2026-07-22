@@ -162,19 +162,95 @@ export type OrderListDelivery = {
   deliveryStatusText: string | null;
 };
 
-export const ORDER_PAYMENT_STATUSES = [
-  "unpaid",
-  "paid",
-  "partially_paid",
-] as const;
+export const ORDER_PAYMENT_STATUSES = ["unpaid", "paid", "partial"] as const;
 
 export type OrderPaymentStatus = (typeof ORDER_PAYMENT_STATUSES)[number];
+
+export type OrderPaymentTransaction = {
+  id: number;
+  workspaceId?: number;
+  orderId?: number;
+  paymentId: number | null;
+  provider: string | null;
+  type: string | null;
+  method: string | null;
+  amount: number;
+  currency: string;
+  status: string;
+  source: string | null;
+  externalTransactionId: string | null;
+  note: string | null;
+  manualPaymentMethodId: number | null;
+  manualPaymentKind?: string | null;
+  confirmedById?: number | null;
+  /** Payment page URL from acquiring provider (field name may vary by backend). */
+  paymentUrl?: string | null;
+  checkoutUrl?: string | null;
+  pageUrl?: string | null;
+  occurredAt: string | null;
+  createdAt: string;
+};
+
+export type OrderManualPaymentPayload = {
+  amount: number;
+  note?: string | null;
+  manualPaymentMethodId: number | null;
+};
+
+export type OrderOnlinePaymentPayload = {
+  amount: number;
+  integrationId: number;
+};
+
+export type OrderOnlinePayment = {
+  id: number;
+  orderId: number;
+  integrationId: number;
+  method: string;
+  provider: string;
+  amount: number;
+  currency: string;
+  status: string;
+  externalPaymentId: string | null;
+  paymentUrl: string | null;
+  expiresAt: string | null;
+  paidAt: string | null;
+  failureReason: string | null;
+  createdById: number | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type OrderPaymentsSummary = {
+  orderId: number;
+  totalAmount: number;
+  paidAmount: number;
+  remainingAmount: number;
+  paymentStatus: OrderPaymentStatus;
+  payments: OrderOnlinePayment[];
+  selectedManualPaymentMethod: unknown | null;
+  selectedManualPaymentKind: string | null;
+};
+
+export type OrderConfirmPaymentTransactionPayload = {
+  occurredAt?: string | null;
+  note?: string | null;
+};
+
+export type OrderPaymentMutationResponse = {
+  orderId: number;
+  paymentStatus: OrderPaymentStatus;
+  totalAmount: number;
+  paidAmount: number;
+  remainingAmount: number;
+  transaction: OrderPaymentTransaction;
+};
 
 export type OrderListPayment = {
   manualPaymentMethodId: string | null;
   paidAmount: number;
   paidAt: string | null;
-  payments: unknown[] | null;
+  payments: OrderPaymentTransaction[] | null;
   reference: string | null;
   remainingAmount: number | null;
   status: OrderPaymentStatus;

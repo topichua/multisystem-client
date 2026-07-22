@@ -7,7 +7,7 @@ import { base } from "@/styled/definitions/colors";
 const PAYMENT_STATUS_DOT_COLOR: Record<OrderPaymentStatus, string> = {
   unpaid: base.red[5],
   paid: base.green[5],
-  partially_paid: base.orange[4],
+  partial: base.orange[4],
 };
 
 const Root = styled.span<{ $color: string }>`

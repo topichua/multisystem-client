@@ -4,13 +4,19 @@ import {
   ORDER_STATUS_CATEGORIES,
   type ClientLastOrder,
   type ClientOrderStats,
+  type OrderConfirmPaymentTransactionPayload,
   type OrderCreatePayload,
   type OrderDetails,
   type OrderListItem,
   type OrderDeliveryPayload,
   type OrderDeliveryTrackingPayload,
+  type OrderManualPaymentPayload,
   type OrderNovaPoshtaWaybillPayload,
   type OrderNovaPoshtaWaybillResponse,
+  type OrderOnlinePayment,
+  type OrderOnlinePaymentPayload,
+  type OrderPaymentMutationResponse,
+  type OrderPaymentsSummary,
   type OrderStatus,
   type OrderStatusCategory,
   type OrderStatusCreatePayload,
@@ -258,6 +264,55 @@ export const ordersApi = {
 
   removeNovaPoshtaWaybill: async (orderId: number): Promise<void> => {
     await apiClient.delete(`${basePath}/${orderId}/novaposhta/waybill`);
+  },
+
+  createManualPayment: async (
+    orderId: number,
+    payload: OrderManualPaymentPayload,
+  ): Promise<OrderPaymentMutationResponse> => {
+    const { data } = await apiClient.post<OrderPaymentMutationResponse>(
+      `${basePath}/${orderId}/payments/manual`,
+      payload,
+    );
+
+    return data;
+  },
+
+  createOnlinePayment: async (
+    orderId: number,
+    payload: OrderOnlinePaymentPayload,
+  ): Promise<OrderOnlinePayment> => {
+    const { data } = await apiClient.post<OrderOnlinePayment>(
+      `${basePath}/${orderId}/payments`,
+      payload,
+    );
+
+    return data;
+  },
+
+  listOrderPayments: async (orderId: number): Promise<OrderPaymentsSummary> => {
+    const { data } = await apiClient.get<OrderPaymentsSummary>(
+      `${basePath}/${orderId}/payments`,
+    );
+
+    return data;
+  },
+
+  confirmPaymentTransaction: async (
+    orderId: number,
+    transactionId: number,
+    payload: OrderConfirmPaymentTransactionPayload = {},
+  ): Promise<OrderPaymentMutationResponse> => {
+    const { data } = await apiClient.post<OrderPaymentMutationResponse>(
+      `${basePath}/${orderId}/payments/transactions/${transactionId}/confirm`,
+      payload,
+    );
+
+    return data;
+  },
+
+  deletePayment: async (orderId: number, paymentId: number): Promise<void> => {
+    await apiClient.delete(`${basePath}/${orderId}/payments/${paymentId}`);
   },
 
   getClientOrders: async (

@@ -5,7 +5,9 @@ import type {
   OrderDeliveryPayload,
   OrderDeliveryTrackingPayload,
   OrderDetails,
+  OrderManualPaymentPayload,
   OrderNovaPoshtaWaybillPayload,
+  OrderOnlinePaymentPayload,
   OrderUpdatePayload,
 } from "@/features/orders/model/order.types";
 import { useOrdersStore } from "@/features/orders/model/use-orders-store";
@@ -137,6 +139,72 @@ export const useOrderDetails = (orderId: number | null) => {
     [orderId, ordersStore],
   );
 
+  const createManualPayment = useCallback(
+    async (payload: OrderManualPaymentPayload): Promise<void> => {
+      if (orderId == null) {
+        return;
+      }
+
+      const updatedOrder = await ordersStore.createManualPayment(
+        orderId,
+        payload,
+      );
+      setOrder(updatedOrder);
+    },
+    [orderId, ordersStore],
+  );
+
+  const createOnlinePayment = useCallback(
+    async (payload: OrderOnlinePaymentPayload): Promise<void> => {
+      if (orderId == null) {
+        return;
+      }
+
+      const updatedOrder = await ordersStore.createOnlinePayment(
+        orderId,
+        payload,
+      );
+      setOrder(updatedOrder);
+    },
+    [orderId, ordersStore],
+  );
+
+  const confirmPaymentTransaction = useCallback(
+    async (transactionId: number): Promise<void> => {
+      if (orderId == null) {
+        return;
+      }
+
+      const updatedOrder = await ordersStore.confirmPaymentTransaction(
+        orderId,
+        transactionId,
+      );
+      setOrder(updatedOrder);
+    },
+    [orderId, ordersStore],
+  );
+
+  const deletePayment = useCallback(
+    async (paymentId: number): Promise<void> => {
+      if (orderId == null) {
+        return;
+      }
+
+      const updatedOrder = await ordersStore.deletePayment(orderId, paymentId);
+      setOrder(updatedOrder);
+    },
+    [orderId, ordersStore],
+  );
+
+  const refreshOrder = useCallback(async (): Promise<void> => {
+    if (orderId == null) {
+      return;
+    }
+
+    const updatedOrder = await ordersStore.reloadOrder(orderId);
+    setOrder(updatedOrder);
+  }, [orderId, ordersStore]);
+
   return {
     order,
     loading,
@@ -147,5 +215,10 @@ export const useOrderDetails = (orderId: number | null) => {
     updateDelivery,
     attachDeliveryTracking,
     updateOrder,
+    createManualPayment,
+    createOnlinePayment,
+    confirmPaymentTransaction,
+    deletePayment,
+    refreshOrder,
   };
 };

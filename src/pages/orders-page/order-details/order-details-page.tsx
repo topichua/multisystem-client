@@ -37,6 +37,11 @@ export const OrderDetailsPage = () => {
     updateDelivery,
     attachDeliveryTracking,
     updateOrder,
+    createManualPayment,
+    createOnlinePayment,
+    confirmPaymentTransaction,
+    deletePayment,
+    refreshOrder,
   } = useOrderDetails(orderId);
 
   const handlePrint = () => {
@@ -71,6 +76,11 @@ export const OrderDetailsPage = () => {
               onUpdateDelivery={updateDelivery}
               onAttachDeliveryTracking={attachDeliveryTracking}
               onUpdateOrder={updateOrder}
+              onCreateManualPayment={createManualPayment}
+              onCreateOnlinePayment={createOnlinePayment}
+              onConfirmPaymentTransaction={confirmPaymentTransaction}
+              onDeletePayment={deletePayment}
+              onRefreshOrder={refreshOrder}
             />
           )}
         </Spin>

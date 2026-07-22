@@ -108,9 +108,7 @@ export const MobileSettingsIntegrationsPage = observer(() => {
                           sessionExpired={
                             controller.instagramSetup.sessionExpired
                           }
-                          errorMessage={
-                            controller.instagramSetup.errorMessage
-                          }
+                          errorMessage={controller.instagramSetup.errorMessage}
                           onContinueWithFacebook={() => {
                             void controller.startInstagramFacebookLogin();
                           }}

@@ -5,13 +5,13 @@ import { TruckIcon } from "@phosphor-icons/react";
 import {
   EMPTY_VALUE,
   getDeliveryProviderLabel,
-} from "../../../utils/order-details.utils";
+} from "../../../../utils/order-details.utils";
 
-import type { DeliveryCardProps } from "../order-details-content.types";
-import { useNovaPoshtaWaybill } from "../hooks/use-nova-poshta-waybill";
-import { DeliveryAddPanel } from "./delivery-card/delivery-add-panel";
-import { DeliveryEmptyState } from "./delivery-card/delivery-empty-state";
-import { DeliverySummary } from "./delivery-card/delivery-summary";
+import type { DeliveryCardProps } from "../../order-details-content.types";
+import { useNovaPoshtaWaybill } from "../../hooks/use-nova-poshta-waybill";
+import { DeliveryAddPanel } from "./delivery-add-panel";
+import { DeliveryEmptyState } from "./delivery-empty-state";
+import { DeliverySummary } from "./delivery-summary";
 
 export const DeliveryCard = ({
   order,

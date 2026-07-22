@@ -6,7 +6,7 @@ import { EMPTY_VALUE } from "../utils/order-details.utils";
 const PAYMENT_STATUS_COLORS: Record<string, string> = {
   paid: "green",
   unpaid: "red",
-  partially_paid: "orange",
+  partial: "orange",
   refunded: "purple",
   cancelled: "red",
   canceled: "red",

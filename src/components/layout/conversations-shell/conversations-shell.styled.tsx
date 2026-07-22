@@ -15,16 +15,11 @@ export const Root = styled.section.attrs(() =>
   min-height: 0;
   min-width: 0;
   overflow: hidden;
-  /* margin: 0 12px 0 0; */
   transition: grid-template-columns 0.16s ease;
 
   & > * {
     min-height: 0;
   }
-  /* border: 1px solid ${(props) =>
-    props.theme.colors.functional.border.cardBase}; */
-  /* border-radius: ${(props) => props.theme.radius.semiLarge}; */
-  /* box-shadow: ${(props) => props.theme.shadow.xl}; */
   background: ${(props) => props.theme.colors.functional.background.elevated};
 
   @media (max-width: 767px) {

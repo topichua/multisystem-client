@@ -17,7 +17,9 @@ import type {
   OrderDeliveryTrackingPayload,
   OrderDetails,
   OrderListItem,
+  OrderManualPaymentPayload,
   OrderNovaPoshtaWaybillPayload,
+  OrderOnlinePaymentPayload,
   OrderStatus,
   OrderStatusCreatePayload,
   OrderStatusUpdatePayload,
@@ -746,6 +748,67 @@ export class OrdersStore {
 
     return updated;
   };
+
+  private withOrderUpdate = async (
+    orderId: number,
+    action: () => Promise<unknown>,
+  ): Promise<OrderDetails> => {
+    runInAction(() => {
+      this.orderUpdateLoading = true;
+    });
+
+    try {
+      await action();
+      const updated = await ordersApi.getById(orderId);
+      runInAction(() => {
+        this.replaceOrderInLists(updated);
+      });
+
+      return updated;
+    } finally {
+      runInAction(() => {
+        this.orderUpdateLoading = false;
+      });
+    }
+  };
+
+  reloadOrder = async (orderId: number): Promise<OrderDetails> => {
+    const updated = await ordersApi.getById(orderId);
+    runInAction(() => {
+      this.replaceOrderInLists(updated);
+    });
+
+    return updated;
+  };
+
+  createManualPayment = (
+    orderId: number,
+    payload: OrderManualPaymentPayload,
+  ): Promise<OrderDetails> =>
+    this.withOrderUpdate(orderId, () =>
+      ordersApi.createManualPayment(orderId, payload),
+    );
+
+  createOnlinePayment = (
+    orderId: number,
+    payload: OrderOnlinePaymentPayload,
+  ): Promise<OrderDetails> =>
+    this.withOrderUpdate(orderId, () =>
+      ordersApi.createOnlinePayment(orderId, payload),
+    );
+
+  confirmPaymentTransaction = (
+    orderId: number,
+    transactionId: number,
+  ): Promise<OrderDetails> =>
+    this.withOrderUpdate(orderId, () =>
+      ordersApi.confirmPaymentTransaction(orderId, transactionId, {}),
+    );
+
+  deletePayment = (orderId: number, paymentId: number): Promise<OrderDetails> =>
+    this.withOrderUpdate(orderId, () =>
+      ordersApi.deletePayment(orderId, paymentId),
+    );
 
   updateOrderStatus = async (
     orderId: number,
