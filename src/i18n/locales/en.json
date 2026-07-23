@@ -1431,6 +1431,18 @@
     "markRead": "Mark read",
     "delete": "Delete",
     "rowActionsAria": "Conversation actions",
+    "grouping": {
+      "aria": "Group conversations",
+      "title": "Group by",
+      "none": "No grouping",
+      "responsible": "By responsible",
+      "status": "By status",
+      "createdAt": "By creation time",
+      "channel": "By channel",
+      "loadError": "Could not load conversation groups",
+      "bucketLoadError": "Could not load conversations",
+      "empty": "No conversations"
+    },
     "filterPopover": {
       "title": "Filters",
       "channels": "Channels",

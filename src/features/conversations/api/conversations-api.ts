@@ -33,6 +33,42 @@ export type ListConversationsParams = {
   keyword?: string;
   unreadOnly?: boolean;
   showWithoutResponsibleOnly?: boolean;
+  groupingBy?: ConversationGroupingBy;
+  groupingId?: string;
+};
+
+export type ConversationGroupingBy =
+  | "responsible"
+  | "status"
+  | "createdAt"
+  | "channel";
+
+export type ConversationGroupBucketChannel = {
+  integrationId: number;
+  type: ConversationChannel;
+  name: string;
+};
+
+export type ConversationGroupBucketMeta = {
+  responsibleMemberId: number | null;
+  groupId: number | null;
+  systemKey: string;
+  color: string;
+  createdAtBucket: string;
+  channel: ConversationGroupBucketChannel | null;
+};
+
+export type ConversationGroupBucket = {
+  key: string;
+  label: string;
+  count: number;
+  meta: ConversationGroupBucketMeta;
+};
+
+export type ConversationGroupsResult = {
+  by: ConversationGroupingBy;
+  total: number;
+  items: ConversationGroupBucket[];
 };
 
 export type ConversationCriteriaChannel = {
@@ -84,6 +120,14 @@ export const createOptimisticOutboundMessage = (
 
 const isConversationChannel = (value: unknown): value is ConversationChannel =>
   value === "instagram" || value === "telegram";
+
+const isConversationGroupingBy = (
+  value: unknown,
+): value is ConversationGroupingBy =>
+  value === "responsible" ||
+  value === "status" ||
+  value === "createdAt" ||
+  value === "channel";
 
 const isConversationSource = (value: unknown): value is ConversationSource =>
   value === 1 || value === 2;
@@ -171,6 +215,12 @@ const buildListQuery = (
 
   if (params?.showWithoutResponsibleOnly) {
     query.show_without_responsible_only = "true";
+  }
+
+  const groupingId = params?.groupingId?.trim();
+  if (params?.groupingBy && groupingId) {
+    query.grouping_by = params.groupingBy;
+    query.grouping_id = groupingId;
   }
 
   return Object.keys(query).length > 0 ? query : undefined;
@@ -314,6 +364,75 @@ const normalizeConversationCriteria = (raw: unknown): ConversationCriteria => {
   };
 };
 
+const normalizeConversationGroupBucketChannel = (
+  raw: unknown,
+): ConversationGroupBucketChannel | null => {
+  const record = getRecord(raw);
+  const integrationId = getOptionalNumber(record.integrationId);
+
+  if (integrationId == null) {
+    return null;
+  }
+
+  return {
+    integrationId,
+    type: isConversationChannel(record.type) ? record.type : "instagram",
+    name: getString(record.name),
+  };
+};
+
+const normalizeConversationGroupBucketMeta = (
+  raw: unknown,
+): ConversationGroupBucketMeta => {
+  const record = getRecord(raw);
+
+  return {
+    responsibleMemberId: getOptionalNumber(record.responsibleMemberId),
+    groupId: getOptionalNumber(record.groupId),
+    systemKey: getString(record.systemKey),
+    color: getString(record.color),
+    createdAtBucket: getString(record.createdAtBucket),
+    channel:
+      record.channel == null
+        ? null
+        : normalizeConversationGroupBucketChannel(record.channel),
+  };
+};
+
+const normalizeConversationGroupBucket = (
+  raw: unknown,
+): ConversationGroupBucket | null => {
+  const record = getRecord(raw);
+  const key = getString(record.key).trim();
+
+  if (!key) {
+    return null;
+  }
+
+  return {
+    key,
+    label: getString(record.label, key),
+    count: getNumber(record.count),
+    meta: normalizeConversationGroupBucketMeta(record.meta),
+  };
+};
+
+const normalizeConversationGroups = (
+  raw: unknown,
+  fallbackBy: ConversationGroupingBy,
+): ConversationGroupsResult => {
+  const record = getRecord(raw);
+  const items = Array.isArray(record.items) ? record.items : [];
+
+  return {
+    by: isConversationGroupingBy(record.by) ? record.by : fallbackBy,
+    total: getNumber(record.total),
+    items: items
+      .map(normalizeConversationGroupBucket)
+      .filter((item): item is ConversationGroupBucket => item !== null),
+  };
+};
+
 export const mergeLatestMessagesPageWithSendResult = (
   pageMessages: ConversationMessage[],
   raw: SendMessageApiResponse | ConversationMessage,
@@ -394,6 +513,16 @@ export const conversationsApi = {
       conversations,
       counters: normalizeListCounters(data, conversations),
     };
+  },
+
+  groups: async (
+    by: ConversationGroupingBy,
+  ): Promise<ConversationGroupsResult> => {
+    const { data } = await apiClient.get<unknown>(`${basePath}/groups`, {
+      params: { by },
+    });
+
+    return normalizeConversationGroups(data, by);
   },
 
   update: async (

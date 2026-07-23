@@ -1,4 +1,4 @@
-import { CaretLeftIcon } from "@phosphor-icons/react";
+import { CaretDoubleLeftIcon } from "@phosphor-icons/react";
 import { Tooltip, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
@@ -147,8 +147,9 @@ export const AppSider = observer(() => {
             {isExpanded && (
               <S.CollapseButton
                 type="text"
+                size="small"
                 aria-label={t("nav.collapseSiderAria")}
-                icon={<CaretLeftIcon size={18} />}
+                icon={<CaretDoubleLeftIcon size={18} />}
                 onClick={closeSider}
               />
             )}

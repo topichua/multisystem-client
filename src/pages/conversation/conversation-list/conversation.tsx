@@ -19,6 +19,8 @@ import { useEnsureWorkspaceMembersLoaded } from "@/features/workspace-members/mo
 
 import { ConversationRowSkeleton } from "./components/conversation-row-skeleton";
 import { ConversationFiltersPopover } from "./conversation-filters-popover";
+import { ConversationGroupedList } from "./conversation-grouped-list";
+import { ConversationGroupingDropdown } from "./conversation-grouping-dropdown";
 import type { ConversationPanelProps } from "./conversation-panel.types";
 import { ConversationRow } from "./conversation-row";
 import * as S from "./conversation.styled";
@@ -51,6 +53,7 @@ export const Conversation = observer(
       sortedConversations,
       listLoading,
       listCounters,
+      conversationGroupingBy,
       conversationListSegment,
       setConversationListSegment,
       setConversationListKeyword,
@@ -124,8 +127,13 @@ export const Conversation = observer(
 
     return (
       <S.Conversation $variant={variant}>
-        <Flex justify="space-between" gap={12}>
-          <Title level={4}>{t("conversations.title")}</Title>
+        <Flex align="center" justify="space-between" gap={12}>
+          <Flex align="center" justify="space-between" style={{ flex: 1 }}>
+            <Title level={4}>{t("conversations.title")}</Title>
+            <ConversationGroupingDropdown
+              size={isMobile ? "large" : "middle"}
+            />
+          </Flex>
           {!isMobile && (
             <S.HeaderActions>
               <S.ExpandButton
@@ -169,29 +177,37 @@ export const Conversation = observer(
         </Flex>
 
         <S.ListScroll $variant={variant}>
-          <Spin spinning={listLoading}>
-            <Flex
-              vertical
-              gap={2}
-              style={{ minHeight: listLoading ? 120 : undefined }}
-            >
-              {showSkeleton
-                ? SKELETON_ROW_KEYS.map((i) => (
-                    <ConversationRowSkeleton key={i} />
-                  ))
-                : visibleConversations.map((conversation) => (
-                    <ConversationRow
-                      key={conversation.id}
-                      conversation={conversation}
-                      conversationId={conversationId}
-                      onNavigate={(id) =>
-                        navigate(`${pagesMap.conversations}/${id}`)
-                      }
-                      onSelect={onSelect}
-                    />
-                  ))}
-            </Flex>
-          </Spin>
+          {conversationGroupingBy == null ? (
+            <Spin spinning={listLoading}>
+              <Flex
+                vertical
+                gap={2}
+                style={{ minHeight: listLoading ? 120 : undefined }}
+              >
+                {showSkeleton
+                  ? SKELETON_ROW_KEYS.map((i) => (
+                      <ConversationRowSkeleton key={i} />
+                    ))
+                  : visibleConversations.map((conversation) => (
+                      <ConversationRow
+                        key={conversation.id}
+                        conversation={conversation}
+                        conversationId={conversationId}
+                        onNavigate={(id) =>
+                          navigate(`${pagesMap.conversations}/${id}`)
+                        }
+                        onSelect={onSelect}
+                      />
+                    ))}
+              </Flex>
+            </Spin>
+          ) : (
+            <ConversationGroupedList
+              conversationId={conversationId}
+              onNavigate={(id) => navigate(`${pagesMap.conversations}/${id}`)}
+              onSelect={onSelect}
+            />
+          )}
         </S.ListScroll>
       </S.Conversation>
     );

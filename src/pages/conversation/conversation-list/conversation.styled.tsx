@@ -1,4 +1,4 @@
-import { Typography } from "antd";
+import { Collapse, Typography } from "antd";
 import styled from "styled-components";
 
 import { dataQaAttrs } from "@/styled/data-qa-attrs";
@@ -103,6 +103,73 @@ export const ListScroll = styled.div.attrs(() =>
     $variant === "mobile"
       ? "calc(24px + env(safe-area-inset-bottom, 0px))"
       : "16px"};
+`;
+
+export const GroupingCollapse = styled(Collapse)`
+  && {
+    background: transparent;
+  }
+
+  && > .ant-collapse-item {
+    border: 0;
+  }
+
+  && .ant-collapse-header {
+    align-items: center !important;
+    padding: 7px 4px !important;
+  }
+
+  && .ant-collapse-expand-icon {
+    color: ${({ theme }) => theme.colors.functional.text.subdued};
+    padding-inline-end: 6px !important;
+  }
+
+  && .ant-collapse-content-box {
+    padding: 0 0 6px !important;
+  }
+`;
+
+export const GroupingHeaderLabel = styled.span`
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+`;
+
+export const GroupingHeaderName = styled.span`
+  min-width: 0;
+  overflow: hidden;
+  color: ${({ theme }) => theme.colors.functional.text.subdued};
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 18px;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+`;
+
+export const GroupingStatusDot = styled.span<{ $color: string }>`
+  width: 8px;
+  height: 8px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: ${({ $color }) => $color};
+`;
+
+export const GroupingChannelIcon = styled.span`
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const GroupingBucketRows = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 `;
 
 export const Title = styled(AntdTitle)`

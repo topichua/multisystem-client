@@ -5,6 +5,8 @@ import {
   createOptimisticOutboundMessage,
   mergeLatestMessagesPageWithSendResult,
   normalizeSentMessage,
+  type ConversationGroupBucket,
+  type ConversationGroupingBy,
   type ConversationListCounters,
   type ListConversationsParams,
 } from "@/features/conversations/api/conversations-api";
@@ -56,6 +58,25 @@ const normalizeListGroupFilterIds = (ids: number[]): number[] =>
 
 const sameSortedNumberList = (a: number[], b: number[]): boolean =>
   a.length === b.length && a.every((id, i) => id === b[i]);
+
+const normalizeExpandedGroupingKeys = (
+  keys: string[],
+  allowedKeys: string[],
+): string[] => {
+  const allowed = new Set(allowedKeys);
+  const result: string[] = [];
+
+  keys.forEach((key) => {
+    if (allowed.has(key) && !result.includes(key)) {
+      result.push(key);
+    }
+  });
+
+  return result;
+};
+
+const sameStringList = (a: string[], b: string[]): boolean =>
+  a.length === b.length && a.every((key, i) => key === b[i]);
 
 const createClientTempId = (): string => {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
@@ -147,6 +168,12 @@ export class ConversationStore {
   conversationListKeyword = "";
   conversationListChannelIds: number[] = [];
   conversationListResponsibleUserIds: number[] = [];
+  conversationGroupingBy: ConversationGroupingBy | null = null;
+  conversationGroupingBuckets: ConversationGroupBucket[] = [];
+  expandedConversationGroupingKeys: string[] = [];
+  groupedConversationsByKey: Record<string, Conversation[]> = {};
+  groupedConversationsLoadingByKey: Record<string, boolean | undefined> = {};
+  groupedConversationsErrorByKey: Record<string, string | undefined> = {};
   listCounters: ConversationListCounters = EMPTY_LIST_COUNTERS;
   messagesByConversationId: Record<string, ConversationMessage[]> = {};
   messagesPagingByConversationId: Record<string, MessagesPaging | undefined> =
@@ -158,6 +185,8 @@ export class ConversationStore {
 
   listLoading = false;
   listError: string | null = null;
+  conversationGroupingBucketsLoading = false;
+  conversationGroupingBucketsError: string | null = null;
 
   messagesLoadingConversationId: string | null = null;
   messagesLoadingMoreConversationId: string | null = null;
@@ -169,6 +198,11 @@ export class ConversationStore {
   _messageListMutationGeneration = new Map<string, number>();
   _messagesRequestIdByConversationId = new Map<string, number>();
   _messagesRequestSeq = 0;
+  _conversationGroupingBucketsRequestSeq = 0;
+  _conversationGroupingBucketsRequestId = 0;
+  _groupedConversationsRequestIdByKey = new Map<string, number>();
+  _groupedConversationsRequestSeq = 0;
+  _conversationGroupingExpansionInitialized = false;
   _productSuggestionsRequestIdByConversationId = new Map<string, number>();
   _productSuggestionsRequestSeq = 0;
 
@@ -180,6 +214,11 @@ export class ConversationStore {
       _messageListMutationGeneration: false,
       _messagesRequestIdByConversationId: false,
       _messagesRequestSeq: false,
+      _conversationGroupingBucketsRequestSeq: false,
+      _conversationGroupingBucketsRequestId: false,
+      _groupedConversationsRequestIdByKey: false,
+      _groupedConversationsRequestSeq: false,
+      _conversationGroupingExpansionInitialized: false,
       _productSuggestionsRequestIdByConversationId: false,
       _productSuggestionsRequestSeq: false,
     });
@@ -193,6 +232,12 @@ export class ConversationStore {
     return (
       this.conversationListChannelIds.length > 0 ||
       this.conversationListResponsibleUserIds.length > 0
+    );
+  }
+
+  get visibleConversationGroupingBuckets(): ConversationGroupBucket[] {
+    return this.filterConversationGroupingBucketsForCurrentGroupFilter(
+      this.conversationGroupingBuckets,
     );
   }
 
@@ -277,6 +322,92 @@ export class ConversationStore {
     });
   };
 
+  private clearConversationGroupingData = (): void => {
+    this.conversationGroupingBuckets = [];
+    this.expandedConversationGroupingKeys = [];
+    this.groupedConversationsByKey = {};
+    this.groupedConversationsLoadingByKey = {};
+    this.groupedConversationsErrorByKey = {};
+    this.conversationGroupingBucketsLoading = false;
+    this.conversationGroupingBucketsError = null;
+    this._conversationGroupingBucketsRequestId = 0;
+    this._groupedConversationsRequestIdByKey.clear();
+    this._conversationGroupingExpansionInitialized = false;
+  };
+
+  private clearGroupedConversations = (): void => {
+    this.groupedConversationsByKey = {};
+    this.groupedConversationsLoadingByKey = {};
+    this.groupedConversationsErrorByKey = {};
+    this._groupedConversationsRequestIdByKey.clear();
+  };
+
+  private refreshGroupedConversationsAfterListParamsChange = (): void => {
+    if (this.conversationGroupingBy == null) {
+      return;
+    }
+
+    runInAction(() => {
+      this.clearGroupedConversations();
+    });
+
+    void this.loadConversationGroupingBuckets(this.conversationGroupingBy);
+  };
+
+  private reloadConversationsAfterListParamsChange = (): void => {
+    void this.loadConversations();
+    this.refreshGroupedConversationsAfterListParamsChange();
+  };
+
+  private filterConversationGroupingBucketsForCurrentGroupFilter = (
+    buckets: ConversationGroupBucket[],
+  ): ConversationGroupBucket[] => {
+    if (
+      this.conversationGroupingBy !== "status" ||
+      this.conversationListGroupFilterIds.length === 0
+    ) {
+      return buckets;
+    }
+
+    const selectedGroupIds = new Set(this.conversationListGroupFilterIds);
+
+    return buckets.filter(
+      (bucket) =>
+        bucket.meta.groupId != null &&
+        selectedGroupIds.has(bucket.meta.groupId),
+    );
+  };
+
+  private createConversationGroupingBucketsRequestId = (): number => {
+    const requestId = this._conversationGroupingBucketsRequestSeq + 1;
+
+    this._conversationGroupingBucketsRequestSeq = requestId;
+    this._conversationGroupingBucketsRequestId = requestId;
+
+    return requestId;
+  };
+
+  private isLatestConversationGroupingBucketsRequest = (
+    requestId: number,
+  ): boolean => this._conversationGroupingBucketsRequestId === requestId;
+
+  private createGroupedConversationsRequestId = (
+    groupingKey: string,
+  ): number => {
+    const requestId = this._groupedConversationsRequestSeq + 1;
+
+    this._groupedConversationsRequestSeq = requestId;
+    this._groupedConversationsRequestIdByKey.set(groupingKey, requestId);
+
+    return requestId;
+  };
+
+  private isLatestGroupedConversationsRequest = (
+    groupingKey: string,
+    requestId: number,
+  ): boolean =>
+    this._groupedConversationsRequestIdByKey.get(groupingKey) === requestId;
+
   setConversationListGroupFilterIds = (ids: number[]): void => {
     const normalized = normalizeListGroupFilterIds(ids);
 
@@ -286,9 +417,12 @@ export class ConversationStore {
 
     runInAction(() => {
       this.conversationListGroupFilterIds = normalized;
+      if (this.conversationGroupingBy != null) {
+        this._conversationGroupingExpansionInitialized = false;
+      }
     });
 
-    void this.loadConversations();
+    this.reloadConversationsAfterListParamsChange();
   };
 
   setConversationListSegment = (segment: ConversationListSegment): void => {
@@ -300,7 +434,7 @@ export class ConversationStore {
       this.conversationListSegment = segment;
     });
 
-    void this.loadConversations();
+    this.reloadConversationsAfterListParamsChange();
   };
 
   setConversationListKeyword = (keyword: string): void => {
@@ -314,7 +448,7 @@ export class ConversationStore {
       this.conversationListKeyword = normalized;
     });
 
-    void this.loadConversations();
+    this.reloadConversationsAfterListParamsChange();
   };
 
   setConversationListChannelIds = (ids: number[]): void => {
@@ -328,7 +462,7 @@ export class ConversationStore {
       this.conversationListChannelIds = normalized;
     });
 
-    void this.loadConversations();
+    this.reloadConversationsAfterListParamsChange();
   };
 
   setConversationListResponsibleUserIds = (ids: number[]): void => {
@@ -344,7 +478,7 @@ export class ConversationStore {
       this.conversationListResponsibleUserIds = normalized;
     });
 
-    void this.loadConversations();
+    this.reloadConversationsAfterListParamsChange();
   };
 
   applyConversationListFilters = (filters: ConversationListFilters): void => {
@@ -368,7 +502,181 @@ export class ConversationStore {
       this.conversationListResponsibleUserIds = responsibleUserIds;
     });
 
+    this.reloadConversationsAfterListParamsChange();
+  };
+
+  setConversationGroupingBy = (
+    groupingBy: ConversationGroupingBy | null,
+  ): void => {
+    if (this.conversationGroupingBy === groupingBy) {
+      return;
+    }
+
+    runInAction(() => {
+      this.conversationGroupingBy = groupingBy;
+      this.clearConversationGroupingData();
+    });
+
     void this.loadConversations();
+
+    if (groupingBy != null) {
+      void this.loadConversationGroupingBuckets(groupingBy);
+    }
+  };
+
+  setExpandedConversationGroupingKeys = (keys: string[]): void => {
+    const bucketKeys = this.conversationGroupingBuckets.map(
+      (bucket) => bucket.key,
+    );
+    const normalized = normalizeExpandedGroupingKeys(keys, bucketKeys);
+
+    if (sameStringList(this.expandedConversationGroupingKeys, normalized)) {
+      return;
+    }
+
+    runInAction(() => {
+      this.expandedConversationGroupingKeys = normalized;
+      this._conversationGroupingExpansionInitialized = true;
+    });
+
+    normalized.forEach((key) => {
+      void this.loadConversationGroupingBucketConversations(key);
+    });
+  };
+
+  loadConversationGroupingBuckets = async (
+    groupingBy: ConversationGroupingBy,
+  ): Promise<void> => {
+    const requestId = this.createConversationGroupingBucketsRequestId();
+
+    runInAction(() => {
+      this.conversationGroupingBucketsLoading = true;
+      this.conversationGroupingBucketsError = null;
+    });
+
+    try {
+      const result = await conversationsApi.groups(groupingBy);
+
+      if (
+        !this.isLatestConversationGroupingBucketsRequest(requestId) ||
+        this.conversationGroupingBy !== groupingBy
+      ) {
+        return;
+      }
+
+      const visibleBuckets =
+        this.filterConversationGroupingBucketsForCurrentGroupFilter(
+          result.items,
+        );
+      const bucketKeys = visibleBuckets.map((bucket) => bucket.key);
+      const expandedKeys = this._conversationGroupingExpansionInitialized
+        ? normalizeExpandedGroupingKeys(
+            this.expandedConversationGroupingKeys,
+            bucketKeys,
+          )
+        : bucketKeys;
+
+      runInAction(() => {
+        this.conversationGroupingBuckets = result.items;
+        this.expandedConversationGroupingKeys = expandedKeys;
+        this._conversationGroupingExpansionInitialized = true;
+      });
+
+      expandedKeys.forEach((key) => {
+        void this.loadConversationGroupingBucketConversations(key);
+      });
+    } catch (e) {
+      if (
+        !this.isLatestConversationGroupingBucketsRequest(requestId) ||
+        this.conversationGroupingBy !== groupingBy
+      ) {
+        return;
+      }
+
+      runInAction(() => {
+        this.conversationGroupingBuckets = [];
+        this.expandedConversationGroupingKeys = [];
+        this.conversationGroupingBucketsError = unknownErrorMessage(e);
+      });
+      console.error(`Failed to load conversation groups by ${groupingBy}:`, e);
+    } finally {
+      if (this.isLatestConversationGroupingBucketsRequest(requestId)) {
+        runInAction(() => {
+          this.conversationGroupingBucketsLoading = false;
+        });
+      }
+    }
+  };
+
+  loadConversationGroupingBucketConversations = async (
+    groupingId: string,
+  ): Promise<void> => {
+    const groupingBy = this.conversationGroupingBy;
+
+    if (groupingBy == null) {
+      return;
+    }
+
+    if (this.groupedConversationsByKey[groupingId] != null) {
+      return;
+    }
+
+    const requestId = this.createGroupedConversationsRequestId(groupingId);
+
+    runInAction(() => {
+      this.groupedConversationsLoadingByKey = {
+        ...this.groupedConversationsLoadingByKey,
+        [groupingId]: true,
+      };
+      this.groupedConversationsErrorByKey = {
+        ...this.groupedConversationsErrorByKey,
+        [groupingId]: undefined,
+      };
+    });
+
+    try {
+      const { conversations } = await conversationsApi.list(
+        this.buildGroupingListParams(groupingBy, groupingId),
+      );
+
+      if (
+        !this.isLatestGroupedConversationsRequest(groupingId, requestId) ||
+        this.conversationGroupingBy !== groupingBy
+      ) {
+        return;
+      }
+
+      runInAction(() => {
+        this.groupedConversationsByKey = {
+          ...this.groupedConversationsByKey,
+          [groupingId]: sortConversationsByInstUpdatedAt(conversations),
+        };
+      });
+    } catch (e) {
+      if (!this.isLatestGroupedConversationsRequest(groupingId, requestId)) {
+        return;
+      }
+
+      runInAction(() => {
+        this.groupedConversationsErrorByKey = {
+          ...this.groupedConversationsErrorByKey,
+          [groupingId]: unknownErrorMessage(e),
+        };
+      });
+      console.error(
+        `Failed to load conversations for ${groupingBy} group ${groupingId}:`,
+        e,
+      );
+    } finally {
+      if (this.isLatestGroupedConversationsRequest(groupingId, requestId)) {
+        runInAction(() => {
+          this.groupedConversationsLoadingByKey = {
+            ...this.groupedConversationsLoadingByKey,
+            [groupingId]: false,
+          };
+        });
+      }
+    }
   };
 
   private buildListParams = (): ListConversationsParams | undefined => {
@@ -399,6 +707,19 @@ export class ConversationStore {
     }
 
     return Object.keys(params).length > 0 ? params : undefined;
+  };
+
+  private buildGroupingListParams = (
+    groupingBy: ConversationGroupingBy,
+    groupingId: string,
+  ): ListConversationsParams => {
+    const params: ListConversationsParams = {
+      ...(this.buildListParams() ?? {}),
+      groupingBy,
+      groupingId,
+    };
+
+    return params;
   };
 
   loadConversations = async (): Promise<void> => {

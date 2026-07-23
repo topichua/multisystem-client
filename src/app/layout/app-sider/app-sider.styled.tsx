@@ -246,21 +246,6 @@ export const CollapseButton = styled(CommonButton)`
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid
-      ${(props) => props.theme.colors.functional.border.selected}!important;
-    border-radius: ${(props) => props.theme.radius.medium};
-    background-color: ${(props) =>
-      props.theme.colors.functional.background.elevated}!important;
-    color: ${(props) => props.theme.colors.semantic.primary};
     box-shadow: none;
-  }
-
-  &&:hover,
-  &&:focus-visible {
-    border-color: ${(props) =>
-      props.theme.colors.functional.border.selected}!important;
-    background-color: ${(props) =>
-      props.theme.colors.functional.background.primary}!important;
-    color: ${(props) => props.theme.colors.semantic.primary};
   }
 `;
