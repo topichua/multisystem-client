@@ -3,21 +3,38 @@ import { Badge, Button, Card, Divider, Empty, Flex, Typography } from "antd";
 
 import { formatMoney, formatText } from "../../../utils/order-details.utils";
 
-import type { EditableSectionProps } from "../order-details-content.types";
+import type { OrderEditMode } from "@/pages/orders-page/order-details/order-details.types";
+
 import {
+  getCompactProductMeta,
   getDiscountDisplayValue,
   getProductMeta,
 } from "../utils/order-delivery-display.utils";
 import * as S from "../order-details-content.styled";
+import type { OrderDetails } from "@/features/orders/model/order.types";
+import type { TranslationFn } from "../order-details-content.types";
 
 const { Text } = Typography;
 
-export const ProductsCard = ({ order, t, onEdit }: EditableSectionProps) => {
+type ProductsCardProps = {
+  order: OrderDetails;
+  t: TranslationFn;
+  onEdit?: (mode: OrderEditMode) => void;
+  productCardSize?: "small";
+};
+
+export const ProductsCard = ({
+  order,
+  t,
+  onEdit,
+  productCardSize,
+}: ProductsCardProps) => {
   const discountDisplayValue = getDiscountDisplayValue(order.discountAmount);
   const canEditItems = order.status?.category === "new";
   const editDisabledReason = canEditItems
     ? undefined
     : t("orders.details.itemsEditLockedText");
+  const isCompact = productCardSize === "small";
 
   return (
     <Card
@@ -29,31 +46,36 @@ export const ProductsCard = ({ order, t, onEdit }: EditableSectionProps) => {
         </Flex>
       }
       extra={
-        <Button
-          className="no-print"
-          disabled={!canEditItems}
-          icon={<PencilSimpleIcon size={18} />}
-          title={!canEditItems ? editDisabledReason : undefined}
-          onClick={() => onEdit("items")}
-        >
-          {t("orders.details.edit")}
-        </Button>
+        onEdit ? (
+          <Button
+            className="no-print"
+            disabled={!canEditItems}
+            icon={<PencilSimpleIcon size={18} />}
+            title={!canEditItems ? editDisabledReason : undefined}
+            onClick={() => onEdit("items")}
+          >
+            {t("orders.details.edit")}
+          </Button>
+        ) : undefined
       }
     >
       {order.items.length ? (
         <Flex vertical>
           {order.items.map((item) => (
-            <S.ProductRow key={item.id}>
+            <S.ProductRow key={item.id} $compact={isCompact}>
               <S.ProductImage
                 shape="square"
-                size={64}
+                size={isCompact ? 36 : 64}
                 src={item.imageUrlSnapshot ?? undefined}
               >
                 {formatText(item.productTitleSnapshot).slice(0, 1)}
               </S.ProductImage>
 
               <div style={{ minWidth: 0 }}>
-                <Text strong style={{ display: "block", fontSize: 16 }}>
+                <Text
+                  strong
+                  style={{ display: "block", fontSize: isCompact ? 14 : 16 }}
+                >
                   {formatText(item.productTitleSnapshot)}
                 </Text>
                 <Text
@@ -65,18 +87,22 @@ export const ProductsCard = ({ order, t, onEdit }: EditableSectionProps) => {
                     whiteSpace: "nowrap",
                   }}
                 >
-                  {getProductMeta(item)}
+                  {isCompact
+                    ? getCompactProductMeta(item)
+                    : getProductMeta(item)}
                 </Text>
               </div>
 
-              <S.ProductPrice>
-                <Text type="secondary">
-                  {item.quantity} x{" "}
-                  {formatMoney(item.unitPriceAmount, order.currency)}
-                </Text>
-              </S.ProductPrice>
+              {!isCompact && (
+                <S.ProductPrice>
+                  <Text type="secondary">
+                    {item.quantity} x{" "}
+                    {formatMoney(item.unitPriceAmount, order.currency)}
+                  </Text>
+                </S.ProductPrice>
+              )}
 
-              <S.ProductTotal strong>
+              <S.ProductTotal strong={!isCompact} $compact={isCompact}>
                 {formatMoney(item.totalPriceAmount, order.currency)}
               </S.ProductTotal>
             </S.ProductRow>
@@ -89,7 +115,7 @@ export const ProductsCard = ({ order, t, onEdit }: EditableSectionProps) => {
         />
       )}
 
-      <Flex vertical gap={12} style={{ paddingTop: 20 }}>
+      <Flex vertical gap={isCompact ? 6 : 12} style={{ paddingTop: 20 }}>
         <Flex justify="space-between" gap={16}>
           <Text type="secondary">{t("orders.subtotal")}</Text>
           <Text>{formatMoney(order.subtotalAmount, order.currency)}</Text>

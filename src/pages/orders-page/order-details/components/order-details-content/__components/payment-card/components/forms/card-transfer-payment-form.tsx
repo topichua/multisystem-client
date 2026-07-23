@@ -20,11 +20,11 @@ import type {
 
 import { useNotification } from "@/shared/components/notification/use-notification";
 
-import type { TranslationFn } from "../../order-details-content.types";
-import { useManualPaymentMethods } from "./hooks/use-manual-payment-methods";
-import { isValidPaymentAmount } from "./is-valid-payment-amount";
-import { PaymentAmountField } from "./payment-amount-field";
-import * as S from "./payment-card.styled";
+import type { TranslationFn } from "../../../../order-details-content.types";
+import { useManualPaymentMethods } from "../../hooks/use-manual-payment-methods";
+import { isValidPaymentAmount } from "../../lib/is-valid-payment-amount";
+import * as S from "../../payment-card.styled";
+import { PaymentAmountField } from "../payment-amount-field";
 
 const { Text } = Typography;
 

@@ -1,10 +1,10 @@
 import { CaretRightIcon } from "@phosphor-icons/react";
 import { Flex } from "antd";
 
-import type { TranslationFn } from "../../order-details-content.types";
-import { PAYMENT_COLLECTION_METHODS } from "./payment-card.constants";
-import type { PaymentCollectionMethod } from "./payment-card.types";
-import * as S from "./payment-card.styled";
+import type { TranslationFn } from "../../../order-details-content.types";
+import { PAYMENT_COLLECTION_METHODS } from "../model/payment-card.constants";
+import type { PaymentCollectionMethod } from "../model/payment-card.types";
+import * as S from "../payment-card.styled";
 
 type PaymentCollectionPanelProps = {
   t: TranslationFn;

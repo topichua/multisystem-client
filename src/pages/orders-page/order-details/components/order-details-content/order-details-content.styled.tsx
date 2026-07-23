@@ -85,15 +85,15 @@ export const PrintDocumentMeta = styled.div`
   font-size: 14px;
 `;
 
-export const ProductRow = styled.div`
+export const ProductRow = styled.div<{ $compact?: boolean }>`
   display: grid;
-  grid-template-columns: 64px minmax(0, 1fr) minmax(110px, auto) minmax(
-      120px,
-      auto
-    );
-  gap: 20px;
+  grid-template-columns: ${({ $compact }) =>
+    $compact
+      ? "48px minmax(0, 1fr) auto"
+      : "64px minmax(0, 1fr) minmax(110px, auto) minmax(120px, auto)"};
+  gap: ${({ $compact }) => ($compact ? "0" : "20px")};
   align-items: center;
-  padding: 16px 0;
+  padding: ${({ $compact }) => ($compact ? "12px 0" : "16px 0")};
   border-bottom: 1px solid
     ${({ theme }) => theme.colors.functional.border.split};
 
@@ -102,9 +102,10 @@ export const ProductRow = styled.div`
   }
 
   @media (max-width: 767px) {
-    grid-template-columns: 56px minmax(0, 1fr);
+    grid-template-columns: ${({ $compact }) =>
+      $compact ? "48px minmax(0, 1fr) auto" : "56px minmax(0, 1fr)"};
     gap: 12px;
-    align-items: start;
+    align-items: ${({ $compact }) => ($compact ? "center" : "start")};
   }
 `;
 
@@ -127,17 +128,23 @@ export const ProductPrice = styled.div`
   }
 `;
 
-export const ProductTotal = styled(Text)`
+export const ProductTotal = styled(Text)<{ $compact?: boolean }>`
   && {
     justify-self: end;
     color: ${({ theme }) => theme.colors.functional.text.heading};
-    font-size: ${({ theme }) => theme.fontSize.large};
+    font-size: ${({ theme, $compact }) =>
+      $compact ? theme.fontSize.medium : theme.fontSize.large};
+    font-weight: ${({ $compact }) => ($compact ? 400 : undefined)};
     white-space: nowrap;
   }
 
   @media (max-width: 767px) {
-    grid-column: 2;
-    justify-self: start;
+    ${({ $compact }) =>
+      !$compact &&
+      `
+      grid-column: 2;
+      justify-self: start;
+    `}
   }
 `;
 

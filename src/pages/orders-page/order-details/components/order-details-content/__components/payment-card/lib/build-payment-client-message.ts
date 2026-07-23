@@ -2,7 +2,7 @@ import type { ManualPaymentMethod } from "@/features/integrations/model/integrat
 import type { OrderPaymentTransaction } from "@/features/orders/model/order.types";
 import { formatMoney } from "@/features/orders/utils/format-money";
 
-import type { TranslationFn } from "../../order-details-content.types";
+import type { TranslationFn } from "../../../order-details-content.types";
 import {
   isOnlinePaymentTransaction,
   resolvePaymentUrl,

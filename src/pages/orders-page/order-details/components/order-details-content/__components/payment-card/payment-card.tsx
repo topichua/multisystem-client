@@ -19,27 +19,27 @@ import { useNotification } from "@/shared/components/notification/use-notificati
 import { PaymentStatusTag } from "../../../order-status-tags";
 
 import type { PaymentCardProps } from "../../order-details-content.types";
-import { CardTransferPaymentForm } from "./card-transfer-payment-form";
-import { CashPaymentForm } from "./cash-payment-form";
+import { CardTransferPaymentForm } from "./components/forms/card-transfer-payment-form";
+import { CashPaymentForm } from "./components/forms/cash-payment-form";
+import { OnlinePaymentForm } from "./components/forms/online-payment-form";
+import { RefundPaymentForm } from "./components/forms/refund-payment-form";
+import { PaymentClientMessageModal } from "./components/payment-client-message-modal";
+import { PaymentCollectionPanel } from "./components/payment-collection-panel";
+import { PaymentSummary } from "./components/payment-summary";
+import { PaymentTransactionsList } from "./components/payment-transactions-list";
 import { useOrderPayments } from "./hooks/use-order-payments";
 import { useOrderRefunds } from "./hooks/use-order-refunds";
-import { OnlinePaymentForm } from "./online-payment-form";
-import { PaymentClientMessageModal } from "./payment-client-message-modal";
-import { PaymentCollectionPanel } from "./payment-collection-panel";
-import {
-  PAYMENT_METHOD_VIEWS,
-  type PaymentCardView,
-  type PaymentCollectionMethod,
-} from "./payment-card.types";
-import { PaymentSummary } from "./payment-summary";
 import {
   buildPaymentTimelineItems,
   hasPendingActionablePayments,
   hasPendingRefunds,
   mergePaymentTransactions,
-} from "./payment-transaction.utils";
-import { PaymentTransactionsList } from "./payment-transactions-list";
-import { RefundPaymentForm } from "./refund-payment-form";
+} from "./lib/payment-transaction.utils";
+import {
+  PAYMENT_METHOD_VIEWS,
+  type PaymentCardView,
+  type PaymentCollectionMethod,
+} from "./model/payment-card.types";
 
 export const PaymentCard = ({
   order,

@@ -6,9 +6,8 @@ import { useMemo, useState } from "react";
 import type { OrderPaymentTransaction } from "@/features/orders/model/order.types";
 import { formatMoney } from "@/features/orders/utils/format-money";
 
-import type { TranslationFn } from "../../order-details-content.types";
-import { PAYMENT_TRANSACTION_STATUS_COLORS } from "./payment-card.constants";
-import * as S from "./payment-card.styled";
+import type { TranslationFn } from "../../../order-details-content.types";
+import { CollapsibleListToggle } from "../../collapsible-list-toggle";
 import {
   canActOnPendingPayment,
   canActOnPendingRefund,
@@ -16,8 +15,9 @@ import {
   isOnlinePaymentTransaction,
   resolvePaymentDeleteId,
   type PaymentTimelineItem,
-} from "./payment-transaction.utils";
-import { CollapsibleListToggle } from "../collapsible-list-toggle";
+} from "../lib/payment-transaction.utils";
+import { PAYMENT_TRANSACTION_STATUS_COLORS } from "../model/payment-card.constants";
+import * as S from "../payment-card.styled";
 
 const { Text } = Typography;
 

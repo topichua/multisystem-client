@@ -4,8 +4,8 @@ import { useState } from "react";
 
 import type { OrderRefundCreatePayload } from "@/features/orders/model/order.types";
 
-import type { TranslationFn } from "../../order-details-content.types";
-import { isValidPaymentAmount } from "./is-valid-payment-amount";
+import type { TranslationFn } from "../../../../order-details-content.types";
+import { isValidPaymentAmount } from "../../lib/is-valid-payment-amount";
 
 type RefundPaymentFormProps = {
   paidAmount: number;

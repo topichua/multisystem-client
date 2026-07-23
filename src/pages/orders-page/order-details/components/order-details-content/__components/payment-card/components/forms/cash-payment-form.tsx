@@ -2,9 +2,9 @@ import { ArrowLeftIcon, PlusIcon } from "@phosphor-icons/react";
 import { Alert, Button, Flex, Form } from "antd";
 import { useState } from "react";
 
-import type { TranslationFn } from "../../order-details-content.types";
-import { PaymentAmountField } from "./payment-amount-field";
-import { isValidPaymentAmount } from "./is-valid-payment-amount";
+import type { TranslationFn } from "../../../../order-details-content.types";
+import { isValidPaymentAmount } from "../../lib/is-valid-payment-amount";
+import { PaymentAmountField } from "../payment-amount-field";
 
 type CashPaymentFormProps = {
   remainingAmount: number | null;

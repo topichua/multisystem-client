@@ -92,6 +92,10 @@ export const PaymentTransactionItem = styled.div`
   padding-bottom: 12px;
   border-bottom: 1px solid
     ${({ theme }) => theme.colors.functional.border.cardBase};
+
+  &:last-child {
+    border-bottom: none;
+  }
 `;
 
 export const PaymentAmountDot = styled.span<{

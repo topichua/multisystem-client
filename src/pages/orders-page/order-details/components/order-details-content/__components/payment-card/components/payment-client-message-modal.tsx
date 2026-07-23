@@ -7,9 +7,9 @@ import type { ManualPaymentMethod } from "@/features/integrations/model/integrat
 import type { OrderPaymentTransaction } from "@/features/orders/model/order.types";
 import { useNotification } from "@/shared/components/notification/use-notification";
 
-import type { TranslationFn } from "../../order-details-content.types";
-import { buildPaymentClientMessage } from "./build-payment-client-message";
-import { useManualPaymentMethods } from "./hooks/use-manual-payment-methods";
+import type { TranslationFn } from "../../../order-details-content.types";
+import { useManualPaymentMethods } from "../hooks/use-manual-payment-methods";
+import { buildPaymentClientMessage } from "../lib/build-payment-client-message";
 
 type PaymentClientMessageEditorProps = {
   initialMessage: string;

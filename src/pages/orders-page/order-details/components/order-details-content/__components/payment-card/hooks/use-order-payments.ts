@@ -4,7 +4,7 @@ import { ordersApi } from "@/features/orders/api/orders-api";
 import type { OrderPaymentsSummary } from "@/features/orders/model/order.types";
 import { unknownErrorMessage } from "@/utils/unknown-error-message";
 
-import { hasPendingOnlinePayments } from "../payment-transaction.utils";
+import { hasPendingOnlinePayments } from "../lib/payment-transaction.utils";
 
 const POLL_INTERVAL_MS = 5000;
 

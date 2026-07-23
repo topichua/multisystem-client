@@ -2,8 +2,8 @@ import { Flex, Typography } from "antd";
 
 import { formatMoney } from "@/features/orders/utils/format-money";
 
-import type { TranslationFn } from "../../order-details-content.types";
-import * as S from "./payment-card.styled";
+import type { TranslationFn } from "../../../order-details-content.types";
+import * as S from "../payment-card.styled";
 
 const { Text } = Typography;
 

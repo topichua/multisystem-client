@@ -1,4 +1,4 @@
-import { ArrowUpRightIcon, PlusIcon } from "@phosphor-icons/react";
+import { PlusIcon } from "@phosphor-icons/react";
 import { Button, Tooltip } from "antd";
 import { useTranslation } from "react-i18next";
 
@@ -75,7 +75,6 @@ export function ComposerToolbar({
       <S.LastOrderTotal>
         {formatMoney(clientLastOrder.totalPrice, "UAH")}
       </S.LastOrderTotal>
-      <ArrowUpRightIcon size={13} aria-hidden="true" />
     </S.LastOrderButton>
   ) : clientLastOrderLoading && hasLinkedClient ? (
     <S.LastOrderSkeleton

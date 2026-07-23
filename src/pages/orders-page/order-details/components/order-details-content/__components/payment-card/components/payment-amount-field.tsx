@@ -1,7 +1,7 @@
 import { WalletIcon } from "@phosphor-icons/react";
 import { Button, Flex, Form, InputNumber } from "antd";
 
-import type { TranslationFn } from "../../order-details-content.types";
+import type { TranslationFn } from "../../../order-details-content.types";
 
 type PaymentAmountFieldProps = {
   amount: number | null;

@@ -40,6 +40,17 @@ export const getProductMeta = (item: OrderItem): string => {
   return parts.join(" / ") || EMPTY_VALUE;
 };
 
+export const getCompactProductMeta = (item: OrderItem): string => {
+  const variantLabel = getVariantLabel(item);
+  const quantityLabel = `x${item.quantity}`;
+
+  if (variantLabel === EMPTY_VALUE) {
+    return quantityLabel;
+  }
+
+  return `${variantLabel} · ${quantityLabel}`;
+};
+
 export const getDeliveryTypeLabel = (
   deliveryInfo: DeliveryInfo,
   t: TranslationFn,

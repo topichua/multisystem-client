@@ -9,11 +9,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router";
 
-import {
-  getOrderDetailsPath,
-  getClientDetailsPath,
-  pagesMap,
-} from "@/app/router/pages-map";
+import { getClientDetailsPath, pagesMap } from "@/app/router/pages-map";
 import { useUserStore } from "@/features/auth/model/use-user-store";
 import { clientsApi } from "@/features/clients/api/clients-api";
 import type {
@@ -45,6 +41,7 @@ import { ConversationClientInfoPanel } from "./components/conversation-client-in
 import { Composer } from "./components/composer/composer";
 import * as ComposerS from "./components/composer/composer.styled";
 import { ConversationMessagesList } from "./components/conversation-messages-list/conversation-messages-list";
+import { CurrentOrderDrawer } from "./components/current-order-drawer/current-order-drawer";
 import { Header } from "./components/header/header";
 import { ProductSuggestionsPanel } from "./components/product-suggestions/product-suggestions-panel";
 import type { ReplyComposeTarget } from "./reply-compose-target";
@@ -83,6 +80,10 @@ export const ConversationDetails = observer(() => {
   >();
   const [clientLookupLoading, setClientLookupLoading] = useState(false);
   const [orderDrawerOpen, setOrderDrawerOpen] = useState(false);
+  const [currentOrderDrawerOpen, setCurrentOrderDrawerOpen] = useState(false);
+  const [currentOrderDrawerOrderId, setCurrentOrderDrawerOrderId] = useState<
+    number | null
+  >(null);
   const [suggestedOrderVariant, setSuggestedOrderVariant] =
     useState<CatalogVariant | null>(null);
   const [orderDraftVariantIds, setOrderDraftVariantIds] = useState<Set<number>>(
@@ -326,12 +327,15 @@ export const ConversationDetails = observer(() => {
     );
   }, []);
 
-  const handleOpenLastOrder = useCallback(
-    (orderId: number) => {
-      navigate(getOrderDetailsPath(orderId));
-    },
-    [navigate],
-  );
+  const handleOpenLastOrder = useCallback((orderId: number) => {
+    setCurrentOrderDrawerOrderId(orderId);
+    setCurrentOrderDrawerOpen(true);
+  }, []);
+
+  const handleCloseCurrentOrderDrawer = useCallback(() => {
+    setCurrentOrderDrawerOpen(false);
+    setCurrentOrderDrawerOrderId(null);
+  }, []);
 
   const handleOrderCreated = useCallback(() => {
     if (linkedClientId == null) {
@@ -395,6 +399,8 @@ export const ConversationDetails = observer(() => {
     setReplyTarget(null);
     setClientInfoOpen(false);
     setOrderDrawerOpen(false);
+    setCurrentOrderDrawerOpen(false);
+    setCurrentOrderDrawerOrderId(null);
     setSuggestedOrderVariant(null);
     setOrderDraftVariantIds(new Set());
   }, [conversationId]);
@@ -629,6 +635,12 @@ export const ConversationDetails = observer(() => {
           onOrderCreated={handleOrderCreated}
         />
       )}
+
+      <CurrentOrderDrawer
+        open={currentOrderDrawerOpen}
+        orderId={currentOrderDrawerOrderId}
+        onClose={handleCloseCurrentOrderDrawer}
+      />
     </S.Root>
   );
 });

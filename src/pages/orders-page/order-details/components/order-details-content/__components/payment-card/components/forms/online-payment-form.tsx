@@ -5,10 +5,10 @@ import { useNavigate } from "react-router";
 
 import { pagesMap } from "@/app/router/pages-map";
 
-import type { TranslationFn } from "../../order-details-content.types";
-import { usePaymentIntegrations } from "./hooks/use-payment-integrations";
-import { isValidPaymentAmount } from "./is-valid-payment-amount";
-import { PaymentAmountField } from "./payment-amount-field";
+import type { TranslationFn } from "../../../../order-details-content.types";
+import { usePaymentIntegrations } from "../../hooks/use-payment-integrations";
+import { isValidPaymentAmount } from "../../lib/is-valid-payment-amount";
+import { PaymentAmountField } from "../payment-amount-field";
 
 const { Text } = Typography;
 
