@@ -37,6 +37,26 @@ const EVENT_META: Record<
     tone: "orange",
     titleKey: "orders.details.eventPaymentUpdated",
   },
+  "order.payment_created": {
+    tone: "blue",
+    titleKey: "orders.details.eventPaymentCreated",
+  },
+  "order.payment_succeeded": {
+    tone: "green",
+    titleKey: "orders.details.eventPaymentSucceeded",
+  },
+  "order.payment_refund_requested": {
+    tone: "orange",
+    titleKey: "orders.details.eventPaymentRefundRequested",
+  },
+  "order.payment_refunded": {
+    tone: "purple",
+    titleKey: "orders.details.eventPaymentRefunded",
+  },
+  "order.payment_refund_cancelled": {
+    tone: "gray",
+    titleKey: "orders.details.eventPaymentRefundCancelled",
+  },
   "order.discount_applied": {
     tone: "orange",
     titleKey: "orders.details.eventDiscountApplied",

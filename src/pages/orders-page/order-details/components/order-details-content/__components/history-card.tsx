@@ -1,7 +1,7 @@
 import type { TimelineProps } from "antd";
 import { Card, Empty, Flex, Typography } from "antd";
 import { observer } from "mobx-react-lite";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 import { useWorkspaceMembersStore } from "@/features/workspace-members/model/use-workspace-members-store";
 import { getWorkspaceMemberName } from "@/features/workspace-members/utils/workspace-member-display";
@@ -13,13 +13,18 @@ import {
 
 import type { OrderSectionProps } from "../order-details-content.types";
 import { getActorLabel, getEventMeta } from "../utils/order-event.utils";
+import { CollapsibleListToggle } from "./collapsible-list-toggle";
 
 import * as S from "../order-details-content.styled";
 
 const { Text } = Typography;
 
+const VISIBLE_EVENTS_LIMIT = 5;
+
 export const HistoryCard = observer(({ order, t }: OrderSectionProps) => {
   const membersStore = useWorkspaceMembersStore();
+  const [expanded, setExpanded] = useState(false);
+
   const actorNamesByUserId = useMemo(
     () =>
       new Map(
@@ -40,9 +45,17 @@ export const HistoryCard = observer(({ order, t }: OrderSectionProps) => {
     [order.events],
   );
 
+  const visibleEvents = useMemo(() => {
+    if (expanded || sortedEvents.length <= VISIBLE_EVENTS_LIMIT) {
+      return sortedEvents;
+    }
+
+    return sortedEvents.slice(0, VISIBLE_EVENTS_LIMIT);
+  }, [expanded, sortedEvents]);
+
   const historyItems = useMemo<TimelineProps["items"]>(
     () =>
-      sortedEvents.map((event, index) => {
+      visibleEvents.map((event, index) => {
         const eventMeta = getEventMeta(event);
         const color = eventMeta.tone;
         const eventTitle = eventMeta.titleKey
@@ -89,7 +102,7 @@ export const HistoryCard = observer(({ order, t }: OrderSectionProps) => {
           ),
         };
       }),
-    [actorNamesByUserId, order.currency, order.items, sortedEvents, t],
+    [actorNamesByUserId, order.currency, order.items, t, visibleEvents],
   );
 
   return (
@@ -98,7 +111,16 @@ export const HistoryCard = observer(({ order, t }: OrderSectionProps) => {
       title={t("orders.details.statusHistory")}
     >
       {historyItems?.length ? (
-        <S.Timeline variant="filled" items={historyItems} />
+        <Flex vertical gap={8}>
+          <S.Timeline variant="filled" items={historyItems} />
+          {sortedEvents.length > VISIBLE_EVENTS_LIMIT && (
+            <CollapsibleListToggle
+              expanded={expanded}
+              t={t}
+              onToggle={() => setExpanded((current) => !current)}
+            />
+          )}
+        </Flex>
       ) : (
         <Empty
           image={Empty.PRESENTED_IMAGE_SIMPLE}

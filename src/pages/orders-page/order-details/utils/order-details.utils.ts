@@ -203,6 +203,51 @@ export const getEventDescription = (
     case "order.payment_updated":
       return translate("orders.events.paymentUpdated");
 
+    case "order.payment_created": {
+      const amount = getRecordNumber(payload, "amount");
+      return amount != null
+        ? translate("orders.events.paymentCreatedWithAmount", {
+            amount: formatMoney(amount, currency),
+          })
+        : translate("orders.events.paymentCreated");
+    }
+
+    case "order.payment_succeeded": {
+      const amount = getRecordNumber(payload, "amount");
+      return amount != null
+        ? translate("orders.events.paymentSucceededWithAmount", {
+            amount: formatMoney(amount, currency),
+          })
+        : translate("orders.events.paymentSucceeded");
+    }
+
+    case "order.payment_refund_requested": {
+      const amount = getRecordNumber(payload, "amount");
+      return amount != null
+        ? translate("orders.events.paymentRefundRequestedWithAmount", {
+            amount: formatMoney(amount, currency),
+          })
+        : translate("orders.events.paymentRefundRequested");
+    }
+
+    case "order.payment_refunded": {
+      const amount = getRecordNumber(payload, "amount");
+      return amount != null
+        ? translate("orders.events.paymentRefundedWithAmount", {
+            amount: formatMoney(amount, currency),
+          })
+        : translate("orders.events.paymentRefunded");
+    }
+
+    case "order.payment_refund_cancelled": {
+      const amount = getRecordNumber(payload, "amount");
+      return amount != null
+        ? translate("orders.events.paymentRefundCancelledWithAmount", {
+            amount: formatMoney(amount, currency),
+          })
+        : translate("orders.events.paymentRefundCancelled");
+    }
+
     case "order.discount_applied": {
       const discountAmount = getRecordNumber(payload, "discountAmount");
       const discountPercent = getRecordNumber(payload, "discountPercent");

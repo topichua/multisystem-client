@@ -1,6 +1,7 @@
 import { CheckIcon, PaperPlaneTiltIcon, XIcon } from "@phosphor-icons/react";
 import { Button, Flex, Popconfirm, Tag, Typography } from "antd";
 import dayjs from "dayjs";
+import { useMemo, useState } from "react";
 
 import type { OrderPaymentTransaction } from "@/features/orders/model/order.types";
 import { formatMoney } from "@/features/orders/utils/format-money";
@@ -16,8 +17,11 @@ import {
   resolvePaymentDeleteId,
   type PaymentTimelineItem,
 } from "./payment-transaction.utils";
+import { CollapsibleListToggle } from "../collapsible-list-toggle";
 
 const { Text } = Typography;
+
+const VISIBLE_ITEMS_LIMIT = 5;
 
 type PaymentTransactionsListProps = {
   currency: string;
@@ -98,6 +102,16 @@ export function PaymentTransactionsList({
   onDeleteRefund,
   onMessageClient,
 }: PaymentTransactionsListProps) {
+  const [expanded, setExpanded] = useState(false);
+
+  const visibleItems = useMemo(() => {
+    if (expanded || items.length <= VISIBLE_ITEMS_LIMIT) {
+      return items;
+    }
+
+    return items.slice(0, VISIBLE_ITEMS_LIMIT);
+  }, [expanded, items]);
+
   if (items.length === 0) {
     return null;
   }
@@ -109,7 +123,7 @@ export function PaymentTransactionsList({
       </S.PaymentsSectionTitle>
 
       <Flex vertical gap={12}>
-        {items.map((item) => {
+        {visibleItems.map((item) => {
           if (item.kind === "refund") {
             const confirmKey = `refund-confirm:${item.refund.id}`;
             const deleteKey = `refund-delete:${item.refund.id}`;
@@ -330,6 +344,14 @@ export function PaymentTransactionsList({
           );
         })}
       </Flex>
+
+      {items.length > VISIBLE_ITEMS_LIMIT && (
+        <CollapsibleListToggle
+          expanded={expanded}
+          t={t}
+          onToggle={() => setExpanded((current) => !current)}
+        />
+      )}
     </Flex>
   );
 }
