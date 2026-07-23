@@ -23,6 +23,8 @@ import type {
   OrderStatus,
   OrderStatusCreatePayload,
   OrderStatusUpdatePayload,
+  OrderRefundApprovePayload,
+  OrderRefundCreatePayload,
   OrderUpdatePayload,
 } from "@/features/orders/model/order.types";
 import { buildOrderCreatePayload } from "@/features/orders/utils/build-order-create-payload";
@@ -808,6 +810,31 @@ export class OrdersStore {
   deletePayment = (orderId: number, paymentId: number): Promise<OrderDetails> =>
     this.withOrderUpdate(orderId, () =>
       ordersApi.deletePayment(orderId, paymentId),
+    );
+
+  createOrderRefund = (
+    orderId: number,
+    payload: OrderRefundCreatePayload,
+  ): Promise<OrderDetails> =>
+    this.withOrderUpdate(orderId, () =>
+      ordersApi.createOrderRefund(orderId, payload),
+    );
+
+  approveOrderRefund = (
+    orderId: number,
+    refundId: number,
+    payload: OrderRefundApprovePayload = {},
+  ): Promise<OrderDetails> =>
+    this.withOrderUpdate(orderId, () =>
+      ordersApi.approveOrderRefund(orderId, refundId, payload),
+    );
+
+  deleteOrderRefund = (
+    orderId: number,
+    refundId: number,
+  ): Promise<OrderDetails> =>
+    this.withOrderUpdate(orderId, () =>
+      ordersApi.deleteOrderRefund(orderId, refundId),
     );
 
   updateOrderStatus = async (

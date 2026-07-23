@@ -17,6 +17,11 @@ import {
   type OrderOnlinePaymentPayload,
   type OrderPaymentMutationResponse,
   type OrderPaymentsSummary,
+  type OrderRefund,
+  type OrderRefundApprovePayload,
+  type OrderRefundCreatePayload,
+  type OrderRefundMutationResponse,
+  type OrderRefundsListResponse,
   type OrderStatus,
   type OrderStatusCategory,
   type OrderStatusCreatePayload,
@@ -313,6 +318,48 @@ export const ordersApi = {
 
   deletePayment: async (orderId: number, paymentId: number): Promise<void> => {
     await apiClient.delete(`${basePath}/${orderId}/payments/${paymentId}`);
+  },
+
+  listOrderRefunds: async (
+    orderId: number,
+  ): Promise<OrderRefundsListResponse> => {
+    const { data } = await apiClient.get<OrderRefundsListResponse>(
+      `${basePath}/${orderId}/refunds`,
+    );
+
+    return data;
+  },
+
+  createOrderRefund: async (
+    orderId: number,
+    payload: OrderRefundCreatePayload,
+  ): Promise<OrderRefund> => {
+    const { data } = await apiClient.post<OrderRefund>(
+      `${basePath}/${orderId}/refunds`,
+      payload,
+    );
+
+    return data;
+  },
+
+  approveOrderRefund: async (
+    orderId: number,
+    refundId: number,
+    payload: OrderRefundApprovePayload = {},
+  ): Promise<OrderRefundMutationResponse> => {
+    const { data } = await apiClient.post<OrderRefundMutationResponse>(
+      `${basePath}/${orderId}/refunds/${refundId}/approve`,
+      payload,
+    );
+
+    return data;
+  },
+
+  deleteOrderRefund: async (
+    orderId: number,
+    refundId: number,
+  ): Promise<void> => {
+    await apiClient.delete(`${basePath}/${orderId}/refunds/${refundId}`);
   },
 
   getClientOrders: async (

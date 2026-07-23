@@ -27,6 +27,9 @@ export const OrderDetailsContent = ({
   onCreateOnlinePayment,
   onConfirmPaymentTransaction,
   onDeletePayment,
+  onCreateOrderRefund,
+  onApproveOrderRefund,
+  onDeleteOrderRefund,
   onRefreshOrder,
 }: OrderDetailsContentProps) => {
   const { t } = useTranslation();
@@ -73,6 +76,9 @@ export const OrderDetailsContent = ({
               onCreateOnlinePayment={onCreateOnlinePayment}
               onConfirmPaymentTransaction={onConfirmPaymentTransaction}
               onDeletePayment={onDeletePayment}
+              onCreateOrderRefund={onCreateOrderRefund}
+              onApproveOrderRefund={onApproveOrderRefund}
+              onDeleteOrderRefund={onDeleteOrderRefund}
               onRefreshOrder={onRefreshOrder}
             />
             <NotesCard order={order} t={t} onEdit={setEditMode} />

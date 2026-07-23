@@ -8,6 +8,8 @@ import type {
   OrderManualPaymentPayload,
   OrderNovaPoshtaWaybillPayload,
   OrderOnlinePaymentPayload,
+  OrderRefundApprovePayload,
+  OrderRefundCreatePayload,
   OrderUpdatePayload,
 } from "@/features/orders/model/order.types";
 import { useOrdersStore } from "@/features/orders/model/use-orders-store";
@@ -196,6 +198,55 @@ export const useOrderDetails = (orderId: number | null) => {
     [orderId, ordersStore],
   );
 
+  const createOrderRefund = useCallback(
+    async (payload: OrderRefundCreatePayload): Promise<void> => {
+      if (orderId == null) {
+        return;
+      }
+
+      const updatedOrder = await ordersStore.createOrderRefund(
+        orderId,
+        payload,
+      );
+      setOrder(updatedOrder);
+    },
+    [orderId, ordersStore],
+  );
+
+  const approveOrderRefund = useCallback(
+    async (
+      refundId: number,
+      payload: OrderRefundApprovePayload = {},
+    ): Promise<void> => {
+      if (orderId == null) {
+        return;
+      }
+
+      const updatedOrder = await ordersStore.approveOrderRefund(
+        orderId,
+        refundId,
+        payload,
+      );
+      setOrder(updatedOrder);
+    },
+    [orderId, ordersStore],
+  );
+
+  const deleteOrderRefund = useCallback(
+    async (refundId: number): Promise<void> => {
+      if (orderId == null) {
+        return;
+      }
+
+      const updatedOrder = await ordersStore.deleteOrderRefund(
+        orderId,
+        refundId,
+      );
+      setOrder(updatedOrder);
+    },
+    [orderId, ordersStore],
+  );
+
   const refreshOrder = useCallback(async (): Promise<void> => {
     if (orderId == null) {
       return;
@@ -219,6 +270,9 @@ export const useOrderDetails = (orderId: number | null) => {
     createOnlinePayment,
     confirmPaymentTransaction,
     deletePayment,
+    createOrderRefund,
+    approveOrderRefund,
+    deleteOrderRefund,
     refreshOrder,
   };
 };

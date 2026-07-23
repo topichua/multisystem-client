@@ -202,6 +202,56 @@ export type OrderOnlinePaymentPayload = {
   integrationId: number;
 };
 
+export type OrderRefundStatus =
+  | "pending"
+  | "approved"
+  | "confirmed"
+  | "succeeded"
+  | "cancelled"
+  | "canceled"
+  | "rejected"
+  | string;
+
+export type OrderRefund = {
+  id: number;
+  orderId: number;
+  amount: number;
+  currency: string;
+  status: OrderRefundStatus;
+  note: string | null;
+  createdById: number | null;
+  reviewedById: number | null;
+  reviewedAt: string | null;
+  paymentTransactionId: number | null;
+  occurredAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type OrderRefundsListResponse = {
+  orderId: number;
+  refunds: OrderRefund[];
+};
+
+export type OrderRefundCreatePayload = {
+  amount: number;
+  note?: string | null;
+  occurredAt?: string | null;
+};
+
+export type OrderRefundApprovePayload = {
+  note?: string | null;
+};
+
+export type OrderRefundMutationResponse = {
+  orderId: number;
+  paymentStatus: OrderPaymentStatus;
+  totalAmount: number;
+  paidAmount: number;
+  remainingAmount: number;
+  refund: OrderRefund;
+};
+
 export type OrderOnlinePayment = {
   id: number;
   orderId: number;

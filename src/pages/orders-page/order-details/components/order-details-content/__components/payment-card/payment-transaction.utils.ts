@@ -1,6 +1,7 @@
 import type {
   OrderOnlinePayment,
   OrderPaymentTransaction,
+  OrderRefund,
 } from "@/features/orders/model/order.types";
 
 const ONLINE_METHOD_KINDS = new Set([
@@ -17,6 +18,40 @@ const PENDING_PAYMENT_STATUSES = new Set([
   "created",
   "processing",
 ]);
+
+const CONFIRMED_PAYMENT_STATUSES = new Set(["confirmed", "succeeded", "paid"]);
+
+const PENDING_REFUND_STATUSES = new Set(["pending", "awaiting_confirmation"]);
+
+const CONFIRMED_REFUND_STATUSES = new Set([
+  "approved",
+  "confirmed",
+  "succeeded",
+  "completed",
+]);
+
+export type PaymentTimelineItem =
+  | {
+      kind: "payment";
+      key: string;
+      amount: number;
+      currency: string;
+      status: string;
+      createdAt: string;
+      occurredAt: string | null;
+      transaction: OrderPaymentTransaction;
+    }
+  | {
+      kind: "refund";
+      key: string;
+      amount: number;
+      currency: string;
+      status: string;
+      createdAt: string;
+      occurredAt: string | null;
+      note: string | null;
+      refund: OrderRefund;
+    };
 
 export function isOnlinePaymentTransaction(
   transaction: OrderPaymentTransaction,
@@ -38,6 +73,23 @@ export function isOnlinePaymentTransaction(
   }
 
   return false;
+}
+
+export function isRefundLikeTransaction(
+  transaction: OrderPaymentTransaction,
+): boolean {
+  if (transaction.amount < 0) {
+    return true;
+  }
+
+  const kind = (
+    transaction.manualPaymentKind ??
+    transaction.method ??
+    transaction.type ??
+    ""
+  ).toLowerCase();
+
+  return kind.includes("refund") || kind.includes("return");
 }
 
 export function mapOnlinePaymentToTransaction(
@@ -95,6 +147,38 @@ export function resolvePaymentDeleteId(
 
 export function canActOnPendingPayment(status: string): boolean {
   return PENDING_PAYMENT_STATUSES.has(status);
+}
+
+export function hasPendingActionablePayments(
+  transactions: OrderPaymentTransaction[],
+): boolean {
+  return transactions.some((transaction) =>
+    canActOnPendingPayment(transaction.status),
+  );
+}
+
+export function isConfirmedPaymentStatus(status: string): boolean {
+  return CONFIRMED_PAYMENT_STATUSES.has(status);
+}
+
+export function hasConfirmedPayments(
+  transactions: OrderPaymentTransaction[],
+): boolean {
+  return transactions.some((transaction) =>
+    isConfirmedPaymentStatus(transaction.status),
+  );
+}
+
+export function canActOnPendingRefund(status: string): boolean {
+  return PENDING_REFUND_STATUSES.has(status);
+}
+
+export function isConfirmedRefundStatus(status: string): boolean {
+  return CONFIRMED_REFUND_STATUSES.has(status);
+}
+
+export function hasPendingRefunds(refunds: OrderRefund[]): boolean {
+  return refunds.some((refund) => canActOnPendingRefund(refund.status));
 }
 
 export function hasPendingOnlinePayments(
@@ -155,6 +239,50 @@ export function mergePaymentTransactions(
   }
 
   return merged.sort((left, right) =>
+    right.createdAt.localeCompare(left.createdAt),
+  );
+}
+
+export function buildPaymentTimelineItems(
+  transactions: OrderPaymentTransaction[],
+  refunds: OrderRefund[],
+): PaymentTimelineItem[] {
+  const refundTransactionIds = new Set(
+    refunds
+      .map((refund) => refund.paymentTransactionId)
+      .filter((id): id is number => typeof id === "number"),
+  );
+
+  const paymentItems: PaymentTimelineItem[] = transactions
+    .filter(
+      (transaction) =>
+        !isRefundLikeTransaction(transaction) &&
+        !refundTransactionIds.has(transaction.id),
+    )
+    .map((transaction) => ({
+      kind: "payment" as const,
+      key: getPaymentTransactionListKey(transaction),
+      amount: Math.abs(transaction.amount),
+      currency: transaction.currency,
+      status: transaction.status,
+      createdAt: transaction.createdAt,
+      occurredAt: transaction.occurredAt,
+      transaction,
+    }));
+
+  const refundItems: PaymentTimelineItem[] = refunds.map((refund) => ({
+    kind: "refund" as const,
+    key: `refund:${refund.id}`,
+    amount: Math.abs(refund.amount),
+    currency: refund.currency,
+    status: refund.status,
+    createdAt: refund.createdAt,
+    occurredAt: refund.occurredAt,
+    note: refund.note,
+    refund,
+  }));
+
+  return [...paymentItems, ...refundItems].sort((left, right) =>
     right.createdAt.localeCompare(left.createdAt),
   );
 }

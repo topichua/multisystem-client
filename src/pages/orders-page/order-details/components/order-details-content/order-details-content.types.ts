@@ -8,6 +8,8 @@ import type {
   OrderManualPaymentPayload,
   OrderNovaPoshtaWaybillPayload,
   OrderOnlinePaymentPayload,
+  OrderRefundApprovePayload,
+  OrderRefundCreatePayload,
   OrderUpdatePayload,
 } from "@/features/orders/model/order.types";
 
@@ -33,6 +35,12 @@ export type OrderDetailsContentProps = {
   onCreateOnlinePayment: (payload: OrderOnlinePaymentPayload) => Promise<void>;
   onConfirmPaymentTransaction: (transactionId: number) => Promise<void>;
   onDeletePayment: (paymentId: number) => Promise<void>;
+  onCreateOrderRefund: (payload: OrderRefundCreatePayload) => Promise<void>;
+  onApproveOrderRefund: (
+    refundId: number,
+    payload?: OrderRefundApprovePayload,
+  ) => Promise<void>;
+  onDeleteOrderRefund: (refundId: number) => Promise<void>;
   onRefreshOrder: () => Promise<void>;
 };
 
@@ -71,5 +79,11 @@ export type PaymentCardProps = OrderSectionProps & {
   onCreateOnlinePayment: (payload: OrderOnlinePaymentPayload) => Promise<void>;
   onConfirmPaymentTransaction: (transactionId: number) => Promise<void>;
   onDeletePayment: (paymentId: number) => Promise<void>;
+  onCreateOrderRefund: (payload: OrderRefundCreatePayload) => Promise<void>;
+  onApproveOrderRefund: (
+    refundId: number,
+    payload?: OrderRefundApprovePayload,
+  ) => Promise<void>;
+  onDeleteOrderRefund: (refundId: number) => Promise<void>;
   onRefreshOrder: () => Promise<void>;
 };

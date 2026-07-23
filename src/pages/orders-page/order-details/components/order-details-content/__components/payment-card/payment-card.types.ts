@@ -7,7 +7,8 @@ export type PaymentCardView =
   | "select_method"
   | "cash"
   | "card_transfer"
-  | "online";
+  | "online"
+  | "refund";
 
 export type PaymentCollectionMethodOption = {
   key: PaymentCollectionMethod;

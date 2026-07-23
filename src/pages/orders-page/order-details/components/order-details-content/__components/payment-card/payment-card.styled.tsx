@@ -94,11 +94,23 @@ export const PaymentTransactionItem = styled.div`
     ${({ theme }) => theme.colors.functional.border.cardBase};
 `;
 
-export const PaymentAmountDot = styled.span`
+export const PaymentAmountDot = styled.span<{
+  $tone?: "credit" | "debit" | "pending";
+}>`
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: ${({ theme }) => theme.colors.functional.border.selected};
+  background: ${({ theme, $tone }) => {
+    if ($tone === "debit") {
+      return theme.colors.base.red[5];
+    }
+
+    if ($tone === "credit") {
+      return theme.colors.base.green[5];
+    }
+
+    return theme.colors.functional.border.selected;
+  }};
   flex-shrink: 0;
 `;
 

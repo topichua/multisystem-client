@@ -1,5 +1,10 @@
-import { CreditCardIcon, WalletIcon } from "@phosphor-icons/react";
-import { Alert, Button, Card, Flex, Spin } from "antd";
+import {
+  ArrowUUpLeftIcon,
+  ClockIcon,
+  CreditCardIcon,
+  WalletIcon,
+} from "@phosphor-icons/react";
+import { Alert, Button, Card, Flex } from "antd";
 import { useMemo, useState } from "react";
 
 import { getApiErrorMessage } from "@/api/get-api-error-message";
@@ -7,6 +12,7 @@ import type {
   OrderManualPaymentPayload,
   OrderOnlinePaymentPayload,
   OrderPaymentTransaction,
+  OrderRefundCreatePayload,
 } from "@/features/orders/model/order.types";
 import { useNotification } from "@/shared/components/notification/use-notification";
 
@@ -16,6 +22,7 @@ import type { PaymentCardProps } from "../../order-details-content.types";
 import { CardTransferPaymentForm } from "./card-transfer-payment-form";
 import { CashPaymentForm } from "./cash-payment-form";
 import { useOrderPayments } from "./hooks/use-order-payments";
+import { useOrderRefunds } from "./hooks/use-order-refunds";
 import { OnlinePaymentForm } from "./online-payment-form";
 import { PaymentClientMessageModal } from "./payment-client-message-modal";
 import { PaymentCollectionPanel } from "./payment-collection-panel";
@@ -25,8 +32,14 @@ import {
   type PaymentCollectionMethod,
 } from "./payment-card.types";
 import { PaymentSummary } from "./payment-summary";
-import { mergePaymentTransactions } from "./payment-transaction.utils";
+import {
+  buildPaymentTimelineItems,
+  hasPendingActionablePayments,
+  hasPendingRefunds,
+  mergePaymentTransactions,
+} from "./payment-transaction.utils";
 import { PaymentTransactionsList } from "./payment-transactions-list";
+import { RefundPaymentForm } from "./refund-payment-form";
 
 export const PaymentCard = ({
   order,
@@ -35,6 +48,9 @@ export const PaymentCard = ({
   onCreateOnlinePayment,
   onConfirmPaymentTransaction,
   onDeletePayment,
+  onCreateOrderRefund,
+  onApproveOrderRefund,
+  onDeleteOrderRefund,
   onRefreshOrder,
 }: PaymentCardProps) => {
   const notification = useNotification();
@@ -46,7 +62,6 @@ export const PaymentCard = ({
 
   const {
     summary: paymentsSummary,
-    loading: paymentsLoading,
     error: paymentsError,
     refresh: refreshPayments,
   } = useOrderPayments({
@@ -54,6 +69,10 @@ export const PaymentCard = ({
     onSettledChange: () => {
       void onRefreshOrder();
     },
+  });
+
+  const { refunds, refresh: refreshRefunds } = useOrderRefunds({
+    orderId: order.id,
   });
 
   const { dueAmount, paidAmount, remainingAmount, paymentStatus } =
@@ -84,9 +103,46 @@ export const PaymentCard = ({
     [order.payment.payments, paymentsSummary],
   );
 
-  const canCollectPayment = remainingAmount != null && remainingAmount > 0;
-  const activeView = canCollectPayment ? view : "summary";
+  const timelineItems = useMemo(
+    () => buildPaymentTimelineItems(transactions, refunds),
+    [transactions, refunds],
+  );
+
+  const hasPendingPayment = useMemo(
+    () => hasPendingActionablePayments(transactions),
+    [transactions],
+  );
+  const hasPendingRefund = useMemo(() => hasPendingRefunds(refunds), [refunds]);
+  const hasBlockingPending = hasPendingPayment || hasPendingRefund;
+
+  const canCollectPayment =
+    remainingAmount != null && remainingAmount > 0 && !hasBlockingPending;
+  const canRefundPayment = paidAmount > 0 && !hasBlockingPending;
+
+  const activeView = useMemo<PaymentCardView>(() => {
+    if (view === "refund") {
+      return canRefundPayment ? "refund" : "summary";
+    }
+
+    if (
+      view === "select_method" ||
+      view === "cash" ||
+      view === "card_transfer" ||
+      view === "online"
+    ) {
+      return canCollectPayment ? view : "summary";
+    }
+
+    return "summary";
+  }, [canCollectPayment, canRefundPayment, view]);
+
   const currencyLabel = order.currency || "UAH";
+  const showSummaryActions =
+    activeView === "summary" && (canCollectPayment || canRefundPayment);
+
+  const refreshPaymentData = async () => {
+    await Promise.all([refreshPayments(), refreshRefunds()]);
+  };
 
   const handleSelectMethod = (method: PaymentCollectionMethod) => {
     const nextView = PAYMENT_METHOD_VIEWS[method];
@@ -103,7 +159,7 @@ export const PaymentCard = ({
 
     try {
       await onCreateManualPayment(payload);
-      await refreshPayments();
+      await refreshPaymentData();
       setView("summary");
     } catch (error) {
       notification.error({
@@ -121,7 +177,7 @@ export const PaymentCard = ({
 
     try {
       await onCreateOnlinePayment(payload);
-      await refreshPayments();
+      await refreshPaymentData();
       setView("summary");
     } catch (error) {
       notification.error({
@@ -135,12 +191,31 @@ export const PaymentCard = ({
     }
   };
 
-  const handleConfirm = async (transactionId: number) => {
+  const handleCreateRefund = async (payload: OrderRefundCreatePayload) => {
+    setSubmitting(true);
+
+    try {
+      await onCreateOrderRefund(payload);
+      await refreshPaymentData();
+      setView("summary");
+    } catch (error) {
+      notification.error({
+        title: getApiErrorMessage(
+          error,
+          t("orders.details.createRefundFailed"),
+        ),
+      });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleConfirmPayment = async (transactionId: number) => {
     setActionLoadingKey(`confirm:${transactionId}`);
 
     try {
       await onConfirmPaymentTransaction(transactionId);
-      await refreshPayments();
+      await refreshPaymentData();
     } catch (error) {
       notification.error({
         title: getApiErrorMessage(
@@ -153,17 +228,54 @@ export const PaymentCard = ({
     }
   };
 
-  const handleDelete = async (paymentId: number) => {
+  const handleDeletePayment = async (paymentId: number) => {
     setActionLoadingKey(`delete:${paymentId}`);
 
     try {
       await onDeletePayment(paymentId);
-      await refreshPayments();
+      await refreshPaymentData();
     } catch (error) {
       notification.error({
         title: getApiErrorMessage(
           error,
           t("orders.details.cancelPaymentFailed"),
+        ),
+      });
+    } finally {
+      setActionLoadingKey(null);
+    }
+  };
+
+  const handleApproveRefund = async (refundId: number) => {
+    setActionLoadingKey(`refund-confirm:${refundId}`);
+
+    try {
+      await onApproveOrderRefund(refundId);
+      await refreshPaymentData();
+      await onRefreshOrder();
+    } catch (error) {
+      notification.error({
+        title: getApiErrorMessage(
+          error,
+          t("orders.details.confirmRefundFailed"),
+        ),
+      });
+    } finally {
+      setActionLoadingKey(null);
+    }
+  };
+
+  const handleDeleteRefund = async (refundId: number) => {
+    setActionLoadingKey(`refund-delete:${refundId}`);
+
+    try {
+      await onDeleteOrderRefund(refundId);
+      await refreshPaymentData();
+    } catch (error) {
+      notification.error({
+        title: getApiErrorMessage(
+          error,
+          t("orders.details.cancelRefundFailed"),
         ),
       });
     } finally {
@@ -193,15 +305,37 @@ export const PaymentCard = ({
           t={t}
         />
 
-        {activeView === "summary" && canCollectPayment && (
-          <Button
-            type="primary"
-            block
-            icon={<WalletIcon size={16} />}
-            onClick={() => setView("select_method")}
-          >
-            {t("orders.details.collectPayment")}
-          </Button>
+        {activeView === "summary" && hasBlockingPending && (
+          <Alert
+            type="info"
+            showIcon
+            icon={<ClockIcon size={16} />}
+            title={t("orders.details.pendingPaymentActionRequired")}
+          />
+        )}
+
+        {showSummaryActions && (
+          <Flex align="center" justify="space-between" wrap="wrap">
+            {canCollectPayment && (
+              <Button
+                type="primary"
+                icon={<WalletIcon size={16} />}
+                onClick={() => setView("select_method")}
+              >
+                {t("orders.details.collectPayment")}
+              </Button>
+            )}
+
+            {canRefundPayment && (
+              <Button
+                type="text"
+                icon={<ArrowUUpLeftIcon size={16} />}
+                onClick={() => setView("refund")}
+              >
+                {t("orders.details.refundPayment")}
+              </Button>
+            )}
+          </Flex>
         )}
 
         {activeView === "select_method" && (
@@ -257,13 +391,16 @@ export const PaymentCard = ({
           />
         )}
 
-        {activeView === "summary" &&
-          paymentsLoading &&
-          transactions.length === 0 && (
-            <Flex align="center" justify="center" style={{ minHeight: 48 }}>
-              <Spin size="small" />
-            </Flex>
-          )}
+        {activeView === "refund" && (
+          <RefundPaymentForm
+            paidAmount={paidAmount}
+            currencyLabel={currencyLabel}
+            submitting={submitting}
+            t={t}
+            onBack={() => setView("summary")}
+            onSubmit={handleCreateRefund}
+          />
+        )}
 
         {activeView === "summary" &&
           paymentsError &&
@@ -271,22 +408,29 @@ export const PaymentCard = ({
             <Alert type="warning" showIcon title={paymentsError} />
           )}
 
-        {activeView === "summary" && (
-          <PaymentTransactionsList
-            currency={order.currency}
-            transactions={transactions}
-            actionLoadingKey={actionLoadingKey}
-            canMessageClient={order.conversationId != null}
-            t={t}
-            onConfirm={(transactionId) => {
-              void handleConfirm(transactionId);
-            }}
-            onDelete={(paymentId) => {
-              void handleDelete(paymentId);
-            }}
-            onMessageClient={setMessageTransaction}
-          />
-        )}
+        {(activeView === "summary" || activeView === "refund") &&
+          timelineItems.length > 0 && (
+            <PaymentTransactionsList
+              currency={order.currency}
+              items={timelineItems}
+              actionLoadingKey={actionLoadingKey}
+              canMessageClient={order.conversationId != null}
+              t={t}
+              onConfirmPayment={(transactionId) => {
+                void handleConfirmPayment(transactionId);
+              }}
+              onDeletePayment={(paymentId) => {
+                void handleDeletePayment(paymentId);
+              }}
+              onApproveRefund={(refundId) => {
+                void handleApproveRefund(refundId);
+              }}
+              onDeleteRefund={(refundId) => {
+                void handleDeleteRefund(refundId);
+              }}
+              onMessageClient={setMessageTransaction}
+            />
+          )}
       </Flex>
 
       <PaymentClientMessageModal

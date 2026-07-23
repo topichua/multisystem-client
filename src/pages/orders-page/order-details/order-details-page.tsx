@@ -41,6 +41,9 @@ export const OrderDetailsPage = () => {
     createOnlinePayment,
     confirmPaymentTransaction,
     deletePayment,
+    createOrderRefund,
+    approveOrderRefund,
+    deleteOrderRefund,
     refreshOrder,
   } = useOrderDetails(orderId);
 
@@ -80,6 +83,9 @@ export const OrderDetailsPage = () => {
               onCreateOnlinePayment={createOnlinePayment}
               onConfirmPaymentTransaction={confirmPaymentTransaction}
               onDeletePayment={deletePayment}
+              onCreateOrderRefund={createOrderRefund}
+              onApproveOrderRefund={approveOrderRefund}
+              onDeleteOrderRefund={deleteOrderRefund}
               onRefreshOrder={refreshOrder}
             />
           )}
