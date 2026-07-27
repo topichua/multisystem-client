@@ -9,11 +9,13 @@ import type { TranslationFn } from "../order-details-content.types";
 type UseNovaPoshtaWaybillParams = {
   t: TranslationFn;
   onRemoveNovaPoshtaWaybill: () => Promise<void>;
+  onCreateDeliveryPayment: () => Promise<void>;
 };
 
 export const useNovaPoshtaWaybill = ({
   t,
   onRemoveNovaPoshtaWaybill,
+  onCreateDeliveryPayment,
 }: UseNovaPoshtaWaybillParams) => {
   const notification = useNotification();
   const [waybillActionLoading, setWaybillActionLoading] = useState(false);
@@ -48,8 +50,29 @@ export const useNovaPoshtaWaybill = ({
     });
   }, [notification, onRemoveNovaPoshtaWaybill, t]);
 
+  const handleSyncPayment = useCallback(async () => {
+    setWaybillActionLoading(true);
+
+    try {
+      await onCreateDeliveryPayment();
+      notification.success({
+        title: t("orders.details.deliveryPaymentSyncSuccess"),
+      });
+    } catch (error) {
+      notification.error({
+        title: getApiErrorMessage(
+          error,
+          t("orders.details.deliveryPaymentSyncFailed"),
+        ),
+      });
+    } finally {
+      setWaybillActionLoading(false);
+    }
+  }, [notification, onCreateDeliveryPayment, t]);
+
   return {
     waybillActionLoading,
     handleRemoveWaybill,
+    handleSyncPayment,
   };
 };

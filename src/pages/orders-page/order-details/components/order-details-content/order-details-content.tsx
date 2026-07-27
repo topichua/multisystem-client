@@ -22,6 +22,7 @@ export const OrderDetailsContent = ({
   onRemoveNovaPoshtaWaybill,
   onUpdateDelivery,
   onAttachDeliveryTracking,
+  onCreateDeliveryPayment,
   onUpdateOrder,
   onCreateManualPayment,
   onCreateOnlinePayment,
@@ -63,6 +64,7 @@ export const OrderDetailsContent = ({
               onRemoveNovaPoshtaWaybill={onRemoveNovaPoshtaWaybill}
               onUpdateDelivery={onUpdateDelivery}
               onAttachDeliveryTracking={onAttachDeliveryTracking}
+              onCreateDeliveryPayment={onCreateDeliveryPayment}
             />
           </Flex>
         </Col>

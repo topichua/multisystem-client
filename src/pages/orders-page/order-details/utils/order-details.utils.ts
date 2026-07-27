@@ -221,6 +221,15 @@ export const getEventDescription = (
         : translate("orders.events.paymentSucceeded");
     }
 
+    case "order.payment_cancelled": {
+      const amount = getRecordNumber(payload, "amount");
+      return amount != null
+        ? translate("orders.events.paymentCancelledWithAmount", {
+            amount: formatMoney(amount, currency),
+          })
+        : translate("orders.events.paymentCancelled");
+    }
+
     case "order.payment_refund_requested": {
       const amount = getRecordNumber(payload, "amount");
       return amount != null

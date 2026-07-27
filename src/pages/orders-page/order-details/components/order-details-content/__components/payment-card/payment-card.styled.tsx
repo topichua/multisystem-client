@@ -99,12 +99,16 @@ export const PaymentTransactionItem = styled.div`
 `;
 
 export const PaymentAmountDot = styled.span<{
-  $tone?: "credit" | "debit" | "pending";
+  $tone?: "credit" | "debit" | "pending" | "refund";
 }>`
   width: 8px;
   height: 8px;
   border-radius: 50%;
   background: ${({ theme, $tone }) => {
+    if ($tone === "refund") {
+      return theme.colors.semantic.primary;
+    }
+
     if ($tone === "debit") {
       return theme.colors.base.red[5];
     }
@@ -116,6 +120,11 @@ export const PaymentAmountDot = styled.span<{
     return theme.colors.functional.border.selected;
   }};
   flex-shrink: 0;
+`;
+
+export const PaymentRefundAmount = styled.span`
+  color: ${({ theme }) => theme.colors.semantic.primary};
+  font-weight: 600;
 `;
 
 export const TransferMethodBox = styled.div`

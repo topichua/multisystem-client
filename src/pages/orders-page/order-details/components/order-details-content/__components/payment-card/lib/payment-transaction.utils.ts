@@ -30,6 +30,8 @@ const CONFIRMED_REFUND_STATUSES = new Set([
   "completed",
 ]);
 
+const DELIVERY_PAYMENT_KINDS = new Set(["nova_poshta_payment"]);
+
 export type PaymentTimelineItem =
   | {
       kind: "payment";
@@ -92,6 +94,20 @@ export function isRefundLikeTransaction(
   return kind.includes("refund") || kind.includes("return");
 }
 
+export function isDeliveryPaymentTransaction(
+  transaction: OrderPaymentTransaction,
+): boolean {
+  const kinds = [
+    transaction.source,
+    transaction.method,
+    transaction.manualPaymentKind,
+  ];
+
+  return kinds.some(
+    (kind) => kind != null && DELIVERY_PAYMENT_KINDS.has(kind.toLowerCase()),
+  );
+}
+
 export function mapOnlinePaymentToTransaction(
   payment: OrderOnlinePayment,
 ): OrderPaymentTransaction {
@@ -142,18 +158,29 @@ export function resolvePaymentDeleteId(
     return transaction.paymentId;
   }
 
-  return null;
+  // DELETE /orders/:orderId/payments/:paymentId accepts a pending payment
+  // transaction id from order.payment.payments[] when paymentId is not present.
+  return transaction.id;
 }
 
-export function canActOnPendingPayment(status: string): boolean {
+export function isPendingPaymentStatus(status: string): boolean {
   return PENDING_PAYMENT_STATUSES.has(status);
+}
+
+export function canActOnPendingPayment(
+  transaction: OrderPaymentTransaction,
+): boolean {
+  return (
+    isPendingPaymentStatus(transaction.status) &&
+    !isDeliveryPaymentTransaction(transaction)
+  );
 }
 
 export function hasPendingActionablePayments(
   transactions: OrderPaymentTransaction[],
 ): boolean {
   return transactions.some((transaction) =>
-    canActOnPendingPayment(transaction.status),
+    canActOnPendingPayment(transaction),
   );
 }
 

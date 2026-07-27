@@ -3,6 +3,7 @@ import type { useTranslation } from "react-i18next";
 
 import type {
   OrderDeliveryPayload,
+  OrderDeliveryPaymentPayload,
   OrderDeliveryTrackingPayload,
   OrderDetails,
   OrderManualPaymentPayload,
@@ -29,6 +30,9 @@ export type OrderDetailsContentProps = {
   onUpdateDelivery: (payload: OrderDeliveryPayload) => Promise<void>;
   onAttachDeliveryTracking: (
     payload: OrderDeliveryTrackingPayload,
+  ) => Promise<void>;
+  onCreateDeliveryPayment: (
+    payload: OrderDeliveryPaymentPayload,
   ) => Promise<void>;
   onUpdateOrder: (payload: OrderUpdatePayload) => Promise<void>;
   onCreateManualPayment: (payload: OrderManualPaymentPayload) => Promise<void>;
@@ -71,6 +75,9 @@ export type DeliveryCardProps = OrderSectionProps & {
   onUpdateDelivery: (payload: OrderDeliveryPayload) => Promise<void>;
   onAttachDeliveryTracking: (
     payload: OrderDeliveryTrackingPayload,
+  ) => Promise<void>;
+  onCreateDeliveryPayment: (
+    payload: OrderDeliveryPaymentPayload,
   ) => Promise<void>;
 };
 

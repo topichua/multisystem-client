@@ -45,6 +45,10 @@ const EVENT_META: Record<
     tone: "green",
     titleKey: "orders.details.eventPaymentSucceeded",
   },
+  "order.payment_cancelled": {
+    tone: "gray",
+    titleKey: "orders.details.eventPaymentCancelled",
+  },
   "order.payment_refund_requested": {
     tone: "orange",
     titleKey: "orders.details.eventPaymentRefundRequested",

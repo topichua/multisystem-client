@@ -1,4 +1,4 @@
-import { Alert, Drawer, Flex, Spin, Typography } from "antd";
+import { Alert, Divider, Drawer, Flex, Spin, Typography } from "antd";
 import { useTranslation } from "react-i18next";
 
 import { DeliveryCard } from "@/pages/orders-page/order-details/components/order-details-content/__components/delivery-card/delivery-card";
@@ -9,8 +9,9 @@ import {
   EMPTY_VALUE,
   getCustomerName,
 } from "@/pages/orders-page/order-details/utils/order-details.utils";
+import { ArrowUpRightIcon } from "@phosphor-icons/react";
 
-const { Text } = Typography;
+const { Text, Link } = Typography;
 
 type CurrentOrderDrawerProps = {
   open: boolean;
@@ -33,6 +34,7 @@ export function CurrentOrderDrawer({
     removeNovaPoshtaWaybill,
     updateDelivery,
     attachDeliveryTracking,
+    createDeliveryPayment,
     createManualPayment,
     createOnlinePayment,
     confirmPaymentTransaction,
@@ -86,12 +88,12 @@ export function CurrentOrderDrawer({
           padding: "18px 18px 14px",
         },
         body: {
-          padding: "18px",
+          padding: 0,
         },
       }}
     >
       <Spin spinning={loading}>
-        <Flex vertical gap={16}>
+        <Flex vertical>
           {error && <Alert type="error" showIcon title={error} />}
 
           {!error && !loading && !order && (
@@ -100,27 +102,47 @@ export function CurrentOrderDrawer({
 
           {order && (
             <>
-              <ProductsCard productCardSize="small" order={order} t={t} />
-              <DeliveryCard
-                order={order}
-                t={t}
-                onCreateNovaPoshtaWaybill={createNovaPoshtaWaybill}
-                onRemoveNovaPoshtaWaybill={removeNovaPoshtaWaybill}
-                onUpdateDelivery={updateDelivery}
-                onAttachDeliveryTracking={attachDeliveryTracking}
-              />
-              <PaymentCard
-                order={order}
-                t={t}
-                onCreateManualPayment={createManualPayment}
-                onCreateOnlinePayment={createOnlinePayment}
-                onConfirmPaymentTransaction={confirmPaymentTransaction}
-                onDeletePayment={deletePayment}
-                onCreateOrderRefund={createOrderRefund}
-                onApproveOrderRefund={approveOrderRefund}
-                onDeleteOrderRefund={deleteOrderRefund}
-                onRefreshOrder={refreshOrder}
-              />
+              <div style={{ padding: "18px 18px 0 18px" }}>
+                <Link
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={`/orders/${order.id}`}
+                >
+                  <Flex
+                    align="center"
+                    gap={4}
+                    style={{ display: "inline-flex" }}
+                  >
+                    <ArrowUpRightIcon size={16} />
+                    {t("conversation.clientOrders.openFullOrder")}
+                  </Flex>
+                </Link>
+              </div>
+              <Divider size="middle" />
+              <div style={{ padding: "0 18px 18px 18px" }}>
+                <ProductsCard productCardSize="small" order={order} t={t} />
+                <DeliveryCard
+                  order={order}
+                  t={t}
+                  onCreateNovaPoshtaWaybill={createNovaPoshtaWaybill}
+                  onRemoveNovaPoshtaWaybill={removeNovaPoshtaWaybill}
+                  onUpdateDelivery={updateDelivery}
+                  onAttachDeliveryTracking={attachDeliveryTracking}
+                  onCreateDeliveryPayment={createDeliveryPayment}
+                />
+                <PaymentCard
+                  order={order}
+                  t={t}
+                  onCreateManualPayment={createManualPayment}
+                  onCreateOnlinePayment={createOnlinePayment}
+                  onConfirmPaymentTransaction={confirmPaymentTransaction}
+                  onDeletePayment={deletePayment}
+                  onCreateOrderRefund={createOrderRefund}
+                  onApproveOrderRefund={approveOrderRefund}
+                  onDeleteOrderRefund={deleteOrderRefund}
+                  onRefreshOrder={refreshOrder}
+                />
+              </div>
             </>
           )}
         </Flex>

@@ -14,6 +14,7 @@ import type {
   ClientOrderStats,
   OrderCreatePayload,
   OrderDeliveryPayload,
+  OrderDeliveryPaymentPayload,
   OrderDeliveryTrackingPayload,
   OrderDetails,
   OrderListItem,
@@ -789,6 +790,14 @@ export class OrdersStore {
   ): Promise<OrderDetails> =>
     this.withOrderUpdate(orderId, () =>
       ordersApi.createManualPayment(orderId, payload),
+    );
+
+  createDeliveryPayment = (
+    orderId: number,
+    payload: OrderDeliveryPaymentPayload,
+  ): Promise<OrderDetails> =>
+    this.withOrderUpdate(orderId, () =>
+      ordersApi.createDeliveryPayment(orderId, payload),
     );
 
   createOnlinePayment = (

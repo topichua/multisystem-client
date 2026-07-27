@@ -197,6 +197,11 @@ export type OrderManualPaymentPayload = {
   manualPaymentMethodId: number | null;
 };
 
+export type OrderDeliveryPaymentPayload = {
+  amount: number;
+  note: string;
+};
+
 export type OrderOnlinePaymentPayload = {
   amount: number;
   integrationId: number;
@@ -353,6 +358,7 @@ export type OrderConversation = {
 };
 
 export type OrderDeliveryInfo = {
+  canSyncPayment?: boolean;
   id: number;
   provider: string;
   providerId: number | null;

@@ -1,4 +1,9 @@
-import { CopySimpleIcon, MapPinIcon, TrashIcon } from "@phosphor-icons/react";
+import {
+  ArrowClockwiseIcon,
+  CopySimpleIcon,
+  MapPinIcon,
+  TrashIcon,
+} from "@phosphor-icons/react";
 import {
   Alert,
   Button,
@@ -39,6 +44,7 @@ type DeliverySummaryProps = {
   waybillActionLoading: boolean;
   onCopyTrackingNumber: () => void;
   onRemoveWaybill: () => void;
+  onSyncPayment: () => void;
 };
 
 export function DeliverySummary({
@@ -49,9 +55,11 @@ export function DeliverySummary({
   waybillActionLoading,
   onCopyTrackingNumber,
   onRemoveWaybill,
+  onSyncPayment,
 }: DeliverySummaryProps) {
   const trackingNumber = primaryDeliveryInfo.trackingNumber;
   const destination = getDeliveryDestination(primaryDeliveryInfo);
+  const canSyncPayment = primaryDeliveryInfo.canSyncPayment;
   const city = formatText(primaryDeliveryInfo.city);
   const destinationText =
     city !== EMPTY_VALUE && destination !== EMPTY_VALUE
@@ -132,16 +140,34 @@ export function DeliverySummary({
 
       <Descriptions column={{ xs: 1, md: 2 }} items={items} />
 
-      <Button
-        block
-        danger
-        disabled={waybillActionLoading}
-        icon={<TrashIcon size={18} />}
-        loading={waybillActionLoading}
-        onClick={onRemoveWaybill}
+      <Flex
+        align="center"
+        justify={canSyncPayment ? "space-between" : "center"}
+        gap={16}
       >
-        {t("orders.details.removeDelivery")}
-      </Button>
+        {canSyncPayment && (
+          <Button
+            block={canSyncPayment}
+            type="primary"
+            disabled={waybillActionLoading}
+            icon={<ArrowClockwiseIcon size={18} />}
+            loading={waybillActionLoading}
+            onClick={onSyncPayment}
+          >
+            {t("orders.details.deliveryPaymentSync")}
+          </Button>
+        )}
+        <Button
+          block={canSyncPayment}
+          danger
+          disabled={waybillActionLoading}
+          icon={<TrashIcon size={18} />}
+          loading={waybillActionLoading}
+          onClick={onRemoveWaybill}
+        >
+          {t("orders.details.removeDelivery")}
+        </Button>
+      </Flex>
     </Space>
   );
 }

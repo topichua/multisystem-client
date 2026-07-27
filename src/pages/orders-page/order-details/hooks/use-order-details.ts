@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { ordersApi } from "@/features/orders/api/orders-api";
 import type {
   OrderDeliveryPayload,
+  OrderDeliveryPaymentPayload,
   OrderDeliveryTrackingPayload,
   OrderDetails,
   OrderManualPaymentPayload,
@@ -156,6 +157,21 @@ export const useOrderDetails = (orderId: number | null) => {
     [orderId, ordersStore],
   );
 
+  const createDeliveryPayment = useCallback(
+    async (payload: OrderDeliveryPaymentPayload): Promise<void> => {
+      if (orderId == null) {
+        return;
+      }
+
+      const updatedOrder = await ordersStore.createDeliveryPayment(
+        orderId,
+        payload,
+      );
+      setOrder(updatedOrder);
+    },
+    [orderId, ordersStore],
+  );
+
   const createOnlinePayment = useCallback(
     async (payload: OrderOnlinePaymentPayload): Promise<void> => {
       if (orderId == null) {
@@ -267,6 +283,7 @@ export const useOrderDetails = (orderId: number | null) => {
     attachDeliveryTracking,
     updateOrder,
     createManualPayment,
+    createDeliveryPayment,
     createOnlinePayment,
     confirmPaymentTransaction,
     deletePayment,

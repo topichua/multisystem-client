@@ -9,6 +9,7 @@ import {
   type OrderDetails,
   type OrderListItem,
   type OrderDeliveryPayload,
+  type OrderDeliveryPaymentPayload,
   type OrderDeliveryTrackingPayload,
   type OrderManualPaymentPayload,
   type OrderNovaPoshtaWaybillPayload,
@@ -269,6 +270,18 @@ export const ordersApi = {
 
   removeNovaPoshtaWaybill: async (orderId: number): Promise<void> => {
     await apiClient.delete(`${basePath}/${orderId}/novaposhta/waybill`);
+  },
+
+  createDeliveryPayment: async (
+    orderId: number,
+    payload: OrderDeliveryPaymentPayload,
+  ): Promise<OrderPaymentMutationResponse> => {
+    const { data } = await apiClient.post<OrderPaymentMutationResponse>(
+      `${basePath}/${orderId}/delivery/payment`,
+      payload,
+    );
+
+    return data;
   },
 
   createManualPayment: async (

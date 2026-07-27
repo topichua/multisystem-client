@@ -12,7 +12,9 @@ import {
   canActOnPendingPayment,
   canActOnPendingRefund,
   isConfirmedPaymentStatus,
+  isDeliveryPaymentTransaction,
   isOnlinePaymentTransaction,
+  isPendingPaymentStatus,
   resolvePaymentDeleteId,
   type PaymentTimelineItem,
 } from "../lib/payment-transaction.utils";
@@ -70,6 +72,23 @@ function getPaymentMethodLabel(
   }
 
   return t(`orders.paymentMethodKind.${kind}`, { defaultValue: kind });
+}
+
+function getPaymentDescription(
+  transaction: OrderPaymentTransaction,
+  t: TranslationFn,
+): string | null {
+  const note = transaction.note?.trim();
+
+  if (note) {
+    return note;
+  }
+
+  if (isDeliveryPaymentTransaction(transaction)) {
+    return t("orders.details.deliveryPaymentTransactionDescription");
+  }
+
+  return null;
 }
 
 function getStatusLabel(
@@ -136,10 +155,10 @@ export function PaymentTransactionsList({
               <S.PaymentTransactionItem key={item.key}>
                 <Flex align="flex-start" justify="space-between" gap={8}>
                   <Flex align="center" gap={8}>
-                    <S.PaymentAmountDot $tone="debit" aria-hidden="true" />
-                    <Text strong type="danger">
+                    <S.PaymentAmountDot $tone="refund" aria-hidden="true" />
+                    <S.PaymentRefundAmount>
                       -{formatMoney(item.amount, item.currency || currency)}
-                    </Text>
+                    </S.PaymentRefundAmount>
                   </Flex>
                   <Text
                     type="secondary"
@@ -230,9 +249,18 @@ export function PaymentTransactionsList({
           const isConfirming = actionLoadingKey === confirmKey;
           const isDeleting = actionLoadingKey === deleteKey;
           const isOnline = isOnlinePaymentTransaction(transaction);
-          const showActions = canActOnPendingPayment(transaction.status);
+          const isPending = isPendingPaymentStatus(transaction.status);
+          const canActOnPending = canActOnPendingPayment(transaction);
+          const showStatus = isPending;
+          const showConfirmButton = isPending && !isOnline;
+          const showMessageButton = isPending && canMessageClient;
+          const showDeleteButton = isPending;
+          const showPrimaryActions = showConfirmButton || showMessageButton;
+          const showActions = showPrimaryActions || showDeleteButton;
+          const description = getPaymentDescription(transaction, t);
           const isConfirmed = isConfirmedPaymentStatus(transaction.status);
           const actionsDisabled = actionLoadingKey != null;
+          const primaryActionsDisabled = actionsDisabled || !canActOnPending;
 
           return (
             <S.PaymentTransactionItem key={item.key}>
@@ -256,7 +284,7 @@ export function PaymentTransactionsList({
 
               <Flex align="center" gap={8} wrap="wrap" style={{ marginTop: 6 }}>
                 <Text>{getPaymentMethodLabel(transaction, t)}</Text>
-                {showActions && (
+                {showStatus && (
                   <Tag
                     color={
                       PAYMENT_TRANSACTION_STATUS_COLORS[transaction.status] ??
@@ -271,73 +299,86 @@ export function PaymentTransactionsList({
                 )}
               </Flex>
 
+              {description && (
+                <Text
+                  type="secondary"
+                  style={{ display: "block", fontSize: 12, marginTop: 2 }}
+                >
+                  {description}
+                </Text>
+              )}
+
               {showActions && (
                 <Flex
                   align="center"
-                  justify="space-between"
+                  justify={showPrimaryActions ? "space-between" : "flex-end"}
                   gap={8}
                   style={{ marginTop: 16 }}
                 >
-                  <Flex align="center" gap={8}>
-                    {!isOnline && (
-                      <Popconfirm
-                        title={t("orders.details.confirmPaymentConfirmTitle")}
-                        description={t(
-                          "orders.details.confirmPaymentConfirmText",
-                        )}
-                        okText={t("orders.details.confirmPayment")}
-                        cancelText={t("orders.details.cancel")}
-                        disabled={actionsDisabled}
-                        onConfirm={() => onConfirmPayment(transaction.id)}
-                      >
-                        <Button
-                          type="primary"
-                          size="small"
-                          icon={<CheckIcon size={14} />}
-                          loading={isConfirming}
-                          disabled={actionsDisabled}
+                  {showPrimaryActions && (
+                    <Flex align="center" gap={8}>
+                      {showConfirmButton && (
+                        <Popconfirm
+                          title={t("orders.details.confirmPaymentConfirmTitle")}
+                          description={t(
+                            "orders.details.confirmPaymentConfirmText",
+                          )}
+                          okText={t("orders.details.confirmPayment")}
+                          cancelText={t("orders.details.cancel")}
+                          disabled={primaryActionsDisabled}
+                          onConfirm={() => onConfirmPayment(transaction.id)}
                         >
-                          {t("orders.details.confirmPayment")}
+                          <Button
+                            type="primary"
+                            size="small"
+                            icon={<CheckIcon size={14} />}
+                            loading={isConfirming}
+                            disabled={primaryActionsDisabled}
+                          >
+                            {t("orders.details.confirmPayment")}
+                          </Button>
+                        </Popconfirm>
+                      )}
+
+                      {showMessageButton && (
+                        <Button
+                          type="link"
+                          size="small"
+                          icon={<PaperPlaneTiltIcon size={14} />}
+                          disabled={primaryActionsDisabled}
+                          onClick={() => onMessageClient(transaction)}
+                        >
+                          {t("orders.details.paymentClientMessageSend")}
                         </Button>
-                      </Popconfirm>
-                    )}
+                      )}
+                    </Flex>
+                  )}
 
-                    {canMessageClient && (
-                      <Button
-                        type="link"
-                        size="small"
-                        icon={<PaperPlaneTiltIcon size={14} />}
-                        disabled={actionsDisabled}
-                        onClick={() => onMessageClient(transaction)}
-                      >
-                        {t("orders.details.paymentClientMessageSend")}
-                      </Button>
-                    )}
-                  </Flex>
-
-                  <Popconfirm
-                    title={t("orders.details.cancelPaymentConfirmTitle")}
-                    description={t("orders.details.cancelPaymentConfirmText")}
-                    okText={t("orders.details.cancel")}
-                    okButtonProps={{ danger: true }}
-                    cancelText={t("orders.details.paymentKeepPending")}
-                    disabled={actionsDisabled || deleteId == null}
-                    onConfirm={() => {
-                      if (deleteId != null) {
-                        onDeletePayment(deleteId);
-                      }
-                    }}
-                  >
-                    <Button
-                      danger
-                      variant="outlined"
-                      size="small"
-                      icon={<XIcon size={14} />}
-                      loading={isDeleting}
+                  {showDeleteButton && (
+                    <Popconfirm
+                      title={t("orders.details.cancelPaymentConfirmTitle")}
+                      description={t("orders.details.cancelPaymentConfirmText")}
+                      okText={t("orders.details.cancel")}
+                      okButtonProps={{ danger: true }}
+                      cancelText={t("orders.details.paymentKeepPending")}
                       disabled={actionsDisabled || deleteId == null}
-                      aria-label={t("orders.details.cancel")}
-                    />
-                  </Popconfirm>
+                      onConfirm={() => {
+                        if (deleteId != null) {
+                          onDeletePayment(deleteId);
+                        }
+                      }}
+                    >
+                      <Button
+                        danger
+                        variant="outlined"
+                        size="small"
+                        icon={<XIcon size={14} />}
+                        loading={isDeleting}
+                        disabled={actionsDisabled || deleteId == null}
+                        aria-label={t("orders.details.cancel")}
+                      />
+                    </Popconfirm>
+                  )}
                 </Flex>
               )}
             </S.PaymentTransactionItem>

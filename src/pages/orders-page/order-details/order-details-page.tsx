@@ -38,6 +38,7 @@ export const OrderDetailsPage = () => {
     attachDeliveryTracking,
     updateOrder,
     createManualPayment,
+    createDeliveryPayment,
     createOnlinePayment,
     confirmPaymentTransaction,
     deletePayment,
@@ -78,6 +79,7 @@ export const OrderDetailsPage = () => {
               onRemoveNovaPoshtaWaybill={removeNovaPoshtaWaybill}
               onUpdateDelivery={updateDelivery}
               onAttachDeliveryTracking={attachDeliveryTracking}
+              onCreateDeliveryPayment={createDeliveryPayment}
               onUpdateOrder={updateOrder}
               onCreateManualPayment={createManualPayment}
               onCreateOnlinePayment={createOnlinePayment}
