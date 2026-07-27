@@ -9,6 +9,7 @@ export type ProductCreateFormValues = {
   status: "draft" | "active" | "archived";
   price: number;
   quantity: number;
+  sku?: string;
   categoryId?: number;
   weightGrams?: number | null;
   lengthCm?: number | null;
@@ -37,6 +38,7 @@ export const defaultCreateValues: ProductCreateFormValues = {
   status: "active",
   price: 0,
   quantity: 0,
+  sku: "",
   categoryId: undefined,
   weightGrams: undefined,
   lengthCm: undefined,

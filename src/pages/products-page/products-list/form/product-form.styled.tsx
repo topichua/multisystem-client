@@ -3,8 +3,8 @@ import styled, { css } from "styled-components";
 
 export const UploadedMediaPreview = styled.div<{ $isMain: boolean }>`
   position: relative;
-  width: 138px;
-  height: 138px;
+  width: 100px;
+  height: 100px;
   flex-shrink: 0;
   border-radius: 8px;
   overflow: hidden;
@@ -25,11 +25,12 @@ export const UploadedMediaPreview = styled.div<{ $isMain: boolean }>`
     left: 6px;
     z-index: 1;
     margin: 0;
+    padding: 4px;
   }
 
   .uploaded-media-delete {
     position: absolute;
-    top: 4px;
+    bottom: 4px;
     right: 4px;
     z-index: 1;
     background: rgba(255, 255, 255, 0.92) !important;

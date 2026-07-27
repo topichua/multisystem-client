@@ -60,8 +60,8 @@ type ProductVariantImagesModalInnerProps = Omit<
 
 const MediaThumb = styled.button<{ $selected?: boolean }>`
   position: relative;
-  width: 88px;
-  height: 88px;
+  width: 64px;
+  height: 64px;
   padding: 0;
   border-radius: 8px;
   overflow: hidden;

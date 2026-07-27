@@ -20,9 +20,11 @@ export type ProductMainInfoSectionProps = {
     price: string;
     quantity: string;
     status: string;
+    sku: string;
   };
   showQuantityField: boolean;
   showPriceField?: boolean;
+  showSkuField?: boolean;
   showStatusField?: boolean;
   isMobile?: boolean;
 };
@@ -33,6 +35,7 @@ export const ProductMainInfoSection = ({
   labels,
   showQuantityField,
   showPriceField = true,
+  showSkuField = false,
   showStatusField = true,
   isMobile = false,
 }: ProductMainInfoSectionProps) => {
@@ -156,6 +159,18 @@ export const ProductMainInfoSection = ({
                 />
               </Form.Item>
             </Col>
+          )}
+
+          {showSkuField ? (
+            <Col span={isMobile ? 24 : 12}>
+              <Form.Item name="sku" label={labels.sku}>
+                <Input placeholder={t("products.form.skuPlaceholder")} />
+              </Form.Item>
+            </Col>
+          ) : (
+            <Form.Item name="sku" hidden>
+              <Input />
+            </Form.Item>
           )}
         </Row>
 

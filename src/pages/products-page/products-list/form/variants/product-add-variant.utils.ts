@@ -123,10 +123,6 @@ function parseProductAddVariantFormRow(
     price: Number(record.price ?? 0),
     quantity: Number(record.quantity ?? 0),
     sku: typeof record.sku === "string" ? record.sku : "",
-    discountPrice:
-      typeof record.discountPrice === "number"
-        ? record.discountPrice
-        : undefined,
   };
 }
 
@@ -394,10 +390,41 @@ export function getCharacteristicValueOptions(
     return [];
   }
 
-  return field.options.map((option) => ({
-    value: option,
-    label: option,
-  }));
+  return field.options.flatMap((option) => {
+    const label = getCharacteristicOptionLabel(option);
+    if (!label) {
+      return [];
+    }
+
+    return [{ value: label, label }];
+  });
+}
+
+/**
+ * List API returns `{ id, label, archivedAt }`; older payloads used plain strings.
+ * Archived options are excluded from product form selects.
+ */
+function getCharacteristicOptionLabel(option: unknown): string | null {
+  if (typeof option === "string") {
+    const trimmed = option.trim();
+    return trimmed.length > 0 ? trimmed : null;
+  }
+
+  if (!option || typeof option !== "object") {
+    return null;
+  }
+
+  const record = option as Record<string, unknown>;
+  if (record.archivedAt != null && record.archivedAt !== "") {
+    return null;
+  }
+
+  if (typeof record.label !== "string") {
+    return null;
+  }
+
+  const trimmed = record.label.trim();
+  return trimmed.length > 0 ? trimmed : null;
 }
 
 export function productVariantUiToFormValues(

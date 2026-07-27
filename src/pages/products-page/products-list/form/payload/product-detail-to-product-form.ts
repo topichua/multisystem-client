@@ -270,6 +270,7 @@ export function productDetailToProductForm(
           : "draft",
       price: Number(product.price ?? 0),
       quantity: singleProductQuantity,
+      sku: productType === "single" ? (product.variants[0]?.sku ?? "") : "",
       categoryId: product.categoryId ?? undefined,
       weightGrams: product.weightGrams ?? undefined,
       lengthCm: product.lengthCm ?? undefined,

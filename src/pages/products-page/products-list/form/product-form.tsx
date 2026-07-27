@@ -47,6 +47,7 @@ export type ProductFormProps = {
   requiredMessage: string;
   showMainQuantityField: boolean;
   showMainPriceField?: boolean;
+  showMainSkuField?: boolean;
   showStatusField?: boolean;
   labels: {
     name: string;
@@ -54,6 +55,7 @@ export type ProductFormProps = {
     price: string;
     quantity: string;
     status: string;
+    sku: string;
   };
 
   // Single characteristics section
@@ -96,6 +98,7 @@ export const ProductForm = ({
   requiredMessage,
   showMainQuantityField,
   showMainPriceField = true,
+  showMainSkuField = false,
   showStatusField = true,
   labels,
   singleCharacteristicsProps,
@@ -166,6 +169,7 @@ export const ProductForm = ({
         requiredMessage={requiredMessage}
         showQuantityField={showMainQuantityField}
         showPriceField={showMainPriceField}
+        showSkuField={showMainSkuField}
         showStatusField={showStatusField}
         labels={labels}
         isMobile={isMobileViewport}

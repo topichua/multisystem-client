@@ -8,8 +8,15 @@ export type CharacteristicBase = {
   sortOrder: number;
 };
 
+/** Option shape returned by the characteristics list endpoint. */
+export type CharacteristicListOption = {
+  id: number;
+  label: string;
+  archivedAt: string | null;
+};
+
 export type Characteristic = CharacteristicBase & {
-  options?: string[];
+  options?: CharacteristicListOption[];
 };
 
 export type CharacteristicOption = {

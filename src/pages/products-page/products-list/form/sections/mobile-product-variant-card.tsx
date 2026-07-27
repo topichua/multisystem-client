@@ -12,7 +12,6 @@ import {
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 
-import { VariantWishlistBadge } from "@/features/products/components/variant-wishlist-badge/variant-wishlist-badge";
 import type { VariantCustomField } from "@/features/products/model/product-create-api.types";
 import { getProductVariantTitle } from "@/features/products/utils/product-display";
 
@@ -115,12 +114,9 @@ export function MobileProductVariantCard({
       styles={{ body: { padding: 12 } }}
     >
       <Flex vertical gap={12}>
-        <Flex align="center" gap={8}>
-          <VariantWishlistBadge count={variant.wishlistCount ?? 0} compact />
-          <Text strong>
-            {title || `${t("products.variant.fallbackName")} #${variantQaId}`}
-          </Text>
-        </Flex>
+        <Text strong>
+          {title || `${t("products.variant.fallbackName")} #${variantQaId}`}
+        </Text>
 
         {characteristicColumns.map((column) => {
           const currentValue =
@@ -225,7 +221,7 @@ export function MobileProductVariantCard({
             name={["variants", variantIndex, "sku"]}
             style={{ marginBottom: 0 }}
           >
-            <Input placeholder="SKU-0001" />
+            <Input placeholder={t("products.form.skuPlaceholder")} />
           </Form.Item>
         </FieldBlock>
 
@@ -256,16 +252,6 @@ export function MobileProductVariantCard({
             </Form.Item>
           </FieldBlock>
         )}
-
-        <FieldBlock>
-          <FieldLabel>{t("products.variant.discountPrice")}</FieldLabel>
-          <Form.Item
-            name={["variants", variantIndex, "discountPrice"]}
-            style={{ marginBottom: 0 }}
-          >
-            <InputNumber min={0} placeholder="0.00" style={{ width: "100%" }} />
-          </Form.Item>
-        </FieldBlock>
 
         <Button
           danger

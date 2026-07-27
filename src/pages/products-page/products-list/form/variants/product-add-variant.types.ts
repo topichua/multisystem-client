@@ -73,5 +73,4 @@ export type ProductAddVariantFormValues = {
   price: number;
   quantity: number;
   sku: string;
-  discountPrice?: number;
 };

@@ -297,6 +297,7 @@ function buildSingleProductVariant(
     inStock: PRODUCT_DEFAULT_IN_STOCK,
     ...normalizeVariantQuantity(inventoryMode, formValues.quantity),
     mediaIds: normalizeVariantMediaIds(variantMedia),
+    ...normalizeOptionalSku(formValues.sku),
   };
 }
 
@@ -324,7 +325,7 @@ function buildSingleProductUpdateVariant(
     inStock: PRODUCT_DEFAULT_IN_STOCK,
     ...normalizeVariantQuantity(inventoryMode, formValues.quantity),
     mediaIds: normalizeVariantMediaIds(variantMedia),
-    ...normalizeOptionalSku(existingVariant?.sku),
+    ...normalizeOptionalSku(formValues.sku),
   };
 }
 

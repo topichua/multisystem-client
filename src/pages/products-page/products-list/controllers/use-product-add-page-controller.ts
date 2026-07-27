@@ -46,6 +46,7 @@ export type ProductAddPageControllerReturn = {
   requiredMessage: string;
   showMainQuantityField: boolean;
   showMainPriceField: boolean;
+  showMainSkuField: boolean;
   showStatusField: boolean;
   labels: {
     name: string;
@@ -53,6 +54,7 @@ export type ProductAddPageControllerReturn = {
     price: string;
     quantity: string;
     status: string;
+    sku: string;
   };
   singleCharacteristicsProps: Omit<
     SingleProductCharacteristicsSectionProps,
@@ -239,6 +241,7 @@ export const useProductAddPageController =
       showMainQuantityField:
         isSimpleInventoryMode && variantsController.productType === "single",
       showMainPriceField: variantsController.productType === "single",
+      showMainSkuField: variantsController.productType === "single",
       showStatusField: isEditMode,
       labels: {
         name: t("products.form.name"),
@@ -246,6 +249,7 @@ export const useProductAddPageController =
         price: t("products.form.price"),
         quantity: t("products.form.quantity"),
         status: t("products.form.status"),
+        sku: t("products.form.sku"),
       },
       singleCharacteristicsProps: {
         watchedSingleCharacteristics:

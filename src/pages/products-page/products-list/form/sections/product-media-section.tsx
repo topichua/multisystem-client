@@ -19,7 +19,6 @@ import { CSS } from "@dnd-kit/utilities";
 import {
   ArrowDownIcon,
   ArrowUpIcon,
-  CloudArrowUpIcon,
   DotsSixVerticalIcon,
   TrashIcon,
 } from "@phosphor-icons/react";
@@ -223,14 +222,11 @@ export const ProductMediaSection = ({
               showUploadList={false}
               beforeUpload={onBeforeUpload}
               customRequest={onUpload}
-              style={{ minHeight: 134, width: isMobile ? "100%" : undefined }}
+              style={{
+                minHeight: 102,
+                width: isMobile ? "100%" : 100,
+              }}
             >
-              <p className="ant-upload-drag-icon">
-                <CloudArrowUpIcon size={32} />
-              </p>
-
-              <p className="ant-upload-text">{texts.dragUploadTitle}</p>
-
               <p className="ant-upload-hint">{texts.uploadHint}</p>
             </Dragger>
           </Spin>

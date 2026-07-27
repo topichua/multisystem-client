@@ -26,6 +26,7 @@ export const ProductAddPage = observer(() => {
             requiredMessage={controller.requiredMessage}
             showMainQuantityField={controller.showMainQuantityField}
             showMainPriceField={controller.showMainPriceField}
+            showMainSkuField={controller.showMainSkuField}
             showStatusField={controller.showStatusField}
             labels={controller.labels}
             singleCharacteristicsProps={controller.singleCharacteristicsProps}

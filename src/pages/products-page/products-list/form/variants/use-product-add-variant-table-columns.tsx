@@ -13,7 +13,6 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 
-import { VariantWishlistBadge } from "@/features/products/components/variant-wishlist-badge/variant-wishlist-badge";
 import type { VariantCustomField } from "@/features/products/model/product-create-api.types";
 
 import type { SelectedCharacteristic } from "./generate-product-variants";
@@ -235,14 +234,6 @@ export function useProductAddVariantTableColumns({
           );
         },
       },
-      {
-        title: t("products.variant.wishlist"),
-        key: "wishlist",
-        width: 88,
-        render: (_: unknown, record: ProductVariantUi) => (
-          <VariantWishlistBadge count={record.wishlistCount ?? 0} compact />
-        ),
-      },
       ...characteristicColumns,
       {
         title: t("products.variant.sku"),
@@ -258,7 +249,7 @@ export function useProductAddVariantTableColumns({
               name={["variants", index, "sku"]}
               style={{ marginBottom: 0 }}
             >
-              <Input placeholder="SKU-0001" />
+              <Input placeholder={t("products.form.skuPlaceholder")} />
             </Form.Item>
           </>
         ),
@@ -316,19 +307,6 @@ export function useProductAddVariantTableColumns({
             },
           ]
         : []),
-      {
-        title: t("products.variant.discountPrice"),
-        dataIndex: "discountPrice",
-        width: 180,
-        render: (_: unknown, _record: ProductVariantUi, index: number) => (
-          <Form.Item
-            name={["variants", index, "discountPrice"]}
-            style={{ marginBottom: 0 }}
-          >
-            <InputNumber min={0} placeholder="0.00" style={{ width: "100%" }} />
-          </Form.Item>
-        ),
-      },
       {
         title: t("products.table.actions"),
         dataIndex: "actions",
