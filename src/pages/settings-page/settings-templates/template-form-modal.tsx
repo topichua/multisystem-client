@@ -2,6 +2,8 @@ import { Form, Input, Modal } from "antd";
 import type { FormInstance } from "antd/es/form";
 import { useTranslation } from "react-i18next";
 
+import { TemplateBodyField } from "./template-body-field";
+
 export type TemplateFormValues = {
   name: string;
   template: string;
@@ -54,7 +56,7 @@ export const TemplateFormModal = ({
           label={t("templates.body")}
           rules={[{ required: true, message: t("templates.required") }]}
         >
-          <Input.TextArea rows={6} />
+          <TemplateBodyField rows={6} data-qa="template-create-body" />
         </Form.Item>
       </Form>
     </Modal>

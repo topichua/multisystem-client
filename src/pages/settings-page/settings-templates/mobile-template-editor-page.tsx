@@ -8,6 +8,7 @@ import { CenteredSpinner } from "@/components/loading/centered-spinner";
 
 import { getTemplateCharacterCount } from "./settings-templates.utils";
 import * as S from "./mobile-template-editor-page.styled";
+import { TemplateBodyField } from "./template-body-field";
 import { useSettingsTemplateEditor } from "./use-settings-template-editor";
 
 export const MobileTemplateEditorPage = observer(() => {
@@ -113,7 +114,10 @@ export const MobileTemplateEditorPage = observer(() => {
                 count: getTemplateCharacterCount(templateBody),
               })}
             >
-              <Input.TextArea rows={8} />
+              <TemplateBodyField
+                rows={8}
+                data-qa="settings-mobile-template-body"
+              />
             </Form.Item>
           </Form>
         </S.FormSection>

@@ -8,6 +8,7 @@ import { CenteredSpinner } from "@/components/loading/centered-spinner";
 import { FormCard } from "@/components/layout/form-card";
 
 import { getTemplateCharacterCount } from "./settings-templates.utils";
+import { TemplateBodyField } from "./template-body-field";
 import { TemplateDetailHeader } from "./template-detail-header";
 import { useSettingsTemplateEditor } from "./use-settings-template-editor";
 
@@ -92,7 +93,7 @@ export const SettingsTemplateDetailView = observer(() => {
                   count: getTemplateCharacterCount(templateBody),
                 })}
               >
-                <Input.TextArea rows={8} />
+                <TemplateBodyField rows={8} data-qa="template-edit-body" />
               </Form.Item>
             </Form>
           </FormCard>
