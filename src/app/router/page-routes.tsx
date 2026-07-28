@@ -26,9 +26,7 @@ import { SettingsTemplatesIndexRoute } from "@/pages/settings-page/settings-temp
 import { SettingsTemplatesLayout } from "@/pages/settings-page/settings-templates/settings-templates-layout";
 import { ProductsIndexRoute } from "@/pages/products-page/products-index-route";
 import { ProductsPage } from "@/pages/products-page/products-page";
-import { ProductsCategoriesLayout } from "@/pages/products-page/products-categories/products-categories-layout";
-import { ProductsCategoriesIndexRoute } from "@/pages/products-page/products-categories/products-categories-index-route";
-import { ProductCategoryDetailRoute } from "@/pages/products-page/products-categories/product-category-detail-route";
+import { ProductsCategoriesPage } from "@/pages/products-page/products-categories/products-categories-page";
 import { ProductsCharacteristicsLayout } from "@/pages/products-page/products-characteristics/products-characteristics-layout";
 import { ProductsCharacteristicsIndexRoute } from "@/pages/products-page/products-characteristics/products-characteristics-index-route";
 import { ProductCharacteristicDetailRoute } from "@/pages/products-page/products-characteristics/product-characteristic-detail-route";
@@ -153,13 +151,11 @@ export const PageRoutes = () => {
                 element={<ProductAddPage />}
               />
               <Route path="list" element={<ProductsListRoute />} />
-              <Route path="categories" element={<ProductsCategoriesLayout />}>
-                <Route index element={<ProductsCategoriesIndexRoute />} />
-                <Route
-                  path=":categoryId"
-                  element={<ProductCategoryDetailRoute />}
-                />
-              </Route>
+              <Route path="categories" element={<ProductsCategoriesPage />} />
+              <Route
+                path="categories/:categoryId"
+                element={<ProductsCategoriesPage />}
+              />
               <Route
                 path="characteristics"
                 element={<ProductsCharacteristicsLayout />}

@@ -6,7 +6,8 @@ export type Category = {
   createdByUserId: number;
   createdAt: string;
   updatedAt: string;
-  productsCount: number;
+  productCount: number;
+  productVariantCount: number;
   children: Category[];
 };
 
@@ -20,3 +21,7 @@ export type CategoryCreatePayload = {
 export type CategoryUpdatePayload = Partial<
   Pick<CategoryCreatePayload, "name" | "parentId">
 >;
+
+export type CategoryDeletePayload = {
+  categoryId: number | null;
+};

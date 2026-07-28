@@ -3,6 +3,7 @@ import { apiClient } from "@/api/api-client";
 import type {
   Category,
   CategoryCreatePayload,
+  CategoryDeletePayload,
   CategoryUpdatePayload,
 } from "@/features/categories/model/category.types";
 import {
@@ -49,7 +50,13 @@ export const categoriesApi = {
     return normalizeCategory(data);
   },
 
-  delete: async (id: number): Promise<void> => {
-    await apiClient.delete<unknown>(`${basePath}/${id}`);
+  delete: async (
+    id: number,
+    payload?: CategoryDeletePayload,
+  ): Promise<void> => {
+    await apiClient.delete<unknown>(
+      `${basePath}/${id}`,
+      payload ? { data: payload } : undefined,
+    );
   },
 };

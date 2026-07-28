@@ -6,6 +6,7 @@ import { throwLoadError } from "@/utils/throw-load-error";
 import type {
   Category,
   CategoryCreatePayload,
+  CategoryDeletePayload,
   CategoryUpdatePayload,
 } from "@/features/categories/model/category.types";
 
@@ -126,13 +127,16 @@ export class CategoriesStore {
     }
   };
 
-  deleteCategory = async (id: number): Promise<void> => {
+  deleteCategory = async (
+    id: number,
+    payload?: CategoryDeletePayload,
+  ): Promise<void> => {
     runInAction(() => {
       this.deleteLoadingId = id;
     });
 
     try {
-      await categoriesApi.delete(id);
+      await categoriesApi.delete(id, payload);
       runInAction(() => {
         if (this.activeCategory?.id === id) {
           this.activeCategory = null;
