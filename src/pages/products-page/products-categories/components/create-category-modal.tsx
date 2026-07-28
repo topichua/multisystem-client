@@ -3,6 +3,8 @@ import { Button, Flex, Form, Input, Modal, Typography } from "antd";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
+import { useIsMobileViewport } from "@/utils/use-media-query";
+
 import { CATEGORY_NAME_MAX_LENGTH } from "../products-categories.constants";
 
 type CreateCategoryModalProps = {
@@ -23,6 +25,7 @@ export const CreateCategoryModal = ({
   onCreate,
 }: CreateCategoryModalProps) => {
   const { t } = useTranslation();
+  const isMobileViewport = useIsMobileViewport();
   const [form] = Form.useForm<CreateCategoryFormValues>();
 
   useEffect(() => {
@@ -52,11 +55,21 @@ export const CreateCategoryModal = ({
       destroyOnHidden
       centered
       title={t("categories.modalCreateRootTitle")}
-      width={440}
+      width={isMobileViewport ? "calc(100vw - 32px)" : 440}
       open={open}
       onCancel={handleCancel}
+      styles={
+        isMobileViewport
+          ? {
+              body: {
+                maxHeight: "calc(100dvh - 12rem)",
+                overflowY: "auto",
+              },
+            }
+          : undefined
+      }
       footer={
-        <Flex gap={8}>
+        <Flex gap={8} vertical={isMobileViewport}>
           <Button block size="large" onClick={handleCancel} disabled={loading}>
             {t("categories.cancel")}
           </Button>

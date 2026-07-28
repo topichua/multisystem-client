@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 
 import { UNCATEGORIZED_CATEGORY_ID } from "@/features/categories/model/category.constants";
 import type { Category } from "@/features/categories/model/category.types";
+import { useIsMobileViewport } from "@/utils/use-media-query";
 
 import {
   excludeCategoryBranchById,
@@ -45,6 +46,7 @@ export const DeleteCategoryWithProductsModal = ({
   onDelete,
 }: DeleteCategoryWithProductsModalProps) => {
   const { t } = useTranslation();
+  const isMobileViewport = useIsMobileViewport();
   const [searchValue, setSearchValue] = useState("");
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
     null,
@@ -106,11 +108,21 @@ export const DeleteCategoryWithProductsModal = ({
           ? t("categories.deleteTransferTitle", { name: category.name })
           : t("categories.deleteCategory")
       }
-      width={440}
+      width={isMobileViewport ? "calc(100vw - 32px)" : 440}
       open={open}
       closable={!loading}
       keyboard={!loading}
       maskClosable={!loading}
+      styles={
+        isMobileViewport
+          ? {
+              body: {
+                maxHeight: "calc(100dvh - 12rem)",
+                overflowY: "auto",
+              },
+            }
+          : undefined
+      }
       onCancel={onCancel}
       okText={t("categories.deleteCategory")}
       cancelText={t("categories.cancel")}

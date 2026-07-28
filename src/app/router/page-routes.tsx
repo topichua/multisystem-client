@@ -26,7 +26,7 @@ import { SettingsTemplatesIndexRoute } from "@/pages/settings-page/settings-temp
 import { SettingsTemplatesLayout } from "@/pages/settings-page/settings-templates/settings-templates-layout";
 import { ProductsIndexRoute } from "@/pages/products-page/products-index-route";
 import { ProductsPage } from "@/pages/products-page/products-page";
-import { ProductsCategoriesPage } from "@/pages/products-page/products-categories/products-categories-page";
+import { ProductsCategoriesRoute } from "@/pages/products-page/products-categories/products-categories-route";
 import { ProductsCharacteristicsLayout } from "@/pages/products-page/products-characteristics/products-characteristics-layout";
 import { ProductsCharacteristicsIndexRoute } from "@/pages/products-page/products-characteristics/products-characteristics-index-route";
 import { ProductCharacteristicDetailRoute } from "@/pages/products-page/products-characteristics/product-characteristic-detail-route";
@@ -151,10 +151,10 @@ export const PageRoutes = () => {
                 element={<ProductAddPage />}
               />
               <Route path="list" element={<ProductsListRoute />} />
-              <Route path="categories" element={<ProductsCategoriesPage />} />
+              <Route path="categories" element={<ProductsCategoriesRoute />} />
               <Route
                 path="categories/:categoryId"
-                element={<ProductsCategoriesPage />}
+                element={<ProductsCategoriesRoute />}
               />
               <Route
                 path="characteristics"

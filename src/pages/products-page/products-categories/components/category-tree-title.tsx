@@ -94,43 +94,47 @@ export const CategoryTreeTitle = ({
 
       <S.CategoryProductsCount>{category.productCount}</S.CategoryProductsCount>
 
-      {canManageCategory && (
-        <S.CategoryActions data-category-actions>
+      <S.CategoryActions data-category-actions>
+        <Button
+          type="text"
+          size="small"
+          icon={<PlusIcon size={16} />}
+          aria-label={t("categories.mobile.addSubcategoryAria")}
+          onClick={handleAddSubcategoryClick}
+          disabled={!canManageCategory}
+          style={{ opacity: !canManageCategory ? 0 : 1 }}
+        />
+        <Button
+          type="text"
+          size="small"
+          icon={<PencilSimpleIcon size={16} />}
+          aria-label={t("categories.renameCategory")}
+          onClick={handleEditCategoryClick}
+          disabled={!canManageCategory}
+          style={{ opacity: !canManageCategory ? 0 : 1 }}
+        />
+        <Popconfirm
+          title={t("categories.deleteConfirm")}
+          description={t("categories.deleteWarning")}
+          okText={t("categories.delete")}
+          cancelText={t("categories.cancel")}
+          okButtonProps={{ danger: true }}
+          onConfirm={() => void onDeleteCategory(category)}
+          placement="left"
+        >
           <Button
             type="text"
             size="small"
-            icon={<PlusIcon size={16} />}
-            aria-label={t("categories.mobile.addSubcategoryAria")}
-            onClick={handleAddSubcategoryClick}
+            danger
+            loading={deleteLoading}
+            icon={<TrashIcon size={16} />}
+            aria-label={t("categories.delete")}
+            onClick={stopActionClick}
+            disabled={!canManageCategory}
+            style={{ opacity: !canManageCategory ? 0 : 1 }}
           />
-          <Button
-            type="text"
-            size="small"
-            icon={<PencilSimpleIcon size={16} />}
-            aria-label={t("categories.renameCategory")}
-            onClick={handleEditCategoryClick}
-          />
-          <Popconfirm
-            title={t("categories.deleteConfirm")}
-            description={t("categories.deleteWarning")}
-            okText={t("categories.delete")}
-            cancelText={t("categories.cancel")}
-            okButtonProps={{ danger: true }}
-            onConfirm={() => void onDeleteCategory(category)}
-            placement="left"
-          >
-            <Button
-              type="text"
-              size="small"
-              danger
-              loading={deleteLoading}
-              icon={<TrashIcon size={16} />}
-              aria-label={t("categories.delete")}
-              onClick={stopActionClick}
-            />
-          </Popconfirm>
-        </S.CategoryActions>
-      )}
+        </Popconfirm>
+      </S.CategoryActions>
     </S.CategoryRow>
   );
 };

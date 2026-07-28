@@ -1,83 +1,34 @@
 import { PlusIcon } from "@phosphor-icons/react";
 import { Alert, Button, Card, Empty, Flex, Input, Typography } from "antd";
 import { observer } from "mobx-react-lite";
-import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { getApiErrorMessage } from "@/api/get-api-error-message";
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
 import { CenteredSpinner } from "@/components/loading/centered-spinner";
-import { useCategoriesStore } from "@/features/categories/model/use-categories-store";
-import { useNotification } from "@/shared/components/notification/use-notification";
 
 import { CreateCategoryModal } from "./components/create-category-modal";
 import { ProductsCategoriesTree } from "./components/products-categories-tree";
-import {
-  countCategoryTreeItems,
-  filterCategoryTreeBySearch,
-} from "./products-categories.utils";
+import { useProductsCategoriesPageController } from "./controllers/use-products-categories-page-controller";
 
 const { Text, Title } = Typography;
 
 export const ProductsCategoriesPage = observer(() => {
   const { t } = useTranslation();
-  const store = useCategoriesStore();
-  const notification = useNotification();
-  const [loadError, setLoadError] = useState<string | null>(null);
-  const [createModalOpen, setCreateModalOpen] = useState(false);
-  const [createLoading, setCreateLoading] = useState(false);
-  const [searchValue, setSearchValue] = useState("");
-
-  const loadCategories = useCallback(async () => {
-    setLoadError(null);
-
-    try {
-      await store.loadCategories();
-    } catch (error) {
-      setLoadError(getApiErrorMessage(error, t("categories.loadFailed")));
-    }
-  }, [store, t]);
-
-  useEffect(() => {
-    void loadCategories();
-  }, [loadCategories]);
-
-  const handleCreateRootCategory = useCallback(
-    async (name: string) => {
-      setCreateLoading(true);
-
-      try {
-        await store.createCategory({
-          name,
-          parentId: null,
-        });
-        notification.success({ title: t("categories.createSuccess") });
-        setCreateModalOpen(false);
-      } catch (error) {
-        notification.error({
-          title: getApiErrorMessage(error, t("categories.createFailed")),
-        });
-        throw error;
-      } finally {
-        setCreateLoading(false);
-      }
-    },
-    [notification, store, t],
-  );
-
-  const visibleCategories = useMemo(
-    () => filterCategoryTreeBySearch(store.categories, searchValue),
-    [searchValue, store.categories],
-  );
-
-  const categoriesCount = useMemo(
-    () => countCategoryTreeItems(store.categories),
-    [store.categories],
-  );
-
-  const searchActive = searchValue.trim().length > 0;
-  const showInitialLoading =
-    store.listLoading && store.categories.length === 0 && !loadError;
+  const {
+    categoriesCount,
+    createLoading,
+    createModalOpen,
+    handleCreateRootCategory,
+    loadCategories,
+    loadError,
+    searchActive,
+    searchValue,
+    setCreateModalOpen,
+    setSearchValue,
+    showInitialLoading,
+    store,
+    visibleCategories,
+  } = useProductsCategoriesPageController();
 
   return (
     <>

@@ -32,6 +32,11 @@ export const NoCategoryOptionContent = styled.span`
   align-items: center;
   gap: 8px;
   min-width: 0;
+
+  span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
 `;
 
 export const NoCategoryOptionIcon = styled.span`
@@ -53,6 +58,11 @@ export const TargetTreeShell = styled.div`
   min-height: 220px;
   overflow: auto;
   padding: 8px;
+
+  @media (max-width: 767px) {
+    max-height: 40dvh;
+    min-height: 180px;
+  }
 `;
 
 export const TargetTree = styled(Tree)`

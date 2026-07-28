@@ -33,6 +33,20 @@ export const CategoriesTreeShell = styled.div`
     display: block;
     width: 100%;
   }
+
+  @media (max-width: 767px) {
+    .ant-tree-treenode {
+      padding: 0;
+    }
+
+    .ant-tree-node-content-wrapper {
+      border-radius: 0;
+    }
+
+    .ant-tree-indent-unit {
+      width: 14px;
+    }
+  }
 `;
 
 export const CategoryRow = styled.div<{
@@ -60,6 +74,12 @@ export const CategoryRow = styled.div<{
     opacity: 1;
     pointer-events: auto;
   }
+
+  @media (max-width: 767px) {
+    min-height: 52px;
+    padding: 6px 8px;
+    border-radius: 0;
+  }
 `;
 
 export const CategoryCaret = styled.span`
@@ -84,6 +104,11 @@ export const CategoryName = styled.span`
   text-overflow: ellipsis;
   white-space: nowrap;
   font-weight: 500;
+
+  @media (max-width: 767px) {
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
 `;
 
 export const CategoryProductsCount = styled.span`
@@ -92,6 +117,10 @@ export const CategoryProductsCount = styled.span`
   text-align: right;
   color: ${({ theme }) => theme.colors.functional.text.subdued};
   font-size: ${({ theme }) => theme.fontSize.small};
+
+  @media (max-width: 767px) {
+    min-width: 32px;
+  }
 `;
 
 export const CategoryActions = styled.span`
@@ -102,6 +131,17 @@ export const CategoryActions = styled.span`
   opacity: 0;
   pointer-events: none;
   transition: opacity 120ms ease;
+
+  @media (max-width: 767px) {
+    opacity: 1;
+    pointer-events: auto;
+
+    .ant-btn-sm {
+      width: 36px;
+      height: 36px;
+      padding: 0;
+    }
+  }
 `;
 
 export const CategoryInlineRow = styled.div`
@@ -115,5 +155,18 @@ export const CategoryInlineRow = styled.div`
   .ant-input {
     min-width: 0;
     flex: 1 1 auto;
+  }
+
+  @media (max-width: 767px) {
+    min-height: 52px;
+    padding: 8px;
+  }
+
+  @media (max-width: 420px) {
+    flex-wrap: wrap;
+
+    .ant-input {
+      flex-basis: 100%;
+    }
   }
 `;
