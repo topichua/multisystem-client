@@ -16,6 +16,7 @@ export const ProductsCategoriesPage = observer(() => {
   const { t } = useTranslation();
   const {
     categoriesCount,
+    productsCount,
     createLoading,
     createModalOpen,
     handleCreateRootCategory,
@@ -42,6 +43,8 @@ export const ProductsCategoriesPage = observer(() => {
                 </Title>
                 <Text type="secondary">
                   {t("categories.itemsCount", { count: categoriesCount })}
+                  {" · "}
+                  {t("categories.productsCount", { count: productsCount })}
                 </Text>
               </div>
 

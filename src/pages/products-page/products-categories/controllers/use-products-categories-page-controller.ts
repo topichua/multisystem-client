@@ -7,6 +7,7 @@ import { useNotification } from "@/shared/components/notification/use-notificati
 
 import {
   countCategoryTreeItems,
+  countCategoryTreeProducts,
   filterCategoryTreeBySearch,
 } from "../products-categories.utils";
 
@@ -82,11 +83,17 @@ export const useProductsCategoriesPageController = () => {
     [store.categories],
   );
 
+  const productsCount = useMemo(
+    () => countCategoryTreeProducts(store.categories),
+    [store.categories],
+  );
+
   const searchActive = searchValue.trim().length > 0;
   const showInitialLoading = store.listLoading && store.categories.length === 0;
 
   return {
     categoriesCount,
+    productsCount,
     createLoading,
     createModalOpen,
     handleCreateRootCategory,

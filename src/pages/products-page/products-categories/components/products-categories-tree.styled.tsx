@@ -97,13 +97,13 @@ export const CategoryIcon = styled.span`
   color: ${({ theme }) => theme.colors.functional.text.subdued};
 `;
 
-export const CategoryName = styled.span`
+export const CategoryName = styled.span<{ $hasChildren?: boolean }>`
   min-width: 0;
   flex: 1 1 auto;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-weight: 500;
+  font-weight: ${({ $hasChildren }) => ($hasChildren ? 600 : 500)};
 
   @media (max-width: 767px) {
     overflow-wrap: anywhere;

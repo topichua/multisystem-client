@@ -7,7 +7,7 @@ import {
   PlusIcon,
   TrashIcon,
 } from "@phosphor-icons/react";
-import { Button, Popconfirm } from "antd";
+import { Button, Popconfirm, Typography } from "antd";
 import type { MouseEvent } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -27,6 +27,8 @@ type CategoryTreeTitleProps = {
   onEditCategory: (category: Category) => void;
   onToggle: (categoryId: number) => void;
 };
+
+const { Text } = Typography;
 
 export const CategoryTreeTitle = ({
   category,
@@ -90,9 +92,27 @@ export const CategoryTreeTitle = ({
         {expanded ? <FolderOpenIcon size={16} /> : <FolderIcon size={16} />}
       </S.CategoryIcon>
 
-      <S.CategoryName title={category.name}>{category.name}</S.CategoryName>
+      <S.CategoryName
+        $hasChildren={expandable}
+        title={category.name}
+        style={{
+          color: !canManageCategory ? "grey" : undefined,
+        }}
+      >
+        {category.name}
+      </S.CategoryName>
 
-      <S.CategoryProductsCount>{category.productCount}</S.CategoryProductsCount>
+      {(category.productCount > 0 || category.productVariantCount > 0) && (
+        <S.CategoryProductsCount>
+          <Text strong>{category.productCount}</Text>{" "}
+          {t("categories.productsWord", { count: category.productCount })}
+          {", "}
+          <Text strong>{category.productVariantCount}</Text>{" "}
+          {t("categories.productVariantsWord", {
+            count: category.productVariantCount,
+          })}
+        </S.CategoryProductsCount>
+      )}
 
       <S.CategoryActions data-category-actions>
         <Button

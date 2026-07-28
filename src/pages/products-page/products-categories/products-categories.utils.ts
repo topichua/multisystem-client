@@ -3,10 +3,14 @@ import type { Category } from "@/features/categories/model/category.types";
 
 export const countCategoryTreeItems = (categories: Category[]): number =>
   categories.reduce(
+    (sum, category) => sum + (isUncategorizedCategory(category) ? 0 : 1),
+    0,
+  );
+
+export const countCategoryTreeProducts = (categories: Category[]): number =>
+  categories.reduce(
     (sum, category) =>
-      sum +
-      (isUncategorizedCategory(category) ? 0 : 1) +
-      countCategoryTreeItems(category.children),
+      sum + (isUncategorizedCategory(category) ? 0 : category.productCount),
     0,
   );
 

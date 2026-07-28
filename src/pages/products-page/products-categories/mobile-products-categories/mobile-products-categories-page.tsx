@@ -17,6 +17,7 @@ export const MobileProductsCategoriesPage = observer(() => {
   const navigate = useNavigate();
   const {
     categoriesCount,
+    productsCount,
     createLoading,
     createModalOpen,
     handleCreateRootCategory,
@@ -53,6 +54,8 @@ export const MobileProductsCategoriesPage = observer(() => {
                 <S.PageTitle level={3}>{t("categories.title")}</S.PageTitle>
                 <S.PageSubtitle>
                   {t("categories.itemsCount", { count: categoriesCount })}
+                  {" · "}
+                  {t("categories.productsCount", { count: productsCount })}
                 </S.PageSubtitle>
               </S.TitleCopy>
             </S.TitleRow>
