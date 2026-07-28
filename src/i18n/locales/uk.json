@@ -2514,6 +2514,7 @@
       "deliveryPaymentSyncSuccess": "Оплату синхронізовано",
       "deliveryPaymentSyncFailed": "Не вдалося синхронізувати оплату",
       "deliveryPaymentSyncNote": "Синхронізація оплати доставки",
+      "deliveryPaymentSynced": "Синхронізовано (отримання коштів від наложки переведе оплату в «Оплачено»)",
       "paymentAwaiting": "Очікує оплати",
       "amountToPay": "До сплати",
       "amountPaid": "Сплачено",

@@ -359,6 +359,7 @@ export type OrderConversation = {
 
 export type OrderDeliveryInfo = {
   canSyncPayment?: boolean;
+  paymentId?: number | null;
   id: number;
   provider: string;
   providerId: number | null;

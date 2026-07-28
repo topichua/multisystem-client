@@ -31,12 +31,16 @@ export const DeliveryCard = ({
       }),
     [onCreateDeliveryPayment, order.payment.remainingAmount, t],
   );
-  const { waybillActionLoading, handleRemoveWaybill, handleSyncPayment } =
-    useNovaPoshtaWaybill({
-      t,
-      onRemoveNovaPoshtaWaybill,
-      onCreateDeliveryPayment: handleCreateDeliveryPayment,
-    });
+  const {
+    removeWaybillLoading,
+    syncPaymentLoading,
+    handleRemoveWaybill,
+    handleSyncPayment,
+  } = useNovaPoshtaWaybill({
+    t,
+    onRemoveNovaPoshtaWaybill,
+    onCreateDeliveryPayment: handleCreateDeliveryPayment,
+  });
 
   const primaryDeliveryInfo = order.deliveryInfo;
   const trackingNumber = primaryDeliveryInfo?.trackingNumber;
@@ -95,7 +99,8 @@ export const DeliveryCard = ({
           primaryDeliveryInfo={primaryDeliveryInfo}
           providerLabel={providerLabel}
           t={t}
-          waybillActionLoading={waybillActionLoading}
+          removeWaybillLoading={removeWaybillLoading}
+          syncPaymentLoading={syncPaymentLoading}
           onCopyTrackingNumber={handleCopyTrackingNumber}
           onRemoveWaybill={handleRemoveWaybill}
           onSyncPayment={handleSyncPayment}

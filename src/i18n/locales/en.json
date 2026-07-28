@@ -2474,6 +2474,7 @@
       "deliveryPaymentSyncSuccess": "Payment synchronized",
       "deliveryPaymentSyncFailed": "Failed to synchronize payment",
       "deliveryPaymentSyncNote": "Delivery payment synchronization",
+      "deliveryPaymentSynced": "Synchronized (receiving COD funds will move payment to “Paid”)",
       "paymentAwaiting": "Awaiting payment",
       "amountToPay": "Amount due",
       "amountPaid": "Paid",

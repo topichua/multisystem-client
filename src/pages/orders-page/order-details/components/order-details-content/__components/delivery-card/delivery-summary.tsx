@@ -1,9 +1,10 @@
 import {
   ArrowClockwiseIcon,
+  CheckIcon,
   CopySimpleIcon,
   MapPinIcon,
   TrashIcon,
-} from "@phosphor-icons/react";
+} from '@phosphor-icons/react';
 import {
   Alert,
   Button,
@@ -12,27 +13,27 @@ import {
   Flex,
   Space,
   Typography,
-} from "antd";
-import type { DescriptionsProps } from "antd";
+} from 'antd';
+import type { DescriptionsProps } from 'antd';
 
 import {
   EMPTY_VALUE,
   formatMoney,
   formatText,
-} from "../../../../utils/order-details.utils";
+} from '../../../../utils/order-details.utils';
 import type {
   DeliveryInfo,
   TranslationFn,
-} from "../../order-details-content.types";
+} from '../../order-details-content.types';
 import {
   getDeliveryDestination,
   getDeliveryTypeLabel,
-} from "../../utils/order-delivery-display.utils";
+} from '../../utils/order-delivery-display.utils';
 import {
   drawerKey,
   formatTrackingNumber,
   getDeliveryStatusLabel,
-} from "./delivery-card.utils";
+} from './delivery-card.utils';
 
 const { Text } = Typography;
 
@@ -41,7 +42,8 @@ type DeliverySummaryProps = {
   primaryDeliveryInfo: NonNullable<DeliveryInfo>;
   providerLabel: string;
   t: TranslationFn;
-  waybillActionLoading: boolean;
+  removeWaybillLoading: boolean;
+  syncPaymentLoading: boolean;
   onCopyTrackingNumber: () => void;
   onRemoveWaybill: () => void;
   onSyncPayment: () => void;
@@ -52,14 +54,17 @@ export function DeliverySummary({
   primaryDeliveryInfo,
   providerLabel,
   t,
-  waybillActionLoading,
+  removeWaybillLoading,
+  syncPaymentLoading,
   onCopyTrackingNumber,
   onRemoveWaybill,
   onSyncPayment,
 }: DeliverySummaryProps) {
   const trackingNumber = primaryDeliveryInfo.trackingNumber;
   const destination = getDeliveryDestination(primaryDeliveryInfo);
-  const canSyncPayment = primaryDeliveryInfo.canSyncPayment;
+  const isPaymentSynced = primaryDeliveryInfo.paymentId != null;
+  const showSyncPaymentButton =
+    !isPaymentSynced && Boolean(primaryDeliveryInfo.canSyncPayment);
   const city = formatText(primaryDeliveryInfo.city);
   const destinationText =
     city !== EMPTY_VALUE && destination !== EMPTY_VALUE
@@ -71,28 +76,28 @@ export function DeliverySummary({
       formatText(primaryDeliveryInfo.phone),
     ]
       .filter((part) => part !== EMPTY_VALUE)
-      .join(" · ") || EMPTY_VALUE;
+      .join(' · ') || EMPTY_VALUE;
   const paymentText = primaryDeliveryInfo.isCashOnDelivery
-    ? `${t("orders.details.paymentCashOnDelivery")} · ${formatMoney(
+    ? `${t('orders.details.paymentCashOnDelivery')} · ${formatMoney(
         primaryDeliveryInfo.cashOnDeliveryAmount,
         currency,
       )}`
-    : t(drawerKey("prepayment"));
+    : t(drawerKey('prepayment'));
 
-  const items: DescriptionsProps["items"] = [
+  const items: DescriptionsProps['items'] = [
     {
-      key: "provider",
-      label: t("orders.deliveryProvider"),
+      key: 'provider',
+      label: t('orders.deliveryProvider'),
       children: providerLabel,
     },
     {
-      key: "type",
-      label: t("orders.details.deliveryType"),
+      key: 'type',
+      label: t('orders.details.deliveryType'),
       children: getDeliveryTypeLabel(primaryDeliveryInfo, t),
     },
     {
-      key: "destination",
-      label: t("orders.warehouse"),
+      key: 'destination',
+      label: t('orders.warehouse'),
       children: (
         <Flex align="flex-start" gap={6}>
           <MapPinIcon size={16} />
@@ -101,23 +106,23 @@ export function DeliverySummary({
       ),
     },
     {
-      key: "recipient",
-      label: t("orders.recipientName"),
+      key: 'recipient',
+      label: t('orders.recipientName'),
       children: recipientText,
     },
     {
-      key: "payment",
-      label: t("orders.payment"),
+      key: 'payment',
+      label: t('orders.payment'),
       children: <Text type="success">{paymentText}</Text>,
     },
   ];
 
   return (
-    <Space orientation="vertical" size="middle" style={{ width: "100%" }}>
+    <Space orientation="vertical" size="middle" style={{ width: '100%' }}>
       <Card size="small">
         <Flex align="center" justify="space-between" gap={16} wrap>
           <Space orientation="vertical" size={2}>
-            <Text type="secondary">{t("orders.details.waybillNumber")}</Text>
+            <Text type="secondary">{t('orders.details.waybillNumber')}</Text>
             <Text strong>{formatTrackingNumber(trackingNumber)}</Text>
           </Space>
 
@@ -126,7 +131,7 @@ export function DeliverySummary({
             icon={<CopySimpleIcon size={18} />}
             onClick={onCopyTrackingNumber}
           >
-            {t("orders.details.copy")}
+            {t('orders.details.copy')}
           </Button>
         </Flex>
       </Card>
@@ -140,29 +145,35 @@ export function DeliverySummary({
 
       <Descriptions column={{ xs: 1, md: 2 }} items={items} />
 
-      <Flex
-        align="center"
-        justify={canSyncPayment ? "space-between" : "center"}
-        gap={16}
-      >
-        {canSyncPayment && (
+      <Flex vertical gap={16} style={{ marginTop: 24, width: '100%' }}>
+        {isPaymentSynced && (
+          <Flex align="center" justify="center" gap={8}>
+            <CheckIcon size={16} />
+            <Text type="success">
+              {t('orders.details.deliveryPaymentSynced')}
+            </Text>
+          </Flex>
+        )}
+
+        {showSyncPaymentButton && (
           <Button
-            block={canSyncPayment}
+            block
             type="primary"
-            disabled={waybillActionLoading}
+            disabled={removeWaybillLoading || syncPaymentLoading}
             icon={<ArrowClockwiseIcon size={18} />}
-            loading={waybillActionLoading}
+            loading={syncPaymentLoading}
             onClick={onSyncPayment}
           >
             {t("orders.details.deliveryPaymentSync")}
           </Button>
         )}
+
         <Button
-          block={canSyncPayment}
+          block
           danger
-          disabled={waybillActionLoading}
+          disabled={removeWaybillLoading || syncPaymentLoading}
           icon={<TrashIcon size={18} />}
-          loading={waybillActionLoading}
+          loading={removeWaybillLoading}
           onClick={onRemoveWaybill}
         >
           {t("orders.details.removeDelivery")}

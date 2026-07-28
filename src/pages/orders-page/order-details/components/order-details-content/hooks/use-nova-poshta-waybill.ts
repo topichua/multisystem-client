@@ -18,7 +18,8 @@ export const useNovaPoshtaWaybill = ({
   onCreateDeliveryPayment,
 }: UseNovaPoshtaWaybillParams) => {
   const notification = useNotification();
-  const [waybillActionLoading, setWaybillActionLoading] = useState(false);
+  const [removeWaybillLoading, setRemoveWaybillLoading] = useState(false);
+  const [syncPaymentLoading, setSyncPaymentLoading] = useState(false);
 
   const handleRemoveWaybill = useCallback(() => {
     Modal.confirm({
@@ -28,7 +29,7 @@ export const useNovaPoshtaWaybill = ({
       okType: "danger",
       cancelText: t("orders.details.cancel"),
       onOk: async () => {
-        setWaybillActionLoading(true);
+        setRemoveWaybillLoading(true);
 
         try {
           await onRemoveNovaPoshtaWaybill();
@@ -44,14 +45,14 @@ export const useNovaPoshtaWaybill = ({
           });
           return Promise.reject(error);
         } finally {
-          setWaybillActionLoading(false);
+          setRemoveWaybillLoading(false);
         }
       },
     });
   }, [notification, onRemoveNovaPoshtaWaybill, t]);
 
   const handleSyncPayment = useCallback(async () => {
-    setWaybillActionLoading(true);
+    setSyncPaymentLoading(true);
 
     try {
       await onCreateDeliveryPayment();
@@ -66,12 +67,13 @@ export const useNovaPoshtaWaybill = ({
         ),
       });
     } finally {
-      setWaybillActionLoading(false);
+      setSyncPaymentLoading(false);
     }
   }, [notification, onCreateDeliveryPayment, t]);
 
   return {
-    waybillActionLoading,
+    removeWaybillLoading,
+    syncPaymentLoading,
     handleRemoveWaybill,
     handleSyncPayment,
   };
