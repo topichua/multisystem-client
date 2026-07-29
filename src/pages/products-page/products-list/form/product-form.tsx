@@ -26,6 +26,7 @@ import { ProductFormHeader } from "./sections/product-form-header";
 import { ProductInstagramAiDrawer } from "../instagram-ai-panel";
 import type { ProductAddFormValues } from "./product-form.types";
 import type { InstagramPostAiExtractionResponse } from "@/features/instagram/model/instagram.types";
+import type { Category } from "@/features/categories/model/category.types";
 import * as MobileS from "./mobile-product-form-layout.styled";
 
 export type ProductFormProps = {
@@ -43,6 +44,7 @@ export type ProductFormProps = {
   onProductTypeChange: (nextType: ProductType) => void;
 
   // Main info section
+  categories: Category[];
   categoryOptions: Array<{ value: number; label: string }>;
   requiredMessage: string;
   showMainQuantityField: boolean;
@@ -94,6 +96,7 @@ export const ProductForm = ({
   onBack,
   productType,
   onProductTypeChange,
+  categories,
   categoryOptions,
   requiredMessage,
   showMainQuantityField,
@@ -165,7 +168,7 @@ export const ProductForm = ({
       />
 
       <ProductMainInfoSection
-        categoryOptions={categoryOptions}
+        categories={categories}
         requiredMessage={requiredMessage}
         showQuantityField={showMainQuantityField}
         showPriceField={showMainPriceField}

@@ -13,7 +13,6 @@ import type {
   UseCatalogProductSearchOptions,
   VariantSelectOption,
 } from "./catalog-product-search.types";
-import { flattenCategoriesForSelect } from "./category-select.utils";
 
 export function useCatalogProductSearch({
   debounceMs = CATALOG_SEARCH_DEBOUNCE_MS,
@@ -82,11 +81,6 @@ export function useCatalogProductSearch({
     trimmedSearch,
   ]);
 
-  const categorySelectOptions = useMemo(
-    () => flattenCategoriesForSelect(categoriesStore.categories),
-    [categoriesStore.categories],
-  );
-
   const variantSelectOptions = useMemo<VariantSelectOption[]>(
     () =>
       ordersStore.catalogSearchResults.map((variant) => ({
@@ -151,12 +145,12 @@ export function useCatalogProductSearch({
   );
 
   return {
+    categories: categoriesStore.categories,
     catalogSearchLoading: ordersStore.catalogSearchLoading,
     catalogSearchMode,
     catalogSearchProductGroups: ordersStore.catalogSearchProductGroups,
     catalogSearchResults: ordersStore.catalogSearchResults,
     categoriesLoading: categoriesStore.listLoading,
-    categorySelectOptions,
     minSearchLength,
     productPickerKey,
     searchQuery,

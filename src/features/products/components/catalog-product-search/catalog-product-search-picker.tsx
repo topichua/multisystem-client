@@ -4,17 +4,16 @@ import { useCallback, useMemo, useState } from "react";
 import { Flex, Segmented, Select, Spin, Tooltip, Typography } from "antd";
 import { useTranslation } from "react-i18next";
 
+import { CategoryTreeSelect } from "@/features/categories/components/category-tree-select";
+import { flattenCategories } from "@/features/categories/model/category-tree";
+import type { Category } from "@/features/categories/model/category.types";
 import type { CatalogSearchMode } from "@/features/orders/model/orders-store";
 import type { CatalogSearchProductGroup } from "@/features/orders/model/orders-store";
 import type { CatalogVariant } from "@/features/products/model/product.types";
 
-import {
-  ALL_CATEGORIES_VALUE,
-  EMPTY_PRODUCT_PICKER_VALUE,
-} from "./catalog-product-search.constants";
+import { EMPTY_PRODUCT_PICKER_VALUE } from "./catalog-product-search.constants";
 import * as S from "./catalog-product-search.styled";
 import type {
-  CategorySelectOptionData,
   VariantSelectOption,
   VariantSelectOptionData,
 } from "./catalog-product-search.types";
@@ -29,21 +28,14 @@ const defaultIsVariantDisabled = (
   selectedVariantIds: Set<number>,
 ) => !variant.inStock || selectedVariantIds.has(variant.id);
 
-type CategorySelectOption = {
-  value: string;
-  label: string;
-  level: number;
-  searchLabel: string;
-};
-
 export type CatalogProductSearchPickerProps = {
   autoFocus?: boolean;
   dropdownOpen?: boolean;
+  categories: Category[];
   catalogSearchLoading: boolean;
   catalogSearchMode: CatalogSearchMode;
   catalogSearchProductGroups: CatalogSearchProductGroup[];
   categoriesLoading: boolean;
-  categorySelectOptions: CategorySelectOptionData[];
   getPopupContainer?: (triggerNode: HTMLElement) => HTMLElement;
   listHeight?: number;
   minSearchLength: number;
@@ -72,11 +64,11 @@ export type CatalogProductSearchPickerProps = {
 export function CatalogProductSearchPicker({
   autoFocus = false,
   dropdownOpen,
+  categories,
   catalogSearchLoading,
   catalogSearchMode,
   catalogSearchProductGroups,
   categoriesLoading,
-  categorySelectOptions,
   getPopupContainer,
   listHeight = 320,
   minSearchLength,
@@ -99,33 +91,15 @@ export function CatalogProductSearchPicker({
   onVariantSelect,
 }: CatalogProductSearchPickerProps) {
   const { t } = useTranslation();
-  const categoryOptions = useMemo<CategorySelectOption[]>(
-    () => [
-      {
-        value: ALL_CATEGORIES_VALUE,
-        label: t("products.catalogSearch.allCategories"),
-        level: 0,
-        searchLabel: t("products.catalogSearch.allCategories"),
-      },
-      ...categorySelectOptions.map((option) => ({
-        value: String(option.value),
-        label: option.label,
-        level: option.level,
-        searchLabel: option.label,
-      })),
-    ],
-    [categorySelectOptions, t],
-  );
-  const categoryValue =
-    selectedCategoryId == null
-      ? ALL_CATEGORIES_VALUE
-      : String(selectedCategoryId);
   const categoryLabelById = useMemo(
     () =>
       new Map(
-        categorySelectOptions.map((option) => [option.value, option.label]),
+        flattenCategories(categories).map((category) => [
+          category.id,
+          category.name,
+        ]),
       ),
-    [categorySelectOptions],
+    [categories],
   );
   const groupedProducts = useMemo(
     () =>
@@ -234,33 +208,18 @@ export function CatalogProductSearchPicker({
       {showToolbar && (
         <S.ProductSearchToolbar>
           {showCategoryFilter && (
-            <Select<string>
-              showSearch
-              value={categoryValue}
-              loading={categoriesLoading}
+            <CategoryTreeSelect
+              allowClear={false}
+              allowNoCategory
+              categories={categories}
+              disabled={categoriesLoading}
               getPopupContainer={getPopupContainer}
-              aria-label={t("products.catalogSearch.categoryFilterAria")}
-              optionFilterProp="searchLabel"
-              filterOption={(input, option) =>
-                String(option?.searchLabel ?? "")
-                  .toLowerCase()
-                  .includes(input.trim().toLowerCase())
-              }
-              options={categoryOptions}
+              noCategoryLabel={t("products.catalogSearch.allCategories")}
+              searchPlaceholder={t("categories.searchPlaceholder")}
+              value={selectedCategoryId}
               onChange={(value) =>
-                handleCategoryChange(
-                  value === ALL_CATEGORIES_VALUE ? null : Number(value),
-                )
+                handleCategoryChange(typeof value === "number" ? value : null)
               }
-              optionRender={(option) => {
-                const data = option.data as CategorySelectOption | undefined;
-
-                return (
-                  <S.CategoryOption $level={data?.level ?? 0}>
-                    {data?.label ?? option.label}
-                  </S.CategoryOption>
-                );
-              }}
             />
           )}
 

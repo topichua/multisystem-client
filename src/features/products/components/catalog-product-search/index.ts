@@ -1,11 +1,9 @@
 export {
-  ALL_CATEGORIES_VALUE,
   CATALOG_SEARCH_DEBOUNCE_MS,
   EMPTY_PRODUCT_PICKER_VALUE,
   MIN_CATALOG_SEARCH_LENGTH,
 } from "./catalog-product-search.constants";
 export type {
-  CategorySelectOptionData,
   UseCatalogProductSearchOptions,
   VariantSelectOption,
   VariantSelectOptionData,
@@ -17,5 +15,4 @@ export { CatalogVariantSearchRow } from "./catalog-variant-search-row";
 export { GroupedProductSearchPopup } from "./grouped-product-search-popup";
 export { buildGroupedSearchProducts } from "./grouped-product-search-popup.utils";
 export type { GroupedSearchProduct } from "./grouped-product-search-popup.utils";
-export { flattenCategoriesForSelect } from "./category-select.utils";
 export { useCatalogProductSearch } from "./use-catalog-product-search";

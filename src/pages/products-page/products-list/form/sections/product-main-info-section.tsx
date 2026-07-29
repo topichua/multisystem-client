@@ -2,6 +2,8 @@ import { Card, Col, Flex, Form, Input, InputNumber, Row, Select } from "antd";
 import { Typography } from "antd";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { CategoryTreeSelect } from "@/features/categories/components/category-tree-select";
+import type { Category } from "@/features/categories/model/category.types";
 import { ProductDeliverySection } from "./product-delivery-section";
 
 const { Title, Text } = Typography;
@@ -12,7 +14,7 @@ type StatusOption = {
 };
 
 export type ProductMainInfoSectionProps = {
-  categoryOptions: Array<{ value: number; label: string }>;
+  categories: Category[];
   requiredMessage: string;
   labels: {
     name: string;
@@ -30,7 +32,7 @@ export type ProductMainInfoSectionProps = {
 };
 
 export const ProductMainInfoSection = ({
-  categoryOptions,
+  categories,
   requiredMessage,
   labels,
   showQuantityField,
@@ -83,9 +85,10 @@ export const ProductMainInfoSection = ({
                 },
               ]}
             >
-              <Select
+              <CategoryTreeSelect
+                categories={categories}
+                allowClear
                 placeholder={t("products.form.categoryPlaceholder")}
-                options={categoryOptions}
               />
             </Form.Item>
           </Col>

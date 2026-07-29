@@ -253,7 +253,7 @@ export const ProductsListFiltersPanel = observer(
                 }
               }}
             />
-            <span>–</span>
+            <span>-</span>
             <InputNumber
               style={{ flex: 1, minWidth: 0 }}
               placeholder={t("products.listFilters.panelPriceTo")}

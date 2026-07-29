@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
 
 import type { InstagramPostAiExtractionResponse } from "@/features/instagram/model/instagram.types";
+import type { Category } from "@/features/categories/model/category.types";
 import { InventoryMode } from "@/features/workspace-settings/model/workspace-settings.types";
 import { useWorkspaceSettingsStore } from "@/features/workspace-settings/model/use-workspace-settings-store";
 
@@ -42,6 +43,7 @@ export type ProductAddPageControllerReturn = {
   navigateToProductsList: () => void;
   productType: ProductType;
   onProductTypeChange: (nextType: ProductType) => void;
+  categories: Category[];
   categoryOptions: Array<{ value: number; label: string }>;
   requiredMessage: string;
   showMainQuantityField: boolean;
@@ -79,6 +81,7 @@ export const useProductAddPageController =
   (): ProductAddPageControllerReturn => {
     const {
       categoryOptions,
+      categories,
       navigateToProductsList,
       productsStore,
       variantCustomFields,
@@ -236,6 +239,7 @@ export const useProductAddPageController =
       navigateToProductsList,
       productType: variantsController.productType,
       onProductTypeChange: variantsController.onProductTypeChange,
+      categories,
       categoryOptions,
       requiredMessage,
       showMainQuantityField:

@@ -23,8 +23,6 @@ import {
   loadAllCatalogVariants,
 } from "../stock-supply-modal.utils";
 
-const ALL_CATEGORIES_VALUE = "all";
-
 export const useStockSupplyModal = ({
   onClose,
   onSuccess,
@@ -102,15 +100,6 @@ export const useStockSupplyModal = ({
     loadRequestIdRef.current += 1;
     onClose();
   }, [onClose]);
-
-  const categoryOptions = useMemo(
-    () =>
-      flattenCategories(categoriesStore.categories).map((category) => ({
-        value: String(category.id),
-        label: category.name,
-      })),
-    [categoriesStore.categories],
-  );
 
   const selectedCategoryIds = useMemo(() => {
     if (selectedCategoryId == null) {
@@ -267,16 +256,9 @@ export const useStockSupplyModal = ({
     t,
   ]);
 
-  const handleCategoryChange = useCallback((value: string) => {
-    setSelectedCategoryId(
-      value === ALL_CATEGORIES_VALUE ? null : Number(value),
-    );
+  const handleCategoryChange = useCallback((categoryId: number | null) => {
+    setSelectedCategoryId(categoryId);
   }, []);
-
-  const categorySelectValue =
-    selectedCategoryId == null
-      ? ALL_CATEGORIES_VALUE
-      : String(selectedCategoryId);
 
   return {
     t,
@@ -289,14 +271,13 @@ export const useStockSupplyModal = ({
     comment,
     search,
     pickerMode,
-    categoryOptions,
+    selectedCategoryId,
     filteredAvailableVariants,
     groupedAvailableVariants,
     selectedQuantity,
     selectedTotal,
     summaryCurrency,
     canSubmit,
-    categorySelectValue,
     setComment,
     setSearch,
     setPickerMode,
@@ -311,5 +292,3 @@ export const useStockSupplyModal = ({
     updateLine,
   };
 };
-
-export { ALL_CATEGORIES_VALUE };

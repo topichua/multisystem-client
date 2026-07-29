@@ -10,15 +10,14 @@ import {
   Flex,
   Input,
   Segmented,
-  Select,
   Spin,
   Typography,
 } from "antd";
 
+import { CategoryTreeSelect } from "@/features/categories/components/category-tree-select";
 import type { useCategoriesStore } from "@/features/categories/model/use-categories-store";
 import type { CatalogVariant } from "@/features/products/model/product.types";
 
-import { ALL_CATEGORIES_VALUE } from "../hooks/use-stock-supply-modal";
 import type {
   SupplyPickerMode,
   VariantGroup,
@@ -35,13 +34,12 @@ type StockSupplyVariantsPickerProps = {
   loadError: string | null;
   search: string;
   pickerMode: SupplyPickerMode;
-  categoryOptions: Array<{ value: string; label: string }>;
-  categorySelectValue: string;
+  selectedCategoryId: number | null;
   filteredAvailableVariants: CatalogVariant[];
   groupedAvailableVariants: VariantGroup[];
   onSearchChange: (value: string) => void;
   onPickerModeChange: (mode: SupplyPickerMode) => void;
-  onCategoryChange: (value: string) => void;
+  onCategoryChange: (value: number | null) => void;
   onAddAll: () => void;
   onAddVariant: (variant: CatalogVariant) => void;
 };
@@ -53,8 +51,7 @@ export const StockSupplyVariantsPicker = ({
   loadError,
   search,
   pickerMode,
-  categoryOptions,
-  categorySelectValue,
+  selectedCategoryId,
   filteredAvailableVariants,
   groupedAvailableVariants,
   onSearchChange,
@@ -79,18 +76,18 @@ export const StockSupplyVariantsPicker = ({
     </Flex>
 
     <Flex gap={8} align="center">
-      <Select<string>
-        value={categorySelectValue}
-        loading={categoriesStore.listLoading}
+      <CategoryTreeSelect
+        allowClear={false}
+        allowNoCategory
+        categories={categoriesStore.categories}
+        disabled={categoriesStore.listLoading}
+        noCategoryLabel={t("products.catalogSearch.allCategories")}
+        searchPlaceholder={t("categories.searchPlaceholder")}
+        value={selectedCategoryId}
         style={{ flex: 1, minWidth: 0 }}
-        options={[
-          {
-            value: ALL_CATEGORIES_VALUE,
-            label: t("products.catalogSearch.allCategories"),
-          },
-          ...categoryOptions,
-        ]}
-        onChange={onCategoryChange}
+        onChange={(value) =>
+          onCategoryChange(typeof value === "number" ? value : null)
+        }
       />
       <Segmented<SupplyPickerMode>
         value={pickerMode}

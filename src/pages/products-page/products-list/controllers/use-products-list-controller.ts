@@ -99,6 +99,7 @@ export const useProductsListController = () => {
 
   return {
     productsStore,
+    categories: categoriesStore.categories,
     categoryNameById,
     categoryOptions,
     rowSelection,

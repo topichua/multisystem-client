@@ -22,6 +22,7 @@ export const ProductAddPage = observer(() => {
             onBack={controller.navigateToProductsList}
             productType={controller.productType}
             onProductTypeChange={controller.onProductTypeChange}
+            categories={controller.categories}
             categoryOptions={controller.categoryOptions}
             requiredMessage={controller.requiredMessage}
             showMainQuantityField={controller.showMainQuantityField}

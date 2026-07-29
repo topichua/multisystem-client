@@ -21,7 +21,6 @@ import { normalizeClientPhoneForInput } from "@/utils/phone-input";
 import { useClientOrderNovaPoshtaDelivery } from "./use-client-order-nova-poshta-delivery";
 
 export type {
-  CategorySelectOptionData,
   VariantSelectOption,
   VariantSelectOptionData,
 } from "@/features/products/components/catalog-product-search";

@@ -78,8 +78,8 @@ export const OrderEditItemsSection = ({
             catalogSearchProductGroups={
               catalogSearch.catalogSearchProductGroups
             }
+            categories={catalogSearch.categories}
             categoriesLoading={catalogSearch.categoriesLoading}
-            categorySelectOptions={catalogSearch.categorySelectOptions}
             minSearchLength={catalogSearch.minSearchLength}
             productPickerKey={catalogSearch.productPickerKey}
             selectedCategoryId={catalogSearch.selectedCategoryId}

@@ -1,12 +1,6 @@
 import type { CatalogSearchMode } from "@/features/orders/model/orders-store";
 import type { CatalogVariant } from "@/features/products/model/product.types";
 
-export type CategorySelectOptionData = {
-  value: number;
-  label: string;
-  level: number;
-};
-
 export type VariantSelectOptionData = {
   variant: CatalogVariant;
 };

@@ -29,14 +29,13 @@ export function StockSupplyModal({
     comment,
     search,
     pickerMode,
-    categoryOptions,
+    selectedCategoryId,
     filteredAvailableVariants,
     groupedAvailableVariants,
     selectedQuantity,
     selectedTotal,
     summaryCurrency,
     canSubmit,
-    categorySelectValue,
     setComment,
     setSearch,
     setPickerMode,
@@ -116,8 +115,7 @@ export function StockSupplyModal({
           loadError={loadError}
           search={search}
           pickerMode={pickerMode}
-          categoryOptions={categoryOptions}
-          categorySelectValue={categorySelectValue}
+          selectedCategoryId={selectedCategoryId}
           filteredAvailableVariants={filteredAvailableVariants}
           groupedAvailableVariants={groupedAvailableVariants}
           onSearchChange={setSearch}
