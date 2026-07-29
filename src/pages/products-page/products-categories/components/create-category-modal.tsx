@@ -18,6 +18,8 @@ type CreateCategoryFormValues = {
   name: string;
 };
 
+const { Text } = Typography;
+
 export const CreateCategoryModal = ({
   loading,
   open,
@@ -70,12 +72,11 @@ export const CreateCategoryModal = ({
       }
       footer={
         <Flex gap={8} vertical={isMobileViewport}>
-          <Button block size="large" onClick={handleCancel} disabled={loading}>
+          <Button block onClick={handleCancel} disabled={loading}>
             {t("categories.cancel")}
           </Button>
           <Button
             block
-            size="large"
             type="primary"
             icon={<CheckOutlined />}
             loading={loading}
@@ -86,9 +87,9 @@ export const CreateCategoryModal = ({
         </Flex>
       }
     >
-      <Form form={form} layout="vertical" requiredMark={false}>
+      <Form form={form} layout="vertical">
         <Form.Item
-          label={t("categories.name").toUpperCase()}
+          label={t("categories.name")}
           name="name"
           rules={[
             {
@@ -110,9 +111,7 @@ export const CreateCategoryModal = ({
             onPressEnter={() => void handleCreate()}
           />
         </Form.Item>
-        <Typography.Paragraph style={{ marginBottom: 0 }}>
-          {t("categories.rootCreateHint")}
-        </Typography.Paragraph>
+        <Text type="secondary">{t("categories.rootCreateHint")}</Text>
       </Form>
     </Modal>
   );

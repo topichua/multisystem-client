@@ -19,7 +19,7 @@ export type CategoryCreatePayload = {
 };
 
 export type CategoryUpdatePayload = Partial<
-  Pick<CategoryCreatePayload, "name" | "parentId">
+  Pick<Category, "name" | "parentId" | "sortOrder">
 >;
 
 export type CategoryDeletePayload = {

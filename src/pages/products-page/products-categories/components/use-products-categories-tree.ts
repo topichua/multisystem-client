@@ -42,6 +42,9 @@ export const useProductsCategoriesTree = ({
   const [renameLoading, setRenameLoading] = useState(false);
   const [pendingDeleteCategory, setPendingDeleteCategory] =
     useState<Category | null>(null);
+  const [pendingMoveCategory, setPendingMoveCategory] =
+    useState<Category | null>(null);
+  const [moveLoading, setMoveLoading] = useState(false);
   const [subcategoryName, setSubcategoryName] = useState("");
 
   const expandableKeys = useMemo(
@@ -119,6 +122,20 @@ export const useProductsCategoriesTree = ({
     setRenamingCategoryId(null);
     setRenamingCategoryName("");
   }, []);
+
+  const openMoveCategory = useCallback(
+    (category: Category) => {
+      if (isUncategorizedCategory(category)) {
+        return;
+      }
+
+      setAddingParentId(null);
+      setSubcategoryName("");
+      cancelRenameCategory();
+      setPendingMoveCategory(category);
+    },
+    [cancelRenameCategory],
+  );
 
   const handleCreateSubcategory = useCallback(async () => {
     if (addingParentId == null) {
@@ -275,6 +292,48 @@ export const useProductsCategoriesTree = ({
     [deleteCategory, pendingDeleteCategory],
   );
 
+  const handleMoveCategory = useCallback(
+    async (parentCategoryId: number | null) => {
+      if (!pendingMoveCategory) {
+        return;
+      }
+
+      if (parentCategoryId === pendingMoveCategory.parentId) {
+        setPendingMoveCategory(null);
+        return;
+      }
+
+      setMoveLoading(true);
+
+      try {
+        await store.updateCategory(pendingMoveCategory.id, {
+          name: pendingMoveCategory.name,
+          parentId: parentCategoryId,
+          sortOrder: pendingMoveCategory.sortOrder,
+        });
+        notification.success({ title: t("categories.moved") });
+        setPendingMoveCategory(null);
+
+        if (parentCategoryId != null) {
+          const parentKey = String(parentCategoryId);
+
+          setExpandedKeys((currentKeys) =>
+            currentKeys.includes(parentKey)
+              ? currentKeys
+              : [...currentKeys, parentKey],
+          );
+        }
+      } catch (error) {
+        notification.error({
+          title: getApiErrorMessage(error, t("categories.moveFailed")),
+        });
+      } finally {
+        setMoveLoading(false);
+      }
+    },
+    [notification, pendingMoveCategory, store, t],
+  );
+
   return {
     addingParentId,
     cancelAddSubcategory,
@@ -285,16 +344,21 @@ export const useProductsCategoriesTree = ({
     handleCreateSubcategory,
     handleDeleteCategory,
     handleDeleteCategoryWithTransfer,
+    handleMoveCategory,
     handleRenameCategory,
+    moveLoading,
     openAddSubcategory,
+    openMoveCategory,
     openRenameCategory,
     pendingDeleteCategory,
+    pendingMoveCategory,
     renameLoading,
     renamingCategoryId,
     renamingCategoryName,
     selectedCategoryId,
     setExpandedKeys,
     setPendingDeleteCategory,
+    setPendingMoveCategory,
     setRenamingCategoryName,
     setSubcategoryName,
     storeCategories: store.categories,

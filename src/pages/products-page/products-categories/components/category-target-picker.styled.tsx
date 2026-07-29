@@ -1,7 +1,7 @@
 import { Tree } from "antd";
 import styled from "styled-components";
 
-export const NoCategoryOption = styled.button<{ $selected: boolean }>`
+export const NullableOption = styled.button<{ $selected: boolean }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -27,7 +27,7 @@ export const NoCategoryOption = styled.button<{ $selected: boolean }>`
   }
 `;
 
-export const NoCategoryOptionContent = styled.span`
+export const NullableOptionContent = styled.span`
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -39,13 +39,13 @@ export const NoCategoryOptionContent = styled.span`
   }
 `;
 
-export const NoCategoryOptionIcon = styled.span`
+export const NullableOptionIcon = styled.span`
   display: inline-flex;
   flex: 0 0 auto;
   color: ${({ theme }) => theme.colors.functional.text.subdued};
 `;
 
-export const NoCategoryOptionCheck = styled.span`
+export const NullableOptionCheck = styled.span`
   display: inline-flex;
   flex: 0 0 auto;
   color: ${({ theme }) => theme.colors.semantic.primary};

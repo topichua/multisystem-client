@@ -5,6 +5,7 @@ import {
   FolderOpenIcon,
   PencilSimpleIcon,
   PlusIcon,
+  SwapIcon,
   TrashIcon,
 } from "@phosphor-icons/react";
 import { Button, Popconfirm, Typography } from "antd";
@@ -25,6 +26,7 @@ type CategoryTreeTitleProps = {
   onAddSubcategory: (parentCategoryId: number) => void;
   onDeleteCategory: (category: Category) => Promise<void>;
   onEditCategory: (category: Category) => void;
+  onMoveCategory: (category: Category) => void;
   onToggle: (categoryId: number) => void;
 };
 
@@ -39,6 +41,7 @@ export const CategoryTreeTitle = ({
   onAddSubcategory,
   onDeleteCategory,
   onEditCategory,
+  onMoveCategory,
   onToggle,
 }: CategoryTreeTitleProps) => {
   const { t } = useTranslation();
@@ -56,6 +59,11 @@ export const CategoryTreeTitle = ({
   const handleEditCategoryClick = (event: MouseEvent<HTMLElement>) => {
     stopActionClick(event);
     onEditCategory(category);
+  };
+
+  const handleMoveCategoryClick = (event: MouseEvent<HTMLElement>) => {
+    stopActionClick(event);
+    onMoveCategory(category);
   };
 
   const handleRowClick = () => {
@@ -102,7 +110,7 @@ export const CategoryTreeTitle = ({
         {category.name}
       </S.CategoryName>
 
-      {(category.productCount > 0 || category.productVariantCount > 0) && (
+      {category.productCount > 0 || category.productVariantCount > 0 ? (
         <S.CategoryProductsCount>
           <Text strong>{category.productCount}</Text>{" "}
           {t("categories.productsWord", { count: category.productCount })}
@@ -111,6 +119,10 @@ export const CategoryTreeTitle = ({
           {t("categories.productVariantsWord", {
             count: category.productVariantCount,
           })}
+        </S.CategoryProductsCount>
+      ) : (
+        <S.CategoryProductsCount>
+          {t("categories.noLinkedProducts")}
         </S.CategoryProductsCount>
       )}
 
@@ -130,6 +142,15 @@ export const CategoryTreeTitle = ({
           icon={<PencilSimpleIcon size={16} />}
           aria-label={t("categories.renameCategory")}
           onClick={handleEditCategoryClick}
+          disabled={!canManageCategory}
+          style={{ opacity: !canManageCategory ? 0 : 1 }}
+        />
+        <Button
+          type="text"
+          size="small"
+          icon={<SwapIcon size={16} />}
+          aria-label={t("categories.moveCategory")}
+          onClick={handleMoveCategoryClick}
           disabled={!canManageCategory}
           style={{ opacity: !canManageCategory ? 0 : 1 }}
         />

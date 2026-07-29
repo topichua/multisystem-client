@@ -1,4 +1,5 @@
-import { XIcon } from "@phosphor-icons/react";
+import { FolderOutlined } from "@ant-design/icons";
+import { ArrowUpRightIcon } from "@phosphor-icons/react";
 import { Modal, Typography } from "antd";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -10,58 +11,68 @@ import { useIsMobileViewport } from "@/utils/use-media-query";
 import { excludeCategoryBranchById } from "../products-categories.utils";
 import { CategoryTargetPicker } from "./category-target-picker";
 
-type DeleteCategoryWithProductsModalProps = {
+type MoveCategoryModalProps = {
   categories: Category[];
   category: Category | null;
   loading: boolean;
   open: boolean;
   onCancel: () => void;
-  onDelete: (targetCategoryId: number | null) => Promise<void>;
+  onMove: (parentCategoryId: number | null) => Promise<void>;
 };
 
-type DeleteCategorySelectionState = {
+type MoveCategorySelectionState = {
   categoryId: number | null;
-  selectedCategoryId: number | null;
+  parentId: number | null;
+  selectedParentId: number | null;
 };
 
-export const DeleteCategoryWithProductsModal = ({
+export const MoveCategoryModal = ({
   categories,
   category,
   loading,
   open,
   onCancel,
-  onDelete,
-}: DeleteCategoryWithProductsModalProps) => {
+  onMove,
+}: MoveCategoryModalProps) => {
   const { t } = useTranslation();
   const isMobileViewport = useIsMobileViewport();
   const currentCategoryId = open ? (category?.id ?? null) : null;
+  const currentParentId = open ? (category?.parentId ?? null) : null;
   const [selectionState, setSelectionState] =
-    useState<DeleteCategorySelectionState>({
+    useState<MoveCategorySelectionState>({
       categoryId: currentCategoryId,
-      selectedCategoryId: null,
+      parentId: currentParentId,
+      selectedParentId: currentParentId,
     });
-  let selectedCategoryId = selectionState.selectedCategoryId;
+  let selectedParentId = selectionState.selectedParentId;
 
-  if (selectionState.categoryId !== currentCategoryId) {
+  if (
+    selectionState.categoryId !== currentCategoryId ||
+    selectionState.parentId !== currentParentId
+  ) {
     const nextSelectionState = {
       categoryId: currentCategoryId,
-      selectedCategoryId: null,
+      parentId: currentParentId,
+      selectedParentId: currentParentId,
     };
 
     setSelectionState(nextSelectionState);
-    selectedCategoryId = nextSelectionState.selectedCategoryId;
+    selectedParentId = nextSelectionState.selectedParentId;
   }
 
   const availableCategories = useMemo(() => {
-    const categoriesWithoutDeletedBranch = category
+    const categoriesWithoutMovedBranch = category
       ? excludeCategoryBranchById(categories, category.id)
       : categories;
 
     return excludeCategoryBranchById(
-      categoriesWithoutDeletedBranch,
+      categoriesWithoutMovedBranch,
       UNCATEGORIZED_CATEGORY_ID,
     );
   }, [categories, category]);
+
+  const parentUnchanged =
+    category == null || selectedParentId === currentParentId;
 
   return (
     <Modal
@@ -69,8 +80,8 @@ export const DeleteCategoryWithProductsModal = ({
       centered
       title={
         category
-          ? t("categories.deleteTransferTitle", { name: category.name })
-          : t("categories.deleteCategory")
+          ? t("categories.moveCategoryTitle", { name: category.name })
+          : t("categories.moveCategory")
       }
       width={isMobileViewport ? "calc(100vw - 32px)" : 440}
       open={open}
@@ -88,31 +99,35 @@ export const DeleteCategoryWithProductsModal = ({
           : undefined
       }
       onCancel={onCancel}
-      okText={t("categories.deleteCategory")}
+      okText={t("categories.moveCategorySubmit")}
       cancelText={t("categories.cancel")}
       confirmLoading={loading}
-      okButtonProps={{ danger: true }}
+      okButtonProps={{
+        disabled: loading || parentUnchanged,
+        icon: <ArrowUpRightIcon size={16} />,
+      }}
       cancelButtonProps={{ disabled: loading }}
-      onOk={() => void onDelete(selectedCategoryId)}
+      onOk={() => {
+        if (!parentUnchanged) {
+          void onMove(selectedParentId);
+        }
+      }}
     >
       <Typography.Paragraph>
-        {t("categories.deleteTransferDescription", {
-          productCount: category?.productCount ?? 0,
-          productVariantCount: category?.productVariantCount ?? 0,
-        })}
+        {t("categories.moveCategoryDescription")}
       </Typography.Paragraph>
 
       <CategoryTargetPicker
         categories={availableCategories}
         disabled={loading}
-        emptyDescription={t("categories.deleteTransferEmpty")}
-        nullableOptionIcon={<XIcon size={16} />}
-        nullableOptionLabel={t("categories.deleteTransferNoCategory")}
-        selectedCategoryId={selectedCategoryId}
-        onSelectCategory={(categoryId) =>
+        emptyDescription={t("categories.moveCategoryEmpty")}
+        nullableOptionIcon={<FolderOutlined />}
+        nullableOptionLabel={t("categories.moveCategoryRootOption")}
+        selectedCategoryId={selectedParentId}
+        onSelectCategory={(parentCategoryId) =>
           setSelectionState((currentState) => ({
             ...currentState,
-            selectedCategoryId: categoryId,
+            selectedParentId: parentCategoryId,
           }))
         }
       />

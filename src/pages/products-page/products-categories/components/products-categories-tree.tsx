@@ -7,6 +7,7 @@ import type { Category } from "@/features/categories/model/category.types";
 import { CategoryInlineFormRow } from "./category-inline-form-row";
 import { CategoryTreeTitle } from "./category-tree-title";
 import { DeleteCategoryWithProductsModal } from "./delete-category-with-products-modal";
+import { MoveCategoryModal } from "./move-category-modal";
 import * as S from "./products-categories-tree.styled";
 import { categoriesToTreeData } from "./products-categories-tree.utils";
 import { useProductsCategoriesTree } from "./use-products-categories-tree";
@@ -31,16 +32,21 @@ export const ProductsCategoriesTree = ({
     handleCreateSubcategory,
     handleDeleteCategory,
     handleDeleteCategoryWithTransfer,
+    handleMoveCategory,
     handleRenameCategory,
+    moveLoading,
     openAddSubcategory,
+    openMoveCategory,
     openRenameCategory,
     pendingDeleteCategory,
+    pendingMoveCategory,
     renameLoading,
     renamingCategoryId,
     renamingCategoryName,
     selectedCategoryId,
     setExpandedKeys,
     setPendingDeleteCategory,
+    setPendingMoveCategory,
     setRenamingCategoryName,
     setSubcategoryName,
     storeCategories,
@@ -94,6 +100,7 @@ export const ProductsCategoriesTree = ({
               onAddSubcategory={openAddSubcategory}
               onDeleteCategory={handleDeleteCategory}
               onEditCategory={openRenameCategory}
+              onMoveCategory={openMoveCategory}
               onToggle={toggleCategory}
             />
           );
@@ -111,6 +118,7 @@ export const ProductsCategoriesTree = ({
       handleDeleteCategory,
       handleRenameCategory,
       openAddSubcategory,
+      openMoveCategory,
       openRenameCategory,
       renameLoading,
       renamingCategoryId,
@@ -146,6 +154,15 @@ export const ProductsCategoriesTree = ({
         open={pendingDeleteCategory != null}
         onCancel={() => setPendingDeleteCategory(null)}
         onDelete={handleDeleteCategoryWithTransfer}
+      />
+
+      <MoveCategoryModal
+        categories={storeCategories}
+        category={pendingMoveCategory}
+        loading={moveLoading}
+        open={pendingMoveCategory != null}
+        onCancel={() => setPendingMoveCategory(null)}
+        onMove={handleMoveCategory}
       />
     </>
   );
