@@ -593,6 +593,11 @@
   "errors": {
     "somethingWentWrong": "Something went wrong"
   },
+  "notFound": {
+    "title": "Cat knows. Won't tell.",
+    "description": "Looks like this page got lost or moved. Head home before the cat hides something else.",
+    "goHome": "Back to home"
+  },
   "quickActions": {
     "title": "Manage your workspace",
     "subtitle": "Everything you need for daily operations is right at your fingertips.",
