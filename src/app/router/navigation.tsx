@@ -10,6 +10,8 @@ import {
   ReceiptIcon,
   UsersIcon,
   UsersThreeIcon,
+  TagIcon,
+  CubeIcon,
 } from "@phosphor-icons/react";
 
 import * as darkColors from "@/styled/definitions/colors.dark";
@@ -98,13 +100,13 @@ export const mainNavItems: readonly MainNavItem[] = [
     key: "products",
     path: pagesMap.products,
     labelKey: "nav.products",
-    icon: <PackageIcon size={24} />,
+    icon: <CubeIcon size={24} />,
   },
   {
     key: "orders",
     path: pagesMap.orders,
     labelKey: "nav.orders",
-    icon: <ReceiptIcon size={24} />,
+    icon: <TagIcon size={24} />,
   },
   {
     key: "clients",

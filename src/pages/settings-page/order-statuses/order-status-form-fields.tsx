@@ -6,7 +6,6 @@ import type {
   OrderStatus,
   OrderStatusCategory,
 } from "@/features/orders/model/order.types";
-import { PresetColorPicker } from "@/shared/components/preset-color-picker/preset-color-picker";
 import { useIsMobileViewport } from "@/utils/use-media-query";
 
 import { OrderStatusCategorySelect } from "./order-status-category-select";
@@ -15,7 +14,6 @@ import { isDuplicateOrderStatusName } from "./order-status-name-validation";
 export type OrderStatusFormValues = {
   name: string;
   category: OrderStatusCategory;
-  color: string;
 };
 
 type OrderStatusFormFieldsProps = {
@@ -44,7 +42,11 @@ export const OrderStatusFormFields = ({
         name="name"
         label={t("orderStatuses.fieldName")}
         rules={[
-          { required: true, message: t("orderStatuses.nameRequired") },
+          {
+            required: true,
+            whitespace: true,
+            message: t("orderStatuses.nameRequired"),
+          },
           {
             validator: async (_, value: string) => {
               if (value == null || String(value).trim() === "") {
@@ -74,16 +76,6 @@ export const OrderStatusFormFields = ({
         ]}
       >
         <OrderStatusCategorySelect statuses={statuses} disabled={isSystem} />
-      </Form.Item>
-      <Form.Item
-        name="color"
-        label={t("orderStatuses.fieldColor")}
-        rules={[{ required: true, message: t("orderStatuses.pickColor") }]}
-      >
-        <PresetColorPicker
-          ariaLabel={t("orderStatuses.colorPickerAria")}
-          columns={isMobileViewport ? 5 : undefined}
-        />
       </Form.Item>
 
       {!isSystem && onDelete && (

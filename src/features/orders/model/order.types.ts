@@ -91,8 +91,6 @@ export type OrderNovaPoshtaWaybillResponse = {
 export type OrderStatusCategory =
   | "new"
   | "confirmed"
-  | "packed"
-  | "shipped"
   | "delivery"
   | "completed"
   | "canceled";
@@ -100,8 +98,6 @@ export type OrderStatusCategory =
 export const ORDER_STATUS_CATEGORIES = [
   "new",
   "confirmed",
-  "packed",
-  "shipped",
   "delivery",
   "completed",
   "canceled",

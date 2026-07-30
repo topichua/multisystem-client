@@ -4,9 +4,7 @@ import { dataQaAttrs } from "@/styled/data-qa-attrs";
 
 import { NotFoundCatIllustration } from "./not-found-cat-illustration";
 
-export const Root = styled.section.attrs(() =>
-  dataQaAttrs("layout-not-found"),
-)`
+export const Root = styled.section.attrs(() => dataQaAttrs("layout-not-found"))`
   position: relative;
   box-sizing: border-box;
   display: flex;

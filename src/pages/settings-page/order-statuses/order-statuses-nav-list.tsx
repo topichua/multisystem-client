@@ -1,4 +1,4 @@
-import { PlusIcon } from "@phosphor-icons/react";
+import { CaretRightIcon } from "@phosphor-icons/react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -17,12 +17,14 @@ import { OrderStatusSystemBadge } from "./order-status-system-badge";
 type OrderStatusNavItemProps = {
   status: OrderStatus;
   selected: boolean;
+  accentColor: string;
   onSelect: (statusId: number) => void;
 };
 
 const OrderStatusNavItem = ({
   status,
   selected,
+  accentColor,
   onSelect,
 }: OrderStatusNavItemProps) => {
   return (
@@ -31,15 +33,20 @@ const OrderStatusNavItem = ({
       data-status-id={status.id}
       data-qa={`order-status-nav-item-${status.id}`}
       $selected={selected}
+      $accent={accentColor}
     >
       <S.StatusButton
         type="button"
         aria-current={selected ? "page" : undefined}
+        $selected={selected}
+        $accent={accentColor}
         onClick={() => onSelect(status.id)}
       >
-        <S.StatusDot $color={status.color} aria-hidden="true" />
-        <S.StatusName>{status.name}</S.StatusName>
+        <S.StatusName $selected={selected}>{status.name}</S.StatusName>
         {status.isSystem && <OrderStatusSystemBadge />}
+        <S.Caret aria-hidden="true">
+          <CaretRightIcon size={16} />
+        </S.Caret>
       </S.StatusButton>
     </S.StatusItem>
   );
@@ -57,10 +64,10 @@ type OrderStatusCategorySectionProps = {
 const OrderStatusCategorySection = ({
   group,
   selectedStatusId,
-  createDisabled,
-  creating,
+  // createDisabled,
+  // creating,
   onSelect,
-  onCreateStatus,
+  // onCreateStatus,
 }: OrderStatusCategorySectionProps) => {
   const { t } = useTranslation();
   const categoryLabel = t(getOrderStatusCategoryLabelKey(group.category));
@@ -69,11 +76,8 @@ const OrderStatusCategorySection = ({
     <S.CategorySection data-qa={`order-status-category-${group.category}`}>
       <S.CategoryHeader>
         <S.CategoryDot $color={group.color} aria-hidden="true" />
-        <S.CategoryTitleCluster>
-          <S.CategoryTitle>{categoryLabel}</S.CategoryTitle>
-          <S.CategoryCount>{group.statuses.length}</S.CategoryCount>
-        </S.CategoryTitleCluster>
-        <S.CategoryAddButton
+        <S.CategoryTitle $color={group.color}>{categoryLabel}</S.CategoryTitle>
+        {/* <S.CategoryAddButton
           type="button"
           aria-label={t("orderStatuses.addStatusAria", {
             category: categoryLabel,
@@ -87,20 +91,21 @@ const OrderStatusCategorySection = ({
           ) : (
             <PlusIcon size={14} aria-hidden="true" />
           )}
-        </S.CategoryAddButton>
+        </S.CategoryAddButton> */}
       </S.CategoryHeader>
 
       {group.statuses.length > 0 && (
-        <S.StatusTree role="list">
+        <S.StatusCard role="list">
           {group.statuses.map((status) => (
             <OrderStatusNavItem
               key={status.id}
               status={status}
               selected={selectedStatusId === status.id}
+              accentColor={group.color}
               onSelect={onSelect}
             />
           ))}
-        </S.StatusTree>
+        </S.StatusCard>
       )}
     </S.CategorySection>
   );
@@ -108,7 +113,7 @@ const OrderStatusCategorySection = ({
 
 export type OrderStatusesNavListProps = {
   statuses: OrderStatus[];
-  selectedStatusId: number | null;
+  selectedStatusId?: number | null;
   creatingCategory?: OrderStatusCategory | null;
   createDisabled?: boolean;
   onSelect: (statusId: number) => void;
@@ -117,7 +122,7 @@ export type OrderStatusesNavListProps = {
 
 export const OrderStatusesNavList = ({
   statuses,
-  selectedStatusId,
+  selectedStatusId = null,
   creatingCategory = null,
   createDisabled = false,
   onSelect,

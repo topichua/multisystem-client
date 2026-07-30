@@ -33,7 +33,6 @@ export function useOrderStatusEditor(statusId: string | undefined) {
       form.setFieldsValue({
         name: status.name,
         category: status.category,
-        color: status.color,
       });
     }
   }, [form, status]);
@@ -51,9 +50,8 @@ export function useOrderStatusEditor(statusId: string | undefined) {
     }
 
     const payload: OrderStatusUpdatePayload = {
-      name: values.name,
-      color:
-        typeof values.color === "string" ? values.color : String(values.color),
+      name: values.name.trim(),
+      color: status.color,
       category: status.isSystem ? status.category : values.category,
       isDefault: status.isDefault,
     };

@@ -1,4 +1,4 @@
-import { Button, Card, Flex, Typography } from "antd";
+import { Button, Typography } from "antd";
 import styled from "styled-components";
 
 import { dataQaAttrs } from "@/styled/data-qa-attrs";
@@ -23,7 +23,7 @@ export const Header = styled.header`
   min-width: 0;
   padding: 16px 16px 12px;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 12px;
 `;
 
@@ -77,205 +77,10 @@ export const PageTitle = styled(Typography.Title)`
   }
 `;
 
-export const HeaderCount = styled.span`
-  flex-shrink: 0;
-  color: ${({ theme }) => theme.colors.functional.text.subdued};
-  font-size: ${({ theme }) => theme.fontSize.medium};
-  font-weight: 500;
-  line-height: 1.25;
-`;
-
-export const NavRoot = styled.div`
-  margin-top: 16px;
-`;
-
-export const CategorySection = styled.section`
-  &:not(:first-child) {
-    margin-top: 16px;
-  }
-`;
-
-export const CategoryHeader = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 32px;
-  padding: 0 4px;
-`;
-
-export const CategoryDot = styled.span<{ $color: string }>`
-  flex-shrink: 0;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: ${({ $color }) => $color};
-  border: 1px solid rgba(0, 0, 0, 0.12);
-`;
-
-export const CategoryTitleCluster = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex: 1 1 auto;
+export const ListWrap = styled.div`
+  margin-top: 8px;
+  margin-inline: -8px;
   min-width: 0;
-`;
-
-export const CategoryTitle = styled.span`
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  color: ${({ theme }) => theme.colors.functional.text.subdued};
-  font-size: ${({ theme }) => theme.fontSize.small};
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-`;
-
-export const CategoryCount = styled.span`
-  flex-shrink: 0;
-  color: ${({ theme }) => theme.colors.functional.text.placeholder};
-  font-size: ${({ theme }) => theme.fontSize.small};
-  font-weight: 500;
-  line-height: 1.25;
-`;
-
-export const CategoryAddButton = styled.button`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 32px;
-  height: 32px;
-  margin: 0;
-  padding: 0;
-  border: none;
-  border-radius: 8px;
-  background: transparent;
-  color: ${({ theme }) => theme.colors.functional.text.subdued};
-  cursor: pointer;
-
-  &:active:not(:disabled) {
-    background: ${({ theme }) => theme.colors.functional.background.active};
-    color: ${({ theme }) => theme.colors.functional.text.primary};
-  }
-
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.45;
-  }
-`;
-
-export const StatusTree = styled.ul`
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  min-width: 0;
-`;
-
-export const ListCard = styled(Card)`
-  && {
-    margin-top: 8px;
-    overflow: hidden;
-    border-color: ${({ theme }) => theme.colors.functional.border.cardBase};
-    border-radius: ${({ theme }) => theme.radius.large};
-    background: ${({ theme }) => theme.colors.functional.background.elevated};
-    box-shadow: ${({ theme }) => theme.shadow.cardShadow};
-  }
-
-  && .ant-card-body {
-    padding: 0;
-  }
-`;
-
-export const StatusRow = styled.li`
-  display: flex;
-  align-items: stretch;
-  min-width: 0;
-
-  &:not(:first-child) {
-    border-top: 1px solid ${({ theme }) => theme.colors.functional.border.split};
-  }
-`;
-
-export const StatusItemButton = styled(Button)`
-  && {
-    flex: 1 1 auto;
-    min-width: 0;
-    height: auto;
-    min-height: 48px;
-    padding: 12px;
-    border: 0;
-    border-radius: 0;
-    color: ${({ theme }) => theme.colors.functional.text.primary};
-    text-align: left;
-    white-space: normal;
-  }
-
-  &&:hover {
-    background: transparent;
-    color: ${({ theme }) => theme.colors.functional.text.primary};
-  }
-
-  @media (hover: hover) and (pointer: fine) {
-    &&:hover {
-      background: ${({ theme }) => theme.colors.functional.background.hover};
-    }
-  }
-
-  &&:active {
-    background: ${({ theme }) => theme.colors.functional.background.active};
-  }
-
-  &&:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.functional.border.selected};
-    outline-offset: -2px;
-  }
-`;
-
-export const ItemContent = styled(Flex)`
-  && {
-    width: 100%;
-    min-width: 0;
-  }
-`;
-
-export const ColorDot = styled.span<{ $color: string }>`
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: ${({ $color }) => $color};
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  flex: 0 0 auto;
-`;
-
-export const ItemCopy = styled(Flex)`
-  && {
-    min-width: 0;
-    flex: 1 1 auto;
-  }
-`;
-
-export const ItemTitle = styled(Typography.Text)`
-  && {
-    display: block;
-    max-width: 100%;
-    color: ${({ theme }) => theme.colors.functional.text.heading};
-    font-size: ${({ theme }) => theme.fontSize.medium};
-    font-weight: 600;
-    line-height: 1.25;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-`;
-
-export const Caret = styled.span`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex: 0 0 auto;
-  color: ${({ theme }) => theme.colors.functional.text.placeholder};
 `;
 
 export const StateContainer = styled.div`
