@@ -17,16 +17,25 @@ type MobileProductVariantsListProps = {
   selectedCharacteristics: SelectedCharacteristic[];
   variantCustomFields: VariantCustomField[];
   deletingVariantKey: string | null;
+  deleteLoadingVariantId?: number | null;
+  archiveLoadingVariantId?: number | null;
   onManageVariantImages: (variant: ProductVariantUi) => void;
   onDeleteVariant: (variant: ProductVariantUi) => void;
+  onArchiveVariant?: (variant: ProductVariantUi) => void;
+  onUnarchiveVariant?: (variant: ProductVariantUi) => void;
+  onOpenInventory?: (variant: ProductVariantUi) => void;
+  onOpenProductInventory?: () => void;
   onUpdateManualVariantCustomField: (
     variantKey: string,
     fieldStableKey: string,
     value: string,
   ) => void;
   showQuantityField: boolean;
+  showInventorySummary?: boolean;
+  showInventoryManagement?: boolean;
   onAddManualVariant: () => void;
   onApplyPriceToAllVariants: (price: number) => void;
+  highlightedVariantId?: number | null;
   isMobile?: boolean;
 };
 
@@ -35,12 +44,21 @@ export function MobileProductVariantsList({
   selectedCharacteristics,
   variantCustomFields,
   deletingVariantKey,
+  deleteLoadingVariantId = null,
+  archiveLoadingVariantId = null,
   onManageVariantImages,
   onDeleteVariant,
+  onArchiveVariant,
+  onUnarchiveVariant,
+  onOpenInventory,
+  onOpenProductInventory,
   onUpdateManualVariantCustomField,
   showQuantityField,
+  showInventorySummary = false,
+  showInventoryManagement = false,
   onAddManualVariant,
   onApplyPriceToAllVariants,
+  highlightedVariantId = null,
   isMobile = false,
 }: MobileProductVariantsListProps) {
   const { t } = useTranslation();
@@ -59,7 +77,11 @@ export function MobileProductVariantsList({
       ) : (
         <>
           <VariantsBulkPriceBar
+            productVariants={productVariants}
             onApplyPriceToAll={onApplyPriceToAllVariants}
+            showInventorySummary={showInventorySummary}
+            showInventoryManagement={showInventoryManagement}
+            onOpenInventory={onOpenProductInventory}
             isMobile={isMobile}
           />
 
@@ -72,12 +94,21 @@ export function MobileProductVariantsList({
                 selectedCharacteristics={selectedCharacteristics}
                 availableFields={variantCustomFields}
                 deletingVariantKey={deletingVariantKey}
+                deleteLoadingVariantId={deleteLoadingVariantId}
+                archiveLoadingVariantId={archiveLoadingVariantId}
                 onManageVariantImages={onManageVariantImages}
                 onDeleteVariant={onDeleteVariant}
+                onArchiveVariant={onArchiveVariant}
+                onUnarchiveVariant={onUnarchiveVariant}
+                onOpenInventory={onOpenInventory}
                 onUpdateManualVariantCustomField={
                   onUpdateManualVariantCustomField
                 }
                 showQuantityField={showQuantityField}
+                showInventoryManagement={showInventoryManagement}
+                highlighted={
+                  variant.id != null && variant.id === highlightedVariantId
+                }
               />
             ))}
           </Flex>

@@ -121,7 +121,10 @@ function parseProductAddVariantFormRow(
   return {
     key: record.key,
     price: Number(record.price ?? 0),
-    quantity: Number(record.quantity ?? 0),
+    quantity:
+      record.quantity === undefined || record.quantity === null
+        ? undefined
+        : Number(record.quantity),
     sku: typeof record.sku === "string" ? record.sku : "",
   };
 }
@@ -275,7 +278,9 @@ export function mergeProductVariantsWithFormValues(
     return {
       ...variant,
       price: formValues.price,
-      quantity: formValues.quantity,
+      ...(formValues.quantity !== undefined
+        ? { quantity: formValues.quantity }
+        : {}),
       sku: formValues.sku,
     };
   });

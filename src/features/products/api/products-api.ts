@@ -413,7 +413,42 @@ export const productsApi = {
   },
 
   delete: async (id: number): Promise<void> => {
-    await apiClient.delete(`${basePath}/${id}`);
+    await apiClient.delete(`${basePath}/${id}/hard`);
+  },
+
+  hardDeleteVariant: async (
+    productId: number,
+    variantId: number,
+  ): Promise<void> => {
+    await apiClient.delete(
+      `${basePath}/${productId}/variants/${variantId}/hard`,
+    );
+  },
+
+  archive: async (id: number): Promise<void> => {
+    await apiClient.post(`${basePath}/${id}/archive`);
+  },
+
+  unarchive: async (id: number): Promise<void> => {
+    await apiClient.post(`${basePath}/${id}/unarchive`);
+  },
+
+  archiveVariant: async (
+    productId: number,
+    variantId: number,
+  ): Promise<void> => {
+    await apiClient.post(
+      `${basePath}/${productId}/variants/${variantId}/archive`,
+    );
+  },
+
+  unarchiveVariant: async (
+    productId: number,
+    variantId: number,
+  ): Promise<void> => {
+    await apiClient.post(
+      `${basePath}/${productId}/variants/${variantId}/unarchive`,
+    );
   },
 
   uploadMedia: async (file: File): Promise<ProductUploadedMedia> => {

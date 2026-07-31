@@ -1,23 +1,28 @@
 import {
+  ArchiveIcon,
+  ArrowClockwiseIcon,
   CaretDownIcon,
   CubeIcon,
   PencilSimpleIcon,
   TrashIcon,
 } from "@phosphor-icons/react";
-import { Button, Modal } from "antd";
-// import { Tag } from "@/components/tag/tag";
+import { Button, Flex, Tooltip } from "antd";
 import { useState, type MouseEvent } from "react";
 import { useTranslation } from "react-i18next";
 
-import type { Product } from "@/features/products/model/product.types";
+import type {
+  Product,
+  ProductVariant,
+} from "@/features/products/model/product.types";
 import {
   formatProductVariantListMetaLine,
   getProductPriceRange,
   getSingleVariantListMeta,
-  // productStatusToColor,
-  // variantStatusToColor,
+  isArchivedStatus,
+  resolveProductImageSrc,
 } from "@/features/products/utils/product-display";
 
+import { ProductArchivedStatusTag } from "../components/product-archived-status-tag";
 import { ProductsListVariantCard } from "../components/products-list-variant-card";
 
 import * as S from "./mobile-products-list-page.styled";
@@ -29,10 +34,18 @@ type MobileProductCardProps = {
   product: Product;
   categoryName: string;
   deleteLoading: boolean;
+  archiveLoading: boolean;
   showInventoryQuantity: boolean;
   showInventoryManagement: boolean;
-  onEdit: (productId: number) => void;
-  onDelete: (productId: number) => Promise<void>;
+  onEdit: (productId: number, focusVariantId?: number) => void;
+  onDelete: (product: Product) => void;
+  onArchive: (product: Product) => void;
+  onUnarchive: (product: Product) => void;
+  onDeleteVariant: (product: Product, variant: ProductVariant) => void;
+  onArchiveVariant: (product: Product, variant: ProductVariant) => void;
+  onUnarchiveVariant: (product: Product, variant: ProductVariant) => void;
+  deleteLoadingVariantId: number | null;
+  archiveLoadingVariantId: number | null;
   onOpenInventory: (product: Product) => void;
   onOpenVariantInventory: (product: Product, variantId: number) => void;
 };
@@ -41,10 +54,18 @@ export const MobileProductCard = ({
   product,
   categoryName,
   deleteLoading,
+  archiveLoading,
   showInventoryQuantity,
   showInventoryManagement,
   onEdit,
   onDelete,
+  onArchive,
+  onUnarchive,
+  onDeleteVariant,
+  onArchiveVariant,
+  onUnarchiveVariant,
+  deleteLoadingVariantId,
+  archiveLoadingVariantId,
   onOpenInventory,
   onOpenVariantInventory,
 }: MobileProductCardProps) => {
@@ -53,6 +74,11 @@ export const MobileProductCard = ({
   const hasMultipleVariants = variantsCount > 1;
   const singleVariantMeta = getSingleVariantListMeta(product);
   const [expanded, setExpanded] = useState(false);
+  const isArchived = isArchivedStatus(product.status);
+  const archiveLabel = isArchived
+    ? t("products.unarchive")
+    : t("products.archive");
+  const canManageInventory = showInventoryManagement && !isArchived;
 
   const priceLabel = getProductPriceRange(product) ?? t("products.noPrice");
 
@@ -80,6 +106,10 @@ export const MobileProductCard = ({
       return;
     }
 
+    if (isArchived) {
+      return;
+    }
+
     void onEdit(product.id);
   };
 
@@ -95,9 +125,15 @@ export const MobileProductCard = ({
     >
       <S.CardTopRow align="flex-start">
         <S.ProductInfo>
-          <S.Thumbnail $src={product.mainImageUrl} aria-hidden />
+          <S.Thumbnail
+            $src={resolveProductImageSrc(product.mainImageUrl)}
+            aria-hidden
+          />
           <S.ProductCopy>
-            <S.ProductName>{product.name}</S.ProductName>
+            <Flex align="center" gap={6} wrap="wrap" style={{ minWidth: 0 }}>
+              <S.ProductName>{product.name}</S.ProductName>
+              {isArchived && <ProductArchivedStatusTag />}
+            </Flex>
             <S.ProductMeta>
               {[secondaryMeta, categoryName].filter(Boolean).join(" · ")}
             </S.ProductMeta>
@@ -109,12 +145,6 @@ export const MobileProductCard = ({
         <S.PriceQuantity>
           {[priceLabel, quantityLabel].filter(Boolean).join(" · ")}
         </S.PriceQuantity>
-
-        {/* <S.StatusWrap>
-          <Tag color={productStatusToColor(product.status)}>
-            {product.status}
-          </Tag>
-        </S.StatusWrap> */}
 
         {hasMultipleVariants && (
           <S.ExpandButton
@@ -167,8 +197,13 @@ export const MobileProductCard = ({
                 variant={variant}
                 showInventoryQuantity={showInventoryQuantity}
                 showInventoryManagement={showInventoryManagement}
+                deleteLoading={deleteLoadingVariantId === variant.id}
+                archiveLoading={archiveLoadingVariantId === variant.id}
                 onOpenInventory={onOpenVariantInventory}
                 onEdit={onEdit}
+                onArchive={onArchiveVariant}
+                onUnarchive={onUnarchiveVariant}
+                onDelete={onDeleteVariant}
               />
             </S.VariantRow>
           ))}
@@ -183,7 +218,7 @@ export const MobileProductCard = ({
         onMouseDown={stopCardNavigation}
         onPointerDown={stopCardNavigation}
       >
-        {showInventoryManagement && (
+        {canManageInventory && (
           <Button
             type="text"
             size="small"
@@ -193,14 +228,35 @@ export const MobileProductCard = ({
             onClick={() => onOpenInventory(product)}
           />
         )}
-        <Button
-          type="text"
-          size="small"
-          icon={<PencilSimpleIcon size={16} />}
-          aria-label={t("products.edit")}
-          data-qa={`products-mobile-action-edit-${product.id}`}
-          onClick={() => void onEdit(product.id)}
-        />
+        {!isArchived && (
+          <Button
+            type="text"
+            size="small"
+            icon={<PencilSimpleIcon size={16} />}
+            aria-label={t("products.edit")}
+            data-qa={`products-mobile-action-edit-${product.id}`}
+            onClick={() => void onEdit(product.id)}
+          />
+        )}
+        <Tooltip title={archiveLabel}>
+          <Button
+            type="text"
+            size="small"
+            loading={archiveLoading}
+            icon={
+              isArchived ? (
+                <ArrowClockwiseIcon size={16} />
+              ) : (
+                <ArchiveIcon size={16} />
+              )
+            }
+            aria-label={archiveLabel}
+            data-qa={`products-mobile-action-archive-${product.id}`}
+            onClick={() =>
+              isArchived ? onUnarchive(product) : onArchive(product)
+            }
+          />
+        </Tooltip>
         <Button
           type="text"
           size="small"
@@ -209,14 +265,7 @@ export const MobileProductCard = ({
           icon={<TrashIcon size={16} />}
           aria-label={t("products.delete")}
           data-qa={`products-mobile-action-delete-${product.id}`}
-          onClick={() => {
-            Modal.confirm({
-              title: t("products.deleteConfirm"),
-              okText: t("products.delete"),
-              okType: "danger",
-              onOk: () => onDelete(product.id),
-            });
-          }}
+          onClick={() => onDelete(product)}
         />
       </S.CardActionsRow>
     </S.ProductCard>

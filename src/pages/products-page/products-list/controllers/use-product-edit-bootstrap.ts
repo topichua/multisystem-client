@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 
 import { getApiErrorMessage } from "@/api/get-api-error-message";
 import type { ProductsStore } from "@/features/products/model/products-store";
+import { isArchivedStatus } from "@/features/products/utils/product-display";
 import { throwLoadError } from "@/utils/throw-load-error";
 import { productDetailToProductForm } from "../form/payload/product-detail-to-product-form";
 import type { ProductType } from "../form/sections/product-type-section";
@@ -76,6 +77,14 @@ export function useProductEditBootstrap({
         const product = await productsStore.loadProductById(editingProductId);
 
         if (!alive) {
+          return;
+        }
+
+        if (isArchivedStatus(product.status)) {
+          notification.error({
+            title: t("products.archivedCannotEdit"),
+          });
+          navigateToProductsList();
           return;
         }
 

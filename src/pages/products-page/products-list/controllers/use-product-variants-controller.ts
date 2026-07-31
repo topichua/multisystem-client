@@ -319,6 +319,95 @@ export function useProductVariantsController({
     [form, notification, t],
   );
 
+  const removeVariantById = useCallback(
+    (variantId: number) => {
+      setProductVariants((current) => {
+        const mergedVariants = mergeProductVariantsWithFormValues(
+          current,
+          form.getFieldValue("variants"),
+        );
+        const nextVariants = mergedVariants.filter(
+          (item) => item.id !== variantId,
+        );
+
+        syncProductVariantsToForm(form, nextVariants);
+        return nextVariants;
+      });
+    },
+    [form],
+  );
+
+  const setVariantStatusById = useCallback(
+    (variantId: number, status: ProductVariantUi["status"]) => {
+      setProductVariants((current) => {
+        const mergedVariants = mergeProductVariantsWithFormValues(
+          current,
+          form.getFieldValue("variants"),
+        );
+        const nextVariants = mergedVariants.map((item) =>
+          item.id === variantId ? { ...item, status } : item,
+        );
+
+        syncProductVariantsToForm(form, nextVariants);
+        return nextVariants;
+      });
+    },
+    [form],
+  );
+
+  const applyVariantStockFromInventory = useCallback(
+    (inventory: {
+      variants?: Array<{
+        variantId: number;
+        quantity?: number | null;
+        availableQuantity?: number | null;
+        stockQty?: number | null;
+      }> | null;
+    }) => {
+      const quantityByVariantId = new Map<number, number>();
+
+      for (const variant of inventory.variants ?? []) {
+        const quantity = Number(
+          variant.quantity ??
+            variant.availableQuantity ??
+            variant.stockQty ??
+            0,
+        );
+        quantityByVariantId.set(variant.variantId, quantity);
+      }
+
+      if (quantityByVariantId.size === 0) {
+        return;
+      }
+
+      setProductVariants((current) => {
+        const mergedVariants = mergeProductVariantsWithFormValues(
+          current,
+          form.getFieldValue("variants"),
+        );
+
+        const nextVariants = mergedVariants.map((item) => {
+          if (item.id == null || !quantityByVariantId.has(item.id)) {
+            return item;
+          }
+
+          const nextQuantity = quantityByVariantId.get(item.id) ?? 0;
+
+          return {
+            ...item,
+            quantity: nextQuantity,
+            inStock: nextQuantity > 0,
+          };
+        });
+
+        syncProductVariantsToForm(form, nextVariants);
+        productVariantsRef.current = nextVariants;
+        return nextVariants;
+      });
+    },
+    [form],
+  );
+
   const handleAddManualVariant = useCallback(() => {
     const mergedVariants = mergeProductVariantsWithFormValues(
       productVariantsRef.current,
@@ -418,6 +507,9 @@ export function useProductVariantsController({
     deletingVariantKey,
     onProductTypeChange: handleProductTypeChange,
     onDeleteVariant: handleDeleteVariant,
+    removeVariantById,
+    setVariantStatusById,
+    applyVariantStockFromInventory,
     onAddManualVariant: handleAddManualVariant,
     onUpdateManualVariantCustomField: handleUpdateManualVariantCustomField,
     onApplyPriceToAllVariants: handleApplyPriceToAllVariants,

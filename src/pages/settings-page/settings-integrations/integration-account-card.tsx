@@ -101,7 +101,11 @@ export function IntegrationAccountCard({
   return (
     <S.IntegrationAccountRow>
       <Flex gap={16} align="center" flex={1}>
-        <Avatar size={40} src={integration.avatar ?? undefined} alt={integration.name}>
+        <Avatar
+          size={40}
+          src={integration.avatar ?? undefined}
+          alt={integration.name}
+        >
           {integration.name.charAt(0).toUpperCase()}
         </Avatar>
         <Flex vertical gap={12} flex={1}>

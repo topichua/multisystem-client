@@ -42,6 +42,26 @@ export const productStatusToColor = (
 
 export const variantStatusToColor = productStatusToColor;
 
+export const isArchivedStatus = (
+  status: ProductStatus | null | undefined,
+): boolean => status === "archived";
+
+/** Public fallback when a product/variant has no image. */
+export const PRODUCT_IMAGE_PLACEHOLDER_SRC =
+  "/no-image/no-picture-placeholder-icon-vector-30386535.png";
+
+export const resolveProductImageSrc = (
+  imageUrl: string | null | undefined,
+): string => {
+  const trimmed = imageUrl?.trim();
+  return trimmed ? trimmed : PRODUCT_IMAGE_PLACEHOLDER_SRC;
+};
+
+/** Ant Design Badge status for stock quantity: green if > 0, red if 0. */
+export const getStockQuantityBadgeStatus = (
+  quantity: number,
+): "success" | "error" => (quantity > 0 ? "success" : "error");
+
 export const getProductVariantTitle = (
   variant: ProductVariantTitleSource,
 ): string =>

@@ -38,6 +38,11 @@ export type ProductFormProps = {
   subtitle: string;
   backLabel: string;
   onBack: () => void;
+  isEditMode?: boolean;
+  archiveLoading?: boolean;
+  deleteLoading?: boolean;
+  onArchiveProduct?: () => void;
+  onDeleteProduct?: () => void;
 
   // Product type section
   productType: ProductType;
@@ -94,6 +99,11 @@ export const ProductForm = ({
   subtitle,
   backLabel,
   onBack,
+  isEditMode = false,
+  archiveLoading = false,
+  deleteLoading = false,
+  onArchiveProduct,
+  onDeleteProduct,
   productType,
   onProductTypeChange,
   categories,
@@ -158,6 +168,11 @@ export const ProductForm = ({
           title={title}
           subtitle={subtitle}
           onInstagramAiClick={openInstagramAiDrawer}
+          isEditMode={isEditMode}
+          archiveLoading={archiveLoading}
+          deleteLoading={deleteLoading}
+          onArchiveProduct={onArchiveProduct}
+          onDeleteProduct={onDeleteProduct}
         />
       )}
 
@@ -227,11 +242,19 @@ export const ProductForm = ({
           selectedCharacteristics={variantsProps.selectedCharacteristics}
           onManageVariantImages={variantsProps.onManageVariantImages}
           onDeleteVariant={variantsProps.onDeleteVariant}
+          onArchiveVariant={variantsProps.onArchiveVariant}
+          onUnarchiveVariant={variantsProps.onUnarchiveVariant}
+          onOpenInventory={variantsProps.onOpenInventory}
           onUpdateManualVariantCustomField={
             variantsProps.onUpdateManualVariantCustomField
           }
           deletingVariantKey={variantsProps.deletingVariantKey}
+          deleteLoadingVariantId={variantsProps.deleteLoadingVariantId}
+          archiveLoadingVariantId={variantsProps.archiveLoadingVariantId}
           showQuantityField={variantsProps.showQuantityField}
+          showInventorySummary={variantsProps.showInventorySummary}
+          showInventoryManagement={variantsProps.showInventoryManagement}
+          onOpenProductInventory={variantsProps.onOpenProductInventory}
           onApplyPriceToAllVariants={variantsProps.onApplyPriceToAllVariants}
           isMobile={isMobileViewport}
         />
@@ -283,6 +306,11 @@ export const ProductForm = ({
               subtitle={subtitle}
               onInstagramAiClick={openInstagramAiDrawer}
               isMobile
+              isEditMode={isEditMode}
+              archiveLoading={archiveLoading}
+              deleteLoading={deleteLoading}
+              onArchiveProduct={onArchiveProduct}
+              onDeleteProduct={onDeleteProduct}
             />
           </MobileS.MobilePageHeader>
 

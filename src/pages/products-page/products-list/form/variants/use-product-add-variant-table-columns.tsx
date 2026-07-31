@@ -1,11 +1,18 @@
-import { TrashIcon } from "@phosphor-icons/react";
+import {
+  ArchiveIcon,
+  ArrowClockwiseIcon,
+  CubeIcon,
+  TrashIcon,
+} from "@phosphor-icons/react";
 import {
   Button,
+  Badge,
   Flex,
   Form,
   Input,
   InputNumber,
   Select,
+  Tooltip,
   Typography,
 } from "antd";
 import type { ColumnsType } from "antd/es/table";
@@ -14,6 +21,10 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 
 import type { VariantCustomField } from "@/features/products/model/product-create-api.types";
+import {
+  getStockQuantityBadgeStatus,
+  isArchivedStatus,
+} from "@/features/products/utils/product-display";
 
 import type { SelectedCharacteristic } from "./generate-product-variants";
 import type {
@@ -148,13 +159,19 @@ type UseProductAddVariantTableColumnsParams = {
   availableFields: VariantCustomField[];
   onManageVariantImages: (variant: ProductVariantUi) => void;
   onDeleteVariant: (variant: ProductVariantUi) => void;
+  onArchiveVariant?: (variant: ProductVariantUi) => void;
+  onUnarchiveVariant?: (variant: ProductVariantUi) => void;
+  onOpenInventory?: (variant: ProductVariantUi) => void;
   onUpdateManualVariantCustomField: (
     variantKey: string,
     fieldStableKey: string,
     value: string,
   ) => void;
   deletingVariantKey: string | null;
+  deleteLoadingVariantId?: number | null;
+  archiveLoadingVariantId?: number | null;
   showQuantityColumn: boolean;
+  showInventoryManagement?: boolean;
 };
 
 const VariantImageThumb = styled.img`
@@ -170,9 +187,15 @@ export function useProductAddVariantTableColumns({
   availableFields,
   onManageVariantImages,
   onDeleteVariant,
+  onArchiveVariant,
+  onUnarchiveVariant,
+  onOpenInventory,
   onUpdateManualVariantCustomField,
   deletingVariantKey,
+  deleteLoadingVariantId = null,
+  archiveLoadingVariantId = null,
   showQuantityColumn,
+  showInventoryManagement = false,
 }: UseProductAddVariantTableColumnsParams): ColumnsType<ProductVariantUi> {
   const { t } = useTranslation();
 
@@ -306,30 +329,123 @@ export function useProductAddVariantTableColumns({
               ),
             },
           ]
-        : []),
+        : showInventoryManagement
+          ? [
+              {
+                title: t("products.variant.stock"),
+                key: "stock",
+                dataIndex: "quantity",
+                width: 120,
+                render: (_: unknown, record: ProductVariantUi) => {
+                  const quantity = Number(record.quantity ?? 0);
+                  const isEmpty = quantity <= 0;
+
+                  return (
+                    <Flex align="center" gap={6}>
+                      <Badge status={getStockQuantityBadgeStatus(quantity)} />
+                      <Text type={isEmpty ? "danger" : undefined}>
+                        {t("products.catalogVariant.inStock", {
+                          count: quantity,
+                        })}
+                      </Text>
+                    </Flex>
+                  );
+                },
+              },
+            ]
+          : []),
       {
         title: t("products.table.actions"),
+        key: "actions",
         dataIndex: "actions",
-        width: 100,
+        width: 128,
         fixed: "right",
-        render: (_: unknown, record: ProductVariantUi) => (
-          <Button
-            danger
-            icon={<TrashIcon />}
-            loading={deletingVariantKey === record.key}
-            disabled={deletingVariantKey != null}
-            onClick={() => onDeleteVariant(record)}
-          />
-        ),
+        render: (_: unknown, record: ProductVariantUi) => {
+          const isPersisted = record.id != null;
+          const isArchived = isArchivedStatus(record.status);
+          const archiveLabel = isArchived
+            ? t("products.unarchive")
+            : t("products.archive");
+          const isDeleting =
+            deletingVariantKey === record.key ||
+            (record.id != null && deleteLoadingVariantId === record.id);
+
+          return (
+            <Flex align="center" gap={0} style={{ flexWrap: "nowrap" }}>
+              {showInventoryManagement &&
+                isPersisted &&
+                !isArchived &&
+                onOpenInventory && (
+                  <Tooltip
+                    title={t("products.inventoryDrawer.openVariantStockAria")}
+                  >
+                    <Button
+                      type="text"
+                      size="small"
+                      icon={<CubeIcon size={16} />}
+                      aria-label={t(
+                        "products.inventoryDrawer.openVariantStockAria",
+                      )}
+                      onClick={() => onOpenInventory(record)}
+                    />
+                  </Tooltip>
+                )}
+              {isPersisted &&
+                ((isArchived && onUnarchiveVariant) ||
+                  (!isArchived && onArchiveVariant)) && (
+                  <Tooltip title={archiveLabel}>
+                    <Button
+                      type="text"
+                      size="small"
+                      loading={archiveLoadingVariantId === record.id}
+                      icon={
+                        isArchived ? (
+                          <ArrowClockwiseIcon size={16} />
+                        ) : (
+                          <ArchiveIcon size={16} />
+                        )
+                      }
+                      aria-label={archiveLabel}
+                      onClick={() =>
+                        isArchived
+                          ? onUnarchiveVariant?.(record)
+                          : onArchiveVariant?.(record)
+                      }
+                    />
+                  </Tooltip>
+                )}
+              <Tooltip title={t("products.delete")}>
+                <Button
+                  type="text"
+                  size="small"
+                  danger
+                  icon={<TrashIcon size={16} />}
+                  loading={isDeleting}
+                  disabled={
+                    deletingVariantKey != null || deleteLoadingVariantId != null
+                  }
+                  aria-label={t("products.delete")}
+                  onClick={() => onDeleteVariant(record)}
+                />
+              </Tooltip>
+            </Flex>
+          );
+        },
       },
     ];
   }, [
+    archiveLoadingVariantId,
     availableFields,
+    deleteLoadingVariantId,
     deletingVariantKey,
+    onArchiveVariant,
     onDeleteVariant,
     onManageVariantImages,
+    onOpenInventory,
+    onUnarchiveVariant,
     onUpdateManualVariantCustomField,
     selectedCharacteristics,
+    showInventoryManagement,
     showQuantityColumn,
     t,
   ]);

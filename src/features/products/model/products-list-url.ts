@@ -149,7 +149,29 @@ export function productsListUrlSearchStringCanonical(
 
 export type ProductsListReturnState = {
   productsListSearch?: string;
+  focusVariantId?: number;
 };
+
+export function buildProductsListEditState(
+  listSearch: string,
+  focusVariantId?: number,
+): ProductsListReturnState {
+  return {
+    productsListSearch: listSearch,
+    ...(focusVariantId != null ? { focusVariantId } : {}),
+  };
+}
+
+export function readProductsListFocusVariantId(state: unknown): number | null {
+  if (!state || typeof state !== "object") {
+    return null;
+  }
+
+  const focusVariantId = (state as ProductsListReturnState).focusVariantId;
+  return typeof focusVariantId === "number" && Number.isFinite(focusVariantId)
+    ? focusVariantId
+    : null;
+}
 
 export function readProductsListReturnSearch(state: unknown): string {
   if (!state || typeof state !== "object") {

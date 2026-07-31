@@ -5,6 +5,7 @@ import type { VariantCustomField } from "@/features/products/model/product-creat
 import type { SelectedCharacteristic } from "../variants/generate-product-variants";
 import type { ProductVariantUi } from "../variants/product-add-variant.types";
 import type { ProductOptionCharacteristicsBaseline } from "../variants/product-option-baseline";
+import { useFocusProductVariantFromNavigation } from "../variants/use-focus-product-variant-from-navigation";
 import {
   ProductCharacteristicsBuilder,
   type ProductCharacteristicBuilderRow,
@@ -29,13 +30,21 @@ export type ProductVariantsSectionProps = {
   selectedCharacteristics: SelectedCharacteristic[];
   onManageVariantImages: (variant: ProductVariantUi) => void;
   onDeleteVariant: (variant: ProductVariantUi) => void;
+  onArchiveVariant?: (variant: ProductVariantUi) => void;
+  onUnarchiveVariant?: (variant: ProductVariantUi) => void;
+  onOpenInventory?: (variant: ProductVariantUi) => void;
   onUpdateManualVariantCustomField: (
     variantKey: string,
     fieldStableKey: string,
     value: string,
   ) => void;
   deletingVariantKey: string | null;
+  deleteLoadingVariantId?: number | null;
+  archiveLoadingVariantId?: number | null;
   showQuantityField: boolean;
+  showInventorySummary?: boolean;
+  showInventoryManagement?: boolean;
+  onOpenProductInventory?: () => void;
   onApplyPriceToAllVariants: (price: number) => void;
   isMobile?: boolean;
 };
@@ -53,13 +62,26 @@ export const ProductVariantsSection = ({
   selectedCharacteristics,
   onManageVariantImages,
   onDeleteVariant,
+  onArchiveVariant,
+  onUnarchiveVariant,
+  onOpenInventory,
   onUpdateManualVariantCustomField,
   deletingVariantKey,
+  deleteLoadingVariantId = null,
+  archiveLoadingVariantId = null,
   showQuantityField,
+  showInventorySummary = false,
+  showInventoryManagement = false,
+  onOpenProductInventory,
   onApplyPriceToAllVariants,
   isMobile = false,
 }: ProductVariantsSectionProps) => {
   const { t } = useTranslation();
+
+  const highlightedVariantId = useFocusProductVariantFromNavigation(
+    !isVariantCustomFieldsLoading &&
+      productVariants.some((variant) => variant.id != null),
+  );
 
   return (
     <Card>
@@ -88,12 +110,21 @@ export const ProductVariantsSection = ({
             selectedCharacteristics={selectedCharacteristics}
             variantCustomFields={variantCustomFields}
             deletingVariantKey={deletingVariantKey}
+            deleteLoadingVariantId={deleteLoadingVariantId}
+            archiveLoadingVariantId={archiveLoadingVariantId}
             onManageVariantImages={onManageVariantImages}
             onDeleteVariant={onDeleteVariant}
+            onArchiveVariant={onArchiveVariant}
+            onUnarchiveVariant={onUnarchiveVariant}
+            onOpenInventory={onOpenInventory}
+            onOpenProductInventory={onOpenProductInventory}
             onUpdateManualVariantCustomField={onUpdateManualVariantCustomField}
             showQuantityField={showQuantityField}
+            showInventorySummary={showInventorySummary}
+            showInventoryManagement={showInventoryManagement}
             onAddManualVariant={onAddManualVariant}
             onApplyPriceToAllVariants={onApplyPriceToAllVariants}
+            highlightedVariantId={highlightedVariantId}
             isMobile
           />
         ) : (
@@ -102,6 +133,10 @@ export const ProductVariantsSection = ({
             variantTableColumns={variantTableColumns}
             onAddManualVariant={onAddManualVariant}
             onApplyPriceToAllVariants={onApplyPriceToAllVariants}
+            showInventorySummary={showInventorySummary}
+            showInventoryManagement={showInventoryManagement}
+            onOpenInventory={onOpenProductInventory}
+            highlightedVariantId={highlightedVariantId}
           />
         )}
       </Flex>

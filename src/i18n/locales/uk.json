@@ -1890,7 +1890,11 @@
     },
     "editPage": {
       "title": "Редагувати товар",
-      "subtitle": "Оновіть інформацію про товар"
+      "subtitle": "Оновіть інформацію про товар",
+      "summary": "{{variants}} · {{stock}}",
+      "stockOnHand": "{{count}} шт на складі",
+      "archiveProduct": "Архівувати товар",
+      "deleteProduct": "Видалити товар"
     },
     "productType": {
       "title": "Тип товару",
@@ -1959,6 +1963,16 @@
     "cancelEdit": "Скасувати",
     "delete": "Видалити",
     "deleteConfirm": "Видалити цей товар?",
+    "hardDelete": {
+      "productTitle": "Видалити «{{name}}»?",
+      "variantTitle": "Видалити варіант «{{name}}»?",
+      "productWarning": "Товар буде повністю видалений з усіх замовлень і всієї статистики. Цю дію не можна скасувати.",
+      "variantWarning": "Варіант буде повністю видалений з усіх замовлень і всієї статистики. Цю дію не можна скасувати.",
+      "variantMeta": "{{productName}} · {{sku}}",
+      "acknowledge": "Я розумію наслідки",
+      "confirm": "Видалити назавжди",
+      "cancel": "Скасувати"
+    },
     "createSuccess": "Товар додано",
     "createFailed": "Не вдалося додати товар",
     "categoryRequired": "Категорія товару обов'язкова",
@@ -1966,6 +1980,27 @@
     "updateFailed": "Не вдалося оновити товар",
     "deleteSuccess": "Товар видалено",
     "deleteFailed": "Не вдалося видалити товар",
+    "archive": "Архівувати",
+    "unarchive": "Розархівувати",
+    "archiveModal": {
+      "productTitle": "Архівувати «{{name}}»?",
+      "variantTitle": "Архівувати варіант «{{name}}»?",
+      "productDescription": "Товар буде архівовано. Його не можна буде додати в нове замовлення чи поповнити залишок, але він залишиться видимим у статистиці та аналітиці, а вже створені замовлення не зміняться.",
+      "variantDescription": "Варіант буде архівовано. Його не можна буде додати в нове замовлення чи поповнити залишок, але він залишиться видимим у статистиці та аналітиці.",
+      "variantMeta": "{{productName}} · {{sku}}",
+      "confirmProduct": "Архівувати товар",
+      "confirmVariant": "Архівувати варіант",
+      "cancel": "Скасувати"
+    },
+    "archiveSuccess": "Товар архівовано",
+    "archiveFailed": "Не вдалося архівувати товар",
+    "unarchiveSuccess": "Товар розархівовано",
+    "unarchiveFailed": "Не вдалося розархівувати товар",
+    "variantArchiveSuccess": "Варіант архівовано",
+    "variantArchiveFailed": "Не вдалося архівувати варіант",
+    "variantUnarchiveSuccess": "Варіант розархівовано",
+    "variantUnarchiveFailed": "Не вдалося розархівувати варіант",
+    "archivedCannotEdit": "Архівований товар не можна редагувати",
     "variantCreateSuccess": "Варіант додано",
     "variantCreateFailed": "Не вдалося додати варіант",
     "variantUpdateSuccess": "Варіант оновлено",
@@ -2120,9 +2155,14 @@
       "singleConfirm": "Товар буде створено як один товар.",
       "singleUpdateConfirm": "Товар буде збережено як один товар. Частина даних варіантів може бути втрачена.",
       "lockedOptionsChanged": "Збережені характеристики-списки та їхні значення не можна видаляти з наявного товару з варіантами.",
-      "editSkuAndPriceHint": "Редагуйте артикул та ціну продажу кожного варіанта.",
-      "bulkPricePlaceholder": "Ціна всім {{currency}}",
-      "applyPriceToAll": "Всім"
+      "editSkuAndPriceHint": "Редагуйте SKU та ціну продажу кожного варіанта.",
+      "bulkPricePlaceholder": "Ціна всім",
+      "applyPriceToAll": "Всім",
+      "totalStock_one": "{{count}} шт усього",
+      "totalStock_few": "{{count}} шт усього",
+      "totalStock_many": "{{count}} шт усього",
+      "totalStock_other": "{{count}} шт усього",
+      "manageInventory": "Управління"
     },
     "form": {
       "name": "Назва",
@@ -2158,6 +2198,7 @@
     "variant": {
       "price": "Ціна",
       "quantity": "Кількість",
+      "stock": "Залишок",
       "reserved": "Резерв",
       "available": "Доступно",
       "wishlist": "Вішлист",

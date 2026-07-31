@@ -1,12 +1,12 @@
 import {
+  ArchiveIcon,
+  ArrowClockwiseIcon,
   CaretRightIcon,
   CubeIcon,
-  PencilSimpleIcon,
   TrashIcon,
 } from "@phosphor-icons/react";
 import type { TableColumnsType } from "antd";
-import { Button, Flex, Modal, Tooltip, Typography, theme } from "antd";
-// import { Tag } from "@/components/tag/tag";
+import { Button, Flex, Tooltip, Typography, theme } from "antd";
 import { useMemo, type Key } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -15,32 +15,42 @@ import {
   formatProductVariantListMetaLine,
   getProductPriceRange,
   getSingleVariantListMeta,
-  // productStatusToColor,
+  isArchivedStatus,
+  resolveProductImageSrc,
 } from "@/features/products/utils/product-display";
+
+import { ProductArchivedStatusTag } from "./components/product-archived-status-tag";
+import * as S from "./products-list-page.styled";
 
 const { Text } = Typography;
 
 type UseProductsTableColumnsParams = {
   categoryNameById: Map<number, string>;
   deleteLoadingId: number | null;
+  archiveLoadingId: number | null;
   expandedRowKeys: Key[];
   showInventoryQuantity: boolean;
   showInventoryManagement: boolean;
   onToggleRowExpand: (productId: number) => void;
   onOpenInventory: (product: Product) => void;
-  onEdit: (productId: number) => void | Promise<void>;
-  onDelete: (productId: number) => Promise<void>;
+  onEdit: (productId: number, focusVariantId?: number) => void | Promise<void>;
+  onArchive: (product: Product) => void;
+  onUnarchive: (product: Product) => void;
+  onDelete: (product: Product) => void;
 };
 
 export const useProductsTableColumns = ({
   categoryNameById,
   deleteLoadingId,
+  archiveLoadingId,
   expandedRowKeys,
   showInventoryQuantity,
   showInventoryManagement,
   onToggleRowExpand,
   onOpenInventory,
   onEdit,
+  onArchive,
+  onUnarchive,
   onDelete,
 }: UseProductsTableColumnsParams): TableColumnsType<Product> => {
   const { t } = useTranslation();
@@ -58,6 +68,7 @@ export const useProductsTableColumns = ({
           const singleVariantMeta = getSingleVariantListMeta(product);
           const isExpanded =
             hasMultipleVariants && expandedRowKeys.includes(product.id);
+          const isArchived = isArchivedStatus(product.status);
           const variantSecondaryLine = singleVariantMeta
             ? formatProductVariantListMetaLine(
                 singleVariantMeta,
@@ -88,52 +99,70 @@ export const useProductsTableColumns = ({
                       }}
                     />
                   }
-                  onClick={(e) => {
-                    e.stopPropagation();
+                  onClick={() => {
                     onToggleRowExpand(product.id);
                   }}
-                  onMouseDown={(e) => e.stopPropagation()}
                 />
               ) : (
                 <span aria-hidden style={{ width: 24, flexShrink: 0 }} />
               )}
               <Flex align="center" gap={8} style={{ minWidth: 0, flex: 1 }}>
-                {product.mainImageUrl ? (
-                  <img
-                    src={product.mainImageUrl}
-                    alt={product.name}
-                    width={44}
-                    height={44}
-                    style={{
-                      width: 44,
-                      height: 44,
-                      objectFit: "cover",
-                      borderRadius: 8,
-                      backgroundColor: token.colorFillAlter,
-                      flexShrink: 0,
-                    }}
-                  />
-                ) : (
-                  <div
-                    aria-hidden
-                    style={{
-                      width: 50,
-                      height: 50,
-                      borderRadius: 8,
-                      backgroundColor: token.colorFillAlter,
-                      flexShrink: 0,
-                    }}
-                  />
-                )}
+                <img
+                  src={resolveProductImageSrc(product.mainImageUrl)}
+                  alt={product.name}
+                  width={44}
+                  height={44}
+                  style={{
+                    width: 44,
+                    height: 44,
+                    objectFit: "cover",
+                    borderRadius: 8,
+                    backgroundColor: token.colorFillAlter,
+                    flexShrink: 0,
+                  }}
+                />
                 <Flex vertical gap={0} style={{ minWidth: 0, flex: 1 }}>
-                  <Text strong ellipsis style={{ maxWidth: 260 }}>
-                    {product.name}
-                  </Text>
-                  {variantsCount > 0 && (
-                    <Text italic type="secondary" ellipsis>
-                      {variantSecondaryLine}
-                    </Text>
-                  )}
+                  <Flex
+                    align="center"
+                    gap={8}
+                    style={{ minWidth: 0, maxWidth: "100%" }}
+                  >
+                    {isArchived ? (
+                      <Tooltip title={t("products.archivedCannotEdit")}>
+                        <S.ProductNameMuted strong ellipsis>
+                          {product.name}
+                        </S.ProductNameMuted>
+                      </Tooltip>
+                    ) : (
+                      <S.ProductNameLink
+                        strong
+                        ellipsis
+                        onClick={() => void onEdit(product.id)}
+                      >
+                        {product.name}
+                      </S.ProductNameLink>
+                    )}
+                    {isArchived && <ProductArchivedStatusTag />}
+                  </Flex>
+                  {variantsCount > 0 &&
+                    (singleVariantMeta != null &&
+                    product.variants?.[0]?.id != null &&
+                    !isArchived ? (
+                      <S.VariantMetaLink
+                        italic
+                        type="secondary"
+                        ellipsis
+                        onClick={() =>
+                          void onEdit(product.id, product.variants![0].id)
+                        }
+                      >
+                        {variantSecondaryLine}
+                      </S.VariantMetaLink>
+                    ) : (
+                      <Text italic type="secondary" ellipsis>
+                        {variantSecondaryLine}
+                      </Text>
+                    ))}
                 </Flex>
               </Flex>
             </Flex>
@@ -176,77 +205,74 @@ export const useProductsTableColumns = ({
             },
           ]
         : []),
-      // {
-      //   title: t("products.table.status"),
-      //   dataIndex: "status",
-      //   key: "status",
-      //   width: 100,
-      //   render: (status: string) => (
-      //     <Tag color={productStatusToColor(status)}>{status}</Tag>
-      //   ),
-      // },
       {
         title: t("products.table.actions"),
         key: "actions",
         width: 120,
-        render: (_, product) => (
-          <Flex
-            align="center"
-            gap={4}
-            onClick={(e) => e.stopPropagation()}
-            onMouseDown={(e) => e.stopPropagation()}
-            onPointerDown={(e) => e.stopPropagation()}
-          >
-            {showInventoryManagement && (
-              <Tooltip title={t("system.inventory.title")}>
+        render: (_, product) => {
+          const isArchived = isArchivedStatus(product.status);
+          const archiveLabel = isArchived
+            ? t("products.unarchive")
+            : t("products.archive");
+
+          return (
+            <Flex align="center">
+              {showInventoryManagement && !isArchived && (
+                <Tooltip title={t("system.inventory.title")}>
+                  <Button
+                    type="text"
+                    size="small"
+                    icon={<CubeIcon size={14} />}
+                    aria-label={t("system.inventory.title")}
+                    onClick={() => onOpenInventory(product)}
+                  />
+                </Tooltip>
+              )}
+              <Tooltip title={archiveLabel}>
                 <Button
                   type="text"
                   size="small"
-                  icon={<CubeIcon size={16} />}
-                  aria-label={t("system.inventory.title")}
-                  onClick={() => onOpenInventory(product)}
+                  loading={archiveLoadingId === product.id}
+                  icon={
+                    isArchived ? (
+                      <ArrowClockwiseIcon size={14} />
+                    ) : (
+                      <ArchiveIcon size={14} />
+                    )
+                  }
+                  aria-label={archiveLabel}
+                  onClick={() =>
+                    isArchived ? onUnarchive(product) : onArchive(product)
+                  }
                 />
               </Tooltip>
-            )}
-            <Tooltip title={t("products.edit")}>
-              <Button
-                type="text"
-                size="small"
-                icon={<PencilSimpleIcon size={16} />}
-                aria-label={t("products.edit")}
-                onClick={() => void onEdit(product.id)}
-              />
-            </Tooltip>
-            <Tooltip title={t("products.delete")}>
-              <Button
-                type="text"
-                size="small"
-                danger
-                loading={deleteLoadingId === product.id}
-                icon={<TrashIcon size={16} />}
-                aria-label={t("products.delete")}
-                onClick={() => {
-                  Modal.confirm({
-                    title: t("products.deleteConfirm"),
-                    okText: t("products.delete"),
-                    okType: "danger",
-                    onOk: () => onDelete(product.id),
-                  });
-                }}
-              />
-            </Tooltip>
-          </Flex>
-        ),
+              <Tooltip title={t("products.delete")}>
+                <Button
+                  type="text"
+                  size="small"
+                  danger
+                  loading={deleteLoadingId === product.id}
+                  icon={<TrashIcon size={14} />}
+                  aria-label={t("products.delete")}
+                  onClick={() => onDelete(product)}
+                />
+              </Tooltip>
+            </Flex>
+          );
+        },
       },
     ],
     [
+      archiveLoadingId,
       categoryNameById,
       deleteLoadingId,
       expandedRowKeys,
+      onArchive,
       onDelete,
       onEdit,
       onOpenInventory,
       onToggleRowExpand,
+      onUnarchive,
       showInventoryManagement,
       showInventoryQuantity,
       t,

@@ -14,7 +14,10 @@ import type {
   ProductInventoryVariant,
   ProductVariant,
 } from "@/features/products/model/product.types";
-import { formatProductPrice } from "@/features/products/utils/product-display";
+import {
+  formatProductPrice,
+  getStockQuantityBadgeStatus,
+} from "@/features/products/utils/product-display";
 
 import {
   formatNumber,
@@ -109,7 +112,7 @@ export const ProductInventoryVariantCard = ({
 
           <Flex align="center" gap={12} style={{ flexShrink: 0 }}>
             <Flex align="center" gap={6}>
-              <Badge status={quantity > 0 ? "success" : "error"} />
+              <Badge status={getStockQuantityBadgeStatus(quantity)} />
               <Text type={quantity === 0 ? "danger" : undefined} strong>
                 {formatNumber(quantity)}
               </Text>

@@ -6,12 +6,20 @@ import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router";
 
 import { getProductEditPath, pagesMap } from "@/app/router/pages-map";
+import { buildProductsListEditState } from "@/features/products/model/products-list-url";
 import { CenteredSpinner } from "@/components/loading/centered-spinner";
 import { StockSupplyModal } from "@/features/inventory/components/stock-supply-modal/stock-supply-modal";
 import { ProductInventoryDrawer } from "@/features/products/components/product-inventory-drawer/product-inventory-drawer";
-import type { Product } from "@/features/products/model/product.types";
+import type {
+  Product,
+  ProductVariant,
+} from "@/features/products/model/product.types";
+import { isArchivedStatus } from "@/features/products/utils/product-display";
 
 import { useProductsListController } from "../../controllers/use-products-list-controller";
+import { ProductArchiveModal } from "../components/product-archive-modal";
+import { ProductHardDeleteModal } from "../components/product-hard-delete-modal";
+import { useProductListLifecycleModals } from "../components/use-product-list-lifecycle-modals";
 import { ProductsListActiveFilters } from "../products-list-active-filters";
 import { ProductsListFiltersPanel } from "../products-list-filters-panel";
 import { ProductsListToolbar } from "../products-list-toolbar";
@@ -37,29 +45,73 @@ export const MobileProductsListPage = observer(() => {
     showInventoryQuantity,
     showInventoryManagement,
     handleDeleteById,
+    handleDeleteVariant,
+    handleArchiveProduct,
+    handleUnarchiveProduct,
+    handleArchiveVariant,
+    handleUnarchiveVariant,
   } = useProductsListController();
   const [inventoryDrawerSelection, setInventoryDrawerSelection] =
     useState<InventoryDrawerSelection | null>(null);
   const inventoryDrawerProduct = inventoryDrawerSelection?.product ?? null;
+  const lifecycleModals = useProductListLifecycleModals({
+    deleteLoadingId: productsStore.deleteLoadingId,
+    deleteLoadingVariantId: productsStore.deleteLoadingVariantId,
+    archiveLoadingId: productsStore.archiveLoadingId,
+    archiveLoadingVariantId: productsStore.archiveLoadingVariantId,
+    onDeleteProduct: handleDeleteById,
+    onDeleteVariant: handleDeleteVariant,
+    onArchiveProduct: handleArchiveProduct,
+    onArchiveVariant: handleArchiveVariant,
+  });
 
   useProductsListUrlSync(productsStore);
 
   const handleOpenProduct = useCallback(
-    (productId: number) => {
+    (productId: number, focusVariantId?: number) => {
+      const product = productsStore.products.find(
+        (item) => item.id === productId,
+      );
+      if (product != null && isArchivedStatus(product.status)) {
+        return;
+      }
+
       navigate(getProductEditPath(productId), {
-        state: { productsListSearch: location.search },
+        state: buildProductsListEditState(location.search, focusVariantId),
       });
     },
-    [location.search, navigate],
+    [location.search, navigate, productsStore.products],
   );
 
-  const handleDeleteProduct = useCallback(
-    (productId: number) => handleDeleteById(productId),
-    [handleDeleteById],
+  const handleUnarchiveProductClick = useCallback(
+    (product: Product) => {
+      void handleUnarchiveProduct(product.id);
+    },
+    [handleUnarchiveProduct],
+  );
+
+  const handleUnarchiveVariantClick = useCallback(
+    (product: Product, variant: ProductVariant) => {
+      void handleUnarchiveVariant(product.id, variant.id);
+    },
+    [handleUnarchiveVariant],
   );
 
   const handleOpenInventoryDrawer = useCallback(
     (product: Product, targetVariantId: number | null = null) => {
+      if (isArchivedStatus(product.status)) {
+        return;
+      }
+
+      if (targetVariantId != null) {
+        const variant = product.variants?.find(
+          (item) => item.id === targetVariantId,
+        );
+        if (variant != null && isArchivedStatus(variant.status)) {
+          return;
+        }
+      }
+
       setInventoryDrawerSelection((current) => ({
         product,
         targetVariantId,
@@ -154,10 +206,20 @@ export const MobileProductsListPage = observer(() => {
                       : t("products.noCategory")
                   }
                   deleteLoading={productsStore.deleteLoadingId === product.id}
+                  archiveLoading={productsStore.archiveLoadingId === product.id}
                   showInventoryQuantity={showInventoryQuantity}
                   showInventoryManagement={showInventoryManagement}
                   onEdit={handleOpenProduct}
-                  onDelete={handleDeleteProduct}
+                  onDelete={lifecycleModals.requestDeleteProduct}
+                  onArchive={lifecycleModals.requestArchiveProduct}
+                  onUnarchive={handleUnarchiveProductClick}
+                  onDeleteVariant={lifecycleModals.requestDeleteVariant}
+                  onArchiveVariant={lifecycleModals.requestArchiveVariant}
+                  onUnarchiveVariant={handleUnarchiveVariantClick}
+                  deleteLoadingVariantId={productsStore.deleteLoadingVariantId}
+                  archiveLoadingVariantId={
+                    productsStore.archiveLoadingVariantId
+                  }
                   onOpenInventory={handleOpenInventoryDrawer}
                   onOpenVariantInventory={handleOpenVariantInventory}
                 />
@@ -196,6 +258,20 @@ export const MobileProductsListPage = observer(() => {
           targetVariantFocusId={inventoryDrawerSelection?.focusId ?? 0}
           onClose={handleCloseInventoryDrawer}
           onOpenProduct={handleOpenProduct}
+        />
+        <ProductHardDeleteModal
+          open={lifecycleModals.hardDeleteTarget != null}
+          target={lifecycleModals.hardDeleteTarget}
+          loading={lifecycleModals.hardDeleteLoading}
+          onCancel={lifecycleModals.closeHardDeleteModal}
+          onConfirm={lifecycleModals.confirmHardDelete}
+        />
+        <ProductArchiveModal
+          open={lifecycleModals.archiveTarget != null}
+          target={lifecycleModals.archiveTarget}
+          loading={lifecycleModals.archiveLoading}
+          onCancel={lifecycleModals.closeArchiveModal}
+          onConfirm={lifecycleModals.confirmArchive}
         />
       </S.ScrollRegion>
     </S.Root>

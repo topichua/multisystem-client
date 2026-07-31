@@ -71,6 +71,6 @@ export type ProductVariantUi = {
 export type ProductAddVariantFormValues = {
   key: string;
   price: number;
-  quantity: number;
+  quantity?: number;
   sku: string;
 };

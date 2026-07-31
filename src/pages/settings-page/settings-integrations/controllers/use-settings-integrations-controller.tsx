@@ -378,9 +378,7 @@ export function useSettingsIntegrationsController() {
           stopTikTokOauthPoll({ closePopup: true });
           clearStoredTikTokOAuthSessionId();
           notification.error({
-            title:
-              result.error ||
-              t("integrations.tiktokOauth.oauthFailed"),
+            title: result.error || t("integrations.tiktokOauth.oauthFailed"),
           });
         }
       } catch (e) {

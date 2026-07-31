@@ -65,6 +65,9 @@ export class ProductsStore {
   listLoading = false;
   listError: string | null = null;
   deleteLoadingId: number | null = null;
+  deleteLoadingVariantId: number | null = null;
+  archiveLoadingId: number | null = null;
+  archiveLoadingVariantId: number | null = null;
   detailLoading = false;
 
   variantCustomFields: VariantCustomField[] = [];
@@ -354,6 +357,106 @@ export class ProductsStore {
       runInAction(() => {
         this.deleteLoadingId = null;
       });
+    }
+  };
+
+  deleteVariant = async (
+    productId: number,
+    variantId: number,
+  ): Promise<void> => {
+    await this.runVariantMutation(variantId, async () => {
+      await productsApi.hardDeleteVariant(productId, variantId);
+      await this.refreshAfterProductMutation(productId);
+    });
+  };
+
+  archiveProduct = async (id: number): Promise<void> => {
+    await this.runProductArchiveMutation(id, () => productsApi.archive(id));
+  };
+
+  unarchiveProduct = async (id: number): Promise<void> => {
+    await this.runProductArchiveMutation(id, () => productsApi.unarchive(id));
+  };
+
+  archiveVariant = async (
+    productId: number,
+    variantId: number,
+  ): Promise<void> => {
+    await this.runVariantMutation(
+      variantId,
+      async () => {
+        await productsApi.archiveVariant(productId, variantId);
+        await this.refreshAfterProductMutation(productId);
+      },
+      "archive",
+    );
+  };
+
+  unarchiveVariant = async (
+    productId: number,
+    variantId: number,
+  ): Promise<void> => {
+    await this.runVariantMutation(
+      variantId,
+      async () => {
+        await productsApi.unarchiveVariant(productId, variantId);
+        await this.refreshAfterProductMutation(productId);
+      },
+      "archive",
+    );
+  };
+
+  private runProductArchiveMutation = async (
+    id: number,
+    mutate: () => Promise<void>,
+  ): Promise<void> => {
+    runInAction(() => {
+      this.archiveLoadingId = id;
+    });
+
+    try {
+      await mutate();
+      await this.refreshAfterProductMutation(id);
+    } finally {
+      runInAction(() => {
+        this.archiveLoadingId = null;
+      });
+    }
+  };
+
+  private runVariantMutation = async (
+    variantId: number,
+    mutate: () => Promise<void>,
+    kind: "delete" | "archive" = "delete",
+  ): Promise<void> => {
+    runInAction(() => {
+      if (kind === "archive") {
+        this.archiveLoadingVariantId = variantId;
+      } else {
+        this.deleteLoadingVariantId = variantId;
+      }
+    });
+
+    try {
+      await mutate();
+    } finally {
+      runInAction(() => {
+        if (kind === "archive") {
+          this.archiveLoadingVariantId = null;
+        } else {
+          this.deleteLoadingVariantId = null;
+        }
+      });
+    }
+  };
+
+  private refreshAfterProductMutation = async (
+    productId: number,
+  ): Promise<void> => {
+    await this.loadProducts({ silent: true });
+
+    if (this.activeProduct?.id === productId) {
+      await this.loadProductById(productId, { silent: true });
     }
   };
 

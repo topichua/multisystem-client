@@ -1,5 +1,11 @@
-import { TrashIcon } from "@phosphor-icons/react";
 import {
+  ArchiveIcon,
+  ArrowClockwiseIcon,
+  CubeIcon,
+  TrashIcon,
+} from "@phosphor-icons/react";
+import {
+  Badge,
   Button,
   Card,
   Flex,
@@ -7,13 +13,18 @@ import {
   Input,
   InputNumber,
   Select,
+  Tooltip,
   Typography,
 } from "antd";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 
 import type { VariantCustomField } from "@/features/products/model/product-create-api.types";
-import { getProductVariantTitle } from "@/features/products/utils/product-display";
+import {
+  getProductVariantTitle,
+  getStockQuantityBadgeStatus,
+  isArchivedStatus,
+} from "@/features/products/utils/product-display";
 
 import type { SelectedCharacteristic } from "../variants/generate-product-variants";
 import type { ProductVariantUi } from "../variants/product-add-variant.types";
@@ -21,6 +32,11 @@ import {
   getCharacteristicValueOptions,
   resolveSelectedCharacteristicColumns,
 } from "../variants/product-add-variant.utils";
+import { productVariantCardHighlightCss } from "../variants/product-variant-highlight.styles";
+import {
+  PRODUCT_VARIANT_ANCHOR_ATTR,
+  PRODUCT_VARIANT_SCROLL_HIGHLIGHT_CLASS,
+} from "../variants/scroll-to-product-variant";
 import {
   isColorLikeCharacteristicField,
   resolveCharacteristicDisplayColor,
@@ -60,6 +76,10 @@ const FieldLabel = styled(Text)`
   }
 `;
 
+const MobileVariantCard = styled(Card)`
+  ${productVariantCardHighlightCss}
+`;
+
 function getCustomFieldStableKey(
   field: ProductVariantUi["customFields"][number],
 ): string {
@@ -78,14 +98,21 @@ type MobileProductVariantCardProps = {
   selectedCharacteristics: SelectedCharacteristic[];
   availableFields: VariantCustomField[];
   deletingVariantKey: string | null;
+  deleteLoadingVariantId?: number | null;
+  archiveLoadingVariantId?: number | null;
   onManageVariantImages: (variant: ProductVariantUi) => void;
   onDeleteVariant: (variant: ProductVariantUi) => void;
+  onArchiveVariant?: (variant: ProductVariantUi) => void;
+  onUnarchiveVariant?: (variant: ProductVariantUi) => void;
+  onOpenInventory?: (variant: ProductVariantUi) => void;
   onUpdateManualVariantCustomField: (
     variantKey: string,
     fieldStableKey: string,
     value: string,
   ) => void;
   showQuantityField: boolean;
+  showInventoryManagement?: boolean;
+  highlighted?: boolean;
 };
 
 export function MobileProductVariantCard({
@@ -94,10 +121,17 @@ export function MobileProductVariantCard({
   selectedCharacteristics,
   availableFields,
   deletingVariantKey,
+  deleteLoadingVariantId = null,
+  archiveLoadingVariantId = null,
   onManageVariantImages,
   onDeleteVariant,
+  onArchiveVariant,
+  onUnarchiveVariant,
+  onOpenInventory,
   onUpdateManualVariantCustomField,
   showQuantityField,
+  showInventoryManagement = false,
+  highlighted = false,
 }: MobileProductVariantCardProps) {
   const { t } = useTranslation();
   const variantQaId = variant.id ?? variant.key;
@@ -106,17 +140,82 @@ export function MobileProductVariantCard({
   const characteristicColumns = resolveSelectedCharacteristicColumns(
     selectedCharacteristics,
   );
+  const isPersisted = variant.id != null;
+  const isArchived = isArchivedStatus(variant.status);
+  const archiveLabel = isArchived
+    ? t("products.unarchive")
+    : t("products.archive");
+  const showArchiveAction =
+    isPersisted &&
+    ((isArchived && onUnarchiveVariant != null) ||
+      (!isArchived && onArchiveVariant != null));
+  const isDeleting =
+    deletingVariantKey === variant.key ||
+    (variant.id != null && deleteLoadingVariantId === variant.id);
 
   return (
-    <Card
+    <MobileVariantCard
       size="small"
       data-qa={`products-mobile-variant-${variantQaId}`}
+      className={
+        highlighted ? PRODUCT_VARIANT_SCROLL_HIGHLIGHT_CLASS : undefined
+      }
+      {...(variant.id != null
+        ? { [PRODUCT_VARIANT_ANCHOR_ATTR]: String(variant.id) }
+        : {})}
       styles={{ body: { padding: 12 } }}
     >
       <Flex vertical gap={12}>
-        <Text strong>
-          {title || `${t("products.variant.fallbackName")} #${variantQaId}`}
-        </Text>
+        <Flex align="flex-start" justify="space-between" gap={8}>
+          <Text strong style={{ minWidth: 0 }}>
+            {title || `${t("products.variant.fallbackName")} #${variantQaId}`}
+          </Text>
+
+          <Flex align="center" flex="none">
+            {showInventoryManagement &&
+              isPersisted &&
+              !isArchived &&
+              onOpenInventory && (
+                <Tooltip
+                  title={t("products.inventoryDrawer.openVariantStockAria")}
+                >
+                  <Button
+                    type="text"
+                    size="small"
+                    icon={<CubeIcon size={16} />}
+                    aria-label={t(
+                      "products.inventoryDrawer.openVariantStockAria",
+                    )}
+                    data-qa={`products-mobile-variant-inventory-${variantQaId}`}
+                    onClick={() => onOpenInventory(variant)}
+                  />
+                </Tooltip>
+              )}
+            {showArchiveAction && (
+              <Tooltip title={archiveLabel}>
+                <Button
+                  type="text"
+                  size="small"
+                  loading={archiveLoadingVariantId === variant.id}
+                  icon={
+                    isArchived ? (
+                      <ArrowClockwiseIcon size={16} />
+                    ) : (
+                      <ArchiveIcon size={16} />
+                    )
+                  }
+                  aria-label={archiveLabel}
+                  data-qa={`products-mobile-variant-archive-${variantQaId}`}
+                  onClick={() =>
+                    isArchived
+                      ? onUnarchiveVariant?.(variant)
+                      : onArchiveVariant?.(variant)
+                  }
+                />
+              </Tooltip>
+            )}
+          </Flex>
+        </Flex>
 
         {characteristicColumns.map((column) => {
           const currentValue =
@@ -253,18 +352,40 @@ export function MobileProductVariantCard({
           </FieldBlock>
         )}
 
+        {!showQuantityField && showInventoryManagement && (
+          <FieldBlock>
+            <FieldLabel>{t("products.variant.stock")}</FieldLabel>
+            <Flex align="center" gap={6}>
+              <Badge
+                status={getStockQuantityBadgeStatus(
+                  Number(variant.quantity ?? 0),
+                )}
+              />
+              <Text
+                type={Number(variant.quantity ?? 0) <= 0 ? "danger" : undefined}
+              >
+                {t("products.catalogVariant.inStock", {
+                  count: Number(variant.quantity ?? 0),
+                })}
+              </Text>
+            </Flex>
+          </FieldBlock>
+        )}
+
         <Button
           danger
           block
           icon={<TrashIcon />}
-          loading={deletingVariantKey === variant.key}
-          disabled={deletingVariantKey != null}
+          loading={isDeleting}
+          disabled={
+            deletingVariantKey != null || deleteLoadingVariantId != null
+          }
           data-qa={`products-mobile-variant-delete-${variantQaId}`}
           onClick={() => onDeleteVariant(variant)}
         >
           {t("products.delete")}
         </Button>
       </Flex>
-    </Card>
+    </MobileVariantCard>
   );
 }

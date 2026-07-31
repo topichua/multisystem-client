@@ -1,11 +1,13 @@
 import { Form } from "antd";
 import type { FormInstance } from "antd";
-import { useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
 
 import type { InstagramPostAiExtractionResponse } from "@/features/instagram/model/instagram.types";
 import type { Category } from "@/features/categories/model/category.types";
+import type { ProductDetails } from "@/features/products/model/product.types";
+import { productsApi } from "@/features/products/api/products-api";
 import { InventoryMode } from "@/features/workspace-settings/model/workspace-settings.types";
 import { useWorkspaceSettingsStore } from "@/features/workspace-settings/model/use-workspace-settings-store";
 
@@ -17,7 +19,8 @@ import type { ProductMediaSectionProps } from "../form/sections/product-media-se
 import type { ProductType } from "../form/sections/product-type-section";
 import type { ProductVariantsSectionProps } from "../form/sections/product-variants-section";
 import type { SingleProductCharacteristicsSectionProps } from "../form/sections/single-product-characteristics-section";
-import { useProductAddVariantTableColumns } from "../form/variants/use-product-add-variant-table-columns";
+import type { SelectedCharacteristic } from "../form/variants/generate-product-variants";
+import type { ProductVariantUi } from "../form/variants/product-add-variant.types";
 import { useProductsListController } from "./use-products-list-controller";
 import { useProductEditBootstrap } from "./use-product-edit-bootstrap";
 import { useProductFormSubmitController } from "./use-product-form-submit-controller";
@@ -40,6 +43,46 @@ export type ProductAddPageControllerReturn = {
   title: string;
   subtitle: string;
   backLabel: string;
+  isEditMode: boolean;
+  editingProduct: ProductDetails | null;
+  archiveLoading: boolean;
+  deleteLoading: boolean;
+  handleArchiveProduct: (productId: number) => Promise<boolean>;
+  handleArchiveVariant: (
+    productId: number,
+    variantId: number,
+  ) => Promise<boolean>;
+  handleUnarchiveVariant: (
+    productId: number,
+    variantId: number,
+  ) => Promise<boolean>;
+  handleDeleteById: (
+    productId: number,
+    options?: { navigateToList?: boolean },
+  ) => Promise<boolean>;
+  handleDeleteVariant: (
+    productId: number,
+    variantId: number,
+  ) => Promise<boolean>;
+  showInventoryManagement: boolean;
+  archiveLoadingVariantId: number | null;
+  deleteLoadingVariantId: number | null;
+  removeVariantById: (variantId: number) => void;
+  setVariantStatusById: (
+    variantId: number,
+    status: ProductVariantUi["status"],
+  ) => void;
+  refreshVariantStockAfterInventory: () => Promise<void>;
+  onDeleteVariantLocal: (variant: ProductVariantUi) => void;
+  onManageVariantImages: (variant: ProductVariantUi) => void;
+  selectedCharacteristics: SelectedCharacteristic[];
+  deletingVariantKey: string | null;
+  showQuantityColumn: boolean;
+  onUpdateManualVariantCustomField: (
+    variantKey: string,
+    fieldStableKey: string,
+    value: string,
+  ) => void;
   navigateToProductsList: () => void;
   productType: ProductType;
   onProductTypeChange: (nextType: ProductType) => void;
@@ -87,12 +130,20 @@ export const useProductAddPageController =
       variantCustomFields,
       isVariantCustomFieldsLoading,
       loadVariantCustomFields,
+      handleArchiveProduct,
+      handleArchiveVariant,
+      handleUnarchiveVariant,
+      handleDeleteById,
+      handleDeleteVariant,
+      showInventoryManagement,
     } = useProductsListController();
     const { t } = useTranslation();
     const { productId } = useParams();
     const notification = useNotification();
     const workspaceSettingsStore = useWorkspaceSettingsStore();
     const [form] = Form.useForm<ProductAddFormValues>();
+    const watchedProductName = Form.useWatch("name", form);
+    const watchedQuantity = Form.useWatch("quantity", form);
     const parsedProductId = productId ? Number(productId) : null;
     const editingProductId =
       parsedProductId != null && Number.isFinite(parsedProductId)
@@ -143,17 +194,6 @@ export const useProductAddPageController =
         variantsController.mergeVariantsWithFormValues,
       setProductVariants: variantsController.setProductVariants,
       syncVariantsToForm: variantsController.syncVariantsToForm,
-    });
-
-    const variantTableColumns = useProductAddVariantTableColumns({
-      selectedCharacteristics: variantsController.selectedCharacteristics,
-      availableFields: variantCustomFields,
-      onManageVariantImages: handleManageVariantImages,
-      onDeleteVariant: variantsController.onDeleteVariant,
-      onUpdateManualVariantCustomField:
-        variantsController.onUpdateManualVariantCustomField,
-      deletingVariantKey: variantsController.deletingVariantKey,
-      showQuantityColumn: isSimpleInventoryMode,
     });
 
     const isInitialEditLoading = useProductEditBootstrap({
@@ -218,9 +258,65 @@ export const useProductAddPageController =
 
     const requiredMessage = t("products.form.required");
 
+    const editPageTitle = useMemo(() => {
+      const trimmedName =
+        typeof watchedProductName === "string" ? watchedProductName.trim() : "";
+
+      return (
+        trimmedName ||
+        productsStore.activeProduct?.name ||
+        t("products.editPage.title")
+      );
+    }, [productsStore.activeProduct?.name, t, watchedProductName]);
+
+    const editPageSubtitle = useMemo(() => {
+      const variants = variantsController.productVariants;
+      const variantsCount =
+        variantsController.productType === "variants"
+          ? variants.length
+          : Math.max(variants.length, 1);
+      const stockFromVariants = variants.reduce(
+        (sum, variant) => sum + Number(variant.quantity ?? 0),
+        0,
+      );
+      const stockCount =
+        variantsController.productType === "variants"
+          ? stockFromVariants
+          : Number(
+              watchedQuantity ??
+                productsStore.activeProduct?.quantity ??
+                stockFromVariants,
+            );
+
+      return t("products.editPage.summary", {
+        variants: t("products.table.variantsCount", { count: variantsCount }),
+        stock: t("products.editPage.stockOnHand", { count: stockCount }),
+      });
+    }, [
+      productsStore.activeProduct?.quantity,
+      t,
+      variantsController.productType,
+      variantsController.productVariants,
+      watchedQuantity,
+    ]);
+
+    const refreshVariantStockAfterInventory = useCallback(async () => {
+      if (editingProductId == null) {
+        return;
+      }
+
+      const [inventory] = await Promise.all([
+        productsApi.getInventory(editingProductId),
+        productsStore.loadProductById(editingProductId, { silent: true }),
+      ]);
+
+      variantsController.applyVariantStockFromInventory(inventory);
+    }, [editingProductId, productsStore, variantsController]);
+
     return {
       pageLoading:
         isInitialEditLoading ||
+        (isEditMode && isVariantCustomFieldsLoading) ||
         (!workspaceSettingsReady && !workspaceSettingsStore.loadError),
       form,
       initialValues: {
@@ -229,13 +325,35 @@ export const useProductAddPageController =
         singleCharacteristics: [],
         variants: [],
       },
-      title: t(
-        isEditMode ? "products.editPage.title" : "products.addPage.title",
-      ),
-      subtitle: t(
-        isEditMode ? "products.editPage.subtitle" : "products.addPage.subtitle",
-      ),
+      title: isEditMode ? editPageTitle : t("products.addPage.title"),
+      subtitle: isEditMode ? editPageSubtitle : t("products.addPage.subtitle"),
       backLabel: t("products.detailBackToList"),
+      isEditMode,
+      editingProduct: productsStore.activeProduct,
+      archiveLoading:
+        editingProductId != null &&
+        productsStore.archiveLoadingId === editingProductId,
+      deleteLoading:
+        editingProductId != null &&
+        productsStore.deleteLoadingId === editingProductId,
+      handleArchiveProduct,
+      handleArchiveVariant,
+      handleUnarchiveVariant,
+      handleDeleteById,
+      handleDeleteVariant,
+      showInventoryManagement,
+      archiveLoadingVariantId: productsStore.archiveLoadingVariantId,
+      deleteLoadingVariantId: productsStore.deleteLoadingVariantId,
+      removeVariantById: variantsController.removeVariantById,
+      setVariantStatusById: variantsController.setVariantStatusById,
+      refreshVariantStockAfterInventory,
+      onDeleteVariantLocal: variantsController.onDeleteVariant,
+      onManageVariantImages: handleManageVariantImages,
+      selectedCharacteristics: variantsController.selectedCharacteristics,
+      deletingVariantKey: variantsController.deletingVariantKey,
+      showQuantityColumn: isSimpleInventoryMode,
+      onUpdateManualVariantCustomField:
+        variantsController.onUpdateManualVariantCustomField,
       navigateToProductsList,
       productType: variantsController.productType,
       onProductTypeChange: variantsController.onProductTypeChange,
@@ -285,7 +403,7 @@ export const useProductAddPageController =
       },
       variantsProps: {
         productVariants: variantsController.productVariants,
-        variantTableColumns,
+        variantTableColumns: [],
         watchedCharacteristics: variantsController.watchedCharacteristics,
         variantCustomFields,
         isVariantCustomFieldsLoading,

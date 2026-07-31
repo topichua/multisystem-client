@@ -1860,7 +1860,11 @@
     },
     "editPage": {
       "title": "Edit product",
-      "subtitle": "Update product information"
+      "subtitle": "Update product information",
+      "summary": "{{variants}} · {{stock}}",
+      "stockOnHand": "{{count}} pcs in stock",
+      "archiveProduct": "Archive product",
+      "deleteProduct": "Delete product"
     },
     "productType": {
       "title": "Product type",
@@ -1929,6 +1933,16 @@
     "cancelEdit": "Cancel",
     "delete": "Delete",
     "deleteConfirm": "Delete this product?",
+    "hardDelete": {
+      "productTitle": "Delete “{{name}}”?",
+      "variantTitle": "Delete variant “{{name}}”?",
+      "productWarning": "The product will be permanently deleted from all orders and all statistics. This action cannot be undone.",
+      "variantWarning": "The variant will be permanently deleted from all orders and all statistics. This action cannot be undone.",
+      "variantMeta": "{{productName}} · {{sku}}",
+      "acknowledge": "I understand the consequences",
+      "confirm": "Delete forever",
+      "cancel": "Cancel"
+    },
     "createSuccess": "Product created",
     "createFailed": "Failed to create product",
     "categoryRequired": "Product category is required",
@@ -1936,6 +1950,27 @@
     "updateFailed": "Failed to update product",
     "deleteSuccess": "Product deleted",
     "deleteFailed": "Failed to delete product",
+    "archive": "Archive",
+    "unarchive": "Unarchive",
+    "archiveModal": {
+      "productTitle": "Archive “{{name}}”?",
+      "variantTitle": "Archive variant “{{name}}”?",
+      "productDescription": "The product will be archived. It cannot be added to a new order or restocked, but it will remain visible in statistics and analytics, and existing orders will not change.",
+      "variantDescription": "The variant will be archived. It cannot be added to a new order or restocked, but it will remain visible in statistics and analytics.",
+      "variantMeta": "{{productName}} · {{sku}}",
+      "confirmProduct": "Archive product",
+      "confirmVariant": "Archive variant",
+      "cancel": "Cancel"
+    },
+    "archiveSuccess": "Product archived",
+    "archiveFailed": "Failed to archive product",
+    "unarchiveSuccess": "Product unarchived",
+    "unarchiveFailed": "Failed to unarchive product",
+    "variantArchiveSuccess": "Variant archived",
+    "variantArchiveFailed": "Failed to archive variant",
+    "variantUnarchiveSuccess": "Variant unarchived",
+    "variantUnarchiveFailed": "Failed to unarchive variant",
+    "archivedCannotEdit": "Archived products cannot be edited",
     "variantCreateSuccess": "Variant created",
     "variantCreateFailed": "Failed to create variant",
     "variantUpdateSuccess": "Variant updated",
@@ -2086,9 +2121,12 @@
       "singleConfirm": "Product will be created as a single product.",
       "singleUpdateConfirm": "Product will be saved as a single product. Extra variant data may be lost.",
       "lockedOptionsChanged": "Saved option characteristics and values cannot be removed from an existing variants product.",
-      "editSkuAndPriceHint": "Edit the article number and selling price for each variant.",
-      "bulkPricePlaceholder": "Price for all {{currency}}",
-      "applyPriceToAll": "To all"
+      "editSkuAndPriceHint": "Edit the SKU and selling price for each variant.",
+      "bulkPricePlaceholder": "Price for all",
+      "applyPriceToAll": "To all",
+      "totalStock_one": "{{count}} pc total",
+      "totalStock_other": "{{count}} pcs total",
+      "manageInventory": "Manage"
     },
     "form": {
       "name": "Name",
@@ -2124,6 +2162,7 @@
     "variant": {
       "price": "Price",
       "quantity": "Quantity",
+      "stock": "Stock",
       "reserved": "Reserved",
       "available": "Available",
       "wishlist": "Wishlist",

@@ -1,8 +1,7 @@
 import { CubeIcon } from "@phosphor-icons/react";
 import { Button, Flex, Table, Typography } from "antd";
-// import { Tag } from "@/components/tag/tag";
 import { observer } from "mobx-react-lite";
-import { useCallback, useState, type Key, type MouseEvent } from "react";
+import { useCallback, useState, type Key } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router";
 
@@ -11,9 +10,17 @@ import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
 import { PaneSectionTitle } from "@/components/layout/pane-frame";
 import { StockSupplyModal } from "@/features/inventory/components/stock-supply-modal/stock-supply-modal";
 import { ProductInventoryDrawer } from "@/features/products/components/product-inventory-drawer/product-inventory-drawer";
-import type { Product } from "@/features/products/model/product.types";
+import type {
+  Product,
+  ProductVariant,
+} from "@/features/products/model/product.types";
+import { buildProductsListEditState } from "@/features/products/model/products-list-url";
+import { isArchivedStatus } from "@/features/products/utils/product-display";
 
+import { ProductArchiveModal } from "./components/product-archive-modal";
+import { ProductHardDeleteModal } from "./components/product-hard-delete-modal";
 import { ProductsListVariantCard } from "./components/products-list-variant-card";
+import { useProductListLifecycleModals } from "./components/use-product-list-lifecycle-modals";
 
 import { ProductsListActiveFilters } from "./products-list-active-filters";
 import { ProductsListFiltersPanel } from "./products-list-filters-panel";
@@ -42,45 +49,60 @@ export const ProductsListPage = observer(() => {
   const {
     productsStore,
     categoryNameById,
-    rowSelection,
     showInventoryQuantity,
     showInventoryManagement,
     handleDeleteById,
+    handleDeleteVariant,
+    handleArchiveProduct,
+    handleUnarchiveProduct,
+    handleArchiveVariant,
+    handleUnarchiveVariant,
   } = useProductsListController();
   const [expandedRowKeys, setExpandedRowKeys] = useState<Key[]>([]);
   const [inventoryDrawerSelection, setInventoryDrawerSelection] =
     useState<InventoryDrawerSelection | null>(null);
   const inventoryDrawerProduct = inventoryDrawerSelection?.product ?? null;
+  const lifecycleModals = useProductListLifecycleModals({
+    deleteLoadingId: productsStore.deleteLoadingId,
+    deleteLoadingVariantId: productsStore.deleteLoadingVariantId,
+    archiveLoadingId: productsStore.archiveLoadingId,
+    archiveLoadingVariantId: productsStore.archiveLoadingVariantId,
+    onDeleteProduct: handleDeleteById,
+    onDeleteVariant: handleDeleteVariant,
+    onArchiveProduct: handleArchiveProduct,
+    onArchiveVariant: handleArchiveVariant,
+  });
 
   useProductsListUrlSync(productsStore);
 
   const handleOpenProduct = useCallback(
-    (productId: number) => {
+    (productId: number, focusVariantId?: number) => {
+      const product = productsStore.products.find(
+        (item) => item.id === productId,
+      );
+      if (product != null && isArchivedStatus(product.status)) {
+        return;
+      }
+
       navigate(getProductEditPath(productId), {
-        state: { productsListSearch: location.search },
+        state: buildProductsListEditState(location.search, focusVariantId),
       });
     },
-    [location.search, navigate],
+    [location.search, navigate, productsStore.products],
   );
 
-  const handleProductRowClick = useCallback(
+  const handleUnarchiveProductClick = useCallback(
     (product: Product) => {
-      return (event: MouseEvent<HTMLElement>) => {
-        const target = event.target as HTMLElement;
-
-        if (
-          target.closest(".ant-checkbox-wrapper") ||
-          target.closest(".ant-checkbox") ||
-          target.closest("button") ||
-          target.closest("a")
-        ) {
-          return;
-        }
-
-        handleOpenProduct(product.id);
-      };
+      void handleUnarchiveProduct(product.id);
     },
-    [handleOpenProduct],
+    [handleUnarchiveProduct],
+  );
+
+  const handleUnarchiveVariantClick = useCallback(
+    (product: Product, variant: ProductVariant) => {
+      void handleUnarchiveVariant(product.id, variant.id);
+    },
+    [handleUnarchiveVariant],
   );
 
   const handleToggleRowExpand = useCallback((productId: number) => {
@@ -104,13 +126,21 @@ export const ProductsListPage = observer(() => {
     [],
   );
 
-  const handleDeleteProduct = useCallback(
-    (productId: number) => handleDeleteById(productId),
-    [handleDeleteById],
-  );
-
   const handleOpenInventoryDrawer = useCallback(
     (product: Product, targetVariantId: number | null = null) => {
+      if (isArchivedStatus(product.status)) {
+        return;
+      }
+
+      if (targetVariantId != null) {
+        const variant = product.variants?.find(
+          (item) => item.id === targetVariantId,
+        );
+        if (variant != null && isArchivedStatus(variant.status)) {
+          return;
+        }
+      }
+
       setInventoryDrawerSelection((current) => ({
         product,
         targetVariantId,
@@ -134,13 +164,16 @@ export const ProductsListPage = observer(() => {
   const columns = useProductsTableColumns({
     categoryNameById,
     deleteLoadingId: productsStore.deleteLoadingId,
+    archiveLoadingId: productsStore.archiveLoadingId,
     expandedRowKeys,
     showInventoryQuantity,
     showInventoryManagement,
     onToggleRowExpand: handleToggleRowExpand,
     onOpenInventory: handleOpenInventoryDrawer,
     onEdit: handleOpenProduct,
-    onDelete: handleDeleteProduct,
+    onArchive: lifecycleModals.requestArchiveProduct,
+    onUnarchive: handleUnarchiveProductClick,
+    onDelete: lifecycleModals.requestDeleteProduct,
   });
 
   const renderExpandedRow = useCallback(
@@ -154,7 +187,7 @@ export const ProductsListPage = observer(() => {
       }
 
       return (
-        <Flex vertical gap={8} style={{ paddingLeft: "5%" }}>
+        <Flex vertical gap={4} style={{ paddingLeft: "5%" }}>
           {product.variants.map((variant) => (
             <ProductsListVariantCard
               key={variant.id}
@@ -162,8 +195,17 @@ export const ProductsListPage = observer(() => {
               variant={variant}
               showInventoryQuantity={showInventoryQuantity}
               showInventoryManagement={showInventoryManagement}
+              deleteLoading={
+                productsStore.deleteLoadingVariantId === variant.id
+              }
+              archiveLoading={
+                productsStore.archiveLoadingVariantId === variant.id
+              }
               onOpenInventory={handleOpenVariantInventory}
               onEdit={handleOpenProduct}
+              onArchive={lifecycleModals.requestArchiveVariant}
+              onUnarchive={handleUnarchiveVariantClick}
+              onDelete={lifecycleModals.requestDeleteVariant}
             />
           ))}
         </Flex>
@@ -172,6 +214,11 @@ export const ProductsListPage = observer(() => {
     [
       handleOpenProduct,
       handleOpenVariantInventory,
+      handleUnarchiveVariantClick,
+      lifecycleModals.requestArchiveVariant,
+      lifecycleModals.requestDeleteVariant,
+      productsStore.archiveLoadingVariantId,
+      productsStore.deleteLoadingVariantId,
       showInventoryManagement,
       showInventoryQuantity,
       t,
@@ -216,19 +263,24 @@ export const ProductsListPage = observer(() => {
                   rowKey="id"
                   columns={columns}
                   dataSource={productsStore.products}
-                  rowSelection={rowSelection}
                   loading={productsStore.listLoading}
                   pagination={false}
-                  rowClassName={(product) =>
-                    (product.variants?.length ?? 0) > 1 &&
-                    expandedRowKeys.includes(product.id)
-                      ? "product-row-expanded"
-                      : ""
-                  }
-                  onRow={(product) => ({
-                    onClick: handleProductRowClick(product),
-                    style: { cursor: "pointer" },
-                  })}
+                  rowClassName={(product) => {
+                    const classes: string[] = [];
+
+                    if (
+                      (product.variants?.length ?? 0) > 1 &&
+                      expandedRowKeys.includes(product.id)
+                    ) {
+                      classes.push("product-row-expanded");
+                    }
+
+                    if (isArchivedStatus(product.status)) {
+                      classes.push("product-row-archived");
+                    }
+
+                    return classes.join(" ");
+                  }}
                   scroll={{ x: "max-content" }}
                   expandable={{
                     showExpandColumn: false,
@@ -246,10 +298,12 @@ export const ProductsListPage = observer(() => {
                 products={productsStore.products}
                 loading={productsStore.listLoading}
                 categoryNameById={categoryNameById}
-                onOpenProduct={handleProductRowClick}
-                onEdit={handleOpenProduct}
-                onDelete={handleDeleteProduct}
+                onOpenProduct={handleOpenProduct}
+                onArchive={lifecycleModals.requestArchiveProduct}
+                onUnarchive={handleUnarchiveProductClick}
+                onDelete={lifecycleModals.requestDeleteProduct}
                 deleteLoadingId={productsStore.deleteLoadingId}
+                archiveLoadingId={productsStore.archiveLoadingId}
                 showInventoryQuantity={showInventoryQuantity}
                 showInventoryManagement={showInventoryManagement}
                 onOpenInventory={handleOpenInventoryDrawer}
@@ -281,6 +335,20 @@ export const ProductsListPage = observer(() => {
           targetVariantFocusId={inventoryDrawerSelection?.focusId ?? 0}
           onClose={handleCloseInventoryDrawer}
           onOpenProduct={handleOpenProduct}
+        />
+        <ProductHardDeleteModal
+          open={lifecycleModals.hardDeleteTarget != null}
+          target={lifecycleModals.hardDeleteTarget}
+          loading={lifecycleModals.hardDeleteLoading}
+          onCancel={lifecycleModals.closeHardDeleteModal}
+          onConfirm={lifecycleModals.confirmHardDelete}
+        />
+        <ProductArchiveModal
+          open={lifecycleModals.archiveTarget != null}
+          target={lifecycleModals.archiveTarget}
+          loading={lifecycleModals.archiveLoading}
+          onCancel={lifecycleModals.closeArchiveModal}
+          onConfirm={lifecycleModals.confirmArchive}
         />
       </PaneDetailLayout.Body>
     </PaneDetailLayout.Root>
