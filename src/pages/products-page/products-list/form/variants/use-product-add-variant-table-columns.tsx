@@ -372,24 +372,30 @@ export function useProductAddVariantTableColumns({
 
           return (
             <Flex align="center" gap={0} style={{ flexWrap: "nowrap" }}>
-              {showInventoryManagement &&
-                isPersisted &&
-                !isArchived &&
-                onOpenInventory && (
-                  <Tooltip
-                    title={t("products.inventoryDrawer.openVariantStockAria")}
-                  >
+              {showInventoryManagement && isPersisted && onOpenInventory && (
+                <Tooltip
+                  title={
+                    isArchived
+                      ? t("products.inventoryDrawer.archivedVariantTooltip")
+                      : t("products.inventoryDrawer.openVariantStockAria")
+                  }
+                >
+                  <span>
                     <Button
                       type="text"
                       size="small"
                       icon={<CubeIcon size={16} />}
-                      aria-label={t(
-                        "products.inventoryDrawer.openVariantStockAria",
-                      )}
+                      disabled={isArchived}
+                      aria-label={
+                        isArchived
+                          ? t("products.inventoryDrawer.archivedVariantTooltip")
+                          : t("products.inventoryDrawer.openVariantStockAria")
+                      }
                       onClick={() => onOpenInventory(record)}
                     />
-                  </Tooltip>
-                )}
+                  </span>
+                </Tooltip>
+              )}
               {isPersisted &&
                 ((isArchived && onUnarchiveVariant) ||
                   (!isArchived && onArchiveVariant)) && (

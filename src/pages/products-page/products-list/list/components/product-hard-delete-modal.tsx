@@ -77,7 +77,6 @@ function ProductHardDeleteModalContent({
       title={title}
       closable={!loading}
       keyboard={!loading}
-      maskClosable={!loading}
       onCancel={onCancel}
       width={400}
       footer={

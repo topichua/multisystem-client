@@ -1995,6 +1995,7 @@
       "openProduct": "Open product",
       "done": "Done",
       "openVariantStockAria": "Open variant stock",
+      "archivedVariantTooltip": "Variant is archived",
       "expandHistoryAria": "Show stock history",
       "collapseHistoryAria": "Hide stock history",
       "historyTitle": "Delivery and change history",

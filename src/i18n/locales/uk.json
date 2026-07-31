@@ -2027,6 +2027,7 @@
       "openProduct": "Відкрити товар",
       "done": "Готово",
       "openVariantStockAria": "Відкрити залишок варіанта",
+      "archivedVariantTooltip": "Варіант заархівовано",
       "expandHistoryAria": "Показати історію залишків",
       "collapseHistoryAria": "Приховати історію залишків",
       "historyTitle": "Історія поставок і змін",

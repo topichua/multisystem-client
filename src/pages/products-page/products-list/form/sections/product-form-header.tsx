@@ -42,7 +42,7 @@ function ProductLifecycleActions({
   return (
     <Flex gap={gap} wrap="wrap">
       <Button
-        type="text"
+        type="link"
         htmlType="button"
         icon={<ArchiveIcon size={16} />}
         loading={archiveLoading}
@@ -52,7 +52,8 @@ function ProductLifecycleActions({
         {t("products.editPage.archiveProduct")}
       </Button>
       <Button
-        type="text"
+        type="link"
+        danger
         htmlType="button"
         icon={<TrashIcon size={16} />}
         loading={deleteLoading}
