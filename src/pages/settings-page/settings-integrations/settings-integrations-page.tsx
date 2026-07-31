@@ -55,6 +55,7 @@ export const SettingsIntegrationsPage = observer(() => {
                 <IntegrationTypeSidebar
                   integrationsCountByType={{
                     instagram: controller.integrationsByType.instagram.length,
+                    tiktok: controller.integrationsByType.tiktok.length,
                     telegram: controller.integrationsByType.telegram.length,
                     novaposhta: controller.integrationsByType.novaposhta.length,
                     monobank: controller.integrationsByType.monobank.length,

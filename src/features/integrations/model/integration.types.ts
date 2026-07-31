@@ -1,5 +1,6 @@
 export type IntegrationType =
   | "instagram"
+  | "tiktok"
   | "telegram"
   | "novaposhta"
   | "monobank"
@@ -10,8 +11,8 @@ export type IntegrationItem = {
   type: IntegrationType;
   id: number;
   name: string;
-  connectedAt: string;
-  avatar?: string;
+  connectedAt?: string;
+  avatar?: string | null;
   businessAccountId?: string;
   userName?: string;
   followersCount?: number;

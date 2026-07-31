@@ -1,4 +1,4 @@
-import { CreditCardIcon } from "@phosphor-icons/react";
+import { CreditCardIcon, TiktokLogoIcon } from "@phosphor-icons/react";
 
 import { InstagramLogoIcon } from "@/components/icons/instagram/instagram-logo-icon";
 import { TelegramLogoIcon } from "@/components/icons/telegram/telegram-logo-icon";
@@ -32,6 +32,16 @@ export const INTEGRATION_TYPES = [
     connectLabelKey: "integrations.types.instagram.connectLabel",
     emptyKey: "integrations.types.instagram.empty",
     icon: <InstagramLogoIcon size={40} />,
+    allowMultiple: true,
+  },
+  {
+    type: "tiktok",
+    groupKey: "channels",
+    labelKey: "integrations.types.tiktok.label",
+    descriptionKey: "integrations.types.tiktok.description",
+    connectLabelKey: "integrations.types.tiktok.connectLabel",
+    emptyKey: "integrations.types.tiktok.empty",
+    icon: <TiktokLogoIcon size={40} weight="fill" />,
     allowMultiple: true,
   },
   {
@@ -85,6 +95,7 @@ export const createEmptyIntegrationsByType = (): Record<
   IntegrationItem[]
 > => ({
   instagram: [],
+  tiktok: [],
   telegram: [],
   novaposhta: [],
   monobank: [],
@@ -95,6 +106,7 @@ export const isKnownIntegrationType = (
   type: IntegrationItem["type"],
 ): type is IntegrationType =>
   type === "instagram" ||
+  type === "tiktok" ||
   type === "telegram" ||
   type === "novaposhta" ||
   type === "monobank" ||

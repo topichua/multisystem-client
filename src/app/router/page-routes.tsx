@@ -117,10 +117,10 @@ export const PageRoutes = () => {
               </Route>
               <Route path="user" element={<SettingsUserRoute />} />
               <Route path="system" element={<SettingsSystemRoute />} />
-              <Route
-                path="integrations"
-                element={<SettingsIntegrationsRoute />}
-              />
+              <Route path="integrations">
+                <Route index element={<SettingsIntegrationsRoute />} />
+                <Route path="tiktok" element={<SettingsIntegrationsRoute />} />
+              </Route>
               <Route path="billing" element={<SettingsBillingRoute />} />
               <Route path="templates" element={<SettingsTemplatesLayout />}>
                 <Route index element={<SettingsTemplatesIndexRoute />} />

@@ -2,6 +2,7 @@ import {
   CreditCardIcon,
   MagnifyingGlassIcon,
   SquaresFourIcon,
+  TiktokLogoIcon,
 } from "@phosphor-icons/react";
 import type { MenuProps } from "antd";
 import { Badge, Flex, Input, Menu, Typography } from "antd";
@@ -27,6 +28,8 @@ const getSidebarIcon = (type: IntegrationType) => {
   switch (type) {
     case "instagram":
       return <InstagramLogoIcon size={SIDEBAR_ICON_SIZE} />;
+    case "tiktok":
+      return <TiktokLogoIcon size={SIDEBAR_ICON_SIZE} weight="fill" />;
     case "telegram":
       return <TelegramLogoIcon size={SIDEBAR_ICON_SIZE} />;
     case "novaposhta":

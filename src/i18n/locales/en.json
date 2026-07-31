@@ -917,6 +917,7 @@
     "disconnectConfirmCancel": "Cancel",
     "disconnectAction": "Disconnect",
     "connectedTag": "Connected",
+    "followersCount": "{{count}} followers",
     "typeLabel": "Type: {{type}}",
     "addedLabel": "Added: {{date}}",
     "groups": {
@@ -935,6 +936,12 @@
         "description": "Direct messages from business accounts. Сan connect multiple accounts.",
         "connectLabel": "Add account",
         "empty": "No Instagram integrations"
+      },
+      "tiktok": {
+        "label": "TikTok",
+        "description": "Messages and comments from TikTok, linking to TikTok Shop. Multiple accounts can be connected.",
+        "connectLabel": "Add account",
+        "empty": "No TikTok integrations"
       },
       "telegram": {
         "label": "Telegram",
@@ -1275,6 +1282,12 @@
       "noPages": "No Instagram Business pages were found for this Facebook account.",
       "oauthFailed": "Facebook login did not complete. Try again.",
       "loadPagesFailed": "Could not load Instagram pages"
+    },
+    "tiktokOauth": {
+      "awaitingOauth": "Complete TikTok authorization in the popup. This page updates automatically.",
+      "oauthFailed": "TikTok authorization did not complete. Try again.",
+      "oauthDenied": "TikTok authorization was denied or failed.",
+      "sessionExpired": "This connection session has expired. Start again to continue."
     }
   },
   "system": {

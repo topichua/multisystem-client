@@ -923,6 +923,7 @@
     "disconnectConfirmCancel": "Скасувати",
     "disconnectAction": "Відключити",
     "connectedTag": "Підключено",
+    "followersCount": "Підписники: {{count}}",
     "typeLabel": "Тип: {{type}}",
     "addedLabel": "Додано: {{date}}",
     "groups": {
@@ -943,6 +944,12 @@
         "description": "Direct-повідомлення з бізнес-акаунтів. Можна підключити кілька акаунтів.",
         "connectLabel": "Додати акаунт",
         "empty": "Немає інтеграцій Instagram"
+      },
+      "tiktok": {
+        "label": "TikTok",
+        "description": "Повідомлення й коментарі з TikTok, прив'язка до TikTok Shop. Можна підключити кілька акаунтів.",
+        "connectLabel": "Додати акаунт",
+        "empty": "Немає інтеграцій TikTok"
       },
       "telegram": {
         "label": "Telegram",
@@ -1283,6 +1290,12 @@
       "noPages": "Для цього Facebook-акаунта не знайдено сторінок Instagram Business.",
       "oauthFailed": "Вхід через Facebook не завершився. Спробуйте ще раз.",
       "loadPagesFailed": "Не вдалося завантажити сторінки Instagram"
+    },
+    "tiktokOauth": {
+      "awaitingOauth": "Завершіть авторизацію TikTok у вікні. Ця сторінка оновиться автоматично.",
+      "oauthFailed": "Авторизація TikTok не завершилась. Спробуйте ще раз.",
+      "oauthDenied": "Авторизацію TikTok відхилено або сталася помилка.",
+      "sessionExpired": "Сесія підключення закінчилась. Почніть знову, щоб продовжити."
     }
   },
   "system": {

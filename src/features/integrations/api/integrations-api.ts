@@ -29,6 +29,8 @@ import type {
   InstagramOAuthPagesResponse,
 } from "../model/instagram-oauth.types";
 import { parseInstagramOAuthPagesResponse } from "../model/instagram-oauth.types";
+import type { TikTokOAuthStatusResponse } from "../model/tiktok-oauth.types";
+import { parseTikTokOAuthStatusResponse } from "../model/tiktok-oauth.types";
 
 const basePath = "/integrations";
 const telegramIntegrationsBasePath = "/telegram-integrations";
@@ -253,6 +255,24 @@ export const integrationsApi = {
     );
 
     return data;
+  },
+
+  getTikTokOAuthStatus: async (
+    sessionId: string,
+    config?: AxiosRequestConfig,
+  ): Promise<TikTokOAuthStatusResponse> => {
+    const { data } = await apiClient.get<unknown>(
+      `${basePath}/tiktok/oauth/status`,
+      withParams(config, { sessionId }),
+    );
+
+    const parsed = parseTikTokOAuthStatusResponse(data, sessionId);
+
+    if (parsed == null) {
+      throw new Error("Invalid TikTok OAuth status response");
+    }
+
+    return parsed;
   },
 
   listPaymentIntegrations:

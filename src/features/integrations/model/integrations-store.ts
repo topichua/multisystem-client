@@ -17,6 +17,7 @@ import type {
   InstagramOAuthConfirmPayload,
   InstagramOAuthPagesResponse,
 } from "./instagram-oauth.types";
+import type { TikTokOAuthStatusResponse } from "./tiktok-oauth.types";
 
 const INTEGRATION_NOT_AVAILABLE_ERROR = "INTEGRATION_NOT_AVAILABLE";
 
@@ -25,6 +26,7 @@ export const isIntegrationNotAvailableError = (error: unknown): boolean =>
 
 const CONNECTABLE_INTEGRATION_TYPES = [
   "instagram",
+  "tiktok",
   "telegram",
 ] as const satisfies readonly IntegrationType[];
 
@@ -201,8 +203,12 @@ export class IntegrationsStore {
     try {
       const created = await integrationsApi.create({ integration_type });
 
-      // Instagram OAuth finishes only after page confirm — do not reload as connected.
-      if (created.url || integration_type === "instagram") {
+      // OAuth flows finish after external auth / confirm — do not reload as connected yet.
+      if (
+        created.url ||
+        integration_type === "instagram" ||
+        integration_type === "tiktok"
+      ) {
         return created;
       }
 
@@ -246,6 +252,13 @@ export class IntegrationsStore {
         }
       });
     }
+  };
+
+  getTikTokOAuthStatus = async (
+    sessionId: string,
+    options?: IntegrationRequestOptions,
+  ): Promise<TikTokOAuthStatusResponse> => {
+    return integrationsApi.getTikTokOAuthStatus(sessionId, options);
   };
 
   startTelegramQrLogin = async (

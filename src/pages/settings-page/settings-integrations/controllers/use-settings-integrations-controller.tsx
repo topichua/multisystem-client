@@ -1,7 +1,9 @@
 import { Modal } from "antd";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useLocation, useNavigate, useSearchParams } from "react-router";
 
+import { pagesMap } from "@/app/router/pages-map";
 import { getApiErrorMessage } from "@/api/get-api-error-message";
 import { isInstagramOAuthSessionExpiredError } from "@/features/integrations/is-instagram-oauth-session-expired";
 import {
@@ -33,6 +35,36 @@ import type { TelegramQrLoginModalStatus } from "../telegram-qr-login-modal";
 
 const TELEGRAM_QR_LOGIN_TIMEOUT_MS = 90_000;
 const INSTAGRAM_OAUTH_POLL_INTERVAL_MS = 2_500;
+const TIKTOK_OAUTH_POLL_INTERVAL_MS = 2_000;
+const TIKTOK_OAUTH_SESSION_STORAGE_KEY = "tiktok-oauth-session-id";
+
+function readCreatedOAuthSessionId(created: IntegrationItem): string | null {
+  const createdRecord = created as IntegrationItem & {
+    session_id?: unknown;
+  };
+  const sessionIdCandidate =
+    createdRecord.sessionId ?? createdRecord.session_id;
+
+  return typeof sessionIdCandidate === "string" && sessionIdCandidate.trim()
+    ? sessionIdCandidate.trim()
+    : null;
+}
+
+function storeTikTokOAuthSessionId(sessionId: string): void {
+  try {
+    sessionStorage.setItem(TIKTOK_OAUTH_SESSION_STORAGE_KEY, sessionId);
+  } catch {
+    // Ignore storage failures — popup polling still works via in-memory refs.
+  }
+}
+
+function clearStoredTikTokOAuthSessionId(): void {
+  try {
+    sessionStorage.removeItem(TIKTOK_OAUTH_SESSION_STORAGE_KEY);
+  } catch {
+    // Ignore storage failures.
+  }
+}
 
 type TelegramQrModalState = {
   open: boolean;
@@ -77,6 +109,9 @@ export function useSettingsIntegrationsController() {
   const store = useIntegrationsStore();
   const notification = useNotification();
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState("");
   const [selectedFilter, setSelectedFilter] =
     useState<IntegrationFilter>("all");
@@ -106,10 +141,22 @@ export function useSettingsIntegrationsController() {
   const instagramOauthPollInFlightRef = useRef(false);
   const instagramOauthSessionIdRef = useRef<string | null>(null);
   const instagramOauthRunIdRef = useRef(0);
+  const tiktokAuthWindowRef = useRef<Window | null>(null);
+  const tiktokOauthPollRef = useRef<number | null>(null);
+  const tiktokOauthPollInFlightRef = useRef(false);
+  const tiktokOauthSessionIdRef = useRef<string | null>(null);
+  const tiktokOauthRunIdRef = useRef(0);
+  const tiktokReturnHandledRef = useRef(false);
 
   useEffect(() => {
     void store.loadIntegrations();
   }, [store]);
+
+  useEffect(() => {
+    if (location.pathname === pagesMap.settingsIntegrationsTiktok) {
+      setSelectedFilter("tiktok");
+    }
+  }, [location.pathname]);
 
   const clearTelegramQrTimeout = useCallback(() => {
     if (telegramQrTimeoutRef.current != null) {
@@ -270,6 +317,248 @@ export function useSettingsIntegrationsController() {
       stopInstagramOauthPoll({ closePopup: true });
     };
   }, [stopInstagramOauthPoll]);
+
+  const closeTikTokAuthPopup = useCallback(() => {
+    closeIntegrationAuthWindow(tiktokAuthWindowRef.current);
+    tiktokAuthWindowRef.current = null;
+  }, []);
+
+  const stopTikTokOauthPoll = useCallback(
+    (options?: { closePopup?: boolean }) => {
+      if (tiktokOauthPollRef.current != null) {
+        window.clearInterval(tiktokOauthPollRef.current);
+        tiktokOauthPollRef.current = null;
+      }
+
+      tiktokOauthPollInFlightRef.current = false;
+      tiktokOauthSessionIdRef.current = null;
+
+      if (options?.closePopup) {
+        closeTikTokAuthPopup();
+      }
+    },
+    [closeTikTokAuthPopup],
+  );
+
+  const pollTikTokOAuthSession = useCallback(
+    async (sessionId: string, runId: number) => {
+      if (
+        tiktokOauthPollInFlightRef.current ||
+        tiktokOauthRunIdRef.current !== runId ||
+        tiktokOauthSessionIdRef.current !== sessionId
+      ) {
+        return;
+      }
+
+      tiktokOauthPollInFlightRef.current = true;
+
+      try {
+        const result = await store.getTikTokOAuthStatus(sessionId);
+
+        if (
+          tiktokOauthRunIdRef.current !== runId ||
+          tiktokOauthSessionIdRef.current !== sessionId
+        ) {
+          return;
+        }
+
+        if (result.status === "awaiting_tiktok") {
+          return;
+        }
+
+        if (result.status === "connected") {
+          stopTikTokOauthPoll({ closePopup: true });
+          clearStoredTikTokOAuthSessionId();
+          await store.loadIntegrations({ silent: true, force: true });
+          notification.success({ title: t("integrations.connectSuccess") });
+          return;
+        }
+
+        if (result.status === "failed") {
+          stopTikTokOauthPoll({ closePopup: true });
+          clearStoredTikTokOAuthSessionId();
+          notification.error({
+            title:
+              result.error ||
+              t("integrations.tiktokOauth.oauthFailed"),
+          });
+        }
+      } catch (e) {
+        if (
+          tiktokOauthRunIdRef.current !== runId ||
+          tiktokOauthSessionIdRef.current !== sessionId
+        ) {
+          return;
+        }
+
+        if (isInstagramOAuthSessionExpiredError(e)) {
+          stopTikTokOauthPoll({ closePopup: true });
+          clearStoredTikTokOAuthSessionId();
+          notification.error({
+            title: t("integrations.tiktokOauth.sessionExpired"),
+          });
+          return;
+        }
+
+        // Transient poll errors — keep waiting while popup/session may still succeed.
+      } finally {
+        if (tiktokOauthSessionIdRef.current === sessionId) {
+          tiktokOauthPollInFlightRef.current = false;
+        }
+      }
+    },
+    [notification, stopTikTokOauthPoll, store, t],
+  );
+
+  const startTikTokOauthPoll = useCallback(
+    (sessionId: string, authWindow: Window | null) => {
+      const runId = tiktokOauthRunIdRef.current + 1;
+      tiktokOauthRunIdRef.current = runId;
+
+      stopTikTokOauthPoll();
+      tiktokAuthWindowRef.current = authWindow;
+      tiktokOauthSessionIdRef.current = sessionId;
+      storeTikTokOAuthSessionId(sessionId);
+
+      void pollTikTokOAuthSession(sessionId, runId);
+
+      tiktokOauthPollRef.current = window.setInterval(() => {
+        void pollTikTokOAuthSession(sessionId, runId);
+      }, TIKTOK_OAUTH_POLL_INTERVAL_MS);
+    },
+    [pollTikTokOAuthSession, stopTikTokOauthPoll],
+  );
+
+  useEffect(() => {
+    return () => {
+      tiktokOauthRunIdRef.current += 1;
+      stopTikTokOauthPoll({ closePopup: true });
+    };
+  }, [stopTikTokOauthPoll]);
+
+  const clearTikTokReturnQuery = useCallback(() => {
+    if (!searchParams.has("status")) {
+      if (location.pathname === pagesMap.settingsIntegrationsTiktok) {
+        navigate(pagesMap.settingsIntegrations, { replace: true });
+      }
+      return;
+    }
+
+    const nextParams = new URLSearchParams(searchParams);
+    nextParams.delete("status");
+
+    if (location.pathname === pagesMap.settingsIntegrationsTiktok) {
+      const query = nextParams.toString();
+      navigate(
+        query
+          ? `${pagesMap.settingsIntegrations}?${query}`
+          : pagesMap.settingsIntegrations,
+        { replace: true },
+      );
+      return;
+    }
+
+    setSearchParams(nextParams, { replace: true });
+  }, [location.pathname, navigate, searchParams, setSearchParams]);
+
+  useEffect(() => {
+    const status = searchParams.get("status");
+
+    if (status !== "success" && status !== "error") {
+      tiktokReturnHandledRef.current = false;
+      return;
+    }
+
+    if (tiktokReturnHandledRef.current) {
+      return;
+    }
+
+    tiktokReturnHandledRef.current = true;
+
+    // Popup callback tab: opener keeps polling and owns toasts/list refresh.
+    if (window.opener && !window.opener.closed) {
+      clearStoredTikTokOAuthSessionId();
+      window.close();
+      return;
+    }
+
+    tiktokOauthRunIdRef.current += 1;
+    stopTikTokOauthPoll({ closePopup: true });
+    clearStoredTikTokOAuthSessionId();
+
+    const finishReturn = async () => {
+      if (status === "success") {
+        try {
+          await store.loadIntegrations({ silent: true, force: true });
+          notification.success({ title: t("integrations.connectSuccess") });
+        } catch (e) {
+          notification.error({
+            title: getApiErrorMessage(e, t("integrations.connectFailed")),
+          });
+        }
+      } else {
+        notification.error({
+          title: t("integrations.tiktokOauth.oauthDenied"),
+        });
+      }
+
+      clearTikTokReturnQuery();
+    };
+
+    void finishReturn();
+  }, [
+    clearTikTokReturnQuery,
+    notification,
+    searchParams,
+    stopTikTokOauthPoll,
+    store,
+    t,
+  ]);
+
+  const connectTikTok = useCallback(async () => {
+    tiktokOauthRunIdRef.current += 1;
+    stopTikTokOauthPoll({ closePopup: true });
+    clearStoredTikTokOAuthSessionId();
+    setSelectedFilter("tiktok");
+
+    const authWindow = openIntegrationAuthWindow({
+      keepOpener: true,
+      popup: true,
+    });
+    const popupAvailable = Boolean(authWindow && !authWindow.closed);
+
+    try {
+      const created = await store.connectIntegration("tiktok");
+      const sessionId = readCreatedOAuthSessionId(created);
+
+      if (!created.url || !sessionId) {
+        closeIntegrationAuthWindow(authWindow);
+        notification.error({
+          title: t("integrations.tiktokOauth.oauthFailed"),
+        });
+        return;
+      }
+
+      storeTikTokOAuthSessionId(sessionId);
+
+      if (popupAvailable) {
+        navigateIntegrationAuthUrl(created.url, authWindow, { popup: true });
+        startTikTokOauthPoll(sessionId, authWindow);
+        return;
+      }
+
+      // Popup blocked — same-tab redirect; backend returns to SPA with ?status=.
+      window.location.assign(created.url);
+    } catch (e) {
+      closeIntegrationAuthWindow(authWindow);
+      clearStoredTikTokOAuthSessionId();
+      notification.error({
+        title: isIntegrationNotAvailableError(e)
+          ? t("integrations.notAvailableYet")
+          : getApiErrorMessage(e, t("integrations.connectFailed")),
+      });
+    }
+  }, [notification, startTikTokOauthPoll, stopTikTokOauthPoll, store, t]);
 
   const waitForTelegramQrConfirmation = useCallback(
     async (session: TelegramQrLoginSession, runId: number) => {
@@ -508,15 +797,7 @@ export function useSettingsIntegrationsController() {
 
     try {
       const created = await store.connectIntegration("instagram");
-      const createdRecord = created as IntegrationItem & {
-        session_id?: unknown;
-      };
-      const sessionIdCandidate =
-        createdRecord.sessionId ?? createdRecord.session_id;
-      const sessionId =
-        typeof sessionIdCandidate === "string" && sessionIdCandidate.trim()
-          ? sessionIdCandidate.trim()
-          : null;
+      const sessionId = readCreatedOAuthSessionId(created);
 
       if (created.url && sessionId) {
         navigateIntegrationAuthUrl(created.url, authWindow, { popup: true });
@@ -715,9 +996,14 @@ export function useSettingsIntegrationsController() {
         return;
       }
 
+      if (type === "tiktok") {
+        await connectTikTok();
+        return;
+      }
+
       notification.error({ title: t("integrations.notAvailableYet") });
     },
-    [notification, openInstagramSetup, startTelegramQrLogin, t],
+    [connectTikTok, notification, openInstagramSetup, startTelegramQrLogin, t],
   );
 
   const closeNovaPoshtaWizard = useCallback(() => {
