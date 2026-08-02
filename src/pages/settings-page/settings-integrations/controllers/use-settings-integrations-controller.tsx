@@ -148,10 +148,41 @@ export function useSettingsIntegrationsController() {
   const tiktokOauthSessionIdRef = useRef<string | null>(null);
   const tiktokOauthRunIdRef = useRef(0);
   const tiktokReturnHandledRef = useRef(false);
+  const [instagramHistorySyncNoticeVisible, setInstagramHistorySyncNoticeVisible] =
+    useState(false);
+  const instagramHistorySyncNoticeTimeoutRef = useRef<number | null>(null);
+
+  const clearInstagramHistorySyncNoticeTimeout = useCallback(() => {
+    if (instagramHistorySyncNoticeTimeoutRef.current != null) {
+      window.clearTimeout(instagramHistorySyncNoticeTimeoutRef.current);
+      instagramHistorySyncNoticeTimeoutRef.current = null;
+    }
+  }, []);
+
+  const dismissInstagramHistorySyncNotice = useCallback(() => {
+    clearInstagramHistorySyncNoticeTimeout();
+    setInstagramHistorySyncNoticeVisible(false);
+  }, [clearInstagramHistorySyncNoticeTimeout]);
+
+  const showInstagramHistorySyncNotice = useCallback(() => {
+    clearInstagramHistorySyncNoticeTimeout();
+    setInstagramHistorySyncNoticeVisible(true);
+    setSelectedFilter("instagram");
+    instagramHistorySyncNoticeTimeoutRef.current = window.setTimeout(() => {
+      setInstagramHistorySyncNoticeVisible(false);
+      instagramHistorySyncNoticeTimeoutRef.current = null;
+    }, 60_000);
+  }, [clearInstagramHistorySyncNoticeTimeout]);
 
   useEffect(() => {
     void store.loadIntegrations();
   }, [store]);
+
+  useEffect(() => {
+    return () => {
+      clearInstagramHistorySyncNoticeTimeout();
+    };
+  }, [clearInstagramHistorySyncNoticeTimeout]);
 
   useEffect(() => {
     if (location.pathname === pagesMap.settingsIntegrationsTiktok) {
@@ -876,6 +907,7 @@ export function useSettingsIntegrationsController() {
         await store.confirmInstagramOAuth({ sessionId, pageId });
         stopInstagramOauthPoll({ closePopup: true });
         setInstagramSetup(initialInstagramSetupState);
+        showInstagramHistorySyncNotice();
         notification.success({ title: t("integrations.connectSuccess") });
       } catch (e) {
         if (isInstagramOAuthSessionExpiredError(e)) {
@@ -895,7 +927,14 @@ export function useSettingsIntegrationsController() {
         }));
       }
     },
-    [instagramSetup.sessionId, notification, stopInstagramOauthPoll, store, t],
+    [
+      instagramSetup.sessionId,
+      notification,
+      showInstagramHistorySyncNotice,
+      stopInstagramOauthPoll,
+      store,
+      t,
+    ],
   );
 
   const normalizedQuery = useMemo(() => query.trim().toLowerCase(), [query]);
@@ -1099,6 +1138,8 @@ export function useSettingsIntegrationsController() {
     startInstagramFacebookLogin,
     confirmInstagramPage,
     restartInstagramSetup,
+    instagramHistorySyncNoticeVisible,
+    dismissInstagramHistorySyncNotice,
     telegramQrModal,
     closeTelegramQrModal,
     retryTelegramQrLogin: startTelegramQrLogin,

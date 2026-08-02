@@ -4,7 +4,7 @@ import {
   EnvelopeSimpleIcon,
   UserPlusIcon,
 } from "@phosphor-icons/react";
-import { Flex, Input, Segmented, Spin, Typography } from "antd";
+import { Alert, Flex, Input, Segmented, Spin, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -15,6 +15,7 @@ import { useEnsureConversationGroupsLoaded } from "@/features/conversation-group
 import { useEnsureIntegrationsLoaded } from "@/features/integrations/model/use-ensure-integrations-loaded";
 import type { ConversationListSegment } from "@/features/conversations/model/conversation-store";
 import { useConversationsStore } from "@/features/conversations/model/use-conversations-store";
+import { instagramApi } from "@/features/instagram/api/instagram-api";
 import { useEnsureWorkspaceMembersLoaded } from "@/features/workspace-members/model/use-ensure-workspace-members-loaded";
 
 import { ConversationRowSkeleton } from "./components/conversation-row-skeleton";
@@ -31,6 +32,18 @@ const { Title } = Typography;
 const SKELETON_ROW_KEYS = [0, 1, 2, 3, 4] as const;
 
 const SEARCH_DEBOUNCE_MS = 400;
+
+let activeInstagramSynchronizationCheck: Promise<boolean> | null = null;
+
+function loadActiveInstagramSynchronizationOnce(): Promise<boolean> {
+  if (activeInstagramSynchronizationCheck == null) {
+    activeInstagramSynchronizationCheck = instagramApi
+      .getActiveSynchronizations()
+      .catch(() => false);
+  }
+
+  return activeInstagramSynchronizationCheck;
+}
 
 export const Conversation = observer(
   ({
@@ -59,10 +72,26 @@ export const Conversation = observer(
       setConversationListKeyword,
     } = useConversationsStore();
     const [searchQuery, setSearchQuery] = useState("");
+    const [instagramSyncInProgress, setInstagramSyncInProgress] =
+      useState(false);
 
     useEffect(() => {
       void loadConversations();
     }, [loadConversations]);
+
+    useEffect(() => {
+      let cancelled = false;
+
+      void loadActiveInstagramSynchronizationOnce().then((isActive) => {
+        if (!cancelled) {
+          setInstagramSyncInProgress(isActive);
+        }
+      });
+
+      return () => {
+        cancelled = true;
+      };
+    }, []);
 
     useEffect(() => {
       const timeoutId = window.setTimeout(() => {
@@ -148,6 +177,16 @@ export const Conversation = observer(
         </Flex>
 
         {listHeaderSlot}
+
+        {instagramSyncInProgress ? (
+          <Alert
+            type="info"
+            showIcon
+            closable
+            onClose={() => setInstagramSyncInProgress(false)}
+            title={t("conversations.instagramSyncInProgress")}
+          />
+        ) : null}
 
         <Flex align="center" gap={8}>
           <Input.Search

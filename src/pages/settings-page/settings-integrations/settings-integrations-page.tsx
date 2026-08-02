@@ -1,4 +1,4 @@
-import { Empty, Flex, Spin } from "antd";
+import { Empty, Flex, Spin, Alert } from "antd";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
 
@@ -87,6 +87,25 @@ export const SettingsIntegrationsPage = observer(() => {
                           )}
                           isDisconnecting={(type, id) =>
                             store.isDisconnecting(type, id)
+                          }
+                          noticeContent={
+                            definition.type === "instagram" &&
+                            controller.instagramHistorySyncNoticeVisible ? (
+                              <Alert
+                                type="info"
+                                showIcon
+                                closable
+                                onClose={
+                                  controller.dismissInstagramHistorySyncNotice
+                                }
+                                title={t(
+                                  "integrations.instagramSetup.historySyncTitle",
+                                )}
+                                description={t(
+                                  "integrations.instagramSetup.historySyncDescription",
+                                )}
+                              />
+                            ) : undefined
                           }
                           setupContent={
                             definition.type === "novaposhta" &&

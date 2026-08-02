@@ -1290,7 +1290,9 @@
       "restart": "Почати знову",
       "noPages": "Для цього Facebook-акаунта не знайдено сторінок Instagram Business.",
       "oauthFailed": "Вхід через Facebook не завершився. Спробуйте ще раз.",
-      "loadPagesFailed": "Не вдалося завантажити сторінки Instagram"
+      "loadPagesFailed": "Не вдалося завантажити сторінки Instagram",
+      "historySyncTitle": "Синхронізуємо повідомлення за останні 7 днів...",
+      "historySyncDescription": "Це може зайняти до 1 хвилини."
     },
     "tiktokOauth": {
       "awaitingOauth": "Завершіть авторизацію TikTok у вікні. Ця сторінка оновиться автоматично.",
@@ -1464,6 +1466,7 @@
     "deleteSuccess": "Розмову видалено",
     "deleteFailed": "Не вдалося видалити розмову",
     "rowActionsAria": "Дії з розмовою",
+    "instagramSyncInProgress": "Синхронізація чатів з Instagram все ще триває. Це може зайняти декілька хвилин.",
     "grouping": {
       "aria": "Групування розмов",
       "title": "Групувати за",

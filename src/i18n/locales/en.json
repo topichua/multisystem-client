@@ -1282,7 +1282,9 @@
       "restart": "Start again",
       "noPages": "No Instagram Business pages were found for this Facebook account.",
       "oauthFailed": "Facebook login did not complete. Try again.",
-      "loadPagesFailed": "Could not load Instagram pages"
+      "loadPagesFailed": "Could not load Instagram pages",
+      "historySyncTitle": "Syncing messages from the last 7 days...",
+      "historySyncDescription": "This may take up to 1 minute."
     },
     "tiktokOauth": {
       "awaitingOauth": "Complete TikTok authorization in the popup. This page updates automatically.",
@@ -1456,6 +1458,7 @@
     "deleteSuccess": "Conversation deleted",
     "deleteFailed": "Failed to delete conversation",
     "rowActionsAria": "Conversation actions",
+    "instagramSyncInProgress": "Instagram chat synchronization is still in progress. This may take a few minutes.",
     "grouping": {
       "aria": "Group conversations",
       "title": "Group by",

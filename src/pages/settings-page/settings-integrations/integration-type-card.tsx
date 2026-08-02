@@ -21,6 +21,7 @@ type IntegrationTypeCardProps = {
   integrations: IntegrationItem[];
   isDisconnecting: (type: IntegrationItem["type"], id: number) => boolean;
   layout?: "desktop" | "mobile";
+  noticeContent?: ReactNode;
   setupContent?: ReactNode;
   onConnectType: (type: IntegrationType) => void;
   onDisconnect: (integration: IntegrationItem) => void;
@@ -33,6 +34,7 @@ export const IntegrationTypeCard = ({
   integrations,
   isDisconnecting,
   layout = "desktop",
+  noticeContent,
   setupContent,
   onConnectType,
   onDisconnect,
@@ -41,6 +43,7 @@ export const IntegrationTypeCard = ({
   const { t } = useTranslation();
   const hasConnections = integrations.length > 0;
   const hasSetupContent = setupContent != null;
+  const hasNoticeContent = noticeContent != null;
   const isMobile = layout === "mobile";
   const canConnectMore = definition.allowMultiple || !hasConnections;
   const showConnectButton =
@@ -126,6 +129,13 @@ export const IntegrationTypeCard = ({
           {showConnectButton && connectButton}
         </S.MobileIntegrationCardHeader>
 
+        {hasNoticeContent ? (
+          <>
+            <S.IntegrationCardDivider />
+            {noticeContent}
+          </>
+        ) : null}
+
         {hasSetupContent ? (
           <>
             <S.IntegrationCardDivider />
@@ -177,6 +187,13 @@ export const IntegrationTypeCard = ({
       </S.IntegrationCardHeader>
 
       <S.IntegrationCardDivider />
+
+      {hasNoticeContent ? (
+        <>
+          {noticeContent}
+          <S.IntegrationCardDivider />
+        </>
+      ) : null}
 
       {hasSetupContent ? (
         <>

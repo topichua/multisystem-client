@@ -15,6 +15,7 @@ import type {
   InstagramPostProductVariantsResponse,
   InstagramProductReferences,
 } from "@/features/instagram/model/instagram.types";
+import { hasActiveInstagramSynchronization } from "@/features/instagram/model/has-active-instagram-synchronization";
 
 const basePath = "/api/instagram";
 const INSTAGRAM_MEDIA_PAGE_SIZE = 5;
@@ -66,6 +67,14 @@ export const instagramApi = {
     const { data } = await apiClient.get<unknown>(`${basePath}/integrations`);
 
     return parseInstagramIntegrationsResponse(data);
+  },
+
+  getActiveSynchronizations: async (): Promise<boolean> => {
+    const { data } = await apiClient.get<unknown>(
+      `${basePath}/synchronizations/active`,
+    );
+
+    return hasActiveInstagramSynchronization(data);
   },
 
   listMedia: async ({

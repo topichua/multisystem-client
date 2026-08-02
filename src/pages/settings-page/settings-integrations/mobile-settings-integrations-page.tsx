@@ -1,5 +1,5 @@
 import { ArrowLeftIcon } from "@phosphor-icons/react";
-import { Flex, Spin } from "antd";
+import { Alert, Flex, Spin } from "antd";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
@@ -70,6 +70,25 @@ export const MobileSettingsIntegrationsPage = observer(() => {
                       store.isDisconnecting(type, id)
                     }
                     layout="mobile"
+                    noticeContent={
+                      definition.type === "instagram" &&
+                      controller.instagramHistorySyncNoticeVisible ? (
+                        <Alert
+                          type="info"
+                          showIcon
+                          closable
+                          onClose={
+                            controller.dismissInstagramHistorySyncNotice
+                          }
+                          title={t(
+                            "integrations.instagramSetup.historySyncTitle",
+                          )}
+                          description={t(
+                            "integrations.instagramSetup.historySyncDescription",
+                          )}
+                        />
+                      ) : undefined
+                    }
                     setupContent={
                       definition.type === "novaposhta" &&
                       controller.novaPoshtaWizardOpen ? (
