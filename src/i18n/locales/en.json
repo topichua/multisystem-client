@@ -1465,6 +1465,7 @@
     "deleteFailed": "Failed to delete conversation",
     "rowActionsAria": "Conversation actions",
     "instagramSyncInProgress": "Instagram chat synchronization is still in progress. This may take a few minutes.",
+    "instagramSyncCompleted": "Syncing was completed",
     "grouping": {
       "aria": "Group conversations",
       "title": "Group by",

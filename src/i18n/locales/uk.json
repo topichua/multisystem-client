@@ -1473,6 +1473,7 @@
     "deleteFailed": "Не вдалося видалити розмову",
     "rowActionsAria": "Дії з розмовою",
     "instagramSyncInProgress": "Синхронізація чатів з Instagram все ще триває. Це може зайняти декілька хвилин.",
+    "instagramSyncCompleted": "Синхронізацію завершено",
     "grouping": {
       "aria": "Групування розмов",
       "title": "Групувати за",

@@ -722,11 +722,15 @@ export class ConversationStore {
     return params;
   };
 
-  loadConversations = async (): Promise<void> => {
-    runInAction(() => {
-      this.listLoading = true;
-      this.listError = null;
-    });
+  loadConversations = async (options?: { silent?: boolean }): Promise<void> => {
+    const silent = options?.silent === true;
+
+    if (!silent) {
+      runInAction(() => {
+        this.listLoading = true;
+        this.listError = null;
+      });
+    }
 
     try {
       const { conversations, counters } = await conversationsApi.list(
@@ -742,9 +746,11 @@ export class ConversationStore {
       });
       throwLoadError("Failed to load conversations", e);
     } finally {
-      runInAction(() => {
-        this.listLoading = false;
-      });
+      if (!silent) {
+        runInAction(() => {
+          this.listLoading = false;
+        });
+      }
     }
   };
 

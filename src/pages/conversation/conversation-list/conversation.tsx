@@ -15,7 +15,7 @@ import { useEnsureConversationGroupsLoaded } from "@/features/conversation-group
 import { useEnsureIntegrationsLoaded } from "@/features/integrations/model/use-ensure-integrations-loaded";
 import type { ConversationListSegment } from "@/features/conversations/model/conversation-store";
 import { useConversationsStore } from "@/features/conversations/model/use-conversations-store";
-import { instagramApi } from "@/features/instagram/api/instagram-api";
+import { useInstagramSyncInProgress } from "@/features/instagram/model/use-instagram-sync-in-progress";
 import { useEnsureWorkspaceMembersLoaded } from "@/features/workspace-members/model/use-ensure-workspace-members-loaded";
 
 import { ConversationRowSkeleton } from "./components/conversation-row-skeleton";
@@ -32,18 +32,6 @@ const { Title } = Typography;
 const SKELETON_ROW_KEYS = [0, 1, 2, 3, 4] as const;
 
 const SEARCH_DEBOUNCE_MS = 400;
-
-let activeInstagramSynchronizationCheck: Promise<boolean> | null = null;
-
-function loadActiveInstagramSynchronizationOnce(): Promise<boolean> {
-  if (activeInstagramSynchronizationCheck == null) {
-    activeInstagramSynchronizationCheck = instagramApi
-      .getActiveSynchronizations()
-      .catch(() => false);
-  }
-
-  return activeInstagramSynchronizationCheck;
-}
 
 export const Conversation = observer(
   ({
@@ -72,26 +60,12 @@ export const Conversation = observer(
       setConversationListKeyword,
     } = useConversationsStore();
     const [searchQuery, setSearchQuery] = useState("");
-    const [instagramSyncInProgress, setInstagramSyncInProgress] =
-      useState(false);
+    const { instagramSyncInProgress, dismissInstagramSyncNotice } =
+      useInstagramSyncInProgress();
 
     useEffect(() => {
       void loadConversations();
     }, [loadConversations]);
-
-    useEffect(() => {
-      let cancelled = false;
-
-      void loadActiveInstagramSynchronizationOnce().then((isActive) => {
-        if (!cancelled) {
-          setInstagramSyncInProgress(isActive);
-        }
-      });
-
-      return () => {
-        cancelled = true;
-      };
-    }, []);
 
     useEffect(() => {
       const timeoutId = window.setTimeout(() => {
@@ -183,7 +157,7 @@ export const Conversation = observer(
             type="info"
             showIcon
             closable
-            onClose={() => setInstagramSyncInProgress(false)}
+            onClose={dismissInstagramSyncNotice}
             title={t("conversations.instagramSyncInProgress")}
           />
         ) : null}
