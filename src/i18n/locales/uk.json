@@ -1384,6 +1384,12 @@
     "expandGroupsPaneAria": "Розгорнути панель груп",
     "noGroupsEmpty": "Немає груп",
     "updateConversationGroupError": "Не вдалося оновити групу розмови",
+    "systemKeys": {
+      "new": "Новий",
+      "processing": "Обробка",
+      "archived": "Архів",
+      "spam": "Спам"
+    },
     "mobile": {
       "backToSettingsAria": "До налаштувань",
       "createGroupAria": "Створити групу",

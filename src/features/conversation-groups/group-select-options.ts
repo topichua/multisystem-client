@@ -1,6 +1,9 @@
+import type { TFunction } from "i18next";
+
 import type { ConversationGroup } from "@/features/conversation-groups/model/conversation-group.types";
 import {
   type FooterSystemGroupKey,
+  getConversationGroupDisplayName,
   isFooterSystemGroup,
 } from "@/features/conversation-groups/model/system-groups";
 
@@ -15,14 +18,16 @@ export type GroupSelectOptionData = {
 
 const toGroupSelectOption = (
   group: ConversationGroup,
+  t: TFunction,
 ): GroupSelectOptionData => ({
   value: group.id,
-  label: group.name,
+  label: getConversationGroupDisplayName(group, t),
   color: group.color,
 });
 
 export const toGroupSelectOptions = (
   groups: ConversationGroup[],
+  t: TFunction,
 ): GroupSelectOptionData[] => {
   const sortedGroups = [...groups].sort(
     (firstGroup, secondGroup) => firstGroup.sortOrder - secondGroup.sortOrder,
@@ -33,9 +38,9 @@ export const toGroupSelectOptions = (
   const footerSystemGroups = sortedGroups.filter(isFooterSystemGroup);
 
   return [
-    ...regularGroups.map(toGroupSelectOption),
+    ...regularGroups.map((group) => toGroupSelectOption(group, t)),
     ...footerSystemGroups.map((group) => ({
-      ...toGroupSelectOption(group),
+      ...toGroupSelectOption(group, t),
       footerSystemKey: group.systemKey,
     })),
   ];

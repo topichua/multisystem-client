@@ -56,8 +56,8 @@ export const ConversationGroupSelect = observer(
     const [saving, setSaving] = useState(false);
 
     const options = useMemo(
-      () => toGroupSelectOptions(groupsStore.groups),
-      [groupsStore.groups],
+      () => toGroupSelectOptions(groupsStore.groups, t),
+      [groupsStore.groups, t],
     );
     const selectOptions = useMemo(() => {
       const regularOptions = options.filter(

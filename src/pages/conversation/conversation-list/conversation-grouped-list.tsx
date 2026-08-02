@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { UserAvatar } from "@/components/user-avatar";
 import { InstagramLogoIcon } from "@/components/icons/instagram/instagram-logo-icon";
 import { TelegramLogoIcon } from "@/components/icons/telegram/telegram-logo-icon";
+import { getConversationGroupSystemNameKey } from "@/features/conversation-groups/model/system-groups";
 import type {
   ConversationGroupBucket,
   ConversationGroupingBy,
@@ -31,6 +32,24 @@ const getBucketColor = (
   bucket: ConversationGroupBucket,
   fallbackColor: string,
 ): string => bucket.meta.color.trim() || fallbackColor;
+
+const getBucketLabel = (
+  groupingBy: ConversationGroupingBy,
+  bucket: ConversationGroupBucket,
+  t: (key: string) => string,
+): string => {
+  if (groupingBy === "status") {
+    const systemNameKey = getConversationGroupSystemNameKey(
+      bucket.meta.systemKey,
+    );
+
+    if (systemNameKey) {
+      return t(systemNameKey);
+    }
+  }
+
+  return bucket.label;
+};
 
 const isUnassignedResponsibleBucket = (
   bucket: ConversationGroupBucket,
@@ -112,10 +131,11 @@ const renderBucketLabel = (
   groupingBy: ConversationGroupingBy,
   bucket: ConversationGroupBucket,
   fallbackColor: string,
+  label: string,
 ) => (
   <S.GroupingHeaderLabel>
     {renderBucketPrefix(groupingBy, bucket, fallbackColor)}
-    <S.GroupingHeaderName>{bucket.label}</S.GroupingHeaderName>
+    <S.GroupingHeaderName>{label}</S.GroupingHeaderName>
   </S.GroupingHeaderLabel>
 );
 
@@ -179,7 +199,12 @@ export const ConversationGroupedList = observer(
 
         return {
           key: bucket.key,
-          label: renderBucketLabel(groupingBy, bucket, token.colorPrimary),
+          label: renderBucketLabel(
+            groupingBy,
+            bucket,
+            token.colorPrimary,
+            getBucketLabel(groupingBy, bucket, t),
+          ),
           extra: (
             <Badge
               count={displayCount}

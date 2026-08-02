@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 import { CenteredSpinner } from "@/components/loading/centered-spinner";
 import {
   type FooterSystemGroupKey,
+  getConversationGroupDisplayName,
   isFooterSystemGroup,
 } from "@/features/conversation-groups/model/system-groups";
 import { useConversationGroupsStore } from "@/features/conversation-groups/model/use-conversation-groups-store";
@@ -123,7 +124,7 @@ export const ConversationGroupsPane = observer(
                       key={group.id}
                       color={group.color}
                       count={group.counter}
-                      name={group.name}
+                      name={getConversationGroupDisplayName(group, t)}
                       selected={selectedGroupId === group.id}
                       onClick={() => handleSelectGroup(group.id)}
                     />
@@ -137,7 +138,7 @@ export const ConversationGroupsPane = observer(
                           key={group.id}
                           count={group.counter}
                           icon={footerSystemGroupIcons[group.systemKey]}
-                          name={group.name}
+                          name={getConversationGroupDisplayName(group, t)}
                           selected={selectedGroupId === group.id}
                           onClick={() => handleSelectGroup(group.id)}
                         />

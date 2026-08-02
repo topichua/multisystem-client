@@ -1376,6 +1376,12 @@
     "expandGroupsPaneAria": "Expand groups pane",
     "noGroupsEmpty": "No groups",
     "updateConversationGroupError": "Could not update conversation group",
+    "systemKeys": {
+      "new": "New",
+      "processing": "Processing",
+      "archived": "Archived",
+      "spam": "Spam"
+    },
     "mobile": {
       "backToSettingsAria": "Back to settings",
       "createGroupAria": "Create group",

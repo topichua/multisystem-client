@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import { CenteredSpinner } from "@/components/loading/centered-spinner";
+import { getConversationGroupDisplayName } from "@/features/conversation-groups/model/system-groups";
 import { useConversationGroupsStore } from "@/features/conversation-groups/model/use-conversation-groups-store";
 import { useEnsureConversationGroupsLoaded } from "@/features/conversation-groups/model/use-ensure-conversation-groups-loaded";
 import { useConversationsStore } from "@/features/conversations/model/use-conversations-store";
@@ -63,7 +64,9 @@ const MobileConversationGroupFilters = observer(() => {
             onClick={() => handleSelectGroup(group.id)}
           >
             <S.GroupDot $color={group.color} aria-hidden="true" />
-            <S.GroupName>{group.name}</S.GroupName>
+            <S.GroupName>
+              {getConversationGroupDisplayName(group, t)}
+            </S.GroupName>
             <S.GroupCount>{group.counter}</S.GroupCount>
           </S.GroupChip>
         ))}

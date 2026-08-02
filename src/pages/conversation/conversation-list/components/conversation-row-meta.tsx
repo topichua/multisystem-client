@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 
 import { UserAvatar } from "@/components/user-avatar";
 import type { ConversationGroup } from "@/features/conversation-groups/model/conversation-group.types";
+import { getConversationGroupDisplayName } from "@/features/conversation-groups/model/system-groups";
 import type { ConversationAssignee } from "@/features/conversations/model/types";
 
 import { ConversationRowRightColumn } from "./conversation-row-layout";
@@ -11,7 +12,7 @@ import { ConversationRowRightColumn } from "./conversation-row-layout";
 const { Text } = Typography;
 
 type ConversationGroupLabelProps = {
-  group: Pick<ConversationGroup, "name" | "color"> | null;
+  group: Pick<ConversationGroup, "name" | "color" | "systemKey"> | null;
 };
 
 type ConversationAssigneeBadgeProps = {
@@ -20,7 +21,7 @@ type ConversationAssigneeBadgeProps = {
 };
 
 type ConversationRowMetaProps = {
-  group: Pick<ConversationGroup, "name" | "color"> | null;
+  group: Pick<ConversationGroup, "name" | "color" | "systemKey"> | null;
   assignee: ConversationAssignee | null;
   emptyAssigneeColor: string;
 };
@@ -87,28 +88,32 @@ const ConversationAssigneeBadge = ({
   );
 };
 
-const ConversationGroupLabel = ({ group }: ConversationGroupLabelProps) => (
-  <Flex
-    align="center"
-    gap={4}
-    style={{
-      flex: 1,
-      minWidth: 0,
-    }}
-  >
-    {group && (
-      <>
-        <Badge color={group.color} />
-        <Text
-          ellipsis
-          style={{
-            fontSize: 12,
-            color: group.color,
-          }}
-        >
-          {group.name}
-        </Text>
-      </>
-    )}
-  </Flex>
-);
+const ConversationGroupLabel = ({ group }: ConversationGroupLabelProps) => {
+  const { t } = useTranslation();
+
+  return (
+    <Flex
+      align="center"
+      gap={4}
+      style={{
+        flex: 1,
+        minWidth: 0,
+      }}
+    >
+      {group && (
+        <>
+          <Badge color={group.color} />
+          <Text
+            ellipsis
+            style={{
+              fontSize: 12,
+              color: group.color,
+            }}
+          >
+            {getConversationGroupDisplayName(group, t)}
+          </Text>
+        </>
+      )}
+    </Flex>
+  );
+};
