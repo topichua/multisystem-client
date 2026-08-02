@@ -1,13 +1,19 @@
-import { Flex, theme } from "antd";
+import { Flex, Modal, theme } from "antd";
+import type { MenuProps } from "antd";
 import { observer } from "mobx-react-lite";
 import type { KeyboardEvent, SyntheticEvent } from "react";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router";
 
+import { pagesMap } from "@/app/router/pages-map";
+import { getApiErrorMessage } from "@/api/get-api-error-message";
 import { useConversationGroupsStore } from "@/features/conversation-groups/model/use-conversation-groups-store";
 import type { Conversation as ConversationModel } from "@/features/conversations/model/types";
+import { useConversationsStore } from "@/features/conversations/model/use-conversations-store";
 import { getWorkspaceMemberAssignee } from "@/features/conversations/utils/conversation-assignee";
 import { useWorkspaceMembersStore } from "@/features/workspace-members/model/use-workspace-members-store";
+import { useNotification } from "@/shared/components/notification/use-notification";
 import { formatRelativeTimeShort } from "@/utils/date-time";
 
 import { ConversationRowActions } from "./components/conversation-row-actions";
@@ -36,17 +42,67 @@ export const ConversationRow = observer(
 
     const { t } = useTranslation();
     const { token } = theme.useToken();
+    const navigate = useNavigate();
+    const notification = useNotification();
+    const conversationsStore = useConversationsStore();
     const groupsStore = useConversationGroupsStore();
     const membersStore = useWorkspaceMembersStore();
 
     const hasUnreadMessages = conversation.unreadCount > 0;
     const showActions = isHovered || isMenuOpen;
-    const conversationCardMenuItems = useMemo(
+
+    const handleDelete = useCallback(() => {
+      Modal.confirm({
+        title: t("conversations.deleteConfirmTitle"),
+        content: t("conversations.deleteConfirmContent", {
+          name: conversation.participant.name,
+        }),
+        okText: t("conversations.deleteConfirmOk"),
+        okType: "danger",
+        cancelText: t("conversations.deleteConfirmCancel"),
+        onOk: async () => {
+          try {
+            await conversationsStore.deleteConversation(conversation.id);
+
+            if (conversationId === String(conversation.id)) {
+              navigate(pagesMap.conversations, { replace: true });
+            }
+
+            notification.success({
+              title: t("conversations.deleteSuccess"),
+            });
+          } catch (e) {
+            notification.error({
+              title: getApiErrorMessage(e, t("conversations.deleteFailed")),
+            });
+            return Promise.reject();
+          }
+        },
+      });
+    }, [
+      conversation.id,
+      conversation.participant.name,
+      conversationId,
+      conversationsStore,
+      navigate,
+      notification,
+      t,
+    ]);
+
+    const conversationCardMenuItems = useMemo<MenuProps["items"]>(
       () => [
         { key: "mute", label: t("conversations.markRead") },
-        { key: "delete", label: t("conversations.delete"), danger: true },
+        {
+          key: "delete",
+          label: t("conversations.delete"),
+          danger: true,
+          onClick: ({ domEvent }) => {
+            domEvent.stopPropagation();
+            handleDelete();
+          },
+        },
       ],
-      [t],
+      [handleDelete, t],
     );
     const messagePreview = useMemo(() => {
       if (!conversation.lastMessage) {

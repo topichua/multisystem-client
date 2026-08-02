@@ -1,5 +1,5 @@
 import { CheckIcon } from "@phosphor-icons/react";
-import { Alert, Button, Flex, Select, Typography } from "antd";
+import { Alert, Button, Flex, Select, Spin, Typography } from "antd";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -116,9 +116,13 @@ function InstagramSelectPageSetup({
       </S.InstagramPageField>
 
       <S.InstagramSetupFooter>
-        <Button disabled={confirming} onClick={onCancel}>
-          {t("integrations.instagramSetup.cancel")}
-        </Button>
+        <S.FacebookLogoutButton
+          disabled={confirming}
+          icon={<FacebookLogoIcon size={16} />}
+          onClick={onCancel}
+        >
+          {t("integrations.instagramSetup.logout")}
+        </S.FacebookLogoutButton>
         <Button
           type="primary"
           icon={<CheckIcon />}
@@ -135,9 +139,7 @@ function InstagramSelectPageSetup({
             }
           }}
         >
-          <Flex align="center" gap={6}>
-            {t("integrations.instagramSetup.connect")}
-          </Flex>
+          {t("integrations.instagramSetup.connect")}
         </Button>
       </S.InstagramSetupFooter>
     </S.InstagramSetup>
@@ -175,20 +177,37 @@ export function InstagramIntegrationSetup({
           {t("integrations.instagramSetup.facebookHint")}
         </Typography.Text>
 
-        <S.FacebookContinueButton
-          block
-          loading={connecting}
-          disabled={connecting || awaitingOauth}
-          icon={<FacebookLogoIcon size={16} />}
-          onClick={onContinueWithFacebook}
-        >
-          {t("integrations.instagramSetup.continueWithFacebook")}
-        </S.FacebookContinueButton>
+        {awaitingOauth ? (
+          <Flex vertical gap={12} align="center">
+            <Spin />
+            <Typography.Text type="secondary">
+              {t("integrations.instagramSetup.awaitingOauth")}
+            </Typography.Text>
+            <S.FacebookLogoutButton
+              icon={<FacebookLogoIcon size={16} />}
+              onClick={onCancel}
+            >
+              {t("integrations.instagramSetup.logout")}
+            </S.FacebookLogoutButton>
+          </Flex>
+        ) : (
+          <>
+            <S.FacebookContinueButton
+              block
+              loading={connecting}
+              disabled={connecting}
+              icon={<FacebookLogoIcon size={16} />}
+              onClick={onContinueWithFacebook}
+            >
+              {t("integrations.instagramSetup.continueWithFacebook")}
+            </S.FacebookContinueButton>
 
-        {awaitingOauth && (
-          <Typography.Text type="secondary">
-            {t("integrations.instagramSetup.awaitingOauth")}
-          </Typography.Text>
+            <S.InstagramSetupFooter>
+              <Button disabled={connecting} onClick={onCancel}>
+                {t("integrations.instagramSetup.cancel")}
+              </Button>
+            </S.InstagramSetupFooter>
+          </>
         )}
       </S.InstagramSetup>
     );

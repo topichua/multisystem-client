@@ -546,6 +546,10 @@ export const conversationsApi = {
     return undefined;
   },
 
+  delete: async (conversationId: string | number): Promise<void> => {
+    await apiClient.delete(`${basePath}/${encodeURIComponent(String(conversationId))}`);
+  },
+
   getMessages: async (
     conversationId: string,
     params?: GetMessagesParams,

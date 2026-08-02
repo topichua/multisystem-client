@@ -6,6 +6,7 @@ import { useLocation, useNavigate, useSearchParams } from "react-router";
 import { pagesMap } from "@/app/router/pages-map";
 import { getApiErrorMessage } from "@/api/get-api-error-message";
 import { isInstagramOAuthSessionExpiredError } from "@/features/integrations/is-instagram-oauth-session-expired";
+import { logoutFacebookSdkSession } from "@/features/integrations/logout-facebook-sdk-session";
 import {
   closeIntegrationAuthWindow,
   navigateIntegrationAuthUrl,
@@ -34,7 +35,7 @@ import {
 import type { TelegramQrLoginModalStatus } from "../telegram-qr-login-modal";
 
 const TELEGRAM_QR_LOGIN_TIMEOUT_MS = 90_000;
-const INSTAGRAM_OAUTH_POLL_INTERVAL_MS = 2_500;
+const INSTAGRAM_OAUTH_POLL_INTERVAL_MS = 2_000;
 const TIKTOK_OAUTH_POLL_INTERVAL_MS = 2_000;
 const TIKTOK_OAUTH_SESSION_STORAGE_KEY = "tiktok-oauth-session-id";
 
@@ -198,6 +199,16 @@ export function useSettingsIntegrationsController() {
     stopInstagramOauthPoll({ closePopup: true });
     setInstagramSetup(initialInstagramSetupState);
   }, [stopInstagramOauthPoll]);
+
+  /**
+   * Abandons an in-progress Instagram connect (before confirm).
+   * Stops polling, clears pending session/UI, and logs out of FB SDK when present.
+   * Does not call DELETE /integrations/instagram/:id and does not clear app JWT.
+   */
+  const cancelInstagramConnectFlow = useCallback(async () => {
+    closeInstagramSetup();
+    await logoutFacebookSdkSession();
+  }, [closeInstagramSetup]);
 
   const pollInstagramOAuthSession = useCallback(
     async (sessionId: string, runId: number) => {
@@ -771,6 +782,17 @@ export function useSettingsIntegrationsController() {
     });
   }, [stopInstagramOauthPoll]);
 
+  const restartInstagramSetup = useCallback(async () => {
+    instagramOauthRunIdRef.current += 1;
+    stopInstagramOauthPoll({ closePopup: true });
+    await logoutFacebookSdkSession();
+    setInstagramSetup({
+      ...initialInstagramSetupState,
+      open: true,
+      stage: "facebook_login",
+    });
+  }, [stopInstagramOauthPoll]);
+
   const startInstagramFacebookLogin = useCallback(async () => {
     instagramOauthRunIdRef.current += 1;
     stopInstagramOauthPoll({ closePopup: true });
@@ -1073,9 +1095,10 @@ export function useSettingsIntegrationsController() {
     closeManualPaymentForm,
     instagramSetup,
     closeInstagramSetup,
+    cancelInstagramConnectFlow,
     startInstagramFacebookLogin,
     confirmInstagramPage,
-    restartInstagramSetup: openInstagramSetup,
+    restartInstagramSetup,
     telegramQrModal,
     closeTelegramQrModal,
     retryTelegramQrLogin: startTelegramQrLogin,

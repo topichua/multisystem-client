@@ -1182,6 +1182,83 @@ export class ConversationStore {
     }
   };
 
+  deleteConversation = async (
+    conversationId: string | number,
+  ): Promise<void> => {
+    const id = String(conversationId);
+    const existing = this.conversations.find((item) => String(item.id) === id);
+
+    await conversationsApi.delete(id);
+
+    runInAction(() => {
+      this.conversations = this.conversations.filter(
+        (item) => String(item.id) !== id,
+      );
+
+      const nextGrouped: Record<string, Conversation[]> = {};
+      const decrementedGroupingKeys = new Set<string>();
+
+      for (const [key, items] of Object.entries(
+        this.groupedConversationsByKey,
+      )) {
+        const filtered = items.filter((item) => String(item.id) !== id);
+
+        if (filtered.length !== items.length) {
+          decrementedGroupingKeys.add(key);
+        }
+
+        nextGrouped[key] = filtered;
+      }
+
+      this.groupedConversationsByKey = nextGrouped;
+      this.conversationGroupingBuckets =
+        this.conversationGroupingBuckets.map((bucket) =>
+          decrementedGroupingKeys.has(bucket.key)
+            ? { ...bucket, count: Math.max(0, bucket.count - 1) }
+            : bucket,
+        );
+
+      const {
+        [id]: _removedMessages,
+        ...restMessages
+      } = this.messagesByConversationId;
+      this.messagesByConversationId = restMessages;
+
+      const {
+        [id]: _removedPaging,
+        ...restPaging
+      } = this.messagesPagingByConversationId;
+      this.messagesPagingByConversationId = restPaging;
+
+      const {
+        [id]: _removedSuggestions,
+        ...restSuggestions
+      } = this.productSuggestionsByConversationId;
+      this.productSuggestionsByConversationId = restSuggestions;
+
+      const {
+        [id]: _removedSuggestionsError,
+        ...restSuggestionsErrors
+      } = this.productSuggestionsErrorByConversationId;
+      this.productSuggestionsErrorByConversationId = restSuggestionsErrors;
+
+      if (existing) {
+        this.listCounters = {
+          total: Math.max(0, this.listCounters.total - 1),
+          unread: Math.max(
+            0,
+            this.listCounters.unread - (existing.unreadCount > 0 ? 1 : 0),
+          ),
+          withoutResponsible: Math.max(
+            0,
+            this.listCounters.withoutResponsible -
+              (existing.responsibleMemberId == null ? 1 : 0),
+          ),
+        };
+      }
+    });
+  };
+
   upsertMessage = (
     conversationId: string,
     dto: InstagramMessageDto,

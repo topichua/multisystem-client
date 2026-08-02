@@ -141,8 +141,12 @@ export const SettingsIntegrationsPage = observer(() => {
                                 onConfirm={(pageId) => {
                                   void controller.confirmInstagramPage(pageId);
                                 }}
-                                onCancel={controller.closeInstagramSetup}
-                                onRestart={controller.restartInstagramSetup}
+                                onCancel={() => {
+                                  void controller.cancelInstagramConnectFlow();
+                                }}
+                                onRestart={() => {
+                                  void controller.restartInstagramSetup();
+                                }}
                               />
                             ) : undefined
                           }

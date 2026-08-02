@@ -373,6 +373,31 @@ export const FacebookContinueButton = styled(Button)`
   }
 `;
 
+export const FacebookLogoutButton = styled(Button)`
+  && {
+    height: 36px;
+    border: 0;
+    background: #1877f2;
+    color: #fff;
+    font-weight: 500;
+    font-size: ${({ theme }) => theme.fontSize.small};
+    box-shadow: none;
+  }
+
+  &&:hover,
+  &&:focus {
+    background: #166fe5 !important;
+    color: #fff !important;
+    box-shadow: none;
+  }
+
+  &&:disabled {
+    background: #1877f2;
+    color: #fff;
+    opacity: 0.65;
+  }
+`;
+
 export const InstagramPageField = styled.div`
   display: flex;
   flex-direction: column;
