@@ -7,7 +7,6 @@ import {
   type CreateStockCorrectionResponse,
   type CreateStockPurchaseRequest,
   type CreateStockPurchaseResponse,
-  type CreateStockSupplyItem,
   type CreateStockSupplyRequest,
   type CreateStockSupplyResponse,
   type GetInventoryHistoryMovementsParams,
@@ -24,8 +23,10 @@ import {
   STOCK_SUPPLIES_DEFAULT_LIMIT,
   type StockSuppliesResponse,
   type StockSupplyCreatedBy,
+  type StockSupplyLineItem,
   type StockSupplyListItem,
   type StockSupplyStatus,
+  type UpdateStockSupplyRequest,
 } from "../model/inventory.types";
 
 const basePath = "/inventory";
@@ -90,6 +91,7 @@ const normalizeInventoryHistoryItem = (
       kind: "supply",
       id: Number(record.id ?? 0),
       type: "supply",
+      name: typeof record.name === "string" ? record.name : null,
       createdAt: String(record.createdAt ?? ""),
       comment: typeof record.comment === "string" ? record.comment : null,
       user:
@@ -175,9 +177,7 @@ const normalizeStockSupplyCreatedBy = (
   };
 };
 
-const normalizeStockSupplyLine = (
-  raw: unknown,
-): CreateStockSupplyItem | null => {
+const normalizeStockSupplyLine = (raw: unknown): StockSupplyLineItem | null => {
   if (!raw || typeof raw !== "object") {
     return null;
   }
@@ -189,6 +189,11 @@ const normalizeStockSupplyLine = (
     productVariantId: Number(record.productVariantId ?? 0),
     quantity: Number(record.quantity ?? 0),
     buyPrice: Number(record.buyPrice ?? 0),
+    productName:
+      typeof record.productName === "string" ? record.productName : null,
+    variantName:
+      typeof record.variantName === "string" ? record.variantName : null,
+    sku: typeof record.sku === "string" ? record.sku : null,
   };
 };
 
@@ -203,7 +208,7 @@ const normalizeStockSupplyListItem = (
   const items = Array.isArray(record.items)
     ? record.items
         .map(normalizeStockSupplyLine)
-        .filter((item): item is CreateStockSupplyItem => item != null)
+        .filter((item): item is StockSupplyLineItem => item != null)
     : [];
 
   return {
@@ -219,6 +224,16 @@ const normalizeStockSupplyListItem = (
     totalSum: Number(record.totalSum ?? 0),
     items,
   };
+};
+
+const requireStockSupply = (data: unknown): StockSupplyListItem => {
+  const supply = normalizeStockSupplyListItem(data);
+
+  if (!supply) {
+    throw new Error("Invalid stock supply response");
+  }
+
+  return supply;
 };
 
 const normalizeStockSuppliesResponse = (
@@ -341,5 +356,37 @@ export const inventoryApi = {
     );
 
     return normalizeStockSuppliesResponse(data, limit, offset);
+  },
+
+  getStockSupply: async (id: number): Promise<StockSupplyListItem> => {
+    const { data } = await apiClient.get<unknown>(
+      `${basePath}/stock/supplies/${id}`,
+    );
+
+    return requireStockSupply(data);
+  },
+
+  updateStockSupply: async (
+    id: number,
+    payload: UpdateStockSupplyRequest,
+  ): Promise<StockSupplyListItem> => {
+    const { data } = await apiClient.patch<unknown>(
+      `${basePath}/stock/supplies/${id}`,
+      payload,
+    );
+
+    return requireStockSupply(data);
+  },
+
+  applyStockSupply: async (id: number): Promise<StockSupplyListItem> => {
+    const { data } = await apiClient.post<unknown>(
+      `${basePath}/stock/supplies/${id}/apply`,
+    );
+
+    return requireStockSupply(data);
+  },
+
+  deleteStockSupply: async (id: number): Promise<void> => {
+    await apiClient.delete(`${basePath}/stock/supplies/${id}`);
   },
 };

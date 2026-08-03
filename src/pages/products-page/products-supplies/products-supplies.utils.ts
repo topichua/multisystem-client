@@ -1,7 +1,9 @@
 import type { TFunction } from "i18next";
 
 import type {
+  InventoryHistorySupplyItem,
   StockSupplyListBy,
+  StockSupplyListItem,
   StockSupplyStatus,
 } from "@/features/inventory/model/inventory.types";
 import { formatDateTimeNumeric } from "@/utils/date-time";
@@ -34,3 +36,29 @@ export const getSuppliesStatusTabLabel = (
 export const formatSupplyDateTime = (
   value: string | null | undefined,
 ): string => (value ? formatDateTimeNumeric(value) : "") || "—";
+
+export const toInventoryHistorySupplyItem = (
+  supply: StockSupplyListItem,
+): InventoryHistorySupplyItem => ({
+  kind: "supply",
+  id: supply.id,
+  type: "supply",
+  name: supply.name,
+  createdAt: supply.createdAt,
+  comment: supply.comment,
+  user: supply.createdBy,
+  itemsCount: supply.positionsCount,
+  totalQuantityChange: supply.totalQuantity,
+  totalPurchaseCost: supply.totalSum,
+  items: supply.items.map((line) => ({
+    productId: line.productId,
+    productName: line.productName?.trim() || `#${line.productId}`,
+    variantId: line.productVariantId,
+    variantName: line.variantName?.trim() || `#${line.productVariantId}`,
+    sku: line.sku ?? null,
+    quantityChange: line.quantity,
+    purchasePrice: line.buyPrice,
+    stockBefore: 0,
+    stockAfter: 0,
+  })),
+});

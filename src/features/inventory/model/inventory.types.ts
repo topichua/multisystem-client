@@ -101,6 +101,12 @@ export type CreateStockSupplyItem = {
   buyPrice: number;
 };
 
+export type StockSupplyLineItem = CreateStockSupplyItem & {
+  productName?: string | null;
+  variantName?: string | null;
+  sku?: string | null;
+};
+
 export type CreateStockSupplyRequest = {
   name: string;
   items: CreateStockSupplyItem[];
@@ -127,6 +133,12 @@ export type CreateStockSupplyResponse = {
   lines: CreateStockSupplyLine[];
 };
 
+export type UpdateStockSupplyRequest = {
+  name: string;
+  items: CreateStockSupplyItem[];
+  comment: string;
+};
+
 export const STOCK_SUPPLIES_DEFAULT_LIMIT = 20;
 
 export type StockSupplyStatus = "pending" | "applied";
@@ -149,7 +161,7 @@ export type StockSupplyListItem = {
   positionsCount: number;
   totalQuantity: number;
   totalSum: number;
-  items: CreateStockSupplyItem[];
+  items: StockSupplyLineItem[];
 };
 
 export type GetStockSuppliesParams = {
@@ -255,6 +267,7 @@ export type InventoryHistorySupplyItem = {
   kind: "supply";
   id: number;
   type: "supply";
+  name?: string | null;
   createdAt: string;
   comment: string | null;
   user: InventoryMovementUser | null;

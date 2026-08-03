@@ -12,6 +12,7 @@ type StockSupplySelectedSectionProps = {
   name: string;
   comment: string;
   immediatelyApply: boolean;
+  showImmediatelyApply: boolean;
   submitError: string | null;
   onNameChange: (value: string) => void;
   onCommentChange: (value: string) => void;
@@ -30,6 +31,7 @@ export const StockSupplySelectedSection = ({
   name,
   comment,
   immediatelyApply,
+  showImmediatelyApply,
   submitError,
   onNameChange,
   onCommentChange,
@@ -78,7 +80,9 @@ export const StockSupplySelectedSection = ({
     </S.SelectedLinesList>
 
     <Flex vertical gap={8}>
-      <Text>{t("products.stockSupply.nameLabel")}</Text>
+      <Text>
+        {t("products.stockSupply.nameLabel")} <Text type="danger">*</Text>
+      </Text>
       <Input
         value={name}
         placeholder={t("products.stockSupply.namePlaceholder")}
@@ -96,12 +100,14 @@ export const StockSupplySelectedSection = ({
       />
     </Flex>
 
-    <Checkbox
-      checked={immediatelyApply}
-      onChange={(event) => onImmediatelyApplyChange(event.target.checked)}
-    >
-      {t("products.stockSupply.immediatelyApplyLabel")}
-    </Checkbox>
+    {showImmediatelyApply && (
+      <Checkbox
+        checked={immediatelyApply}
+        onChange={(event) => onImmediatelyApplyChange(event.target.checked)}
+      >
+        {t("products.stockSupply.immediatelyApplyLabel")}
+      </Checkbox>
+    )}
 
     {submitError && <Alert type="error" title={submitError} showIcon />}
   </S.SupplyColumn>

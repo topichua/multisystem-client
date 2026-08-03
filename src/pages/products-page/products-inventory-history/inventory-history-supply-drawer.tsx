@@ -36,6 +36,8 @@ type InventoryHistorySupplyDrawerProps = {
   open: boolean;
   item: InventoryHistorySupplyItem | null;
   onClose: () => void;
+  /** Hide stock before/after when data is not available (e.g. supplies list). */
+  hideStockColumn?: boolean;
 };
 
 function getSupplyTotalCost(item: InventoryHistorySupplyItem): number | null {
@@ -58,14 +60,15 @@ export const InventoryHistorySupplyDrawer = ({
   open,
   item,
   onClose,
+  hideStockColumn = false,
 }: InventoryHistorySupplyDrawerProps) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const isMobileViewport = useIsMobileViewport();
   const currency = useWorkspaceSettingsStore().currency ?? "UAH";
 
-  const columns = useMemo<TableColumnsType<InventoryHistorySupplyLine>>(
-    () => [
+  const columns = useMemo<TableColumnsType<InventoryHistorySupplyLine>>(() => {
+    const nextColumns: TableColumnsType<InventoryHistorySupplyLine> = [
       {
         title: t("products.inventoryHistory.drawer.productVariant"),
         key: "productVariant",
@@ -90,7 +93,10 @@ export const InventoryHistorySupplyDrawer = ({
           </Text>
         ),
       },
-      {
+    ];
+
+    if (!hideStockColumn) {
+      nextColumns.push({
         title: t("products.inventoryHistory.drawer.stock"),
         key: "stock",
         width: 110,
@@ -100,32 +106,38 @@ export const InventoryHistorySupplyDrawer = ({
             <Text strong>{formatNumber(line.stockAfter)}</Text>
           </>
         ),
-      },
-      {
-        title: t("products.inventoryHistory.drawer.price"),
-        key: "price",
-        width: 90,
-        render: (_, line) => (
-          <Text>
-            {line.purchasePrice != null
-              ? formatMoney(line.purchasePrice, currency)
-              : "—"}
-          </Text>
-        ),
-      },
-    ],
-    [currency, t, token.colorSuccess],
-  );
+      });
+    }
+
+    nextColumns.push({
+      title: t("products.inventoryHistory.drawer.price"),
+      key: "price",
+      width: 90,
+      render: (_, line) => (
+        <Text>
+          {line.purchasePrice != null
+            ? formatMoney(line.purchasePrice, currency)
+            : "—"}
+        </Text>
+      ),
+    });
+
+    return nextColumns;
+  }, [currency, hideStockColumn, t, token.colorSuccess]);
 
   if (!item) {
     return null;
   }
 
   const totalCost = getSupplyTotalCost(item);
+  const supplyName = item.name?.trim() || "";
+  const title = supplyName
+    ? `${getMovementTitle(item.type, t)} - ${supplyName}`
+    : getMovementTitle(item.type, t);
   const meta = [
     formatInventoryHistoryDate(item.createdAt),
     formatInventoryHistoryTime(item.createdAt),
-    item.user?.name,
+    item.user?.name?.trim(),
   ]
     .filter(Boolean)
     .join(" · ");
@@ -144,12 +156,17 @@ export const InventoryHistorySupplyDrawer = ({
       onClose={onClose}
       size={isMobileViewport ? "100%" : 560}
       destroyOnHidden
-      title={<Title level={4}>{getMovementTitle(item.type, t)}</Title>}
+      title={
+        <Flex vertical gap={2}>
+          <Title level={4} style={{ margin: 0 }}>
+            {title}
+          </Title>
+          {meta ? <Text type="secondary">{meta}</Text> : null}
+        </Flex>
+      }
       data-qa="products-inventory-history-supply-drawer"
     >
       <Flex vertical gap={16}>
-        <Text type="secondary">{meta}</Text>
-
         {item.comment?.trim() && (
           <Alert
             type="info"

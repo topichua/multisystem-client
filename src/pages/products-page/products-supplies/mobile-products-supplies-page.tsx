@@ -68,7 +68,11 @@ export const MobileProductsSuppliesPage = observer(() => {
             ) : (
               <Flex vertical gap={12}>
                 {page.items.map((item) => (
-                  <SuppliesMobileCard key={item.id} item={item} />
+                  <SuppliesMobileCard
+                    key={item.id}
+                    item={item}
+                    onOpenSupply={page.openSupplyDetails}
+                  />
                 ))}
               </Flex>
             )}
@@ -92,8 +96,11 @@ export const MobileProductsSuppliesPage = observer(() => {
         onResetDraft={page.resetDraftFilters}
         onApplyFilters={page.applyDraftFilters}
         stockSupplyModalOpen={page.stockSupplyModalOpen}
+        editingSupplyId={page.editingSupplyId}
         onCloseStockSupplyModal={page.closeStockSupplyModal}
         onStockSupplySuccess={page.reload}
+        selectedSupply={page.selectedSupply}
+        onCloseSupplyDetails={page.closeSupplyDetails}
       />
     </S.Root>
   );

@@ -13,15 +13,25 @@ const { Text } = Typography;
 
 type SuppliesMobileCardProps = {
   item: StockSupplyListItem;
+  onOpenSupply: (item: StockSupplyListItem) => void;
 };
 
-export const SuppliesMobileCard = ({ item }: SuppliesMobileCardProps) => {
+export const SuppliesMobileCard = ({
+  item,
+  onOpenSupply,
+}: SuppliesMobileCardProps) => {
   const { t } = useTranslation();
   const workspaceSettingsStore = useWorkspaceSettingsStore();
   const currency = workspaceSettingsStore.currency ?? "UAH";
 
   return (
-    <Card size="small" data-qa={`products-mobile-supplies-item-${item.id}`}>
+    <Card
+      size="small"
+      hoverable
+      data-qa={`products-mobile-supplies-item-${item.id}`}
+      styles={{ body: { cursor: "pointer" } }}
+      onClick={() => onOpenSupply(item)}
+    >
       <Flex vertical gap={10}>
         <Flex justify="space-between" align="flex-start" gap={8}>
           <Text strong style={{ minWidth: 0 }}>

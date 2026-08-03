@@ -2,6 +2,7 @@ import type { CatalogVariant } from "@/features/products/model/product.types";
 
 export type StockSupplyModalProps = {
   open: boolean;
+  supplyId?: number | null;
   onClose: () => void;
   onSuccess?: () => Promise<void> | void;
 };
@@ -19,3 +20,5 @@ export type VariantGroup = {
   productName: string;
   variants: CatalogVariant[];
 };
+
+export type StockSupplySubmitAction = "create" | "save" | "apply" | "delete";

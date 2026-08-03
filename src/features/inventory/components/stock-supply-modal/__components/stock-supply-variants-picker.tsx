@@ -3,16 +3,7 @@ import {
   MagnifyingGlassIcon,
   StackIcon,
 } from "@phosphor-icons/react";
-import {
-  Alert,
-  Button,
-  Empty,
-  Flex,
-  Input,
-  Segmented,
-  Spin,
-  Typography,
-} from "antd";
+import { Alert, Button, Empty, Flex, Input, Segmented, Typography } from "antd";
 import { memo } from "react";
 
 import { CategoryTreeSelect } from "@/features/categories/components/category-tree-select";
@@ -31,7 +22,6 @@ const { Text } = Typography;
 type StockSupplyVariantsPickerProps = {
   t: ReturnType<typeof import("react-i18next").useTranslation>["t"];
   categoriesStore: ReturnType<typeof useCategoriesStore>;
-  variantsLoading: boolean;
   loadError: string | null;
   search: string;
   pickerMode: SupplyPickerMode;
@@ -49,7 +39,6 @@ export const StockSupplyVariantsPicker = memo(
   function StockSupplyVariantsPicker({
     t,
     categoriesStore,
-    variantsLoading,
     loadError,
     search,
     pickerMode,
@@ -118,11 +107,7 @@ export const StockSupplyVariantsPicker = memo(
         />
 
         <S.VariantsList>
-          {variantsLoading ? (
-            <Flex align="center" justify="center" style={{ minHeight: 220 }}>
-              <Spin />
-            </Flex>
-          ) : loadError ? (
+          {loadError ? (
             <Alert type="error" message={loadError} showIcon />
           ) : filteredAvailableVariants.length === 0 ? (
             <Flex align="center" justify="center" style={{ minHeight: 220 }}>

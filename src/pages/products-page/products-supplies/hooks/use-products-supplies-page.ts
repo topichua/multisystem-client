@@ -4,13 +4,16 @@ import { inventoryApi } from "@/features/inventory/api/inventory-api";
 import {
   STOCK_SUPPLIES_DEFAULT_LIMIT,
   type GetStockSuppliesParams,
+  type InventoryHistorySupplyItem,
   type StockSuppliesResponse,
   type StockSupplyListBy,
+  type StockSupplyListItem,
 } from "@/features/inventory/model/inventory.types";
 import { useEnsureWorkspaceMembersLoaded } from "@/features/workspace-members/model/use-ensure-workspace-members-loaded";
 import { useWorkspaceMembersStore } from "@/features/workspace-members/model/use-workspace-members-store";
 import { unknownErrorMessage } from "@/utils/unknown-error-message";
 
+import { toInventoryHistorySupplyItem } from "../products-supplies.utils";
 import {
   countSuppliesPanelFilters,
   EMPTY_SUPPLIES_PANEL_FILTERS,
@@ -61,6 +64,9 @@ export const useProductsSuppliesPage = () => {
   const [reloadToken, setReloadToken] = useState(0);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [stockSupplyModalOpen, setStockSupplyModalOpen] = useState(false);
+  const [editingSupplyId, setEditingSupplyId] = useState<number | null>(null);
+  const [selectedSupply, setSelectedSupply] =
+    useState<InventoryHistorySupplyItem | null>(null);
 
   const pageSize = STOCK_SUPPLIES_DEFAULT_LIMIT;
   const appliedFilterCount = countSuppliesPanelFilters(appliedFilters);
@@ -185,6 +191,47 @@ export const useProductsSuppliesPage = () => {
     setReloadToken((current) => current + 1);
   }, [beginLoading]);
 
+  const openSupplyDetails = useCallback((supply: StockSupplyListItem) => {
+    if (supply.status !== "applied") {
+      setEditingSupplyId(supply.id);
+      setStockSupplyModalOpen(true);
+      return;
+    }
+
+    setSelectedSupply(toInventoryHistorySupplyItem(supply));
+
+    if (supply.items.length > 0) {
+      return;
+    }
+
+    const supplyId = supply.id;
+
+    void inventoryApi
+      .getStockSupply(supplyId)
+      .then((detail) => {
+        setSelectedSupply((current) =>
+          current?.id === supplyId
+            ? toInventoryHistorySupplyItem(detail)
+            : current,
+        );
+      })
+      .catch(() => undefined);
+  }, []);
+
+  const closeSupplyDetails = useCallback(() => {
+    setSelectedSupply(null);
+  }, []);
+
+  const openStockSupplyModal = useCallback(() => {
+    setEditingSupplyId(null);
+    setStockSupplyModalOpen(true);
+  }, []);
+
+  const closeStockSupplyModal = useCallback(() => {
+    setStockSupplyModalOpen(false);
+    setEditingSupplyId(null);
+  }, []);
+
   return {
     items,
     total,
@@ -210,8 +257,12 @@ export const useProductsSuppliesPage = () => {
     resetDraftFilters,
     applyDraftFilters,
     stockSupplyModalOpen,
-    openStockSupplyModal: () => setStockSupplyModalOpen(true),
-    closeStockSupplyModal: () => setStockSupplyModalOpen(false),
+    editingSupplyId,
+    openStockSupplyModal,
+    closeStockSupplyModal,
+    selectedSupply,
+    openSupplyDetails,
+    closeSupplyDetails,
     onPageChange,
     onByChange,
     reload,

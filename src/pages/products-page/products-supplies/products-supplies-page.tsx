@@ -67,6 +67,10 @@ export const ProductsSuppliesPage = observer(() => {
                   dataSource={page.items}
                   pagination={false}
                   scroll={{ x: 1100 }}
+                  onRow={(item) => ({
+                    onClick: () => page.openSupplyDetails(item),
+                    style: { cursor: "pointer" },
+                  })}
                 />
               )}
             </Spin>
@@ -90,8 +94,11 @@ export const ProductsSuppliesPage = observer(() => {
         onResetDraft={page.resetDraftFilters}
         onApplyFilters={page.applyDraftFilters}
         stockSupplyModalOpen={page.stockSupplyModalOpen}
+        editingSupplyId={page.editingSupplyId}
         onCloseStockSupplyModal={page.closeStockSupplyModal}
         onStockSupplySuccess={page.reload}
+        selectedSupply={page.selectedSupply}
+        onCloseSupplyDetails={page.closeSupplyDetails}
       />
     </PaneDetailLayout.Root>
   );

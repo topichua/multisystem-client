@@ -1,5 +1,6 @@
-import { CheckIcon } from "@phosphor-icons/react";
-import { Button, Flex, Modal, Typography } from "antd";
+import { CheckIcon, TrashIcon } from "@phosphor-icons/react";
+import { Button, Flex, Modal, Popconfirm, Spin, Typography } from "antd";
+import { Trans } from "react-i18next";
 
 import { useIsMobileViewport } from "@/utils/use-media-query";
 
@@ -12,19 +13,22 @@ import { formatAmount } from "./stock-supply-modal.utils";
 
 const { Text, Title } = Typography;
 
-export function StockSupplyModal({
+export const StockSupplyModal = ({
   open,
+  supplyId = null,
   onClose,
   onSuccess,
-}: StockSupplyModalProps) {
+}: StockSupplyModalProps) => {
   const isMobileViewport = useIsMobileViewport();
   const {
     t,
+    isEditMode,
     categoriesStore,
     variantsLoading,
     loadError,
     submitError,
     submitting,
+    submittingAction,
     selectedLines,
     name,
     comment,
@@ -45,14 +49,103 @@ export function StockSupplyModal({
     setPickerMode,
     handleAfterOpenChange,
     handleClose,
-    handleSubmit,
+    handleCreate,
+    handleSave,
+    handleApply,
+    handleDelete,
     handleCategoryChange,
     addVariant,
     addAllVisibleVariants,
     clearSelectedLines,
     removeLine,
     updateLine,
-  } = useStockSupplyModal({ onClose, onSuccess });
+  } = useStockSupplyModal({ supplyId, onClose, onSuccess });
+
+  const title = isEditMode
+    ? t("products.stockSupply.editTitle")
+    : t("products.stockSupply.title");
+  const description = isEditMode
+    ? name.trim()
+      ? t("products.stockSupply.editDescriptionNamed", { name: name.trim() })
+      : t("products.stockSupply.editDescription")
+    : t("products.stockSupply.description");
+
+  const isActionBusy = (action: typeof submittingAction) =>
+    submitting && submittingAction !== action;
+
+  const footer = (
+    <Flex align="center" justify="space-between" gap={16} wrap="wrap">
+      <Text type="secondary">
+        <Trans
+          i18nKey="products.stockSupply.summary"
+          values={{
+            count: selectedLines.length,
+            quantity: selectedQuantity,
+            amount: formatAmount(selectedTotal, summaryCurrency),
+          }}
+          components={{
+            value: <Text strong />,
+          }}
+        />
+      </Text>
+      <Flex gap={8} justify="flex-end" style={{ marginLeft: "auto" }}>
+        {isEditMode && (
+          <Popconfirm
+            title={t("products.stockSupply.deleteConfirm")}
+            description={t("products.stockSupply.deleteWarning")}
+            okText={t("products.stockSupply.delete")}
+            okButtonProps={{ danger: true }}
+            disabled={variantsLoading || submitting}
+            onConfirm={() => void handleDelete()}
+          >
+            <Button
+              danger
+              icon={<TrashIcon size={16} />}
+              loading={submittingAction === "delete"}
+              disabled={variantsLoading || isActionBusy("delete")}
+              data-qa="stock-supply-delete"
+            >
+              {t("products.stockSupply.delete")}
+            </Button>
+          </Popconfirm>
+        )}
+        <Button onClick={handleClose} disabled={submitting}>
+          {t("products.stockSupply.cancel")}
+        </Button>
+        {isEditMode ? (
+          <>
+            <Button
+              type="text"
+              loading={submittingAction === "save"}
+              disabled={variantsLoading || !canSubmit || isActionBusy("save")}
+              onClick={() => void handleSave()}
+            >
+              {t("products.stockSupply.save")}
+            </Button>
+            <Button
+              type="primary"
+              icon={<CheckIcon size={16} />}
+              loading={submittingAction === "apply"}
+              disabled={variantsLoading || !canSubmit || isActionBusy("apply")}
+              onClick={() => void handleApply()}
+            >
+              {t("products.stockSupply.apply")}
+            </Button>
+          </>
+        ) : (
+          <Button
+            type="primary"
+            icon={<CheckIcon size={16} />}
+            loading={submittingAction === "create"}
+            disabled={variantsLoading || !canSubmit || isActionBusy("create")}
+            onClick={() => void handleCreate()}
+          >
+            {t("products.stockSupply.submit")}
+          </Button>
+        )}
+      </Flex>
+    </Flex>
+  );
 
   return (
     <Modal
@@ -60,9 +153,9 @@ export function StockSupplyModal({
       title={
         <Flex vertical gap={4}>
           <Title level={4} style={{ margin: 0 }}>
-            {t("products.stockSupply.title")}
+            {title}
           </Title>
-          <Text type="secondary">{t("products.stockSupply.description")}</Text>
+          <Text type="secondary">{description}</Text>
         </Flex>
       }
       width={isMobileViewport ? "calc(100vw - 24px)" : 1120}
@@ -70,69 +163,61 @@ export function StockSupplyModal({
       destroyOnHidden
       afterOpenChange={handleAfterOpenChange}
       onCancel={handleClose}
-      footer={
-        <Flex align="center" justify="space-between" gap={16} wrap="wrap">
-          <Text type="secondary">
-            {t("products.stockSupply.summary", {
-              count: selectedLines.length,
-              quantity: selectedQuantity,
-              amount: formatAmount(selectedTotal, summaryCurrency),
-            })}
-          </Text>
-          <Flex gap={8} justify="flex-end" style={{ marginLeft: "auto" }}>
-            <Button onClick={handleClose}>
-              {t("products.stockSupply.cancel")}
-            </Button>
-            <Button
-              type="primary"
-              icon={<CheckIcon size={16} />}
-              loading={submitting}
-              disabled={!canSubmit}
-              onClick={() => void handleSubmit()}
-            >
-              {t("products.stockSupply.submit")}
-            </Button>
-          </Flex>
-        </Flex>
-      }
+      footer={footer}
       styles={{
         body: { padding: 0 },
-        footer: { marginTop: 0 },
+        footer: {
+          paddingTop: 16,
+          marginTop: 0,
+          borderTop: "1px solid #eff0f4",
+        },
       }}
       data-qa="stock-supply-modal"
     >
       <S.ModalBody>
-        <StockSupplySelectedSection
-          t={t}
-          selectedLines={selectedLines}
-          name={name}
-          comment={comment}
-          immediatelyApply={immediatelyApply}
-          submitError={submitError}
-          onNameChange={setName}
-          onCommentChange={setComment}
-          onImmediatelyApplyChange={setImmediatelyApply}
-          onClear={clearSelectedLines}
-          onUpdateLine={updateLine}
-          onRemoveLine={removeLine}
-        />
-        <StockSupplyVariantsPicker
-          t={t}
-          categoriesStore={categoriesStore}
-          variantsLoading={variantsLoading}
-          loadError={loadError}
-          search={search}
-          pickerMode={pickerMode}
-          selectedCategoryId={selectedCategoryId}
-          filteredAvailableVariants={filteredAvailableVariants}
-          groupedAvailableVariants={groupedAvailableVariants}
-          onSearchChange={setSearch}
-          onPickerModeChange={setPickerMode}
-          onCategoryChange={handleCategoryChange}
-          onAddAll={addAllVisibleVariants}
-          onAddVariant={addVariant}
-        />
+        {variantsLoading ? (
+          <Flex
+            align="center"
+            justify="center"
+            style={{ gridColumn: "1 / -1", minHeight: "100%" }}
+          >
+            <Spin size="large" />
+          </Flex>
+        ) : (
+          <>
+            <StockSupplySelectedSection
+              t={t}
+              selectedLines={selectedLines}
+              name={name}
+              comment={comment}
+              immediatelyApply={immediatelyApply}
+              showImmediatelyApply={!isEditMode}
+              submitError={submitError}
+              onNameChange={setName}
+              onCommentChange={setComment}
+              onImmediatelyApplyChange={setImmediatelyApply}
+              onClear={clearSelectedLines}
+              onUpdateLine={updateLine}
+              onRemoveLine={removeLine}
+            />
+            <StockSupplyVariantsPicker
+              t={t}
+              categoriesStore={categoriesStore}
+              loadError={loadError}
+              search={search}
+              pickerMode={pickerMode}
+              selectedCategoryId={selectedCategoryId}
+              filteredAvailableVariants={filteredAvailableVariants}
+              groupedAvailableVariants={groupedAvailableVariants}
+              onSearchChange={setSearch}
+              onPickerModeChange={setPickerMode}
+              onCategoryChange={handleCategoryChange}
+              onAddAll={addAllVisibleVariants}
+              onAddVariant={addVariant}
+            />
+          </>
+        )}
       </S.ModalBody>
     </Modal>
   );
-}
+};

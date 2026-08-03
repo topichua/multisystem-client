@@ -14,28 +14,33 @@ import { useNotification } from "@/shared/components/notification/use-notificati
 
 import type {
   StockSupplyModalProps,
+  StockSupplySubmitAction,
   SupplyLine,
   SupplyPickerMode,
 } from "../stock-supply-modal.types";
 import {
+  buildSupplyLines,
   getVariantSearchText,
   groupVariantsByProduct,
   loadAllCatalogVariants,
 } from "../stock-supply-modal.utils";
 
 export const useStockSupplyModal = ({
+  supplyId = null,
   onClose,
   onSuccess,
-}: Pick<StockSupplyModalProps, "onClose" | "onSuccess">) => {
+}: Pick<StockSupplyModalProps, "supplyId" | "onClose" | "onSuccess">) => {
   const { t } = useTranslation();
   const notification = useNotification();
   const categoriesStore = useCategoriesStore();
   const loadRequestIdRef = useRef(0);
+  const isEditMode = supplyId != null;
   const [variants, setVariants] = useState<CatalogVariant[]>([]);
-  const [variantsLoading, setVariantsLoading] = useState(false);
+  const [variantsLoading, setVariantsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [submitting, setSubmitting] = useState(false);
+  const [submittingAction, setSubmittingAction] =
+    useState<StockSupplySubmitAction | null>(null);
   const [selectedLines, setSelectedLines] = useState<SupplyLine[]>([]);
   const [name, setName] = useState("");
   const [comment, setComment] = useState("");
@@ -46,24 +51,29 @@ export const useStockSupplyModal = ({
   );
   const [pickerMode, setPickerMode] = useState<SupplyPickerMode>("flat");
 
+  const resetFormState = useCallback(() => {
+    setSelectedLines([]);
+    setName("");
+    setComment("");
+    setImmediatelyApply(false);
+    setSearch("");
+    setSelectedCategoryId(null);
+    setPickerMode("flat");
+    setSubmitError(null);
+  }, []);
+
   const handleAfterOpenChange = useCallback(
     (nextOpen: boolean) => {
       if (!nextOpen) {
         loadRequestIdRef.current += 1;
+        setVariantsLoading(true);
         return;
       }
 
       const loadRequestId = loadRequestIdRef.current + 1;
       loadRequestIdRef.current = loadRequestId;
 
-      setSelectedLines([]);
-      setName("");
-      setComment("");
-      setImmediatelyApply(false);
-      setSearch("");
-      setSelectedCategoryId(null);
-      setPickerMode("flat");
-      setSubmitError(null);
+      resetFormState();
       setVariantsLoading(true);
       setLoadError(null);
 
@@ -73,13 +83,25 @@ export const useStockSupplyModal = ({
           .catch(() => undefined);
       }
 
-      void loadAllCatalogVariants()
-        .then((nextVariants) => {
+      const loadVariantsPromise = loadAllCatalogVariants();
+      const loadSupplyPromise =
+        supplyId != null
+          ? inventoryApi.getStockSupply(supplyId)
+          : Promise.resolve(null);
+
+      void Promise.all([loadVariantsPromise, loadSupplyPromise])
+        .then(([nextVariants, supply]) => {
           if (loadRequestIdRef.current !== loadRequestId) {
             return;
           }
 
           setVariants(nextVariants);
+
+          if (supply) {
+            setName(supply.name);
+            setComment(supply.comment ?? "");
+            setSelectedLines(buildSupplyLines(supply, nextVariants));
+          }
         })
         .catch((error) => {
           if (loadRequestIdRef.current !== loadRequestId) {
@@ -87,6 +109,7 @@ export const useStockSupplyModal = ({
           }
 
           setVariants([]);
+          setSelectedLines([]);
           setLoadError(
             getApiErrorMessage(error, t("products.stockSupply.loadError")),
           );
@@ -97,7 +120,7 @@ export const useStockSupplyModal = ({
           }
         });
     },
-    [categoriesStore, t],
+    [categoriesStore, resetFormState, supplyId, t],
   );
 
   const handleClose = useCallback(() => {
@@ -175,6 +198,18 @@ export const useStockSupplyModal = ({
         line.buyPrice != null &&
         line.buyPrice >= 0,
     );
+  const submitting = submittingAction != null;
+
+  const buildItemsPayload = useCallback(
+    (): CreateStockSupplyItem[] =>
+      selectedLines.map((line) => ({
+        productId: line.variant.productId,
+        productVariantId: line.variant.id,
+        quantity: line.quantity ?? 0,
+        buyPrice: line.buyPrice ?? 0,
+      })),
+    [selectedLines],
+  );
 
   const addVariant = useCallback((variant: CatalogVariant) => {
     setSelectedLines((current) => {
@@ -218,52 +253,135 @@ export const useStockSupplyModal = ({
     [],
   );
 
-  const handleSubmit = useCallback(async () => {
+  const finishSuccessfully = useCallback(
+    (successKey: string) => {
+      notification.success({ title: t(successKey) });
+      handleClose();
+      void Promise.resolve(onSuccess?.()).catch(() => undefined);
+    },
+    [handleClose, notification, onSuccess, t],
+  );
+
+  const persistSupplyDraft = useCallback(async () => {
+    if (supplyId == null) {
+      return;
+    }
+
+    await inventoryApi.updateStockSupply(supplyId, {
+      name: name.trim(),
+      items: buildItemsPayload(),
+      comment: comment.trim(),
+    });
+  }, [buildItemsPayload, comment, name, supplyId]);
+
+  const runAction = useCallback(
+    async (
+      action: StockSupplySubmitAction,
+      failedKey: string,
+      execute: () => Promise<void>,
+      onSuccessAction?: () => void,
+    ) => {
+      setSubmittingAction(action);
+      setSubmitError(null);
+
+      try {
+        await execute();
+        onSuccessAction?.();
+      } catch (error) {
+        const message = getApiErrorMessage(error, t(failedKey));
+        setSubmitError(message);
+        notification.error({ title: message });
+      } finally {
+        setSubmittingAction(null);
+      }
+    },
+    [notification, t],
+  );
+
+  const handleCreate = useCallback(async () => {
     if (!canSubmit) {
       return;
     }
 
-    const items: CreateStockSupplyItem[] = selectedLines.map((line) => ({
-      productId: line.variant.productId,
-      productVariantId: line.variant.id,
-      quantity: line.quantity ?? 0,
-      buyPrice: line.buyPrice ?? 0,
-    }));
-
-    setSubmitting(true);
-    setSubmitError(null);
-
-    try {
-      await inventoryApi.createStockSupply({
-        name: name.trim(),
-        items,
-        comment: comment.trim(),
-        immediatelyApply,
-      });
-      notification.success({ title: t("products.stockSupply.createSuccess") });
-      handleClose();
-      void Promise.resolve(onSuccess?.()).catch(() => undefined);
-    } catch (error) {
-      const message = getApiErrorMessage(
-        error,
-        t("products.stockSupply.createFailed"),
-      );
-      setSubmitError(message);
-      notification.error({ title: message });
-    } finally {
-      setSubmitting(false);
-    }
+    await runAction(
+      "create",
+      "products.stockSupply.createFailed",
+      async () => {
+        await inventoryApi.createStockSupply({
+          name: name.trim(),
+          items: buildItemsPayload(),
+          comment: comment.trim(),
+          immediatelyApply,
+        });
+      },
+      () => finishSuccessfully("products.stockSupply.createSuccess"),
+    );
   }, [
+    buildItemsPayload,
     canSubmit,
     comment,
-    handleClose,
+    finishSuccessfully,
     immediatelyApply,
     name,
+    runAction,
+  ]);
+
+  const handleSave = useCallback(async () => {
+    if (!canSubmit || supplyId == null) {
+      return;
+    }
+
+    await runAction(
+      "save",
+      "products.stockSupply.saveFailed",
+      persistSupplyDraft,
+      () => {
+        notification.success({
+          title: t("products.stockSupply.saveSuccess"),
+        });
+        void Promise.resolve(onSuccess?.()).catch(() => undefined);
+      },
+    );
+  }, [
+    canSubmit,
     notification,
     onSuccess,
-    selectedLines,
+    persistSupplyDraft,
+    runAction,
+    supplyId,
     t,
   ]);
+
+  const handleApply = useCallback(async () => {
+    if (!canSubmit || supplyId == null) {
+      return;
+    }
+
+    await runAction(
+      "apply",
+      "products.stockSupply.applyFailed",
+      async () => {
+        await persistSupplyDraft();
+        await inventoryApi.applyStockSupply(supplyId);
+      },
+      () => finishSuccessfully("products.stockSupply.applySuccess"),
+    );
+  }, [canSubmit, finishSuccessfully, persistSupplyDraft, runAction, supplyId]);
+
+  const handleDelete = useCallback(async () => {
+    if (supplyId == null) {
+      return;
+    }
+
+    await runAction(
+      "delete",
+      "products.stockSupply.deleteFailed",
+      async () => {
+        await inventoryApi.deleteStockSupply(supplyId);
+      },
+      () => finishSuccessfully("products.stockSupply.deleteSuccess"),
+    );
+  }, [finishSuccessfully, runAction, supplyId]);
 
   const handleCategoryChange = useCallback((categoryId: number | null) => {
     setSelectedCategoryId(categoryId);
@@ -271,11 +389,13 @@ export const useStockSupplyModal = ({
 
   return {
     t,
+    isEditMode,
     categoriesStore,
     variantsLoading,
     loadError,
     submitError,
     submitting,
+    submittingAction,
     selectedLines,
     name,
     comment,
@@ -296,7 +416,10 @@ export const useStockSupplyModal = ({
     setPickerMode,
     handleAfterOpenChange,
     handleClose,
-    handleSubmit,
+    handleCreate,
+    handleSave,
+    handleApply,
+    handleDelete,
     handleCategoryChange,
     addVariant,
     addAllVisibleVariants,
