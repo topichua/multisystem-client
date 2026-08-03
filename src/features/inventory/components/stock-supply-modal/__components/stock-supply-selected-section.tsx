@@ -1,4 +1,4 @@
-import { Alert, Button, Empty, Flex, Input, Typography } from "antd";
+import { Alert, Button, Checkbox, Empty, Flex, Input, Typography } from "antd";
 
 import type { SupplyLine } from "../stock-supply-modal.types";
 import * as S from "../stock-supply-modal.styled";
@@ -9,9 +9,13 @@ const { Text } = Typography;
 type StockSupplySelectedSectionProps = {
   t: ReturnType<typeof import("react-i18next").useTranslation>["t"];
   selectedLines: SupplyLine[];
+  name: string;
   comment: string;
+  immediatelyApply: boolean;
   submitError: string | null;
+  onNameChange: (value: string) => void;
   onCommentChange: (value: string) => void;
+  onImmediatelyApplyChange: (value: boolean) => void;
   onClear: () => void;
   onUpdateLine: (
     variantId: number,
@@ -23,9 +27,13 @@ type StockSupplySelectedSectionProps = {
 export const StockSupplySelectedSection = ({
   t,
   selectedLines,
+  name,
   comment,
+  immediatelyApply,
   submitError,
+  onNameChange,
   onCommentChange,
+  onImmediatelyApplyChange,
   onClear,
   onUpdateLine,
   onRemoveLine,
@@ -51,7 +59,7 @@ export const StockSupplySelectedSection = ({
       <span />
     </S.SelectedHeader>
 
-    <Flex vertical style={{ minHeight: 70, flex: "0 0 auto" }}>
+    <S.SelectedLinesList>
       {selectedLines.length === 0 ? (
         <Empty
           image={Empty.PRESENTED_IMAGE_SIMPLE}
@@ -67,6 +75,15 @@ export const StockSupplySelectedSection = ({
           />
         ))
       )}
+    </S.SelectedLinesList>
+
+    <Flex vertical gap={8}>
+      <Text>{t("products.stockSupply.nameLabel")}</Text>
+      <Input
+        value={name}
+        placeholder={t("products.stockSupply.namePlaceholder")}
+        onChange={(event) => onNameChange(event.target.value)}
+      />
     </Flex>
 
     <Flex vertical gap={8}>
@@ -78,6 +95,13 @@ export const StockSupplySelectedSection = ({
         onChange={(event) => onCommentChange(event.target.value)}
       />
     </Flex>
+
+    <Checkbox
+      checked={immediatelyApply}
+      onChange={(event) => onImmediatelyApplyChange(event.target.checked)}
+    >
+      {t("products.stockSupply.immediatelyApplyLabel")}
+    </Checkbox>
 
     {submitError && <Alert type="error" title={submitError} showIcon />}
   </S.SupplyColumn>

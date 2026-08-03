@@ -1,5 +1,6 @@
 import { PlusIcon } from "@phosphor-icons/react";
 import { Avatar, Flex, Typography } from "antd";
+import { memo } from "react";
 import { useTranslation } from "react-i18next";
 
 import { VariantWishlistBadge } from "@/features/products/components/variant-wishlist-badge/variant-wishlist-badge";
@@ -16,7 +17,10 @@ type SupplyVariantRowProps = {
   onAdd: (variant: CatalogVariant) => void;
 };
 
-export const SupplyVariantRow = ({ variant, onAdd }: SupplyVariantRowProps) => {
+export const SupplyVariantRow = memo(function SupplyVariantRow({
+  variant,
+  onAdd,
+}: SupplyVariantRowProps) {
   const { t } = useTranslation();
   const meta = getVariantMeta(variant);
   const imageUrl = getCatalogVariantImageUrl(variant);
@@ -58,4 +62,4 @@ export const SupplyVariantRow = ({ variant, onAdd }: SupplyVariantRowProps) => {
       </Text>
     </S.VariantRow>
   );
-};
+});

@@ -24,6 +24,7 @@ export const SupplyColumn = styled.section`
   flex-direction: column;
   gap: 14px;
   padding: 18px 24px;
+  overflow: hidden;
 `;
 
 export const VariantsColumn = styled.section`
@@ -74,6 +75,13 @@ export const SelectedHeader = styled.div`
   @media (max-width: 620px) {
     display: none;
   }
+`;
+
+export const SelectedLinesList = styled.div`
+  min-height: 70px;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 `;
 
 export const SelectedLineRow = styled.div`

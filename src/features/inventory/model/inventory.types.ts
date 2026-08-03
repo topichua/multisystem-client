@@ -102,12 +102,15 @@ export type CreateStockSupplyItem = {
 };
 
 export type CreateStockSupplyRequest = {
+  name: string;
   items: CreateStockSupplyItem[];
   comment: string;
+  immediatelyApply: boolean;
 };
 
 export type StockSupply = {
   id: number;
+  name: string;
   comment: string | null;
   createdAt: string;
   items: CreateStockSupplyItem[];

@@ -37,7 +37,9 @@ export const useStockSupplyModal = ({
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [selectedLines, setSelectedLines] = useState<SupplyLine[]>([]);
+  const [name, setName] = useState("");
   const [comment, setComment] = useState("");
+  const [immediatelyApply, setImmediatelyApply] = useState(false);
   const [search, setSearch] = useState("");
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
     null,
@@ -55,7 +57,9 @@ export const useStockSupplyModal = ({
       loadRequestIdRef.current = loadRequestId;
 
       setSelectedLines([]);
+      setName("");
       setComment("");
+      setImmediatelyApply(false);
       setSearch("");
       setSelectedCategoryId(null);
       setPickerMode("flat");
@@ -162,6 +166,7 @@ export const useStockSupplyModal = ({
   );
   const summaryCurrency = selectedLines[0]?.variant.product.currency ?? "UAH";
   const canSubmit =
+    name.trim().length > 0 &&
     selectedLines.length > 0 &&
     selectedLines.every(
       (line) =>
@@ -230,8 +235,10 @@ export const useStockSupplyModal = ({
 
     try {
       await inventoryApi.createStockSupply({
+        name: name.trim(),
         items,
         comment: comment.trim(),
+        immediatelyApply,
       });
       notification.success({ title: t("products.stockSupply.createSuccess") });
       handleClose();
@@ -250,6 +257,8 @@ export const useStockSupplyModal = ({
     canSubmit,
     comment,
     handleClose,
+    immediatelyApply,
+    name,
     notification,
     onSuccess,
     selectedLines,
@@ -268,7 +277,9 @@ export const useStockSupplyModal = ({
     submitError,
     submitting,
     selectedLines,
+    name,
     comment,
+    immediatelyApply,
     search,
     pickerMode,
     selectedCategoryId,
@@ -278,7 +289,9 @@ export const useStockSupplyModal = ({
     selectedTotal,
     summaryCurrency,
     canSubmit,
+    setName,
     setComment,
+    setImmediatelyApply,
     setSearch,
     setPickerMode,
     handleAfterOpenChange,

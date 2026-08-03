@@ -26,7 +26,9 @@ export function StockSupplyModal({
     submitError,
     submitting,
     selectedLines,
+    name,
     comment,
+    immediatelyApply,
     search,
     pickerMode,
     selectedCategoryId,
@@ -36,7 +38,9 @@ export function StockSupplyModal({
     selectedTotal,
     summaryCurrency,
     canSubmit,
+    setName,
     setComment,
+    setImmediatelyApply,
     setSearch,
     setPickerMode,
     handleAfterOpenChange,
@@ -101,9 +105,13 @@ export function StockSupplyModal({
         <StockSupplySelectedSection
           t={t}
           selectedLines={selectedLines}
+          name={name}
           comment={comment}
+          immediatelyApply={immediatelyApply}
           submitError={submitError}
+          onNameChange={setName}
           onCommentChange={setComment}
+          onImmediatelyApplyChange={setImmediatelyApply}
           onClear={clearSelectedLines}
           onUpdateLine={updateLine}
           onRemoveLine={removeLine}
