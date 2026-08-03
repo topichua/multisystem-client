@@ -1217,35 +1217,29 @@ export class ConversationStore {
       }
 
       this.groupedConversationsByKey = nextGrouped;
-      this.conversationGroupingBuckets =
-        this.conversationGroupingBuckets.map((bucket) =>
+      this.conversationGroupingBuckets = this.conversationGroupingBuckets.map(
+        (bucket) =>
           decrementedGroupingKeys.has(bucket.key)
             ? { ...bucket, count: Math.max(0, bucket.count - 1) }
             : bucket,
-        );
+      );
 
-      const {
-        [id]: _removedMessages,
-        ...restMessages
-      } = this.messagesByConversationId;
+      const restMessages = { ...this.messagesByConversationId };
+      delete restMessages[id];
       this.messagesByConversationId = restMessages;
 
-      const {
-        [id]: _removedPaging,
-        ...restPaging
-      } = this.messagesPagingByConversationId;
+      const restPaging = { ...this.messagesPagingByConversationId };
+      delete restPaging[id];
       this.messagesPagingByConversationId = restPaging;
 
-      const {
-        [id]: _removedSuggestions,
-        ...restSuggestions
-      } = this.productSuggestionsByConversationId;
+      const restSuggestions = { ...this.productSuggestionsByConversationId };
+      delete restSuggestions[id];
       this.productSuggestionsByConversationId = restSuggestions;
 
-      const {
-        [id]: _removedSuggestionsError,
-        ...restSuggestionsErrors
-      } = this.productSuggestionsErrorByConversationId;
+      const restSuggestionsErrors = {
+        ...this.productSuggestionsErrorByConversationId,
+      };
+      delete restSuggestionsErrors[id];
       this.productSuggestionsErrorByConversationId = restSuggestionsErrors;
 
       if (existing) {

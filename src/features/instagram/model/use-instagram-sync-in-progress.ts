@@ -90,8 +90,7 @@ export function useInstagramSyncInProgress(): {
         return;
       }
 
-      let isActive = false;
-
+      let isActive: boolean;
       try {
         isActive = await instagramApi.getActiveSynchronizations();
       } catch {

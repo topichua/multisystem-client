@@ -148,8 +148,10 @@ export function useSettingsIntegrationsController() {
   const tiktokOauthSessionIdRef = useRef<string | null>(null);
   const tiktokOauthRunIdRef = useRef(0);
   const tiktokReturnHandledRef = useRef(false);
-  const [instagramHistorySyncNoticeVisible, setInstagramHistorySyncNoticeVisible] =
-    useState(false);
+  const [
+    instagramHistorySyncNoticeVisible,
+    setInstagramHistorySyncNoticeVisible,
+  ] = useState(false);
   const instagramHistorySyncNoticeTimeoutRef = useRef<number | null>(null);
 
   const clearInstagramHistorySyncNoticeTimeout = useCallback(() => {

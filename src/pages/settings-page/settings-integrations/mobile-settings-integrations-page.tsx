@@ -77,9 +77,7 @@ export const MobileSettingsIntegrationsPage = observer(() => {
                           type="info"
                           showIcon
                           closable
-                          onClose={
-                            controller.dismissInstagramHistorySyncNotice
-                          }
+                          onClose={controller.dismissInstagramHistorySyncNotice}
                           title={t(
                             "integrations.instagramSetup.historySyncTitle",
                           )}

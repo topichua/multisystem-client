@@ -36,7 +36,11 @@ function hasActiveSynchronizationItems(value: unknown): boolean {
       return true;
     }
 
-    if (item.active === true || item.isActive === true || item.syncing === true) {
+    if (
+      item.active === true ||
+      item.isActive === true ||
+      item.syncing === true
+    ) {
       return true;
     }
 

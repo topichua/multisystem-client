@@ -547,7 +547,9 @@ export const conversationsApi = {
   },
 
   delete: async (conversationId: string | number): Promise<void> => {
-    await apiClient.delete(`${basePath}/${encodeURIComponent(String(conversationId))}`);
+    await apiClient.delete(
+      `${basePath}/${encodeURIComponent(String(conversationId))}`,
+    );
   },
 
   getMessages: async (
