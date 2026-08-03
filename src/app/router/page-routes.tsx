@@ -33,6 +33,7 @@ import { ProductCharacteristicDetailRoute } from "@/pages/products-page/products
 import { ProductAddPage } from "@/pages/products-page/products-list/pages/product-add-page";
 import { ProductsListRoute } from "@/pages/products-page/products-list/list/products-list-route";
 import { ProductsInventoryHistoryRoute } from "@/pages/products-page/products-inventory-history/products-inventory-history-route";
+import { ProductsSuppliesRoute } from "@/pages/products-page/products-supplies/products-supplies-route";
 import { ClientsIndexRoute } from "@/pages/clients-page/clients-index-route";
 import { ClientDetailRoute } from "@/pages/clients-page/client-details/client-detail-route";
 import { ClientsListRoute } from "@/pages/clients-page/clients-list/clients-list-route";
@@ -152,6 +153,7 @@ export const PageRoutes = () => {
                 element={<ProductAddPage />}
               />
               <Route path="list" element={<ProductsListRoute />} />
+              <Route path="supplies" element={<ProductsSuppliesRoute />} />
               <Route path="categories" element={<ProductsCategoriesRoute />} />
               <Route
                 path="categories/:categoryId"

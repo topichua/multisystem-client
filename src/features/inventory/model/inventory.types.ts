@@ -127,6 +127,50 @@ export type CreateStockSupplyResponse = {
   lines: CreateStockSupplyLine[];
 };
 
+export const STOCK_SUPPLIES_DEFAULT_LIMIT = 20;
+
+export type StockSupplyStatus = "pending" | "applied";
+
+export type StockSupplyListBy = "all" | "applied" | "not_applied";
+
+export type StockSupplyCreatedBy = {
+  id: number;
+  name: string;
+};
+
+export type StockSupplyListItem = {
+  id: number;
+  name: string;
+  status: StockSupplyStatus;
+  comment: string | null;
+  createdAt: string;
+  appliedAt: string | null;
+  createdBy: StockSupplyCreatedBy | null;
+  positionsCount: number;
+  totalQuantity: number;
+  totalSum: number;
+  items: CreateStockSupplyItem[];
+};
+
+export type GetStockSuppliesParams = {
+  by?: StockSupplyListBy;
+  status?: "all" | StockSupplyStatus;
+  createdFrom?: string;
+  createdTo?: string;
+  createdBy?: number;
+  totalSumFrom?: number;
+  totalSumTo?: number;
+  limit?: number;
+  offset?: number;
+};
+
+export type StockSuppliesResponse = {
+  items: StockSupplyListItem[];
+  total: number;
+  limit: number;
+  offset: number;
+};
+
 export const INVENTORY_HISTORY_MOVEMENTS_ENDPOINT =
   "/inventory/history-movements";
 

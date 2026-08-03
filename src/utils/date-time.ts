@@ -10,7 +10,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import minMax from "dayjs/plugin/minMax";
 import duration from "dayjs/plugin/duration";
 
-export function initDayJs() {
+export const initDayJs = () => {
   dayjs.extend(calendar);
   dayjs.extend(utc);
   dayjs.extend(timezone);
@@ -20,12 +20,18 @@ export function initDayJs() {
   });
   dayjs.extend(minMax);
   dayjs.extend(duration);
-}
+};
 
 export const formatDateTime = (date: Date | string) => {
   const parsed = dayjs(date);
 
   return parsed.isValid() ? parsed.format("lll") : "";
+};
+
+export const formatDateTimeNumeric = (date: Date | string) => {
+  const parsed = dayjs(date);
+
+  return parsed.isValid() ? parsed.format("DD.MM.YYYY HH:mm") : "";
 };
 
 export const formatDate = (date: Date | string) => {
@@ -34,11 +40,11 @@ export const formatDate = (date: Date | string) => {
   return parsed.isValid() ? parsed.format("ll") : "";
 };
 
-export function formatApiDate(date: Date | string | Dayjs): string {
+export const formatApiDate = (date: Date | string | Dayjs): string => {
   const parsed = dayjs(date);
 
   return parsed.isValid() ? parsed.format("YYYY-MM-DD") : "";
-}
+};
 
 export const fromNow = (date: Date | string, skipSuffix?: boolean) =>
   dayjs(date).fromNow(skipSuffix);
@@ -130,17 +136,17 @@ export const passedTimeName = (time: string) => {
 export const getEffectiveDate = (date: string | null) =>
   date ? dayjs(date).format("MMMM D") : "";
 
-export function formatMessageTime(createdTime: string): string {
+export const formatMessageTime = (createdTime: string): string => {
   const parsed = dayjs(createdTime);
 
   return parsed.isValid() ? parsed.format("HH:mm") : "";
-}
+};
 
-export function isSameConversationDay(isoA: string, isoB: string): boolean {
+export const isSameConversationDay = (isoA: string, isoB: string): boolean => {
   return dayjs(isoA).isSame(dayjs(isoB), "day");
-}
+};
 
-export function formatConversationDayLabel(iso: string): string {
+export const formatConversationDayLabel = (iso: string): string => {
   const d = dayjs(iso);
   return d.isValid() ? d.format("LL") : "";
-}
+};

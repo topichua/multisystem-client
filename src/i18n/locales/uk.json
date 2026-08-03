@@ -1721,13 +1721,56 @@
       },
       "descriptions": {
         "list": "Переглядайте та керуйте каталогом товарів.",
+        "supplies": "Створюйте та переглядайте поставки товарів.",
         "categories": "Організуйте категорії товарів.",
         "characteristics": "Керуйте атрибутами та опціями товарів.",
         "inventoryHistory": "Переглядайте історію рухів залишків."
       }
     },
-    "listTitle": "Список товарів",
-    "inventoryHistoryTitle": "Історія залишків",
+    "listTitle": "Товари",
+    "suppliesTitle": "Поставки",
+    "inventoryHistoryTitle": "Історія",
+    "fieldsTitle": "Поля",
+    "supplies": {
+      "emptyState": "Тут з'являться поставки.",
+      "loadError": "Не вдалося завантажити поставки.",
+      "tabs": {
+        "aria": "Фільтри статусу поставок",
+        "all": "Усі",
+        "notApplied": "Не проведені",
+        "applied": "Проведені"
+      },
+      "status": {
+        "pending": "Не проведено",
+        "applied": "Проведено"
+      },
+      "filters": {
+        "title": "Фільтри",
+        "openAria": "Відкрити фільтри",
+        "createdBy": "Хто створив",
+        "period": "Період створення",
+        "datePlaceholder": "dd.mm.yyyy",
+        "sum": "Сума, {{currency}}",
+        "sumFrom": "Від",
+        "sumTo": "До",
+        "allManagers": "Усі менеджери",
+        "clear": "Очистити",
+        "apply": "Застосувати"
+      },
+      "table": {
+        "name": "Назва",
+        "createdAt": "Створено",
+        "manager": "Менеджер",
+        "positions": "Позицій",
+        "units": "Одиниць",
+        "sum": "Сума",
+        "status": "Статус",
+        "appliedAt": "Проведено"
+      },
+      "mobile": {
+        "positions": "{{count}} позицій"
+      }
+    },
     "inventoryHistory": {
       "emptyState": "Тут з'явиться історія рухів залишків.",
       "loadError": "Не вдалося завантажити історію залишків.",

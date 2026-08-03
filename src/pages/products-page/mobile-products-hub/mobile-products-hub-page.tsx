@@ -4,6 +4,7 @@ import {
   FolderIcon,
   ListChecksIcon,
   PackageIcon,
+  TruckIcon,
 } from "@phosphor-icons/react";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
@@ -24,6 +25,10 @@ const productsMobilePresentationByKey = {
   "products-list": {
     icon: <PackageIcon />,
     descriptionKey: "products.mobile.descriptions.list",
+  },
+  "products-supplies": {
+    icon: <TruckIcon />,
+    descriptionKey: "products.mobile.descriptions.supplies",
   },
   "products-inventory-history": {
     icon: <ClockCounterClockwiseIcon />,

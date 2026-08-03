@@ -210,6 +210,11 @@ export const productsSectionNavItems = [
     labelKey: "products.listTitle",
   },
   {
+    key: "products-supplies",
+    path: pagesMap.productsSupplies,
+    labelKey: "products.suppliesTitle",
+  },
+  {
     key: "products-inventory-history",
     path: pagesMap.productsInventoryHistory,
     labelKey: "products.inventoryHistoryTitle",
@@ -222,7 +227,7 @@ export const productsSectionNavItems = [
   {
     key: "products-characteristics",
     path: pagesMap.productsCharacteristics,
-    labelKey: "characteristics.title",
+    labelKey: "products.fieldsTitle",
   },
 ] as const satisfies readonly SectionNavItem[];
 
@@ -394,22 +399,26 @@ export const mobileNavItems: readonly MobileNavItem[] =
     return items;
   }, []);
 
-function doesPathMatch(path: string, pathname: string, exact = false): boolean {
+const doesPathMatch = (
+  path: string,
+  pathname: string,
+  exact = false,
+): boolean => {
   if (exact || path === pagesMap.home) {
     return pathname === path;
   }
 
   return pathname === path || pathname.startsWith(`${path}/`);
-}
+};
 
-export function isNavItemActive(item: NavItemBase, pathname: string) {
+export const isNavItemActive = (item: NavItemBase, pathname: string) => {
   const matchPaths = item.matchPaths ?? [item.path];
   return matchPaths.some((path) => doesPathMatch(path, pathname));
-}
+};
 
-export function getSelectedMobileNavKey(
+export const getSelectedMobileNavKey = (
   pathname: string,
-): MobileNavItemKey | undefined {
+): MobileNavItemKey | undefined => {
   const integrationsActive = doesPathMatch(
     pagesMap.settingsIntegrations,
     pathname,
@@ -428,15 +437,15 @@ export function getSelectedMobileNavKey(
 
     return matchPaths.some((path) => doesPathMatch(path, pathname, item.exact));
   })?.key;
-}
+};
 
-export function getSelectedSectionNavPath(
+export const getSelectedSectionNavPath = (
   items: readonly SectionNavItem[],
   pathname: string,
-): string {
+): string => {
   return (
     items.find((item) => isNavItemActive(item, pathname))?.path ??
     items[0]?.path ??
     ""
   );
-}
+};

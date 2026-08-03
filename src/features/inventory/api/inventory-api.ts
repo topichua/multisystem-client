@@ -7,9 +7,11 @@ import {
   type CreateStockCorrectionResponse,
   type CreateStockPurchaseRequest,
   type CreateStockPurchaseResponse,
+  type CreateStockSupplyItem,
   type CreateStockSupplyRequest,
   type CreateStockSupplyResponse,
   type GetInventoryHistoryMovementsParams,
+  type GetStockSuppliesParams,
   INVENTORY_HISTORY_MOVEMENTS_DEFAULT_LIMIT,
   INVENTORY_MOVEMENTS_DEFAULT_LIMIT,
   type InventoryHistoryItem,
@@ -19,13 +21,18 @@ import {
   type InventoryHistorySupplyLine,
   type InventoryMovementsResponse,
   type InventoryVariantMovementsQuery,
+  STOCK_SUPPLIES_DEFAULT_LIMIT,
+  type StockSuppliesResponse,
+  type StockSupplyCreatedBy,
+  type StockSupplyListItem,
+  type StockSupplyStatus,
 } from "../model/inventory.types";
 
 const basePath = "/inventory";
 
-function normalizeInventoryMovements(
+const normalizeInventoryMovements = (
   data: unknown,
-): InventoryMovementsResponse {
+): InventoryMovementsResponse => {
   if (!data || typeof data !== "object") {
     return { items: [], total: 0 };
   }
@@ -37,11 +44,11 @@ function normalizeInventoryMovements(
   const total = typeof record.total === "number" ? record.total : items.length;
 
   return { items, total };
-}
+};
 
-function normalizeInventoryHistorySupplyLine(
+const normalizeInventoryHistorySupplyLine = (
   raw: unknown,
-): InventoryHistorySupplyLine | null {
+): InventoryHistorySupplyLine | null => {
   if (!raw || typeof raw !== "object") {
     return null;
   }
@@ -60,11 +67,11 @@ function normalizeInventoryHistorySupplyLine(
     stockBefore: Number(record.stockBefore ?? 0),
     stockAfter: Number(record.stockAfter ?? 0),
   };
-}
+};
 
-function normalizeInventoryHistoryItem(
+const normalizeInventoryHistoryItem = (
   raw: unknown,
-): InventoryHistoryItem | null {
+): InventoryHistoryItem | null => {
   if (!raw || typeof raw !== "object") {
     return null;
   }
@@ -129,11 +136,11 @@ function normalizeInventoryHistoryItem(
     stockBefore: Number(record.stockBefore ?? 0),
     stockAfter: Number(record.stockAfter ?? 0),
   };
-}
+};
 
-function normalizeInventoryHistoryMovements(
+const normalizeInventoryHistoryMovements = (
   data: unknown,
-): InventoryHistoryMovementsResponse {
+): InventoryHistoryMovementsResponse => {
   if (!data || typeof data !== "object") {
     return { items: [], total: 0 };
   }
@@ -147,7 +154,100 @@ function normalizeInventoryHistoryMovements(
   const total = typeof record.total === "number" ? record.total : items.length;
 
   return { items, total };
-}
+};
+
+const normalizeStockSupplyStatus = (value: unknown): StockSupplyStatus => {
+  return value === "applied" ? "applied" : "pending";
+};
+
+const normalizeStockSupplyCreatedBy = (
+  raw: unknown,
+): StockSupplyCreatedBy | null => {
+  if (!raw || typeof raw !== "object") {
+    return null;
+  }
+
+  const record = raw as Record<string, unknown>;
+
+  return {
+    id: Number(record.id ?? 0),
+    name: String(record.name ?? ""),
+  };
+};
+
+const normalizeStockSupplyLine = (
+  raw: unknown,
+): CreateStockSupplyItem | null => {
+  if (!raw || typeof raw !== "object") {
+    return null;
+  }
+
+  const record = raw as Record<string, unknown>;
+
+  return {
+    productId: Number(record.productId ?? 0),
+    productVariantId: Number(record.productVariantId ?? 0),
+    quantity: Number(record.quantity ?? 0),
+    buyPrice: Number(record.buyPrice ?? 0),
+  };
+};
+
+const normalizeStockSupplyListItem = (
+  raw: unknown,
+): StockSupplyListItem | null => {
+  if (!raw || typeof raw !== "object") {
+    return null;
+  }
+
+  const record = raw as Record<string, unknown>;
+  const items = Array.isArray(record.items)
+    ? record.items
+        .map(normalizeStockSupplyLine)
+        .filter((item): item is CreateStockSupplyItem => item != null)
+    : [];
+
+  return {
+    id: Number(record.id ?? 0),
+    name: String(record.name ?? ""),
+    status: normalizeStockSupplyStatus(record.status),
+    comment: typeof record.comment === "string" ? record.comment : null,
+    createdAt: String(record.createdAt ?? ""),
+    appliedAt: typeof record.appliedAt === "string" ? record.appliedAt : null,
+    createdBy: normalizeStockSupplyCreatedBy(record.createdBy),
+    positionsCount: Number(record.positionsCount ?? items.length),
+    totalQuantity: Number(record.totalQuantity ?? 0),
+    totalSum: Number(record.totalSum ?? 0),
+    items,
+  };
+};
+
+const normalizeStockSuppliesResponse = (
+  data: unknown,
+  fallbackLimit = STOCK_SUPPLIES_DEFAULT_LIMIT,
+  fallbackOffset = 0,
+): StockSuppliesResponse => {
+  if (!data || typeof data !== "object") {
+    return {
+      items: [],
+      total: 0,
+      limit: fallbackLimit,
+      offset: fallbackOffset,
+    };
+  }
+
+  const record = data as Record<string, unknown>;
+  const items = Array.isArray(record.items)
+    ? record.items
+        .map(normalizeStockSupplyListItem)
+        .filter((item): item is StockSupplyListItem => item != null)
+    : [];
+  const total = typeof record.total === "number" ? record.total : items.length;
+  const limit = typeof record.limit === "number" ? record.limit : fallbackLimit;
+  const offset =
+    typeof record.offset === "number" ? record.offset : fallbackOffset;
+
+  return { items, total, limit, offset };
+};
 
 export const inventoryApi = {
   listVariantMovements: async ({
@@ -222,5 +322,24 @@ export const inventoryApi = {
     );
 
     return data;
+  },
+
+  listStockSupplies: async (
+    params: GetStockSuppliesParams = {},
+  ): Promise<StockSuppliesResponse> => {
+    const limit = params.limit ?? STOCK_SUPPLIES_DEFAULT_LIMIT;
+    const offset = params.offset ?? 0;
+    const { data } = await apiClient.get<unknown>(
+      `${basePath}/stock/supplies`,
+      {
+        params: {
+          ...params,
+          limit,
+          offset,
+        },
+      },
+    );
+
+    return normalizeStockSuppliesResponse(data, limit, offset);
   },
 };

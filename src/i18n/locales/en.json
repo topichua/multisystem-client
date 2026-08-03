@@ -1701,13 +1701,56 @@
       },
       "descriptions": {
         "list": "Browse and manage your product catalog.",
+        "supplies": "Create and review product supplies.",
         "categories": "Organize your product categories.",
         "characteristics": "Manage product attributes and options.",
         "inventoryHistory": "View stock movement history."
       }
     },
-    "listTitle": "Products list",
-    "inventoryHistoryTitle": "Inventory history",
+    "listTitle": "Products",
+    "suppliesTitle": "Supplies",
+    "inventoryHistoryTitle": "History",
+    "fieldsTitle": "Fields",
+    "supplies": {
+      "emptyState": "Supplies will appear here.",
+      "loadError": "Failed to load supplies.",
+      "tabs": {
+        "aria": "Supply status filters",
+        "all": "All",
+        "notApplied": "Not applied",
+        "applied": "Applied"
+      },
+      "status": {
+        "pending": "Not applied",
+        "applied": "Applied"
+      },
+      "filters": {
+        "title": "Filters",
+        "openAria": "Open filters",
+        "createdBy": "Who created",
+        "period": "Creation period",
+        "datePlaceholder": "dd.mm.yyyy",
+        "sum": "Sum, {{currency}}",
+        "sumFrom": "From",
+        "sumTo": "To",
+        "allManagers": "All managers",
+        "clear": "Clear",
+        "apply": "Apply"
+      },
+      "table": {
+        "name": "Name",
+        "createdAt": "Created",
+        "manager": "Manager",
+        "positions": "Positions",
+        "units": "Units",
+        "sum": "Sum",
+        "status": "Status",
+        "appliedAt": "Applied"
+      },
+      "mobile": {
+        "positions": "{{count}} positions"
+      }
+    },
     "inventoryHistory": {
       "emptyState": "Stock movement history will appear here.",
       "loadError": "Failed to load inventory history.",
