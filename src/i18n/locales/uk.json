@@ -19,15 +19,12 @@
       "customersWorkspace": "Клієнти та простір"
     },
     "homeAria": "Головна",
-    "openConversationsAria": "Відкрити розмови",
-    "toggleSiderAria": "Згорнути або розгорнути меню",
     "expandSiderAria": "Розгорнути меню",
     "collapseSiderAria": "Згорнути меню"
   },
   "brand": "MultiSale",
   "instagram": {
     "pageTitle": "Instagram",
-    "placeholder": "Тут з'явиться керування Instagram.",
     "emptySidebar": "Немає підключених сторінок",
     "emptyDescription": "Ще не підключено жодної сторінки Instagram.",
     "openIntegrations": "Відкрити інтеграції",
@@ -54,7 +51,6 @@
     "noComments": "Коментарів поки немає",
     "reply": "Відповісти",
     "replyTo": "Відповідь для",
-    "replySent": "Відповідь надіслано",
     "you": "Ви",
     "replyPlaceholder": "Напишіть відповідь...",
     "sendReply": "Надіслати",
@@ -70,9 +66,6 @@
     "linkedProducts": "Прив'язані товари",
     "noLinkedProducts": "Немає прив'язаних товарів",
     "linkProduct": "Прив'язати",
-    "productSearchPlaceholder": "Пошук товарів",
-    "searchMinChars": "Введіть щонайменше {{count}} символи",
-    "searchNoResults": "Товари не знайдено",
     "linkProductSuccess": "Товар прив'язано до допису",
     "linkProductFailed": "Не вдалося прив'язати товар до допису",
     "linkingProduct": "Прив'язуємо...",
@@ -186,163 +179,6 @@
           }
         }
       }
-    },
-    "summary": {
-      "revenue": "Виручка (30 днів)",
-      "orders": "Замовлення",
-      "products": "Активні товари",
-      "conversion": "Конверсія"
-    },
-    "charts": {
-      "revenueTrend": {
-        "title": "Замовлення та виручка",
-        "subtitle": "Денна динаміка за останній тиждень",
-        "ordersAxis": "Замовлення",
-        "revenueAxis": "грн",
-        "ordersSeries": "Замовлення",
-        "revenueSeries": "Виручка"
-      },
-      "salesByCategory": {
-        "title": "Продажі за категоріями",
-        "subtitle": "Частка виручки в каталозі"
-      },
-      "topProducts": {
-        "title": "Топ товарів",
-        "subtitle": "Лідери продажів за кількістю",
-        "unit": "од."
-      },
-      "ordersByStatus": {
-        "title": "Замовлення за статусами",
-        "subtitle": "Розподіл замовлень у воронці"
-      },
-      "conversations": {
-        "title": "Розмови за каналами",
-        "subtitle": "Звідки найчастіше пишуть клієнти"
-      },
-      "characteristics": {
-        "title": "Характеристики товарів",
-        "subtitle": "Наскільки повно заповнений каталог",
-        "series": "Заповненість, %"
-      },
-      "salesFunnel": {
-        "title": "Воронка продажів",
-        "subtitle": "Від переглядів каталогу до оплачених замовлень"
-      },
-      "monthlyClients": {
-        "title": "Нові та повторні клієнти",
-        "subtitle": "Динаміка за останні 6 місяців",
-        "newSeries": "Нові",
-        "returningSeries": "Повторні"
-      },
-      "stockHealth": {
-        "title": "Залишки за категоріями",
-        "subtitle": "Наявність варіантів у каталозі",
-        "inStock": "В наявності",
-        "lowStock": "Закінчується",
-        "outOfStock": "Немає в наявності"
-      },
-      "responseTime": {
-        "title": "Час відповіді команди",
-        "subtitle": "Середній перший відгук за днями тижня",
-        "axis": "Хвилини",
-        "unit": "хв",
-        "average": "Середнє"
-      },
-      "orderSources": {
-        "title": "Джерела замовлень",
-        "subtitle": "Звідки надходять замовлення"
-      },
-      "teamPerformance": {
-        "title": "Ефективність команди",
-        "subtitle": "Оброблені замовлення по учасниках"
-      },
-      "messageHeatmap": {
-        "title": "Активність повідомлень",
-        "subtitle": "Вхідні повідомлення за днями та годинами",
-        "unit": "повідомлень"
-      }
-    },
-    "mock": {
-      "categories": {
-        "clothing": "Одяг",
-        "footwear": "Взуття",
-        "accessories": "Аксесуари",
-        "electronics": "Електроніка",
-        "home": "Дім і декор"
-      },
-      "products": {
-        "linenDress": "Лляна літня сукня",
-        "sneakersUrban": "Міські кросівки",
-        "leatherBag": "Шкіряна сумка через плече",
-        "wirelessEarbuds": "Бездротові навушники",
-        "ceramicVase": "Керамічна ваза"
-      },
-      "orderStatuses": {
-        "new": "Нове",
-        "processing": "В обробці",
-        "shipped": "Відправлено",
-        "completed": "Завершено",
-        "cancelled": "Скасовано"
-      },
-      "channels": {
-        "instagram": "Instagram",
-        "telegram": "Telegram",
-        "viber": "Viber",
-        "direct": "Напряму"
-      },
-      "characteristics": {
-        "size": "Розмір",
-        "color": "Колір",
-        "material": "Матеріал",
-        "brand": "Бренд",
-        "season": "Сезон",
-        "weight": "Вага"
-      },
-      "funnel": {
-        "catalogViews": "Перегляди каталогу",
-        "conversations": "Розмови",
-        "orders": "Замовлення",
-        "paid": "Оплачено"
-      },
-      "months": {
-        "jan": "Січ",
-        "feb": "Лют",
-        "mar": "Бер",
-        "apr": "Кві",
-        "may": "Тра",
-        "jun": "Чер"
-      },
-      "weekdays": {
-        "mon": "Понеділок",
-        "tue": "Вівторок",
-        "wed": "Середа",
-        "thu": "Четвер",
-        "fri": "П'ятниця",
-        "sat": "Субота",
-        "sun": "Неділя"
-      },
-      "weekdaysShort": {
-        "mon": "Пн",
-        "tue": "Вт",
-        "wed": "Ср",
-        "thu": "Чт",
-        "fri": "Пт",
-        "sat": "Сб",
-        "sun": "Нд"
-      },
-      "orderSources": {
-        "instagramStory": "Instagram Stories",
-        "instagramDm": "Instagram DM",
-        "catalogLink": "Посилання на каталог",
-        "telegramBot": "Telegram-бот",
-        "manual": "Вручну"
-      },
-      "teamMembers": {
-        "olena": "Олена К.",
-        "andrii": "Андрій Г.",
-        "maria": "Марія С.",
-        "dmytro": "Дмитро П."
-      }
     }
   },
   "team": {
@@ -360,7 +196,6 @@
     "membersInactiveCount_many": "{{count}} неактивних",
     "membersInactiveCount_other": "{{count}} неактивних",
     "rolesTitle": "Ролі",
-    "rolesPlaceholder": "Тут з'явиться керування ролями.",
     "rolesEmpty": "Ролей ще немає",
     "invalidRole": "Некоректна роль",
     "roleNotFoundTitle": "Роль не знайдено",
@@ -409,7 +244,6 @@
     "disableAll": "Зняти всі",
     "rolesIntegrationGrantsEmpty": "Немає підключених інтеграцій",
     "rolesIntegrationGrantsError": "Не вдалося завантажити гранти інтеграцій",
-    "cancel": "Скасувати",
     "permissions": {
       "integrationGrantFallback": "{{type}} #{{id}}",
       "itemsByKey": {
@@ -426,8 +260,8 @@
         "products_read": "Перегляд товарів",
         "products_write": "Створення та редагування товарів",
         "products_create_and_edit": "Створення та редагування товарів",
-        "products_custom_fields": "Керування характеристиками",
-        "products_custom_fields_management": "Керування характеристиками",
+        "products_custom_fields": "Керування полями",
+        "products_custom_fields_management": "Керування полями",
         "products_category": "Керування категоріями",
         "products_category_management": "Керування категоріями",
         "products_ai_import": "AI-імпорт з Instagram",
@@ -485,7 +319,7 @@
         "products": {
           "read": "Перегляд товарів",
           "create_and_edit": "Створення та редагування товарів",
-          "custom_fields_management": "Керування характеристиками",
+          "custom_fields_management": "Керування полями",
           "category_management": "Керування категоріями",
           "ai_import": "AI-імпорт з Instagram"
         },
@@ -526,7 +360,6 @@
       }
     },
     "inviteCta": "Запросити",
-    "placeholder": "Тут з'явиться керування командою.",
     "menu": {
       "members": "Учасники",
       "roles": "Ролі"
@@ -546,8 +379,6 @@
     },
     "table": {
       "member": "Учасник",
-      "name": "Ім'я",
-      "email": "Email",
       "role": "Роль",
       "canBeAssignedToChat": "Відповідальний за чат",
       "status": "Статус",
@@ -579,17 +410,7 @@
       "cancel": "Скасувати",
       "submit": "Надіслати запрошення",
       "success": "Запрошення надіслано",
-      "error": "Не вдалося надіслати запрошення",
-      "roles": {
-        "manager": {
-          "title": "Менеджер",
-          "description": "Веде продажі: розмови, замовлення, товари та клієнти."
-        },
-        "operator": {
-          "title": "Оператор",
-          "description": "Спілкується з клієнтами, без доступу до налаштувань."
-        }
-      }
+      "error": "Не вдалося надіслати запрошення"
     }
   },
   "sidebar": {
@@ -711,9 +532,7 @@
     "placeholders": {
       "name": "Назва автоматизації",
       "sourceStatus": "Оберіть значення...",
-      "targetStatus": "Оберіть статус...",
-      "durationValue": "Значення",
-      "durationUnit": "Одиниця"
+      "targetStatus": "Оберіть статус..."
     },
     "sourceType": {
       "delivery": "Статус доставки",
@@ -726,7 +545,6 @@
       "changeOrderStatus": "Змінити статус замовлення"
     },
     "delay": {
-      "label": "Затримка",
       "summary": "{{value}} {{unit}}",
       "units": {
         "minutes": "хв",
@@ -755,7 +573,6 @@
       "sourceType": "Оберіть тип умови",
       "sourceStatus": "Оберіть значення",
       "durationValue": "Вкажіть додатнє число",
-      "durationUnit": "Оберіть одиницю часу",
       "targetStatus": "Оберіть статус замовлення"
     },
     "mobile": {
@@ -765,7 +582,6 @@
   "billing": {
     "title": "Білінг",
     "sectionHint": "Підписка та оплата робочого простору.",
-    "placeholder": "Розділ білінгу скоро з'явиться",
     "infoBar": {
       "manualPayment": "Оплата вручну через Monobank. Автопродовження немає."
     },
@@ -906,10 +722,8 @@
   "integrations": {
     "title": "Інтеграції",
     "subtitle": "Підключайте зовнішні сервіси та керуйте акаунтами",
-    "addIntegration": "Додати інтеграцію",
     "searchPlaceholder": "Пошук інтеграцій...",
     "allIntegrations": "Усі інтеграції",
-    "noIntegrationsYet": "Інтеграцій поки немає",
     "noMatchFilters": "Жодна інтеграція не відповідає фільтрам",
     "noActiveConnections": "Немає активних підключень для {{name}}",
     "connectSuccess": "Інтеграцію підключено",
@@ -924,8 +738,6 @@
     "disconnectAction": "Відключити",
     "connectedTag": "Підключено",
     "followersCount": "Підписники: {{count}}",
-    "typeLabel": "Тип: {{type}}",
-    "addedLabel": "Додано: {{date}}",
     "groups": {
       "channels": "Канали звернень",
       "delivery": "Доставка",
@@ -1161,19 +973,11 @@
       "updateFailed": "Не вдалося оновити інтеграцію Нової Пошти",
       "emptyValue": "Не вказано",
       "apiKeyPlaceholder": "Введіть новий API ключ, щоб замінити поточний",
-      "apiKeyConfigured": "Налаштовано",
-      "apiKeyMissing": "Не налаштовано",
       "sections": {
-        "sender": "Відправник",
-        "defaults": "Параметри за замовчуванням"
+        "sender": "Відправник"
       },
       "fields": {
-        "apiKey": "API ключ",
-        "senderPlace": "Місце відправлення",
-        "senderName": "Відправник",
-        "senderNameRequired": "Вкажіть відправника",
-        "senderPhone": "Телефон відправника",
-        "senderPhoneRequired": "Вкажіть телефон відправника"
+        "senderPlace": "Місце відправлення"
       }
     },
     "monobank": {
@@ -1290,12 +1094,10 @@
       "restart": "Почати знову",
       "noPages": "Для цього Facebook-акаунта не знайдено сторінок Instagram Business.",
       "oauthFailed": "Вхід через Facebook не завершився. Спробуйте ще раз.",
-      "loadPagesFailed": "Не вдалося завантажити сторінки Instagram",
       "historySyncTitle": "Синхронізуємо повідомлення за останні 7 днів...",
       "historySyncDescription": "Це може зайняти до 1 хвилини."
     },
     "tiktokOauth": {
-      "awaitingOauth": "Завершіть авторизацію TikTok у вікні. Ця сторінка оновиться автоматично.",
       "oauthFailed": "Авторизація TikTok не завершилась. Спробуйте ще раз.",
       "oauthDenied": "Авторизацію TikTok відхилено або сталася помилка.",
       "sessionExpired": "Сесія підключення закінчилась. Почніть знову, щоб продовжити."
@@ -1343,9 +1145,7 @@
       "saveError": "Не вдалося оновити налаштування вішлисту"
     },
     "mobile": {
-      "backToSettingsAria": "До налаштувань",
-      "workspaceSection": "Робочий простір",
-      "appearanceSection": "Зовнішній вигляд"
+      "backToSettingsAria": "До налаштувань"
     }
   },
   "groups": {
@@ -1447,20 +1247,15 @@
   },
   "conversations": {
     "title": "Розмови",
-    "drawerTitle": "Розмови",
     "selectConversation": "Оберіть розмову",
     "noMessages": "Поки немає повідомлень.",
     "youPrefix": "Ви:",
-    "filterAllGroups": "Усі групи",
     "searchPlaceholder": "Пошук по імені або @нік",
     "all": "Усі",
     "unread": "Непрочитані",
     "withoutResponsible": "Без відповідального",
     "filtersAria": "Фільтри розмов",
-    "bookmarksAria": "Закладки розмов",
-    "listViewModeAria": "Режим списку розмов",
     "collapseListPaneAria": "Згорнути список розмов",
-    "expandListPaneAria": "Розгорнути список розмов",
     "unassignedAssignee": "Без відповідального",
     "unassignedAssigneeAria": "Розмова без відповідального",
     "markRead": "Позначити прочитаним",
@@ -1534,13 +1329,8 @@
     "linkExistingClientSearchFailed": "Не вдалося знайти клієнтів",
     "linkExistingClientSuccess": "Клієнта прив'язано",
     "linkExistingClientFailed": "Не вдалося прив'язати клієнта",
-    "addClient": "Додати клієнта",
-    "backFromCreate": "Назад",
     "clientRecordMissing": "Не вдалося завантажити картку клієнта.",
     "clientProfile": {
-      "aiAnalysis": "AI-аналіз клієнта",
-      "firstContact": "Перший контакт",
-      "lastActivity": "Остання активність",
       "fullProfile": "Повний профіль",
       "contacts": "Контакти",
       "editAria": "Редагувати клієнта",
@@ -1583,23 +1373,15 @@
       "wishlistAddFailed": "Не вдалося додати товар до вішлисту"
     },
     "clientOrders": {
-      "delivery": "Доставка",
-      "clientSince": "Клієнт з",
-      "summaryTitle": "Підсумок по клієнту",
       "ordersCount": "Замовлень",
       "ordersSum": "Сума",
       "lastOrder": "Останнє замовлення",
       "overviewOrderSummary": "Загальна інформація",
       "lastOrderSection": "Останнє замовлення",
       "allOrders": "Усі замовлення",
-      "spent": "Витрачено",
       "averageBill": "Середній чек",
-      "ordersTitle": "Замовлення клієнта",
       "emptyOrders": "Ще немає замовлень",
       "orderNumber": "Замовлення №{{id}}",
-      "totalLabel": "Разом",
-      "showMore": "Показати більше",
-      "showLess": "Показати менше",
       "currentOrder": "Поточне",
       "openCurrentOrderAria": "Відкрити поточне замовлення №{{id}}",
       "openFullOrder": "Відкрити повне замовлення",
@@ -1723,7 +1505,7 @@
         "list": "Переглядайте та керуйте каталогом товарів.",
         "supplies": "Створюйте та переглядайте поставки товарів.",
         "categories": "Організуйте категорії товарів.",
-        "characteristics": "Керуйте атрибутами та опціями товарів.",
+        "characteristics": "Керуйте полями та опціями товарів.",
         "inventoryHistory": "Переглядайте історію рухів залишків."
       }
     },
@@ -1733,7 +1515,6 @@
     "fieldsTitle": "Поля",
     "supplies": {
       "emptyState": "Тут з'являться поставки.",
-      "loadError": "Не вдалося завантажити поставки.",
       "tabs": {
         "aria": "Фільтри статусу поставок",
         "all": "Усі",
@@ -1773,7 +1554,6 @@
     },
     "inventoryHistory": {
       "emptyState": "Тут з'явиться історія рухів залишків.",
-      "loadError": "Не вдалося завантажити історію залишків.",
       "viewDetails": "Подивитись",
       "searchPlaceholder": "Пошук за товаром, артикулом або менеджером...",
       "searchAria": "Пошук історії залишків",
@@ -1817,13 +1597,10 @@
         "date": "Дата",
         "details": "Товар / деталі",
         "type": "Тип",
-        "product": "Товар",
-        "variant": "Варіант",
         "change": "Зміна",
         "stock": "Залишок",
         "price": "Ціна",
-        "user": "Менеджер",
-        "comment": "Коментар"
+        "user": "Менеджер"
       },
       "drawer": {
         "positions": "Позицій",
@@ -1839,8 +1616,7 @@
       "inStock_one": "{{count}} шт",
       "inStock_few": "{{count}} шт",
       "inStock_many": "{{count}} шт",
-      "inStock_other": "{{count}} шт",
-      "outOfStock": "немає в наявності"
+      "inStock_other": "{{count}} шт"
     },
     "catalogSearch": {
       "addLabel": "Додати товар",
@@ -1902,7 +1678,6 @@
       "tagPriceMin": "Мін. ціна: {{min}}",
       "tagPriceMax": "Макс. ціна: {{max}}",
       "clearAll": "Очистити все",
-      "panelCloseAria": "Закрити фільтри",
       "panelCategorySearchPlaceholder": "Пошук категорій…",
       "panelSelectAll": "Вибрати все",
       "panelPriceSection": "Ціна",
@@ -1967,7 +1742,6 @@
     },
     "editPage": {
       "title": "Редагувати товар",
-      "subtitle": "Оновіть інформацію про товар",
       "summary": "{{variants}} · {{stock}}",
       "stockOnHand": "{{count}} шт на складі",
       "archiveProduct": "Архівувати товар",
@@ -1986,21 +1760,7 @@
       "switchToSingleConfirmOk": "Перемкнути тип"
     },
     "instagram": {
-      "drawerTitle": "Пости Instagram",
-      "selectPostHint": "Оберіть пост зліва, щоб переглянути його та заповнити форму товару.",
-      "refreshPosts": "Оновити пости",
-      "noBio": "Біо недоступне",
       "noCaption": "Без підпису",
-      "openOnInstagram": "Відкрити в Instagram",
-      "fillFormHeading": "Заповнити форму товару за допомогою AI",
-      "fillFormIntro": "AI проаналізує пост і заповнить форму запропонованими даними. Ви можете все змінити й зберегти товар, коли будете готові.",
-      "fillFormWhatTitle": "Що буде заповнено:",
-      "fillFormItemName": "Назва та опис",
-      "fillFormItemCategory": "Категорія (якщо поверне AI)",
-      "fillFormItemPrice": "Ціна (якщо вказана)",
-      "fillFormItemMedia": "Обкладинка та зображення галереї (якщо URL можна завантажити)",
-      "fillFormItemVariants": "Чернетки варіантів (кольори та розміри)",
-      "analyzeFillButton": "Проаналізувати й заповнити форму",
       "ai": {
         "tag": "AI аналіз",
         "drawerTitle": "Додати товар з Instagram",
@@ -2034,12 +1794,10 @@
       }
     },
     "detailBackToList": "Назад до списку товарів",
-    "autoSaveSuccess": "Збережено",
     "edit": "Редагувати",
     "saveChanges": "Зберегти зміни",
     "cancelEdit": "Скасувати",
     "delete": "Видалити",
-    "deleteConfirm": "Видалити цей товар?",
     "hardDelete": {
       "productTitle": "Видалити «{{name}}»?",
       "variantTitle": "Видалити варіант «{{name}}»?",
@@ -2078,10 +1836,6 @@
     "variantUnarchiveSuccess": "Варіант розархівовано",
     "variantUnarchiveFailed": "Не вдалося розархівувати варіант",
     "archivedCannotEdit": "Архівований товар не можна редагувати",
-    "variantCreateSuccess": "Варіант додано",
-    "variantCreateFailed": "Не вдалося додати варіант",
-    "variantUpdateSuccess": "Варіант оновлено",
-    "variantUpdateFailed": "Не вдалося оновити варіант",
     "variantDeleteSuccess": "Варіант видалено",
     "variantDeleteFailed": "Не вдалося видалити варіант",
     "detailLoadFailed": "Не вдалося завантажити товар",
@@ -2110,7 +1864,6 @@
       "historyTitle": "Історія поставок і змін",
       "historyLoadedCount": "{{count}} з {{total}}",
       "movementsLoadError": "Не вдалося завантажити історію залишків",
-      "movementsEmpty": "Історії залишків ще немає",
       "movementsNoChangesYet": "Ще не було змін залишку для цього варіанта",
       "showFullHistory": "Показати всю історію",
       "fullHistoryTitle": "{{variantName}} — повна історія залишків",
@@ -2193,18 +1946,18 @@
       "unitCm": "см"
     },
     "characteristics": {
-      "title": "Характеристики",
-      "singleDescription": "Додайте необов'язкові характеристики, наприклад колір або розмір. Кожне значення обирається для товару один раз.",
-      "chooseFirst": "Спочатку оберіть характеристику",
-      "choose": "Оберіть характеристику",
+      "title": "Поля",
+      "singleDescription": "Додайте необов'язкові поля, наприклад колір або розмір. Кожне значення обирається для товару один раз.",
+      "chooseFirst": "Спочатку оберіть поле",
+      "choose": "Оберіть поле",
       "chooseValue": "Оберіть значення",
       "selectValue": "Оберіть значення",
       "enterValue": "Введіть значення",
       "enterCustomValue": "Введіть власне значення",
-      "add": "Додати характеристику",
+      "add": "Додати поле",
       "addValues": "Додайте значення",
       "addCustomValues": "Додайте власні значення",
-      "savedCharacteristics": "Збережені характеристики",
+      "savedCharacteristics": "Збережені поля",
       "createAs": "Створити «{{name}}» як:",
       "text": "Текст",
       "option": "Список",
@@ -2214,25 +1967,25 @@
       "optionCount_few": "{{count}} варіанти",
       "optionCount_many": "{{count}} варіантів",
       "optionCount_other": "{{count}} варіанта",
-      "enterNameToCreate": "Введіть назву, щоб створити нову характеристику",
-      "enterName": "Введіть назву характеристики",
+      "enterNameToCreate": "Введіть назву, щоб створити нове поле",
+      "enterName": "Введіть назву поля",
       "addOptionValue": "Додати «{{value}}»",
       "savedToList": "— збережеться у список",
-      "dragRow": "Перетягнути характеристику",
-      "lockedOptionCharacteristic": "Цю характеристику не можна видалити після створення товару, бо вона використовується наявними варіантами.",
-      "newOptionDisabledInEdit": "Нові характеристики-списки не можна додавати після створення товару, бо вони перебудують наявні варіанти."
+      "dragRow": "Перетягнути поле",
+      "lockedOptionCharacteristic": "Це поле не можна видалити після створення товару, бо воно використовується наявними варіантами.",
+      "newOptionDisabledInEdit": "Нові поля-списки не можна додавати після створення товару, бо вони перебудують наявні варіанти."
     },
     "variantsForm": {
       "title": "Варіанти товару",
-      "description": "Додайте характеристики, наприклад колір або розмір. Ціна й кількість налаштовуються для кожного варіанта.",
+      "description": "Додайте поля, наприклад колір або розмір. Ціна й кількість налаштовуються для кожного варіанта.",
       "variants": "Варіанти",
-      "empty": "Варіантів ще немає. Додайте характеристики, щоб згенерувати варіанти автоматично, або додайте варіант вручну.",
+      "empty": "Варіантів ще немає. Додайте поля, щоб згенерувати варіанти автоматично, або додайте варіант вручну.",
       "addAtLeastOne": "Додайте щонайменше один варіант.",
-      "duplicate": "Варіант із такими характеристиками вже існує.",
-      "manualMissingFields": "У ручних варіантах потрібно заповнити всі значення характеристик.",
+      "duplicate": "Варіант із такими полями вже існує.",
+      "manualMissingFields": "У ручних варіантах потрібно заповнити всі значення полів.",
       "singleConfirm": "Товар буде створено як один товар.",
       "singleUpdateConfirm": "Товар буде збережено як один товар. Частина даних варіантів може бути втрачена.",
-      "lockedOptionsChanged": "Збережені характеристики-списки та їхні значення не можна видаляти з наявного товару з варіантами.",
+      "lockedOptionsChanged": "Збережені поля-списки та їхні значення не можна видаляти з наявного товару з варіантами.",
       "editSkuAndPriceHint": "Редагуйте SKU та ціну продажу кожного варіанта.",
       "bulkPricePlaceholder": "Ціна всім",
       "applyPriceToAll": "Всім",
@@ -2262,10 +2015,8 @@
       "sectionTitle": "Зображення товару",
       "sectionSubtitle": "Додайте фото товару",
       "deleteTooltip": "Видалити",
-      "deleteFailed": "Не вдалося видалити зображення",
       "dragUploadTitle": "Додай зображення",
       "coverRadioLabel": "Обкладинка",
-      "urlTooLong": "Посилання не довше {{max}} символів (ліміт сервера). Використай коротше HTTPS або менше зображення.",
       "cropOk": "Застосувати",
       "uploadHintShort": "PNG, JPG, WEBP до 10 МБ",
       "reorderHint": "Перетягніть зображення, щоб змінити порядок. Перше зображення використовується як головне для товару.",
@@ -2313,8 +2064,7 @@
       "uploadVariantOnlyImage": "Завантажити зображення лише для варіанта",
       "reorderImagesHint": "Перетягніть зображення, щоб змінити порядок. Перше зображення використовується як головне для варіанта.",
       "mainImage": "Головне",
-      "variantOnly": "Лише варіант",
-      "deleteImageFailed": "Не вдалося видалити зображення варіанта"
+      "variantOnly": "Лише варіант"
     },
     "table": {
       "product": "Товар",
@@ -2355,7 +2105,6 @@
     "saveChanges": "Зберегти зміни",
     "updated": "Статус замовлення оновлено",
     "updateError": "Не вдалося оновити статус замовлення",
-    "dangerZoneTitle": "Небезпечна зона",
     "deleteStatus": "Видалити статус",
     "deleteStatusAria": "Видалити статус замовлення",
     "delete": "Видалити",
@@ -2373,10 +2122,7 @@
     "nameRequired": "Введіть назву",
     "namePlaceholder": "Напр. Очікує оплати...",
     "duplicateName": "Статус замовлення з такою назвою вже існує",
-    "dragHandleAria": "Перетягніть для зміни порядку",
-    "reorderError": "Не вдалося змінити порядок статусів замовлень",
     "mobile": {
-      "backToOrdersAria": "Назад до замовлень",
       "backToSettingsAria": "Назад до налаштувань",
       "backToStatusesAria": "Назад до статусів замовлень"
     }
@@ -2418,11 +2164,6 @@
       "products": {
         "title": "Товари",
         "add": "Додати товар",
-        "searchPlaceholder": "Пошук товару",
-        "searchMinChars": "Введіть мінімум {{count}} символи",
-        "found": "Знайдено: {{count}}",
-        "stock": "{{count}} шт",
-        "outOfStock": "Немає в наявності",
         "empty": "Товарів не знайдено",
         "emptyState": "Додайте товари до замовлення",
         "decreaseQuantity": "Зменшити кількість",
@@ -2430,8 +2171,7 @@
         "toggleDiscount": "Знижка на позицію",
         "positionDiscount": "Знижка на позицію",
         "closeDiscount": "Закрити знижку",
-        "remove": "Видалити товар",
-        "closeSearch": "Закрити пошук товарів"
+        "remove": "Видалити товар"
       },
       "delivery": {
         "title": "Доставка",
@@ -2443,21 +2183,6 @@
       "payment": {
         "title": "Оплата",
         "prepaymentCard": "Передоплата (карта)"
-      },
-      "shipment": {
-        "title": "Параметри відправлення",
-        "configure": "Налаштувати",
-        "collapse": "Згорнути",
-        "weight": "Вага",
-        "weightPlaceholder": "напр. 500",
-        "places": "Кількість місць",
-        "length": "Довжина",
-        "width": "Ширина",
-        "height": "Висота",
-        "declaredValue": "Оголошена вартість",
-        "grams": "г",
-        "centimeters": "см",
-        "hint": "Необов'язково. За замовчуванням розраховується з товарів."
       },
       "comment": {
         "title": "Коментар",
@@ -2515,10 +2240,8 @@
       "source": "Джерело",
       "paymentStatus": "Оплата",
       "manager": "Менеджер",
-      "note": "Нотатка",
       "delivery": "Доставка",
       "internalNote": "Внутрішня нотатка",
-      "openClientAria": "Відкрити профіль клієнта {{name}} у новій вкладці",
       "seeClientOrders": "Переглянути всі замовлення цього клієнта",
       "createdAt": "Створено"
     },
@@ -2526,7 +2249,6 @@
     "notFound": "Замовлення не знайдено",
     "backToOrders": "Назад до всіх замовлень",
     "orderTitle": "Замовлення",
-    "orderAmount": "Сума замовлення",
     "print": "Друк",
     "product": "Товар",
     "quantity": "К-сть",
@@ -2551,8 +2273,6 @@
     "address": "Адреса",
     "trackingNumber": "Трек-номер",
     "customerId": "ID клієнта",
-    "instagramUserId": "Instagram ID",
-    "savedDeliveryInfo": "Дані доставки",
     "customerCreatedAt": "Клієнт створений",
     "subtotal": "Проміжний підсумок",
     "discount": "Знижка",
@@ -2579,14 +2299,12 @@
     "customerTab": "Клієнт",
     "conversation": "Діалог",
     "groupId": "ID групи",
-    "managerId": "ID менеджера",
     "responsibleMemberId": "ID відповідального",
     "readAt": "Прочитано",
     "historyTab": "Історія",
     "details": {
       "edit": "Редагувати",
       "editNotes": "Редагувати нотатки",
-      "editUnavailable": "Редагування замовлення поки недоступне",
       "editOrderTitle": "Редагування замовлення",
       "editNotesTitle": "Редагування нотаток",
       "editSuccess": "Замовлення оновлено",
@@ -2628,14 +2346,10 @@
       "removeWaybillConfirmTitle": "Видалити доставку?",
       "removeWaybillConfirmText": "Ви видаляєте ТТН і всі дані доставки цього замовлення. Клієнт більше не зможе відстежити посилку за цим номером — якщо доставка вже в дорозі, спершу переконайтесь, що це дійсно потрібно. Цю дію не можна скасувати.",
       "removeWaybillConfirmOk": "Видалити",
-      "removeWaybillUnavailable": "Цю ТТН не можна видалити",
-      "removeWaybillMissing": "Спочатку створіть або прив'яжіть ТТН",
       "cancel": "Скасувати",
       "waybillWeight": "Вага",
       "waybillWeightKg": "Вага, кг",
       "waybillSeatsAmount": "Кількість місць",
-      "waybillDeclaredCost": "Оголошена вартість",
-      "waybillDescription": "Опис",
       "deliveryPayer": "Платник доставки",
       "deliveryPayerRecipient": "Отримувач",
       "deliveryPayerSender": "Відправник",
@@ -2645,28 +2359,17 @@
       "widthCm": "Ширина, см",
       "heightCm": "Висота, см",
       "copy": "Копіювати",
-      "collapse": "Згорнути",
       "requiredField": "Обов'язкове поле",
-      "deliveryShippedLocked": "Доставку відправлено, редагування недоступне",
-      "waybillMissingDelivery": "Додайте дані доставки перед створенням ТТН",
-      "waybillNovaPoshtaRequired": "ТТН можна створити лише для доставки Новою поштою",
-      "waybillItemsRequired": "Додайте товари перед створенням ТТН",
-      "waybillRefsRequired": "Потрібні ref міста та відділення Нової пошти",
       "deliveryInTransit": "В дорозі",
-      "deliveryExpected": "Очікується {{dateRange}}",
       "deliveryType": "Тип",
       "deliveryBranchType": "Відділення",
-      "deliveryCityMock": "Київ",
-      "deliveryWarehouseMock": "Відділення №12, вул. Хрещатик, 22",
       "paymentMethod": "Спосіб",
-      "paymentStatusField": "Статус",
       "paymentCashOnDelivery": "Накладений платіж",
       "deliveryPaymentSync": "Синхронізувати з оплатою",
       "deliveryPaymentSyncSuccess": "Оплату синхронізовано",
       "deliveryPaymentSyncFailed": "Не вдалося синхронізувати оплату",
       "deliveryPaymentSyncNote": "Синхронізація оплати доставки",
       "deliveryPaymentSynced": "Синхронізовано (отримання коштів від наложки переведе оплату в «Оплачено»)",
-      "paymentAwaiting": "Очікує оплати",
       "amountToPay": "До сплати",
       "amountPaid": "Сплачено",
       "amountRemaining": "Залишилось",
@@ -2692,7 +2395,6 @@
       "amountLabel": "Сума",
       "paymentPurposeLabel": "Призначення",
       "paymentPurposeDefault": "Оплата замовлення №{{orderId}}",
-      "uah": "грн",
       "fullOrderAmount": "Вся сума замовлення",
       "amountExceedsRemaining": "Сума не може перевищувати залишок до сплати",
       "addPayment": "Додати оплату",
@@ -2703,7 +2405,6 @@
       "cancelPaymentConfirmTitle": "Скасувати оплату?",
       "cancelPaymentConfirmText": "Запис про оплату буде видалено. Цю дію не можна скасувати.",
       "paymentKeepPending": "Залишити",
-      "writeToClient": "Написати клієнту",
       "paymentClientMessageModalTitle": "Написати клієнту",
       "paymentClientMessageSend": "Надіслати",
       "paymentClientMessageSent": "Повідомлення надіслано",
@@ -2715,7 +2416,6 @@
       "paymentClientMessageGeneric": "Будь ласка, здійсніть оплату: {{method}}.\n\nСума: {{amount}}{{noteLine}}",
       "paymentClientMessageNoteLine": "\nПризначення: {{note}}",
       "paymentFallback": "Оплата",
-      "paymentActorYou": "Ви",
       "paymentMethodCardTransfer": "Переказ на картку",
       "paymentMethodOnline": "Онлайн-оплата",
       "paymentMethodCash": "Готівка",
@@ -2866,8 +2566,6 @@
     "firstName": "Ім'я",
     "lastName": "Прізвище",
     "phone": "Телефон",
-    "deliveryInfo": "Доставка",
-    "tableColumnDelivery": "Доставка",
     "searchPlaceholder": "Пошук за іменем або телефоном",
     "table": {
       "client": "Клієнт",
@@ -2890,7 +2588,6 @@
     "save": "Зберегти",
     "modalCreateOk": "Створити",
     "createClientCta": "Створити клієнта",
-    "created": "Створено",
     "createSubmit": "Створити клієнта",
     "createSuccess": "Клієнта створено",
     "updateSuccess": "Клієнта оновлено",
@@ -2907,8 +2604,6 @@
       "invalidClientId": "Некоректний ідентифікатор клієнта",
       "notFound": "Клієнта не знайдено",
       "clientSince": "Клієнт з {{date}}",
-      "message": "Написати",
-      "createOrder": "Замовлення",
       "retry": "Повторити",
       "ordersTitle": "Замовлення",
       "emptyOrders": "У клієнта поки немає замовлень",
@@ -2931,9 +2626,6 @@
   "categories": {
     "title": "Категорії",
     "mobile": {
-      "backToCategoriesAria": "Повернутися до категорій",
-      "createCategoryAria": "Створити категорію",
-      "deleteCategoryAria": "Видалити категорію",
       "addSubcategoryAria": "Додати підкатегорію"
     },
     "itemsCount_one": "{{count}} категорія",
@@ -2944,10 +2636,6 @@
     "productsCount_few": "{{count}} товари",
     "productsCount_many": "{{count}} товарів",
     "productsCount_other": "{{count}} товару",
-    "productVariantsCount_one": "{{count}} варіант",
-    "productVariantsCount_few": "{{count}} варіанти",
-    "productVariantsCount_many": "{{count}} варіантів",
-    "productVariantsCount_other": "{{count}} варіанта",
     "productsWord_one": "товар",
     "productsWord_few": "товари",
     "productsWord_many": "товарів",
@@ -2960,15 +2648,9 @@
     "emptySearch": "За вашим пошуком категорій не знайдено",
     "loadFailed": "Не вдалося завантажити категорії",
     "retry": "Повторити",
-    "selectCategory": "Оберіть категорію зі списку",
     "noCategory": "Без категорії",
     "clearCategorySelection": "Очистити вибір категорії",
-    "subcategoriesCount_one": "{{count}} підкатегорія",
-    "subcategoriesCount_few": "{{count}} підкатегорії",
-    "subcategoriesCount_many": "{{count}} підкатегорій",
-    "subcategoriesCount_other": "{{count}} підкатегорії",
     "createCategory": "Нова",
-    "modalCreateTitle": "Створити категорію",
     "modalCreateRootTitle": "Нова категорія",
     "name": "Назва",
     "nameRequired": "Потрібна назва категорії",
@@ -2976,9 +2658,6 @@
     "namePlaceholder": "Назва категорії",
     "rootNamePlaceholder": "Напр. Спідня білизна...",
     "rootCreateHint": "Створює кореневу категорію. Підкатегорії додаються іконкою «+» прямо у списку.",
-    "parentCategory": "Батьківська категорія",
-    "parentCategoryHint": "Оберіть батьківську категорію, щоб створити підкатегорію.",
-    "noParent": "Без батька",
     "createSuccess": "Категорію створено",
     "createFailed": "Не вдалося створити категорію",
     "okCreate": "Створити",
@@ -2986,37 +2665,16 @@
     "updateFailed": "Не вдалося оновити категорію",
     "deleted": "Категорію видалено",
     "deleteFailed": "Не вдалося видалити категорію",
-    "invalidId": "Некоректний ідентифікатор категорії",
-    "notFoundTitle": "Категорію не знайдено",
-    "notFoundDescription": "Обраної категорії немає або вона недоступна.",
-    "backToList": "Назад до категорій",
-    "detailSubtitle": "Редагуйте дані категорії та переглядайте метадані.",
-    "metaLine": "Створив(ла) {{userId}}, {{created}} · оновлено {{updated}}",
     "saveChanges": "Зберегти зміни",
     "deleteConfirm": "Видалити цю категорію?",
     "deleteWarning": "Цю дію не скасувати.",
     "delete": "Видалити",
-    "contentTitle": "Вміст категорії",
-    "subcategories": "Підкатегорії",
-    "noSubcategories": "Немає підкатегорій",
     "emptyState": "Поки немає категорій",
-    "usedInProducts": "Використовується у",
-    "productsUnit": "товарах",
     "noLinkedProducts": "Немає пов'язаних товарів",
-    "metaSubcategories_one": "{{count}} підкатегорія",
-    "metaSubcategories_few": "{{count}} підкатегорії",
-    "metaSubcategories_many": "{{count}} підкатегорій",
-    "metaSubcategories_other": "{{count}} підкатегорії",
-    "metaProductsCount_one": "{{count}} товар",
-    "metaProductsCount_few": "{{count}} товари",
-    "metaProductsCount_many": "{{count}} товарів",
-    "metaProductsCount_other": "{{count}} товару",
-    "createdOn": "Створено {{date}}",
     "addSubcategory": "Додати підкатегорію",
     "subcategoryNamePlaceholder": "Назва підкатегорії, напр. Світшоти…",
     "addSubcategorySubmit": "Додати",
     "addSubcategoryCancel": "Скасувати",
-    "renameSubcategory": "Перейменувати підкатегорію",
     "renameCategory": "Перейменувати категорію",
     "moveCategory": "Перемістити категорію",
     "moveCategoryTitle": "Перемістити «{{name}}»",
@@ -3031,62 +2689,55 @@
     "deleteTransferDescription": "Цю категорію використано у {{productCount}} товарах і {{productVariantCount}} варіантах. Оберіть, куди перенести їх перед видаленням.",
     "deleteTransferNoCategory": "Залишити товари без категорії",
     "deleteTransferEmpty": "Немає доступних категорій",
-    "productsInCategory_one": "{{count}} товар",
-    "productsInCategory_few": "{{count}} товари",
-    "productsInCategory_many": "{{count}} товарів",
-    "productsInCategory_other": "{{count}} товару",
-    "newBadge": "Нове",
-    "deleteSubcategoryNote": "Видалення підкатегорії не видаляє товари — лише відв'язує їх.",
     "deleteCategory": "Видалити категорію",
     "deleteBlockedHasChildrenTitle": "Неможливо видалити категорію",
     "deleteBlockedHasChildren": "Спочатку видаліть усі підкатегорії, а потім цю категорію."
   },
   "characteristics": {
-    "title": "Характеристики",
+    "title": "Поля",
     "mobile": {
-      "backToCharacteristicsAria": "Повернутися до характеристик",
-      "createCharacteristicAria": "Створити характеристику",
-      "deleteCharacteristicAria": "Видалити характеристику",
-      "archiveCharacteristicAria": "Заархівувати характеристику",
-      "unarchiveCharacteristicAria": "Розархівувати характеристику",
+      "backToCharacteristicsAria": "Повернутися до полів",
+      "createCharacteristicAria": "Створити поле",
+      "deleteCharacteristicAria": "Видалити поле",
+      "archiveCharacteristicAria": "Заархівувати поле",
+      "unarchiveCharacteristicAria": "Розархівувати поле",
       "addOptionAria": "Додати опцію"
     },
-    "itemsCount_one": "{{count}} характеристика",
-    "itemsCount_few": "{{count}} характеристики",
-    "itemsCount_many": "{{count}} характеристик",
-    "itemsCount_other": "{{count}} характеристики",
-    "searchPlaceholder": "Пошук характеристик…",
-    "emptySearch": "За вашим пошуком характеристик не знайдено",
-    "selectCharacteristic": "Оберіть характеристику зі списку",
+    "itemsCount_one": "{{count}} поле",
+    "itemsCount_few": "{{count}} поля",
+    "itemsCount_many": "{{count}} полів",
+    "itemsCount_other": "{{count}} поля",
+    "searchPlaceholder": "Пошук полів…",
+    "emptySearch": "За вашим пошуком полів не знайдено",
     "createCharacteristic": "Нова",
-    "modalCreateTitle": "Створити характеристику",
+    "modalCreateTitle": "Створити поле",
     "name": "Назва",
-    "nameRequired": "Потрібна назва характеристики",
-    "nameTooLong": "Назва характеристики завелика",
-    "namePlaceholder": "Назва характеристики",
+    "nameRequired": "Потрібна назва поля",
+    "nameTooLong": "Назва поля завелика",
+    "namePlaceholder": "Назва поля",
     "displayName": "Назва для відображення (необов'язково)",
     "displayNameTooLong": "Назва для відображення завелика",
     "type": "Тип",
-    "typeRequired": "Потрібен тип характеристики",
+    "typeRequired": "Потрібен тип поля",
     "typeText": "Текстове поле",
     "typeOptions": "Список",
     "typeTextDescription": "Вільне поле вводу",
     "typeOptionsDescription": "Готові варіанти",
-    "createSuccess": "Характеристику створено",
-    "createFailed": "Не вдалося створити характеристику",
+    "createSuccess": "Поле створено",
+    "createFailed": "Не вдалося створити поле",
     "okCreate": "Створити",
-    "updated": "Характеристику оновлено",
-    "updateFailed": "Не вдалося оновити характеристику",
-    "deleted": "Характеристику видалено",
-    "deleteFailed": "Не вдалося видалити характеристику",
-    "invalidId": "Некоректний ідентифікатор характеристики",
-    "notFoundTitle": "Характеристику не знайдено",
-    "notFoundDescription": "Обраної характеристики немає або вона недоступна.",
-    "backToList": "Назад до характеристик",
-    "detailLoadFailed": "Не вдалося завантажити дані характеристики",
+    "updated": "Поле оновлено",
+    "updateFailed": "Не вдалося оновити поле",
+    "deleted": "Поле видалено",
+    "deleteFailed": "Не вдалося видалити поле",
+    "invalidId": "Некоректний ідентифікатор поля",
+    "notFoundTitle": "Поле не знайдено",
+    "notFoundDescription": "Обраного поля немає або воно недоступне.",
+    "backToList": "Назад до полів",
+    "detailLoadFailed": "Не вдалося завантажити дані поля",
     "saveChanges": "Зберегти зміни",
     "cancel": "Скасувати",
-    "renameCharacteristic": "Перейменувати характеристику",
+    "renameCharacteristic": "Перейменувати поле",
     "optionsCount_one": "{{count}} опція",
     "optionsCount_few": "{{count}} опції",
     "optionsCount_many": "{{count}} опцій",
@@ -3126,22 +2777,22 @@
     "optionValueTooLong": "Опція завелика",
     "duplicateOptionValue": "Така опція вже існує",
     "deleteValueNote": "Видалення опції не видаляє товари — лише прибирає опцію зі збереженого списку.",
-    "deleteConfirm": "Видалити цю характеристику?",
+    "deleteConfirm": "Видалити це поле?",
     "deleteWarning": "Цю дію не скасувати.",
     "delete": "Видалити",
-    "deleteCharacteristic": "Видалити характеристику",
-    "archiveCharacteristic": "Заархівувати характеристику",
-    "unarchiveCharacteristic": "Розархівувати характеристику",
+    "deleteCharacteristic": "Видалити поле",
+    "archiveCharacteristic": "Заархівувати поле",
+    "unarchiveCharacteristic": "Розархівувати поле",
     "archiveModal": {
-      "title": "Заархівувати характеристику «{{name}}»?",
-      "description": "Характеристика та всі опції стануть недоступні для нових товарів.",
+      "title": "Заархівувати поле «{{name}}»?",
+      "description": "Поле та всі опції стануть недоступні для нових товарів.",
       "confirm": "Заархівувати",
       "cancel": "Скасувати"
     },
-    "archiveSuccess": "Характеристику заархівовано",
-    "archiveFailed": "Не вдалося заархівувати характеристику",
-    "unarchiveSuccess": "Характеристику розархівовано",
-    "unarchiveFailed": "Не вдалося розархівувати характеристику",
+    "archiveSuccess": "Поле заархівовано",
+    "archiveFailed": "Не вдалося заархівувати поле",
+    "unarchiveSuccess": "Поле розархівовано",
+    "unarchiveFailed": "Не вдалося розархівувати поле",
     "archiveValue": "Заархівувати опцію",
     "unarchiveValue": "Розархівувати опцію",
     "archivedBadge": "Архів",
@@ -3154,7 +2805,7 @@
     "optionArchiveFailed": "Не вдалося заархівувати опцію",
     "optionUnarchiveSuccess": "Опцію розархівовано",
     "optionUnarchiveFailed": "Не вдалося розархівувати опцію",
-    "emptyState": "Поки немає характеристик"
+    "emptyState": "Поки немає полів"
   },
   "composer": {
     "tabsAria": "Режим введення",
@@ -3196,7 +2847,6 @@
     }
   },
   "login": {
-    "subtitle": "Уведіть дані для входу",
     "email": "Електронна пошта",
     "password": "Пароль",
     "emailPlaceholder": "Електронна пошта",

@@ -1,0 +1,29 @@
+---
+description: Glossary for Characteristics vs Fields / VariantCustomFields naming
+globs: src/features/characteristics/**/*,src/pages/products-page/products-characteristics/**/*,src/pages/products-page/products-list/form/**/*
+alwaysApply: false
+---
+
+# Characteristics = Fields (glossary)
+
+User-facing product language is **Fields** (uk: **Поля**). Code still uses legacy `Characteristic*` names.
+
+## Mapping
+
+| Layer | Name |
+|-------|------|
+| UI / i18n values | Field / Поле |
+| Code (`features/characteristics`, pages) | `Characteristic*` |
+| Product form types / aliases | `VariantCustomField*` |
+| API | `/workspace/variant-custom-fields` |
+
+## Why
+
+The domain started as “characteristics” in the client. Backend and product create payloads already use **variant custom fields**. UI was renamed to Fields without a full code rename to avoid a large churn PR.
+
+## Rules for new work
+
+- Visible copy: never say “characteristic” / “характеристика” — use Field / Поле.
+- i18n keys may stay under `characteristics.*` for now; only **values** must say Field/Поле.
+- Prefer existing `VariantCustomField` aliases when touching product-form code.
+- Do not mass-rename folders/symbols unless explicitly requested; if renaming, target `variant-custom-fields` / `VariantCustomField`.

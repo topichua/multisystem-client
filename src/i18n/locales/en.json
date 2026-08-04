@@ -19,15 +19,12 @@
       "customersWorkspace": "Customers & workspace"
     },
     "homeAria": "Home",
-    "openConversationsAria": "Open conversations",
-    "toggleSiderAria": "Collapse or expand menu",
     "expandSiderAria": "Expand menu",
     "collapseSiderAria": "Collapse menu"
   },
   "brand": "MultiSale",
   "instagram": {
     "pageTitle": "Instagram",
-    "placeholder": "Instagram management will appear here.",
     "emptySidebar": "No connected pages",
     "emptyDescription": "No Instagram pages are connected yet.",
     "openIntegrations": "Open integrations",
@@ -54,7 +51,6 @@
     "noComments": "No comments yet",
     "reply": "Reply",
     "replyTo": "Replying to",
-    "replySent": "Reply sent",
     "you": "You",
     "replyPlaceholder": "Write a reply...",
     "sendReply": "Send",
@@ -70,9 +66,6 @@
     "linkedProducts": "Linked products",
     "noLinkedProducts": "No linked products",
     "linkProduct": "Link",
-    "productSearchPlaceholder": "Search products",
-    "searchMinChars": "Enter at least {{count}} characters",
-    "searchNoResults": "No products found",
     "linkProductSuccess": "Product linked to post",
     "linkProductFailed": "Failed to link product to post",
     "linkingProduct": "Linking...",
@@ -186,163 +179,6 @@
           }
         }
       }
-    },
-    "summary": {
-      "revenue": "Revenue (30 days)",
-      "orders": "Orders",
-      "products": "Active products",
-      "conversion": "Conversion"
-    },
-    "charts": {
-      "revenueTrend": {
-        "title": "Orders & revenue",
-        "subtitle": "Daily dynamics for the last week",
-        "ordersAxis": "Orders",
-        "revenueAxis": "UAH",
-        "ordersSeries": "Orders",
-        "revenueSeries": "Revenue"
-      },
-      "salesByCategory": {
-        "title": "Sales by category",
-        "subtitle": "Share of revenue across the catalog"
-      },
-      "topProducts": {
-        "title": "Top products",
-        "subtitle": "Best sellers by units sold",
-        "unit": "units"
-      },
-      "ordersByStatus": {
-        "title": "Orders by status",
-        "subtitle": "Current order pipeline distribution"
-      },
-      "conversations": {
-        "title": "Conversations by channel",
-        "subtitle": "Where customers reach out most often"
-      },
-      "characteristics": {
-        "title": "Product characteristics",
-        "subtitle": "How fully the catalog is filled in",
-        "series": "Fill rate, %"
-      },
-      "salesFunnel": {
-        "title": "Sales funnel",
-        "subtitle": "From catalog views to paid orders"
-      },
-      "monthlyClients": {
-        "title": "New vs returning clients",
-        "subtitle": "Client dynamics over the last 6 months",
-        "newSeries": "New",
-        "returningSeries": "Returning"
-      },
-      "stockHealth": {
-        "title": "Stock by category",
-        "subtitle": "Variant availability across the catalog",
-        "inStock": "In stock",
-        "lowStock": "Low stock",
-        "outOfStock": "Out of stock"
-      },
-      "responseTime": {
-        "title": "Team response time",
-        "subtitle": "Average first reply by day of week",
-        "axis": "Minutes",
-        "unit": "min",
-        "average": "Average"
-      },
-      "orderSources": {
-        "title": "Order sources",
-        "subtitle": "Where orders come from"
-      },
-      "teamPerformance": {
-        "title": "Team performance",
-        "subtitle": "Orders handled per team member"
-      },
-      "messageHeatmap": {
-        "title": "Message activity",
-        "subtitle": "Incoming messages by day and hour",
-        "unit": "messages"
-      }
-    },
-    "mock": {
-      "categories": {
-        "clothing": "Clothing",
-        "footwear": "Footwear",
-        "accessories": "Accessories",
-        "electronics": "Electronics",
-        "home": "Home & decor"
-      },
-      "products": {
-        "linenDress": "Linen summer dress",
-        "sneakersUrban": "Urban sneakers",
-        "leatherBag": "Leather crossbody bag",
-        "wirelessEarbuds": "Wireless earbuds",
-        "ceramicVase": "Ceramic vase"
-      },
-      "orderStatuses": {
-        "new": "New",
-        "processing": "Processing",
-        "shipped": "Shipped",
-        "completed": "Completed",
-        "cancelled": "Cancelled"
-      },
-      "channels": {
-        "instagram": "Instagram",
-        "telegram": "Telegram",
-        "viber": "Viber",
-        "direct": "Direct"
-      },
-      "characteristics": {
-        "size": "Size",
-        "color": "Color",
-        "material": "Material",
-        "brand": "Brand",
-        "season": "Season",
-        "weight": "Weight"
-      },
-      "funnel": {
-        "catalogViews": "Catalog views",
-        "conversations": "Conversations",
-        "orders": "Orders",
-        "paid": "Paid"
-      },
-      "months": {
-        "jan": "Jan",
-        "feb": "Feb",
-        "mar": "Mar",
-        "apr": "Apr",
-        "may": "May",
-        "jun": "Jun"
-      },
-      "weekdays": {
-        "mon": "Monday",
-        "tue": "Tuesday",
-        "wed": "Wednesday",
-        "thu": "Thursday",
-        "fri": "Friday",
-        "sat": "Saturday",
-        "sun": "Sunday"
-      },
-      "weekdaysShort": {
-        "mon": "Mon",
-        "tue": "Tue",
-        "wed": "Wed",
-        "thu": "Thu",
-        "fri": "Fri",
-        "sat": "Sat",
-        "sun": "Sun"
-      },
-      "orderSources": {
-        "instagramStory": "Instagram Story",
-        "instagramDm": "Instagram DM",
-        "catalogLink": "Catalog link",
-        "telegramBot": "Telegram bot",
-        "manual": "Manual"
-      },
-      "teamMembers": {
-        "olena": "Olena K.",
-        "andrii": "Andrii H.",
-        "maria": "Maria S.",
-        "dmytro": "Dmytro P."
-      }
     }
   },
   "team": {
@@ -356,7 +192,6 @@
     "membersInactiveCount_one": "{{count}} inactive",
     "membersInactiveCount_other": "{{count}} inactive",
     "rolesTitle": "Roles",
-    "rolesPlaceholder": "Role management will appear here.",
     "rolesEmpty": "No roles yet",
     "invalidRole": "Invalid role",
     "roleNotFoundTitle": "Role not found",
@@ -403,7 +238,6 @@
     "disableAll": "Disable all",
     "rolesIntegrationGrantsEmpty": "No connected integrations",
     "rolesIntegrationGrantsError": "Failed to load integration grants",
-    "cancel": "Cancel",
     "permissions": {
       "integrationGrantFallback": "{{type}} #{{id}}",
       "itemsByKey": {
@@ -420,8 +254,8 @@
         "products_read": "View products",
         "products_write": "Create and edit products",
         "products_create_and_edit": "Create and edit products",
-        "products_custom_fields": "Manage characteristics",
-        "products_custom_fields_management": "Manage characteristics",
+        "products_custom_fields": "Manage fields",
+        "products_custom_fields_management": "Manage fields",
         "products_category": "Manage categories",
         "products_category_management": "Manage categories",
         "products_ai_import": "AI import from Instagram",
@@ -479,7 +313,7 @@
         "products": {
           "read": "View products",
           "create_and_edit": "Create and edit products",
-          "custom_fields_management": "Manage characteristics",
+          "custom_fields_management": "Manage fields",
           "category_management": "Manage categories",
           "ai_import": "AI import from Instagram"
         },
@@ -520,7 +354,6 @@
       }
     },
     "inviteCta": "Invite",
-    "placeholder": "Team management will appear here.",
     "menu": {
       "members": "Members",
       "roles": "Roles"
@@ -540,8 +373,6 @@
     },
     "table": {
       "member": "Member",
-      "name": "Name",
-      "email": "Email",
       "role": "Role",
       "canBeAssignedToChat": "Responsible for chat",
       "status": "Status",
@@ -573,17 +404,7 @@
       "cancel": "Cancel",
       "submit": "Send invitation",
       "success": "Invitation sent",
-      "error": "Failed to send invitation",
-      "roles": {
-        "manager": {
-          "title": "Manager",
-          "description": "Handles sales: conversations, orders, products, and customers."
-        },
-        "operator": {
-          "title": "Operator",
-          "description": "Communicates with customers, without access to settings."
-        }
-      }
+      "error": "Failed to send invitation"
     }
   },
   "sidebar": {
@@ -705,9 +526,7 @@
     "placeholders": {
       "name": "Automation name",
       "sourceStatus": "Select value...",
-      "targetStatus": "Select status...",
-      "durationValue": "Value",
-      "durationUnit": "Unit"
+      "targetStatus": "Select status..."
     },
     "sourceType": {
       "delivery": "Delivery status",
@@ -720,7 +539,6 @@
       "changeOrderStatus": "Change order status"
     },
     "delay": {
-      "label": "Delay",
       "summary": "{{value}} {{unit}}",
       "units": {
         "minutes": "min",
@@ -749,7 +567,6 @@
       "sourceType": "Select condition type",
       "sourceStatus": "Select a value",
       "durationValue": "Enter a positive number",
-      "durationUnit": "Select a time unit",
       "targetStatus": "Select an order status"
     },
     "mobile": {
@@ -759,7 +576,6 @@
   "billing": {
     "title": "Billing",
     "sectionHint": "Workspace subscription and payments.",
-    "placeholder": "Billing section coming soon",
     "infoBar": {
       "manualPayment": "Manual payment via Monobank. No auto-renewal."
     },
@@ -900,10 +716,8 @@
   "integrations": {
     "title": "Integrations",
     "subtitle": "Connect external services and manage accounts",
-    "addIntegration": "Add integration",
     "searchPlaceholder": "Search integrations...",
     "allIntegrations": "All integrations",
-    "noIntegrationsYet": "No integrations yet",
     "noMatchFilters": "No integrations match your filters",
     "noActiveConnections": "No active connections for {{name}}",
     "connectSuccess": "Integration connected",
@@ -918,8 +732,6 @@
     "disconnectAction": "Disconnect",
     "connectedTag": "Connected",
     "followersCount": "{{count}} followers",
-    "typeLabel": "Type: {{type}}",
-    "addedLabel": "Added: {{date}}",
     "groups": {
       "channels": "Contact channels",
       "delivery": "Delivery",
@@ -1153,19 +965,11 @@
       "updateFailed": "Failed to update Nova Poshta integration",
       "emptyValue": "Not set",
       "apiKeyPlaceholder": "Enter a new API key to replace the current one",
-      "apiKeyConfigured": "Configured",
-      "apiKeyMissing": "Not configured",
       "sections": {
-        "sender": "Sender",
-        "defaults": "Default parameters"
+        "sender": "Sender"
       },
       "fields": {
-        "apiKey": "API key",
-        "senderPlace": "Dispatch place",
-        "senderName": "Sender",
-        "senderNameRequired": "Enter sender",
-        "senderPhone": "Sender phone",
-        "senderPhoneRequired": "Enter sender phone"
+        "senderPlace": "Dispatch place"
       }
     },
     "monobank": {
@@ -1282,12 +1086,10 @@
       "restart": "Start again",
       "noPages": "No Instagram Business pages were found for this Facebook account.",
       "oauthFailed": "Facebook login did not complete. Try again.",
-      "loadPagesFailed": "Could not load Instagram pages",
       "historySyncTitle": "Syncing messages from the last 7 days...",
       "historySyncDescription": "This may take up to 1 minute."
     },
     "tiktokOauth": {
-      "awaitingOauth": "Complete TikTok authorization in the popup. This page updates automatically.",
       "oauthFailed": "TikTok authorization did not complete. Try again.",
       "oauthDenied": "TikTok authorization was denied or failed.",
       "sessionExpired": "This connection session has expired. Start again to continue."
@@ -1335,9 +1137,7 @@
       "saveError": "Could not update wishlist setting"
     },
     "mobile": {
-      "backToSettingsAria": "Back to settings",
-      "workspaceSection": "Workspace",
-      "appearanceSection": "Appearance"
+      "backToSettingsAria": "Back to settings"
     }
   },
   "groups": {
@@ -1439,20 +1239,15 @@
   },
   "conversations": {
     "title": "Conversations",
-    "drawerTitle": "Conversations",
     "selectConversation": "Select a conversation",
     "noMessages": "No messages yet.",
     "youPrefix": "You:",
-    "filterAllGroups": "All groups",
     "searchPlaceholder": "Search by name or @handle",
     "all": "All",
     "unread": "Unread",
     "withoutResponsible": "Without responsible",
     "filtersAria": "Conversation filters",
-    "bookmarksAria": "Conversation bookmarks",
-    "listViewModeAria": "Conversation list view mode",
     "collapseListPaneAria": "Collapse conversations list",
-    "expandListPaneAria": "Expand conversations list",
     "unassignedAssignee": "Unassigned",
     "unassignedAssigneeAria": "Conversation is unassigned",
     "markRead": "Mark read",
@@ -1526,13 +1321,8 @@
     "linkExistingClientSearchFailed": "Failed to search clients",
     "linkExistingClientSuccess": "Client linked",
     "linkExistingClientFailed": "Failed to link client",
-    "addClient": "Add client",
-    "backFromCreate": "Back",
     "clientRecordMissing": "Could not load this client record.",
     "clientProfile": {
-      "aiAnalysis": "AI client analysis",
-      "firstContact": "First contact",
-      "lastActivity": "Last activity",
       "fullProfile": "Full profile",
       "contacts": "Contacts",
       "editAria": "Edit client",
@@ -1571,23 +1361,15 @@
       "wishlistAddFailed": "Could not add product to wishlist"
     },
     "clientOrders": {
-      "delivery": "Delivery",
-      "clientSince": "Client since",
-      "summaryTitle": "Client summary",
       "ordersCount": "Orders",
       "ordersSum": "Total",
       "lastOrder": "Last order",
       "overviewOrderSummary": "Overview",
       "lastOrderSection": "Last order",
       "allOrders": "All orders",
-      "spent": "Spent",
       "averageBill": "Average bill",
-      "ordersTitle": "Client orders",
       "emptyOrders": "No orders yet",
       "orderNumber": "Order #{{id}}",
-      "totalLabel": "Total",
-      "showMore": "Show more",
-      "showLess": "Show less",
       "currentOrder": "Current",
       "openCurrentOrderAria": "Open current order #{{id}}",
       "openFullOrder": "Open full order",
@@ -1703,7 +1485,7 @@
         "list": "Browse and manage your product catalog.",
         "supplies": "Create and review product supplies.",
         "categories": "Organize your product categories.",
-        "characteristics": "Manage product attributes and options.",
+        "characteristics": "Manage product fields and options.",
         "inventoryHistory": "View stock movement history."
       }
     },
@@ -1713,7 +1495,6 @@
     "fieldsTitle": "Fields",
     "supplies": {
       "emptyState": "Supplies will appear here.",
-      "loadError": "Failed to load supplies.",
       "tabs": {
         "aria": "Supply status filters",
         "all": "All",
@@ -1753,7 +1534,6 @@
     },
     "inventoryHistory": {
       "emptyState": "Stock movement history will appear here.",
-      "loadError": "Failed to load inventory history.",
       "viewDetails": "View",
       "searchPlaceholder": "Search by product, SKU, or manager...",
       "searchAria": "Search inventory history",
@@ -1797,13 +1577,10 @@
         "date": "Date",
         "details": "Product / details",
         "type": "Type",
-        "product": "Product",
-        "variant": "Variant",
         "change": "Change",
         "stock": "Stock",
         "price": "Price",
-        "user": "Manager",
-        "comment": "Comment"
+        "user": "Manager"
       },
       "drawer": {
         "positions": "Positions",
@@ -1817,8 +1594,7 @@
     },
     "catalogVariant": {
       "inStock_one": "{{count}} pc",
-      "inStock_other": "{{count}} pcs",
-      "outOfStock": "Out of stock"
+      "inStock_other": "{{count}} pcs"
     },
     "catalogSearch": {
       "addLabel": "Add product",
@@ -1872,7 +1648,6 @@
       "tagPriceMin": "Min price: {{min}}",
       "tagPriceMax": "Max price: {{max}}",
       "clearAll": "Clear all",
-      "panelCloseAria": "Close filters",
       "panelCategorySearchPlaceholder": "Search categories…",
       "panelSelectAll": "Select all",
       "panelPriceSection": "Price",
@@ -1937,7 +1712,6 @@
     },
     "editPage": {
       "title": "Edit product",
-      "subtitle": "Update product information",
       "summary": "{{variants}} · {{stock}}",
       "stockOnHand": "{{count}} pcs in stock",
       "archiveProduct": "Archive product",
@@ -1956,21 +1730,7 @@
       "switchToSingleConfirmOk": "Switch type"
     },
     "instagram": {
-      "drawerTitle": "Instagram posts",
-      "selectPostHint": "Select a post on the left to preview and fill the product form.",
-      "refreshPosts": "Refresh posts",
-      "noBio": "No bio available",
       "noCaption": "No caption",
-      "openOnInstagram": "Open on Instagram",
-      "fillFormHeading": "Fill product form with AI",
-      "fillFormIntro": "The AI analyzes the post and fills this form with suggested data. You can edit everything and save the product when you are ready.",
-      "fillFormWhatTitle": "What will be filled:",
-      "fillFormItemName": "Name and description",
-      "fillFormItemCategory": "Category (when returned by the AI)",
-      "fillFormItemPrice": "Price (when returned)",
-      "fillFormItemMedia": "Cover and gallery images (when URLs can be downloaded)",
-      "fillFormItemVariants": "Variant drafts (colors and sizes)",
-      "analyzeFillButton": "Analyze and fill form",
       "ai": {
         "tag": "AI analysis",
         "drawerTitle": "Add product from Instagram",
@@ -2004,12 +1764,10 @@
       }
     },
     "detailBackToList": "Back to products list",
-    "autoSaveSuccess": "Saved",
     "edit": "Edit",
     "saveChanges": "Save changes",
     "cancelEdit": "Cancel",
     "delete": "Delete",
-    "deleteConfirm": "Delete this product?",
     "hardDelete": {
       "productTitle": "Delete “{{name}}”?",
       "variantTitle": "Delete variant “{{name}}”?",
@@ -2048,10 +1806,6 @@
     "variantUnarchiveSuccess": "Variant unarchived",
     "variantUnarchiveFailed": "Failed to unarchive variant",
     "archivedCannotEdit": "Archived products cannot be edited",
-    "variantCreateSuccess": "Variant created",
-    "variantCreateFailed": "Failed to create variant",
-    "variantUpdateSuccess": "Variant updated",
-    "variantUpdateFailed": "Failed to update variant",
     "variantDeleteSuccess": "Variant deleted",
     "variantDeleteFailed": "Failed to delete variant",
     "detailLoadFailed": "Failed to load product",
@@ -2078,7 +1832,6 @@
       "historyTitle": "Delivery and change history",
       "historyLoadedCount": "{{count}} of {{total}}",
       "movementsLoadError": "Failed to load stock history",
-      "movementsEmpty": "No stock history yet",
       "movementsNoChangesYet": "No stock changes for this variant yet",
       "showFullHistory": "Show full history",
       "fullHistoryTitle": "{{variantName}} — full stock history",
@@ -2161,18 +1914,18 @@
       "unitCm": "cm"
     },
     "characteristics": {
-      "title": "Characteristics",
-      "singleDescription": "Add optional characteristics like color or size. Each value is selected once for the product.",
-      "chooseFirst": "Choose characteristic first",
-      "choose": "Choose characteristic",
+      "title": "Fields",
+      "singleDescription": "Add optional fields like color or size. Each value is selected once for the product.",
+      "chooseFirst": "Choose field first",
+      "choose": "Choose field",
       "chooseValue": "Choose value",
       "selectValue": "Select value",
       "enterValue": "Enter value",
       "enterCustomValue": "Enter custom value",
-      "add": "Add characteristic",
+      "add": "Add field",
       "addValues": "Add values",
       "addCustomValues": "Add custom values",
-      "savedCharacteristics": "Saved characteristics",
+      "savedCharacteristics": "Saved fields",
       "createAs": "Create \"{{name}}\" as:",
       "text": "Text",
       "option": "List",
@@ -2180,25 +1933,25 @@
       "optionValues": "selectable values",
       "optionCount_one": "{{count}} option",
       "optionCount_other": "{{count}} options",
-      "enterNameToCreate": "Enter a name to create a new characteristic",
-      "enterName": "Enter characteristic name",
+      "enterNameToCreate": "Enter a name to create a new field",
+      "enterName": "Enter field name",
       "addOptionValue": "Add \"{{value}}\"",
       "savedToList": "— saved to list",
-      "dragRow": "Drag characteristic",
-      "lockedOptionCharacteristic": "This characteristic cannot be removed after the product has been created because it is used by existing variants.",
-      "newOptionDisabledInEdit": "New option characteristics cannot be added after the product has been created because they would rebuild existing variants."
+      "dragRow": "Drag field",
+      "lockedOptionCharacteristic": "This field cannot be removed after the product has been created because it is used by existing variants.",
+      "newOptionDisabledInEdit": "New option fields cannot be added after the product has been created because they would rebuild existing variants."
     },
     "variantsForm": {
       "title": "Product variants",
-      "description": "Add characteristics like color or size. Price and quantity are configured for each variant.",
+      "description": "Add fields like color or size. Price and quantity are configured for each variant.",
       "variants": "Variants",
-      "empty": "No variants yet. Add characteristics to generate variants automatically or add variant manually.",
+      "empty": "No variants yet. Add fields to generate variants automatically or add variant manually.",
       "addAtLeastOne": "Add at least one variant.",
-      "duplicate": "Variant with the same characteristics already exists.",
-      "manualMissingFields": "Manual variants must have all characteristic values filled.",
+      "duplicate": "Variant with the same fields already exists.",
+      "manualMissingFields": "Manual variants must have all field values filled.",
       "singleConfirm": "Product will be created as a single product.",
       "singleUpdateConfirm": "Product will be saved as a single product. Extra variant data may be lost.",
-      "lockedOptionsChanged": "Saved option characteristics and values cannot be removed from an existing variants product.",
+      "lockedOptionsChanged": "Saved option fields and values cannot be removed from an existing variants product.",
       "editSkuAndPriceHint": "Edit the SKU and selling price for each variant.",
       "bulkPricePlaceholder": "Price for all",
       "applyPriceToAll": "To all",
@@ -2226,10 +1979,8 @@
       "sectionTitle": "Product images",
       "sectionSubtitle": "Add product pictures",
       "deleteTooltip": "Delete",
-      "deleteFailed": "Failed to delete image",
       "dragUploadTitle": "Click or drag images here",
       "coverRadioLabel": "Cover",
-      "urlTooLong": "URL must be at most {{max}} characters (server limit). Use a shorter HTTPS link or a smaller image.",
       "cropOk": "Apply",
       "uploadHintShort": "PNG, JPG, WEBP less than 10MB",
       "reorderHint": "Drag images to change their order. The first image is used as the main product image.",
@@ -2273,8 +2024,7 @@
       "uploadVariantOnlyImage": "Upload variant-only image",
       "reorderImagesHint": "Drag images to change their order. The first image is used as the main variant image.",
       "mainImage": "Main",
-      "variantOnly": "Variant only",
-      "deleteImageFailed": "Failed to delete variant image"
+      "variantOnly": "Variant only"
     },
     "table": {
       "product": "Product",
@@ -2313,7 +2063,6 @@
     "saveChanges": "Save changes",
     "updated": "Order status updated",
     "updateError": "Could not update order status",
-    "dangerZoneTitle": "Danger zone",
     "deleteStatus": "Delete status",
     "deleteStatusAria": "Delete order status",
     "delete": "Delete",
@@ -2331,10 +2080,7 @@
     "nameRequired": "Enter name",
     "namePlaceholder": "E.g. Awaiting payment...",
     "duplicateName": "An order status with this name already exists",
-    "dragHandleAria": "Drag to reorder",
-    "reorderError": "Could not reorder order statuses",
     "mobile": {
-      "backToOrdersAria": "Back to orders",
       "backToSettingsAria": "Back to settings",
       "backToStatusesAria": "Back to order statuses"
     }
@@ -2376,11 +2122,6 @@
       "products": {
         "title": "Products",
         "add": "Add product",
-        "searchPlaceholder": "Search product",
-        "searchMinChars": "Enter at least {{count}} characters",
-        "found": "Found: {{count}}",
-        "stock": "{{count}} pcs",
-        "outOfStock": "Out of stock",
         "empty": "No products found",
         "emptyState": "Add products to the order",
         "decreaseQuantity": "Decrease quantity",
@@ -2388,8 +2129,7 @@
         "toggleDiscount": "Position discount",
         "positionDiscount": "Position discount",
         "closeDiscount": "Close discount",
-        "remove": "Remove product",
-        "closeSearch": "Close product search"
+        "remove": "Remove product"
       },
       "delivery": {
         "title": "Delivery",
@@ -2401,21 +2141,6 @@
       "payment": {
         "title": "Payment",
         "prepaymentCard": "Prepayment (card)"
-      },
-      "shipment": {
-        "title": "Shipment parameters",
-        "configure": "Configure",
-        "collapse": "Collapse",
-        "weight": "Weight",
-        "weightPlaceholder": "e.g. 500",
-        "places": "Number of parcels",
-        "length": "Length",
-        "width": "Width",
-        "height": "Height",
-        "declaredValue": "Declared value",
-        "grams": "g",
-        "centimeters": "cm",
-        "hint": "Optional. By default it is calculated from products."
       },
       "comment": {
         "title": "Comment",
@@ -2473,10 +2198,8 @@
       "source": "Source",
       "paymentStatus": "Payment",
       "manager": "Manager",
-      "note": "Note",
       "delivery": "Delivery",
       "internalNote": "Internal note",
-      "openClientAria": "Open client profile for {{name}} in a new tab",
       "seeClientOrders": "See all orders for this client",
       "createdAt": "Created"
     },
@@ -2484,7 +2207,6 @@
     "notFound": "Order not found",
     "backToOrders": "Back to all orders",
     "orderTitle": "Order",
-    "orderAmount": "Order total",
     "print": "Print",
     "product": "Product",
     "quantity": "Qty",
@@ -2509,8 +2231,6 @@
     "address": "Address",
     "trackingNumber": "Tracking number",
     "customerId": "Client ID",
-    "instagramUserId": "Instagram ID",
-    "savedDeliveryInfo": "Saved delivery info",
     "customerCreatedAt": "Client created",
     "subtotal": "Subtotal",
     "discount": "Discount",
@@ -2535,14 +2255,12 @@
     "customerTab": "Customer",
     "conversation": "Conversation",
     "groupId": "Group ID",
-    "managerId": "Manager ID",
     "responsibleMemberId": "Responsible member ID",
     "readAt": "Read at",
     "historyTab": "History",
     "details": {
       "edit": "Edit",
       "editNotes": "Edit notes",
-      "editUnavailable": "Order editing is not available yet",
       "editOrderTitle": "Edit order",
       "editNotesTitle": "Edit notes",
       "editSuccess": "Order updated",
@@ -2584,14 +2302,10 @@
       "removeWaybillConfirmTitle": "Remove delivery?",
       "removeWaybillConfirmText": "You are removing the TTN and all delivery data for this order. The customer will no longer be able to track the parcel with this number — if the shipment is already in transit, make sure this is really necessary. This action cannot be undone.",
       "removeWaybillConfirmOk": "Remove",
-      "removeWaybillUnavailable": "This TTN cannot be removed",
-      "removeWaybillMissing": "Create or attach a TTN first",
       "cancel": "Cancel",
       "waybillWeight": "Weight",
       "waybillWeightKg": "Weight, kg",
       "waybillSeatsAmount": "Seats amount",
-      "waybillDeclaredCost": "Declared cost",
-      "waybillDescription": "Description",
       "deliveryPayer": "Delivery payer",
       "deliveryPayerRecipient": "Recipient",
       "deliveryPayerSender": "Sender",
@@ -2601,28 +2315,17 @@
       "widthCm": "Width, cm",
       "heightCm": "Height, cm",
       "copy": "Copy",
-      "collapse": "Collapse",
       "requiredField": "Required field",
-      "deliveryShippedLocked": "Delivery is shipped and cannot be edited",
-      "waybillMissingDelivery": "Add delivery information before creating a TTN",
-      "waybillNovaPoshtaRequired": "TTN can be created only for Nova Poshta delivery",
-      "waybillItemsRequired": "Add order items before creating a TTN",
-      "waybillRefsRequired": "Nova Poshta city and warehouse refs are required",
       "deliveryInTransit": "In transit",
-      "deliveryExpected": "Expected {{dateRange}}",
       "deliveryType": "Type",
       "deliveryBranchType": "Branch",
-      "deliveryCityMock": "Kyiv",
-      "deliveryWarehouseMock": "Branch No. 12, Khreshchatyk St, 22",
       "paymentMethod": "Method",
-      "paymentStatusField": "Status",
       "paymentCashOnDelivery": "Cash on delivery",
       "deliveryPaymentSync": "Synchronize with payment",
       "deliveryPaymentSyncSuccess": "Payment synchronized",
       "deliveryPaymentSyncFailed": "Failed to synchronize payment",
       "deliveryPaymentSyncNote": "Delivery payment synchronization",
       "deliveryPaymentSynced": "Synchronized (receiving COD funds will move payment to “Paid”)",
-      "paymentAwaiting": "Awaiting payment",
       "amountToPay": "Amount due",
       "amountPaid": "Paid",
       "amountRemaining": "Remaining",
@@ -2648,7 +2351,6 @@
       "amountLabel": "Amount",
       "paymentPurposeLabel": "Purpose",
       "paymentPurposeDefault": "Payment for order #{{orderId}}",
-      "uah": "UAH",
       "fullOrderAmount": "Full order amount",
       "amountExceedsRemaining": "Amount cannot exceed the remaining balance",
       "addPayment": "Add payment",
@@ -2659,7 +2361,6 @@
       "cancelPaymentConfirmTitle": "Cancel payment?",
       "cancelPaymentConfirmText": "This payment record will be deleted. This action cannot be undone.",
       "paymentKeepPending": "Keep",
-      "writeToClient": "Message client",
       "paymentClientMessageModalTitle": "Message client",
       "paymentClientMessageSend": "Send",
       "paymentClientMessageSent": "Message sent",
@@ -2671,7 +2372,6 @@
       "paymentClientMessageGeneric": "Please make a payment: {{method}}.\n\nAmount: {{amount}}{{noteLine}}",
       "paymentClientMessageNoteLine": "\nPurpose: {{note}}",
       "paymentFallback": "Payment",
-      "paymentActorYou": "You",
       "paymentMethodCardTransfer": "Transfer to card",
       "paymentMethodOnline": "Online payment",
       "paymentMethodCash": "Cash",
@@ -2820,8 +2520,6 @@
     "firstName": "First name",
     "lastName": "Last name",
     "phone": "Phone",
-    "deliveryInfo": "Delivery info",
-    "tableColumnDelivery": "Delivery",
     "searchPlaceholder": "Search name or phone",
     "table": {
       "client": "Client",
@@ -2844,7 +2542,6 @@
     "save": "Save",
     "modalCreateOk": "Create",
     "createClientCta": "Create client",
-    "created": "Created",
     "createSubmit": "Create client",
     "createSuccess": "Client created",
     "updateSuccess": "Client updated",
@@ -2861,8 +2558,6 @@
       "invalidClientId": "Invalid client id",
       "notFound": "Client not found",
       "clientSince": "Client since {{date}}",
-      "message": "Message",
-      "createOrder": "Order",
       "retry": "Retry",
       "ordersTitle": "Orders",
       "emptyOrders": "This client has no orders yet",
@@ -2885,17 +2580,12 @@
   "categories": {
     "title": "Categories",
     "mobile": {
-      "backToCategoriesAria": "Back to categories",
-      "createCategoryAria": "Create category",
-      "deleteCategoryAria": "Delete category",
       "addSubcategoryAria": "Add subcategory"
     },
     "itemsCount_one": "{{count}} category",
     "itemsCount_other": "{{count}} categories",
     "productsCount_one": "{{count}} product",
     "productsCount_other": "{{count}} products",
-    "productVariantsCount_one": "{{count}} variant",
-    "productVariantsCount_other": "{{count}} variants",
     "productsWord_one": "product",
     "productsWord_other": "products",
     "productVariantsWord_one": "variant",
@@ -2904,13 +2594,9 @@
     "emptySearch": "No categories match your search",
     "loadFailed": "Failed to load categories",
     "retry": "Retry",
-    "selectCategory": "Select a category from the list",
     "noCategory": "No category",
     "clearCategorySelection": "Clear category selection",
-    "subcategoriesCount_one": "{{count}} subcategory",
-    "subcategoriesCount_other": "{{count}} subcategories",
     "createCategory": "New",
-    "modalCreateTitle": "Create category",
     "modalCreateRootTitle": "New category",
     "name": "Name",
     "nameRequired": "Category name is required",
@@ -2918,9 +2604,6 @@
     "namePlaceholder": "Category name",
     "rootNamePlaceholder": "E.g. Underwear...",
     "rootCreateHint": "Creates a root category. Subcategories are added with the \"+\" icon directly in the list.",
-    "parentCategory": "Parent category",
-    "parentCategoryHint": "Choose a parent category to create a subcategory.",
-    "noParent": "No parent",
     "createSuccess": "Category created",
     "createFailed": "Failed to create category",
     "okCreate": "Create",
@@ -2928,33 +2611,16 @@
     "updateFailed": "Failed to update category",
     "deleted": "Category deleted",
     "deleteFailed": "Failed to delete category",
-    "invalidId": "Invalid category id",
-    "notFoundTitle": "Category not found",
-    "notFoundDescription": "The selected category does not exist or is unavailable.",
-    "backToList": "Back to categories",
-    "detailSubtitle": "Edit category details and view category metadata.",
-    "metaLine": "Created by {{userId}}, {{created}} · updated {{updated}}",
     "saveChanges": "Save changes",
     "deleteConfirm": "Delete this category?",
     "deleteWarning": "This action cannot be undone.",
     "delete": "Delete",
-    "contentTitle": "Category content",
-    "subcategories": "Subcategories",
-    "noSubcategories": "No subcategories",
     "emptyState": "No categories yet",
-    "usedInProducts": "Used in",
-    "productsUnit": "products",
     "noLinkedProducts": "No linked products",
-    "metaSubcategories_one": "{{count}} subcategory",
-    "metaSubcategories_other": "{{count}} subcategories",
-    "metaProductsCount_one": "{{count}} product",
-    "metaProductsCount_other": "{{count}} products",
-    "createdOn": "Created {{date}}",
     "addSubcategory": "Add subcategory",
     "subcategoryNamePlaceholder": "Subcategory name, e.g. Sweatshirts…",
     "addSubcategorySubmit": "Add",
     "addSubcategoryCancel": "Cancel",
-    "renameSubcategory": "Rename subcategory",
     "renameCategory": "Rename category",
     "moveCategory": "Move category",
     "moveCategoryTitle": "Move \"{{name}}\"",
@@ -2969,58 +2635,53 @@
     "deleteTransferDescription": "This category is used in {{productCount}} products and {{productVariantCount}} variants. Choose where to move them before deleting.",
     "deleteTransferNoCategory": "Leave products without a category",
     "deleteTransferEmpty": "No available categories",
-    "productsInCategory_one": "{{count}} product",
-    "productsInCategory_other": "{{count}} products",
-    "newBadge": "New",
-    "deleteSubcategoryNote": "Deleting a subcategory does not delete products — it only unlinks them.",
     "deleteCategory": "Delete category",
     "deleteBlockedHasChildrenTitle": "Category cannot be deleted",
     "deleteBlockedHasChildren": "Remove all subcategories before deleting this category."
   },
   "characteristics": {
-    "title": "Characteristics",
+    "title": "Fields",
     "mobile": {
-      "backToCharacteristicsAria": "Back to characteristics",
-      "createCharacteristicAria": "Create characteristic",
-      "deleteCharacteristicAria": "Delete characteristic",
-      "archiveCharacteristicAria": "Archive characteristic",
-      "unarchiveCharacteristicAria": "Unarchive characteristic",
+      "backToCharacteristicsAria": "Back to fields",
+      "createCharacteristicAria": "Create field",
+      "deleteCharacteristicAria": "Delete field",
+      "archiveCharacteristicAria": "Archive field",
+      "unarchiveCharacteristicAria": "Unarchive field",
       "addOptionAria": "Add option"
     },
-    "itemsCount_one": "{{count}} characteristic",
-    "itemsCount_other": "{{count}} characteristics",
-    "searchPlaceholder": "Search characteristics…",
-    "emptySearch": "No characteristics match your search",
-    "selectCharacteristic": "Select a characteristic from the list",
+    "itemsCount_one": "{{count}} field",
+    "itemsCount_other": "{{count}} fields",
+    "searchPlaceholder": "Search fields…",
+    "emptySearch": "No fields match your search",
     "createCharacteristic": "New",
-    "modalCreateTitle": "Create characteristic",
+    "modalCreateTitle": "Create field",
     "name": "Name",
-    "nameRequired": "Characteristic name is required",
-    "nameTooLong": "Characteristic name is too long",
-    "namePlaceholder": "Characteristic name",
+    "nameRequired": "Field name is required",
+    "nameTooLong": "Field name is too long",
+    "namePlaceholder": "Field name",
     "displayName": "Display name (optional)",
     "displayNameTooLong": "Display name is too long",
     "type": "Type",
-    "typeRequired": "Characteristic type is required",
+    "typeRequired": "Field type is required",
     "typeText": "Text field",
     "typeOptions": "List",
     "typeTextDescription": "Free text input",
     "typeOptionsDescription": "Prepared options",
-    "createSuccess": "Characteristic created",
-    "createFailed": "Failed to create characteristic",
+    "createSuccess": "Field created",
+    "createFailed": "Failed to create field",
     "okCreate": "Create",
-    "updated": "Characteristic updated",
-    "updateFailed": "Failed to update characteristic",
-    "deleted": "Characteristic deleted",
-    "deleteFailed": "Failed to delete characteristic",
-    "invalidId": "Invalid characteristic id",
-    "notFoundTitle": "Characteristic not found",
-    "notFoundDescription": "The selected characteristic does not exist or is unavailable.",
-    "backToList": "Back to characteristics",
-    "detailLoadFailed": "Failed to load characteristic details",
+    "updated": "Field updated",
+    "updateFailed": "Failed to update field",
+    "deleted": "Field deleted",
+    "deleteFailed": "Failed to delete field",
+    "invalidId": "Invalid field id",
+    "notFoundTitle": "Field not found",
+    "notFoundDescription": "The selected field does not exist or is unavailable.",
+    "backToList": "Back to fields",
+    "detailLoadFailed": "Failed to load field details",
     "saveChanges": "Save changes",
     "cancel": "Cancel",
-    "renameCharacteristic": "Rename characteristic",
+    "renameCharacteristic": "Rename field",
     "optionsCount_one": "{{count}} option",
     "optionsCount_other": "{{count}} options",
     "totalProducts_one": "{{count}} total product",
@@ -3050,22 +2711,22 @@
     "optionValueTooLong": "Option is too long",
     "duplicateOptionValue": "This option already exists",
     "deleteValueNote": "Deleting an option does not delete products — it only removes the option from the saved list.",
-    "deleteConfirm": "Delete this characteristic?",
+    "deleteConfirm": "Delete this field?",
     "deleteWarning": "This action cannot be undone.",
     "delete": "Delete",
-    "deleteCharacteristic": "Delete characteristic",
-    "archiveCharacteristic": "Archive characteristic",
-    "unarchiveCharacteristic": "Unarchive characteristic",
+    "deleteCharacteristic": "Delete field",
+    "archiveCharacteristic": "Archive field",
+    "unarchiveCharacteristic": "Unarchive field",
     "archiveModal": {
-      "title": "Archive characteristic “{{name}}”?",
-      "description": "The characteristic and all its options will become unavailable for new products.",
+      "title": "Archive field “{{name}}”?",
+      "description": "The field and all its options will become unavailable for new products.",
       "confirm": "Archive",
       "cancel": "Cancel"
     },
-    "archiveSuccess": "Characteristic archived",
-    "archiveFailed": "Failed to archive characteristic",
-    "unarchiveSuccess": "Characteristic unarchived",
-    "unarchiveFailed": "Failed to unarchive characteristic",
+    "archiveSuccess": "Field archived",
+    "archiveFailed": "Failed to archive field",
+    "unarchiveSuccess": "Field unarchived",
+    "unarchiveFailed": "Failed to unarchive field",
     "archiveValue": "Archive option",
     "unarchiveValue": "Unarchive option",
     "archivedBadge": "Archived",
@@ -3078,7 +2739,7 @@
     "optionArchiveFailed": "Failed to archive option",
     "optionUnarchiveSuccess": "Option unarchived",
     "optionUnarchiveFailed": "Failed to unarchive option",
-    "emptyState": "No characteristics yet"
+    "emptyState": "No fields yet"
   },
   "composer": {
     "tabsAria": "Compose mode",
@@ -3120,7 +2781,6 @@
     }
   },
   "login": {
-    "subtitle": "Enter your credentials to continue",
     "email": "Email",
     "password": "Password",
     "emailPlaceholder": "Enter email",
