@@ -1,4 +1,4 @@
-import { ArchiveIcon, TrashIcon } from "@phosphor-icons/react";
+import { ArchiveIcon, CubeIcon, TrashIcon } from "@phosphor-icons/react";
 import { Button, Flex, Typography } from "antd";
 import { useTranslation } from "react-i18next";
 
@@ -18,6 +18,7 @@ export type ProductFormHeaderProps = {
   deleteLoading?: boolean;
   onArchiveProduct?: () => void;
   onDeleteProduct?: () => void;
+  onManageInventory?: () => void;
 };
 
 type ProductLifecycleActionsProps = {
@@ -26,6 +27,7 @@ type ProductLifecycleActionsProps = {
   deleteLoading: boolean;
   onArchiveProduct: () => void;
   onDeleteProduct: () => void;
+  onManageInventory?: () => void;
   showDataQa?: boolean;
 };
 
@@ -35,12 +37,24 @@ function ProductLifecycleActions({
   deleteLoading,
   onArchiveProduct,
   onDeleteProduct,
+  onManageInventory,
   showDataQa = false,
 }: ProductLifecycleActionsProps) {
   const { t } = useTranslation();
 
   return (
     <Flex gap={gap} wrap="wrap">
+      {onManageInventory != null && (
+        <Button
+          type="link"
+          htmlType="button"
+          icon={<CubeIcon size={16} />}
+          data-qa={showDataQa ? "products-edit-manage-inventory" : undefined}
+          onClick={onManageInventory}
+        >
+          {t("products.variantsForm.manageInventory")}
+        </Button>
+      )}
       <Button
         type="link"
         htmlType="button"
@@ -76,6 +90,7 @@ export const ProductFormHeader = ({
   deleteLoading = false,
   onArchiveProduct,
   onDeleteProduct,
+  onManageInventory,
 }: ProductFormHeaderProps) => {
   const { t } = useTranslation();
   const showLifecycleActions =
@@ -102,6 +117,7 @@ export const ProductFormHeader = ({
             deleteLoading={deleteLoading}
             onArchiveProduct={onArchiveProduct}
             onDeleteProduct={onDeleteProduct}
+            onManageInventory={onManageInventory}
           />
         )}
       </Flex>
@@ -125,6 +141,7 @@ export const ProductFormHeader = ({
             deleteLoading={deleteLoading}
             onArchiveProduct={onArchiveProduct}
             onDeleteProduct={onDeleteProduct}
+            onManageInventory={onManageInventory}
             showDataQa
           />
         )}

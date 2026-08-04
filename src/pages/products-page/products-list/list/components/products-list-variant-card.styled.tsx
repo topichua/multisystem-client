@@ -64,6 +64,15 @@ export const VariantBottomRow = styled.div`
   min-width: 0;
 `;
 
+export const VariantDetailsRow = styled.div`
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  min-width: 0;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+`;
+
 export const VariantSku = styled(Typography.Text)`
   && {
     min-width: 0;
@@ -71,6 +80,39 @@ export const VariantSku = styled(Typography.Text)`
     font-size: 13px;
     line-height: 1.3;
   }
+`;
+
+export const VariantPriceMetrics = styled.div`
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+  flex-wrap: wrap;
+`;
+
+export const VariantSalePrice = styled.span`
+  color: ${({ theme }) => theme.colors.functional.text.heading};
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.3;
+`;
+
+export const VariantPurchasePrice = styled.span`
+  color: ${({ theme }) => theme.colors.functional.text.subdued};
+  font-size: 12px;
+  line-height: 1.3;
+`;
+
+export const VariantMarginPercent = styled.span<{
+  $tone: "positive" | "negative";
+}>`
+  color: ${({ $tone, theme }) =>
+    $tone === "positive"
+      ? theme.colors.functional.text.success
+      : theme.colors.functional.text.error};
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.3;
 `;
 
 export const StockMetrics = styled.div`

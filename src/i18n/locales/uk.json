@@ -2275,6 +2275,7 @@
     },
     "variant": {
       "price": "Ціна",
+      "purchasePrice": "Закуп. ціна",
       "quantity": "Кількість",
       "stock": "Залишок",
       "reserved": "Резерв",

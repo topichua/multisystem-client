@@ -231,6 +231,12 @@ function normalizeProductVariant(raw: unknown): ProductVariant {
       getNumber(record, ["reservedQuantity", "reserved_quantity"]) ?? 0,
     availableQuantity:
       getNumber(record, ["availableQuantity", "available_quantity"]) ?? 0,
+    avgPurchasePrice: getNumber(record, [
+      "avgPurchasePrice",
+      "avg_purchase_price",
+      "averagePurchasePrice",
+      "average_purchase_price",
+    ]),
     wishlistCount: getNumber(record, ["wishlistCount", "wishlist_count"]) ?? 0,
     imageUrl: getString(record, ["imageUrl", "image_url"]),
     sku: getString(record, ["sku"]),

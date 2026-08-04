@@ -1,17 +1,19 @@
-import { Card, Col, Flex, Form, Input, InputNumber, Row, Select } from "antd";
+import { Card, Col, Flex, Form, Input, InputNumber, Row } from "antd";
 import { Typography } from "antd";
-import { useMemo } from "react";
+// import { Select } from "antd";
+// import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { CategoryTreeSelect } from "@/features/categories/components/category-tree-select";
 import type { Category } from "@/features/categories/model/category.types";
 import { ProductDeliverySection } from "./product-delivery-section";
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
+// const { Text } = Typography;
 
-type StatusOption = {
-  value: string;
-  label: string;
-};
+// type StatusOption = {
+//   value: string;
+//   label: string;
+// };
 
 export type ProductMainInfoSectionProps = {
   categories: Category[];
@@ -21,13 +23,16 @@ export type ProductMainInfoSectionProps = {
     category: string;
     price: string;
     quantity: string;
-    status: string;
+    // Publication parameters are temporarily hidden on product edit.
+    // status: string;
     sku: string;
   };
   showQuantityField: boolean;
+  isQuantityReadOnly?: boolean;
   showPriceField?: boolean;
   showSkuField?: boolean;
-  showStatusField?: boolean;
+  // Publication parameters are temporarily hidden on product edit.
+  // showStatusField?: boolean;
   isMobile?: boolean;
 };
 
@@ -36,20 +41,31 @@ export const ProductMainInfoSection = ({
   requiredMessage,
   labels,
   showQuantityField,
+  isQuantityReadOnly = false,
   showPriceField = true,
   showSkuField = false,
-  showStatusField = true,
+  // Publication parameters are temporarily hidden on product edit.
+  // showStatusField = true,
   isMobile = false,
 }: ProductMainInfoSectionProps) => {
   const { t } = useTranslation();
-  const statusOptions: StatusOption[] = useMemo(
-    () => [
-      { value: "draft", label: t("products.status.draft") },
-      { value: "active", label: t("products.status.active") },
-      { value: "archived", label: t("products.status.archived") },
-    ],
-    [t],
-  );
+  const mainFieldSpan =
+    !isMobile &&
+    [showPriceField, showSkuField, showQuantityField].filter(Boolean).length >=
+      3
+      ? 8
+      : isMobile
+        ? 24
+        : 12;
+
+  // const statusOptions: StatusOption[] = useMemo(
+  //   () => [
+  //     { value: "draft", label: t("products.status.draft") },
+  //     { value: "active", label: t("products.status.active") },
+  //     { value: "archived", label: t("products.status.archived") },
+  //   ],
+  //   [t],
+  // );
 
   return (
     <Card>
@@ -108,7 +124,7 @@ export const ProductMainInfoSection = ({
           </Col>
 
           {showPriceField ? (
-            <Col span={isMobile ? 24 : 12}>
+            <Col span={mainFieldSpan}>
               <Form.Item
                 name="price"
                 label={labels.price}
@@ -137,8 +153,20 @@ export const ProductMainInfoSection = ({
             </Form.Item>
           )}
 
+          {showSkuField ? (
+            <Col span={mainFieldSpan}>
+              <Form.Item name="sku" label={labels.sku}>
+                <Input placeholder={t("products.form.skuPlaceholder")} />
+              </Form.Item>
+            </Col>
+          ) : (
+            <Form.Item name="sku" hidden>
+              <Input />
+            </Form.Item>
+          )}
+
           {showQuantityField && (
-            <Col span={isMobile ? 24 : 12}>
+            <Col span={mainFieldSpan}>
               <Form.Item
                 name="quantity"
                 label={labels.quantity}
@@ -158,27 +186,19 @@ export const ProductMainInfoSection = ({
                   min={0}
                   precision={0}
                   placeholder="0"
+                  // In advanced inventory edit mode, stock changes must go through
+                  // the inventory drawer so movement history and purchase cost stay consistent.
+                  disabled={isQuantityReadOnly}
                   style={{ width: "100%" }}
                 />
               </Form.Item>
             </Col>
           )}
-
-          {showSkuField ? (
-            <Col span={isMobile ? 24 : 12}>
-              <Form.Item name="sku" label={labels.sku}>
-                <Input placeholder={t("products.form.skuPlaceholder")} />
-              </Form.Item>
-            </Col>
-          ) : (
-            <Form.Item name="sku" hidden>
-              <Input />
-            </Form.Item>
-          )}
         </Row>
 
         <ProductDeliverySection isMobile={isMobile} />
 
+        {/*
         {showStatusField ? (
           <Flex vertical gap={16}>
             <Title level={5} style={{ margin: 0 }}>
@@ -206,6 +226,10 @@ export const ProductMainInfoSection = ({
             <Input />
           </Form.Item>
         )}
+        */}
+        <Form.Item name="status" hidden>
+          <Input />
+        </Form.Item>
       </Flex>
     </Card>
   );

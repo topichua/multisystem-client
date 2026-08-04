@@ -406,7 +406,8 @@ export function normalizeCreateProductPayload({
   return {
     name: formValues.name.trim() ?? "",
     ...(description ? { description } : {}),
-    status: productStatus,
+    // Publication parameters are temporarily hidden on product edit.
+    // status: productStatus,
     productType,
     sourceType: PRODUCT_DEFAULT_SOURCE_TYPE,
     price: Number(formValues.price ?? 0),
@@ -459,7 +460,8 @@ export function normalizeUpdateProductPayload({
   return {
     name: formValues.name.trim() ?? "",
     description,
-    status: productStatus,
+    // Publication parameters are temporarily hidden on product edit.
+    // status: productStatus,
     productType,
     sourceType: PRODUCT_DEFAULT_SOURCE_TYPE,
     price: Number(formValues.price ?? 0),

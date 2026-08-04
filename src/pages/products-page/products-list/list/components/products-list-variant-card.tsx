@@ -14,12 +14,24 @@ import type {
   ProductVariant,
 } from "@/features/products/model/product.types";
 import {
+  formatProductPrice,
   getVariantTitle,
   isArchivedStatus,
 } from "@/features/products/utils/product-display";
 
 import { ProductArchivedStatusTag } from "./product-archived-status-tag";
 import * as S from "./products-list-variant-card.styled";
+
+function getMarginPercent(
+  price: number | null | undefined,
+  purchasePrice: number | null | undefined,
+): number | null {
+  if (price == null || purchasePrice == null || purchasePrice <= 0) {
+    return null;
+  }
+
+  return Math.round(((price - purchasePrice) / purchasePrice) * 100);
+}
 
 type ProductsListVariantCardProps = {
   product: Product;
@@ -56,6 +68,13 @@ export function ProductsListVariantCard({
   const quantity = variant.quantity ?? 0;
   const reservedQuantity = variant.reservedQuantity ?? 0;
   const availableQuantity = variant.availableQuantity ?? 0;
+  const purchasePrice = variant.avgPurchasePrice;
+  const marginPercent = getMarginPercent(variant.price, purchasePrice);
+  const showPriceMetrics =
+    showInventoryManagement &&
+    purchasePrice != null &&
+    Number.isFinite(purchasePrice) &&
+    purchasePrice > 0;
   const isProductArchived = isArchivedStatus(product.status);
   const isVariantArchived = isArchivedStatus(variant.status);
   const canEdit = onEdit != null && !isProductArchived;
@@ -149,7 +168,28 @@ export function ProductsListVariantCard({
       </S.VariantTopRow>
 
       <S.VariantBottomRow>
-        <S.VariantSku ellipsis={{ tooltip: sku }}>{sku}</S.VariantSku>
+        <S.VariantDetailsRow>
+          <S.VariantSku ellipsis={{ tooltip: sku }}>{sku}</S.VariantSku>
+          {showPriceMetrics && (
+            <S.VariantPriceMetrics>
+              <S.VariantSalePrice>
+                {formatProductPrice(variant.price, product.currency)}
+              </S.VariantSalePrice>
+              <S.VariantPurchasePrice>
+                {t("products.inventoryDrawer.purchasePrice")}{" "}
+                {formatProductPrice(purchasePrice, product.currency)}
+              </S.VariantPurchasePrice>
+              {marginPercent != null && (
+                <S.VariantMarginPercent
+                  $tone={marginPercent >= 0 ? "positive" : "negative"}
+                >
+                  {marginPercent > 0 ? "+" : ""}
+                  {marginPercent}%
+                </S.VariantMarginPercent>
+              )}
+            </S.VariantPriceMetrics>
+          )}
+        </S.VariantDetailsRow>
 
         {showInventoryQuantity && (
           <S.StockMetrics>

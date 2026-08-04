@@ -269,7 +269,7 @@ export const ProductsListPage = observer(() => {
                     const classes: string[] = [];
 
                     if (
-                      (product.variants?.length ?? 0) > 1 &&
+                      (product.variants?.length ?? 0) > 0 &&
                       expandedRowKeys.includes(product.id)
                     ) {
                       classes.push("product-row-expanded");
@@ -286,7 +286,7 @@ export const ProductsListPage = observer(() => {
                     showExpandColumn: false,
                     expandedRowRender: renderExpandedRow,
                     rowExpandable: (product) =>
-                      (product.variants?.length ?? 0) > 1,
+                      (product.variants?.length ?? 0) > 0,
                     expandedRowKeys,
                     onExpand: handleTableRowExpand,
                     expandRowByClick: false,

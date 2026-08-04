@@ -185,6 +185,8 @@ export const ProductAddPage = observer(() => {
     archiveLoadingVariantId: controller.archiveLoadingVariantId,
     showQuantityColumn: controller.showQuantityColumn,
     showInventoryManagement: controller.showInventoryManagement,
+    showPurchasePriceColumn:
+      controller.showInventoryManagement && controller.isEditMode,
   });
 
   return (
@@ -209,15 +211,22 @@ export const ProductAddPage = observer(() => {
             onDeleteProduct={
               controller.isEditMode ? handleRequestDeleteProduct : undefined
             }
+            onManageInventory={
+              controller.showSingleProductInventoryManagement
+                ? handleOpenProductInventory
+                : undefined
+            }
             productType={controller.productType}
             onProductTypeChange={controller.onProductTypeChange}
             categories={controller.categories}
             categoryOptions={controller.categoryOptions}
             requiredMessage={controller.requiredMessage}
             showMainQuantityField={controller.showMainQuantityField}
+            isMainQuantityReadOnly={controller.isMainQuantityReadOnly}
             showMainPriceField={controller.showMainPriceField}
             showMainSkuField={controller.showMainSkuField}
-            showStatusField={controller.showStatusField}
+            // Publication parameters are temporarily hidden on product edit.
+            // showStatusField={controller.showStatusField}
             labels={controller.labels}
             singleCharacteristicsProps={controller.singleCharacteristicsProps}
             mediaProps={controller.mediaProps}

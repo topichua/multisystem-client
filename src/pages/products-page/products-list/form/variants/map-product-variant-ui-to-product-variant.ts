@@ -24,6 +24,7 @@ export function mapProductVariantUiToProductVariant(
     quantity: variant.quantity,
     reservedQuantity: 0,
     availableQuantity: variant.quantity,
+    avgPurchasePrice: variant.avgPurchasePrice,
     wishlistCount: variant.wishlistCount ?? 0,
     imageUrl: variant.media[0]?.src ?? null,
     sku: variant.sku?.trim() || null,

@@ -21,6 +21,7 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 
 import type { VariantCustomField } from "@/features/products/model/product-create-api.types";
+import { useWorkspaceSettingsStore } from "@/features/workspace-settings/model/use-workspace-settings-store";
 import {
   getStockQuantityBadgeStatus,
   isArchivedStatus,
@@ -43,6 +44,11 @@ import {
 
 const { Text } = Typography;
 
+const CURRENCY_SYMBOLS: Record<string, string> = {
+  UAH: "₴",
+  USD: "$",
+};
+
 const ColorSwatch = styled.span<{ $color: string }>`
   width: 16px;
   height: 16px;
@@ -51,6 +57,84 @@ const ColorSwatch = styled.span<{ $color: string }>`
   background-color: ${(props) => props.$color};
   border: 1px solid ${(props) => props.theme.colors.functional.border.split};
 `;
+
+const PurchasePriceCell = styled.div`
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  min-width: 0;
+  white-space: nowrap;
+`;
+
+const PurchasePriceValue = styled.span`
+  color: ${({ theme }) => theme.colors.functional.text.primary};
+  font-size: 13px;
+  line-height: 1.3;
+`;
+
+const PurchaseMarginPercent = styled.span<{
+  $tone: "positive" | "negative";
+}>`
+  color: ${({ $tone, theme }) =>
+    $tone === "positive"
+      ? theme.colors.functional.text.success
+      : theme.colors.functional.text.error};
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.3;
+`;
+
+function getMarginPercent(
+  price: number | null | undefined,
+  purchasePrice: number | null | undefined,
+): number | null {
+  if (price == null || purchasePrice == null || purchasePrice <= 0) {
+    return null;
+  }
+
+  return Math.round(((price - purchasePrice) / purchasePrice) * 100);
+}
+
+function normalizePrice(value: unknown): number | null {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return value;
+  }
+
+  if (typeof value === "string" && value.trim()) {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+
+  return null;
+}
+
+function renderPurchasePriceValue(
+  price: number | null,
+  purchasePrice: number | null | undefined,
+  currencySymbol: string,
+) {
+  if (purchasePrice == null || purchasePrice <= 0) {
+    return <Text type="secondary">—</Text>;
+  }
+
+  const marginPercent = getMarginPercent(price, purchasePrice);
+
+  return (
+    <PurchasePriceCell>
+      <PurchasePriceValue>
+        {purchasePrice.toLocaleString()} {currencySymbol}
+      </PurchasePriceValue>
+      {marginPercent != null && (
+        <PurchaseMarginPercent
+          $tone={marginPercent >= 0 ? "positive" : "negative"}
+        >
+          {marginPercent > 0 ? "+" : ""}
+          {marginPercent}%
+        </PurchaseMarginPercent>
+      )}
+    </PurchasePriceCell>
+  );
+}
 
 function getCustomFieldStableKey(field: ProductVariantUiCustomField): string {
   if (!field.field) {
@@ -172,6 +256,7 @@ type UseProductAddVariantTableColumnsParams = {
   archiveLoadingVariantId?: number | null;
   showQuantityColumn: boolean;
   showInventoryManagement?: boolean;
+  showPurchasePriceColumn?: boolean;
 };
 
 const VariantImageThumb = styled.img`
@@ -196,8 +281,12 @@ export function useProductAddVariantTableColumns({
   archiveLoadingVariantId = null,
   showQuantityColumn,
   showInventoryManagement = false,
+  showPurchasePriceColumn = false,
 }: UseProductAddVariantTableColumnsParams): ColumnsType<ProductVariantUi> {
   const { t } = useTranslation();
+  const workspaceSettingsStore = useWorkspaceSettingsStore();
+  const currency = workspaceSettingsStore.currency ?? "UAH";
+  const currencySymbol = CURRENCY_SYMBOLS[currency] ?? currency;
 
   return useMemo((): ColumnsType<ProductVariantUi> => {
     const characteristicColumns = resolveSelectedCharacteristicColumns(
@@ -295,6 +384,38 @@ export function useProductAddVariantTableColumns({
           </Form.Item>
         ),
       },
+      ...(showPurchasePriceColumn
+        ? [
+            {
+              title: t("products.variant.purchasePrice"),
+              key: "purchasePrice",
+              width: 140,
+              render: (_: unknown, record: ProductVariantUi, index: number) => (
+                <Form.Item
+                  noStyle
+                  shouldUpdate={(previous, current) =>
+                    previous?.variants?.[index]?.price !==
+                    current?.variants?.[index]?.price
+                  }
+                >
+                  {({ getFieldValue }) => {
+                    const formPrice = normalizePrice(
+                      getFieldValue(["variants", index, "price"]),
+                    );
+                    const currentPrice =
+                      formPrice ?? normalizePrice(record.price);
+
+                    return renderPurchasePriceValue(
+                      currentPrice,
+                      record.avgPurchasePrice,
+                      currencySymbol,
+                    );
+                  }}
+                </Form.Item>
+              ),
+            },
+          ]
+        : []),
       ...(showQuantityColumn
         ? [
             {
@@ -442,6 +563,7 @@ export function useProductAddVariantTableColumns({
   }, [
     archiveLoadingVariantId,
     availableFields,
+    currencySymbol,
     deleteLoadingVariantId,
     deletingVariantKey,
     onArchiveVariant,
@@ -452,6 +574,7 @@ export function useProductAddVariantTableColumns({
     onUpdateManualVariantCustomField,
     selectedCharacteristics,
     showInventoryManagement,
+    showPurchasePriceColumn,
     showQuantityColumn,
     t,
   ]);

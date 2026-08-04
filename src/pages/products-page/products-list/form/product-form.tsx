@@ -43,6 +43,7 @@ export type ProductFormProps = {
   deleteLoading?: boolean;
   onArchiveProduct?: () => void;
   onDeleteProduct?: () => void;
+  onManageInventory?: () => void;
 
   // Product type section
   productType: ProductType;
@@ -53,15 +54,18 @@ export type ProductFormProps = {
   categoryOptions: Array<{ value: number; label: string }>;
   requiredMessage: string;
   showMainQuantityField: boolean;
+  isMainQuantityReadOnly?: boolean;
   showMainPriceField?: boolean;
   showMainSkuField?: boolean;
-  showStatusField?: boolean;
+  // Publication parameters are temporarily hidden on product edit.
+  // showStatusField?: boolean;
   labels: {
     name: string;
     category: string;
     price: string;
     quantity: string;
-    status: string;
+    // Publication parameters are temporarily hidden on product edit.
+    // status: string;
     sku: string;
   };
 
@@ -104,15 +108,18 @@ export const ProductForm = ({
   deleteLoading = false,
   onArchiveProduct,
   onDeleteProduct,
+  onManageInventory,
   productType,
   onProductTypeChange,
   categories,
   categoryOptions,
   requiredMessage,
   showMainQuantityField,
+  isMainQuantityReadOnly = false,
   showMainPriceField = true,
   showMainSkuField = false,
-  showStatusField = true,
+  // Publication parameters are temporarily hidden on product edit.
+  // showStatusField = true,
   labels,
   singleCharacteristicsProps,
   mediaProps,
@@ -173,6 +180,7 @@ export const ProductForm = ({
           deleteLoading={deleteLoading}
           onArchiveProduct={onArchiveProduct}
           onDeleteProduct={onDeleteProduct}
+          onManageInventory={onManageInventory}
         />
       )}
 
@@ -182,13 +190,17 @@ export const ProductForm = ({
         isMobile={isMobileViewport}
       />
 
+      {/*
+      Publication parameters are temporarily hidden on product edit.
+      showStatusField={showStatusField}
+      */}
       <ProductMainInfoSection
         categories={categories}
         requiredMessage={requiredMessage}
         showQuantityField={showMainQuantityField}
+        isQuantityReadOnly={isMainQuantityReadOnly}
         showPriceField={showMainPriceField}
         showSkuField={showMainSkuField}
-        showStatusField={showStatusField}
         labels={labels}
         isMobile={isMobileViewport}
       />
@@ -311,6 +323,7 @@ export const ProductForm = ({
               deleteLoading={deleteLoading}
               onArchiveProduct={onArchiveProduct}
               onDeleteProduct={onDeleteProduct}
+              onManageInventory={onManageInventory}
             />
           </MobileS.MobilePageHeader>
 

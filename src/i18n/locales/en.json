@@ -2239,6 +2239,7 @@
     },
     "variant": {
       "price": "Price",
+      "purchasePrice": "Purchase price",
       "quantity": "Quantity",
       "stock": "Stock",
       "reserved": "Reserved",

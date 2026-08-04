@@ -64,6 +64,7 @@ export type ProductVariantUi = {
   inStock: boolean;
   quantity: number;
   wishlistCount?: number;
+  avgPurchasePrice?: number | null;
   sku?: string;
   media: VariantMediaItem[];
 };

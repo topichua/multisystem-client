@@ -132,6 +132,7 @@ function mapProductVariant(
     inStock: variant.inStock ?? true,
     quantity: Number(variant.quantity ?? 0),
     wishlistCount: variant.wishlistCount ?? 0,
+    avgPurchasePrice: variant.avgPurchasePrice,
     sku: variant.sku ?? "",
     media: mapVariantMedia(variant.media ?? [], productMediaIds),
   };

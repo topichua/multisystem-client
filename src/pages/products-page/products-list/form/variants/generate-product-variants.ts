@@ -221,6 +221,7 @@ function buildVariantFromPairs(
     price: previous?.price ?? base.price,
     quantity: previous?.quantity ?? base.quantity,
     inStock: previous?.inStock ?? DEFAULT_VARIANT_IN_STOCK,
+    avgPurchasePrice: previous?.avgPurchasePrice,
     sku: previous?.sku ?? "",
     media: previous ? [...previous.media] : [],
   };

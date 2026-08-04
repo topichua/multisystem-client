@@ -41,6 +41,7 @@ export type ProductVariant = {
   quantity: number | null;
   reservedQuantity: number;
   availableQuantity: number;
+  avgPurchasePrice?: number | null;
   wishlistCount: number;
   imageUrl: string | null;
   sku: string | null;

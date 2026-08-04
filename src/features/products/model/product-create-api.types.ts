@@ -60,7 +60,8 @@ export type CreateProductVariantPayload = {
 export type CreateProductPayload = {
   name: string;
   description?: string;
-  status: ProductLifecycleStatus;
+  // Publication parameters are temporarily hidden on product edit.
+  // status: ProductLifecycleStatus;
   productType: ProductType;
   sourceType: ProductCreateSourceType;
   price: number;

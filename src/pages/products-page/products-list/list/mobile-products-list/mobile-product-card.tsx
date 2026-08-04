@@ -71,7 +71,7 @@ export const MobileProductCard = ({
 }: MobileProductCardProps) => {
   const { t } = useTranslation();
   const variantsCount = product.variants?.length ?? 0;
-  const hasMultipleVariants = variantsCount > 1;
+  const hasVariants = variantsCount > 0;
   const singleVariantMeta = getSingleVariantListMeta(product);
   const [expanded, setExpanded] = useState(false);
   const isArchived = isArchivedStatus(product.status);
@@ -146,7 +146,7 @@ export const MobileProductCard = ({
           {[priceLabel, quantityLabel].filter(Boolean).join(" · ")}
         </S.PriceQuantity>
 
-        {hasMultipleVariants && (
+        {hasVariants && (
           <S.ExpandButton
             type="text"
             size="small"
@@ -177,7 +177,7 @@ export const MobileProductCard = ({
         )}
       </S.CardBottomRow>
 
-      {hasMultipleVariants && expanded && (
+      {hasVariants && expanded && (
         <S.VariantsSection
           id={`products-mobile-variants-${product.id}`}
           data-qa={`products-mobile-variants-${product.id}`}

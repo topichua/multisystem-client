@@ -90,15 +90,19 @@ export type ProductAddPageControllerReturn = {
   categoryOptions: Array<{ value: number; label: string }>;
   requiredMessage: string;
   showMainQuantityField: boolean;
+  isMainQuantityReadOnly: boolean;
   showMainPriceField: boolean;
   showMainSkuField: boolean;
-  showStatusField: boolean;
+  showSingleProductInventoryManagement: boolean;
+  // Publication parameters are temporarily hidden on product edit.
+  // showStatusField: boolean;
   labels: {
     name: string;
     category: string;
     price: string;
     quantity: string;
-    status: string;
+    // Publication parameters are temporarily hidden on product edit.
+    // status: string;
     sku: string;
   };
   singleCharacteristicsProps: Omit<
@@ -300,18 +304,49 @@ export const useProductAddPageController =
       watchedQuantity,
     ]);
 
+    const isSingleProductType = variantsController.productType === "single";
+    const showSingleProductInventoryManagement =
+      showInventoryManagement && isEditMode && isSingleProductType;
+    const showMainQuantityField =
+      isSingleProductType && (isSimpleInventoryMode || isEditMode);
+    const isMainQuantityReadOnly =
+      showInventoryManagement && isEditMode && isSingleProductType;
+
     const refreshVariantStockAfterInventory = useCallback(async () => {
       if (editingProductId == null) {
         return;
       }
 
-      const [inventory] = await Promise.all([
+      const [inventory, product] = await Promise.all([
         productsApi.getInventory(editingProductId),
         productsStore.loadProductById(editingProductId, { silent: true }),
       ]);
 
       variantsController.applyVariantStockFromInventory(inventory);
-    }, [editingProductId, productsStore, variantsController]);
+
+      if (isSingleProductType) {
+        const stockVariant = inventory.variants?.[0];
+        const nextQuantity = Number(
+          stockVariant?.quantity ??
+            stockVariant?.availableQuantity ??
+            stockVariant?.stockQty ??
+            product.variants?.[0]?.quantity ??
+            product.quantity ??
+            0,
+        );
+
+        form.setFieldValue(
+          "quantity",
+          Number.isFinite(nextQuantity) ? nextQuantity : 0,
+        );
+      }
+    }, [
+      editingProductId,
+      form,
+      isSingleProductType,
+      productsStore,
+      variantsController,
+    ]);
 
     return {
       pageLoading:
@@ -360,17 +395,20 @@ export const useProductAddPageController =
       categories,
       categoryOptions,
       requiredMessage,
-      showMainQuantityField:
-        isSimpleInventoryMode && variantsController.productType === "single",
-      showMainPriceField: variantsController.productType === "single",
-      showMainSkuField: variantsController.productType === "single",
-      showStatusField: isEditMode,
+      showMainQuantityField,
+      isMainQuantityReadOnly,
+      showMainPriceField: isSingleProductType,
+      showMainSkuField: isSingleProductType,
+      showSingleProductInventoryManagement,
+      // Publication parameters are temporarily hidden on product edit.
+      // showStatusField: isEditMode,
       labels: {
         name: t("products.form.name"),
         category: t("products.form.category"),
         price: t("products.form.price"),
         quantity: t("products.form.quantity"),
-        status: t("products.form.status"),
+        // Publication parameters are temporarily hidden on product edit.
+        // status: t("products.form.status"),
         sku: t("products.form.sku"),
       },
       singleCharacteristicsProps: {

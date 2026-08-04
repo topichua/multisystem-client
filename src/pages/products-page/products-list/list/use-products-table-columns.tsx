@@ -64,10 +64,10 @@ export const useProductsTableColumns = ({
         width: 360,
         render: (_, product) => {
           const variantsCount = product.variants?.length ?? 0;
-          const hasMultipleVariants = variantsCount > 1;
+          const hasVariants = variantsCount > 0;
           const singleVariantMeta = getSingleVariantListMeta(product);
           const isExpanded =
-            hasMultipleVariants && expandedRowKeys.includes(product.id);
+            hasVariants && expandedRowKeys.includes(product.id);
           const isArchived = isArchivedStatus(product.status);
           const variantSecondaryLine = singleVariantMeta
             ? formatProductVariantListMetaLine(
@@ -80,7 +80,7 @@ export const useProductsTableColumns = ({
 
           return (
             <Flex align="center" gap={4}>
-              {hasMultipleVariants ? (
+              {hasVariants ? (
                 <Button
                   type="text"
                   size="small"
