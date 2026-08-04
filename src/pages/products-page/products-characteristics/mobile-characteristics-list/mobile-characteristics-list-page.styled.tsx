@@ -184,13 +184,17 @@ export const ItemCopy = styled(Flex)`
   }
 `;
 
-export const ItemTitle = styled(Typography.Text)`
+export const ItemTitle = styled(Typography.Text)<{ $archived?: boolean }>`
   && {
     display: block;
+    min-width: 0;
     max-width: 100%;
-    color: ${({ theme }) => theme.colors.functional.text.heading};
+    color: ${({ $archived, theme }) =>
+      $archived
+        ? theme.colors.functional.text.subdued
+        : theme.colors.functional.text.heading};
     font-size: ${({ theme }) => theme.fontSize.medium};
-    font-weight: 600;
+    font-weight: ${({ $archived }) => ($archived ? 500 : 600)};
     line-height: 1.25;
     overflow: hidden;
     text-overflow: ellipsis;

@@ -4,7 +4,7 @@ import {
   PlusIcon,
   TextTIcon,
 } from "@phosphor-icons/react";
-import { Button, Empty, Flex, Input, Typography } from "antd";
+import { Button, Empty, Flex, Input, Tag, Typography } from "antd";
 import { useTranslation } from "react-i18next";
 
 import {
@@ -78,6 +78,7 @@ export const ProductsCharacteristicsSidebar = ({
           ) : (
             characteristics.map((characteristic) => {
               const isActive = characteristic.id === activeCharacteristicId;
+              const isArchived = characteristic.archivedAt != null;
               const optionsCount = characteristic.options?.length ?? 0;
 
               return (
@@ -98,9 +99,22 @@ export const ProductsCharacteristicsSidebar = ({
                     </S.CharacteristicNavTypeBadge>
 
                     <Flex vertical flex={1} style={{ minWidth: 0 }}>
-                      <Text strong ellipsis={{ tooltip: characteristic.label }}>
-                        {characteristic.label}
-                      </Text>
+                      <Flex align="center" gap={8} style={{ minWidth: 0 }}>
+                        <Text
+                          strong={!isArchived}
+                          type={isArchived ? "secondary" : undefined}
+                          ellipsis={{ tooltip: characteristic.label }}
+                          style={{ minWidth: 0 }}
+                        >
+                          {characteristic.label}
+                        </Text>
+
+                        {isArchived && (
+                          <Tag style={{ marginInlineEnd: 0, flexShrink: 0 }}>
+                            {t("characteristics.archivedBadge")}
+                          </Tag>
+                        )}
+                      </Flex>
 
                       <Text type="secondary">
                         {characteristic.type === "options"

@@ -52,7 +52,7 @@ export function ProductArchiveModal({
       title={title}
       closable={!loading}
       keyboard={!loading}
-      maskClosable={!loading}
+      mask={{ closable: !loading }}
       onCancel={onCancel}
       width={400}
       footer={

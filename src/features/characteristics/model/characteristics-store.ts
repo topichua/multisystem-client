@@ -28,7 +28,9 @@ export class CharacteristicsStore {
 
   saveLoading = false;
   deleteLoadingId: number | null = null;
+  archiveLoadingId: number | null = null;
   optionDeleteLoadingId: number | null = null;
+  optionArchiveLoadingId: number | null = null;
 
   constructor() {
     makeAutoObservable(this);
@@ -231,6 +233,79 @@ export class CharacteristicsStore {
     } finally {
       runInAction(() => {
         this.optionDeleteLoadingId = null;
+      });
+    }
+  };
+
+  archiveCharacteristic = async (id: number): Promise<void> => {
+    await this.runCharacteristicArchiveMutation(id, () =>
+      characteristicsApi.archive(id),
+    );
+  };
+
+  unarchiveCharacteristic = async (id: number): Promise<void> => {
+    await this.runCharacteristicArchiveMutation(id, () =>
+      characteristicsApi.unarchive(id),
+    );
+  };
+
+  archiveCharacteristicOption = async (
+    characteristicId: number,
+    optionId: number,
+  ): Promise<void> => {
+    await this.runCharacteristicOptionArchiveMutation(
+      characteristicId,
+      optionId,
+      () => characteristicsApi.archiveOption(characteristicId, optionId),
+    );
+  };
+
+  unarchiveCharacteristicOption = async (
+    characteristicId: number,
+    optionId: number,
+  ): Promise<void> => {
+    await this.runCharacteristicOptionArchiveMutation(
+      characteristicId,
+      optionId,
+      () => characteristicsApi.unarchiveOption(characteristicId, optionId),
+    );
+  };
+
+  private runCharacteristicArchiveMutation = async (
+    id: number,
+    mutate: () => Promise<void>,
+  ): Promise<void> => {
+    runInAction(() => {
+      this.archiveLoadingId = id;
+    });
+
+    try {
+      await mutate();
+      await this.loadCharacteristicById(id, { silent: true });
+      await this.loadCharacteristics({ silent: true });
+    } finally {
+      runInAction(() => {
+        this.archiveLoadingId = null;
+      });
+    }
+  };
+
+  private runCharacteristicOptionArchiveMutation = async (
+    characteristicId: number,
+    optionId: number,
+    mutate: () => Promise<void>,
+  ): Promise<void> => {
+    runInAction(() => {
+      this.optionArchiveLoadingId = optionId;
+    });
+
+    try {
+      await mutate();
+      await this.loadCharacteristicById(characteristicId, { silent: true });
+      await this.loadCharacteristics({ silent: true });
+    } finally {
+      runInAction(() => {
+        this.optionArchiveLoadingId = null;
       });
     }
   };

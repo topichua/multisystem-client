@@ -59,24 +59,25 @@ export const CharacteristicDetailHeader = ({
   return (
     <Flex vertical gap={12}>
       {labelEdit.isEditing ? (
-        <Flex align="center" gap={8} wrap="wrap">
+        <Flex align="center" gap={8} wrap={false} style={{ width: "100%" }}>
           <Input
             autoFocus
             value={labelEdit.value}
             maxLength={CHARACTERISTIC_NAME_MAX_LENGTH}
             onChange={(event) => labelEdit.onChange(event.target.value)}
             onPressEnter={() => void labelEdit.onSave()}
-            style={{ flex: "1 1 240px", minWidth: 0, maxWidth: 420 }}
+            style={{ flex: 1, minWidth: 0 }}
           />
+          <Button onClick={labelEdit.onCancel} style={{ flexShrink: 0 }}>
+            {t("characteristics.cancel")}
+          </Button>
           <Button
             type="primary"
             loading={saveLoading}
             onClick={() => void labelEdit.onSave()}
+            style={{ flexShrink: 0 }}
           >
             {t("characteristics.saveChanges")}
-          </Button>
-          <Button onClick={labelEdit.onCancel}>
-            {t("characteristics.cancel")}
           </Button>
         </Flex>
       ) : (

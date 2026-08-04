@@ -18,11 +18,13 @@ import {
 
 export type CharacteristicCreateFormValues = {
   label: string;
+  displayName?: string;
   type: CharacteristicFieldType;
 };
 
 export const defaultCreateValues: CharacteristicCreateFormValues = {
   label: "",
+  displayName: "",
   type: "options",
 };
 
@@ -95,11 +97,13 @@ export const useProductsCharacteristicsLayoutController = () => {
     }
 
     const label = values.label.trim();
+    const displayName = values.displayName?.trim();
 
     try {
       const createdCharacteristic = await store.createCharacteristic({
         key: buildUniqueCharacteristicKey(label, store.items),
         label,
+        ...(displayName ? { displayName } : {}),
         type: values.type,
         options: values.type === "options" ? [] : undefined,
         sortOrder: getNextCharacteristicSortOrder(store.items),

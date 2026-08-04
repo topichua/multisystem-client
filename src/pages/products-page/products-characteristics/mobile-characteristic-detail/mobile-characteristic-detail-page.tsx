@@ -6,8 +6,10 @@ import { useParams } from "react-router";
 
 import { CenteredSpinner } from "@/components/loading/centered-spinner";
 
+import { CharacteristicArchiveModal } from "../components/characteristic-archive-modal";
 import { CharacteristicDangerZone } from "../components/characteristic-danger-zone";
 import { CharacteristicDetailHeader } from "../components/characteristic-detail-header";
+import { CharacteristicDisplayNameField } from "../components/characteristic-display-name-field";
 import { CharacteristicOptionsSection } from "../components/characteristic-options-section";
 import { useProductCharacteristicDetailController } from "../controllers/use-product-characteristic-detail-controller";
 import { CharacteristicTextValuesSection } from "../product-characteristic-detail-view";
@@ -121,6 +123,14 @@ const MobileCharacteristicDetailContent = observer(() => {
             editDataQa={`products-mobile-characteristic-edit-${characteristic.id}`}
           />
 
+          <CharacteristicDisplayNameField
+            value={controller.displayNameEdit.value}
+            placeholder={characteristic.label}
+            loading={controller.saveLoading}
+            onChange={controller.displayNameEdit.onChange}
+            onBlur={() => void controller.displayNameEdit.onSave()}
+          />
+
           {characteristic.type === "options" ? (
             <S.SectionCard>
               <CharacteristicOptionsSection
@@ -128,7 +138,10 @@ const MobileCharacteristicDetailContent = observer(() => {
                 create={controller.optionCreate}
                 rename={controller.optionRename}
                 saveLoading={controller.saveLoading}
+                optionArchiveLoadingId={controller.optionArchiveLoadingId}
                 optionDeleteLoadingId={controller.optionDeleteLoadingId}
+                onArchiveOption={controller.onRequestArchiveOption}
+                onUnarchiveOption={controller.onUnarchiveOption}
                 onDeleteOption={controller.onDeleteOption}
                 addOptionDataQa={`products-mobile-characteristic-add-option-${characteristic.id}`}
                 getOptionItemDataQa={(optionId) =>
@@ -147,14 +160,27 @@ const MobileCharacteristicDetailContent = observer(() => {
 
           <S.FooterActions vertical gap={8}>
             <CharacteristicDangerZone
+              isArchived={controller.isArchived}
+              archiveLoading={controller.archiveLoadingId === characteristic.id}
               deleteLoading={controller.deleteLoadingId === characteristic.id}
+              onArchive={controller.onRequestArchiveCharacteristic}
+              onUnarchive={controller.onUnarchiveCharacteristic}
               onDelete={controller.onDeleteCharacteristic}
+              archiveDataQa={`products-mobile-characteristic-archive-${characteristic.id}`}
               deleteDataQa={`products-mobile-characteristic-delete-${characteristic.id}`}
               mobileLayout
             />
           </S.FooterActions>
         </S.ContentSection>
       </S.ScrollRegion>
+
+      <CharacteristicArchiveModal
+        open={controller.archiveModalOpen}
+        target={controller.archiveModalTarget}
+        loading={controller.archiveModalLoading}
+        onCancel={controller.onCloseArchiveModal}
+        onConfirm={controller.onConfirmArchive}
+      />
     </S.Root>
   );
 });

@@ -4,8 +4,10 @@ export type CharacteristicBase = {
   id: number;
   key: string;
   label: string;
+  displayName?: string | null;
   type: CharacteristicFieldType;
   sortOrder: number;
+  archivedAt: string | null;
 };
 
 /** Option shape returned by the characteristics list endpoint. */
@@ -24,6 +26,7 @@ export type CharacteristicOption = {
   label: string;
   productCount: number;
   productVariantCount: number;
+  archivedAt: string | null;
 };
 
 export type CharacteristicTopTextValue = {
@@ -46,6 +49,7 @@ export type CharacteristicsListResponse = {
 export type CharacteristicCreatePayload = {
   key: string;
   label: string;
+  displayName?: string;
   type: CharacteristicFieldType;
   options?: string[];
   sortOrder: number;
@@ -53,6 +57,7 @@ export type CharacteristicCreatePayload = {
 
 export type CharacteristicUpdatePayload = {
   label?: string;
+  displayName?: string | null;
   options?: string[];
   sortOrder?: number;
 };

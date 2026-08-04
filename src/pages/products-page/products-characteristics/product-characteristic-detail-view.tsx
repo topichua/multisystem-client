@@ -17,8 +17,10 @@ import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
 import { CenteredSpinner } from "@/components/loading/centered-spinner";
 import type { CharacteristicTopTextValue } from "@/features/characteristics/model/characteristic.types";
 
+import { CharacteristicArchiveModal } from "./components/characteristic-archive-modal";
 import { CharacteristicDangerZone } from "./components/characteristic-danger-zone";
 import { CharacteristicDetailHeader } from "./components/characteristic-detail-header";
+import { CharacteristicDisplayNameField } from "./components/characteristic-display-name-field";
 import { CharacteristicOptionsSection } from "./components/characteristic-options-section";
 import { useProductCharacteristicDetailController } from "./controllers/use-product-characteristic-detail-controller";
 
@@ -222,13 +224,26 @@ const ProductCharacteristicDetailContent = observer(() => {
             gap={20}
             style={{ maxWidth: 780, margin: "20px auto" }}
           >
+            <Card>
+              <CharacteristicDisplayNameField
+                value={controller.displayNameEdit.value}
+                placeholder={controller.characteristic.label}
+                loading={controller.saveLoading}
+                onChange={controller.displayNameEdit.onChange}
+                onBlur={() => void controller.displayNameEdit.onSave()}
+              />
+            </Card>
+
             {controller.characteristic.type === "options" ? (
               <CharacteristicOptionsSection
                 options={controller.options}
                 create={controller.optionCreate}
                 rename={controller.optionRename}
                 saveLoading={controller.saveLoading}
+                optionArchiveLoadingId={controller.optionArchiveLoadingId}
                 optionDeleteLoadingId={controller.optionDeleteLoadingId}
+                onArchiveOption={controller.onRequestArchiveOption}
+                onUnarchiveOption={controller.onUnarchiveOption}
                 onDeleteOption={controller.onDeleteOption}
               />
             ) : (
@@ -239,14 +254,28 @@ const ProductCharacteristicDetailContent = observer(() => {
             )}
 
             <CharacteristicDangerZone
+              isArchived={controller.isArchived}
+              archiveLoading={
+                controller.archiveLoadingId === controller.characteristic.id
+              }
               deleteLoading={
                 controller.deleteLoadingId === controller.characteristic.id
               }
+              onArchive={controller.onRequestArchiveCharacteristic}
+              onUnarchive={controller.onUnarchiveCharacteristic}
               onDelete={controller.onDeleteCharacteristic}
             />
           </Flex>
         </PaneDetailLayout.Body>
       </PaneDetailLayout.Root>
+
+      <CharacteristicArchiveModal
+        open={controller.archiveModalOpen}
+        target={controller.archiveModalTarget}
+        loading={controller.archiveModalLoading}
+        onCancel={controller.onCloseArchiveModal}
+        onConfirm={controller.onConfirmArchive}
+      />
     </>
   );
 });

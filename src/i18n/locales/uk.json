@@ -3047,6 +3047,8 @@
       "backToCharacteristicsAria": "Повернутися до характеристик",
       "createCharacteristicAria": "Створити характеристику",
       "deleteCharacteristicAria": "Видалити характеристику",
+      "archiveCharacteristicAria": "Заархівувати характеристику",
+      "unarchiveCharacteristicAria": "Розархівувати характеристику",
       "addOptionAria": "Додати опцію"
     },
     "itemsCount_one": "{{count}} характеристика",
@@ -3062,6 +3064,8 @@
     "nameRequired": "Потрібна назва характеристики",
     "nameTooLong": "Назва характеристики завелика",
     "namePlaceholder": "Назва характеристики",
+    "displayName": "Назва для відображення (необов'язково)",
+    "displayNameTooLong": "Назва для відображення завелика",
     "type": "Тип",
     "typeRequired": "Потрібен тип характеристики",
     "typeText": "Текстове поле",
@@ -3126,6 +3130,30 @@
     "deleteWarning": "Цю дію не скасувати.",
     "delete": "Видалити",
     "deleteCharacteristic": "Видалити характеристику",
+    "archiveCharacteristic": "Заархівувати характеристику",
+    "unarchiveCharacteristic": "Розархівувати характеристику",
+    "archiveModal": {
+      "title": "Заархівувати характеристику «{{name}}»?",
+      "description": "Характеристика та всі опції стануть недоступні для нових товарів.",
+      "confirm": "Заархівувати",
+      "cancel": "Скасувати"
+    },
+    "archiveSuccess": "Характеристику заархівовано",
+    "archiveFailed": "Не вдалося заархівувати характеристику",
+    "unarchiveSuccess": "Характеристику розархівовано",
+    "unarchiveFailed": "Не вдалося розархівувати характеристику",
+    "archiveValue": "Заархівувати опцію",
+    "unarchiveValue": "Розархівувати опцію",
+    "archivedBadge": "Архів",
+    "optionArchiveModal": {
+      "title": "Заархівувати варіант «{{name}}»?",
+      "description": "Він стане недоступний для нових товарів.",
+      "confirm": "Заархівувати"
+    },
+    "optionArchiveSuccess": "Опцію заархівовано",
+    "optionArchiveFailed": "Не вдалося заархівувати опцію",
+    "optionUnarchiveSuccess": "Опцію розархівовано",
+    "optionUnarchiveFailed": "Не вдалося розархівувати опцію",
     "emptyState": "Поки немає характеристик"
   },
   "composer": {

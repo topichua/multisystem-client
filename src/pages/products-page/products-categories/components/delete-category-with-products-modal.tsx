@@ -76,7 +76,7 @@ export const DeleteCategoryWithProductsModal = ({
       open={open}
       closable={!loading}
       keyboard={!loading}
-      maskClosable={!loading}
+      mask={{ closable: !loading }}
       styles={
         isMobileViewport
           ? {

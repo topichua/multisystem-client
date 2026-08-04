@@ -2983,6 +2983,8 @@
       "backToCharacteristicsAria": "Back to characteristics",
       "createCharacteristicAria": "Create characteristic",
       "deleteCharacteristicAria": "Delete characteristic",
+      "archiveCharacteristicAria": "Archive characteristic",
+      "unarchiveCharacteristicAria": "Unarchive characteristic",
       "addOptionAria": "Add option"
     },
     "itemsCount_one": "{{count}} characteristic",
@@ -2996,6 +2998,8 @@
     "nameRequired": "Characteristic name is required",
     "nameTooLong": "Characteristic name is too long",
     "namePlaceholder": "Characteristic name",
+    "displayName": "Display name (optional)",
+    "displayNameTooLong": "Display name is too long",
     "type": "Type",
     "typeRequired": "Characteristic type is required",
     "typeText": "Text field",
@@ -3050,6 +3054,30 @@
     "deleteWarning": "This action cannot be undone.",
     "delete": "Delete",
     "deleteCharacteristic": "Delete characteristic",
+    "archiveCharacteristic": "Archive characteristic",
+    "unarchiveCharacteristic": "Unarchive characteristic",
+    "archiveModal": {
+      "title": "Archive characteristic “{{name}}”?",
+      "description": "The characteristic and all its options will become unavailable for new products.",
+      "confirm": "Archive",
+      "cancel": "Cancel"
+    },
+    "archiveSuccess": "Characteristic archived",
+    "archiveFailed": "Failed to archive characteristic",
+    "unarchiveSuccess": "Characteristic unarchived",
+    "unarchiveFailed": "Failed to unarchive characteristic",
+    "archiveValue": "Archive option",
+    "unarchiveValue": "Unarchive option",
+    "archivedBadge": "Archived",
+    "optionArchiveModal": {
+      "title": "Archive option “{{name}}”?",
+      "description": "It will become unavailable for new products.",
+      "confirm": "Archive"
+    },
+    "optionArchiveSuccess": "Option archived",
+    "optionArchiveFailed": "Failed to archive option",
+    "optionUnarchiveSuccess": "Option unarchived",
+    "optionUnarchiveFailed": "Failed to unarchive option",
     "emptyState": "No characteristics yet"
   },
   "composer": {

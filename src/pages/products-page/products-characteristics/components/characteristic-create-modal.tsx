@@ -8,6 +8,8 @@ import styled from "styled-components";
 import { CHARACTERISTIC_NAME_MAX_LENGTH } from "../products-characteristics.constants";
 import type { CharacteristicCreateFormValues } from "../controllers/use-products-characteristics-layout-controller";
 
+const { useWatch } = Form;
+
 const TypeCardsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -186,6 +188,11 @@ export const CharacteristicCreateModal = ({
   onCreate,
 }: CharacteristicCreateModalProps) => {
   const { t } = useTranslation();
+  const labelValue = useWatch("label", form);
+  const displayNamePlaceholder =
+    typeof labelValue === "string" && labelValue.trim().length > 0
+      ? labelValue.trim()
+      : t("characteristics.namePlaceholder");
 
   return (
     <Modal
@@ -215,6 +222,19 @@ export const CharacteristicCreateModal = ({
           ]}
         >
           <Input placeholder={t("characteristics.namePlaceholder")} />
+        </Form.Item>
+
+        <Form.Item
+          name="displayName"
+          label={t("characteristics.displayName")}
+          rules={[
+            {
+              max: CHARACTERISTIC_NAME_MAX_LENGTH,
+              message: t("characteristics.displayNameTooLong"),
+            },
+          ]}
+        >
+          <Input placeholder={displayNamePlaceholder} />
         </Form.Item>
 
         <Form.Item

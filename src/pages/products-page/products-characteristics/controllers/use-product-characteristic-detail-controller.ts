@@ -35,6 +35,16 @@ export const useProductCharacteristicDetailController = () => {
     useState(false);
   const [renamingCharacteristicLabel, setRenamingCharacteristicLabel] =
     useState("");
+  const [displayNameValue, setDisplayNameValue] = useState("");
+  const [syncedDisplayNameKey, setSyncedDisplayNameKey] = useState<{
+    id: number | null;
+    displayName: string;
+  }>({ id: null, displayName: "" });
+  const [archiveModalOpen, setArchiveModalOpen] = useState(false);
+  const [optionArchiveTarget, setOptionArchiveTarget] = useState<{
+    optionId: number;
+    label: string;
+  } | null>(null);
 
   const characteristicIdNumber = useMemo(() => {
     const parsedId = characteristicId != null ? Number(characteristicId) : NaN;
@@ -64,6 +74,20 @@ export const useProductCharacteristicDetailController = () => {
 
     return matchedCharacteristic;
   }, [characteristicFromList, detailCharacteristic]);
+
+  const serverDisplayName = characteristic?.displayName?.trim() ?? "";
+  const serverDisplayNameId = characteristic?.id ?? null;
+
+  if (
+    serverDisplayNameId !== syncedDisplayNameKey.id ||
+    serverDisplayName !== syncedDisplayNameKey.displayName
+  ) {
+    setSyncedDisplayNameKey({
+      id: serverDisplayNameId,
+      displayName: serverDisplayName,
+    });
+    setDisplayNameValue(serverDisplayName);
+  }
 
   useEffect(() => {
     if (store.items.length > 0 || store.listLoading) {
@@ -224,6 +248,38 @@ export const useProductCharacteristicDetailController = () => {
     validateCharacteristicLabel,
   ]);
 
+  const handleSaveDisplayName = useCallback(async () => {
+    if (!characteristic) {
+      return;
+    }
+
+    const nextDisplayName = displayNameValue.trim();
+    const currentDisplayName = characteristic.displayName?.trim() ?? "";
+
+    if (nextDisplayName.length > CHARACTERISTIC_NAME_MAX_LENGTH) {
+      notification.error({ title: t("characteristics.displayNameTooLong") });
+      setDisplayNameValue(currentDisplayName);
+      return;
+    }
+
+    if (nextDisplayName === currentDisplayName) {
+      setDisplayNameValue(currentDisplayName);
+      return;
+    }
+
+    try {
+      await store.updateCharacteristic(characteristic.id, {
+        displayName: nextDisplayName || null,
+      });
+      notification.success({ title: t("characteristics.updated") });
+    } catch (error) {
+      setDisplayNameValue(currentDisplayName);
+      notification.error({
+        title: getApiErrorMessage(error, t("characteristics.updateFailed")),
+      });
+    }
+  }, [characteristic, displayNameValue, notification, store, t]);
+
   const handleCreateOption = useCallback(async () => {
     if (!characteristic || characteristic.type !== "options") {
       return;
@@ -363,9 +419,150 @@ export const useProductCharacteristicDetailController = () => {
     }
   }, [characteristic, notification, navigate, store, t]);
 
+  const openArchiveModal = useCallback(() => {
+    setOptionArchiveTarget(null);
+    setArchiveModalOpen(true);
+  }, []);
+
+  const closeArchiveModal = useCallback(() => {
+    setArchiveModalOpen(false);
+    setOptionArchiveTarget(null);
+  }, []);
+
+  const handleArchiveCharacteristic = useCallback(async () => {
+    if (!characteristic) {
+      return;
+    }
+
+    try {
+      await store.archiveCharacteristic(characteristic.id);
+      notification.success({ title: t("characteristics.archiveSuccess") });
+      closeArchiveModal();
+    } catch (error) {
+      notification.error({
+        title: getApiErrorMessage(error, t("characteristics.archiveFailed")),
+      });
+    }
+  }, [characteristic, closeArchiveModal, notification, store, t]);
+
+  const handleUnarchiveCharacteristic = useCallback(async () => {
+    if (!characteristic) {
+      return;
+    }
+
+    try {
+      await store.unarchiveCharacteristic(characteristic.id);
+      notification.success({ title: t("characteristics.unarchiveSuccess") });
+    } catch (error) {
+      notification.error({
+        title: getApiErrorMessage(error, t("characteristics.unarchiveFailed")),
+      });
+    }
+  }, [characteristic, notification, store, t]);
+
+  const openOptionArchiveModal = useCallback(
+    (optionId: number) => {
+      const option = options.find((item) => item.optionId === optionId);
+
+      if (option == null) {
+        return;
+      }
+
+      setArchiveModalOpen(false);
+      setOptionArchiveTarget({
+        optionId: option.optionId,
+        label: option.label,
+      });
+    },
+    [options],
+  );
+
+  const handleArchiveOption = useCallback(async () => {
+    if (!characteristic || optionArchiveTarget == null) {
+      return;
+    }
+
+    try {
+      await store.archiveCharacteristicOption(
+        characteristic.id,
+        optionArchiveTarget.optionId,
+      );
+      notification.success({
+        title: t("characteristics.optionArchiveSuccess"),
+      });
+      closeArchiveModal();
+    } catch (error) {
+      notification.error({
+        title: getApiErrorMessage(
+          error,
+          t("characteristics.optionArchiveFailed"),
+        ),
+      });
+    }
+  }, [
+    characteristic,
+    closeArchiveModal,
+    notification,
+    optionArchiveTarget,
+    store,
+    t,
+  ]);
+
+  const handleUnarchiveOption = useCallback(
+    async (optionId: number) => {
+      if (!characteristic) {
+        return;
+      }
+
+      try {
+        await store.unarchiveCharacteristicOption(characteristic.id, optionId);
+        notification.success({
+          title: t("characteristics.optionUnarchiveSuccess"),
+        });
+      } catch (error) {
+        notification.error({
+          title: getApiErrorMessage(
+            error,
+            t("characteristics.optionUnarchiveFailed"),
+          ),
+        });
+      }
+    },
+    [characteristic, notification, store, t],
+  );
+
+  const handleConfirmArchive = useCallback(async () => {
+    if (optionArchiveTarget != null) {
+      await handleArchiveOption();
+      return;
+    }
+
+    await handleArchiveCharacteristic();
+  }, [handleArchiveCharacteristic, handleArchiveOption, optionArchiveTarget]);
+
+  const archiveModalTarget =
+    optionArchiveTarget != null
+      ? ({
+          type: "option" as const,
+          label: optionArchiveTarget.label,
+        } as const)
+      : archiveModalOpen && characteristic != null
+        ? ({
+            type: "characteristic" as const,
+            label: characteristic.label,
+          } as const)
+        : null;
+
+  const archiveModalLoading =
+    optionArchiveTarget != null
+      ? store.optionArchiveLoadingId === optionArchiveTarget.optionId
+      : characteristic != null && store.archiveLoadingId === characteristic.id;
+
   const navigateToCharacteristics = useCallback(() => {
     navigate(pagesMap.productsCharacteristics);
   }, [navigate]);
+
+  const isArchived = characteristic?.archivedAt != null;
 
   return {
     characteristic,
@@ -381,7 +578,13 @@ export const useProductCharacteristicDetailController = () => {
     isNotFound: !store.listLoading && !store.detailLoading && !characteristic,
     saveLoading: store.saveLoading,
     deleteLoadingId: store.deleteLoadingId,
+    archiveLoadingId: store.archiveLoadingId,
+    optionArchiveLoadingId: store.optionArchiveLoadingId,
     optionDeleteLoadingId: store.optionDeleteLoadingId,
+    isArchived,
+    archiveModalOpen: archiveModalTarget != null,
+    archiveModalTarget,
+    archiveModalLoading,
     navigateToCharacteristics,
     characteristicLabelEdit: {
       isEditing: isRenamingCharacteristic,
@@ -390,6 +593,11 @@ export const useProductCharacteristicDetailController = () => {
       onOpen: openRenameCharacteristic,
       onCancel: cancelRenameCharacteristic,
       onSave: handleRenameCharacteristic,
+    },
+    displayNameEdit: {
+      value: displayNameValue,
+      onChange: setDisplayNameValue,
+      onSave: handleSaveDisplayName,
     },
     optionCreate: {
       isAdding: isAddingOption,
@@ -409,5 +617,11 @@ export const useProductCharacteristicDetailController = () => {
     },
     onDeleteCharacteristic: handleDeleteCharacteristic,
     onDeleteOption: handleDeleteOption,
+    onRequestArchiveCharacteristic: openArchiveModal,
+    onRequestArchiveOption: openOptionArchiveModal,
+    onCloseArchiveModal: closeArchiveModal,
+    onConfirmArchive: handleConfirmArchive,
+    onUnarchiveCharacteristic: handleUnarchiveCharacteristic,
+    onUnarchiveOption: handleUnarchiveOption,
   };
 };

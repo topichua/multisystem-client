@@ -1,4 +1,10 @@
-import { PencilSimpleIcon, PlusIcon, TrashIcon } from "@phosphor-icons/react";
+import {
+  ArchiveIcon,
+  ArrowClockwiseIcon,
+  PencilSimpleIcon,
+  PlusIcon,
+  TrashIcon,
+} from "@phosphor-icons/react";
 import {
   Badge,
   Button,
@@ -9,6 +15,7 @@ import {
   List,
   Popconfirm,
   Space,
+  Tag,
   Typography,
 } from "antd";
 import { useTranslation } from "react-i18next";
@@ -52,7 +59,10 @@ type CharacteristicOptionListItemProps = {
   option: CharacteristicOption;
   rename: CharacteristicOptionRenameState;
   saveLoading: boolean;
+  archiveLoading: boolean;
   deleteLoading: boolean;
+  onArchive: (optionId: number) => void;
+  onUnarchive: (optionId: number) => Promise<void>;
   onDelete: (optionId: number) => Promise<void>;
 };
 
@@ -61,7 +71,10 @@ type CharacteristicOptionsSectionProps = {
   create: CharacteristicOptionCreateState;
   rename: CharacteristicOptionRenameState;
   saveLoading: boolean;
+  optionArchiveLoadingId: number | null;
   optionDeleteLoadingId: number | null;
+  onArchiveOption: (optionId: number) => void;
+  onUnarchiveOption: (optionId: number) => Promise<void>;
   onDeleteOption: (optionId: number) => Promise<void>;
   addOptionDataQa?: string;
   getOptionItemDataQa?: (optionId: number) => string;
@@ -72,7 +85,10 @@ export const CharacteristicOptionsSection = ({
   create,
   rename,
   saveLoading,
+  optionArchiveLoadingId,
   optionDeleteLoadingId,
+  onArchiveOption,
+  onUnarchiveOption,
   onDeleteOption,
   addOptionDataQa,
   getOptionItemDataQa,
@@ -134,7 +150,10 @@ export const CharacteristicOptionsSection = ({
                   option={option}
                   rename={rename}
                   saveLoading={saveLoading}
+                  archiveLoading={optionArchiveLoadingId === option.optionId}
                   deleteLoading={optionDeleteLoadingId === option.optionId}
+                  onArchive={onArchiveOption}
+                  onUnarchive={onUnarchiveOption}
                   onDelete={onDeleteOption}
                 />
               </List.Item>
@@ -165,13 +184,13 @@ const CharacteristicValueFormRow = ({
   onSubmit,
   onCancel,
 }: CharacteristicValueFormRowProps) => (
-  <Flex align="center" gap={8} wrap="wrap">
+  <Flex align="center" gap={8} wrap={false} style={{ width: "100%" }}>
     <Input
       autoFocus
       value={value}
       placeholder={placeholder}
       maxLength={CHARACTERISTIC_OPTION_VALUE_MAX_LENGTH}
-      style={{ flex: "1 1 240px" }}
+      style={{ flex: 1, minWidth: 0 }}
       onChange={(event) => onChange(event.target.value)}
       onPressEnter={() => {
         if (!loading) {
@@ -180,12 +199,17 @@ const CharacteristicValueFormRow = ({
       }}
     />
 
-    <Button type="primary" loading={loading} onClick={() => void onSubmit()}>
-      {submitLabel}
+    <Button disabled={loading} onClick={onCancel} style={{ flexShrink: 0 }}>
+      {cancelLabel}
     </Button>
 
-    <Button disabled={loading} onClick={onCancel}>
-      {cancelLabel}
+    <Button
+      type="primary"
+      loading={loading}
+      onClick={() => void onSubmit()}
+      style={{ flexShrink: 0 }}
+    >
+      {submitLabel}
     </Button>
   </Flex>
 );
@@ -194,12 +218,16 @@ const CharacteristicOptionListItem = ({
   option,
   rename,
   saveLoading,
+  archiveLoading,
   deleteLoading,
+  onArchive,
+  onUnarchive,
   onDelete,
 }: CharacteristicOptionListItemProps) => {
   const { t } = useTranslation();
 
   const isEditing = rename.optionId === option.optionId;
+  const isArchived = option.archivedAt != null;
 
   if (isEditing) {
     return (
@@ -223,9 +251,21 @@ const CharacteristicOptionListItem = ({
       style={{ width: "100%" }}
     >
       <Flex vertical gap={2} style={{ flex: 1, minWidth: 0 }}>
-        <Text strong ellipsis={{ tooltip: option.label }}>
-          {option.label}
-        </Text>
+        <Flex align="center" gap={8} wrap="wrap">
+          <Text
+            strong={!isArchived}
+            type={isArchived ? "secondary" : undefined}
+            ellipsis={{ tooltip: option.label }}
+          >
+            {option.label}
+          </Text>
+
+          {isArchived && (
+            <Tag style={{ marginInlineEnd: 0 }}>
+              {t("characteristics.archivedBadge")}
+            </Tag>
+          )}
+        </Flex>
 
         <Text type="secondary" style={{ fontSize: 12 }}>
           {t("characteristics.optionUsage", {
@@ -240,9 +280,28 @@ const CharacteristicOptionListItem = ({
       <Space size={4}>
         <Button
           type="text"
-          icon={<PencilSimpleIcon size={18} />}
+          icon={<PencilSimpleIcon />}
           aria-label={t("characteristics.renameValue")}
           onClick={() => rename.onOpen(option.optionId, option.label)}
+        />
+
+        <Button
+          type="text"
+          icon={isArchived ? <ArrowClockwiseIcon /> : <ArchiveIcon />}
+          loading={archiveLoading}
+          aria-label={
+            isArchived
+              ? t("characteristics.unarchiveValue")
+              : t("characteristics.archiveValue")
+          }
+          onClick={() => {
+            if (isArchived) {
+              void onUnarchive(option.optionId);
+              return;
+            }
+
+            onArchive(option.optionId);
+          }}
         />
 
         <Popconfirm
@@ -255,7 +314,7 @@ const CharacteristicOptionListItem = ({
           <Button
             type="text"
             danger
-            icon={<TrashIcon size={18} />}
+            icon={<TrashIcon />}
             loading={deleteLoading}
             aria-label={t("characteristics.deleteValue")}
           />

@@ -5,7 +5,7 @@ import {
   PlusIcon,
   TextTIcon,
 } from "@phosphor-icons/react";
-import { Empty } from "antd";
+import { Empty, Flex, Tag } from "antd";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useOutletContext } from "react-router";
@@ -90,6 +90,7 @@ export const MobileCharacteristicsListPage = observer(() => {
       ) : (
         <S.ListCard>
           {visibleCharacteristics.map((characteristic) => {
+            const isArchived = characteristic.archivedAt != null;
             const optionsCount = characteristic.options?.length ?? 0;
             const metaLabel =
               characteristic.type === "options"
@@ -116,7 +117,16 @@ export const MobileCharacteristicsListPage = observer(() => {
                     )}
                   </S.IconTile>
                   <S.ItemCopy vertical gap={2}>
-                    <S.ItemTitle>{characteristic.label}</S.ItemTitle>
+                    <Flex align="center" gap={8} style={{ minWidth: 0 }}>
+                      <S.ItemTitle $archived={isArchived}>
+                        {characteristic.label}
+                      </S.ItemTitle>
+                      {isArchived && (
+                        <Tag style={{ marginInlineEnd: 0, flexShrink: 0 }}>
+                          {t("characteristics.archivedBadge")}
+                        </Tag>
+                      )}
+                    </Flex>
                     <S.ItemMeta>{metaLabel}</S.ItemMeta>
                   </S.ItemCopy>
                   <S.Caret aria-hidden="true">

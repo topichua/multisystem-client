@@ -87,7 +87,7 @@ export const MoveCategoryModal = ({
       open={open}
       closable={!loading}
       keyboard={!loading}
-      maskClosable={!loading}
+      mask={{ closable: !loading }}
       styles={
         isMobileViewport
           ? {

@@ -68,4 +68,20 @@ export const characteristicsApi = {
   deleteOption: async (id: number, optionId: number): Promise<void> => {
     await apiClient.delete(`${basePath}/${id}/option/${optionId}`);
   },
+
+  archive: async (id: number): Promise<void> => {
+    await apiClient.post(`${basePath}/${id}/archive`);
+  },
+
+  unarchive: async (id: number): Promise<void> => {
+    await apiClient.post(`${basePath}/${id}/unarchive`);
+  },
+
+  archiveOption: async (id: number, optionId: number): Promise<void> => {
+    await apiClient.post(`${basePath}/${id}/option/${optionId}/archive`);
+  },
+
+  unarchiveOption: async (id: number, optionId: number): Promise<void> => {
+    await apiClient.post(`${basePath}/${id}/option/${optionId}/unarchive`);
+  },
 };
