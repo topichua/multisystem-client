@@ -4,16 +4,22 @@ import type {
   AddToWishlistPayload,
   ClientWishlistProductsResponse,
   RemoveFromWishlistPayload,
+  VariantWishlistResponse,
   WishlistItem,
 } from "../model/wishlist.types";
 
 import {
   normalizeClientWishlistProducts,
+  normalizeVariantWishlistResponse,
   normalizeWishlistItem,
 } from "./wishlist-api.utils";
 
 function clientWishlistPath(clientId: number): string {
   return `/clients/${clientId}/wishlist`;
+}
+
+function variantWishlistPath(productId: number, variantId: number): string {
+  return `/products/${productId}/variants/${variantId}/wishlist`;
 }
 
 export const wishlistApi = {
@@ -25,6 +31,17 @@ export const wishlistApi = {
     );
 
     return normalizeClientWishlistProducts(data);
+  },
+
+  getVariantWishlist: async (
+    productId: number,
+    variantId: number,
+  ): Promise<VariantWishlistResponse> => {
+    const { data } = await apiClient.get<unknown>(
+      variantWishlistPath(productId, variantId),
+    );
+
+    return normalizeVariantWishlistResponse(data);
   },
 
   add: async (

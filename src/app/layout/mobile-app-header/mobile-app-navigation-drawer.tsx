@@ -68,7 +68,10 @@ export const MobileAppNavigationDrawer = ({
       placement="left"
       open={open}
       width="min(320px, 88vw)"
-      closable={{ "aria-label": t("nav.closeMobileNavigationAria") }}
+      closable={{
+        "aria-label": t("nav.closeMobileNavigationAria"),
+        placement: "end",
+      }}
       title={<S.DrawerTitle>{t("nav.mobileNavigationTitle")}</S.DrawerTitle>}
       onClose={onClose}
       styles={{

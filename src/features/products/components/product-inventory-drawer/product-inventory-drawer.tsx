@@ -357,6 +357,8 @@ export const ProductInventoryDrawer = observer(
           }}
         >
           <ProductInventoryVariantCard
+            productId={inventory?.productId ?? productId ?? 0}
+            productName={productName}
             variant={variant}
             detailVariant={variantsById.get(variant.variantId)}
             currency={currency}
@@ -409,6 +411,7 @@ export const ProductInventoryDrawer = observer(
     return (
       <Drawer
         open={open}
+        closable={{ placement: "end" }}
         title={
           <Flex vertical gap={4}>
             <Title level={isMobileViewport ? 5 : 4} style={{ margin: 0 }}>

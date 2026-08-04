@@ -2219,7 +2219,8 @@
       "namePlaceholder": "Type name of product",
       "categoryPlaceholder": "Choose product category",
       "descriptionPlaceholder": "Type description of a product...",
-      "skuPlaceholder": "ART-0001"
+      "skuPlaceholder": "ART-0001",
+      "quantityAdvancedInventoryHint": "Quantity is changed through inventory movements. Use Manage."
     },
     "media": {
       "sectionTitle": "Product images",
@@ -2246,6 +2247,17 @@
       "available": "Available",
       "wishlist": "Wishlist",
       "wishlistCountAria": "{{count}} in wishlist",
+      "wishlistClients": {
+        "title": "Waiting for variant",
+        "waitingCount_one": "{{count}} client is waiting for this variant",
+        "waitingCount_other": "{{count}} clients are waiting for this variant",
+        "addedAt": "added {{time}}",
+        "openDialogue": "Dialogue",
+        "openAria": "Show {{count}} clients waiting for this variant",
+        "closeAria": "Close wishlist clients",
+        "empty": "No clients are waiting for this variant yet",
+        "retry": "Retry"
+      },
       "sku": "Article",
       "imagePickerTitle": "Variant image",
       "images": "Images",

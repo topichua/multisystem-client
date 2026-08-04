@@ -7,7 +7,8 @@ import {
 import { Button, Tooltip } from "antd";
 import { useTranslation } from "react-i18next";
 
-import { VariantWishlistBadge } from "@/features/products/components/variant-wishlist-badge/variant-wishlist-badge";
+import { InteractiveVariantWishlistBadge } from "@/features/products/components/variant-wishlist-badge/interactive-variant-wishlist-badge";
+import { buildCatalogVariantLabelFromVariant } from "@/features/products/utils/catalog-variant-display";
 
 import type {
   Product,
@@ -97,7 +98,16 @@ export function ProductsListVariantCard({
     >
       <S.VariantTopRow>
         <S.VariantTitleGroup>
-          <VariantWishlistBadge compact count={variant.wishlistCount} />
+          <InteractiveVariantWishlistBadge
+            compact
+            count={variant.wishlistCount}
+            productId={product.id}
+            subtitle={buildCatalogVariantLabelFromVariant(
+              product.name,
+              variant,
+            )}
+            variantId={variant.id}
+          />
           <S.VariantTitle
             ellipsis={{ tooltip: title }}
             $clickable={canEdit}

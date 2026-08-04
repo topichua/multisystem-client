@@ -253,6 +253,7 @@ export const OrdersListFiltersPanel = observer(
     return (
       <Drawer
         title={t("orders.toolbar.filters")}
+        closable={{ placement: "end" }}
         open={open}
         placement={isMobileViewport ? "bottom" : "right"}
         size={isMobileViewport ? undefined : "auto"}

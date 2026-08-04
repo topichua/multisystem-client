@@ -79,6 +79,7 @@ export const ClientOrderDrawer = observer(
         }
         closable={{
           "aria-label": t("conversation.clientOrders.closeDrawerAria"),
+          placement: "end",
         }}
         keyboard={false}
         mask={{

@@ -10,7 +10,7 @@ import type {
   ConversationProductSuggestionVariant,
 } from "@/features/conversations/model/types";
 import type { CatalogVariant } from "@/features/products/model/product.types";
-import { VariantWishlistBadge } from "@/features/products/components/variant-wishlist-badge/variant-wishlist-badge";
+import { InteractiveVariantWishlistBadge } from "@/features/products/components/variant-wishlist-badge/interactive-variant-wishlist-badge";
 import { formatCatalogVariantPrice } from "@/features/products/utils/catalog-variant-display";
 import { useWishlistStore } from "@/features/wishlist/model/use-wishlist-store";
 import { useNotification } from "@/shared/components/notification/use-notification";
@@ -95,7 +95,13 @@ export const ProductSuggestionVariantRow = observer(
       <S.VariantRow>
         <S.VariantCopy>
           <Flex align="center" gap={6} wrap>
-            <VariantWishlistBadge count={variant.wishlistCount} compact />
+            <InteractiveVariantWishlistBadge
+              compact
+              count={variant.wishlistCount}
+              productId={product.id}
+              subtitle={catalogVariant.label}
+              variantId={variant.id}
+            />
             <Text strong>{title}</Text>
           </Flex>
 

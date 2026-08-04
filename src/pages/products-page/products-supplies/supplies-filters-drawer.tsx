@@ -65,6 +65,7 @@ export const SuppliesFiltersDrawer = observer(
     return (
       <Drawer
         title={t("products.supplies.filters.title")}
+        closable={{ placement: "end" }}
         open={open}
         placement={isMobileViewport ? "bottom" : "right"}
         size={isMobileViewport ? undefined : 420}

@@ -106,6 +106,7 @@ export const ProductInventoryMovementsFullHistoryDrawer = observer(
         {...drawerLayout}
         destroyOnHidden
         onClose={onClose}
+        closable={{ placement: "end" }}
       >
         {movementsLoading ? (
           <Flex align="center" justify="center" style={{ minHeight: 160 }}>

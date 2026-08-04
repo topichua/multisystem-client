@@ -31,6 +31,7 @@ export const ProductInstagramAiDrawer = ({
 
   return (
     <Drawer
+      closable={{ placement: "end" }}
       title={
         <Flex align="center" gap={12}>
           <InstagramLogoIcon size={isMobile ? 28 : 34} />

@@ -2255,7 +2255,8 @@
       "namePlaceholder": "Введіть назву товару",
       "categoryPlaceholder": "Оберіть категорію товару",
       "descriptionPlaceholder": "Введіть опис товару...",
-      "skuPlaceholder": "Арт-0001"
+      "skuPlaceholder": "Арт-0001",
+      "quantityAdvancedInventoryHint": "Кількість змінюється через складські рухи. Використовуйте «Управління»."
     },
     "media": {
       "sectionTitle": "Зображення товару",
@@ -2282,6 +2283,19 @@
       "available": "Доступно",
       "wishlist": "Вішлист",
       "wishlistCountAria": "{{count}} у вішлисті",
+      "wishlistClients": {
+        "title": "Очікують варіант",
+        "waitingCount_one": "{{count}} клієнт очікує цей варіант",
+        "waitingCount_few": "{{count}} клієнти очікують цей варіант",
+        "waitingCount_many": "{{count}} клієнтів очікують цей варіант",
+        "waitingCount_other": "{{count}} клієнтів очікують цей варіант",
+        "addedAt": "додано {{time}}",
+        "openDialogue": "Діалог",
+        "openAria": "Показати {{count}} клієнтів, які очікують цей варіант",
+        "closeAria": "Закрити список клієнтів у вішлисті",
+        "empty": "Поки ніхто не очікує цей варіант",
+        "retry": "Повторити"
+      },
       "sku": "Артикул",
       "imagePickerTitle": "Зображення варіанта",
       "images": "Зображення",

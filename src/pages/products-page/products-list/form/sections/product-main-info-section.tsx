@@ -1,4 +1,5 @@
-import { Card, Col, Flex, Form, Input, InputNumber, Row } from "antd";
+import { CubeIcon } from "@phosphor-icons/react";
+import { Button, Card, Col, Flex, Form, Input, InputNumber, Row } from "antd";
 import { Typography } from "antd";
 // import { Select } from "antd";
 // import { useMemo } from "react";
@@ -7,8 +8,7 @@ import { CategoryTreeSelect } from "@/features/categories/components/category-tr
 import type { Category } from "@/features/categories/model/category.types";
 import { ProductDeliverySection } from "./product-delivery-section";
 
-const { Title } = Typography;
-// const { Text } = Typography;
+const { Title, Text } = Typography;
 
 // type StatusOption = {
 //   value: string;
@@ -29,6 +29,7 @@ export type ProductMainInfoSectionProps = {
   };
   showQuantityField: boolean;
   isQuantityReadOnly?: boolean;
+  onManageInventory?: () => void;
   showPriceField?: boolean;
   showSkuField?: boolean;
   // Publication parameters are temporarily hidden on product edit.
@@ -42,6 +43,7 @@ export const ProductMainInfoSection = ({
   labels,
   showQuantityField,
   isQuantityReadOnly = false,
+  onManageInventory,
   showPriceField = true,
   showSkuField = false,
   // Publication parameters are temporarily hidden on product edit.
@@ -167,31 +169,55 @@ export const ProductMainInfoSection = ({
 
           {showQuantityField && (
             <Col span={mainFieldSpan}>
-              <Form.Item
-                name="quantity"
-                label={labels.quantity}
-                rules={[
-                  {
-                    required: true,
-                    message: requiredMessage,
-                  },
-                  {
-                    type: "number",
-                    min: 0,
-                    message: requiredMessage,
-                  },
-                ]}
-              >
-                <InputNumber
-                  min={0}
-                  precision={0}
-                  placeholder="0"
-                  // In advanced inventory edit mode, stock changes must go through
-                  // the inventory drawer so movement history and purchase cost stay consistent.
-                  disabled={isQuantityReadOnly}
-                  style={{ width: "100%" }}
-                />
-              </Form.Item>
+              <Flex align="flex-start" gap={8}>
+                <Form.Item
+                  name="quantity"
+                  label={labels.quantity}
+                  rules={[
+                    {
+                      required: true,
+                      message: requiredMessage,
+                    },
+                    {
+                      type: "number",
+                      min: 0,
+                      message: requiredMessage,
+                    },
+                  ]}
+                  style={{
+                    flex: "1 1 160px",
+                    minWidth: 0,
+                    marginBottom: isQuantityReadOnly ? 4 : undefined,
+                  }}
+                >
+                  <InputNumber
+                    min={0}
+                    precision={0}
+                    placeholder="0"
+                    // In advanced inventory edit mode, stock changes must go through
+                    // the inventory drawer so movement history and purchase cost stay consistent.
+                    disabled={isQuantityReadOnly}
+                    style={{ width: "100%" }}
+                  />
+                </Form.Item>
+
+                {onManageInventory != null && (
+                  <Button
+                    htmlType="button"
+                    icon={<CubeIcon size={16} />}
+                    onClick={onManageInventory}
+                    style={{ flexShrink: 0, marginTop: 30 }}
+                  >
+                    {t("products.variantsForm.manageInventory")}
+                  </Button>
+                )}
+              </Flex>
+
+              {isQuantityReadOnly && (
+                <Text type="secondary" style={{ display: "block" }}>
+                  {t("products.form.quantityAdvancedInventoryHint")}
+                </Text>
+              )}
             </Col>
           )}
         </Row>

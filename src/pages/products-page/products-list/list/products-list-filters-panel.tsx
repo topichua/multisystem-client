@@ -274,6 +274,7 @@ export const ProductsListFiltersPanel = observer(
     return (
       <Drawer
         title={t("products.toolbar.filters")}
+        closable={{ placement: "end" }}
         open={open}
         placement={isMobileViewport ? "bottom" : "right"}
         size={isMobileViewport ? undefined : "auto"}

@@ -3,7 +3,7 @@ import { Avatar, Flex, Typography } from "antd";
 import { memo } from "react";
 import { useTranslation } from "react-i18next";
 
-import { VariantWishlistBadge } from "@/features/products/components/variant-wishlist-badge/variant-wishlist-badge";
+import { InteractiveVariantWishlistBadge } from "@/features/products/components/variant-wishlist-badge/interactive-variant-wishlist-badge";
 import type { CatalogVariant } from "@/features/products/model/product.types";
 import { getCatalogVariantImageUrl } from "@/features/products/utils/catalog-variant-display";
 
@@ -42,7 +42,13 @@ export const SupplyVariantRow = memo(function SupplyVariantRow({
       />
       <Flex vertical style={{ minWidth: 0 }}>
         <Flex align="center" gap={8} style={{ minWidth: 0 }}>
-          <VariantWishlistBadge count={variant.wishlistCount} compact />
+          <InteractiveVariantWishlistBadge
+            compact
+            count={variant.wishlistCount}
+            productId={variant.productId}
+            subtitle={variant.label}
+            variantId={variant.id}
+          />
           <Text strong ellipsis>
             {variant.product.name}
           </Text>

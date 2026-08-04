@@ -180,7 +180,6 @@ export const ProductForm = ({
           deleteLoading={deleteLoading}
           onArchiveProduct={onArchiveProduct}
           onDeleteProduct={onDeleteProduct}
-          onManageInventory={onManageInventory}
         />
       )}
 
@@ -199,6 +198,7 @@ export const ProductForm = ({
         requiredMessage={requiredMessage}
         showQuantityField={showMainQuantityField}
         isQuantityReadOnly={isMainQuantityReadOnly}
+        onManageInventory={onManageInventory}
         showPriceField={showMainPriceField}
         showSkuField={showMainSkuField}
         labels={labels}
@@ -323,7 +323,6 @@ export const ProductForm = ({
               deleteLoading={deleteLoading}
               onArchiveProduct={onArchiveProduct}
               onDeleteProduct={onDeleteProduct}
-              onManageInventory={onManageInventory}
             />
           </MobileS.MobilePageHeader>
 

@@ -546,6 +546,7 @@ export const ConversationDetails = observer(() => {
         }
         closable={{
           "aria-label": t("conversation.closeClientPanelAria"),
+          placement: "end",
         }}
         extra={
           linkedClient && !clientDrawerEditMode ? (

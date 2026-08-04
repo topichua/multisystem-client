@@ -2,7 +2,11 @@ import { PlusIcon } from "@phosphor-icons/react";
 import { Badge, Button, Card, Flex, Tag, Typography, theme } from "antd";
 import { useTranslation } from "react-i18next";
 
-import { VariantWishlistBadge } from "@/features/products/components/variant-wishlist-badge/variant-wishlist-badge";
+import { InteractiveVariantWishlistBadge } from "@/features/products/components/variant-wishlist-badge/interactive-variant-wishlist-badge";
+import {
+  buildCatalogVariantLabel,
+  buildCatalogVariantLabelFromVariant,
+} from "@/features/products/utils/catalog-variant-display";
 
 import type {
   InitialStockValues,
@@ -30,6 +34,8 @@ import { ProductInventoryMovementsHistory } from "./product-inventory-movements-
 const { Text } = Typography;
 
 type ProductInventoryVariantCardProps = {
+  productId: number;
+  productName: string;
   variant: ProductInventoryVariant;
   detailVariant: ProductVariant | undefined;
   currency: string;
@@ -50,6 +56,8 @@ type ProductInventoryVariantCardProps = {
 };
 
 export const ProductInventoryVariantCard = ({
+  productId,
+  productName,
   variant,
   detailVariant,
   currency,
@@ -80,6 +88,14 @@ export const ProductInventoryVariantCard = ({
     fallbackName,
   );
   const sku = variant.sku || detailVariant?.sku || "—";
+  const wishlistSubtitle = detailVariant
+    ? buildCatalogVariantLabelFromVariant(productName, detailVariant)
+    : buildCatalogVariantLabel(
+        productName,
+        [variantName, sku]
+          .filter((value) => value && value !== "—")
+          .join(" · "),
+      );
 
   return (
     <Card
@@ -99,9 +115,12 @@ export const ProductInventoryVariantCard = ({
         <Flex align="flex-start" justify="space-between" gap={16}>
           <Flex vertical gap={2} style={{ minWidth: 0 }}>
             <Flex align="center" gap={8} style={{ minWidth: 0 }}>
-              <VariantWishlistBadge
-                count={detailVariant?.wishlistCount ?? 0}
+              <InteractiveVariantWishlistBadge
                 compact
+                count={detailVariant?.wishlistCount ?? 0}
+                productId={productId}
+                subtitle={wishlistSubtitle}
+                variantId={variant.variantId}
               />
               <Text strong>{variantName}</Text>
             </Flex>

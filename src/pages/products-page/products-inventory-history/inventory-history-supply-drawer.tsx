@@ -152,6 +152,7 @@ export const InventoryHistorySupplyDrawer = ({
 
   return (
     <Drawer
+      closable={{ placement: "end" }}
       open={open}
       onClose={onClose}
       size={isMobileViewport ? "100%" : 560}
