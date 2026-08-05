@@ -5,9 +5,9 @@ import { Button, Image, theme } from "antd";
 import { VariantWishlistBadge } from "@/features/products/components/variant-wishlist-badge/variant-wishlist-badge";
 import {
   formatCatalogVariantCurrency,
-  getCatalogVariantImageUrl,
   getCatalogVariantMeta,
   getCatalogVariantUnitPrice,
+  resolveCatalogVariantImageSrc,
 } from "@/features/products/utils/catalog-variant-display";
 
 import * as S from "./client-order-drawer.styled";
@@ -26,7 +26,7 @@ export const OrderProductLine = ({
   onRemove,
 }: OrderProductLineProps) => {
   const { token } = theme.useToken();
-  const imageUrl = getCatalogVariantImageUrl(variant) ?? undefined;
+  const imageUrl = resolveCatalogVariantImageSrc(variant);
   const meta = getCatalogVariantMeta(variant);
   const currency = formatCatalogVariantCurrency(variant.product.currency);
   const maxQuantity = variant.quantity > 0 ? variant.quantity : undefined;

@@ -3,7 +3,10 @@ import type {
   Product,
   ProductVariant,
 } from "@/features/products/model/product.types";
-import { getVariantTitle } from "@/features/products/utils/product-display";
+import {
+  getVariantTitle,
+  resolveProductImageSrc,
+} from "@/features/products/utils/product-display";
 
 function getVariantCustomFieldValue(
   variant: ProductVariant,
@@ -94,6 +97,10 @@ export function getCatalogVariantImageUrl(
   variant: CatalogVariant,
 ): string | null {
   return variant.imageUrl ?? variant.product.mainImageUrl ?? null;
+}
+
+export function resolveCatalogVariantImageSrc(variant: CatalogVariant): string {
+  return resolveProductImageSrc(getCatalogVariantImageUrl(variant));
 }
 
 export function getCatalogVariantMeta(variant: CatalogVariant): string {

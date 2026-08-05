@@ -12,6 +12,7 @@ import {
 } from "../utils/order-delivery-display.utils";
 import * as S from "../order-details-content.styled";
 import type { OrderDetails } from "@/features/orders/model/order.types";
+import { resolveProductImageSrc } from "@/features/products/utils/product-display";
 import type { TranslationFn } from "../order-details-content.types";
 
 const { Text } = Typography;
@@ -66,10 +67,8 @@ export const ProductsCard = ({
               <S.ProductImage
                 shape="square"
                 size={isCompact ? 36 : 64}
-                src={item.imageUrlSnapshot ?? undefined}
-              >
-                {formatText(item.productTitleSnapshot).slice(0, 1)}
-              </S.ProductImage>
+                src={resolveProductImageSrc(item.imageUrlSnapshot)}
+              />
 
               <div style={{ minWidth: 0 }}>
                 <Text

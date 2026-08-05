@@ -2,11 +2,12 @@ import { FunnelSimpleIcon, MagnifyingGlassIcon } from "@phosphor-icons/react";
 import {
   Button,
   Checkbox,
+  Divider,
   Drawer,
   Flex,
   Input,
   InputNumber,
-  Select,
+  Segmented,
   Typography,
   theme,
 } from "antd";
@@ -16,6 +17,10 @@ import { useTranslation } from "react-i18next";
 
 import type { Category } from "@/features/categories/model/category.types";
 import { useCategoriesStore } from "@/features/categories/model/use-categories-store";
+import {
+  PRODUCTS_LIST_BY_STATUS_VALUES,
+  type ProductsListByStatus,
+} from "@/features/products/model/product.types";
 import { useProductsStore } from "@/features/products/model/use-products-store";
 import { useIsMobileViewport } from "@/utils/use-media-query";
 
@@ -110,6 +115,15 @@ export const ProductsListFiltersPanel = observer(
       [productsStore.listCategoryIds],
     );
 
+    const byStatusOptions = useMemo(
+      () =>
+        PRODUCTS_LIST_BY_STATUS_VALUES.map((value) => ({
+          value,
+          label: t(`products.listFilters.byStatus.${value}`),
+        })),
+      [t],
+    );
+
     useEffect(() => {
       if (!open) {
         filtersPanelWasOpenRef.current = false;
@@ -125,9 +139,13 @@ export const ProductsListFiltersPanel = observer(
       open,
       productsStore,
       appliedCategoryKey,
-      productsStore.listStatus,
+      productsStore.listByStatus,
       productsStore.listMinPrice,
       productsStore.listMaxPrice,
+      productsStore.listQuantityFrom,
+      productsStore.listQuantityTo,
+      productsStore.listWishlistOnly,
+      productsStore.listShowOnlyReserved,
     ]);
 
     const toggleCategory = (id: number, checked: boolean): void => {
@@ -153,12 +171,26 @@ export const ProductsListFiltersPanel = observer(
     const filterContent = (
       <Flex
         vertical
-        gap={20}
+        gap={16}
         style={{
           width: isMobileViewport ? "100%" : 360,
           maxWidth: isMobileViewport ? "100%" : "80vw",
         }}
       >
+        <div>
+          <Text strong style={{ display: "block", marginBottom: 8 }}>
+            {t("products.toolbar.status")}
+          </Text>
+          <Segmented<ProductsListByStatus>
+            block
+            value={productsStore.draftByStatus}
+            options={byStatusOptions}
+            onChange={(value) => productsStore.setDraftByStatus(value)}
+          />
+        </div>
+
+        <Divider style={{ margin: 0 }} />
+
         <div>
           <Text strong style={{ display: "block", marginBottom: 8 }}>
             {t("products.toolbar.category")}
@@ -178,7 +210,7 @@ export const ProductsListFiltersPanel = observer(
               maxHeight: 220,
               overflowY: "auto",
               border: `1px solid ${token.colorBorderSecondary}`,
-              borderRadius: 8,
+              borderRadius: token.borderRadius,
               padding: 8,
             }}
           >
@@ -212,29 +244,7 @@ export const ProductsListFiltersPanel = observer(
           </div>
         </div>
 
-        <div>
-          <Text strong style={{ display: "block", marginBottom: 8 }}>
-            {t("products.toolbar.status")}
-          </Text>
-          <Select
-            style={{ width: "100%" }}
-            value={productsStore.draftStatus ?? ""}
-            options={[
-              { value: "", label: t("products.toolbar.allStatuses") },
-              { value: "draft", label: t("products.toolbar.statusDraft") },
-              { value: "active", label: t("products.toolbar.statusActive") },
-              {
-                value: "archived",
-                label: t("products.toolbar.statusArchived"),
-              },
-            ]}
-            onChange={(v) =>
-              productsStore.setDraftStatus(
-                v === undefined || v === null || v === "" ? null : String(v),
-              )
-            }
-          />
-        </div>
+        <Divider style={{ margin: 0 }} />
 
         <div>
           <Text strong style={{ display: "block", marginBottom: 8 }}>
@@ -244,29 +254,86 @@ export const ProductsListFiltersPanel = observer(
             <InputNumber
               style={{ flex: 1, minWidth: 0 }}
               placeholder={t("products.listFilters.panelPriceFrom")}
+              min={0}
               value={productsStore.draftMinPrice ?? undefined}
               onChange={(v) => {
-                if (v == null) {
-                  productsStore.setDraftMinPrice(null);
-                } else {
-                  productsStore.setDraftMinPrice(Number(v));
-                }
+                productsStore.setDraftMinPrice(v == null ? null : Number(v));
               }}
             />
-            <span>-</span>
+            <span>—</span>
             <InputNumber
               style={{ flex: 1, minWidth: 0 }}
               placeholder={t("products.listFilters.panelPriceTo")}
+              min={0}
               value={productsStore.draftMaxPrice ?? undefined}
               onChange={(v) => {
-                if (v == null) {
-                  productsStore.setDraftMaxPrice(null);
-                } else {
-                  productsStore.setDraftMaxPrice(Number(v));
-                }
+                productsStore.setDraftMaxPrice(v == null ? null : Number(v));
               }}
             />
           </Flex>
+        </div>
+
+        <Divider style={{ margin: 0 }} />
+
+        <div>
+          <Text strong style={{ display: "block", marginBottom: 8 }}>
+            {t("products.listFilters.panelQuantitySection")}
+          </Text>
+          <Flex gap={8} align="center">
+            <InputNumber
+              style={{ flex: 1, minWidth: 0 }}
+              placeholder={t("products.listFilters.panelQuantityFrom")}
+              min={0}
+              value={productsStore.draftQuantityFrom ?? undefined}
+              onChange={(v) => {
+                productsStore.setDraftQuantityFrom(
+                  v == null ? null : Number(v),
+                );
+              }}
+            />
+            <span>—</span>
+            <InputNumber
+              style={{ flex: 1, minWidth: 0 }}
+              placeholder={t("products.listFilters.panelQuantityTo")}
+              min={0}
+              value={productsStore.draftQuantityTo ?? undefined}
+              onChange={(v) => {
+                productsStore.setDraftQuantityTo(v == null ? null : Number(v));
+              }}
+            />
+          </Flex>
+        </div>
+
+        <Divider style={{ margin: 0 }} />
+
+        <div>
+          <Text strong style={{ display: "block", marginBottom: 8 }}>
+            {t("products.listFilters.panelWishlistSection")}
+          </Text>
+          <Checkbox
+            checked={productsStore.draftWishlistOnly}
+            onChange={(e) =>
+              productsStore.setDraftWishlistOnly(e.target.checked)
+            }
+          >
+            {t("products.listFilters.panelWishlistOnly")}
+          </Checkbox>
+        </div>
+
+        <Divider style={{ margin: 0 }} />
+
+        <div>
+          <Text strong style={{ display: "block", marginBottom: 8 }}>
+            {t("products.listFilters.panelReserveSection")}
+          </Text>
+          <Checkbox
+            checked={productsStore.draftShowOnlyReserved}
+            onChange={(e) =>
+              productsStore.setDraftShowOnlyReserved(e.target.checked)
+            }
+          >
+            {t("products.listFilters.panelShowOnlyReserved")}
+          </Checkbox>
         </div>
       </Flex>
     );

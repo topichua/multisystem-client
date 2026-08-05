@@ -3,6 +3,7 @@ import type { MouseEvent } from "react";
 import { useTranslation } from "react-i18next";
 
 import type { CatalogVariant } from "@/features/products/model/product.types";
+import { resolveProductImageSrc } from "@/features/products/utils/product-display";
 
 import { CatalogVariantSearchRow } from "./catalog-variant-search-row";
 import * as S from "./catalog-product-search.styled";
@@ -73,14 +74,10 @@ export function GroupedProductSearchPopup({
                 )}
               </S.GroupedProductCaret>
 
-              {product.imageUrl ? (
-                <S.GroupedProductImage
-                  src={product.imageUrl}
-                  alt={product.productName}
-                />
-              ) : (
-                <S.GroupedProductImagePlaceholder aria-hidden="true" />
-              )}
+              <S.GroupedProductImage
+                src={resolveProductImageSrc(product.imageUrl)}
+                alt={product.productName}
+              />
 
               <S.GroupedProductCopy>
                 <S.GroupedProductName>

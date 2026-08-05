@@ -1,5 +1,7 @@
-import { Badge, theme } from "antd";
+import { Badge } from "antd";
 import type { ReactNode } from "react";
+
+import { BRAND_PRIMARY } from "@/styled/brand";
 
 type FilterLabelProps = {
   label?: string;
@@ -13,17 +15,13 @@ export const FilterLabel = ({
   icon,
   ariaLabel,
   count,
-}: FilterLabelProps) => {
-  const { token } = theme.useToken();
-
-  return (
-    <span
-      aria-label={ariaLabel}
-      title={ariaLabel}
-      style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
-    >
-      {icon ?? label}
-      <Badge count={count} size="medium" color={token.colorPrimary} showZero />
-    </span>
-  );
-};
+}: FilterLabelProps) => (
+  <span
+    aria-label={ariaLabel}
+    title={ariaLabel}
+    style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
+  >
+    {icon ?? label}
+    <Badge count={count} color={BRAND_PRIMARY} showZero />
+  </span>
+);

@@ -5,8 +5,8 @@ import type { CatalogVariant } from "@/features/products/model/product.types";
 import { VariantWishlistBadge } from "@/features/products/components/variant-wishlist-badge/variant-wishlist-badge";
 import {
   formatCatalogVariantPrice,
-  getCatalogVariantImageUrl,
   getCatalogVariantMeta,
+  resolveCatalogVariantImageSrc,
 } from "@/features/products/utils/catalog-variant-display";
 
 import * as S from "./catalog-product-search.styled";
@@ -24,7 +24,7 @@ export function CatalogVariantSearchRow({
 }: CatalogVariantSearchRowProps) {
   const { t } = useTranslation();
   const meta = getCatalogVariantMeta(variant);
-  const variantImageUrl = getCatalogVariantImageUrl(variant);
+  const variantImageUrl = resolveCatalogVariantImageSrc(variant);
   const stockLabel = selected
     ? t("products.catalogSearch.alreadyAdded")
     : variant.inStock
@@ -35,11 +35,7 @@ export function CatalogVariantSearchRow({
 
   return (
     <>
-      {variantImageUrl ? (
-        <S.GroupedVariantImage src={variantImageUrl} alt={variant.label} />
-      ) : (
-        <S.GroupedVariantImagePlaceholder aria-hidden="true" />
-      )}
+      <S.GroupedVariantImage src={variantImageUrl} alt={variant.label} />
 
       <S.GroupedVariantCopy>
         <S.GroupedVariantNameRow>

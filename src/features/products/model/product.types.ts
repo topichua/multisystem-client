@@ -118,6 +118,29 @@ export function parseProductsListSort(
   return "created_desc";
 }
 
+export const PRODUCTS_LIST_BY_STATUS_VALUES = [
+  "all",
+  "onlyActive",
+  "onlyArchived",
+] as const;
+
+export type ProductsListByStatus =
+  (typeof PRODUCTS_LIST_BY_STATUS_VALUES)[number];
+
+export const PRODUCTS_LIST_BY_STATUS_DEFAULT: ProductsListByStatus = "all";
+
+export function parseProductsListByStatus(
+  raw: string | null | undefined,
+): ProductsListByStatus {
+  if (
+    raw &&
+    (PRODUCTS_LIST_BY_STATUS_VALUES as readonly string[]).includes(raw)
+  ) {
+    return raw as ProductsListByStatus;
+  }
+  return PRODUCTS_LIST_BY_STATUS_DEFAULT;
+}
+
 export type ProductsListResponse = {
   items: Product[];
   total: number;

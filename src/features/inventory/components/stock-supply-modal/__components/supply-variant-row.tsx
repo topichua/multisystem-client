@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 
 import { InteractiveVariantWishlistBadge } from "@/features/products/components/variant-wishlist-badge/interactive-variant-wishlist-badge";
 import type { CatalogVariant } from "@/features/products/model/product.types";
-import { getCatalogVariantImageUrl } from "@/features/products/utils/catalog-variant-display";
+import { resolveCatalogVariantImageSrc } from "@/features/products/utils/catalog-variant-display";
 
 import * as S from "../stock-supply-modal.styled";
 import { getVariantMeta } from "../stock-supply-modal.utils";
@@ -23,7 +23,7 @@ export const SupplyVariantRow = memo(function SupplyVariantRow({
 }: SupplyVariantRowProps) {
   const { t } = useTranslation();
   const meta = getVariantMeta(variant);
-  const imageUrl = getCatalogVariantImageUrl(variant);
+  const imageUrl = resolveCatalogVariantImageSrc(variant);
 
   return (
     <S.VariantRow>
@@ -37,7 +37,7 @@ export const SupplyVariantRow = memo(function SupplyVariantRow({
       <Avatar
         shape="square"
         size={34}
-        src={imageUrl ?? undefined}
+        src={imageUrl}
         style={{ flexShrink: 0 }}
       />
       <Flex vertical style={{ minWidth: 0 }}>

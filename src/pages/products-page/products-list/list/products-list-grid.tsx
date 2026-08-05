@@ -113,28 +113,24 @@ export const ProductsListGrid = ({
                         opacity: isArchived ? 0.55 : 1,
                       }}
                     >
-                      {product.mainImageUrl ? (
-                        <img
-                          src={product.mainImageUrl}
-                          alt=""
-                          style={{
-                            width: "100%",
-                            height: "100%",
-                            objectFit: "cover",
-                          }}
-                        />
-                      ) : (
-                        <img
-                          src={resolveProductImageSrc(null)}
-                          alt=""
-                          style={{
-                            width: "56%",
-                            height: "56%",
-                            objectFit: "contain",
-                            opacity: 0.7,
-                          }}
-                        />
-                      )}
+                      <img
+                        src={resolveProductImageSrc(product.mainImageUrl)}
+                        alt=""
+                        style={
+                          product.mainImageUrl
+                            ? {
+                                width: "100%",
+                                height: "100%",
+                                objectFit: "cover",
+                              }
+                            : {
+                                width: "56%",
+                                height: "56%",
+                                objectFit: "contain",
+                                opacity: 0.7,
+                              }
+                        }
+                      />
                     </div>
                   }
                 >

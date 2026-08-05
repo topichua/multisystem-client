@@ -10,8 +10,10 @@ import type {
 import type {
   Product,
   ProductDetails,
+  ProductsListByStatus,
   ProductsListSort,
 } from "@/features/products/model/product.types";
+import { PRODUCTS_LIST_BY_STATUS_DEFAULT } from "@/features/products/model/product.types";
 import { PRODUCTS_DEFAULT_PAGE_SIZE } from "@/features/products/model/product.constants";
 import { throwLoadError } from "@/utils/throw-load-error";
 import { unknownErrorMessage } from "@/utils/unknown-error-message";
@@ -32,9 +34,13 @@ function snapshotFromStore(store: ProductsStore): ProductsListAppliedUrlState {
     keyword: store.listKeyword,
     sort: store.listSort,
     categoryIds: [...store.listCategoryIds],
-    status: store.listStatus,
+    byStatus: store.listByStatus,
     minPrice: store.listMinPrice,
     maxPrice: store.listMaxPrice,
+    quantityFrom: store.listQuantityFrom,
+    quantityTo: store.listQuantityTo,
+    wishlistOnly: store.listWishlistOnly,
+    showOnlyReserved: store.listShowOnlyReserved,
     page: store.page,
     pageSize: store.pageSize,
     view: store.listViewMode,
@@ -51,16 +57,24 @@ export class ProductsStore {
   listKeyword = "";
   listSort: ProductsListSort = "created_desc";
   listCategoryIds: number[] = [];
-  listStatus: string | null = null;
+  listByStatus: ProductsListByStatus = PRODUCTS_LIST_BY_STATUS_DEFAULT;
   listMinPrice: number | null = null;
   listMaxPrice: number | null = null;
+  listQuantityFrom: number | null = null;
+  listQuantityTo: number | null = null;
+  listWishlistOnly = false;
+  listShowOnlyReserved = false;
 
   listViewMode: ProductsListViewMode = readStoredProductsListViewMode();
 
   draftCategoryIds: number[] = [];
-  draftStatus: string | null = null;
+  draftByStatus: ProductsListByStatus = PRODUCTS_LIST_BY_STATUS_DEFAULT;
   draftMinPrice: number | null = null;
   draftMaxPrice: number | null = null;
+  draftQuantityFrom: number | null = null;
+  draftQuantityTo: number | null = null;
+  draftWishlistOnly = false;
+  draftShowOnlyReserved = false;
 
   listLoading = false;
   listError: string | null = null;
@@ -83,10 +97,19 @@ export class ProductsStore {
 
   get appliedNonKeywordFilterCount(): number {
     let n = this.listCategoryIds.length;
-    if (this.listStatus) {
+    if (this.listByStatus !== PRODUCTS_LIST_BY_STATUS_DEFAULT) {
       n += 1;
     }
     if (this.listMinPrice != null || this.listMaxPrice != null) {
+      n += 1;
+    }
+    if (this.listQuantityFrom != null || this.listQuantityTo != null) {
+      n += 1;
+    }
+    if (this.listWishlistOnly) {
+      n += 1;
+    }
+    if (this.listShowOnlyReserved) {
       n += 1;
     }
     if (this.listSort !== "created_desc") {
@@ -111,9 +134,13 @@ export class ProductsStore {
       this.listKeyword = normalizeAppliedListKeyword(next.keyword);
       this.listSort = next.sort;
       this.listCategoryIds = next.categoryIds;
-      this.listStatus = next.status;
+      this.listByStatus = next.byStatus;
       this.listMinPrice = next.minPrice;
       this.listMaxPrice = next.maxPrice;
+      this.listQuantityFrom = next.quantityFrom;
+      this.listQuantityTo = next.quantityTo;
+      this.listWishlistOnly = next.wishlistOnly;
+      this.listShowOnlyReserved = next.showOnlyReserved;
       this.page = next.page;
       this.pageSize = next.pageSize;
       this.listViewMode = next.view;
@@ -135,18 +162,26 @@ export class ProductsStore {
   syncFilterDraftFromApplied = (): void => {
     runInAction(() => {
       this.draftCategoryIds = [...this.listCategoryIds];
-      this.draftStatus = this.listStatus;
+      this.draftByStatus = this.listByStatus;
       this.draftMinPrice = this.listMinPrice;
       this.draftMaxPrice = this.listMaxPrice;
+      this.draftQuantityFrom = this.listQuantityFrom;
+      this.draftQuantityTo = this.listQuantityTo;
+      this.draftWishlistOnly = this.listWishlistOnly;
+      this.draftShowOnlyReserved = this.listShowOnlyReserved;
     });
   };
 
   resetFilterDraft = (): void => {
     runInAction(() => {
       this.draftCategoryIds = [];
-      this.draftStatus = null;
+      this.draftByStatus = PRODUCTS_LIST_BY_STATUS_DEFAULT;
       this.draftMinPrice = null;
       this.draftMaxPrice = null;
+      this.draftQuantityFrom = null;
+      this.draftQuantityTo = null;
+      this.draftWishlistOnly = false;
+      this.draftShowOnlyReserved = false;
     });
   };
 
@@ -156,9 +191,9 @@ export class ProductsStore {
     });
   };
 
-  setDraftStatus = (status: string | null): void => {
+  setDraftByStatus = (byStatus: ProductsListByStatus): void => {
     runInAction(() => {
-      this.draftStatus = status;
+      this.draftByStatus = byStatus;
     });
   };
 
@@ -174,12 +209,40 @@ export class ProductsStore {
     });
   };
 
+  setDraftQuantityFrom = (value: number | null): void => {
+    runInAction(() => {
+      this.draftQuantityFrom = value;
+    });
+  };
+
+  setDraftQuantityTo = (value: number | null): void => {
+    runInAction(() => {
+      this.draftQuantityTo = value;
+    });
+  };
+
+  setDraftWishlistOnly = (value: boolean): void => {
+    runInAction(() => {
+      this.draftWishlistOnly = value;
+    });
+  };
+
+  setDraftShowOnlyReserved = (value: boolean): void => {
+    runInAction(() => {
+      this.draftShowOnlyReserved = value;
+    });
+  };
+
   applyFiltersFromPanel = (): void => {
     runInAction(() => {
       this.listCategoryIds = [...new Set(this.draftCategoryIds)];
-      this.listStatus = this.draftStatus;
+      this.listByStatus = this.draftByStatus;
       this.listMinPrice = this.draftMinPrice;
       this.listMaxPrice = this.draftMaxPrice;
+      this.listQuantityFrom = this.draftQuantityFrom;
+      this.listQuantityTo = this.draftQuantityTo;
+      this.listWishlistOnly = this.draftWishlistOnly;
+      this.listShowOnlyReserved = this.draftShowOnlyReserved;
       this.page = 1;
     });
   };
@@ -216,9 +279,9 @@ export class ProductsStore {
     });
   };
 
-  clearListStatus = (): void => {
+  clearListByStatus = (): void => {
     runInAction(() => {
-      this.listStatus = null;
+      this.listByStatus = PRODUCTS_LIST_BY_STATUS_DEFAULT;
       this.page = 1;
     });
   };
@@ -227,6 +290,28 @@ export class ProductsStore {
     runInAction(() => {
       this.listMinPrice = null;
       this.listMaxPrice = null;
+      this.page = 1;
+    });
+  };
+
+  clearListQuantityRange = (): void => {
+    runInAction(() => {
+      this.listQuantityFrom = null;
+      this.listQuantityTo = null;
+      this.page = 1;
+    });
+  };
+
+  clearListWishlistOnly = (): void => {
+    runInAction(() => {
+      this.listWishlistOnly = false;
+      this.page = 1;
+    });
+  };
+
+  clearListShowOnlyReserved = (): void => {
+    runInAction(() => {
+      this.listShowOnlyReserved = false;
       this.page = 1;
     });
   };
@@ -250,9 +335,13 @@ export class ProductsStore {
       this.listKeyword = "";
       this.listSort = "created_desc";
       this.listCategoryIds = [];
-      this.listStatus = null;
+      this.listByStatus = PRODUCTS_LIST_BY_STATUS_DEFAULT;
       this.listMinPrice = null;
       this.listMaxPrice = null;
+      this.listQuantityFrom = null;
+      this.listQuantityTo = null;
+      this.listWishlistOnly = false;
+      this.listShowOnlyReserved = false;
       this.page = 1;
       this.pageSize = PRODUCTS_DEFAULT_PAGE_SIZE;
     });
@@ -267,9 +356,19 @@ export class ProductsStore {
       ...(this.listCategoryIds.length
         ? { categoryIds: this.listCategoryIds }
         : {}),
-      ...(this.listStatus ? { status: this.listStatus } : {}),
+      ...(this.listByStatus !== PRODUCTS_LIST_BY_STATUS_DEFAULT
+        ? { byStatus: this.listByStatus }
+        : {}),
       ...(this.listMinPrice != null ? { minPrice: this.listMinPrice } : {}),
       ...(this.listMaxPrice != null ? { maxPrice: this.listMaxPrice } : {}),
+      ...(this.listQuantityFrom != null
+        ? { quantityFrom: this.listQuantityFrom }
+        : {}),
+      ...(this.listQuantityTo != null
+        ? { quantityTo: this.listQuantityTo }
+        : {}),
+      ...(this.listWishlistOnly ? { wishlistOnly: true } : {}),
+      ...(this.listShowOnlyReserved ? { showOnlyReserved: true } : {}),
     };
   }
 

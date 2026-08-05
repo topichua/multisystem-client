@@ -2,6 +2,7 @@ import { TrashIcon } from "@phosphor-icons/react";
 import { Button, Flex, InputNumber, Typography } from "antd";
 
 import { VariantWishlistBadge } from "@/features/products/components/variant-wishlist-badge/variant-wishlist-badge";
+import { resolveProductImageSrc } from "@/features/products/utils/product-display";
 
 import type { OrderDetails } from "@/features/orders/model/order.types";
 
@@ -40,10 +41,8 @@ export const OrderEditLine = ({
       <S.EditLineImage
         shape="square"
         size={48}
-        src={line.imageUrl ?? undefined}
-      >
-        {line.title.slice(0, 1)}
-      </S.EditLineImage>
+        src={resolveProductImageSrc(line.imageUrl)}
+      />
 
       <S.EditLineInfo>
         <Flex align="center" gap={8} style={{ minWidth: 0 }}>

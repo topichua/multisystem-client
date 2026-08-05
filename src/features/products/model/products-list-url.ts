@@ -1,5 +1,8 @@
 import {
+  parseProductsListByStatus,
   parseProductsListSort,
+  PRODUCTS_LIST_BY_STATUS_DEFAULT,
+  type ProductsListByStatus,
   type ProductsListSort,
 } from "@/features/products/model/product.types";
 import {
@@ -14,9 +17,13 @@ export type ProductsListAppliedUrlState = {
   keyword: string;
   sort: ProductsListSort;
   categoryIds: number[];
-  status: string | null;
+  byStatus: ProductsListByStatus;
   minPrice: number | null;
   maxPrice: number | null;
+  quantityFrom: number | null;
+  quantityTo: number | null;
+  wishlistOnly: boolean;
+  showOnlyReserved: boolean;
   page: number;
   pageSize: number;
   view: ProductsListViewMode;
@@ -54,6 +61,10 @@ function parseOptionalPositiveInt(raw: string | null): number | null {
   return n;
 }
 
+function parseOptionalBoolean(raw: string | null): boolean {
+  return raw === "true" || raw === "1";
+}
+
 export function parseProductsListUrlSearchParams(
   searchParams: URLSearchParams,
 ): ProductsListAppliedUrlState {
@@ -68,19 +79,31 @@ export function parseProductsListUrlSearchParams(
         .map((s) => Number(s.trim()))
         .filter((n) => Number.isFinite(n) && n >= 1)
     : [];
-  const statusRaw = searchParams.get("status");
-  const status =
-    statusRaw === "draft" || statusRaw === "active" || statusRaw === "archived"
-      ? statusRaw
-      : null;
+
+  let byStatus = parseProductsListByStatus(searchParams.get("byStatus"));
+  if (!searchParams.has("byStatus") && searchParams.has("status")) {
+    const legacyStatus = searchParams.get("status");
+    if (legacyStatus === "active") {
+      byStatus = "onlyActive";
+    } else if (legacyStatus === "archived") {
+      byStatus = "onlyArchived";
+    }
+  }
 
   return {
     keyword,
     sort,
     categoryIds: [...new Set(categoryIds)],
-    status,
+    byStatus,
     minPrice: parseOptionalNumber(searchParams.get("minPrice")),
     maxPrice: parseOptionalNumber(searchParams.get("maxPrice")),
+    quantityFrom: parseOptionalNumber(searchParams.get("quantityFrom")),
+    quantityTo: parseOptionalNumber(searchParams.get("quantityTo")),
+    wishlistOnly: parseOptionalBoolean(searchParams.get("wishlistOnly")),
+    showOnlyReserved: parseOptionalBoolean(
+      searchParams.get("showOnlyReserved") ??
+        searchParams.get("show_only_reserved"),
+    ),
     page: Math.max(1, parseOptionalPositiveInt(searchParams.get("page")) ?? 1),
     pageSize: Math.min(
       100,
@@ -113,14 +136,26 @@ export function serializeProductsListUrlSearchParams(
       [...new Set(state.categoryIds)].sort((a, b) => a - b).join(","),
     );
   }
-  if (state.status) {
-    sp.set("status", state.status);
+  if (state.byStatus !== PRODUCTS_LIST_BY_STATUS_DEFAULT) {
+    sp.set("byStatus", state.byStatus);
   }
   if (state.minPrice != null) {
     sp.set("minPrice", String(state.minPrice));
   }
   if (state.maxPrice != null) {
     sp.set("maxPrice", String(state.maxPrice));
+  }
+  if (state.quantityFrom != null) {
+    sp.set("quantityFrom", String(state.quantityFrom));
+  }
+  if (state.quantityTo != null) {
+    sp.set("quantityTo", String(state.quantityTo));
+  }
+  if (state.wishlistOnly) {
+    sp.set("wishlistOnly", "true");
+  }
+  if (state.showOnlyReserved) {
+    sp.set("showOnlyReserved", "true");
   }
   if (state.page !== 1) {
     sp.set("page", String(state.page));
@@ -191,9 +226,13 @@ export function productsListAppliedUrlStateEquals(
   return (
     a.keyword === b.keyword &&
     a.sort === b.sort &&
-    a.status === b.status &&
+    a.byStatus === b.byStatus &&
     a.minPrice === b.minPrice &&
     a.maxPrice === b.maxPrice &&
+    a.quantityFrom === b.quantityFrom &&
+    a.quantityTo === b.quantityTo &&
+    a.wishlistOnly === b.wishlistOnly &&
+    a.showOnlyReserved === b.showOnlyReserved &&
     a.page === b.page &&
     a.pageSize === b.pageSize &&
     a.view === b.view &&

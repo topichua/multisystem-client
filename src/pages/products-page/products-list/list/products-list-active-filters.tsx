@@ -4,21 +4,16 @@ import type { TFunction } from "i18next";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
 
+import {
+  PRODUCTS_LIST_BY_STATUS_DEFAULT,
+  type ProductsListByStatus,
+} from "@/features/products/model/product.types";
 import { useProductsStore } from "@/features/products/model/use-products-store";
 
 const { Text } = Typography;
 
-function productStatusFilterLabel(t: TFunction, status: string): string {
-  if (status === "draft") {
-    return t("products.toolbar.statusDraft");
-  }
-  if (status === "active") {
-    return t("products.toolbar.statusActive");
-  }
-  if (status === "archived") {
-    return t("products.toolbar.statusArchived");
-  }
-  return status;
+function byStatusFilterLabel(t: TFunction, byStatus: ProductsListByStatus): string {
+  return t(`products.listFilters.byStatus.${byStatus}`);
 }
 
 type ProductsListActiveFiltersProps = {
@@ -32,13 +27,28 @@ export const ProductsListActiveFilters = observer(
 
     const hasKeyword = Boolean(productsStore.listKeyword);
     const hasCategories = productsStore.listCategoryIds.length > 0;
-    const hasStatus = Boolean(productsStore.listStatus);
+    const hasByStatus =
+      productsStore.listByStatus !== PRODUCTS_LIST_BY_STATUS_DEFAULT;
     const hasMin = productsStore.listMinPrice != null;
     const hasMax = productsStore.listMaxPrice != null;
     const hasPrice = hasMin || hasMax;
+    const hasQtyFrom = productsStore.listQuantityFrom != null;
+    const hasQtyTo = productsStore.listQuantityTo != null;
+    const hasQuantity = hasQtyFrom || hasQtyTo;
+    const hasWishlist = productsStore.listWishlistOnly;
+    const hasReserved = productsStore.listShowOnlyReserved;
     const hasSort = productsStore.listSort !== "created_desc";
 
-    if (!hasKeyword && !hasCategories && !hasStatus && !hasPrice && !hasSort) {
+    if (
+      !hasKeyword &&
+      !hasCategories &&
+      !hasByStatus &&
+      !hasPrice &&
+      !hasQuantity &&
+      !hasWishlist &&
+      !hasReserved &&
+      !hasSort
+    ) {
       return null;
     }
 
@@ -54,6 +64,20 @@ export const ProductsListActiveFilters = observer(
             })
           : t("products.listFilters.tagPriceMax", {
               max: productsStore.listMaxPrice,
+            });
+
+    const quantityLabel =
+      hasQtyFrom && hasQtyTo
+        ? t("products.listFilters.tagQuantityRange", {
+            min: productsStore.listQuantityFrom,
+            max: productsStore.listQuantityTo,
+          })
+        : hasQtyFrom
+          ? t("products.listFilters.tagQuantityMin", {
+              min: productsStore.listQuantityFrom,
+            })
+          : t("products.listFilters.tagQuantityMax", {
+              max: productsStore.listQuantityTo,
             });
 
     return (
@@ -104,16 +128,16 @@ export const ProductsListActiveFilters = observer(
               })}
             </Tag>
           ))}
-          {hasStatus && productsStore.listStatus && (
+          {hasByStatus && (
             <Tag
               closable
               onClose={() => {
-                productsStore.clearListStatus();
+                productsStore.clearListByStatus();
               }}
               color="purple"
             >
               {t("products.listFilters.tagStatus", {
-                label: productStatusFilterLabel(t, productsStore.listStatus),
+                label: byStatusFilterLabel(t, productsStore.listByStatus),
               })}
             </Tag>
           )}
@@ -126,6 +150,39 @@ export const ProductsListActiveFilters = observer(
               color="purple"
             >
               {priceLabel}
+            </Tag>
+          )}
+          {hasQuantity && (
+            <Tag
+              closable
+              onClose={() => {
+                productsStore.clearListQuantityRange();
+              }}
+              color="purple"
+            >
+              {quantityLabel}
+            </Tag>
+          )}
+          {hasWishlist && (
+            <Tag
+              closable
+              onClose={() => {
+                productsStore.clearListWishlistOnly();
+              }}
+              color="purple"
+            >
+              {t("products.listFilters.tagWishlistOnly")}
+            </Tag>
+          )}
+          {hasReserved && (
+            <Tag
+              closable
+              onClose={() => {
+                productsStore.clearListShowOnlyReserved();
+              }}
+              color="purple"
+            >
+              {t("products.listFilters.tagShowOnlyReserved")}
             </Tag>
           )}
           <Button

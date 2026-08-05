@@ -1,9 +1,9 @@
-import { PackageIcon } from "@phosphor-icons/react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import type { AnalyticsTopProducts } from "@/features/analytics/model/analytics.types";
 import { formatMoney } from "@/features/orders/utils/format-money";
+import { resolveProductImageSrc } from "@/features/products/utils/product-display";
 
 import { getRankedListPercent } from "../utils/analytics-ranked-list.utils";
 
@@ -41,11 +41,10 @@ export const AnalyticsOverviewTopProductsList = ({
       {data?.products.map((product) => (
         <S.Row key={`${product.productId}-${product.variantId}`}>
           <S.Media>
-            {product.image ? (
-              <S.ProductImage src={product.image} alt={product.name} />
-            ) : (
-              <PackageIcon size={20} weight="duotone" />
-            )}
+            <S.ProductImage
+              src={resolveProductImageSrc(product.image)}
+              alt={product.name}
+            />
           </S.Media>
 
           <S.Content>

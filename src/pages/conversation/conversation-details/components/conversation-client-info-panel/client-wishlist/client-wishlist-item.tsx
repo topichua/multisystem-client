@@ -9,8 +9,8 @@ import { Tag } from "@/components/tag/tag";
 import type { CatalogVariant } from "@/features/products/model/product.types";
 import {
   formatCatalogVariantPrice,
-  getCatalogVariantImageUrl,
   getCatalogVariantMeta,
+  resolveCatalogVariantImageSrc,
 } from "@/features/products/utils/catalog-variant-display";
 import { useWishlistStore } from "@/features/wishlist/model/use-wishlist-store";
 import { useNotification } from "@/shared/components/notification/use-notification";
@@ -30,7 +30,7 @@ export const ClientWishlistItem = observer(function ClientWishlistItem({
   const notification = useNotification();
   const wishlistStore = useWishlistStore();
   const { token } = theme.useToken();
-  const imageUrl = getCatalogVariantImageUrl(variant) ?? undefined;
+  const imageUrl = resolveCatalogVariantImageSrc(variant);
   const meta = getCatalogVariantMeta(variant);
   const removing = wishlistStore.isMutating(
     clientId,

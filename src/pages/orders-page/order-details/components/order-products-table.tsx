@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import type { OrderDetails } from "@/features/orders/model/order.types";
+import { resolveProductImageSrc } from "@/features/products/utils/product-display";
 
 import {
   formatMoney,
@@ -33,7 +34,11 @@ export const OrderProductsTable = ({
         key: "product",
         render: (_, item) => (
           <Space align="start">
-            <Avatar shape="square" size={56} src={item.imageUrlSnapshot} />
+            <Avatar
+              shape="square"
+              size={56}
+              src={resolveProductImageSrc(item.imageUrlSnapshot)}
+            />
 
             <Flex vertical>
               <Text strong>{formatText(item.productTitleSnapshot)}</Text>

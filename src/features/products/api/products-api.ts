@@ -40,13 +40,17 @@ export type ProductsListQueryParams = {
   categoryIds?: number[];
   minPrice?: number | null;
   maxPrice?: number | null;
-  status?: string | null;
+  byStatus?: string | null;
+  quantityFrom?: number | null;
+  quantityTo?: number | null;
+  wishlistOnly?: boolean;
+  showOnlyReserved?: boolean;
 };
 
 function productsListQueryToRecord(
   params: ProductsListQueryParams,
-): Record<string, string | number> {
-  const out: Record<string, string | number> = {
+): Record<string, string | number | boolean> {
+  const out: Record<string, string | number | boolean> = {
     sort: params.sort,
     page: params.page,
     pageSize: params.pageSize,
@@ -68,9 +72,23 @@ function productsListQueryToRecord(
     out.maxPrice = params.maxPrice;
   }
 
-  const status = params.status?.trim();
-  if (status) {
-    out.status = status;
+  const byStatus = params.byStatus?.trim();
+  if (byStatus && byStatus !== "all") {
+    out.byStatus = byStatus;
+  }
+
+  if (params.quantityFrom != null && !Number.isNaN(params.quantityFrom)) {
+    out.quantityFrom = params.quantityFrom;
+  }
+  if (params.quantityTo != null && !Number.isNaN(params.quantityTo)) {
+    out.quantityTo = params.quantityTo;
+  }
+
+  if (params.wishlistOnly === true) {
+    out.wishlistOnly = true;
+  }
+  if (params.showOnlyReserved === true) {
+    out.showOnlyReserved = true;
   }
 
   return out;

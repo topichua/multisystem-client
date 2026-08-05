@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 
 import type { ConversationProductSuggestionProduct } from "@/features/conversations/model/types";
 import type { CatalogVariant } from "@/features/products/model/product.types";
+import { resolveProductImageSrc } from "@/features/products/utils/product-display";
 
 import { ProductSuggestionVariantRow } from "./product-suggestion-variant-row";
 import {
@@ -33,7 +34,7 @@ export function ProductSuggestionProduct({
   onOpenChange,
 }: ProductSuggestionProductProps) {
   const { t } = useTranslation();
-  const imageUrl = getSuggestionProductImageUrl(product);
+  const imageUrl = resolveProductImageSrc(getSuggestionProductImageUrl(product));
   const meta = [
     t("conversation.productSuggestions.variantCount", {
       count: product.variants.length,
@@ -64,9 +65,7 @@ export function ProductSuggestionProduct({
                   size={36}
                   src={imageUrl}
                   style={{ flexShrink: 0 }}
-                >
-                  {product.name.charAt(0).toUpperCase()}
-                </Avatar>
+                />
 
                 <Flex vertical gap={2} style={{ minWidth: 0 }}>
                   <Text strong ellipsis>

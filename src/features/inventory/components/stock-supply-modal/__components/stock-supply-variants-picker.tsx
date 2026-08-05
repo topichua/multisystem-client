@@ -54,14 +54,14 @@ export const StockSupplyVariantsPicker = memo(
     return (
       <S.VariantsColumn>
         <Flex align="center" justify="space-between" gap={12}>
-          <Text strong>{t("products.stockSupply.addVariants")}</Text>
+          <Text strong>{t('products.stockSupply.addVariants')}</Text>
           <Button
             type="link"
             size="small"
             disabled={filteredAvailableVariants.length === 0}
             onClick={onAddAll}
           >
-            {t("products.stockSupply.addAll", {
+            {t('products.stockSupply.addAll', {
               count: filteredAvailableVariants.length,
             })}
           </Button>
@@ -73,25 +73,25 @@ export const StockSupplyVariantsPicker = memo(
             allowNoCategory
             categories={categoriesStore.categories}
             disabled={categoriesStore.listLoading}
-            noCategoryLabel={t("products.catalogSearch.allCategories")}
-            searchPlaceholder={t("categories.searchPlaceholder")}
+            noCategoryLabel={t('products.catalogSearch.allCategories')}
+            searchPlaceholder={t('categories.searchPlaceholder')}
             value={selectedCategoryId}
             style={{ flex: 1, minWidth: 0 }}
             onChange={(value) =>
-              onCategoryChange(typeof value === "number" ? value : null)
+              onCategoryChange(typeof value === 'number' ? value : null)
             }
           />
           <Segmented<SupplyPickerMode>
             value={pickerMode}
-            aria-label={t("products.stockSupply.viewModeAria")}
+            aria-label={t('products.stockSupply.viewModeAria')}
             onChange={onPickerModeChange}
             options={[
               {
-                value: "flat",
+                value: 'flat',
                 label: <ListIcon size={17} />,
               },
               {
-                value: "grouped",
+                value: 'grouped',
                 label: <StackIcon size={17} />,
               },
             ]}
@@ -102,7 +102,7 @@ export const StockSupplyVariantsPicker = memo(
           allowClear
           value={search}
           prefix={<MagnifyingGlassIcon size={16} />}
-          placeholder={t("products.stockSupply.searchPlaceholder")}
+          placeholder={t('products.stockSupply.searchPlaceholder')}
           onChange={(event) => onSearchChange(event.target.value)}
         />
 
@@ -113,13 +113,13 @@ export const StockSupplyVariantsPicker = memo(
             <Flex align="center" justify="center" style={{ minHeight: 220 }}>
               <Empty
                 image={Empty.PRESENTED_IMAGE_SIMPLE}
-                description={t("products.stockSupply.emptyVariants")}
+                description={t('products.stockSupply.emptyVariants')}
               />
             </Flex>
-          ) : pickerMode === "grouped" ? (
+          ) : pickerMode === 'grouped' ? (
             groupedAvailableVariants.map((group) => (
               <div key={group.key} style={{ paddingTop: 12 }}>
-                <Flex align="center" gap={6} style={{ padding: "0 8px 8px" }}>
+                <Flex align="center" gap={6} style={{ padding: '0 8px 8px' }}>
                   <Text strong style={{ fontSize: 12 }}>
                     {group.productName}
                   </Text>
