@@ -3,8 +3,18 @@ import {
   MagnifyingGlassIcon,
   StackIcon,
 } from "@phosphor-icons/react";
-import { Alert, Button, Empty, Flex, Input, Segmented, Typography } from "antd";
-import { memo } from "react";
+import {
+  Alert,
+  Button,
+  Empty,
+  Flex,
+  Input,
+  Segmented,
+  Spin,
+  Typography,
+} from "antd";
+import { memo, useCallback, useEffect, useRef } from "react";
+import type { UIEvent } from "react";
 
 import { CategoryTreeSelect } from "@/features/categories/components/category-tree-select";
 import type { useCategoriesStore } from "@/features/categories/model/use-categories-store";
@@ -28,9 +38,12 @@ type StockSupplyVariantsPickerProps = {
   selectedCategoryId: number | null;
   filteredAvailableVariants: CatalogVariant[];
   groupedAvailableVariants: VariantGroup[];
+  variantsLoading: boolean;
+  variantsLoadingMore: boolean;
   onSearchChange: (value: string) => void;
   onPickerModeChange: (mode: SupplyPickerMode) => void;
   onCategoryChange: (value: number | null) => void;
+  onLoadMore: () => void;
   onAddAll: () => void;
   onAddVariant: (variant: CatalogVariant) => void;
 };
@@ -45,23 +58,65 @@ export const StockSupplyVariantsPicker = memo(
     selectedCategoryId,
     filteredAvailableVariants,
     groupedAvailableVariants,
+    variantsLoading,
+    variantsLoadingMore,
     onSearchChange,
     onPickerModeChange,
     onCategoryChange,
+    onLoadMore,
     onAddAll,
     onAddVariant,
   }: StockSupplyVariantsPickerProps) {
+    const listRef = useRef<HTMLDivElement>(null);
+
+    const handleListScroll = useCallback(
+      (event: UIEvent<HTMLDivElement>) => {
+        const target = event.currentTarget;
+        const remaining =
+          target.scrollHeight - target.scrollTop - target.clientHeight;
+
+        if (remaining <= 80) {
+          onLoadMore();
+        }
+      },
+      [onLoadMore],
+    );
+
+    useEffect(() => {
+      const list = listRef.current;
+      if (!list || variantsLoading || variantsLoadingMore || loadError) {
+        return;
+      }
+
+      if (list.scrollHeight <= list.clientHeight + 8) {
+        queueMicrotask(() => {
+          onLoadMore();
+        });
+      }
+    }, [
+      filteredAvailableVariants.length,
+      loadError,
+      onLoadMore,
+      variantsLoading,
+      variantsLoadingMore,
+    ]);
+
+    const showInitialSpinner =
+      variantsLoading && filteredAvailableVariants.length === 0 && !loadError;
+    const showEmpty =
+      !variantsLoading && !loadError && filteredAvailableVariants.length === 0;
+
     return (
       <S.VariantsColumn>
         <Flex align="center" justify="space-between" gap={12}>
-          <Text strong>{t('products.stockSupply.addVariants')}</Text>
+          <Text strong>{t("products.stockSupply.addVariants")}</Text>
           <Button
             type="link"
             size="small"
             disabled={filteredAvailableVariants.length === 0}
             onClick={onAddAll}
           >
-            {t('products.stockSupply.addAll', {
+            {t("products.stockSupply.addAll", {
               count: filteredAvailableVariants.length,
             })}
           </Button>
@@ -73,25 +128,25 @@ export const StockSupplyVariantsPicker = memo(
             allowNoCategory
             categories={categoriesStore.categories}
             disabled={categoriesStore.listLoading}
-            noCategoryLabel={t('products.catalogSearch.allCategories')}
-            searchPlaceholder={t('categories.searchPlaceholder')}
+            noCategoryLabel={t("products.catalogSearch.allCategories")}
+            searchPlaceholder={t("categories.searchPlaceholder")}
             value={selectedCategoryId}
             style={{ flex: 1, minWidth: 0 }}
             onChange={(value) =>
-              onCategoryChange(typeof value === 'number' ? value : null)
+              onCategoryChange(typeof value === "number" ? value : null)
             }
           />
           <Segmented<SupplyPickerMode>
             value={pickerMode}
-            aria-label={t('products.stockSupply.viewModeAria')}
+            aria-label={t("products.stockSupply.viewModeAria")}
             onChange={onPickerModeChange}
             options={[
               {
-                value: 'flat',
+                value: "flat",
                 label: <ListIcon size={17} />,
               },
               {
-                value: 'grouped',
+                value: "grouped",
                 label: <StackIcon size={17} />,
               },
             ]}
@@ -102,24 +157,28 @@ export const StockSupplyVariantsPicker = memo(
           allowClear
           value={search}
           prefix={<MagnifyingGlassIcon size={16} />}
-          placeholder={t('products.stockSupply.searchPlaceholder')}
+          placeholder={t("products.stockSupply.searchPlaceholder")}
           onChange={(event) => onSearchChange(event.target.value)}
         />
 
-        <S.VariantsList>
+        <S.VariantsList ref={listRef} onScroll={handleListScroll}>
           {loadError ? (
             <Alert type="error" message={loadError} showIcon />
-          ) : filteredAvailableVariants.length === 0 ? (
+          ) : showInitialSpinner ? (
+            <Flex align="center" justify="center" style={{ minHeight: 220 }}>
+              <Spin />
+            </Flex>
+          ) : showEmpty ? (
             <Flex align="center" justify="center" style={{ minHeight: 220 }}>
               <Empty
                 image={Empty.PRESENTED_IMAGE_SIMPLE}
-                description={t('products.stockSupply.emptyVariants')}
+                description={t("products.stockSupply.emptyVariants")}
               />
             </Flex>
-          ) : pickerMode === 'grouped' ? (
+          ) : pickerMode === "grouped" ? (
             groupedAvailableVariants.map((group) => (
               <div key={group.key} style={{ paddingTop: 12 }}>
-                <Flex align="center" gap={6} style={{ padding: '0 8px 8px' }}>
+                <Flex align="center" gap={6} style={{ padding: "0 8px 8px" }}>
                   <Text strong style={{ fontSize: 12 }}>
                     {group.productName}
                   </Text>
@@ -143,6 +202,12 @@ export const StockSupplyVariantsPicker = memo(
               />
             ))
           )}
+
+          {variantsLoadingMore ? (
+            <Flex align="center" justify="center" style={{ padding: 12 }}>
+              <Spin size="small" />
+            </Flex>
+          ) : null}
         </S.VariantsList>
       </S.VariantsColumn>
     );

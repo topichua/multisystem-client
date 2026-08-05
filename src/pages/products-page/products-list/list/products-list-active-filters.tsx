@@ -12,7 +12,10 @@ import { useProductsStore } from "@/features/products/model/use-products-store";
 
 const { Text } = Typography;
 
-function byStatusFilterLabel(t: TFunction, byStatus: ProductsListByStatus): string {
+function byStatusFilterLabel(
+  t: TFunction,
+  byStatus: ProductsListByStatus,
+): string {
   return t(`products.listFilters.byStatus.${byStatus}`);
 }
 

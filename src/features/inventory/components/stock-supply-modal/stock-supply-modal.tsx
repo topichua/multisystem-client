@@ -1,5 +1,5 @@
 import { CheckIcon, TrashIcon } from "@phosphor-icons/react";
-import { Button, Flex, Modal, Popconfirm, Spin, Typography } from "antd";
+import { Button, Flex, Modal, Popconfirm, Typography } from "antd";
 import { Trans } from "react-i18next";
 
 import { useIsMobileViewport } from "@/utils/use-media-query";
@@ -25,6 +25,7 @@ export const StockSupplyModal = ({
     isEditMode,
     categoriesStore,
     variantsLoading,
+    variantsLoadingMore,
     loadError,
     submitError,
     submitting,
@@ -54,6 +55,7 @@ export const StockSupplyModal = ({
     handleApply,
     handleDelete,
     handleCategoryChange,
+    loadMoreVariants,
     addVariant,
     addAllVisibleVariants,
     clearSelectedLines,
@@ -95,14 +97,14 @@ export const StockSupplyModal = ({
             description={t("products.stockSupply.deleteWarning")}
             okText={t("products.stockSupply.delete")}
             okButtonProps={{ danger: true }}
-            disabled={variantsLoading || submitting}
+            disabled={submitting}
             onConfirm={() => void handleDelete()}
           >
             <Button
               danger
               icon={<TrashIcon size={16} />}
               loading={submittingAction === "delete"}
-              disabled={variantsLoading || isActionBusy("delete")}
+              disabled={isActionBusy("delete")}
               data-qa="stock-supply-delete"
             >
               {t("products.stockSupply.delete")}
@@ -117,7 +119,7 @@ export const StockSupplyModal = ({
             <Button
               type="text"
               loading={submittingAction === "save"}
-              disabled={variantsLoading || !canSubmit || isActionBusy("save")}
+              disabled={!canSubmit || isActionBusy("save")}
               onClick={() => void handleSave()}
             >
               {t("products.stockSupply.save")}
@@ -126,7 +128,7 @@ export const StockSupplyModal = ({
               type="primary"
               icon={<CheckIcon size={16} />}
               loading={submittingAction === "apply"}
-              disabled={variantsLoading || !canSubmit || isActionBusy("apply")}
+              disabled={!canSubmit || isActionBusy("apply")}
               onClick={() => void handleApply()}
             >
               {t("products.stockSupply.apply")}
@@ -137,7 +139,7 @@ export const StockSupplyModal = ({
             type="primary"
             icon={<CheckIcon size={16} />}
             loading={submittingAction === "create"}
-            disabled={variantsLoading || !canSubmit || isActionBusy("create")}
+            disabled={!canSubmit || isActionBusy("create")}
             onClick={() => void handleCreate()}
           >
             {t("products.stockSupply.submit")}
@@ -175,48 +177,39 @@ export const StockSupplyModal = ({
       data-qa="stock-supply-modal"
     >
       <S.ModalBody>
-        {variantsLoading ? (
-          <Flex
-            align="center"
-            justify="center"
-            style={{ gridColumn: "1 / -1", minHeight: "100%" }}
-          >
-            <Spin size="large" />
-          </Flex>
-        ) : (
-          <>
-            <StockSupplySelectedSection
-              t={t}
-              selectedLines={selectedLines}
-              name={name}
-              comment={comment}
-              immediatelyApply={immediatelyApply}
-              showImmediatelyApply={!isEditMode}
-              submitError={submitError}
-              onNameChange={setName}
-              onCommentChange={setComment}
-              onImmediatelyApplyChange={setImmediatelyApply}
-              onClear={clearSelectedLines}
-              onUpdateLine={updateLine}
-              onRemoveLine={removeLine}
-            />
-            <StockSupplyVariantsPicker
-              t={t}
-              categoriesStore={categoriesStore}
-              loadError={loadError}
-              search={search}
-              pickerMode={pickerMode}
-              selectedCategoryId={selectedCategoryId}
-              filteredAvailableVariants={filteredAvailableVariants}
-              groupedAvailableVariants={groupedAvailableVariants}
-              onSearchChange={setSearch}
-              onPickerModeChange={setPickerMode}
-              onCategoryChange={handleCategoryChange}
-              onAddAll={addAllVisibleVariants}
-              onAddVariant={addVariant}
-            />
-          </>
-        )}
+        <StockSupplySelectedSection
+          t={t}
+          selectedLines={selectedLines}
+          name={name}
+          comment={comment}
+          immediatelyApply={immediatelyApply}
+          showImmediatelyApply={!isEditMode}
+          submitError={submitError}
+          onNameChange={setName}
+          onCommentChange={setComment}
+          onImmediatelyApplyChange={setImmediatelyApply}
+          onClear={clearSelectedLines}
+          onUpdateLine={updateLine}
+          onRemoveLine={removeLine}
+        />
+        <StockSupplyVariantsPicker
+          t={t}
+          categoriesStore={categoriesStore}
+          loadError={loadError}
+          search={search}
+          pickerMode={pickerMode}
+          selectedCategoryId={selectedCategoryId}
+          filteredAvailableVariants={filteredAvailableVariants}
+          groupedAvailableVariants={groupedAvailableVariants}
+          variantsLoading={variantsLoading}
+          variantsLoadingMore={variantsLoadingMore}
+          onSearchChange={setSearch}
+          onPickerModeChange={setPickerMode}
+          onCategoryChange={handleCategoryChange}
+          onLoadMore={loadMoreVariants}
+          onAddAll={addAllVisibleVariants}
+          onAddVariant={addVariant}
+        />
       </S.ModalBody>
     </Modal>
   );

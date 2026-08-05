@@ -3,44 +3,51 @@ import type {
   StockSupplyListItem,
 } from "@/features/inventory/model/inventory.types";
 import { productsApi } from "@/features/products/api/products-api";
-import type { CatalogVariant } from "@/features/products/model/product.types";
+import type {
+  CatalogVariant,
+  CatalogVariantsListResponse,
+} from "@/features/products/model/product.types";
 import { formatCatalogVariantCurrency } from "@/features/products/utils/catalog-variant-display";
 
 import type { SupplyLine, VariantGroup } from "./stock-supply-modal.types";
 
-const VARIANTS_PAGE_SIZE = 100;
+export const STOCK_SUPPLY_VARIANTS_PAGE_SIZE = 100;
+export const STOCK_SUPPLY_SEARCH_DEBOUNCE_MS = 300;
 
-export async function loadAllCatalogVariants(): Promise<CatalogVariant[]> {
-  const variants: CatalogVariant[] = [];
-  let page = 1;
-  let total = Number.POSITIVE_INFINITY;
+export async function fetchCatalogVariantsPage(params: {
+  keyword?: string;
+  categoryIds?: number[];
+  page: number;
+  pageSize?: number;
+}): Promise<CatalogVariantsListResponse> {
+  return productsApi.listProductVariants({
+    keyword: params.keyword?.trim() ?? "",
+    categoryIds: params.categoryIds,
+    page: params.page,
+    pageSize: params.pageSize ?? STOCK_SUPPLY_VARIANTS_PAGE_SIZE,
+  });
+}
 
-  while (variants.length < total) {
-    const result = await productsApi.listProductVariants({
-      keyword: "",
-      page,
-      pageSize: VARIANTS_PAGE_SIZE,
-    });
-
-    variants.push(...result.items);
-    total = result.total;
-
-    if (result.items.length === 0 || variants.length >= total) {
-      break;
-    }
-
-    page += 1;
+export function mergeCatalogVariants(
+  current: CatalogVariant[],
+  incoming: CatalogVariant[],
+): CatalogVariant[] {
+  if (incoming.length === 0) {
+    return current;
   }
 
-  const seenVariantIds = new Set<number>();
-  return variants.filter((variant) => {
-    if (seenVariantIds.has(variant.id)) {
-      return false;
-    }
+  const seen = new Set(current.map((variant) => variant.id));
+  const next = [...current];
 
-    seenVariantIds.add(variant.id);
-    return true;
-  });
+  for (const variant of incoming) {
+    if (seen.has(variant.id)) {
+      continue;
+    }
+    seen.add(variant.id);
+    next.push(variant);
+  }
+
+  return next;
 }
 
 export function toNumber(value: string | number | null): number | null {
@@ -56,19 +63,6 @@ export function getVariantMeta(variant: CatalogVariant): string {
   return [variant.color, variant.size, variant.sku].filter(Boolean).join(" / ");
 }
 
-export function getVariantSearchText(variant: CatalogVariant): string {
-  return [
-    variant.product.name,
-    variant.label,
-    variant.color,
-    variant.size,
-    variant.sku,
-  ]
-    .filter(Boolean)
-    .join(" ")
-    .toLocaleLowerCase();
-}
-
 export function formatAmount(
   value: number,
   currency: string | null | undefined,
@@ -79,24 +73,26 @@ export function formatAmount(
 export function groupVariantsByProduct(
   variants: CatalogVariant[],
 ): VariantGroup[] {
+  const groups: VariantGroup[] = [];
   const groupByProductId = new Map<number, VariantGroup>();
 
   for (const variant of variants) {
     const existing = groupByProductId.get(variant.productId);
-
     if (existing) {
       existing.variants.push(variant);
       continue;
     }
 
-    groupByProductId.set(variant.productId, {
+    const group: VariantGroup = {
       key: String(variant.productId),
       productName: variant.product.name,
       variants: [variant],
-    });
+    };
+    groupByProductId.set(variant.productId, group);
+    groups.push(group);
   }
 
-  return [...groupByProductId.values()];
+  return groups;
 }
 
 const createFallbackCatalogVariant = (
@@ -127,7 +123,7 @@ const createFallbackCatalogVariant = (
 
 export function buildSupplyLines(
   supply: StockSupplyListItem,
-  variants: CatalogVariant[],
+  variants: CatalogVariant[] = [],
 ): SupplyLine[] {
   const variantById = new Map(variants.map((variant) => [variant.id, variant]));
 

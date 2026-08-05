@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { getApiErrorMessage } from "@/api/get-api-error-message";
@@ -20,9 +20,11 @@ import type {
 } from "../stock-supply-modal.types";
 import {
   buildSupplyLines,
-  getVariantSearchText,
+  fetchCatalogVariantsPage,
   groupVariantsByProduct,
-  loadAllCatalogVariants,
+  mergeCatalogVariants,
+  STOCK_SUPPLY_SEARCH_DEBOUNCE_MS,
+  STOCK_SUPPLY_VARIANTS_PAGE_SIZE,
 } from "../stock-supply-modal.utils";
 
 export const useStockSupplyModal = ({
@@ -33,10 +35,21 @@ export const useStockSupplyModal = ({
   const { t } = useTranslation();
   const notification = useNotification();
   const categoriesStore = useCategoriesStore();
-  const loadRequestIdRef = useRef(0);
+  const openGenerationRef = useRef(0);
+  const variantsRequestIdRef = useRef(0);
+  const loadMoreInFlightRef = useRef(false);
+  const isOpenRef = useRef(false);
+  const variantsQueryRef = useRef<{
+    keyword: string;
+    categoryIds: number[] | null;
+  }>({ keyword: "", categoryIds: null });
   const isEditMode = supplyId != null;
+
   const [variants, setVariants] = useState<CatalogVariant[]>([]);
-  const [variantsLoading, setVariantsLoading] = useState(true);
+  const [variantsPage, setVariantsPage] = useState(0);
+  const [variantsTotal, setVariantsTotal] = useState(0);
+  const [variantsLoading, setVariantsLoading] = useState(false);
+  const [variantsLoadingMore, setVariantsLoadingMore] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submittingAction, setSubmittingAction] =
@@ -60,22 +73,136 @@ export const useStockSupplyModal = ({
     setSelectedCategoryId(null);
     setPickerMode("flat");
     setSubmitError(null);
+    setVariants([]);
+    setVariantsPage(0);
+    setVariantsTotal(0);
+    setLoadError(null);
+    variantsQueryRef.current = { keyword: "", categoryIds: null };
   }, []);
+
+  const resolveCategoryIds = useCallback(
+    (categoryId: number | null): number[] | null => {
+      if (categoryId == null) {
+        return null;
+      }
+
+      const category = findCategoryById(categoriesStore.categories, categoryId);
+
+      if (!category) {
+        return [categoryId];
+      }
+
+      return flattenCategories([category]).map((item) => item.id);
+    },
+    [categoriesStore.categories],
+  );
+
+  const loadVariantsPage = useCallback(
+    async (page: number, replace: boolean) => {
+      const requestId = variantsRequestIdRef.current + 1;
+      variantsRequestIdRef.current = requestId;
+
+      if (replace) {
+        setVariants([]);
+        setVariantsPage(0);
+        setVariantsTotal(0);
+        setVariantsLoading(true);
+        setLoadError(null);
+        loadMoreInFlightRef.current = false;
+      } else {
+        if (loadMoreInFlightRef.current) {
+          return;
+        }
+        loadMoreInFlightRef.current = true;
+        setVariantsLoadingMore(true);
+      }
+
+      const { keyword, categoryIds } = variantsQueryRef.current;
+
+      try {
+        const result = await fetchCatalogVariantsPage({
+          keyword,
+          categoryIds: categoryIds ?? undefined,
+          page,
+          pageSize: STOCK_SUPPLY_VARIANTS_PAGE_SIZE,
+        });
+
+        if (variantsRequestIdRef.current !== requestId) {
+          return;
+        }
+
+        setVariants((current) =>
+          replace
+            ? mergeCatalogVariants([], result.items)
+            : mergeCatalogVariants(current, result.items),
+        );
+        setVariantsTotal(result.total);
+        setVariantsPage(result.page);
+      } catch (error) {
+        if (variantsRequestIdRef.current !== requestId) {
+          return;
+        }
+
+        if (replace) {
+          setVariants([]);
+          setVariantsPage(0);
+          setVariantsTotal(0);
+        }
+
+        setLoadError(
+          getApiErrorMessage(error, t("products.stockSupply.loadError")),
+        );
+      } finally {
+        if (variantsRequestIdRef.current === requestId) {
+          setVariantsLoading(false);
+          setVariantsLoadingMore(false);
+          loadMoreInFlightRef.current = false;
+        }
+      }
+    },
+    [t],
+  );
+
+  useEffect(() => {
+    if (!isOpenRef.current) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      if (!isOpenRef.current) {
+        return;
+      }
+
+      const nextKeyword = search.trim();
+      if (variantsQueryRef.current.keyword === nextKeyword) {
+        return;
+      }
+
+      variantsQueryRef.current = {
+        ...variantsQueryRef.current,
+        keyword: nextKeyword,
+      };
+      void loadVariantsPage(1, true);
+    }, STOCK_SUPPLY_SEARCH_DEBOUNCE_MS);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [loadVariantsPage, search]);
 
   const handleAfterOpenChange = useCallback(
     (nextOpen: boolean) => {
       if (!nextOpen) {
-        loadRequestIdRef.current += 1;
-        setVariantsLoading(true);
+        openGenerationRef.current += 1;
+        variantsRequestIdRef.current += 1;
+        loadMoreInFlightRef.current = false;
+        isOpenRef.current = false;
         return;
       }
 
-      const loadRequestId = loadRequestIdRef.current + 1;
-      loadRequestIdRef.current = loadRequestId;
-
+      const openGeneration = openGenerationRef.current + 1;
+      openGenerationRef.current = openGeneration;
+      isOpenRef.current = true;
       resetFormState();
-      setVariantsLoading(true);
-      setLoadError(null);
+      void loadVariantsPage(1, true);
 
       if (categoriesStore.categories.length === 0) {
         void categoriesStore
@@ -83,101 +210,77 @@ export const useStockSupplyModal = ({
           .catch(() => undefined);
       }
 
-      const loadVariantsPromise = loadAllCatalogVariants();
-      const loadSupplyPromise =
-        supplyId != null
-          ? inventoryApi.getStockSupply(supplyId)
-          : Promise.resolve(null);
+      if (supplyId == null) {
+        return;
+      }
 
-      void Promise.all([loadVariantsPromise, loadSupplyPromise])
-        .then(([nextVariants, supply]) => {
-          if (loadRequestIdRef.current !== loadRequestId) {
+      void inventoryApi
+        .getStockSupply(supplyId)
+        .then((supply) => {
+          if (openGenerationRef.current !== openGeneration) {
             return;
           }
 
-          setVariants(nextVariants);
-
-          if (supply) {
-            setName(supply.name);
-            setComment(supply.comment ?? "");
-            setSelectedLines(buildSupplyLines(supply, nextVariants));
-          }
+          setName(supply.name);
+          setComment(supply.comment ?? "");
+          setSelectedLines(buildSupplyLines(supply));
         })
         .catch((error) => {
-          if (loadRequestIdRef.current !== loadRequestId) {
+          if (openGenerationRef.current !== openGeneration) {
             return;
           }
 
-          setVariants([]);
-          setSelectedLines([]);
           setLoadError(
             getApiErrorMessage(error, t("products.stockSupply.loadError")),
           );
-        })
-        .finally(() => {
-          if (loadRequestIdRef.current === loadRequestId) {
-            setVariantsLoading(false);
-          }
         });
     },
-    [categoriesStore, resetFormState, supplyId, t],
+    [categoriesStore, loadVariantsPage, resetFormState, supplyId, t],
   );
 
   const handleClose = useCallback(() => {
-    loadRequestIdRef.current += 1;
+    variantsRequestIdRef.current += 1;
+    loadMoreInFlightRef.current = false;
     onClose();
   }, [onClose]);
-
-  const selectedCategoryIds = useMemo(() => {
-    if (selectedCategoryId == null) {
-      return null;
-    }
-
-    const category = findCategoryById(
-      categoriesStore.categories,
-      selectedCategoryId,
-    );
-
-    if (!category) {
-      return new Set([selectedCategoryId]);
-    }
-
-    return new Set(flattenCategories([category]).map((item) => item.id));
-  }, [categoriesStore.categories, selectedCategoryId]);
 
   const selectedVariantIds = useMemo(
     () => new Set(selectedLines.map((line) => line.variant.id)),
     [selectedLines],
   );
 
-  const filteredAvailableVariants = useMemo(() => {
-    const normalizedSearch = search.trim().toLocaleLowerCase();
-
-    return variants.filter((variant) => {
-      if (selectedVariantIds.has(variant.id)) {
-        return false;
-      }
-
-      if (
-        selectedCategoryIds &&
-        (variant.product.categoryId == null ||
-          !selectedCategoryIds.has(variant.product.categoryId))
-      ) {
-        return false;
-      }
-
-      if (!normalizedSearch) {
-        return true;
-      }
-
-      return getVariantSearchText(variant).includes(normalizedSearch);
-    });
-  }, [search, selectedCategoryIds, selectedVariantIds, variants]);
+  const filteredAvailableVariants = useMemo(
+    () => variants.filter((variant) => !selectedVariantIds.has(variant.id)),
+    [selectedVariantIds, variants],
+  );
 
   const groupedAvailableVariants = useMemo(
     () => groupVariantsByProduct(filteredAvailableVariants),
     [filteredAvailableVariants],
   );
+
+  const hasMoreVariants =
+    variants.length > 0 && variants.length < variantsTotal;
+
+  const loadMoreVariants = useCallback(() => {
+    if (
+      !isOpenRef.current ||
+      variantsLoading ||
+      variantsLoadingMore ||
+      !hasMoreVariants ||
+      loadMoreInFlightRef.current
+    ) {
+      return;
+    }
+
+    void loadVariantsPage(variantsPage + 1, false);
+  }, [
+    hasMoreVariants,
+    loadVariantsPage,
+    variantsLoading,
+    variantsLoadingMore,
+    variantsPage,
+  ]);
 
   const selectedQuantity = selectedLines.reduce(
     (sum, line) => sum + (line.quantity ?? 0),
@@ -383,15 +486,25 @@ export const useStockSupplyModal = ({
     );
   }, [finishSuccessfully, runAction, supplyId]);
 
-  const handleCategoryChange = useCallback((categoryId: number | null) => {
-    setSelectedCategoryId(categoryId);
-  }, []);
+  const handleCategoryChange = useCallback(
+    (categoryId: number | null) => {
+      setSelectedCategoryId(categoryId);
+      variantsQueryRef.current = {
+        ...variantsQueryRef.current,
+        categoryIds: resolveCategoryIds(categoryId),
+      };
+      void loadVariantsPage(1, true);
+    },
+    [loadVariantsPage, resolveCategoryIds],
+  );
 
   return {
     t,
     isEditMode,
     categoriesStore,
     variantsLoading,
+    variantsLoadingMore,
+    hasMoreVariants,
     loadError,
     submitError,
     submitting,
@@ -421,6 +534,7 @@ export const useStockSupplyModal = ({
     handleApply,
     handleDelete,
     handleCategoryChange,
+    loadMoreVariants,
     addVariant,
     addAllVisibleVariants,
     clearSelectedLines,

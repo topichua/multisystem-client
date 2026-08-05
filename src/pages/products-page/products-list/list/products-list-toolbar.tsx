@@ -4,7 +4,7 @@ import {
   FunnelSimpleIcon,
   MagnifyingGlassIcon,
 } from "@phosphor-icons/react";
-import { Badge, Button, Flex, Input, Select } from 'antd';
+import { Badge, Button, Flex, Input, Select } from "antd";
 import { observer } from "mobx-react-lite";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -117,14 +117,14 @@ export const ProductsListToolbar = observer(
         align="center"
         gap={16}
         wrap="wrap"
-        style={{ marginBottom: 16, width: '100%' }}
+        style={{ marginBottom: 16, width: "100%" }}
       >
         <ProductsListViewToggle />
-        <div style={{ flex: '1 1 200px', minWidth: 0 }}>
+        <div style={{ flex: "1 1 200px", minWidth: 0 }}>
           <Input
             allowClear
             size="large"
-            placeholder={t('products.toolbar.searchPlaceholderMinChars')}
+            placeholder={t("products.toolbar.searchPlaceholderMinChars")}
             prefix={<MagnifyingGlassIcon size={18} />}
             value={keywordDraft}
             onFocus={() => {
@@ -134,7 +134,7 @@ export const ProductsListToolbar = observer(
               searchFocused.current = false;
             }}
             onChange={(e) => setKeywordDraft(e.target.value)}
-            style={{ width: '100%' }}
+            style={{ width: "100%" }}
           />
         </div>
         <Flex gap={12} align="center" wrap="wrap" style={{ flexShrink: 0 }}>
@@ -151,7 +151,7 @@ export const ProductsListToolbar = observer(
           <Button size="large" type="default" onClick={onToggleFilters}>
             <Flex align="center" gap={8}>
               <FunnelSimpleIcon size={18} />
-              {t('products.toolbar.filters')}
+              {t("products.toolbar.filters")}
               {filterCount > 0 && (
                 <Badge count={filterCount} color={BRAND_PRIMARY} />
               )}

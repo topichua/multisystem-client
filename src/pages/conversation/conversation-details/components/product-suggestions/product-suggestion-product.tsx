@@ -34,7 +34,9 @@ export function ProductSuggestionProduct({
   onOpenChange,
 }: ProductSuggestionProductProps) {
   const { t } = useTranslation();
-  const imageUrl = resolveProductImageSrc(getSuggestionProductImageUrl(product));
+  const imageUrl = resolveProductImageSrc(
+    getSuggestionProductImageUrl(product),
+  );
   const meta = [
     t("conversation.productSuggestions.variantCount", {
       count: product.variants.length,
