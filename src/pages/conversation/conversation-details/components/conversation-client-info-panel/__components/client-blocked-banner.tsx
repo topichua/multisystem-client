@@ -13,11 +13,17 @@ const { Text } = Typography;
 type ClientBlockedBannerProps = {
   client: Client;
   onClientUpdated: (client: Client) => void;
+  layout?: "vertical" | "horizontal";
+  title?: string;
+  description?: string;
 };
 
 export function ClientBlockedBanner({
   client,
   onClientUpdated,
+  layout = "vertical",
+  title,
+  description,
 }: ClientBlockedBannerProps) {
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -45,6 +51,50 @@ export function ClientBlockedBanner({
     return null;
   }
 
+  const bannerTitle = title ?? t("conversation.clientProfile.blockedTitle");
+  const bannerDescription =
+    description ?? t("conversation.clientProfile.blockedDescription");
+  const unblockLoading = loading || clientsStore.blockLoadingId === client.id;
+
+  const icon = (
+    <Avatar
+      size={36}
+      style={{
+        flexShrink: 0,
+        background:
+          layout === "horizontal" ? token.colorErrorBgHover : token.colorError,
+        color:
+          layout === "horizontal"
+            ? token.colorError
+            : token.colorTextLightSolid,
+      }}
+      icon={<LockIcon size={16} weight="bold" />}
+    />
+  );
+
+  const copy = (
+    <Flex vertical gap={2} style={{ minWidth: 0 }}>
+      <Text strong>{bannerTitle}</Text>
+      <Text type="secondary" style={{ fontSize: 13, lineHeight: 1.45 }}>
+        {bannerDescription}
+      </Text>
+    </Flex>
+  );
+
+  const unblockButton = (
+    <Button
+      type={layout === "horizontal" ? "text" : "default"}
+      block={layout === "vertical"}
+      loading={unblockLoading}
+      icon={<LockOpenIcon size={16} />}
+      onClick={() => {
+        void handleUnblock();
+      }}
+    >
+      {t("clients.unblock")}
+    </Button>
+  );
+
   return (
     <Card
       size="small"
@@ -54,41 +104,28 @@ export function ClientBlockedBanner({
         },
       }}
       style={{
-        marginBottom: 16,
+        marginBottom: layout === "vertical" ? 16 : undefined,
         borderColor: token.colorErrorBorder,
         background: token.colorErrorBg,
       }}
     >
-      <Flex vertical gap={12}>
-        <Flex align="flex-start" gap={12}>
-          <Avatar
-            size={36}
-            style={{
-              flexShrink: 0,
-              background: token.colorError,
-              color: token.colorTextLightSolid,
-            }}
-            icon={<LockIcon size={16} weight="bold" />}
-          />
-          <Flex vertical gap={2} style={{ minWidth: 0 }}>
-            <Text strong>{t("conversation.clientProfile.blockedTitle")}</Text>
-            <Text type="secondary" style={{ fontSize: 13, lineHeight: 1.45 }}>
-              {t("conversation.clientProfile.blockedDescription")}
-            </Text>
+      {layout === "horizontal" ? (
+        <Flex justify="space-between" align="center" gap={16} wrap="wrap">
+          <Flex align="flex-start" gap={12} style={{ minWidth: 0, flex: 1 }}>
+            {icon}
+            {copy}
           </Flex>
+          {unblockButton}
         </Flex>
-
-        <Button
-          block
-          loading={loading || clientsStore.blockLoadingId === client.id}
-          icon={<LockOpenIcon size={16} />}
-          onClick={() => {
-            void handleUnblock();
-          }}
-        >
-          {t("clients.unblock")}
-        </Button>
-      </Flex>
+      ) : (
+        <Flex vertical gap={12}>
+          <Flex align="flex-start" gap={12}>
+            {icon}
+            {copy}
+          </Flex>
+          {unblockButton}
+        </Flex>
+      )}
     </Card>
   );
 }

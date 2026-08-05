@@ -2,10 +2,11 @@ import type { FormInstance } from "antd";
 import { Form } from "antd";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 
 import { getOrderDetailsPath } from "@/app/router/pages-map";
 import { getApiErrorMessage } from "@/api/get-api-error-message";
+import { clientsApi } from "@/features/clients/api/clients-api";
 import type { Client } from "@/features/clients/model/client.types";
 import { useClientsStore } from "@/features/clients/model/use-clients-store";
 import {
@@ -41,6 +42,7 @@ import {
 export function useOrdersNewPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const notification = useNotification();
   const clientsStore = useClientsStore();
   const ordersStore = useOrdersStore();
@@ -161,6 +163,28 @@ export function useOrdersNewPage() {
     [t],
   );
 
+  const prefillClientId = useMemo(() => {
+    const raw = searchParams.get("clientId");
+
+    if (raw == null || raw.trim() === "") {
+      return null;
+    }
+
+    const parsed = Number(raw);
+
+    return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
+  }, [searchParams]);
+
+  const clearPrefillClientId = useCallback(() => {
+    if (!searchParams.has("clientId")) {
+      return;
+    }
+
+    const next = new URLSearchParams(searchParams);
+    next.delete("clientId");
+    setSearchParams(next, { replace: true });
+  }, [searchParams, setSearchParams]);
+
   const visibleClients = useMemo(() => {
     const normalizedSearch = normalizeClientSearchText(clientSearchValue);
     const normalizedPhoneSearch =
@@ -249,6 +273,24 @@ export function useOrdersNewPage() {
   const canCreateOrder =
     hasClientSelection && orderLines.length > 0 && hasDeliveryTarget;
 
+  const cachedPrefillClient =
+    prefillClientId == null
+      ? null
+      : (clientsStore.clients.find((client) => client.id === prefillClientId) ??
+        null);
+
+  // Apply URL prefill from the in-memory clients list during render.
+  // Async fetch (when the client is not cached) stays in an effect below.
+  if (
+    prefillClientId != null &&
+    cachedPrefillClient != null &&
+    selectedClient?.id !== prefillClientId
+  ) {
+    setClientMode("existing");
+    setSelectedClient(cachedPrefillClient);
+    setClientSearchValue("");
+  }
+
   useEffect(() => {
     deliveryForm.setFieldsValue({
       deliveryMethod: "nova_poshta",
@@ -257,6 +299,51 @@ export function useOrdersNewPage() {
       isCashOnDelivery: true,
     });
   }, [deliveryForm]);
+
+  useEffect(() => {
+    if (prefillClientId == null) {
+      return;
+    }
+
+    if (selectedClient?.id === prefillClientId) {
+      return;
+    }
+
+    if (cachedPrefillClient != null) {
+      return;
+    }
+
+    let cancelled = false;
+
+    const loadPrefillClient = async () => {
+      try {
+        const client = await clientsApi.getById(prefillClientId);
+
+        if (cancelled) {
+          return;
+        }
+
+        setClientMode("existing");
+        setSelectedClient(client);
+        setClientSearchValue("");
+      } catch {
+        if (!cancelled) {
+          clearPrefillClientId();
+        }
+      }
+    };
+
+    void loadPrefillClient();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    cachedPrefillClient,
+    clearPrefillClientId,
+    prefillClientId,
+    selectedClient?.id,
+  ]);
 
   useEffect(() => {
     if (!withoutDelivery) {
@@ -305,8 +392,9 @@ export function useOrdersNewPage() {
       setClientSearchValue("");
       setSelectedClient(null);
       clientForm.resetFields();
+      clearPrefillClientId();
     },
-    [clientForm],
+    [clearPrefillClientId, clientForm],
   );
 
   const handleExistingClientSearchFocus = useCallback(() => {
@@ -322,15 +410,20 @@ export function useOrdersNewPage() {
       });
   }, [clientsRequested, clientsStore]);
 
-  const handleClientSelect = useCallback((client: Client) => {
-    setSelectedClient(client);
-    setClientSearchValue("");
-  }, []);
+  const handleClientSelect = useCallback(
+    (client: Client) => {
+      setSelectedClient(client);
+      setClientSearchValue("");
+      clearPrefillClientId();
+    },
+    [clearPrefillClientId],
+  );
 
   const handleClientClear = useCallback(() => {
     setSelectedClient(null);
     setClientSearchValue("");
-  }, []);
+    clearPrefillClientId();
+  }, [clearPrefillClientId]);
 
   const handleProductSearchClose = useCallback(() => {
     setProductSearchOpen(false);

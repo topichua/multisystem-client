@@ -2,7 +2,7 @@ import { ArrowSquareOutIcon } from "@phosphor-icons/react";
 import { Button, Card, Flex, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 
-import { pagesMap } from "@/app/router/pages-map";
+import { getClientDetailsPath, pagesMap } from "@/app/router/pages-map";
 import { UserAvatar } from "@/components/user-avatar";
 import { useClientDetails } from "@/pages/clients-page/client-details/hooks/use-client-details";
 import { formatClientDisplayName } from "@/pages/clients-page/clients-list/client-display.utils";
@@ -21,6 +21,10 @@ export const CustomerCard = observer(
       conversationId != null
         ? `${pagesMap.conversations}/${conversationId}`
         : undefined;
+    const clientProfileHref =
+      order.customerId != null
+        ? getClientDetailsPath(order.customerId)
+        : pagesMap.clients;
 
     return (
       <Card className="print-card" title={t("orders.customer")}>
@@ -57,7 +61,7 @@ export const CustomerCard = observer(
               type="link"
               className="no-print"
               icon={<ArrowSquareOutIcon size={16} />}
-              href={pagesMap.clients}
+              href={clientProfileHref}
             >
               {t("orders.details.clientProfile")}
             </Button>

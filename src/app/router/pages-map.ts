@@ -61,6 +61,14 @@ export const getSettingsAutomationPath = (ruleId: string | number) =>
 export const getOrderDetailsPath = (orderId: string | number): string =>
   `${pagesMap.orders}/${orderId}`;
 
+export const getOrdersNewPath = (clientId?: string | number): string => {
+  if (clientId == null || clientId === "") {
+    return pagesMap.ordersNew;
+  }
+
+  return `${pagesMap.ordersNew}?clientId=${encodeURIComponent(String(clientId))}`;
+};
+
 export const getInstagramPostPath = (postId: string | number): string =>
   `${pagesMap.instagram}/${postId}`;
 

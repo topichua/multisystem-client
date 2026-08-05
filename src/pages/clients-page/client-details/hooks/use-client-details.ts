@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useLocation } from "react-router";
 
 import { clientsApi } from "@/features/clients/api/clients-api";
@@ -35,8 +35,15 @@ export function useClientDetails(clientId: number | null) {
   const [remoteClient, setRemoteClient] = useState<RemoteClientState | null>(
     null,
   );
+  const [clientOverride, setClientOverride] = useState<Client | null>(null);
+  const [overrideForClientId, setOverrideForClientId] = useState(clientId);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  if (clientId !== overrideForClientId) {
+    setOverrideForClientId(clientId);
+    setClientOverride(null);
+  }
 
   useEffect(() => {
     if (clientId == null || cachedClient != null) {
@@ -83,11 +90,28 @@ export function useClientDetails(clientId: number | null) {
     };
   }, [cachedClient, clientId]);
 
+  const applyClientUpdate = useCallback((client: Client) => {
+    setClientOverride(client);
+  }, []);
+
   if (clientId == null) {
     return {
       client: null,
       loading: false,
       error: null,
+      applyClientUpdate,
+    };
+  }
+
+  const overrideClient =
+    clientOverride?.id === clientId ? clientOverride : null;
+
+  if (overrideClient) {
+    return {
+      client: overrideClient,
+      loading: false,
+      error: null,
+      applyClientUpdate,
     };
   }
 
@@ -96,6 +120,7 @@ export function useClientDetails(clientId: number | null) {
       client: cachedClient,
       loading: false,
       error: null,
+      applyClientUpdate,
     };
   }
 
@@ -108,5 +133,6 @@ export function useClientDetails(clientId: number | null) {
     client: resolvedRemoteClient,
     loading: isResolving,
     error,
+    applyClientUpdate,
   };
 }

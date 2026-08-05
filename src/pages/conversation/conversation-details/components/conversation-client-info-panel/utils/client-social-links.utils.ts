@@ -94,6 +94,7 @@ const buildLinksFromSocialUsers = (
     provider,
     externalId: user.id,
     username: user.username,
+    conversationId: user.conversationId ?? null,
     label: resolveSocialLinkLabel(
       provider,
       user.id,
@@ -110,6 +111,7 @@ export function getClientSocialLinks(
   if (client.links?.length) {
     return client.links.map((link) => ({
       ...link,
+      conversationId: link.conversationId ?? null,
       label: resolveSocialLinkLabel(
         link.provider,
         link.externalId,

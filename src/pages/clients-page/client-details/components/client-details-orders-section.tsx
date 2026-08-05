@@ -203,7 +203,7 @@ export function ClientDetailsOrdersSection({
   }
 
   return (
-    <Flex vertical gap={12} style={{ marginTop: 24 }}>
+    <Flex vertical gap={12}>
       <Space align="center">
         <Title level={4} style={{ margin: 0 }}>
           {t("clients.details.ordersTitle")}

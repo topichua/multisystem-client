@@ -42,6 +42,21 @@ function normalizeNullableString(value: unknown): string | null {
   return typeof value === "string" ? value : null;
 }
 
+function normalizeOptionalPositiveNumber(value: unknown): number | null {
+  if (typeof value === "number" && Number.isFinite(value) && value > 0) {
+    return value;
+  }
+
+  if (typeof value === "string" && value.trim()) {
+    const parsed = Number(value);
+    if (Number.isFinite(parsed) && parsed > 0) {
+      return parsed;
+    }
+  }
+
+  return null;
+}
+
 function normalizeLastOrderAt(value: unknown): string | null {
   if (typeof value === "string" && value.length > 0) {
     return value;
@@ -91,7 +106,12 @@ export function normalizeClient(value: unknown): Client | null {
     telegramUsers: normalizeClientSocialUsers(value.telegramUsers),
     links: links.length > 0 ? links : undefined,
     workspaceId: typeof value.workspaceId === "number" ? value.workspaceId : 0,
-    avatar_src: typeof value.avatar_src === "string" ? value.avatar_src : null,
+    avatar_src:
+      typeof value.avatar_src === "string"
+        ? value.avatar_src
+        : typeof value.avatarSrc === "string"
+          ? value.avatarSrc
+          : null,
     orderStats: normalizeClientOrderStats(value.orderStats),
   };
 }
@@ -113,6 +133,9 @@ function normalizeClientSocialUsers(value: unknown): ClientSocialUserRecord[] {
       username: normalizeNullableString(item.username),
       fullName: normalizeNullableString(item.fullName),
       avatar: normalizeNullableString(item.avatar),
+      conversationId: normalizeOptionalPositiveNumber(
+        item.conversationId ?? item.conversation_id,
+      ),
     });
   }
 
@@ -149,6 +172,9 @@ function normalizeClientSocialLinks(value: unknown): ClientSocialLinkRecord[] {
         typeof item.username === "string" && item.username.trim()
           ? item.username.trim()
           : null,
+      conversationId: normalizeOptionalPositiveNumber(
+        item.conversationId ?? item.conversation_id,
+      ),
     });
   }
 

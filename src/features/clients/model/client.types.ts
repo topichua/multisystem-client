@@ -10,6 +10,7 @@ export type ClientSocialUserRecord = {
   username: string | null;
   fullName: string | null;
   avatar: string | null;
+  conversationId?: number | null;
 };
 
 export type Client = {
@@ -34,6 +35,7 @@ export type ClientSocialLinkRecord = {
   provider: ClientLinkProvider;
   externalId: string;
   username?: string | null;
+  conversationId?: number | null;
 };
 
 export type ClientsBlockedFilter = "all" | "not_blocked" | "blocked";
@@ -150,7 +152,9 @@ export type ClientCreatePayload = {
   telegramUserIds: string[];
 };
 
-export type ClientUpdatePayload = Partial<ClientCreatePayload>;
+export type ClientUpdatePayload = Partial<ClientCreatePayload> & {
+  note?: string | null;
+};
 
 export type ClientLinkProvider = "telegram" | "instagram";
 
