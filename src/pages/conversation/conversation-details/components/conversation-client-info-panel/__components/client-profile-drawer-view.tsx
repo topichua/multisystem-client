@@ -1,11 +1,13 @@
+import { Divider, Flex } from "antd";
+
 import type { Client } from "@/features/clients/model/client.types";
 import type { Conversation } from "@/features/conversations/model/types";
 
+import { ClientWishlistSection } from "../client-wishlist/client-wishlist-section";
+import { ClientBlockedBanner } from "./client-blocked-banner";
 import { ClientContactsSection } from "./client-contacts-section";
 import { ClientLastOrderSection } from "./client-last-order-section";
 import { ClientOrdersSummary } from "./client-order-summary";
-import { ClientWishlistSection } from "../client-wishlist/client-wishlist-section";
-import { Divider, Flex } from "antd";
 
 type ClientProfileDrawerViewProps = {
   client: Client;
@@ -22,6 +24,8 @@ export function ClientProfileDrawerView({
 }: ClientProfileDrawerViewProps) {
   return (
     <Flex vertical>
+      <ClientBlockedBanner client={client} onClientUpdated={onClientUpdated} />
+
       <ClientContactsSection
         client={client}
         conversation={conversation}

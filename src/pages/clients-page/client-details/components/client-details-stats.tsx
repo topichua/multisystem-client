@@ -4,8 +4,7 @@ import { useTranslation } from "react-i18next";
 
 import type { ClientOrderStats } from "@/features/orders/model/order.types";
 import { formatMoney } from "@/features/orders/utils/format-money";
-
-import { formatClientDate } from "../../clients-list/client-display.utils";
+import { formatDate } from "@/utils/date-time";
 
 const { Text, Title } = Typography;
 
@@ -44,7 +43,7 @@ export function ClientDetailsStats({
       {
         key: "lastOrderAt",
         label: t("clients.details.stats.lastOrder"),
-        value: formatClientDate(stats?.lastOrderAt),
+        value: formatDate(stats?.lastOrderAt ?? "") || "—",
       },
     ],
     [stats, t],

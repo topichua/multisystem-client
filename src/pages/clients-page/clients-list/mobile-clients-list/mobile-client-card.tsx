@@ -2,13 +2,13 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 
 import { getClientDetailsPath } from "@/app/router/pages-map";
+import { UserAvatar } from "@/components/user-avatar";
 import type { Client } from "@/features/clients/model/client.types";
+import { formatDate } from "@/utils/date-time";
 
 import {
   formatClientDisplayName,
-  formatClientDate,
   formatClientUahAmount,
-  getClientInitials,
   getClientOrderStats,
 } from "../client-display.utils";
 import { ClientSourceTags } from "../client-source-tags";
@@ -17,15 +17,19 @@ import * as S from "./mobile-clients-list-page.styled";
 
 type MobileClientCardProps = {
   client: Client;
+  blockLoading: boolean;
   deleteLoading: boolean;
   onEdit: (client: Client) => void;
+  onToggleBlock: (client: Client) => Promise<void>;
   onDelete: (id: number) => Promise<void>;
 };
 
 export function MobileClientCard({
   client,
+  blockLoading,
   deleteLoading,
   onEdit,
+  onToggleBlock,
   onDelete,
 }: MobileClientCardProps) {
   const { t } = useTranslation();
@@ -55,9 +59,7 @@ export function MobileClientCard({
     >
       <S.CardHeader>
         <S.ClientIdentity>
-          <S.ClientAvatar size={40} src={client.avatar_src || undefined}>
-            {getClientInitials(client)}
-          </S.ClientAvatar>
+          <UserAvatar size={40} name={displayName} src={client.avatar_src} />
           <S.ClientText>
             <S.ClientName>{displayName}</S.ClientName>
             {phone && <S.ClientPhone>{phone}</S.ClientPhone>}
@@ -65,11 +67,14 @@ export function MobileClientCard({
         </S.ClientIdentity>
         <MobileClientCardActions
           client={client}
+          blockLoading={blockLoading}
           deleteLoading={deleteLoading}
           actionsDataQa={`clients-mobile-actions-${client.id}`}
           editDataQa={`clients-mobile-edit-${client.id}`}
+          blockDataQa={`clients-mobile-block-${client.id}`}
           deleteDataQa={`clients-mobile-delete-${client.id}`}
           onEdit={onEdit}
+          onToggleBlock={onToggleBlock}
           onDelete={onDelete}
         />
       </S.CardHeader>
@@ -94,7 +99,7 @@ export function MobileClientCard({
         <S.MetadataRow>
           <S.MetadataLabel>{t("clients.table.lastOrder")}</S.MetadataLabel>
           <S.MetadataValue>
-            {formatClientDate(orderStats?.lastOrderAt)}
+            {formatDate(orderStats?.lastOrderAt ?? "") || "—"}
           </S.MetadataValue>
         </S.MetadataRow>
       </S.Metadata>

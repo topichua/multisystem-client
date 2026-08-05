@@ -1,3 +1,4 @@
+import { Drawer } from "antd";
 import styled from "styled-components";
 
 import { dataQaAttrs } from "@/styled/data-qa-attrs";
@@ -75,5 +76,32 @@ export const DaySeparator = styled.div`
     line-height: 1.25;
     text-align: center;
     color: ${({ theme }) => theme.colors.functional.text.subdued};
+  }
+`;
+
+export const ClientDrawer = styled(Drawer)`
+  .ant-drawer-header {
+    gap: 4px;
+  }
+
+  .ant-drawer-header-title {
+    min-width: 0;
+    flex: 1 1 auto;
+    overflow: hidden;
+  }
+
+  .ant-drawer-title {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .ant-drawer-extra {
+    flex-shrink: 0;
+    margin-inline-start: 0;
+  }
+
+  .ant-drawer-close {
+    margin-inline: 0;
+    padding-inline: 4px;
   }
 `;

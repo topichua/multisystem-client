@@ -1330,6 +1330,8 @@
       "unlinkAria": "Unlink account",
       "unlinkSuccess": "Account unlinked",
       "unlinkFailed": "Failed to unlink account",
+      "blockedTitle": "Client blocked",
+      "blockedDescription": "New messages go to Spam, orders cannot be created.",
       "wishlist": {
         "title": "Wishlist",
         "add": "+ Add",
@@ -2524,6 +2526,8 @@
       "subtitle": "Manage customer information and communication.",
       "backToClientsAria": "Back to clients",
       "createClientAria": "Create client",
+      "searchAria": "Search clients",
+      "filtersAria": "Filter clients",
       "actionsAria": "Client actions",
       "clientCardAria": "{{name}}",
       "emptyClients": "No clients yet",
@@ -2538,20 +2542,44 @@
     "lastName": "Last name",
     "phone": "Phone",
     "searchPlaceholder": "Search name or phone",
+    "toolbar": {
+      "filters": "Filters"
+    },
+    "listFilters": {
+      "panelBlockedSection": "Show",
+      "panelCreatedSection": "Created",
+      "panelLastOrderSection": "Last order",
+      "datePlaceholder": "dd.mm.yyyy",
+      "panelClear": "Clear",
+      "panelApply": "Apply",
+      "blocked": {
+        "all": "All",
+        "not_blocked": "Not blocked",
+        "blocked": "Blocked"
+      }
+    },
     "table": {
       "client": "Client",
-      "contacts": "Contacts",
-      "source": "Source",
+      "contacts": "Phone",
+      "source": "Sources",
       "orders": "Orders",
       "totalSpent": "Total spent",
+      "createdAt": "Created",
       "lastOrder": "Last"
     },
     "source": {
+      "manual": "Manual",
       "instagram": "Instagram",
       "telegram": "Telegram"
     },
     "tableActions": "Actions",
     "edit": "Edit",
+    "block": "Block",
+    "unblock": "Unblock",
+    "blockedBadge": "BLOCKED",
+    "blockConfirmTitle": "Block {{name}}?",
+    "blockConfirmDescription": "New messages from the client will go to Spam, and orders cannot be created for them. History and analytics are kept. This can be undone at any time.",
+    "blockConfirmCancel": "Cancel",
     "delete": "Delete",
     "deleteConfirm": "Delete this client?",
     "modalCreateTitle": "Create client",
@@ -2563,9 +2591,13 @@
     "createSuccess": "Client created",
     "updateSuccess": "Client updated",
     "deleteSuccess": "Client deleted",
+    "blockSuccess": "Client blocked",
+    "unblockSuccess": "Client unblocked",
     "createFailed": "Could not create client",
     "requestFailed": "Request failed",
     "deleteFailed": "Failed to delete client",
+    "blockFailed": "Could not block client",
+    "unblockFailed": "Could not unblock client",
     "required": "Required",
     "phonePlaceholder": "+380 …",
     "phoneInvalid": "Enter a valid phone number",

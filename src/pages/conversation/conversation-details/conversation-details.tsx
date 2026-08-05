@@ -1,14 +1,17 @@
-import { Button, Drawer, Flex, Spin, Typography } from "antd";
+import { Button, Flex, Modal, Spin, Typography } from "antd";
 import {
   PencilSimpleIcon,
   ArrowLineUpRightIcon,
   CheckIcon,
+  LockIcon,
+  LockOpenIcon,
 } from "@phosphor-icons/react";
 import { observer } from "mobx-react-lite";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router";
 
+import { getApiErrorMessage } from "@/api/get-api-error-message";
 import { getClientDetailsPath, pagesMap } from "@/app/router/pages-map";
 import { useUserStore } from "@/features/auth/model/use-user-store";
 import { clientsApi } from "@/features/clients/api/clients-api";
@@ -31,6 +34,8 @@ import {
 } from "@/features/conversations/utils/conversation-message-ownership";
 import { useEnsureIntegrationsLoaded } from "@/features/integrations/model/use-ensure-integrations-loaded";
 import { useIntegrationsStore } from "@/features/integrations/model/use-integrations-store";
+import { formatClientDisplayName } from "@/pages/clients-page/clients-list/client-display.utils";
+import { useNotification } from "@/shared/components/notification/use-notification";
 import { useIsMobileViewport } from "@/utils/use-media-query";
 
 import * as S from "./conversation-details.styled";
@@ -69,6 +74,8 @@ export const ConversationDetails = observer(() => {
   const navigate = useNavigate();
   const { conversationId } = useParams();
   const isMobileViewport = useIsMobileViewport();
+  const notification = useNotification();
+  const clientsStore = useClientsStore();
   const [draft, setDraft] = useState("");
   const [replyTarget, setReplyTarget] = useState<ReplyComposeTarget | null>(
     null,
@@ -96,7 +103,6 @@ export const ConversationDetails = observer(() => {
 
   const { conversations, sendConversationMessage, resendOutboundMessage } =
     useConversationsStore();
-  const clientsStore = useClientsStore();
 
   const { company } = useUserStore();
   const integrationsStore = useIntegrationsStore();
@@ -259,6 +265,58 @@ export const ConversationDetails = observer(() => {
 
     setClientDrawerEditMode(true);
   }, [linkedClientId]);
+
+  const handleToggleClientBlock = useCallback(async () => {
+    if (linkedClient == null) {
+      return;
+    }
+
+    const nextBlocked = !linkedClient.blocked;
+
+    try {
+      await clientsStore.setClientBlocked(linkedClient.id, nextBlocked);
+      handleClientCreated({ ...linkedClient, blocked: nextBlocked });
+      notification.success({
+        title: t(
+          nextBlocked ? "clients.blockSuccess" : "clients.unblockSuccess",
+        ),
+      });
+    } catch (error) {
+      notification.error({
+        title: getApiErrorMessage(
+          error,
+          t(nextBlocked ? "clients.blockFailed" : "clients.unblockFailed"),
+        ),
+      });
+    }
+  }, [clientsStore, handleClientCreated, linkedClient, notification, t]);
+
+  const handleBlockClientClick = useCallback(() => {
+    if (linkedClient == null) {
+      return;
+    }
+
+    if (linkedClient.blocked) {
+      void handleToggleClientBlock();
+      return;
+    }
+
+    const name = formatClientDisplayName(linkedClient);
+
+    Modal.confirm({
+      centered: true,
+      icon: null,
+      title: t("clients.blockConfirmTitle", { name }),
+      content: t("clients.blockConfirmDescription"),
+      okText: t("clients.block"),
+      okButtonProps: {
+        type: "primary",
+        danger: true,
+      },
+      cancelText: t("clients.blockConfirmCancel"),
+      onOk: () => handleToggleClientBlock(),
+    });
+  }, [handleToggleClientBlock, linkedClient, t]);
 
   const handleCloseClientPanel = useCallback(() => {
     setClientInfoOpen(false);
@@ -461,6 +519,7 @@ export const ConversationDetails = observer(() => {
         <Header
           clientInfoOpen={clientInfoOpen}
           hasLinkedClient={linkedClient != null}
+          clientBlocked={linkedClient?.blocked === true}
           clientLookupLoading={clientLookupLoading}
           onBackToList={
             isMobileViewport
@@ -533,7 +592,7 @@ export const ConversationDetails = observer(() => {
         </ComposerS.Composer>
       </S.ThreadColumn>
 
-      <Drawer
+      <S.ClientDrawer
         title={
           linkedClient && activeConversation ? (
             <ClientProfileHeader
@@ -550,12 +609,36 @@ export const ConversationDetails = observer(() => {
         }}
         extra={
           linkedClient && !clientDrawerEditMode ? (
-            <Button
-              type="text"
-              aria-label={t("conversation.clientProfile.editAria")}
-              icon={<PencilSimpleIcon size={18} />}
-              onClick={handleEditClient}
-            />
+            <Flex align="center" gap={0}>
+              <Button
+                type="text"
+                size="small"
+                aria-label={t("conversation.clientProfile.editAria")}
+                icon={<PencilSimpleIcon size={18} />}
+                style={{ paddingInline: 4 }}
+                onClick={handleEditClient}
+              />
+              <Button
+                type="text"
+                size="small"
+                danger={linkedClient.blocked}
+                aria-label={
+                  linkedClient.blocked
+                    ? t("clients.unblock")
+                    : t("clients.block")
+                }
+                loading={clientsStore.blockLoadingId === linkedClient.id}
+                icon={
+                  linkedClient.blocked ? (
+                    <LockIcon size={18} />
+                  ) : (
+                    <LockOpenIcon size={18} />
+                  )
+                }
+                style={{ paddingInline: 4 }}
+                onClick={handleBlockClientClick}
+              />
+            </Flex>
           ) : null
         }
         onClose={handleCloseClientPanel}
@@ -603,7 +686,7 @@ export const ConversationDetails = observer(() => {
             padding: "16px 18px",
           },
           header: {
-            padding: "16px 18px",
+            padding: "12px 14px",
           },
           footer: {
             padding: "16px 18px",
@@ -621,7 +704,7 @@ export const ConversationDetails = observer(() => {
           onClientAssociationCleared={handleClientAssociationCleared}
           onEditComplete={handleClientEditComplete}
         />
-      </Drawer>
+      </S.ClientDrawer>
 
       {activeConversation && linkedClient && (
         <ClientOrderDrawer

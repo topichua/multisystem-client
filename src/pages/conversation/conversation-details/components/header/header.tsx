@@ -1,4 +1,9 @@
-import { ArrowLeftIcon, CaretRightIcon, UserIcon } from "@phosphor-icons/react";
+import {
+  ArrowLeftIcon,
+  CaretRightIcon,
+  LockIcon,
+  UserIcon,
+} from "@phosphor-icons/react";
 import { Button, Skeleton, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
@@ -17,6 +22,7 @@ const { Text } = Typography;
 type HeaderProps = {
   clientInfoOpen?: boolean;
   hasLinkedClient?: boolean;
+  clientBlocked?: boolean;
   clientLookupLoading?: boolean;
   onBackToList?: () => void;
   onClientInfoOpen?: () => void;
@@ -26,6 +32,7 @@ export const Header = observer(
   ({
     clientInfoOpen,
     hasLinkedClient,
+    clientBlocked = false,
     clientLookupLoading,
     onBackToList,
     onClientInfoOpen,
@@ -126,9 +133,11 @@ export const Header = observer(
           />
 
           <Button
-            color="default"
-            variant={isMobileViewport ? "filled" : "link"}
-            icon={<UserIcon />}
+            color={clientBlocked ? "danger" : "default"}
+            variant={
+              isMobileViewport ? "filled" : clientBlocked ? "filled" : "link"
+            }
+            icon={clientBlocked ? <LockIcon /> : <UserIcon />}
             aria-label={clientInfoAria}
             aria-pressed={clientInfoOpen}
             loading={clientLookupLoading}

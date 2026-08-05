@@ -67,7 +67,6 @@ export const ProductsListToolbar = observer(
         <Flex vertical gap={8} style={{ marginBottom: 12, width: "100%" }}>
           <Input
             allowClear
-            size="large"
             placeholder={t("products.toolbar.searchPlaceholderMinChars")}
             aria-label={t("products.mobile.searchAria")}
             prefix={<MagnifyingGlassIcon size={18} />}
@@ -84,7 +83,6 @@ export const ProductsListToolbar = observer(
           />
           <Flex align="center" gap={8} style={{ width: "100%" }}>
             <Select<ProductsListSort>
-              size="large"
               value={productsStore.listSort}
               options={sortOptions}
               onChange={(value) => productsStore.setListSort(value)}
@@ -97,7 +95,6 @@ export const ProductsListToolbar = observer(
             />
             <Badge count={filterCount > 0 ? filterCount : 0} size="small">
               <Button
-                size="large"
                 type="default"
                 icon={<FunnelSimpleIcon size={18} />}
                 aria-label={t("products.mobile.filtersAria")}
@@ -123,7 +120,6 @@ export const ProductsListToolbar = observer(
         <div style={{ flex: "1 1 200px", minWidth: 0 }}>
           <Input
             allowClear
-            size="large"
             placeholder={t("products.toolbar.searchPlaceholderMinChars")}
             prefix={<MagnifyingGlassIcon size={18} />}
             value={keywordDraft}
@@ -139,7 +135,6 @@ export const ProductsListToolbar = observer(
         </div>
         <Flex gap={12} align="center" wrap="wrap" style={{ flexShrink: 0 }}>
           <Select<ProductsListSort>
-            size="large"
             value={productsStore.listSort}
             options={sortOptions}
             onChange={(value) => productsStore.setListSort(value)}
@@ -148,7 +143,7 @@ export const ProductsListToolbar = observer(
             popupMatchSelectWidth={false}
             style={{ minWidth: 240 }}
           />
-          <Button size="large" type="default" onClick={onToggleFilters}>
+          <Button type="default" onClick={onToggleFilters}>
             <Flex align="center" gap={8}>
               <FunnelSimpleIcon size={18} />
               {t("products.toolbar.filters")}

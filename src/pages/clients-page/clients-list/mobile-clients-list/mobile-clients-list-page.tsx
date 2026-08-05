@@ -1,36 +1,30 @@
-import { ArrowLeftIcon, PlusIcon } from "@phosphor-icons/react";
-import { Alert, Empty } from "antd";
+import { PlusIcon } from "@phosphor-icons/react";
+import { Alert, Empty, Pagination, Spin } from "antd";
 import { observer } from "mobx-react-lite";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router";
 
-import { pagesMap } from "@/app/router/pages-map";
 import { CenteredSpinner } from "@/components/loading/centered-spinner";
 
 import { ClientFormModal } from "../client-form-modal";
+import { ClientsListFiltersPanel } from "../clients-list-filters-panel";
+import { ClientsListToolbar } from "../clients-list-toolbar";
 import { useClientsListController } from "../controllers/use-clients-list-controller";
 import { MobileClientCard } from "./mobile-client-card";
 import * as S from "./mobile-clients-list-page.styled";
 
 export const MobileClientsListPage = observer(() => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const controller = useClientsListController();
   const { store } = controller;
   const clients = store.clients;
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   return (
     <>
       <S.Root>
         <S.Header>
           <S.TitleCluster>
-            <S.BackButton
-              type="text"
-              icon={<ArrowLeftIcon size={20} />}
-              aria-label={t("clients.mobile.backToClientsAria")}
-              data-qa="clients-mobile-list-back"
-              onClick={() => navigate(pagesMap.clients)}
-            />
             <S.PageTitle level={3}>
               {t("clients.mobile.titles.clientsWorkspace")}
             </S.PageTitle>
@@ -48,6 +42,8 @@ export const MobileClientsListPage = observer(() => {
           </S.CreateButton>
         </S.Header>
 
+        <ClientsListToolbar onToggleFilters={() => setFiltersOpen(true)} />
+
         {store.listError && (
           <Alert type="error" title={store.listError} showIcon />
         )}
@@ -64,18 +60,41 @@ export const MobileClientsListPage = observer(() => {
             />
           </S.StateContainer>
         ) : (
-          <S.ClientList>
-            {clients.map((client) => (
-              <MobileClientCard
-                key={client.id}
-                client={client}
-                deleteLoading={store.deleteLoadingId === client.id}
-                onEdit={controller.openEdit}
-                onDelete={controller.handleDelete}
-              />
-            ))}
-          </S.ClientList>
+          <Spin spinning={store.listLoading}>
+            <S.ClientList>
+              {clients.map((client) => (
+                <MobileClientCard
+                  key={client.id}
+                  client={client}
+                  blockLoading={store.blockLoadingId === client.id}
+                  deleteLoading={store.deleteLoadingId === client.id}
+                  onEdit={controller.openEdit}
+                  onToggleBlock={controller.handleToggleBlock}
+                  onDelete={controller.handleDelete}
+                />
+              ))}
+            </S.ClientList>
+            {store.listTotal > store.listPageSize && (
+              <S.PaginationWrap>
+                <Pagination
+                  current={store.listPage}
+                  pageSize={store.listPageSize}
+                  total={store.listTotal}
+                  showSizeChanger={false}
+                  simple
+                  onChange={(page) => {
+                    store.setListPage(page);
+                  }}
+                />
+              </S.PaginationWrap>
+            )}
+          </Spin>
         )}
+
+        <ClientsListFiltersPanel
+          open={filtersOpen}
+          onClose={() => setFiltersOpen(false)}
+        />
       </S.Root>
 
       <ClientFormModal

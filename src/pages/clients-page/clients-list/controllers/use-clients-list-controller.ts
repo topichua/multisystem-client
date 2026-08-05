@@ -39,7 +39,17 @@ export function useClientsListController() {
 
   useEffect(() => {
     void store.loadClients();
-  }, [store]);
+  }, [
+    store,
+    store.listKeyword,
+    store.listBlocked,
+    store.listCreatedFrom,
+    store.listCreatedTo,
+    store.listLastOrderFrom,
+    store.listLastOrderTo,
+    store.listPage,
+    store.listPageSize,
+  ]);
 
   const openCreate = useCallback(() => {
     setEditingClient(null);
@@ -113,6 +123,29 @@ export function useClientsListController() {
     [notification, store, t],
   );
 
+  const handleToggleBlock = useCallback(
+    async (client: Client) => {
+      const nextBlocked = !client.blocked;
+
+      try {
+        await store.setClientBlocked(client.id, nextBlocked);
+        notification.success({
+          title: t(
+            nextBlocked ? "clients.blockSuccess" : "clients.unblockSuccess",
+          ),
+        });
+      } catch (e) {
+        notification.error({
+          title: getApiErrorMessage(
+            e,
+            t(nextBlocked ? "clients.blockFailed" : "clients.unblockFailed"),
+          ),
+        });
+      }
+    },
+    [notification, store, t],
+  );
+
   return {
     store,
     form,
@@ -123,5 +156,6 @@ export function useClientsListController() {
     closeModal,
     handleSubmit,
     handleDelete,
+    handleToggleBlock,
   };
 }

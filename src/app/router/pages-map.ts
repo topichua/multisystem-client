@@ -23,8 +23,6 @@ export const pagesMap = {
   team: "/team",
   teamMembers: "/team/members",
   teamRoles: "/team/roles",
-  clientsWorkspace: "/clients/clients",
-  clientsDetail: "/clients",
   settings: "/settings",
   settingsGroups: "/settings/groups",
   settingsUser: "/settings/user",
@@ -77,4 +75,4 @@ export const getProductEditPath = (productId: string | number): string =>
   `${pagesMap.productsList}/product/${productId}`;
 
 export const getClientDetailsPath = (clientId: string | number): string =>
-  `${pagesMap.clientsDetail}/${clientId}`;
+  `${pagesMap.clients}/${clientId}`;

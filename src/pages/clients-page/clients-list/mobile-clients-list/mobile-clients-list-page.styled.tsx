@@ -1,4 +1,4 @@
-import { Avatar as AntdAvatar, Button, Card, Typography } from "antd";
+import { Button, Card, Typography } from "antd";
 import styled from "styled-components";
 
 import { dataQaAttrs } from "@/styled/data-qa-attrs";
@@ -90,6 +90,12 @@ export const ClientList = styled.div`
   gap: 12px;
 `;
 
+export const PaginationWrap = styled.div`
+  display: flex;
+  justify-content: center;
+  padding: 16px 0 0;
+`;
+
 export const ClientCard = styled(Card)`
   && {
     min-width: 0;
@@ -122,16 +128,6 @@ export const ClientIdentity = styled.div`
   gap: 12px;
   min-width: 0;
   flex: 1 1 auto;
-`;
-
-export const ClientAvatar = styled(AntdAvatar)`
-  && {
-    flex: 0 0 auto;
-    background: ${({ theme }) => theme.colors.brandPalette[6]};
-    color: ${({ theme }) => theme.colors.base.white};
-    font-size: 13px;
-    font-weight: 700;
-  }
 `;
 
 export const ClientText = styled.div`

@@ -293,7 +293,7 @@ export const analyticsSectionNavItems = [
 export const clientsSectionNavItems: readonly SectionNavItem[] = [
   {
     key: "clients-workspace",
-    path: pagesMap.clientsWorkspace,
+    path: pagesMap.clients,
     labelKey: "clients.pageTitle",
   },
 ] as const;

@@ -55,7 +55,7 @@ export const ClientDetailsPage = () => {
   } = useClientOrdersQuery(resolvedClientId);
 
   const handleBack = () => {
-    navigate(pagesMap.clientsWorkspace);
+    navigate(pagesMap.clients);
   };
 
   const content = (

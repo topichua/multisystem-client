@@ -3,6 +3,7 @@ import type {
   ClientLookupResponse,
   ClientOrderStats,
   ClientSocialLinkRecord,
+  ClientSocialUserRecord,
   ClientsGetParams,
   ClientsListQueryParams,
   ClientsListResponse,
@@ -35,6 +36,10 @@ function normalizeStringArray(value: unknown): string[] {
   }
 
   return value.filter((item): item is string => typeof item === "string");
+}
+
+function normalizeNullableString(value: unknown): string | null {
+  return typeof value === "string" ? value : null;
 }
 
 function normalizeLastOrderAt(value: unknown): string | null {
@@ -78,13 +83,40 @@ export function normalizeClient(value: unknown): Client | null {
     lastName: typeof value.lastName === "string" ? value.lastName : "",
     createdAt: typeof value.createdAt === "string" ? value.createdAt : "",
     phone: typeof value.phone === "string" ? value.phone : "",
+    note: normalizeNullableString(value.note),
+    blocked: typeof value.blocked === "boolean" ? value.blocked : false,
     instagramUserIds: normalizeStringArray(value.instagramUserIds),
     telegramUserIds: normalizeStringArray(value.telegramUserIds),
+    instagramUsers: normalizeClientSocialUsers(value.instagramUsers),
+    telegramUsers: normalizeClientSocialUsers(value.telegramUsers),
     links: links.length > 0 ? links : undefined,
     workspaceId: typeof value.workspaceId === "number" ? value.workspaceId : 0,
     avatar_src: typeof value.avatar_src === "string" ? value.avatar_src : null,
     orderStats: normalizeClientOrderStats(value.orderStats),
   };
+}
+
+function normalizeClientSocialUsers(value: unknown): ClientSocialUserRecord[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  const users: ClientSocialUserRecord[] = [];
+
+  for (const item of value) {
+    if (!isRecord(item) || typeof item.id !== "string" || !item.id.trim()) {
+      continue;
+    }
+
+    users.push({
+      id: item.id.trim(),
+      username: normalizeNullableString(item.username),
+      fullName: normalizeNullableString(item.fullName),
+      avatar: normalizeNullableString(item.avatar),
+    });
+  }
+
+  return users;
 }
 
 function normalizeClientSocialLinks(value: unknown): ClientSocialLinkRecord[] {
@@ -225,12 +257,14 @@ export function buildClientsGetQueryParams(
   if (activeLookupKeys.length === 1) {
     const key = activeLookupKeys[0];
     const value = params[key];
+    const query: Record<string, string | number | boolean> =
+      key === "id" ? { id: Number(value) } : { [key]: String(value) };
 
-    if (key === "id") {
-      return { id: Number(value) };
+    if (params.include_order_stat === true) {
+      query.include_order_stat = true;
     }
 
-    return { [key]: String(value) };
+    return query;
   }
 
   const listParams = params as ClientsListQueryParams;
@@ -246,6 +280,30 @@ export function buildClientsGetQueryParams(
   const keyword = listParams.keyword?.trim();
   if (keyword) {
     query.keyword = keyword;
+  }
+
+  if (listParams.blocked && listParams.blocked !== "all") {
+    query.blocked = listParams.blocked;
+  }
+
+  const createdFrom = listParams.createdFrom?.trim();
+  if (createdFrom) {
+    query.createdFrom = createdFrom;
+  }
+
+  const createdTo = listParams.createdTo?.trim();
+  if (createdTo) {
+    query.createdTo = createdTo;
+  }
+
+  const lastOrderFrom = listParams.lastOrderFrom?.trim();
+  if (lastOrderFrom) {
+    query.lastOrderFrom = lastOrderFrom;
+  }
+
+  const lastOrderTo = listParams.lastOrderTo?.trim();
+  if (lastOrderTo) {
+    query.lastOrderTo = lastOrderTo;
   }
 
   return query;

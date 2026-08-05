@@ -7,9 +7,10 @@ import { InstagramLogoIcon } from "@/components/icons/instagram/instagram-logo-i
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
 import { UserAvatar } from "@/components/user-avatar";
 
+import { formatDate } from "@/utils/date-time";
+
 import {
   formatClientDisplayName,
-  formatClientDate,
   hasClientInstagramSource,
   hasClientTelegramSource,
 } from "../../clients-list/client-display.utils";
@@ -100,7 +101,7 @@ export function ClientDetailsHeader({
                 {client && client.createdAt && (
                   <Text type="secondary">
                     {t("clients.details.clientSince", {
-                      date: formatClientDate(client.createdAt),
+                      date: formatDate(client.createdAt) || "—",
                     })}
                   </Text>
                 )}

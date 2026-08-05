@@ -57,7 +57,7 @@ export const CustomerCard = observer(
               type="link"
               className="no-print"
               icon={<ArrowSquareOutIcon size={16} />}
-              href={pagesMap.clientsWorkspace}
+              href={pagesMap.clients}
             >
               {t("orders.details.clientProfile")}
             </Button>

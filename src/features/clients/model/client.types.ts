@@ -5,14 +5,25 @@ export type ClientOrderStats = {
   lastOrderAt: string | null;
 };
 
+export type ClientSocialUserRecord = {
+  id: string;
+  username: string | null;
+  fullName: string | null;
+  avatar: string | null;
+};
+
 export type Client = {
   id: number;
   firstName: string;
   lastName: string;
   createdAt: string;
   phone: string;
+  note: string | null;
+  blocked: boolean;
   instagramUserIds: string[];
   telegramUserIds: string[];
+  instagramUsers: ClientSocialUserRecord[];
+  telegramUsers: ClientSocialUserRecord[];
   links?: ClientSocialLinkRecord[];
   workspaceId: number;
   avatar_src?: string | null;
@@ -25,11 +36,18 @@ export type ClientSocialLinkRecord = {
   username?: string | null;
 };
 
+export type ClientsBlockedFilter = "all" | "not_blocked" | "blocked";
+
 export type ClientsListQueryParams = {
   page?: number;
   pageSize?: number;
   include_order_stat?: boolean;
   keyword?: string;
+  blocked?: ClientsBlockedFilter;
+  createdFrom?: string;
+  createdTo?: string;
+  lastOrderFrom?: string;
+  lastOrderTo?: string;
   id?: never;
   instagramUserId?: never;
   instagramId?: never;
@@ -43,7 +61,13 @@ export type ClientsLookupByIdParams = {
   telegramUserId?: never;
   page?: never;
   pageSize?: never;
-  include_order_stat?: never;
+  include_order_stat?: boolean;
+  keyword?: never;
+  blocked?: never;
+  createdFrom?: never;
+  createdTo?: never;
+  lastOrderFrom?: never;
+  lastOrderTo?: never;
 };
 
 export type ClientsLookupByInstagramUserIdParams = {
@@ -53,7 +77,13 @@ export type ClientsLookupByInstagramUserIdParams = {
   telegramUserId?: never;
   page?: never;
   pageSize?: never;
-  include_order_stat?: never;
+  include_order_stat?: boolean;
+  keyword?: never;
+  blocked?: never;
+  createdFrom?: never;
+  createdTo?: never;
+  lastOrderFrom?: never;
+  lastOrderTo?: never;
 };
 
 export type ClientsLookupByInstagramIdParams = {
@@ -63,7 +93,13 @@ export type ClientsLookupByInstagramIdParams = {
   telegramUserId?: never;
   page?: never;
   pageSize?: never;
-  include_order_stat?: never;
+  include_order_stat?: boolean;
+  keyword?: never;
+  blocked?: never;
+  createdFrom?: never;
+  createdTo?: never;
+  lastOrderFrom?: never;
+  lastOrderTo?: never;
 };
 
 export type ClientsLookupByTelegramUserIdParams = {
@@ -73,7 +109,13 @@ export type ClientsLookupByTelegramUserIdParams = {
   instagramId?: never;
   page?: never;
   pageSize?: never;
-  include_order_stat?: never;
+  include_order_stat?: boolean;
+  keyword?: never;
+  blocked?: never;
+  createdFrom?: never;
+  createdTo?: never;
+  lastOrderFrom?: never;
+  lastOrderTo?: never;
 };
 
 export type ClientsLookupParams =

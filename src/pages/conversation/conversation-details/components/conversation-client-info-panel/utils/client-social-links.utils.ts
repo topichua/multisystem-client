@@ -2,6 +2,7 @@ import type {
   Client,
   ClientLinkProvider,
   ClientSocialLinkRecord,
+  ClientSocialUserRecord,
 } from "@/features/clients/model/client.types";
 import type { Conversation } from "@/features/conversations/model/types";
 
@@ -41,6 +42,7 @@ const resolveSocialLinkLabel = (
   provider: ClientLinkProvider,
   externalId: string,
   username: string | null | undefined,
+  fullName: string | null | undefined,
   conversation?: Conversation,
 ): string => {
   if (username?.trim()) {
@@ -53,6 +55,10 @@ const resolveSocialLinkLabel = (
     resolveConversationLinkLabel(conversation, externalId)
   ) {
     return resolveConversationLinkLabel(conversation, externalId)!;
+  }
+
+  if (fullName?.trim()) {
+    return fullName.trim();
   }
 
   if (!/^\d+$/.test(externalId)) {
@@ -70,7 +76,31 @@ const buildLinksFromIds = (
   externalIds.map((externalId) => ({
     provider,
     externalId,
-    label: resolveSocialLinkLabel(provider, externalId, null, conversation),
+    label: resolveSocialLinkLabel(
+      provider,
+      externalId,
+      null,
+      null,
+      conversation,
+    ),
+  }));
+
+const buildLinksFromSocialUsers = (
+  provider: ClientLinkProvider,
+  users: ClientSocialUserRecord[],
+  conversation?: Conversation,
+): ClientSocialLinkView[] =>
+  users.map((user) => ({
+    provider,
+    externalId: user.id,
+    username: user.username,
+    label: resolveSocialLinkLabel(
+      provider,
+      user.id,
+      user.username,
+      user.fullName,
+      conversation,
+    ),
   }));
 
 export function getClientSocialLinks(
@@ -84,9 +114,27 @@ export function getClientSocialLinks(
         link.provider,
         link.externalId,
         link.username,
+        null,
         conversation,
       ),
     }));
+  }
+
+  const socialUserLinks = [
+    ...buildLinksFromSocialUsers(
+      "instagram",
+      client.instagramUsers ?? [],
+      conversation,
+    ),
+    ...buildLinksFromSocialUsers(
+      "telegram",
+      client.telegramUsers ?? [],
+      conversation,
+    ),
+  ];
+
+  if (socialUserLinks.length > 0) {
+    return socialUserLinks;
   }
 
   return [

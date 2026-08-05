@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router";
+import { Navigate, Route, Routes } from "react-router";
 import { HomePage } from "@/pages/home-page/home-page";
 import { QuickActionsPage } from "@/pages/home-page/quick-actions/quick-actions-page";
 import { InvitationPage } from "@/pages/invitation-page/invitation-page";
@@ -34,7 +34,6 @@ import { ProductAddPage } from "@/pages/products-page/products-list/pages/produc
 import { ProductsListRoute } from "@/pages/products-page/products-list/list/products-list-route";
 import { ProductsInventoryHistoryRoute } from "@/pages/products-page/products-inventory-history/products-inventory-history-route";
 import { ProductsSuppliesRoute } from "@/pages/products-page/products-supplies/products-supplies-route";
-import { ClientsIndexRoute } from "@/pages/clients-page/clients-index-route";
 import { ClientDetailRoute } from "@/pages/clients-page/client-details/client-detail-route";
 import { ClientsListRoute } from "@/pages/clients-page/clients-list/clients-list-route";
 import { ClientsPage } from "@/pages/clients-page/clients-page";
@@ -195,9 +194,12 @@ export const PageRoutes = () => {
             </Route>
           </Route>
           <Route path="clients">
-            <Route index element={<ClientsIndexRoute />} />
             <Route element={<ClientsPage />}>
-              <Route path="clients" element={<ClientsListRoute />} />
+              <Route index element={<ClientsListRoute />} />
+              <Route
+                path="clients"
+                element={<Navigate to={pagesMap.clients} replace />}
+              />
               <Route path=":clientId" element={<ClientDetailRoute />} />
             </Route>
           </Route>

@@ -84,8 +84,11 @@ export const clientsApi = {
   ): Promise<ClientLookupResponse> => clientsApi.lookupClient({ instagramId }),
 
   getById: async (id: number): Promise<Client> => {
-    const { data } = await apiClient.get<unknown>(`${basePath}/${id}`);
-    const client = normalizeClient(data);
+    const response = await clientsApi.lookupClient({
+      id,
+      include_order_stat: true,
+    });
+    const client = response.client;
 
     if (client == null) {
       throw new Error(`Client ${id} not found`);
@@ -106,13 +109,26 @@ export const clientsApi = {
   },
 
   update: async (id: number, payload: ClientUpdatePayload): Promise<Client> => {
-    const { data } = await apiClient.put<Client>(`${basePath}/${id}`, payload);
+    const { data } = await apiClient.put<unknown>(`${basePath}/${id}`, payload);
+    const client = normalizeClient(data);
 
-    return data;
+    if (client == null) {
+      throw new Error("Invalid client update response");
+    }
+
+    return client;
   },
 
   delete: async (id: number): Promise<void> => {
     await apiClient.delete<unknown>(`${basePath}/${id}`);
+  },
+
+  block: async (id: number): Promise<void> => {
+    await apiClient.post<unknown>(`${basePath}/${id}/block`);
+  },
+
+  unblock: async (id: number): Promise<void> => {
+    await apiClient.post<unknown>(`${basePath}/${id}/unblock`);
   },
 
   createLink: async (

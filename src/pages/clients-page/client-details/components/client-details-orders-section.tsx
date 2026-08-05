@@ -19,9 +19,8 @@ import { getOrderDetailsPath } from "@/app/router/pages-map";
 import { Tag as OrderStatusTag } from "@/components/tag/tag";
 import type { OrderListItem } from "@/features/orders/model/order.types";
 import { formatMoney } from "@/features/orders/utils/format-money";
+import { formatDate } from "@/utils/date-time";
 import { useIsMobileViewport } from "@/utils/use-media-query";
-
-import { formatClientDate } from "../../clients-list/client-display.utils";
 
 const { Text, Title } = Typography;
 
@@ -62,7 +61,7 @@ export function ClientDetailsOrdersSection({
         dataIndex: "createdAt",
         key: "createdAt",
         width: 130,
-        render: (value: string) => formatClientDate(value),
+        render: (value: string) => formatDate(value) || "—",
       },
       {
         title: t("clients.details.ordersTable.positions"),
@@ -164,7 +163,7 @@ export function ClientDetailsOrdersSection({
               <Flex justify="space-between" align="center" gap={8}>
                 <Text strong>#{order.id}</Text>
                 <Text type="secondary">
-                  {formatClientDate(order.createdAt)}
+                  {formatDate(order.createdAt) || "—"}
                 </Text>
               </Flex>
 
