@@ -2931,16 +2931,22 @@
     }
   },
   "login": {
-    "email": "Електронна пошта",
+    "title": "Вхід в акаунт",
+    "description": "Раді бачити знову. Увійдіть, щоб продовжити.",
+    "google": "Увійти через Google",
+    "orEmail": "або через email",
+    "email": "Email",
     "password": "Пароль",
     "emailPlaceholder": "Електронна пошта",
     "passwordPlaceholder": "Пароль",
+    "rememberMe": "Запам'ятати мене",
     "submit": "Увійти",
     "emailRequired": "Уведіть електронну пошту",
     "emailInvalid": "Уведіть коректну адресу",
     "passwordRequired": "Уведіть пароль",
     "invalidCredentials": "Невірна пошта або пароль",
-    "forgotPassword": "Забули пароль?"
+    "forgotPassword": "Забули пароль?",
+    "noAccount": "Немає акаунта? <registerLink>Створити безкоштовно</registerLink>"
   },
   "passwordReset": {
     "email": "Електронна пошта",

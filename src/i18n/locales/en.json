@@ -2865,16 +2865,22 @@
     }
   },
   "login": {
+    "title": "Sign in to your account",
+    "description": "Welcome back. Sign in to continue.",
+    "google": "Sign in with Google",
+    "orEmail": "or via email",
     "email": "Email",
     "password": "Password",
     "emailPlaceholder": "Enter email",
     "passwordPlaceholder": "Enter password",
-    "submit": "Login",
+    "rememberMe": "Remember me",
+    "submit": "Sign in",
     "emailRequired": "Please enter email",
     "emailInvalid": "Please enter valid email",
     "passwordRequired": "Please enter password",
     "invalidCredentials": "Invalid email or password",
-    "forgotPassword": "Forgot password?"
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account? <registerLink>Create for free</registerLink>"
   },
   "passwordReset": {
     "email": "Email",

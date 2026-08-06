@@ -9,9 +9,7 @@ export function customFieldFilterQueryKey(fieldId: number): string {
   return `${PRODUCTS_LIST_CUSTOM_FIELD_QUERY_PREFIX}${fieldId}`;
 }
 
-export function parseCustomFieldFilterQueryKey(
-  key: string,
-): number | null {
+export function parseCustomFieldFilterQueryKey(key: string): number | null {
   if (!key.startsWith(PRODUCTS_LIST_CUSTOM_FIELD_QUERY_PREFIX)) {
     return null;
   }

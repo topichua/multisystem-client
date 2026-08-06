@@ -1,19 +1,23 @@
-import { Button, Form, Input } from "antd";
+import { Button, Checkbox, Divider, Flex, Form, Input } from "antd";
 import { useState } from "react";
-import { useTranslation } from "react-i18next";
-import { Link } from "react-router";
+import { Trans, useTranslation } from "react-i18next";
+import { Link, useNavigate } from "react-router";
 
 import { pagesMap } from "@/app/router/pages-map";
+import { GoogleLogoIcon } from "@/components/icons/google/google-logo-icon";
 import { authApi, type LoginRequest } from "@/features/auth/api/auth-api";
 import { useAuth } from "@/features/auth/model/use-auth";
 import { useNotification } from "@/shared/components/notification/use-notification";
 
 import * as S from "./login-page.styled";
 
-type LoginFormValues = LoginRequest;
+type LoginFormValues = LoginRequest & {
+  rememberMe?: boolean;
+};
 
 export const LoginPage = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { login } = useAuth();
   const [form] = Form.useForm<LoginFormValues>();
   const notification = useNotification();
@@ -23,7 +27,10 @@ export const LoginPage = () => {
     setIsSubmitting(true);
 
     await authApi
-      .login(values)
+      .login({
+        email: values.email,
+        password: values.password,
+      })
       .then((response) => {
         login(response.access_token);
       })
@@ -35,22 +42,32 @@ export const LoginPage = () => {
       });
   };
 
+  const handleGoogleLogin = () => {
+    alert("Google login will be implemented soon");
+  };
+
   return (
     <S.Page>
       <S.FormSide>
         <S.LoginCard>
           <S.Header>
-            <S.Brand>
-              <S.Logo src="/logos/logo.png" alt={t("brand")} />
-              <S.PageTitle>{t("brand")}</S.PageTitle>
-            </S.Brand>
+            <S.PageTitle>{t("login.title")}</S.PageTitle>
+            <S.PageDescription>{t("login.description")}</S.PageDescription>
           </S.Header>
+
+          <Button block icon={<GoogleLogoIcon />} onClick={handleGoogleLogin}>
+            {t("login.google")}
+          </Button>
+
+          <Divider plain>{t("login.orEmail")}</Divider>
 
           <Form
             form={form}
             layout="vertical"
             onFinish={handleSubmit}
             autoComplete="off"
+            disabled={isSubmitting}
+            initialValues={{ rememberMe: true }}
           >
             <Form.Item
               label={t("login.email")}
@@ -77,11 +94,22 @@ export const LoginPage = () => {
               />
             </Form.Item>
 
-            <S.ForgotPasswordRow>
-              <Link to={pagesMap.forgotPassword}>
-                {t("login.forgotPassword")}
-              </Link>
-            </S.ForgotPasswordRow>
+            <Form.Item>
+              <Flex justify="space-between" align="center">
+                <Form.Item name="rememberMe" valuePropName="checked" noStyle>
+                  <Checkbox>{t("login.rememberMe")}</Checkbox>
+                </Form.Item>
+
+                <Button
+                  type="link"
+                  htmlType="button"
+                  style={{ paddingInline: 0 }}
+                  onClick={() => navigate(pagesMap.forgotPassword)}
+                >
+                  {t("login.forgotPassword")}
+                </Button>
+              </Flex>
+            </Form.Item>
 
             <S.FormActions>
               <Button
@@ -94,6 +122,15 @@ export const LoginPage = () => {
               </Button>
             </S.FormActions>
           </Form>
+
+          <S.Footer>
+            <Trans
+              i18nKey="login.noAccount"
+              components={{
+                registerLink: <Link to={pagesMap.register} />,
+              }}
+            />
+          </S.Footer>
         </S.LoginCard>
       </S.FormSide>
 

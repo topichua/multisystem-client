@@ -189,8 +189,9 @@ export class ProductsStore {
       this.draftCustomFieldFilters = normalizeCustomFieldFilters(
         this.listCustomFieldFilters,
       );
-      this.draftSelectedCustomFieldIds =
-        this.draftCustomFieldFilters.map((filter) => filter.fieldId);
+      this.draftSelectedCustomFieldIds = this.draftCustomFieldFilters.map(
+        (filter) => filter.fieldId,
+      );
     });
   };
 
@@ -267,10 +268,7 @@ export class ProductsStore {
         next,
         fieldId,
       );
-      if (
-        next != null &&
-        !this.draftSelectedCustomFieldIds.includes(fieldId)
-      ) {
+      if (next != null && !this.draftSelectedCustomFieldIds.includes(fieldId)) {
         this.draftSelectedCustomFieldIds = [
           ...this.draftSelectedCustomFieldIds,
           fieldId,
@@ -674,9 +672,7 @@ export class ProductsStore {
 
     try {
       const result = await characteristicsApi.list();
-      const items = [...result.items].sort(
-        (a, b) => a.sortOrder - b.sortOrder,
-      );
+      const items = [...result.items].sort((a, b) => a.sortOrder - b.sortOrder);
 
       runInAction(() => {
         this.variantCustomFields = items;

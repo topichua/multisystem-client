@@ -1,6 +1,7 @@
 import { Card } from "antd";
 import styled from "styled-components";
 
+import { authFormInputStyles } from "@/pages/auth-shared/auth-form-controls.styles";
 import { dataQaAttrs } from "@/styled/data-qa-attrs";
 
 export const Page = styled.main.attrs(() =>
@@ -66,6 +67,8 @@ export const PasswordResetCard = styled(Card).attrs(() =>
   .ant-card-body {
     padding: 0;
   }
+
+  ${authFormInputStyles}
 `;
 
 export const ImageSide = styled.section.attrs(() =>

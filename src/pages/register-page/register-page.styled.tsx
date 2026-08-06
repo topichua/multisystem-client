@@ -1,6 +1,7 @@
 import { Card } from "antd";
 import styled from "styled-components";
 
+import { authFormInputStyles } from "@/pages/auth-shared/auth-form-controls.styles";
 import { dataQaAttrs } from "@/styled/data-qa-attrs";
 
 export const Page = styled.main.attrs(() => dataQaAttrs("layout-register"))`
@@ -64,6 +65,8 @@ export const RegisterCard = styled(Card).attrs(() =>
   .ant-card-body {
     padding: 0;
   }
+
+  ${authFormInputStyles}
 `;
 
 export const ImageSide = styled.section.attrs(() =>

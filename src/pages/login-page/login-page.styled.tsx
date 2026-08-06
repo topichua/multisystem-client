@@ -1,6 +1,7 @@
 import { Card } from "antd";
 import styled from "styled-components";
 
+import { authFormInputStyles } from "@/pages/auth-shared/auth-form-controls.styles";
 import { dataQaAttrs } from "@/styled/data-qa-attrs";
 
 export const Page = styled.main.attrs(() => dataQaAttrs("layout-login"))`
@@ -19,15 +20,14 @@ export const Page = styled.main.attrs(() => dataQaAttrs("layout-login"))`
 export const FormSide = styled.section.attrs(() =>
   dataQaAttrs("layout-login-form-side"),
 )`
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 48px;
 
   @media (max-width: 767px) {
-    position: relative;
     overflow: hidden;
-
     width: 100%;
     min-height: 100vh;
     min-height: 100dvh;
@@ -57,7 +57,7 @@ export const LoginCard = styled(Card).attrs(() =>
   dataQaAttrs("layout-login-card"),
 )`
   width: 100%;
-  max-width: 420px;
+  max-width: 464px;
   border: none;
   box-shadow: none;
   background: transparent;
@@ -65,6 +65,8 @@ export const LoginCard = styled(Card).attrs(() =>
   .ant-card-body {
     padding: 0;
   }
+
+  ${authFormInputStyles}
 `;
 
 export const ImageSide = styled.section.attrs(() =>
@@ -81,56 +83,31 @@ export const ImageSide = styled.section.attrs(() =>
   }
 `;
 
-export const Header = styled.div.attrs(() =>
-  dataQaAttrs("layout-login-header"),
-)`
+export const Header = styled.div`
   margin-bottom: 32px;
 `;
 
-export const Brand = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  justify-content: center;
-
-  @media (max-width: 767px) {
-    justify-content: center;
-  }
+export const PageTitle = styled.h1`
+  margin: 0 0 12px;
+  font-size: 32px;
+  line-height: 1.2;
 `;
 
-export const Logo = styled.img`
-  display: block;
-  height: 32px;
-  width: auto;
+export const PageDescription = styled.p`
+  margin: 0;
+  color: ${(props) => props.theme.colors.functional.text.subdued};
+  font-size: 16px;
+  line-height: 1.5;
 `;
 
 export const FormActions = styled.div`
   margin-top: 24px;
 `;
 
-export const ForgotPasswordRow = styled.div`
-  margin-top: -8px;
-  text-align: right;
+export const Footer = styled.div`
+  margin-top: 24px;
+  text-align: center;
+  color: ${(props) => props.theme.colors.functional.text.subdued};
   font-size: 14px;
   line-height: 1.5;
-
-  a {
-    color: ${(props) => props.theme.colors.semantic.primary};
-    font-weight: 500;
-
-    &:hover {
-      color: ${(props) => props.theme.colors.semantic.primary};
-      opacity: 0.85;
-    }
-  }
-`;
-
-export const PageTitle = styled.h1`
-  margin: 0;
-  font-size: 32px;
-  line-height: 1.2;
-`;
-
-export const PageDescription = styled.p`
-  color: ${(props) => props.theme.colors.functional.text.subdued};
 `;
