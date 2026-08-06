@@ -62,7 +62,7 @@ export const HeaderAside = styled.div.attrs(() =>
     min-width: 0;
     margin-left: 0;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 44px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 44px 44px;
     gap: 8px;
 
     .ant-select {

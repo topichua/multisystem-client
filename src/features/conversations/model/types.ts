@@ -62,6 +62,26 @@ export type ConversationUpdatePayload = {
   responsible_member_id?: number | null;
 };
 
+export type ConversationEventType =
+  | "conversation_created"
+  | "group_changed"
+  | "responsible_changed"
+  | "order_created"
+  | (string & {});
+
+export type ConversationEvent = {
+  id: number;
+  conversationId: number;
+  type: ConversationEventType;
+  actorId: number | null;
+  payload: Record<string, unknown>;
+  createdAt: string;
+};
+
+export type ConversationEventsListResponse = {
+  items: ConversationEvent[];
+};
+
 export type ConversationsListResponse = ConversationListItemResponse[];
 
 export type MessageParticipant = {

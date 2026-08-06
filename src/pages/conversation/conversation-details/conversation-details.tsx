@@ -40,6 +40,7 @@ import { useIsMobileViewport } from "@/utils/use-media-query";
 
 import * as S from "./conversation-details.styled";
 import { ClientOrderDrawer } from "./components/client-order-drawer/client-order-drawer";
+import { ConversationEventsDrawer } from "./components/conversation-events-drawer/conversation-events-drawer";
 import { CONVERSATION_CLIENT_EDIT_FORM_ID } from "./components/conversation-client-info-panel/__components/client-profile-edit-form";
 import { ClientProfileHeader } from "./components/conversation-client-info-panel/__components/client-profile-header";
 import { ConversationClientInfoPanel } from "./components/conversation-client-info-panel/conversation-client-info-panel";
@@ -87,6 +88,7 @@ export const ConversationDetails = observer(() => {
   >();
   const [clientLookupLoading, setClientLookupLoading] = useState(false);
   const [orderDrawerOpen, setOrderDrawerOpen] = useState(false);
+  const [conversationEventsOpen, setConversationEventsOpen] = useState(false);
   const [currentOrderDrawerOpen, setCurrentOrderDrawerOpen] = useState(false);
   const [currentOrderDrawerOrderId, setCurrentOrderDrawerOrderId] = useState<
     number | null
@@ -323,6 +325,21 @@ export const ConversationDetails = observer(() => {
     setClientDrawerEditMode(false);
   }, []);
 
+  const handleOpenClientPanel = useCallback(() => {
+    setConversationEventsOpen(false);
+    setClientInfoOpen(true);
+  }, []);
+
+  const handleOpenConversationEvents = useCallback(() => {
+    setClientInfoOpen(false);
+    setClientDrawerEditMode(false);
+    setConversationEventsOpen(true);
+  }, []);
+
+  const handleCloseConversationEvents = useCallback(() => {
+    setConversationEventsOpen(false);
+  }, []);
+
   const handleClientEditComplete = useCallback(() => {
     setClientDrawerEditMode(false);
   }, []);
@@ -456,6 +473,7 @@ export const ConversationDetails = observer(() => {
   useEffect(() => {
     setReplyTarget(null);
     setClientInfoOpen(false);
+    setConversationEventsOpen(false);
     setOrderDrawerOpen(false);
     setCurrentOrderDrawerOpen(false);
     setCurrentOrderDrawerOrderId(null);
@@ -521,12 +539,14 @@ export const ConversationDetails = observer(() => {
           hasLinkedClient={linkedClient != null}
           clientBlocked={linkedClient?.blocked === true}
           clientLookupLoading={clientLookupLoading}
+          conversationEventsOpen={conversationEventsOpen}
           onBackToList={
             isMobileViewport
               ? () => navigate(pagesMap.conversations)
               : undefined
           }
-          onClientInfoOpen={() => setClientInfoOpen(true)}
+          onClientInfoOpen={handleOpenClientPanel}
+          onConversationEventsOpen={handleOpenConversationEvents}
         />
 
         <S.MessagesScroll
@@ -705,6 +725,12 @@ export const ConversationDetails = observer(() => {
           onEditComplete={handleClientEditComplete}
         />
       </S.ClientDrawer>
+
+      <ConversationEventsDrawer
+        open={conversationEventsOpen}
+        conversationId={conversationId}
+        onClose={handleCloseConversationEvents}
+      />
 
       {activeConversation && linkedClient && (
         <ClientOrderDrawer

@@ -1312,6 +1312,24 @@
     "clientPanelAria": "Картка клієнта",
     "closeClientPanelAria": "Закрити панель клієнта",
     "clientPanelTitle": "Клієнт",
+    "events": {
+      "title": "Історія подій",
+      "openAria": "Відкрити історію подій",
+      "closeAria": "Закрити історію подій",
+      "description": "Усі дії та зміни — у хронологічному порядку.",
+      "systemActor": "Система",
+      "log": {
+        "conversationCreated": "Розмову створено",
+        "groupChanged": "Статус змінено",
+        "groupChangedTo": "Статус встановлено: {{to}}",
+        "groupChangedWithTransition": "Статус змінено: {{from}} → {{to}}",
+        "responsibleChanged": "Призначено відповідального",
+        "responsibleChangedWithName": "Призначено відповідальним: {{name}}",
+        "orderCreated": "Створено замовлення",
+        "orderCreatedWithNumber": "Створено замовлення №{{orderNumber}}",
+        "fallback": "Подія: {{type}}"
+      }
+    },
     "noGroup": "Без групи",
     "groupSelectPlaceholder": "Без групи",
     "noAssignee": "Без відповідального",

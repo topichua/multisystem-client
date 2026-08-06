@@ -3,6 +3,8 @@ import { apiClient } from "@/api/api-client";
 import type {
   Conversation,
   ConversationChannel,
+  ConversationEvent,
+  ConversationEventsListResponse,
   ConversationProductSuggestionsResponse,
   ConversationSource,
   ConversationMessage,
@@ -308,6 +310,39 @@ const normalizeConversation = (raw: unknown): Conversation => {
   };
 };
 
+const normalizeConversationEvent = (raw: unknown): ConversationEvent => {
+  const record = getRecord(raw);
+
+  return {
+    id: getNumber(record.id),
+    conversationId: getNumber(record.conversationId),
+    type: getString(record.type) as ConversationEvent["type"],
+    actorId: getOptionalNumber(record.actorId),
+    payload: getRecord(record.payload),
+    createdAt: getString(record.createdAt),
+  };
+};
+
+const normalizeConversationEvents = (
+  raw: unknown,
+): ConversationEventsListResponse => {
+  const record = getRecord(raw);
+  const items = Array.isArray(raw)
+    ? raw
+    : Array.isArray(record.items)
+      ? record.items
+      : [];
+
+  return {
+    items: items
+      .map(normalizeConversationEvent)
+      .sort(
+        (a, b) =>
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+      ),
+  };
+};
+
 const normalizeConversationCriteriaChannel = (
   raw: unknown,
 ): ConversationCriteriaChannel | null => {
@@ -581,6 +616,16 @@ export const conversationsApi = {
       );
 
     return data;
+  },
+
+  getEvents: async (
+    conversationId: string,
+  ): Promise<ConversationEventsListResponse> => {
+    const { data } = await apiClient.get<unknown>(
+      `${basePath}/${encodeURIComponent(conversationId)}/events`,
+    );
+
+    return normalizeConversationEvents(data);
   },
 
   sendMessage: async (

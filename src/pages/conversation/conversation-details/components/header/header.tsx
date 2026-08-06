@@ -1,6 +1,7 @@
 import {
   ArrowLeftIcon,
   CaretRightIcon,
+  ClockCounterClockwiseIcon,
   LockIcon,
   UserIcon,
 } from "@phosphor-icons/react";
@@ -24,8 +25,10 @@ type HeaderProps = {
   hasLinkedClient?: boolean;
   clientBlocked?: boolean;
   clientLookupLoading?: boolean;
+  conversationEventsOpen?: boolean;
   onBackToList?: () => void;
   onClientInfoOpen?: () => void;
+  onConversationEventsOpen?: () => void;
 };
 
 export const Header = observer(
@@ -34,8 +37,10 @@ export const Header = observer(
     hasLinkedClient,
     clientBlocked = false,
     clientLookupLoading,
+    conversationEventsOpen,
     onBackToList,
     onClientInfoOpen,
+    onConversationEventsOpen,
   }: HeaderProps) => {
     const { t } = useTranslation();
     const isMobileViewport = useIsMobileViewport();
@@ -147,6 +152,16 @@ export const Header = observer(
             {isMobileViewport ? null : clientInfoLabel}
             {isMobileViewport ? null : <CaretRightIcon />}
           </Button>
+          <Button
+            variant="link"
+            color="default"
+            icon={<ClockCounterClockwiseIcon size={18} />}
+            aria-label={t("conversation.events.openAria")}
+            aria-pressed={conversationEventsOpen}
+            data-qa="layout-conversation-details-events-toggle"
+            disabled={!conversationId || !onConversationEventsOpen}
+            onClick={onConversationEventsOpen}
+          />
         </S.HeaderAside>
       </S.Header>
     );

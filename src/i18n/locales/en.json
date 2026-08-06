@@ -1304,6 +1304,24 @@
     "clientPanelAria": "Client information",
     "closeClientPanelAria": "Close client panel",
     "clientPanelTitle": "Client",
+    "events": {
+      "title": "Event history",
+      "openAria": "Open event history",
+      "closeAria": "Close event history",
+      "description": "All actions and changes in chronological order.",
+      "systemActor": "System",
+      "log": {
+        "conversationCreated": "Conversation created",
+        "groupChanged": "Status changed",
+        "groupChangedTo": "Status set: {{to}}",
+        "groupChangedWithTransition": "Status changed: {{from}} → {{to}}",
+        "responsibleChanged": "Assignee changed",
+        "responsibleChangedWithName": "Assigned to {{name}}",
+        "orderCreated": "Order created",
+        "orderCreatedWithNumber": "Order №{{orderNumber}} created",
+        "fallback": "Event: {{type}}"
+      }
+    },
     "noGroup": "No group",
     "groupSelectPlaceholder": "No group",
     "noAssignee": "No assignee",
