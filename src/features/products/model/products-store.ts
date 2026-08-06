@@ -22,7 +22,13 @@ import {
   normalizeAppliedListKeyword,
   productsListAppliedUrlStateEquals,
   type ProductsListAppliedUrlState,
+  type ProductsListCustomFieldFilter,
 } from "@/features/products/model/products-list-url";
+import {
+  coerceCustomFieldFiltersToFields,
+  normalizeCustomFieldFilters,
+  upsertDraftCustomFieldFilter,
+} from "@/features/products/model/products-list-custom-field-filters";
 import {
   readStoredProductsListViewMode,
   writeStoredProductsListViewMode,
@@ -41,6 +47,9 @@ function snapshotFromStore(store: ProductsStore): ProductsListAppliedUrlState {
     quantityTo: store.listQuantityTo,
     wishlistOnly: store.listWishlistOnly,
     showOnlyReserved: store.listShowOnlyReserved,
+    customFieldFilters: normalizeCustomFieldFilters(
+      store.listCustomFieldFilters,
+    ),
     page: store.page,
     pageSize: store.pageSize,
     view: store.listViewMode,
@@ -64,6 +73,7 @@ export class ProductsStore {
   listQuantityTo: number | null = null;
   listWishlistOnly = false;
   listShowOnlyReserved = false;
+  listCustomFieldFilters: ProductsListCustomFieldFilter[] = [];
 
   listViewMode: ProductsListViewMode = readStoredProductsListViewMode();
 
@@ -75,6 +85,8 @@ export class ProductsStore {
   draftQuantityTo: number | null = null;
   draftWishlistOnly = false;
   draftShowOnlyReserved = false;
+  draftCustomFieldFilters: ProductsListCustomFieldFilter[] = [];
+  draftSelectedCustomFieldIds: number[] = [];
 
   listLoading = false;
   listError: string | null = null;
@@ -115,6 +127,7 @@ export class ProductsStore {
     if (this.listSort !== "created_desc") {
       n += 1;
     }
+    n += this.listCustomFieldFilters.length;
     return n;
   }
 
@@ -126,6 +139,9 @@ export class ProductsStore {
     const next: ProductsListAppliedUrlState = {
       ...parsed,
       categoryIds: [...new Set(parsed.categoryIds)],
+      customFieldFilters: normalizeCustomFieldFilters(
+        parsed.customFieldFilters,
+      ),
     };
     if (productsListAppliedUrlStateEquals(snapshotFromStore(this), next)) {
       return false;
@@ -141,6 +157,7 @@ export class ProductsStore {
       this.listQuantityTo = next.quantityTo;
       this.listWishlistOnly = next.wishlistOnly;
       this.listShowOnlyReserved = next.showOnlyReserved;
+      this.listCustomFieldFilters = next.customFieldFilters;
       this.page = next.page;
       this.pageSize = next.pageSize;
       this.listViewMode = next.view;
@@ -169,6 +186,11 @@ export class ProductsStore {
       this.draftQuantityTo = this.listQuantityTo;
       this.draftWishlistOnly = this.listWishlistOnly;
       this.draftShowOnlyReserved = this.listShowOnlyReserved;
+      this.draftCustomFieldFilters = normalizeCustomFieldFilters(
+        this.listCustomFieldFilters,
+      );
+      this.draftSelectedCustomFieldIds =
+        this.draftCustomFieldFilters.map((filter) => filter.fieldId);
     });
   };
 
@@ -182,6 +204,8 @@ export class ProductsStore {
       this.draftQuantityTo = null;
       this.draftWishlistOnly = false;
       this.draftShowOnlyReserved = false;
+      this.draftCustomFieldFilters = [];
+      this.draftSelectedCustomFieldIds = [];
     });
   };
 
@@ -233,6 +257,41 @@ export class ProductsStore {
     });
   };
 
+  setDraftCustomFieldFilter = (
+    fieldId: number,
+    next: ProductsListCustomFieldFilter | null,
+  ): void => {
+    runInAction(() => {
+      this.draftCustomFieldFilters = upsertDraftCustomFieldFilter(
+        this.draftCustomFieldFilters,
+        next,
+        fieldId,
+      );
+      if (
+        next != null &&
+        !this.draftSelectedCustomFieldIds.includes(fieldId)
+      ) {
+        this.draftSelectedCustomFieldIds = [
+          ...this.draftSelectedCustomFieldIds,
+          fieldId,
+        ].sort((a, b) => a - b);
+      }
+    });
+  };
+
+  setDraftSelectedCustomFieldIds = (ids: number[]): void => {
+    runInAction(() => {
+      const nextIds = [...new Set(ids)]
+        .filter((id) => Number.isFinite(id) && id >= 1)
+        .sort((a, b) => a - b);
+      const selected = new Set(nextIds);
+      this.draftSelectedCustomFieldIds = nextIds;
+      this.draftCustomFieldFilters = this.draftCustomFieldFilters.filter(
+        (filter) => selected.has(filter.fieldId),
+      );
+    });
+  };
+
   applyFiltersFromPanel = (): void => {
     runInAction(() => {
       this.listCategoryIds = [...new Set(this.draftCategoryIds)];
@@ -243,6 +302,9 @@ export class ProductsStore {
       this.listQuantityTo = this.draftQuantityTo;
       this.listWishlistOnly = this.draftWishlistOnly;
       this.listShowOnlyReserved = this.draftShowOnlyReserved;
+      this.listCustomFieldFilters = normalizeCustomFieldFilters(
+        this.draftCustomFieldFilters,
+      );
       this.page = 1;
     });
   };
@@ -316,6 +378,15 @@ export class ProductsStore {
     });
   };
 
+  removeListCustomFieldFilter = (fieldId: number): void => {
+    runInAction(() => {
+      this.listCustomFieldFilters = this.listCustomFieldFilters.filter(
+        (filter) => filter.fieldId !== fieldId,
+      );
+      this.page = 1;
+    });
+  };
+
   clearListKeyword = (): void => {
     runInAction(() => {
       this.listKeyword = "";
@@ -342,6 +413,7 @@ export class ProductsStore {
       this.listQuantityTo = null;
       this.listWishlistOnly = false;
       this.listShowOnlyReserved = false;
+      this.listCustomFieldFilters = [];
       this.page = 1;
       this.pageSize = PRODUCTS_DEFAULT_PAGE_SIZE;
     });
@@ -369,6 +441,9 @@ export class ProductsStore {
         : {}),
       ...(this.listWishlistOnly ? { wishlistOnly: true } : {}),
       ...(this.listShowOnlyReserved ? { showOnlyReserved: true } : {}),
+      ...(this.listCustomFieldFilters.length
+        ? { customFieldFilters: this.listCustomFieldFilters }
+        : {}),
     };
   }
 
@@ -599,11 +674,39 @@ export class ProductsStore {
 
     try {
       const result = await characteristicsApi.list();
+      const items = [...result.items].sort(
+        (a, b) => a.sortOrder - b.sortOrder,
+      );
 
       runInAction(() => {
-        this.variantCustomFields = [...result.items].sort(
-          (a, b) => a.sortOrder - b.sortOrder,
+        this.variantCustomFields = items;
+        const fieldMeta = items.map((field) => ({
+          id: field.id,
+          type: field.type,
+          archivedAt: field.archivedAt,
+          optionIds: (field.options ?? []).map((option) => option.id),
+        }));
+        this.listCustomFieldFilters = coerceCustomFieldFiltersToFields(
+          this.listCustomFieldFilters,
+          fieldMeta,
         );
+        this.draftCustomFieldFilters = coerceCustomFieldFiltersToFields(
+          this.draftCustomFieldFilters,
+          fieldMeta,
+        );
+        const validFieldIds = new Set(
+          items
+            .filter((field) => field.archivedAt == null)
+            .map((field) => field.id),
+        );
+        this.draftSelectedCustomFieldIds = [
+          ...new Set([
+            ...this.draftSelectedCustomFieldIds.filter((id) =>
+              validFieldIds.has(id),
+            ),
+            ...this.draftCustomFieldFilters.map((filter) => filter.fieldId),
+          ]),
+        ].sort((a, b) => a - b);
       });
     } catch (e) {
       runInAction(() => {

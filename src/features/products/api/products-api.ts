@@ -26,6 +26,10 @@ import type {
 } from "@/features/products/model/product.types";
 import type { CreateProductInstagramReferencePayload } from "@/features/instagram/model/instagram.types";
 import { PRODUCTS_DEFAULT_PAGE_SIZE } from "@/features/products/model/product.constants";
+import {
+  applyCustomFieldFiltersToQueryRecord,
+  type ProductsListCustomFieldFilter,
+} from "@/features/products/model/products-list-custom-field-filters";
 import { buildCatalogVariantLabelFromParts } from "@/features/products/utils/catalog-variant-display";
 
 const basePath = "/products";
@@ -45,6 +49,7 @@ export type ProductsListQueryParams = {
   quantityTo?: number | null;
   wishlistOnly?: boolean;
   showOnlyReserved?: boolean;
+  customFieldFilters?: ProductsListCustomFieldFilter[];
 };
 
 function productsListQueryToRecord(
@@ -90,6 +95,8 @@ function productsListQueryToRecord(
   if (params.showOnlyReserved === true) {
     out.showOnlyReserved = true;
   }
+
+  applyCustomFieldFiltersToQueryRecord(out, params.customFieldFilters);
 
   return out;
 }
@@ -372,12 +379,13 @@ export type CatalogVariantsListQueryParams = {
   categoryIds?: number[];
   page?: number;
   pageSize?: number;
+  customFieldFilters?: ProductsListCustomFieldFilter[];
 };
 
 function catalogVariantsListQueryToRecord(
   params: CatalogVariantsListQueryParams,
-): Record<string, string | number> {
-  const out: Record<string, string | number> = {
+): Record<string, string | number | boolean> {
+  const out: Record<string, string | number | boolean> = {
     keyword: params.keyword.trim(),
     page: params.page ?? 1,
     pageSize: params.pageSize ?? 50,
@@ -386,6 +394,8 @@ function catalogVariantsListQueryToRecord(
   if (params.categoryIds?.length) {
     out.categoryIds = params.categoryIds.join(",");
   }
+
+  applyCustomFieldFiltersToQueryRecord(out, params.customFieldFilters);
 
   return out;
 }

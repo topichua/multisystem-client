@@ -6,12 +6,20 @@ import {
   type ProductsListSort,
 } from "@/features/products/model/product.types";
 import {
+  customFieldFiltersEqual,
+  normalizeCustomFieldFilters,
+  parseCustomFieldFiltersFromSearchParams,
+  writeCustomFieldFiltersToSearchParams,
+  type ProductsListCustomFieldFilter,
+} from "@/features/products/model/products-list-custom-field-filters";
+import {
   readStoredProductsListViewMode,
   type ProductsListViewMode,
 } from "@/features/products/model/products-list-view-storage";
 import { PRODUCTS_DEFAULT_PAGE_SIZE } from "@/features/products/model/product.constants";
 
 export type { ProductsListViewMode };
+export type { ProductsListCustomFieldFilter };
 
 export type ProductsListAppliedUrlState = {
   keyword: string;
@@ -24,6 +32,7 @@ export type ProductsListAppliedUrlState = {
   quantityTo: number | null;
   wishlistOnly: boolean;
   showOnlyReserved: boolean;
+  customFieldFilters: ProductsListCustomFieldFilter[];
   page: number;
   pageSize: number;
   view: ProductsListViewMode;
@@ -104,6 +113,7 @@ export function parseProductsListUrlSearchParams(
       searchParams.get("showOnlyReserved") ??
         searchParams.get("show_only_reserved"),
     ),
+    customFieldFilters: parseCustomFieldFiltersFromSearchParams(searchParams),
     page: Math.max(1, parseOptionalPositiveInt(searchParams.get("page")) ?? 1),
     pageSize: Math.min(
       100,
@@ -157,6 +167,7 @@ export function serializeProductsListUrlSearchParams(
   if (state.showOnlyReserved) {
     sp.set("showOnlyReserved", "true");
   }
+  writeCustomFieldFiltersToSearchParams(sp, state.customFieldFilters);
   if (state.page !== 1) {
     sp.set("page", String(state.page));
   }
@@ -237,6 +248,10 @@ export function productsListAppliedUrlStateEquals(
     a.pageSize === b.pageSize &&
     a.view === b.view &&
     as.length === bs.length &&
-    as.every((id, i) => id === bs[i])
+    as.every((id, i) => id === bs[i]) &&
+    customFieldFiltersEqual(
+      normalizeCustomFieldFilters(a.customFieldFilters),
+      normalizeCustomFieldFilters(b.customFieldFilters),
+    )
   );
 }

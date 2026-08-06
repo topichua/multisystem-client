@@ -44,6 +44,15 @@ export const useProductsListController = () => {
 
   useEffect(() => {
     if (
+      productsStore.variantCustomFields.length === 0 &&
+      !productsStore.variantCustomFieldsLoading
+    ) {
+      void productsStore.loadVariantCustomFields();
+    }
+  }, [productsStore]);
+
+  useEffect(() => {
+    if (
       !workspaceSettingsStore.initialized &&
       !workspaceSettingsStore.loadLoading
     ) {

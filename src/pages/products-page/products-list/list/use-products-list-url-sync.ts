@@ -57,6 +57,7 @@ export function useProductsListUrlSync(store: ProductsStore): void {
     store.listQuantityTo,
     store.listWishlistOnly,
     store.listShowOnlyReserved,
+    store.listCustomFieldFilters,
     store.page,
     store.pageSize,
     store.listViewMode,

@@ -24,6 +24,8 @@ import {
 import { useProductsStore } from "@/features/products/model/use-products-store";
 import { useIsMobileViewport } from "@/utils/use-media-query";
 
+import { ProductsListCustomFieldFiltersSection } from "./products-list-custom-field-filters-section";
+
 const { Text } = Typography;
 const CATEGORY_LEVEL_INDENT = 20;
 
@@ -124,6 +126,22 @@ export const ProductsListFiltersPanel = observer(
       [t],
     );
 
+    const appliedCustomFieldsKey = useMemo(
+      () =>
+        productsStore.listCustomFieldFilters
+          .map((filter) => {
+            if (filter.mode === "all") {
+              return `${filter.fieldId}:all`;
+            }
+            if (filter.mode === "options") {
+              return `${filter.fieldId}:opts:${filter.optionIds.join(",")}`;
+            }
+            return `${filter.fieldId}:text:${filter.value}`;
+          })
+          .join("|"),
+      [productsStore.listCustomFieldFilters],
+    );
+
     useEffect(() => {
       if (!open) {
         filtersPanelWasOpenRef.current = false;
@@ -139,6 +157,7 @@ export const ProductsListFiltersPanel = observer(
       open,
       productsStore,
       appliedCategoryKey,
+      appliedCustomFieldsKey,
       productsStore.listByStatus,
       productsStore.listMinPrice,
       productsStore.listMaxPrice,
@@ -272,6 +291,10 @@ export const ProductsListFiltersPanel = observer(
             />
           </Flex>
         </div>
+
+        <ProductsListCustomFieldFiltersSection
+          fields={productsStore.variantCustomFields}
+        />
 
         <Divider style={{ margin: 0 }} />
 
