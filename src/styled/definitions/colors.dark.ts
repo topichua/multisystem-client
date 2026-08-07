@@ -43,8 +43,10 @@ export const functional = {
   },
 
   background: {
+    appShell: "#121010",
     base: grey[1],
     elevated: grey[2],
+    workspace: "#181818",
     primary: "#2a1f3d",
     natural: grey[2],
     success: "#0f291f",

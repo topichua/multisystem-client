@@ -5,9 +5,9 @@ import {
   GearSixIcon,
   GlobeIcon,
   HouseIcon,
-  InstagramLogoIcon,
   PackageIcon,
   ReceiptIcon,
+  ShareNetworkIcon,
   UsersIcon,
   UsersThreeIcon,
   TagIcon,
@@ -59,6 +59,12 @@ export type SectionNavItem = NavItemBase & {
   key: string;
 };
 
+export type SectionNavGroup = {
+  key: string;
+  titleKey: string;
+  items: readonly SectionNavItem[];
+};
+
 export type AnalyticsSectionNavItem = SectionNavItem & {
   pro?: boolean;
 };
@@ -91,10 +97,10 @@ export const mainNavItems: readonly MainNavItem[] = [
     icon: <ChatsCircleIcon size={24} />,
   },
   {
-    key: "instagram",
-    path: pagesMap.instagram,
-    labelKey: "nav.instagram",
-    icon: <InstagramLogoIcon size={24} />,
+    key: "orders",
+    path: pagesMap.orders,
+    labelKey: "nav.orders",
+    icon: <TagIcon size={24} />,
   },
   {
     key: "products",
@@ -103,16 +109,16 @@ export const mainNavItems: readonly MainNavItem[] = [
     icon: <CubeIcon size={24} />,
   },
   {
-    key: "orders",
-    path: pagesMap.orders,
-    labelKey: "nav.orders",
-    icon: <TagIcon size={24} />,
-  },
-  {
     key: "clients",
     path: pagesMap.clients,
     labelKey: "nav.clients",
     icon: <UsersThreeIcon size={24} />,
+  },
+  {
+    key: "instagram",
+    path: pagesMap.instagram,
+    labelKey: "nav.instagram",
+    icon: <ShareNetworkIcon size={24} />,
   },
   {
     key: "team",
@@ -290,56 +296,70 @@ export const analyticsSectionNavItems = [
   },
 ] as const satisfies readonly AnalyticsSectionNavItem[];
 
-export const clientsSectionNavItems: readonly SectionNavItem[] = [
+export const settingsSectionNavGroups = [
   {
-    key: "clients-workspace",
-    path: pagesMap.clients,
-    labelKey: "clients.pageTitle",
-  },
-] as const;
-//test
-export const settingsSectionNavItems = [
-  {
-    key: "settings-groups",
-    path: pagesMap.settingsGroups,
-    labelKey: "settings.menu.groups",
+    key: 'account',
+    titleKey: 'settings.sections.account',
+    items: [
+      {
+        key: 'settings-user',
+        path: pagesMap.settingsUser,
+        labelKey: 'settings.menu.user',
+      },
+    ],
   },
   {
-    key: "settings-templates",
-    path: pagesMap.settingsTemplates,
-    labelKey: "settings.menu.templates",
+    key: 'workspace',
+    titleKey: 'settings.sections.workspace',
+    items: [
+      {
+        key: 'settings-system',
+        path: pagesMap.settingsSystem,
+        labelKey: 'settings.menu.system',
+      },
+      {
+        key: 'settings-groups',
+        path: pagesMap.settingsGroups,
+        labelKey: 'settings.menu.groups',
+      },
+      {
+        key: 'settings-statuses',
+        path: pagesMap.settingsOrderStatuses,
+        labelKey: 'settings.menu.statuses',
+      },
+      {
+        key: 'settings-automation',
+        path: pagesMap.settingsAutomation,
+        labelKey: 'settings.menu.automation',
+      },
+      {
+        key: 'settings-templates',
+        path: pagesMap.settingsTemplates,
+        labelKey: 'settings.menu.templates',
+      },
+    ],
   },
   {
-    key: "settings-statuses",
-    path: pagesMap.settingsOrderStatuses,
-    labelKey: "settings.menu.statuses",
+    key: 'services',
+    titleKey: 'settings.sections.services',
+    items: [
+      {
+        key: 'settings-integrations',
+        path: pagesMap.settingsIntegrations,
+        labelKey: 'settings.menu.integrations',
+      },
+      {
+        key: 'settings-billing',
+        path: pagesMap.settingsBilling,
+        labelKey: 'settings.menu.billing',
+      },
+    ],
   },
-  {
-    key: "settings-automation",
-    path: pagesMap.settingsAutomation,
-    labelKey: "settings.menu.automation",
-  },
-  {
-    key: "settings-user",
-    path: pagesMap.settingsUser,
-    labelKey: "settings.menu.user",
-  },
-  {
-    key: "settings-system",
-    path: pagesMap.settingsSystem,
-    labelKey: "settings.menu.system",
-  },
-  {
-    key: "settings-integrations",
-    path: pagesMap.settingsIntegrations,
-    labelKey: "settings.menu.integrations",
-  },
-  {
-    key: "settings-billing",
-    path: pagesMap.settingsBilling,
-    labelKey: "settings.menu.billing",
-  },
-] as const satisfies readonly SectionNavItem[];
+] as const satisfies readonly SectionNavGroup[];
+
+export const settingsSectionNavItems: readonly SectionNavItem[] = (
+  settingsSectionNavGroups as readonly SectionNavGroup[]
+).flatMap((group) => group.items);
 
 const findMainNavItem = (key: MainNavItem["key"]): MainNavItem => {
   const item = mainNavItems.find((navItem) => navItem.key === key);

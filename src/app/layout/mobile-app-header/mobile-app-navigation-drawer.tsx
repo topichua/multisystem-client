@@ -95,7 +95,7 @@ export const MobileAppNavigationDrawer = ({
         </S.DrawerNavScroll>
         <S.DrawerFooter>
           <S.DrawerThemeDivider />
-          <ThemePreferenceControl variant="drawer" />
+          <ThemePreferenceControl />
         </S.DrawerFooter>
       </S.DrawerContent>
     </Drawer>

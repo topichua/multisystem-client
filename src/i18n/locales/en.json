@@ -1,13 +1,13 @@
 {
   "nav": {
-    "chats": "Conversations",
-    "instagram": "Social platforms",
+    "chats": "Chats",
+    "instagram": "Social media",
     "clients": "Clients",
     "products": "Products",
     "orders": "Orders",
     "analytics": "Analytics",
     "team": "Team",
-    "settings": "Settings",
+    "settings": "System",
     "workspaceHome": "Workspace home",
     "mobileNavigationTitle": "Navigation",
     "openMobileNavigationAria": "Open navigation",
@@ -18,9 +18,17 @@
       "dailyWork": "Daily work",
       "customersWorkspace": "Customers & workspace"
     },
-    "homeAria": "Home",
-    "expandSiderAria": "Expand menu",
-    "collapseSiderAria": "Collapse menu"
+    "homeAria": "Home"
+  },
+  "appHeader": {
+    "create": "Create",
+    "createProduct": "Create product",
+    "createOrder": "Create order",
+    "createClient": "Create client",
+    "createSupply": "Create delivery",
+    "searchAria": "Search",
+    "searchPlaceholder": "Search products, orders, clients...",
+    "toggleTheme": "Toggle theme"
   },
   "brand": "MultiSale",
   "instagram": {
@@ -460,17 +468,17 @@
       "templates": "Templates",
       "statuses": "Order statuses",
       "automation": "Automation",
-      "user": "User",
-      "system": "System",
+      "user": "Profile",
+      "system": "General",
       "integrations": "Integrations",
       "billing": "Billing"
     },
+    "sections": {
+      "account": "Account",
+      "workspace": "Workspace",
+      "services": "Services"
+    },
     "mobile": {
-      "sections": {
-        "workspace": "Workspace",
-        "account": "Account",
-        "preferences": "Preferences"
-      },
       "descriptions": {
         "groups": "Create and manage conversation groups.",
         "templates": "Create and edit reusable replies.",

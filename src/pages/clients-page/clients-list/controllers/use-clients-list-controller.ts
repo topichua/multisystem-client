@@ -1,13 +1,14 @@
 import { Form } from "antd";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useSearchParams } from "react-router";
 
 import { getApiErrorMessage } from "@/api/get-api-error-message";
+import { CLIENTS_CREATE_QUERY } from "@/app/router/pages-map";
 import type { Client } from "@/features/clients/model/client.types";
 import { useClientsStore } from "@/features/clients/model/use-clients-store";
-import { normalizeClientPhoneForInput } from "@/utils/phone-input";
 import { useNotification } from "@/shared/components/notification/use-notification";
+import { normalizeClientPhoneForInput } from "@/utils/phone-input";
 
 export type ClientFormValues = {
   first_name: string;
@@ -33,6 +34,7 @@ export function useClientsListController() {
   const { t } = useTranslation();
   const store = useClientsStore();
   const notification = useNotification();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [form] = Form.useForm<ClientFormValues>();
   const [modalOpen, setModalOpen] = useState(false);
   const [editingClient, setEditingClient] = useState<Client | null>(null);
@@ -56,6 +58,18 @@ export function useClientsListController() {
     form.setFieldsValue(emptyClientFormValues);
     setModalOpen(true);
   }, [form]);
+
+  useEffect(() => {
+    if (searchParams.get(CLIENTS_CREATE_QUERY) !== "1") {
+      return;
+    }
+
+    openCreate();
+
+    const nextParams = new URLSearchParams(searchParams);
+    nextParams.delete(CLIENTS_CREATE_QUERY);
+    setSearchParams(nextParams, { replace: true });
+  }, [openCreate, searchParams, setSearchParams]);
 
   const openEdit = useCallback(
     (client: Client) => {

@@ -1,27 +1,37 @@
-import type { MenuProps } from "antd";
-import { Menu } from "antd";
-import type { ReactNode } from "react";
-import { useMemo } from "react";
-import { useTranslation } from "react-i18next";
-import { Outlet, useLocation, useNavigate } from "react-router";
+import type { MenuProps } from 'antd';
+import type { ReactNode } from 'react';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Outlet, useLocation, useNavigate } from 'react-router';
 
 import {
   getSelectedSectionNavPath,
+  type SectionNavGroup,
   type SectionNavItem,
-} from "@/app/router/navigation";
-import { useIsMobileViewport } from "@/utils/use-media-query";
+} from '@/app/router/navigation';
+import { useIsMobileViewport } from '@/utils/use-media-query';
 
-import { SettingsShell } from "../settings-shell/settings-shell";
+import { SettingsShell } from '../settings-shell/settings-shell';
+import * as S from './desktop-section-shell.styled';
 
 type DesktopSectionShellProps = {
-  items: readonly SectionNavItem[];
   navDataQa: string;
   titleKey: string;
   mobileWrapper?: (children: ReactNode) => ReactNode;
-};
+} & (
+  | {
+      items: readonly SectionNavItem[];
+      groups?: undefined;
+    }
+  | {
+      groups: readonly SectionNavGroup[];
+      items?: undefined;
+    }
+);
 
 export const DesktopSectionShell = ({
   items,
+  groups,
   navDataQa,
   titleKey,
   mobileWrapper,
@@ -32,18 +42,33 @@ export const DesktopSectionShell = ({
   const isMobileViewport = useIsMobileViewport();
   const outlet = <Outlet />;
 
-  const menuItems: MenuProps["items"] = useMemo(
-    () =>
-      items.map((item) => ({
-        key: item.path,
-        label: t(item.labelKey),
-      })),
-    [items, t],
+  const flatItems = useMemo(
+    () => groups?.flatMap((group) => group.items) ?? items ?? [],
+    [groups, items],
   );
 
+  const menuItems: MenuProps['items'] = useMemo(() => {
+    if (groups) {
+      return groups.map((group) => ({
+        type: 'group' as const,
+        key: group.key,
+        label: <S.GroupLabel>{t(group.titleKey)}</S.GroupLabel>,
+        children: group.items.map((item) => ({
+          key: item.path,
+          label: t(item.labelKey),
+        })),
+      }));
+    }
+
+    return flatItems.map((item) => ({
+      key: item.path,
+      label: t(item.labelKey),
+    }));
+  }, [flatItems, groups, t]);
+
   const selectedKey = useMemo(
-    () => getSelectedSectionNavPath(items, location.pathname),
-    [items, location.pathname],
+    () => getSelectedSectionNavPath(flatItems, location.pathname),
+    [flatItems, location.pathname],
   );
 
   if (isMobileViewport) {
@@ -56,12 +81,11 @@ export const DesktopSectionShell = ({
         <SettingsShell.Title>{t(titleKey)}</SettingsShell.Title>
         <SettingsShell.SidebarScroll>
           <div data-qa={navDataQa}>
-            <Menu
+            <S.NavMenu
               mode="inline"
               selectedKeys={[selectedKey]}
               items={menuItems}
               onClick={({ key }) => navigate(String(key))}
-              style={{ borderInlineEnd: "none" }}
             />
           </div>
         </SettingsShell.SidebarScroll>

@@ -1,13 +1,13 @@
 {
   "nav": {
     "chats": "Розмови",
-    "instagram": "Соціальні платформи",
+    "instagram": "Соцмережі",
     "clients": "Клієнти",
     "products": "Товари",
     "orders": "Замовлення",
     "analytics": "Аналітика",
     "team": "Команда",
-    "settings": "Налаштування",
+    "settings": "Система",
     "workspaceHome": "Головна робочого простору",
     "mobileNavigationTitle": "Навігація",
     "openMobileNavigationAria": "Відкрити навігацію",
@@ -18,9 +18,17 @@
       "dailyWork": "Щоденна робота",
       "customersWorkspace": "Клієнти та простір"
     },
-    "homeAria": "Головна",
-    "expandSiderAria": "Розгорнути меню",
-    "collapseSiderAria": "Згорнути меню"
+    "homeAria": "Головна"
+  },
+  "appHeader": {
+    "create": "Створити",
+    "createProduct": "Створити товар",
+    "createOrder": "Створити замовлення",
+    "createClient": "Створити клієнта",
+    "createSupply": "Створити поставку",
+    "searchAria": "Пошук",
+    "searchPlaceholder": "Пошук товарів, замовлень, клієнтів...",
+    "toggleTheme": "Перемкнути тему"
   },
   "brand": "MultiSale",
   "instagram": {
@@ -466,17 +474,17 @@
       "templates": "Шаблони",
       "statuses": "Статуси замовлень",
       "automation": "Автоматизація",
-      "user": "Користувач",
-      "system": "Система",
+      "user": "Профіль",
+      "system": "Загальні",
       "integrations": "Інтеграції",
       "billing": "Білінг"
     },
+    "sections": {
+      "account": "Обліковий запис",
+      "workspace": "Робочий простір",
+      "services": "Сервіси"
+    },
     "mobile": {
-      "sections": {
-        "workspace": "Робочий простір",
-        "account": "Акаунт",
-        "preferences": "Параметри"
-      },
       "descriptions": {
         "groups": "Створюйте й керуйте групами розмов.",
         "templates": "Створюйте й редагуйте готові відповіді.",

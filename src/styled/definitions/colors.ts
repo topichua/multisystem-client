@@ -149,8 +149,10 @@ export const functional = {
   },
 
   background: {
+    appShell: base.grey[1],
     base: base.grey[1],
     elevated: base.white,
+    workspace: base.white,
     primary: brandPalette[2],
     natural: base.grey[2],
     success: base.green[2],
@@ -173,6 +175,7 @@ export const functional = {
     warning: base.yellow[8],
     error: base.red[7],
     success: base.green[7],
+    navItem: '#757677',
   },
 
   link: { hover: brandPalette[5] },

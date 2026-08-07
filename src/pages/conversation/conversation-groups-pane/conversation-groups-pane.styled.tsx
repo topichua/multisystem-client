@@ -3,13 +3,12 @@ import styled from "styled-components";
 import { dataQaAttrs } from "@/styled/data-qa-attrs";
 
 export const Aside = styled.aside.attrs(() =>
-  dataQaAttrs("layout-conversations-groups"),
+  dataQaAttrs('layout-conversations-groups'),
 )`
   display: flex;
   flex-direction: column;
   min-height: 0;
   padding: 12px;
-  background: ${(props) => props.theme.colors.functional.background.base};
   border-right: 1px solid
     ${(props) => props.theme.colors.functional.border.cardBase};
 
@@ -19,7 +18,7 @@ export const Aside = styled.aside.attrs(() =>
 `;
 
 export const CollapsedAside = styled.aside.attrs(() =>
-  dataQaAttrs("layout-conversations-groups-collapsed"),
+  dataQaAttrs('layout-conversations-groups-collapsed'),
 )`
   display: flex;
   flex-direction: column;
@@ -27,7 +26,6 @@ export const CollapsedAside = styled.aside.attrs(() =>
   gap: 12px;
   min-height: 0;
   padding: 12px;
-  background: ${(props) => props.theme.colors.functional.background.base};
   border-right: 1px solid
     ${(props) => props.theme.colors.functional.border.cardBase};
 

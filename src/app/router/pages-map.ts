@@ -84,3 +84,8 @@ export const getProductEditPath = (productId: string | number): string =>
 
 export const getClientDetailsPath = (clientId: string | number): string =>
   `${pagesMap.clients}/${clientId}`;
+
+export const CLIENTS_CREATE_QUERY = "create";
+
+export const getClientsCreatePath = (): string =>
+  `${pagesMap.clients}?${CLIENTS_CREATE_QUERY}=1`;

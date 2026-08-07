@@ -13,79 +13,53 @@ import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 
-import { settingsSectionNavItems } from "@/app/router/navigation";
+import { settingsSectionNavGroups } from "@/app/router/navigation";
 
 import * as S from "./mobile-settings-hub-page.styled";
 
-type SettingsMobileSectionKey = "workspace" | "account" | "preferences";
-type SettingsMobileItemKey = (typeof settingsSectionNavItems)[number]["key"];
-
-type SettingsMobilePresentation = {
-  section: SettingsMobileSectionKey;
-  icon: ReactNode;
-  descriptionKey: string;
-};
-
-const settingsMobileSections = [
-  {
-    key: "workspace",
-    titleKey: "settings.mobile.sections.workspace",
-  },
-  {
-    key: "account",
-    titleKey: "settings.mobile.sections.account",
-  },
-  {
-    key: "preferences",
-    titleKey: "settings.mobile.sections.preferences",
-  },
-] as const satisfies readonly {
-  key: SettingsMobileSectionKey;
-  titleKey: string;
-}[];
+type SettingsMobileItemKey =
+  (typeof settingsSectionNavGroups)[number]["items"][number]["key"];
 
 const settingsMobilePresentationByKey = {
-  "settings-groups": {
-    section: "workspace",
-    icon: <UsersThreeIcon />,
-    descriptionKey: "settings.mobile.descriptions.groups",
-  },
-  "settings-templates": {
-    section: "workspace",
-    icon: <FileTextIcon />,
-    descriptionKey: "settings.mobile.descriptions.templates",
-  },
-  "settings-statuses": {
-    section: "workspace",
-    icon: <FlowArrowIcon />,
-    descriptionKey: "settings.mobile.descriptions.statuses",
-  },
-  "settings-automation": {
-    section: "workspace",
-    icon: <LightningIcon />,
-    descriptionKey: "settings.mobile.descriptions.automation",
-  },
   "settings-user": {
-    section: "account",
     icon: <UserCircleIcon />,
     descriptionKey: "settings.mobile.descriptions.user",
   },
   "settings-system": {
-    section: "preferences",
     icon: <GearSixIcon />,
     descriptionKey: "settings.mobile.descriptions.system",
   },
+  "settings-groups": {
+    icon: <UsersThreeIcon />,
+    descriptionKey: "settings.mobile.descriptions.groups",
+  },
+  "settings-statuses": {
+    icon: <FlowArrowIcon />,
+    descriptionKey: "settings.mobile.descriptions.statuses",
+  },
+  "settings-automation": {
+    icon: <LightningIcon />,
+    descriptionKey: "settings.mobile.descriptions.automation",
+  },
+  "settings-templates": {
+    icon: <FileTextIcon />,
+    descriptionKey: "settings.mobile.descriptions.templates",
+  },
   "settings-integrations": {
-    section: "workspace",
     icon: <GlobeIcon />,
     descriptionKey: "settings.mobile.descriptions.integrations",
   },
   "settings-billing": {
-    section: "account",
     icon: <CreditCardIcon />,
     descriptionKey: "settings.mobile.descriptions.billing",
   },
-} satisfies Record<SettingsMobileItemKey, SettingsMobilePresentation>;
+} satisfies Record<
+  SettingsMobileItemKey,
+  {
+    icon: ReactNode;
+    descriptionKey: string;
+  }
+>;
 
 export const MobileSettingsHubPage = () => {
   const { t } = useTranslation();
@@ -98,52 +72,44 @@ export const MobileSettingsHubPage = () => {
       </S.Header>
 
       <S.Sections>
-        {settingsMobileSections.map((section) => {
-          const sectionItems = settingsSectionNavItems.filter(
-            (item) =>
-              settingsMobilePresentationByKey[item.key].section === section.key,
-          );
+        {settingsSectionNavGroups.map((section) => (
+          <S.Section
+            key={section.key}
+            data-qa={`settings-mobile-hub-section-${section.key}`}
+          >
+            <S.SectionTitle>{t(section.titleKey)}</S.SectionTitle>
+            <S.SectionCard>
+              {section.items.map((item) => {
+                const presentation = settingsMobilePresentationByKey[item.key];
 
-          return (
-            <S.Section
-              key={section.key}
-              data-qa={`settings-mobile-hub-section-${section.key}`}
-            >
-              <S.SectionTitle>{t(section.titleKey)}</S.SectionTitle>
-              <S.SectionCard>
-                {sectionItems.map((item) => {
-                  const presentation =
-                    settingsMobilePresentationByKey[item.key];
-
-                  return (
-                    <S.ItemButton
-                      key={item.key}
-                      type="text"
-                      block
-                      data-qa={`settings-mobile-hub-item-${item.key}`}
-                      onClick={() => navigate(item.path)}
-                    >
-                      <S.ItemContent align="center" gap={12}>
-                        <S.IconTile aria-hidden="true">
-                          {presentation.icon}
-                        </S.IconTile>
-                        <S.ItemCopy vertical gap={2}>
-                          <S.ItemTitle>{t(item.labelKey)}</S.ItemTitle>
-                          <S.ItemDescription>
-                            {t(presentation.descriptionKey)}
-                          </S.ItemDescription>
-                        </S.ItemCopy>
-                        <S.Caret aria-hidden="true">
-                          <CaretRightIcon size={18} />
-                        </S.Caret>
-                      </S.ItemContent>
-                    </S.ItemButton>
-                  );
-                })}
-              </S.SectionCard>
-            </S.Section>
-          );
-        })}
+                return (
+                  <S.ItemButton
+                    key={item.key}
+                    type="text"
+                    block
+                    data-qa={`settings-mobile-hub-item-${item.key}`}
+                    onClick={() => navigate(item.path)}
+                  >
+                    <S.ItemContent align="center" gap={12}>
+                      <S.IconTile aria-hidden="true">
+                        {presentation.icon}
+                      </S.IconTile>
+                      <S.ItemCopy vertical gap={2}>
+                        <S.ItemTitle>{t(item.labelKey)}</S.ItemTitle>
+                        <S.ItemDescription>
+                          {t(presentation.descriptionKey)}
+                        </S.ItemDescription>
+                      </S.ItemCopy>
+                      <S.Caret aria-hidden="true">
+                        <CaretRightIcon size={18} />
+                      </S.Caret>
+                    </S.ItemContent>
+                  </S.ItemButton>
+                );
+              })}
+            </S.SectionCard>
+          </S.Section>
+        ))}
       </S.Sections>
     </S.Root>
   );
