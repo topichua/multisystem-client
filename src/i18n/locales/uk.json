@@ -1671,6 +1671,7 @@
     },
     "toolbar": {
       "filters": "Фільтри",
+      "export": "Експорт",
       "category": "Категорія",
       "status": "Статус",
       "allStatuses": "Усі статуси",
@@ -1678,6 +1679,30 @@
       "statusActive": "Активний",
       "statusArchived": "Архівований",
       "searchPlaceholderMinChars": "Пошук товарів (мінімум 3 символи)…"
+    },
+    "exportModal": {
+      "title": "Експорт товарів",
+      "scopeSection": "Що експортувати",
+      "scopeAll": "Усі товари",
+      "scopeFiltered": "Відфільтровані товари",
+      "formatSection": "Формат файлу",
+      "formatXlsx": "XLSX",
+      "formatCsv": "CSV",
+      "formatRecommended": "Рекомендовано",
+      "formatXlsxHint": "Найзручніше для редагування в Excel",
+      "formatCsvHint": "Універсальний формат для будь-яких систем",
+      "contentSection": "Вміст файлу",
+      "includeAllFields": "Включити всі поля товару",
+      "contentHint": "Назва, SKU, категорія, ціна, кількість, штрихкод, вага, опис, статус, зображення, дати та всі варіанти товару — один рядок на кожен варіант.",
+      "cancel": "Скасувати",
+      "submit_one": "Експортувати {{count}} товар",
+      "submit_few": "Експортувати {{count}} товари",
+      "submit_many": "Експортувати {{count}} товарів",
+      "submit_other": "Експортувати {{count}} товарів",
+      "preparing": "Готуємо файл експорту…",
+      "readyTitle": "Файл готовий",
+      "readyFallbackName": "експорт товарів",
+      "download": "Завантажити"
     },
     "listSort": {
       "created_desc": "Спочатку нові",

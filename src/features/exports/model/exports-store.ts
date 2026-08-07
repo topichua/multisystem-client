@@ -1,23 +1,34 @@
 import { makeAutoObservable, runInAction } from "mobx";
 
-import { exportsApi } from "@/features/exports/api/exports-api";
+import {
+  exportsApi,
+  productExportsApi,
+} from "@/features/exports/api/exports-api";
 import { ordersApi } from "@/features/orders/api/orders-api";
 import { unknownErrorMessage } from "@/utils/unknown-error-message";
 
 import {
   type CreateExportResponse,
   type CreateOrderExportPayload,
+  type CreateProductExportPayload,
   type ExportJob,
   type ReadyExportFile,
   createPendingExportJob,
   isExportJobTerminal,
 } from "./export.types";
 
-const DEFAULT_POLL_INTERVAL_MS = 1500;
+const ORDERS_POLL_INTERVAL_MS = 1500;
+const PRODUCTS_POLL_INTERVAL_MS = 5000;
+
+type StatusFetcher = (exportId: string) => Promise<ExportJob>;
+type DownloadFetcher = (
+  exportId: string,
+) => Promise<{ downloadUrl: string; fileName: string | null }>;
 
 export class ExportsStore {
   jobsById = new Map<string, ExportJob>();
   createOrdersLoading = false;
+  createProductsLoading = false;
 
   private pollTimersById = new Map<string, number>();
 
@@ -51,9 +62,55 @@ export class ExportsStore {
     }
   };
 
-  /** Polls until completed/failed, then resolves a downloadable URL. */
-  awaitReadyFile = async (exportId: string): Promise<ReadyExportFile> => {
-    const job = await this.awaitTerminal(exportId);
+  createProductsExport = async (
+    payload: CreateProductExportPayload,
+  ): Promise<CreateExportResponse> => {
+    runInAction(() => {
+      this.createProductsLoading = true;
+    });
+
+    try {
+      const response = await productExportsApi.create(payload);
+
+      runInAction(() => {
+        this.jobsById.set(response.exportId, createPendingExportJob(response));
+        this.createProductsLoading = false;
+      });
+
+      return response;
+    } catch (error) {
+      runInAction(() => {
+        this.createProductsLoading = false;
+      });
+      throw error instanceof Error
+        ? error
+        : new Error(unknownErrorMessage(error));
+    }
+  };
+
+  awaitReadyFile = async (exportId: string): Promise<ReadyExportFile> =>
+    this.awaitReadyFileWith(
+      exportId,
+      exportsApi.getStatus,
+      exportsApi.getDownload,
+      ORDERS_POLL_INTERVAL_MS,
+    );
+
+  awaitProductReadyFile = async (exportId: string): Promise<ReadyExportFile> =>
+    this.awaitReadyFileWith(
+      exportId,
+      productExportsApi.getStatus,
+      productExportsApi.getDownload,
+      PRODUCTS_POLL_INTERVAL_MS,
+    );
+
+  private awaitReadyFileWith = async (
+    exportId: string,
+    fetchStatus: StatusFetcher,
+    fetchDownload: DownloadFetcher,
+    intervalMs: number,
+  ): Promise<ReadyExportFile> => {
+    const job = await this.awaitTerminal(exportId, fetchStatus, intervalMs);
 
     if (job.downloadUrl) {
       return {
@@ -63,7 +120,7 @@ export class ExportsStore {
       };
     }
 
-    const download = await exportsApi.getDownload(exportId);
+    const download = await fetchDownload(exportId);
 
     runInAction(() => {
       const current = this.jobsById.get(exportId);
@@ -83,13 +140,17 @@ export class ExportsStore {
     };
   };
 
-  private awaitTerminal = (exportId: string): Promise<ExportJob> =>
+  private awaitTerminal = (
+    exportId: string,
+    fetchStatus: StatusFetcher,
+    intervalMs: number,
+  ): Promise<ExportJob> =>
     new Promise((resolve, reject) => {
       this.stopPolling(exportId);
 
       const tick = async (): Promise<void> => {
         try {
-          const job = await exportsApi.getStatus(exportId);
+          const job = await fetchStatus(exportId);
 
           runInAction(() => {
             this.jobsById.set(exportId, job);
@@ -121,7 +182,7 @@ export class ExportsStore {
 
       const timerId = window.setInterval(() => {
         void tick();
-      }, DEFAULT_POLL_INTERVAL_MS);
+      }, intervalMs);
 
       this.pollTimersById.set(exportId, timerId);
     });

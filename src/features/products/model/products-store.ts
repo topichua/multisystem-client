@@ -1,5 +1,6 @@
 import { makeAutoObservable, runInAction } from "mobx";
 
+import type { ProductExportFilters } from "@/features/exports/model/export.types";
 import { characteristicsApi } from "@/features/characteristics/api/characteristics-api";
 import { productsApi } from "@/features/products/api/products-api";
 import type {
@@ -442,6 +443,63 @@ export class ProductsStore {
       ...(this.listCustomFieldFilters.length
         ? { customFieldFilters: this.listCustomFieldFilters }
         : {}),
+    };
+  }
+
+  get hasActiveListFilters(): boolean {
+    return (
+      Boolean(this.listKeyword) ||
+      this.listCategoryIds.length > 0 ||
+      this.listByStatus !== PRODUCTS_LIST_BY_STATUS_DEFAULT ||
+      this.listMinPrice != null ||
+      this.listMaxPrice != null ||
+      this.listQuantityFrom != null ||
+      this.listQuantityTo != null ||
+      this.listWishlistOnly ||
+      this.listShowOnlyReserved ||
+      this.listCustomFieldFilters.length > 0
+    );
+  }
+
+  /** Same filters as GET /products, without pagination — for export jobs. */
+  get listExportFilters(): ProductExportFilters {
+    const fieldFilters = this.listCustomFieldFilters.map((filter) => {
+      if (filter.mode === "all") {
+        return { fieldId: filter.fieldId, mode: "all" as const };
+      }
+      if (filter.mode === "options") {
+        return {
+          fieldId: filter.fieldId,
+          mode: "in" as const,
+          values: filter.optionIds.map(String),
+        };
+      }
+      return {
+        fieldId: filter.fieldId,
+        mode: "contains" as const,
+        values: [filter.value],
+      };
+    });
+
+    return {
+      ...(this.listKeyword ? { keyword: this.listKeyword } : {}),
+      ...(this.listByStatus !== PRODUCTS_LIST_BY_STATUS_DEFAULT
+        ? { byStatus: this.listByStatus }
+        : {}),
+      ...(this.listCategoryIds.length
+        ? { categoryIds: [...this.listCategoryIds] }
+        : {}),
+      ...(this.listMinPrice != null ? { minPrice: this.listMinPrice } : {}),
+      ...(this.listMaxPrice != null ? { maxPrice: this.listMaxPrice } : {}),
+      ...(this.listQuantityFrom != null
+        ? { quantityFrom: this.listQuantityFrom }
+        : {}),
+      ...(this.listQuantityTo != null
+        ? { quantityTo: this.listQuantityTo }
+        : {}),
+      ...(this.listWishlistOnly ? { wishlistOnly: true } : {}),
+      ...(this.listShowOnlyReserved ? { showOnlyReserved: true } : {}),
+      ...(fieldFilters.length ? { fieldFilters } : {}),
     };
   }
 

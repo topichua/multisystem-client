@@ -75,7 +75,6 @@ export const OrdersListToolbar = observer(
           >
             <Input
               allowClear
-              size="large"
               placeholder={t("orders.toolbar.searchPlaceholder")}
               aria-label={t("orders.mobile.searchAria")}
               prefix={<MagnifyingGlassIcon size={18} />}
@@ -91,7 +90,6 @@ export const OrdersListToolbar = observer(
             />
             <Badge count={filterCount > 0 ? filterCount : 0} size="small">
               <Button
-                size="large"
                 type="default"
                 icon={<FunnelSimpleIcon size={18} />}
                 aria-label={t("orders.mobile.filtersAria")}
@@ -100,7 +98,6 @@ export const OrdersListToolbar = observer(
               />
             </Badge>
             <Button
-              size="large"
               type="default"
               icon={<ExportIcon size={18} />}
               aria-label={t("orders.toolbar.export")}
@@ -124,7 +121,6 @@ export const OrdersListToolbar = observer(
           <div style={{ flex: "1 1 200px", minWidth: 0 }}>
             <Input
               allowClear
-              size="large"
               placeholder={t("orders.toolbar.searchPlaceholder")}
               prefix={<MagnifyingGlassIcon size={18} />}
               value={keywordDraft}
@@ -138,7 +134,7 @@ export const OrdersListToolbar = observer(
               style={{ width: "100%" }}
             />
           </div>
-          <Button size="large" type="default" onClick={onToggleFilters}>
+          <Button type="default" onClick={onToggleFilters}>
             <Flex align="center" gap={8}>
               <FunnelSimpleIcon size={18} />
               {t("orders.toolbar.filters")}
@@ -159,7 +155,6 @@ export const OrdersListToolbar = observer(
             </Flex>
           </Button>
           <Button
-            size="large"
             type="default"
             icon={<ExportIcon size={18} />}
             data-qa="orders-list-export"

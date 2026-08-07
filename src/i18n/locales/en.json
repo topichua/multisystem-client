@@ -1641,6 +1641,7 @@
     },
     "toolbar": {
       "filters": "Filters",
+      "export": "Export",
       "category": "Category",
       "status": "Status",
       "allStatuses": "All statuses",
@@ -1648,6 +1649,28 @@
       "statusActive": "Active",
       "statusArchived": "Archived",
       "searchPlaceholderMinChars": "Search products (min. 3 characters)…"
+    },
+    "exportModal": {
+      "title": "Export products",
+      "scopeSection": "What to export",
+      "scopeAll": "All products",
+      "scopeFiltered": "Filtered products",
+      "formatSection": "File format",
+      "formatXlsx": "XLSX",
+      "formatCsv": "CSV",
+      "formatRecommended": "Recommended",
+      "formatXlsxHint": "Best for editing in Excel",
+      "formatCsvHint": "Universal format for any system",
+      "contentSection": "File contents",
+      "includeAllFields": "Include all product fields",
+      "contentHint": "Name, SKU, category, price, quantity, barcode, weight, description, status, images, dates, and all product variants — one row per variant.",
+      "cancel": "Cancel",
+      "submit_one": "Export {{count}} product",
+      "submit_other": "Export {{count}} products",
+      "preparing": "Preparing export file…",
+      "readyTitle": "File ready",
+      "readyFallbackName": "products export",
+      "download": "Download"
     },
     "listSort": {
       "created_desc": "Newest",

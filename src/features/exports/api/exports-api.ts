@@ -3,6 +3,7 @@ import { asRecord, getNumber, getString } from "@/api/record-parsing";
 
 import {
   type CreateExportResponse,
+  type CreateProductExportPayload,
   type ExportDownload,
   type ExportJob,
   type ExportJobStatus,
@@ -76,6 +77,34 @@ export const exportsApi = {
   getDownload: async (exportId: string): Promise<ExportDownload> => {
     const { data } = await apiClient.get<unknown>(
       `${basePath}/${exportId}/download`,
+    );
+    return normalizeExportDownload(data);
+  },
+};
+
+const productsExportsPath = "/products/exports";
+
+export const productExportsApi = {
+  create: async (
+    payload: CreateProductExportPayload,
+  ): Promise<CreateExportResponse> => {
+    const { data } = await apiClient.post<unknown>(
+      productsExportsPath,
+      payload,
+    );
+    return normalizeCreateExportResponse(data);
+  },
+
+  getStatus: async (exportId: string): Promise<ExportJob> => {
+    const { data } = await apiClient.get<unknown>(
+      `${productsExportsPath}/${exportId}`,
+    );
+    return normalizeExportJob(data);
+  },
+
+  getDownload: async (exportId: string): Promise<ExportDownload> => {
+    const { data } = await apiClient.get<unknown>(
+      `${productsExportsPath}/${exportId}/download`,
     );
     return normalizeExportDownload(data);
   },

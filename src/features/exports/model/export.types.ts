@@ -30,6 +30,36 @@ export type CreateOrderExportPayload = {
   filters?: OrderExportFilters;
 };
 
+export type ProductExportScope = "all" | "filtered";
+
+export type ProductExportFormat = "xlsx" | "csv";
+
+export type ProductExportFieldFilter = {
+  fieldId: number;
+  mode: "all" | "in" | "contains";
+  values?: string[];
+};
+
+export type ProductExportFilters = {
+  keyword?: string;
+  byStatus?: string;
+  categoryIds?: number[];
+  minPrice?: number;
+  maxPrice?: number;
+  quantityFrom?: number;
+  quantityTo?: number;
+  wishlistOnly?: boolean;
+  showOnlyReserved?: boolean;
+  fieldFilters?: ProductExportFieldFilter[];
+};
+
+export type CreateProductExportPayload = {
+  scope: ProductExportScope;
+  format: ProductExportFormat;
+  filters?: ProductExportFilters;
+  sort?: string;
+};
+
 export type CreateExportResponse = {
   exportId: string;
   status: ExportJobStatus;

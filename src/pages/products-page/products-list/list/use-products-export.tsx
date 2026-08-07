@@ -6,33 +6,34 @@ import { useTranslation } from "react-i18next";
 import type { ReadyExportFile } from "@/features/exports/model/export.types";
 import { useExportsStore } from "@/features/exports/model/use-exports-store";
 import { openExportDownload } from "@/features/exports/utils/open-export-download";
-import { useOrdersStore } from "@/features/orders/model/use-orders-store";
+import { useProductsStore } from "@/features/products/model/use-products-store";
 import { unknownErrorMessage } from "@/utils/unknown-error-message";
 
-import type { OrdersExportFormValues } from "./orders-export-modal";
+import type { ProductsExportFormValues } from "./products-export-modal";
 
-export type OrdersExportController = {
+export type ProductsExportController = {
   open: boolean;
   openModal: () => void;
   closeModal: () => void;
   submitting: boolean;
-  submit: (values: OrdersExportFormValues) => Promise<void>;
+  submit: (values: ProductsExportFormValues) => Promise<void>;
 };
 
-export function useOrdersExport(): OrdersExportController {
+export function useProductsExport(): ProductsExportController {
   const { t } = useTranslation();
   const { message, notification } = App.useApp();
-  const ordersStore = useOrdersStore();
+  const productsStore = useProductsStore();
   const exportsStore = useExportsStore();
   const [open, setOpen] = useState(false);
 
   const showReadyNotification = (file: ReadyExportFile): void => {
-    const key = `orders-export-ready-${file.exportId}`;
-    const fileName = file.fileName ?? t("orders.exportModal.readyFallbackName");
+    const key = `products-export-ready-${file.exportId}`;
+    const fileName =
+      file.fileName ?? t("products.exportModal.readyFallbackName");
 
     notification.success({
       key,
-      title: t("orders.exportModal.readyTitle"),
+      title: t("products.exportModal.readyTitle"),
       description: fileName,
       duration: 0,
       closable: false,
@@ -41,35 +42,42 @@ export function useOrdersExport(): OrdersExportController {
           type="primary"
           size="small"
           icon={<DownloadSimpleIcon size={14} />}
-          data-qa="orders-export-download"
+          data-qa="products-export-download"
           onClick={() => {
             openExportDownload(file.downloadUrl, file.fileName);
             notification.destroy(key);
           }}
         >
-          {t("orders.exportModal.download")}
+          {t("products.exportModal.download")}
         </Button>
       ),
     });
   };
 
-  const submit = async (values: OrdersExportFormValues): Promise<void> => {
+  const submit = async (values: ProductsExportFormValues): Promise<void> => {
     const filters =
-      values.scope === "filtered" ? ordersStore.listExportFilters : undefined;
+      values.scope === "filtered" ? productsStore.listExportFilters : undefined;
 
     let hidePreparing: (() => void) | null = null;
 
     try {
-      const created = await exportsStore.createOrdersExport({
-        type: values.includeLineDetails ? "order_items" : "orders",
+      const created = await exportsStore.createProductsExport({
+        scope: values.scope,
         format: values.format,
-        ...(filters && Object.keys(filters).length > 0 ? { filters } : {}),
+        ...(values.scope === "filtered"
+          ? {
+              ...(filters && Object.keys(filters).length > 0
+                ? { filters }
+                : {}),
+              sort: productsStore.listSort,
+            }
+          : {}),
       });
 
       setOpen(false);
-      hidePreparing = message.loading(t("orders.exportModal.preparing"), 0);
+      hidePreparing = message.loading(t("products.exportModal.preparing"), 0);
 
-      const file = await exportsStore.awaitReadyFile(created.exportId);
+      const file = await exportsStore.awaitProductReadyFile(created.exportId);
 
       hidePreparing();
       hidePreparing = null;
@@ -84,7 +92,7 @@ export function useOrdersExport(): OrdersExportController {
     open,
     openModal: () => setOpen(true),
     closeModal: () => setOpen(false),
-    submitting: exportsStore.createOrdersLoading,
+    submitting: exportsStore.createProductsLoading,
     submit,
   };
 }
