@@ -2252,7 +2252,33 @@
     },
     "toolbar": {
       "filters": "Фільтри",
+      "export": "Експорт",
       "searchPlaceholder": "Пошук замовлень (мін. 3 символи)…"
+    },
+    "exportModal": {
+      "title": "Експорт замовлень",
+      "description": "Файл готується у фоні. Коли буде готовий — з’явиться повідомлення із кнопкою завантаження.",
+      "scopeSection": "Що експортувати",
+      "scopeAll": "Усі замовлення",
+      "scopeFiltered": "Відфільтровані",
+      "formatSection": "Формат",
+      "formatXlsx": "XLSX",
+      "formatCsv": "CSV",
+      "formatRecommended": "Рекомендовано",
+      "formatXlsxHint": "Найкраще для редагування в Excel",
+      "formatCsvHint": "Для імпорту в інші системи",
+      "contentSection": "Вміст файлу",
+      "includeLineDetails": "Включити товари, оплату й доставку",
+      "contentHint": "Номер, клієнт і телефон, статус, оплата, ТТН, менеджер, сума та дата. З увімкненою опцією — один рядок на позицію замовлення.",
+      "cancel": "Скасувати",
+      "submit_one": "Експортувати {{count}} замовлення",
+      "submit_few": "Експортувати {{count}} замовлення",
+      "submit_many": "Експортувати {{count}} замовлень",
+      "submit_other": "Експортувати {{count}} замовлень",
+      "preparing": "Готуємо файл експорту…",
+      "readyTitle": "Файл готовий",
+      "readyFallbackName": "експорт замовлень",
+      "download": "Завантажити"
     },
     "listFilters": {
       "activeTitle": "Активні фільтри:",

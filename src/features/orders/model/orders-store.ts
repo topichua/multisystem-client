@@ -28,6 +28,7 @@ import type {
   OrderRefundCreatePayload,
   OrderUpdatePayload,
 } from "@/features/orders/model/order.types";
+import type { OrderExportFilters } from "@/features/exports/model/export.types";
 import { buildOrderCreatePayload } from "@/features/orders/utils/build-order-create-payload";
 import { buildStandaloneOrderCreatePayload } from "@/features/orders/utils/build-standalone-order-create-payload";
 import { productsApi } from "@/features/products/api/products-api";
@@ -315,6 +316,27 @@ export class OrdersStore {
     return {
       page: this.page,
       pageSize: this.pageSize,
+      ...(this.listKeyword ? { keyword: this.listKeyword } : {}),
+      ...(this.listStatusIds.length ? { statuses: this.listStatusIds } : {}),
+      ...(this.listSources.length ? { sources: [...this.listSources] } : {}),
+      ...(this.listTotalPriceFrom != null
+        ? { totalPriceFrom: this.listTotalPriceFrom }
+        : {}),
+      ...(this.listTotalPriceTo != null
+        ? { totalPriceTo: this.listTotalPriceTo }
+        : {}),
+      ...(this.listCreatedFrom
+        ? { createdFrom: toApiIsoDateStart(this.listCreatedFrom) }
+        : {}),
+      ...(this.listCreatedTo
+        ? { createdTo: toApiIsoDateEnd(this.listCreatedTo) }
+        : {}),
+    };
+  }
+
+  /** Same filters as GET /orders, without pagination — for export jobs. */
+  get listExportFilters(): OrderExportFilters {
+    return {
       ...(this.listKeyword ? { keyword: this.listKeyword } : {}),
       ...(this.listStatusIds.length ? { statuses: this.listStatusIds } : {}),
       ...(this.listSources.length ? { sources: [...this.listSources] } : {}),

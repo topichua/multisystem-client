@@ -1,5 +1,10 @@
 import { apiClient } from "@/api/api-client";
 
+import { normalizeCreateExportResponse } from "@/features/exports/api/exports-api";
+import type {
+  CreateExportResponse,
+  CreateOrderExportPayload,
+} from "@/features/exports/model/export.types";
 import {
   ORDER_STATUS_CATEGORIES,
   type ClientLastOrder,
@@ -220,6 +225,16 @@ export const ordersApi = {
     });
 
     return normalizeOrdersList(data);
+  },
+
+  createExport: async (
+    payload: CreateOrderExportPayload,
+  ): Promise<CreateExportResponse> => {
+    const { data } = await apiClient.post<unknown>(
+      `${basePath}/export`,
+      payload,
+    );
+    return normalizeCreateExportResponse(data);
   },
 
   getById: async (orderId: number): Promise<OrderDetails> => {

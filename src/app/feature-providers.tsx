@@ -9,6 +9,7 @@ import { CharacteristicsProvider } from "@/features/characteristics/model/charac
 import { ClientsProvider } from "@/features/clients/model/clients-provider";
 import { ConversationGroupsProvider } from "@/features/conversation-groups/model/conversation-groups-provider";
 import { ConversationsProvider } from "@/features/conversations/model/conversations-provider";
+import { ExportsProvider } from "@/features/exports/model/exports-provider";
 import { InstagramProvider } from "@/features/instagram/model/instagram-provider";
 import { InventoryProvider } from "@/features/inventory/model/inventory-provider";
 import { MessageTemplatesProvider } from "@/features/message-templates/model/message-templates-provider";
@@ -35,6 +36,7 @@ const featureProviders: ProviderComponent[] = [
   InventoryProvider,
   InstagramProvider,
   OrdersProvider,
+  ExportsProvider,
   ConversationGroupsProvider,
   MessageTemplatesProvider,
   AutomationProvider,

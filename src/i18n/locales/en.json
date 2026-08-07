@@ -2210,7 +2210,31 @@
     },
     "toolbar": {
       "filters": "Filters",
+      "export": "Export",
       "searchPlaceholder": "Search orders (min. 3 characters)…"
+    },
+    "exportModal": {
+      "title": "Export orders",
+      "description": "The file is prepared in the background. When ready, a notification with a download button will appear.",
+      "scopeSection": "What to export",
+      "scopeAll": "All orders",
+      "scopeFiltered": "Filtered",
+      "formatSection": "Format",
+      "formatXlsx": "XLSX",
+      "formatCsv": "CSV",
+      "formatRecommended": "Recommended",
+      "formatXlsxHint": "Best for editing in Excel",
+      "formatCsvHint": "For importing into other systems",
+      "contentSection": "File contents",
+      "includeLineDetails": "Include products, payment, and delivery",
+      "contentHint": "Number, client and phone, status, payment, tracking number, manager, amount, and date. With the option enabled — one row per order line.",
+      "cancel": "Cancel",
+      "submit_one": "Export {{count}} order",
+      "submit_other": "Export {{count}} orders",
+      "preparing": "Preparing export file…",
+      "readyTitle": "File ready",
+      "readyFallbackName": "orders export",
+      "download": "Download"
     },
     "listFilters": {
       "activeTitle": "Active filters:",
