@@ -2752,6 +2752,7 @@
     "saveChanges": "Зберегти зміни",
     "deleteConfirm": "Видалити цю категорію?",
     "deleteWarning": "Цю дію не скасувати.",
+    "deleteCascadeWarning": "Усі підкатегорії також будуть видалені. Товари з них стануть без категорії.",
     "delete": "Видалити",
     "emptyState": "Поки немає категорій",
     "noLinkedProducts": "Немає пов'язаних товарів",
@@ -2773,9 +2774,7 @@
     "deleteTransferDescription": "Цю категорію використано у {{productCount}} товарах і {{productVariantCount}} варіантах. Оберіть, куди перенести їх перед видаленням.",
     "deleteTransferNoCategory": "Залишити товари без категорії",
     "deleteTransferEmpty": "Немає доступних категорій",
-    "deleteCategory": "Видалити категорію",
-    "deleteBlockedHasChildrenTitle": "Неможливо видалити категорію",
-    "deleteBlockedHasChildren": "Спочатку видаліть усі підкатегорії, а потім цю категорію."
+    "deleteCategory": "Видалити категорію"
   },
   "characteristics": {
     "title": "Поля",

@@ -156,7 +156,11 @@ export const CategoryTreeTitle = ({
         />
         <Popconfirm
           title={t("categories.deleteConfirm")}
-          description={t("categories.deleteWarning")}
+          description={
+            category.children.length > 0
+              ? t("categories.deleteCascadeWarning")
+              : t("categories.deleteWarning")
+          }
           okText={t("categories.delete")}
           cancelText={t("categories.cancel")}
           okButtonProps={{ danger: true }}

@@ -13,7 +13,6 @@ import type { ProductAddFormValues } from "../form/product-form.types";
 import {
   normalizeCreateProductPayload,
   normalizeUpdateProductPayload,
-  PRODUCT_CATEGORY_REQUIRED_ERROR,
 } from "../form/payload/normalize-create-product-payload";
 import type {
   ProductVariantUi,
@@ -62,12 +61,8 @@ export function useProductFormSubmitController({
   const [isSavingProduct, setIsSavingProduct] = useState(false);
 
   const getProductSubmitErrorMessage = useCallback(
-    (error: unknown, fallback: string) =>
-      error instanceof Error &&
-      error.message === PRODUCT_CATEGORY_REQUIRED_ERROR
-        ? t("products.categoryRequired")
-        : getApiErrorMessage(error, fallback),
-    [t],
+    (error: unknown, fallback: string) => getApiErrorMessage(error, fallback),
+    [],
   );
 
   const submitCreateProduct = useCallback(

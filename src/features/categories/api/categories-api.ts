@@ -14,9 +14,17 @@ import {
 
 const basePath = "/categories";
 
+export type CategoriesListParams = {
+  withCounters?: boolean;
+};
+
 export const categoriesApi = {
-  list: async (): Promise<Category[]> => {
-    const { data } = await apiClient.get<CategoryApiResponse[]>(basePath);
+  list: async (params?: CategoriesListParams): Promise<Category[]> => {
+    const { data } = await apiClient.get<CategoryApiResponse[]>(basePath, {
+      params: {
+        withCounters: params?.withCounters ?? true,
+      },
+    });
 
     return normalizeCategories(data);
   },

@@ -93,19 +93,11 @@ export const ProductMainInfoSection = ({
           </Col>
 
           <Col span={isMobile ? 24 : 12}>
-            <Form.Item
-              name="categoryId"
-              label={labels.category}
-              rules={[
-                {
-                  required: true,
-                  message: requiredMessage,
-                },
-              ]}
-            >
+            <Form.Item name="categoryId" label={labels.category}>
               <CategoryTreeSelect
                 categories={categories}
                 allowClear
+                includeUncategorized
                 placeholder={t("products.form.categoryPlaceholder")}
               />
             </Form.Item>

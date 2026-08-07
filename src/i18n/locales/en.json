@@ -2698,6 +2698,7 @@
     "saveChanges": "Save changes",
     "deleteConfirm": "Delete this category?",
     "deleteWarning": "This action cannot be undone.",
+    "deleteCascadeWarning": "All subcategories will also be deleted. Products from them will become uncategorized.",
     "delete": "Delete",
     "emptyState": "No categories yet",
     "noLinkedProducts": "No linked products",
@@ -2719,9 +2720,7 @@
     "deleteTransferDescription": "This category is used in {{productCount}} products and {{productVariantCount}} variants. Choose where to move them before deleting.",
     "deleteTransferNoCategory": "Leave products without a category",
     "deleteTransferEmpty": "No available categories",
-    "deleteCategory": "Delete category",
-    "deleteBlockedHasChildrenTitle": "Category cannot be deleted",
-    "deleteBlockedHasChildren": "Remove all subcategories before deleting this category."
+    "deleteCategory": "Delete category"
   },
   "characteristics": {
     "title": "Fields",

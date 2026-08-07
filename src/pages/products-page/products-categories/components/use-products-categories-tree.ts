@@ -7,7 +7,6 @@ import { getApiErrorMessage } from "@/api/get-api-error-message";
 import { isUncategorizedCategory } from "@/features/categories/model/category.constants";
 import type { Category } from "@/features/categories/model/category.types";
 import { useCategoriesStore } from "@/features/categories/model/use-categories-store";
-import { isCategoryDeleteHasChildrenError } from "@/features/categories/utils/category-delete-error";
 import { useNotification } from "@/shared/components/notification/use-notification";
 
 import {
@@ -232,14 +231,6 @@ export const useProductsCategoriesTree = ({
 
         return true;
       } catch (error) {
-        if (isCategoryDeleteHasChildrenError(error)) {
-          notification.error({
-            title: t("categories.deleteBlockedHasChildrenTitle"),
-            description: t("categories.deleteBlockedHasChildren"),
-          });
-          return false;
-        }
-
         notification.error({
           title: getApiErrorMessage(error, t("categories.deleteFailed")),
         });

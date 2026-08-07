@@ -1,3 +1,4 @@
+import { UNCATEGORIZED_CATEGORY_ID } from "@/features/categories/model/category.constants";
 import type {
   ProductDetails,
   ProductMediaItem,
@@ -272,7 +273,7 @@ export function productDetailToProductForm(
       price: Number(product.price ?? 0),
       quantity: singleProductQuantity,
       sku: productType === "single" ? (product.variants[0]?.sku ?? "") : "",
-      categoryId: product.categoryId ?? undefined,
+      categoryId: product.categoryId ?? UNCATEGORIZED_CATEGORY_ID,
       weightGrams: product.weightGrams ?? undefined,
       lengthCm: product.lengthCm ?? undefined,
       widthCm: product.widthCm ?? undefined,

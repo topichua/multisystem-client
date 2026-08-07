@@ -1,3 +1,4 @@
+import { UNCATEGORIZED_CATEGORY_ID } from "@/features/categories/model/category.constants";
 import type {
   ProductCharacteristicFormRow,
   SingleProductCharacteristicFormRow,
@@ -39,7 +40,7 @@ export const defaultCreateValues: ProductCreateFormValues = {
   price: 0,
   quantity: 0,
   sku: "",
-  categoryId: undefined,
+  categoryId: UNCATEGORIZED_CATEGORY_ID,
   weightGrams: undefined,
   lengthCm: undefined,
   widthCm: undefined,

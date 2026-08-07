@@ -12,6 +12,7 @@ import {
   InventoryMode,
   type InventoryMode as WorkspaceInventoryMode,
 } from "@/features/workspace-settings/model/workspace-settings.types";
+import { UNCATEGORIZED_CATEGORY_ID } from "@/features/categories/model/category.constants";
 import {
   PRODUCT_DEFAULT_CURRENCY,
   PRODUCT_DEFAULT_IN_STOCK,
@@ -38,7 +39,11 @@ export type NormalizeCreateProductPayloadInput = {
 export type NormalizeUpdateProductPayloadInput =
   NormalizeCreateProductPayloadInput;
 
-export const PRODUCT_CATEGORY_REQUIRED_ERROR = "PRODUCT_CATEGORY_REQUIRED";
+function normalizeProductCategoryId(
+  categoryId: ProductCreateFormValues["categoryId"],
+): number {
+  return categoryId == null ? UNCATEGORIZED_CATEGORY_ID : categoryId;
+}
 
 function normalizeLifecycleStatus(
   status: unknown,
@@ -373,10 +378,7 @@ export function normalizeCreateProductPayload({
   variants,
   inventoryMode,
 }: NormalizeCreateProductPayloadInput): CreateProductPayload {
-  const categoryId = formValues.categoryId;
-  if (categoryId == null) {
-    throw new Error(PRODUCT_CATEGORY_REQUIRED_ERROR);
-  }
+  const categoryId = normalizeProductCategoryId(formValues.categoryId);
 
   const productStatus = normalizeLifecycleStatus(formValues.status, "active");
   const description = formValues.description.trim() ?? "";
@@ -427,10 +429,7 @@ export function normalizeUpdateProductPayload({
   variants,
   inventoryMode,
 }: NormalizeUpdateProductPayloadInput): UpdateProductPayload {
-  const categoryId = formValues.categoryId;
-  if (categoryId == null) {
-    throw new Error(PRODUCT_CATEGORY_REQUIRED_ERROR);
-  }
+  const categoryId = normalizeProductCategoryId(formValues.categoryId);
 
   const productStatus = normalizeLifecycleStatus(formValues.status);
   const description = formValues.description.trim() ?? "";

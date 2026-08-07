@@ -102,6 +102,12 @@ export const DeleteCategoryWithProductsModal = ({
         })}
       </Typography.Paragraph>
 
+      {category != null && category.children.length > 0 ? (
+        <Typography.Paragraph type="warning">
+          {t("categories.deleteCascadeWarning")}
+        </Typography.Paragraph>
+      ) : null}
+
       <CategoryTargetPicker
         categories={availableCategories}
         disabled={loading}
