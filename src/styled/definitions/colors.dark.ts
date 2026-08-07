@@ -68,6 +68,7 @@ export const functional = {
     warning: light.base.yellow[4],
     error: light.base.red[5],
     success: light.base.green[5],
+    navItem: grey[6],
   },
 
   link: { hover: light.brandPalette[4] },

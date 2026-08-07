@@ -21,9 +21,7 @@ export const Wrapper = styled.aside.attrs(() =>
   }
 `;
 
-export const Nav = styled.nav.attrs(() =>
-  dataQaAttrs("layout-app-sider-nav"),
-)`
+export const Nav = styled.nav.attrs(() => dataQaAttrs("layout-app-sider-nav"))`
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -64,7 +62,7 @@ export const NavItem = styled.button`
     outline-offset: 2px;
   }
 
-  &[aria-current='page'] {
+  &[aria-current="page"] {
     color: ${({ theme }) => theme.colors.semantic.primary};
   }
 `;

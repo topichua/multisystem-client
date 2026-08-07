@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { dataQaAttrs } from "@/styled/data-qa-attrs";
 
 export const Aside = styled.aside.attrs(() =>
-  dataQaAttrs('layout-conversations-groups'),
+  dataQaAttrs("layout-conversations-groups"),
 )`
   display: flex;
   flex-direction: column;
@@ -18,7 +18,7 @@ export const Aside = styled.aside.attrs(() =>
 `;
 
 export const CollapsedAside = styled.aside.attrs(() =>
-  dataQaAttrs('layout-conversations-groups-collapsed'),
+  dataQaAttrs("layout-conversations-groups-collapsed"),
 )`
   display: flex;
   flex-direction: column;

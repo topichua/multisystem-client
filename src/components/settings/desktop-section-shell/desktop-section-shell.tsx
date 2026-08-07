@@ -1,18 +1,18 @@
-import type { MenuProps } from 'antd';
-import type { ReactNode } from 'react';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Outlet, useLocation, useNavigate } from 'react-router';
+import type { MenuProps } from "antd";
+import type { ReactNode } from "react";
+import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { Outlet, useLocation, useNavigate } from "react-router";
 
 import {
   getSelectedSectionNavPath,
   type SectionNavGroup,
   type SectionNavItem,
-} from '@/app/router/navigation';
-import { useIsMobileViewport } from '@/utils/use-media-query';
+} from "@/app/router/navigation";
+import { useIsMobileViewport } from "@/utils/use-media-query";
 
-import { SettingsShell } from '../settings-shell/settings-shell';
-import * as S from './desktop-section-shell.styled';
+import { SettingsShell } from "../settings-shell/settings-shell";
+import * as S from "./desktop-section-shell.styled";
 
 type DesktopSectionShellProps = {
   navDataQa: string;
@@ -47,10 +47,10 @@ export const DesktopSectionShell = ({
     [groups, items],
   );
 
-  const menuItems: MenuProps['items'] = useMemo(() => {
+  const menuItems: MenuProps["items"] = useMemo(() => {
     if (groups) {
       return groups.map((group) => ({
-        type: 'group' as const,
+        type: "group" as const,
         key: group.key,
         label: <S.GroupLabel>{t(group.titleKey)}</S.GroupLabel>,
         children: group.items.map((item) => ({

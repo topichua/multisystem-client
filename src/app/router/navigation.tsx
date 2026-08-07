@@ -298,60 +298,60 @@ export const analyticsSectionNavItems = [
 
 export const settingsSectionNavGroups = [
   {
-    key: 'account',
-    titleKey: 'settings.sections.account',
+    key: "account",
+    titleKey: "settings.sections.account",
     items: [
       {
-        key: 'settings-user',
+        key: "settings-user",
         path: pagesMap.settingsUser,
-        labelKey: 'settings.menu.user',
+        labelKey: "settings.menu.user",
       },
     ],
   },
   {
-    key: 'workspace',
-    titleKey: 'settings.sections.workspace',
+    key: "workspace",
+    titleKey: "settings.sections.workspace",
     items: [
       {
-        key: 'settings-system',
+        key: "settings-system",
         path: pagesMap.settingsSystem,
-        labelKey: 'settings.menu.system',
+        labelKey: "settings.menu.system",
       },
       {
-        key: 'settings-groups',
+        key: "settings-groups",
         path: pagesMap.settingsGroups,
-        labelKey: 'settings.menu.groups',
+        labelKey: "settings.menu.groups",
       },
       {
-        key: 'settings-statuses',
+        key: "settings-statuses",
         path: pagesMap.settingsOrderStatuses,
-        labelKey: 'settings.menu.statuses',
+        labelKey: "settings.menu.statuses",
       },
       {
-        key: 'settings-automation',
+        key: "settings-automation",
         path: pagesMap.settingsAutomation,
-        labelKey: 'settings.menu.automation',
+        labelKey: "settings.menu.automation",
       },
       {
-        key: 'settings-templates',
+        key: "settings-templates",
         path: pagesMap.settingsTemplates,
-        labelKey: 'settings.menu.templates',
+        labelKey: "settings.menu.templates",
       },
     ],
   },
   {
-    key: 'services',
-    titleKey: 'settings.sections.services',
+    key: "services",
+    titleKey: "settings.sections.services",
     items: [
       {
-        key: 'settings-integrations',
+        key: "settings-integrations",
         path: pagesMap.settingsIntegrations,
-        labelKey: 'settings.menu.integrations',
+        labelKey: "settings.menu.integrations",
       },
       {
-        key: 'settings-billing',
+        key: "settings-billing",
         path: pagesMap.settingsBilling,
-        labelKey: 'settings.menu.billing',
+        labelKey: "settings.menu.billing",
       },
     ],
   },

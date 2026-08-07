@@ -59,17 +59,25 @@ export function useClientsListController() {
     setModalOpen(true);
   }, [form]);
 
+  const createFromQuery = searchParams.get(CLIENTS_CREATE_QUERY) === "1";
+
+  // Open create modal from a one-shot URL signal during render so we don't
+  // call setState synchronously inside an effect (cascading renders).
+  if (createFromQuery && (!modalOpen || editingClient !== null)) {
+    setEditingClient(null);
+    form.setFieldsValue(emptyClientFormValues);
+    setModalOpen(true);
+  }
+
   useEffect(() => {
-    if (searchParams.get(CLIENTS_CREATE_QUERY) !== "1") {
+    if (!createFromQuery) {
       return;
     }
-
-    openCreate();
 
     const nextParams = new URLSearchParams(searchParams);
     nextParams.delete(CLIENTS_CREATE_QUERY);
     setSearchParams(nextParams, { replace: true });
-  }, [openCreate, searchParams, setSearchParams]);
+  }, [createFromQuery, searchParams, setSearchParams]);
 
   const openEdit = useCallback(
     (client: Client) => {

@@ -118,6 +118,7 @@ export const DesktopAppHeader = observer(() => {
           prefix={<MagnifyingGlassIcon size={16} />}
           aria-label={t("appHeader.searchAria")}
           placeholder={t("appHeader.searchPlaceholder")}
+          disabled
         />
       </S.SearchField>
 

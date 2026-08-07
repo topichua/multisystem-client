@@ -175,7 +175,7 @@ export const functional = {
     warning: base.yellow[8],
     error: base.red[7],
     success: base.green[7],
-    navItem: '#757677',
+    navItem: "#757677",
   },
 
   link: { hover: brandPalette[5] },
