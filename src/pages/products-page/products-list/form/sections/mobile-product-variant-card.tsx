@@ -76,8 +76,9 @@ const FieldLabel = styled(Text)`
   }
 `;
 
-const MobileVariantCard = styled(Card)`
+const MobileVariantCard = styled(Card)<{ $archived?: boolean }>`
   ${productVariantCardHighlightCss}
+  opacity: ${({ $archived }) => ($archived ? 0.5 : 1)};
 `;
 
 function getCustomFieldStableKey(
@@ -156,6 +157,7 @@ export function MobileProductVariantCard({
   return (
     <MobileVariantCard
       size="small"
+      $archived={isArchived}
       data-qa={`products-mobile-variant-${variantQaId}`}
       className={
         highlighted ? PRODUCT_VARIANT_SCROLL_HIGHLIGHT_CLASS : undefined

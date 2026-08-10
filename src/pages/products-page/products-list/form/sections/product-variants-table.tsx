@@ -1,9 +1,11 @@
 import { PlusIcon } from "@phosphor-icons/react";
-import { Button, Flex, Table } from "antd";
+import { Button, Flex, Table, Tooltip } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import type { HTMLAttributes } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
+
+import { isArchivedStatus } from "@/features/products/utils/product-display";
 
 import type { ProductVariantUi } from "../variants/product-add-variant.types";
 import { productVariantTableRowHighlightCss } from "../variants/product-variant-highlight.styles";
@@ -13,6 +15,8 @@ import {
 } from "../variants/scroll-to-product-variant";
 import { EmptyVariantsState } from "./empty-variants-state";
 import { VariantsBulkPriceBar } from "./variants-bulk-price-bar";
+
+const VARIANT_ROW_ARCHIVED_CLASS = "variant-row-archived";
 
 const VariantsTableValidationScope = styled.div`
   .ant-table-cell .ant-form-item {
@@ -31,8 +35,29 @@ const VariantsTableValidationScope = styled.div`
     overflow: visible;
   }
 
+  .ant-table-tbody > tr.${VARIANT_ROW_ARCHIVED_CLASS} {
+    opacity: 0.5;
+  }
+
   ${productVariantTableRowHighlightCss}
 `;
+
+function VariantTableRow({
+  archivedTooltip,
+  ...props
+}: HTMLAttributes<HTMLTableRowElement> & {
+  archivedTooltip?: string;
+}) {
+  if (!archivedTooltip) {
+    return <tr {...props} />;
+  }
+
+  return (
+    <Tooltip title={archivedTooltip}>
+      <tr {...props} />
+    </Tooltip>
+  );
+}
 
 type ProductVariantsTableProps = {
   productVariants: ProductVariantUi[];
@@ -56,6 +81,7 @@ export function ProductVariantsTable({
   highlightedVariantId = null,
 }: ProductVariantsTableProps) {
   const { t } = useTranslation();
+  const archivedTooltip = t("products.inventoryDrawer.archivedVariantTooltip");
 
   return (
     <Flex vertical gap={12}>
@@ -79,11 +105,40 @@ export function ProductVariantsTable({
               scroll={{ x: "max-content" }}
               size="small"
               columns={variantTableColumns}
-              rowClassName={(variant) =>
-                variant.id != null && variant.id === highlightedVariantId
-                  ? PRODUCT_VARIANT_SCROLL_HIGHLIGHT_CLASS
-                  : ""
-              }
+              components={{
+                body: {
+                  row: (
+                    props: HTMLAttributes<HTMLTableRowElement> & {
+                      "data-row-key"?: string;
+                    },
+                  ) => (
+                    <VariantTableRow
+                      {...props}
+                      archivedTooltip={
+                        props.className?.includes(VARIANT_ROW_ARCHIVED_CLASS)
+                          ? archivedTooltip
+                          : undefined
+                      }
+                    />
+                  ),
+                },
+              }}
+              rowClassName={(variant) => {
+                const classes: string[] = [];
+
+                if (
+                  variant.id != null &&
+                  variant.id === highlightedVariantId
+                ) {
+                  classes.push(PRODUCT_VARIANT_SCROLL_HIGHLIGHT_CLASS);
+                }
+
+                if (isArchivedStatus(variant.status)) {
+                  classes.push(VARIANT_ROW_ARCHIVED_CLASS);
+                }
+
+                return classes.join(" ");
+              }}
               onRow={(variant) => {
                 if (variant.id == null) {
                   return {};
