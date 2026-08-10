@@ -5,6 +5,7 @@ import { useNavigate } from "react-router";
 
 import { analyticsSectionNavItems } from "@/app/router/navigation";
 
+import { AnalyticsProBadge } from "../components/analytics-pro-badge.styled";
 import * as S from "./mobile-analytics-hub-page.styled";
 
 export const MobileAnalyticsHubPage = () => {
@@ -32,7 +33,9 @@ export const MobileAnalyticsHubPage = () => {
               </S.ItemCopy>
               <Flex align="center" gap={8}>
                 {"pro" in item && item.pro && (
-                  <S.ProBadge>{t("analytics.menu.proBadge")}</S.ProBadge>
+                  <AnalyticsProBadge>
+                    {t("analytics.menu.proBadge")}
+                  </AnalyticsProBadge>
                 )}
                 <S.Caret aria-hidden="true">
                   <CaretRightIcon size={18} />

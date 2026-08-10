@@ -1,7 +1,8 @@
 export type AnalyticsKpiMetric = {
   value: number;
-  changePercent: number;
+  changePercent: number | null;
   currency?: string;
+  scope?: string;
 };
 
 export type AnalyticsKpi = {
@@ -9,6 +10,94 @@ export type AnalyticsKpi = {
   orders: AnalyticsKpiMetric;
   averageOrderValue: AnalyticsKpiMetric;
   newClients: AnalyticsKpiMetric;
+};
+
+export type AnalyticsClientsKpi = {
+  activeClients: AnalyticsKpiMetric;
+  newClients: AnalyticsKpiMetric;
+  repeatPurchaseRate: AnalyticsKpiMetric;
+  averageCustomerValue: AnalyticsKpiMetric;
+  ordersPerClient: AnalyticsKpiMetric;
+  timeToRepurchaseDays: AnalyticsKpiMetric;
+};
+
+export type AnalyticsClientsNewVsRepeatSegment = {
+  key: string;
+  clients: number;
+  revenue: number;
+  revenuePercent: number;
+};
+
+export type AnalyticsClientsNewVsRepeat = {
+  currency: string;
+  totalRevenue: number;
+  segments: AnalyticsClientsNewVsRepeatSegment[];
+};
+
+export type AnalyticsClientsRepeatFunnelStep = {
+  key: string;
+  minOrders: number;
+  clients: number;
+  percent: number;
+};
+
+export type AnalyticsClientsRepeatFunnel = {
+  steps: AnalyticsClientsRepeatFunnelStep[];
+};
+
+export type AnalyticsClientsReturnTimingBucket = {
+  key: string;
+  clients: number;
+  percent: number;
+};
+
+export type AnalyticsClientsReturnTiming = {
+  buckets: AnalyticsClientsReturnTimingBucket[];
+};
+
+export type AnalyticsClientsWinBackBucket = {
+  key: string;
+  clients: number;
+};
+
+export type AnalyticsClientsWinBack = {
+  buckets: AnalyticsClientsWinBackBucket[];
+  totalClients: number;
+};
+
+export type AnalyticsClientsTopValuableCustomer = {
+  clientId: number;
+  name: string;
+  avatar: string | null;
+  orders: number;
+  periodRevenue: number;
+  lastPurchaseAt: string | null;
+  lifetimeValue: number;
+  periodGrossProfit: number;
+};
+
+export type AnalyticsClientsTopValuableSort =
+  | "lifetimeValue"
+  | "periodRevenue"
+  | "orders"
+  | "lastPurchaseAt";
+
+export type AnalyticsClientsTopValuable = {
+  currency: string;
+  sort: AnalyticsClientsTopValuableSort;
+  customers: AnalyticsClientsTopValuableCustomer[];
+};
+
+export type AnalyticsClientsAcquisitionSource = {
+  source: string;
+  name: string;
+  clients: number;
+  percent: number;
+};
+
+export type AnalyticsClientsAcquisitionSources = {
+  totalNewClients: number;
+  sources: AnalyticsClientsAcquisitionSource[];
 };
 
 export type AnalyticsRevenueChartPoint = {

@@ -6,11 +6,11 @@ import { useAnalyticsStore } from "@/features/analytics/model/use-analytics-stor
 
 import { AnalyticsContentLayout } from "../components/analytics-content-layout";
 import { AnalyticsPeriodFilter } from "../components/analytics-period-filter";
+import { AnalyticsReportsStack } from "../components/analytics-reports-stack";
 import { AnalyticsSectionLayout } from "../components/analytics-section-layout";
 import { AnalyticsOverviewAdvancedSection } from "./components/analytics-overview-advanced-section";
 import { AnalyticsOverviewBusinessHighlightsSection } from "./components/analytics-overview-business-highlights-section";
 import { AnalyticsOverviewKpiCards } from "./components/analytics-overview-kpi-cards";
-import * as S from "./analytics-overview-page.styled";
 import { AnalyticsOverviewRevenueChart } from "./components/analytics-overview-revenue-chart";
 import { AnalyticsOverviewSalesStatusSection } from "./components/analytics-overview-sales-status-section";
 import { formatAnalyticsPeriodLabel } from "./utils/format-analytics-period-label";
@@ -43,7 +43,7 @@ export const AnalyticsOverviewPage = observer(() => {
       descriptionKey="analytics.descriptions.overview"
     >
       <AnalyticsContentLayout toolbar={<AnalyticsPeriodFilter />}>
-        <S.ReportsStack>
+        <AnalyticsReportsStack dataQa="layout-analytics-overview-reports">
           <AnalyticsOverviewKpiCards
             kpi={store.kpi}
             loading={store.kpiLoading}
@@ -66,7 +66,7 @@ export const AnalyticsOverviewPage = observer(() => {
             topCustomersLoading={store.topCustomersLoading}
           />
           <AnalyticsOverviewAdvancedSection />
-        </S.ReportsStack>
+        </AnalyticsReportsStack>
       </AnalyticsContentLayout>
     </AnalyticsSectionLayout>
   );

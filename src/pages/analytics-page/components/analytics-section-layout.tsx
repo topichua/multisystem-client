@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Flex } from "antd";
 import { useTranslation } from "react-i18next";
 
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
@@ -10,12 +11,14 @@ import {
 type AnalyticsSectionLayoutProps = {
   titleKey: string;
   descriptionKey: string;
+  titleExtra?: ReactNode;
   children: ReactNode;
 };
 
 export const AnalyticsSectionLayout = ({
   titleKey,
   descriptionKey,
+  titleExtra,
   children,
 }: AnalyticsSectionLayoutProps) => {
   const { t } = useTranslation();
@@ -23,7 +26,10 @@ export const AnalyticsSectionLayout = ({
   return (
     <PaneDetailLayout.Root inset>
       <PaneDetailLayout.Header>
-        <PaneSectionTitle>{t(titleKey)}</PaneSectionTitle>
+        <Flex align="center" gap={8} wrap>
+          <PaneSectionTitle>{t(titleKey)}</PaneSectionTitle>
+          {titleExtra}
+        </Flex>
         <PaneSectionHint>{t(descriptionKey)}</PaneSectionHint>
       </PaneDetailLayout.Header>
       <PaneDetailLayout.Body>{children}</PaneDetailLayout.Body>

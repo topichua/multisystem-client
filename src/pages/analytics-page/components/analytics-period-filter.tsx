@@ -15,63 +15,85 @@ import * as S from "./analytics-period-filter.styled";
 
 const { RangePicker } = DatePicker;
 
-export const AnalyticsPeriodFilter = observer(() => {
-  const { t } = useTranslation();
-  const store = useAnalyticsStore();
+type AnalyticsPeriodFilterProps = {
+  onFiltersChange?: () => Promise<void> | void;
+};
 
-  const presetOptions = useMemo(
-    () =>
-      ANALYTICS_PERIOD_PRESETS.map((preset) => ({
-        label: t(`analytics.periodFilter.presets.${preset}`),
-        value: preset,
-      })),
-    [t],
-  );
+export const AnalyticsPeriodFilter = observer(
+  ({ onFiltersChange }: AnalyticsPeriodFilterProps) => {
+    const { t } = useTranslation();
+    const store = useAnalyticsStore();
 
-  const rangeValue = useMemo((): [Dayjs, Dayjs] | null => {
-    if (store.dateFilterMode !== "custom" || !store.dateFrom || !store.dateTo) {
-      return null;
-    }
+    const presetOptions = useMemo(
+      () =>
+        ANALYTICS_PERIOD_PRESETS.map((preset) => ({
+          label: t(`analytics.periodFilter.presets.${preset}`),
+          value: preset,
+        })),
+      [t],
+    );
 
-    return [dayjs(store.dateFrom), dayjs(store.dateTo)];
-  }, [store.dateFilterMode, store.dateFrom, store.dateTo]);
+    const rangeValue = useMemo((): [Dayjs, Dayjs] | null => {
+      if (
+        store.dateFilterMode !== "custom" ||
+        !store.dateFrom ||
+        !store.dateTo
+      ) {
+        return null;
+      }
 
-  return (
-    <S.Root>
-      <S.Presets>
-        <Segmented
-          value={store.dateFilterMode === "preset" ? store.period : undefined}
-          options={presetOptions}
-          onChange={(value) => {
-            if (typeof value === "string") {
-              void store.applyPeriodPreset(value as AnalyticsPeriodPreset);
-            }
-          }}
-        />
-      </S.Presets>
-      <S.RangeField>
-        <RangePicker
-          allowClear
-          inputReadOnly
-          format="YYYY/MM/DD"
-          placeholder={[
-            t("analytics.periodFilter.rangeFrom"),
-            t("analytics.periodFilter.rangeTo"),
-          ]}
-          value={rangeValue}
-          onChange={(dates) => {
-            if (dates?.[0] && dates[1]) {
-              void store.applyCustomDateRange(
-                formatApiDate(dates[0]),
-                formatApiDate(dates[1]),
-              );
-              return;
-            }
+      return [dayjs(store.dateFrom), dayjs(store.dateTo)];
+    }, [store.dateFilterMode, store.dateFrom, store.dateTo]);
 
-            void store.applyPeriodPreset(store.period);
-          }}
-        />
-      </S.RangeField>
-    </S.Root>
-  );
-});
+    const reload = (): void => {
+      if (onFiltersChange) {
+        void onFiltersChange();
+        return;
+      }
+
+      void store.loadOverview();
+    };
+
+    return (
+      <S.Root>
+        <S.Presets>
+          <Segmented
+            value={store.dateFilterMode === "preset" ? store.period : undefined}
+            options={presetOptions}
+            onChange={(value) => {
+              if (typeof value === "string") {
+                store.setPeriodPreset(value as AnalyticsPeriodPreset);
+                reload();
+              }
+            }}
+          />
+        </S.Presets>
+        <S.RangeField>
+          <RangePicker
+            allowClear
+            inputReadOnly
+            format="YYYY/MM/DD"
+            placeholder={[
+              t("analytics.periodFilter.rangeFrom"),
+              t("analytics.periodFilter.rangeTo"),
+            ]}
+            value={rangeValue}
+            onChange={(dates) => {
+              if (dates?.[0] && dates[1]) {
+                store.setCustomDateRange(
+                  formatApiDate(dates[0]),
+                  formatApiDate(dates[1]),
+                );
+                reload();
+                return;
+              }
+
+              store.setPeriodPreset(store.period);
+              reload();
+            }}
+          />
+        </S.RangeField>
+      </S.Root>
+    );
+  },
+);

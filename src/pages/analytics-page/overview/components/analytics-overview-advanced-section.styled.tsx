@@ -129,19 +129,6 @@ export const Title = styled.span`
   white-space: nowrap;
 `;
 
-export const ProBadge = styled.span`
-  flex-shrink: 0;
-  padding: 2px 8px;
-  border-radius: 999px;
-  color: ${({ theme }) => theme.colors.semantic.primary};
-  background: ${({ theme }) => theme.colors.functional.background.active};
-  font-size: ${({ theme }) => theme.fontSize.small};
-  font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-`;
-
 export const Description = styled.span`
   display: block;
   color: ${({ theme }) => theme.colors.functional.text.subdued};

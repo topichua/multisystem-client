@@ -49,9 +49,9 @@ import { ProtectedRoute } from "./protected-route";
 import { PublicOnlyRoute } from "./public-only-route";
 import { AnalyticsPage } from "@/pages/analytics-page/analytics-page";
 import { AnalyticsIndexRoute } from "@/pages/analytics-page/analytics-index-route";
-import { AnalyticsCustomersRoute } from "@/pages/analytics-page/customers/analytics-customers-route";
+import { AnalyticsCustomersPage } from "@/pages/analytics-page/customers/analytics-customers-page";
 import { AnalyticsInstagramRoute } from "@/pages/analytics-page/instagram/analytics-instagram-route";
-import { AnalyticsOverviewRoute } from "@/pages/analytics-page/overview/analytics-overview-route";
+import { AnalyticsOverviewPage } from "@/pages/analytics-page/overview/analytics-overview-page";
 import { AnalyticsProductsRoute } from "@/pages/analytics-page/products/analytics-products-route";
 import { AnalyticsSalesRoute } from "@/pages/analytics-page/sales/analytics-sales-route";
 import { AnalyticsWishlistRoute } from "@/pages/analytics-page/wishlist/analytics-wishlist-route";
@@ -185,12 +185,12 @@ export const PageRoutes = () => {
           <Route path="analytics">
             <Route index element={<AnalyticsIndexRoute />} />
             <Route element={<AnalyticsPage />}>
-              <Route path="overview" element={<AnalyticsOverviewRoute />} />
+              <Route path="overview" element={<AnalyticsOverviewPage />} />
               <Route path="sales" element={<AnalyticsSalesRoute />} />
               <Route path="products" element={<AnalyticsProductsRoute />} />
               <Route path="instagram" element={<AnalyticsInstagramRoute />} />
               <Route path="wishlist" element={<AnalyticsWishlistRoute />} />
-              <Route path="customers" element={<AnalyticsCustomersRoute />} />
+              <Route path="customers" element={<AnalyticsCustomersPage />} />
             </Route>
           </Route>
           <Route path="clients">

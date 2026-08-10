@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import { makeAutoObservable, runInAction } from "mobx";
 
+import { analyticsClientsApi } from "@/features/analytics/api/analytics-clients-api";
 import { analyticsApi } from "@/features/analytics/api/analytics-api";
 import {
   DEFAULT_ANALYTICS_PERIOD,
@@ -8,6 +9,14 @@ import {
   type AnalyticsPeriodPreset,
 } from "@/features/analytics/model/analytics-period.constants";
 import type {
+  AnalyticsClientsAcquisitionSources,
+  AnalyticsClientsKpi,
+  AnalyticsClientsNewVsRepeat,
+  AnalyticsClientsRepeatFunnel,
+  AnalyticsClientsReturnTiming,
+  AnalyticsClientsTopValuable,
+  AnalyticsClientsTopValuableSort,
+  AnalyticsClientsWinBack,
   AnalyticsKpi,
   AnalyticsOrdersByStatus,
   AnalyticsQueryParams,
@@ -49,6 +58,7 @@ export class AnalyticsStore {
   categoryIds: number[] = [];
   clientTags: string[] = [];
   instagramAccounts: string[] = [];
+  clientsTopValuableSort: AnalyticsClientsTopValuableSort = "lifetimeValue";
 
   kpi: AnalyticsKpi | null = null;
   revenueChart: AnalyticsRevenueChart | null = null;
@@ -56,6 +66,14 @@ export class AnalyticsStore {
   ordersByStatus: AnalyticsOrdersByStatus | null = null;
   topProducts: AnalyticsTopProducts | null = null;
   topCustomers: AnalyticsTopCustomers | null = null;
+
+  clientsKpi: AnalyticsClientsKpi | null = null;
+  clientsNewVsRepeat: AnalyticsClientsNewVsRepeat | null = null;
+  clientsRepeatFunnel: AnalyticsClientsRepeatFunnel | null = null;
+  clientsReturnTiming: AnalyticsClientsReturnTiming | null = null;
+  clientsWinBack: AnalyticsClientsWinBack | null = null;
+  clientsTopValuable: AnalyticsClientsTopValuable | null = null;
+  clientsAcquisitionSources: AnalyticsClientsAcquisitionSources | null = null;
 
   kpiLoading = false;
   kpiError: string | null = null;
@@ -74,6 +92,27 @@ export class AnalyticsStore {
 
   topCustomersLoading = false;
   topCustomersError: string | null = null;
+
+  clientsKpiLoading = false;
+  clientsKpiError: string | null = null;
+
+  clientsNewVsRepeatLoading = false;
+  clientsNewVsRepeatError: string | null = null;
+
+  clientsRepeatFunnelLoading = false;
+  clientsRepeatFunnelError: string | null = null;
+
+  clientsReturnTimingLoading = false;
+  clientsReturnTimingError: string | null = null;
+
+  clientsWinBackLoading = false;
+  clientsWinBackError: string | null = null;
+
+  clientsTopValuableLoading = false;
+  clientsTopValuableError: string | null = null;
+
+  clientsAcquisitionSourcesLoading = false;
+  clientsAcquisitionSourcesError: string | null = null;
 
   constructor() {
     makeAutoObservable(this);
@@ -222,6 +261,19 @@ export class AnalyticsStore {
     });
   };
 
+  setClientsTopValuableSort = (sort: AnalyticsClientsTopValuableSort): void => {
+    runInAction(() => {
+      this.clientsTopValuableSort = sort;
+    });
+  };
+
+  applyClientsTopValuableSort = async (
+    sort: AnalyticsClientsTopValuableSort,
+  ): Promise<void> => {
+    this.setClientsTopValuableSort(sort);
+    await this.loadClientsTopValuable();
+  };
+
   resetFilters = (): void => {
     runInAction(() => {
       this.dateFilterMode = "preset";
@@ -368,6 +420,177 @@ export class AnalyticsStore {
         this.topCustomersLoading = loading;
       },
       errorMessage: "Failed to load analytics top customers",
+    });
+  };
+
+  loadClientsAnalytics = async (options?: {
+    silent?: boolean;
+  }): Promise<void> => {
+    await Promise.all([
+      this.loadClientsKpi(options),
+      this.loadClientsNewVsRepeat(options),
+      this.loadClientsRepeatFunnel(options),
+      this.loadClientsReturnTiming(options),
+      this.loadClientsWinBack(options),
+      this.loadClientsTopValuable(options),
+      this.loadClientsAcquisitionSources(options),
+    ]);
+  };
+
+  loadClientsKpi = async (options?: { silent?: boolean }): Promise<void> => {
+    await this.loadResource({
+      silent: options?.silent,
+      fetch: () => analyticsClientsApi.getKpi(this.buildQueryParams()),
+      setData: (data) => {
+        this.clientsKpi = data;
+      },
+      clearData: () => {
+        this.clientsKpi = null;
+      },
+      setError: (error) => {
+        this.clientsKpiError = error;
+      },
+      setLoading: (loading) => {
+        this.clientsKpiLoading = loading;
+      },
+      errorMessage: "Failed to load analytics clients KPI",
+    });
+  };
+
+  loadClientsNewVsRepeat = async (options?: {
+    silent?: boolean;
+  }): Promise<void> => {
+    await this.loadResource({
+      silent: options?.silent,
+      fetch: () => analyticsClientsApi.getNewVsRepeat(this.buildQueryParams()),
+      setData: (data) => {
+        this.clientsNewVsRepeat = data;
+      },
+      clearData: () => {
+        this.clientsNewVsRepeat = null;
+      },
+      setError: (error) => {
+        this.clientsNewVsRepeatError = error;
+      },
+      setLoading: (loading) => {
+        this.clientsNewVsRepeatLoading = loading;
+      },
+      errorMessage: "Failed to load analytics clients new vs repeat",
+    });
+  };
+
+  loadClientsRepeatFunnel = async (options?: {
+    silent?: boolean;
+  }): Promise<void> => {
+    await this.loadResource({
+      silent: options?.silent,
+      fetch: () => analyticsClientsApi.getRepeatFunnel(this.buildQueryParams()),
+      setData: (data) => {
+        this.clientsRepeatFunnel = data;
+      },
+      clearData: () => {
+        this.clientsRepeatFunnel = null;
+      },
+      setError: (error) => {
+        this.clientsRepeatFunnelError = error;
+      },
+      setLoading: (loading) => {
+        this.clientsRepeatFunnelLoading = loading;
+      },
+      errorMessage: "Failed to load analytics clients repeat funnel",
+    });
+  };
+
+  loadClientsReturnTiming = async (options?: {
+    silent?: boolean;
+  }): Promise<void> => {
+    await this.loadResource({
+      silent: options?.silent,
+      fetch: () => analyticsClientsApi.getReturnTiming(this.buildQueryParams()),
+      setData: (data) => {
+        this.clientsReturnTiming = data;
+      },
+      clearData: () => {
+        this.clientsReturnTiming = null;
+      },
+      setError: (error) => {
+        this.clientsReturnTimingError = error;
+      },
+      setLoading: (loading) => {
+        this.clientsReturnTimingLoading = loading;
+      },
+      errorMessage: "Failed to load analytics clients return timing",
+    });
+  };
+
+  loadClientsWinBack = async (options?: {
+    silent?: boolean;
+  }): Promise<void> => {
+    await this.loadResource({
+      silent: options?.silent,
+      fetch: () => analyticsClientsApi.getWinBack(this.buildQueryParams()),
+      setData: (data) => {
+        this.clientsWinBack = data;
+      },
+      clearData: () => {
+        this.clientsWinBack = null;
+      },
+      setError: (error) => {
+        this.clientsWinBackError = error;
+      },
+      setLoading: (loading) => {
+        this.clientsWinBackLoading = loading;
+      },
+      errorMessage: "Failed to load analytics clients win back",
+    });
+  };
+
+  loadClientsTopValuable = async (options?: {
+    silent?: boolean;
+  }): Promise<void> => {
+    await this.loadResource({
+      silent: options?.silent,
+      fetch: () =>
+        analyticsClientsApi.getTopValuable(
+          this.buildQueryParams(),
+          this.clientsTopValuableSort,
+        ),
+      setData: (data) => {
+        this.clientsTopValuable = data;
+      },
+      clearData: () => {
+        this.clientsTopValuable = null;
+      },
+      setError: (error) => {
+        this.clientsTopValuableError = error;
+      },
+      setLoading: (loading) => {
+        this.clientsTopValuableLoading = loading;
+      },
+      errorMessage: "Failed to load analytics clients top valuable",
+    });
+  };
+
+  loadClientsAcquisitionSources = async (options?: {
+    silent?: boolean;
+  }): Promise<void> => {
+    await this.loadResource({
+      silent: options?.silent,
+      fetch: () =>
+        analyticsClientsApi.getAcquisitionSources(this.buildQueryParams()),
+      setData: (data) => {
+        this.clientsAcquisitionSources = data;
+      },
+      clearData: () => {
+        this.clientsAcquisitionSources = null;
+      },
+      setError: (error) => {
+        this.clientsAcquisitionSourcesError = error;
+      },
+      setLoading: (loading) => {
+        this.clientsAcquisitionSourcesLoading = loading;
+      },
+      errorMessage: "Failed to load analytics clients acquisition sources",
     });
   };
 }

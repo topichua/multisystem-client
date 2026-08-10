@@ -12,13 +12,17 @@ export function formatAnalyticsKpiValue(
   return metric.value.toLocaleString("uk-UA");
 }
 
-export function formatAnalyticsKpiChangePercent(value: number): string {
+export function formatAnalyticsKpiChangePercent(value: number | null): string {
+  if (value == null) {
+    return "—";
+  }
+
   return `${Math.abs(value).toLocaleString("uk-UA", {
     minimumFractionDigits: 1,
     maximumFractionDigits: 1,
   })}%`;
 }
 
-export function isAnalyticsKpiChangePositive(value: number): boolean {
-  return value >= 0;
+export function isAnalyticsKpiChangePositive(value: number | null): boolean {
+  return (value ?? 0) >= 0;
 }

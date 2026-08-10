@@ -8,6 +8,7 @@ import {
 } from "@/app/router/navigation";
 import { SettingsShell } from "@/components/settings/settings-shell/settings-shell";
 
+import { AnalyticsProBadge } from "./analytics-pro-badge.styled";
 import * as S from "./analytics-sidebar.styled";
 
 export const AnalyticsSidebar = () => {
@@ -40,7 +41,9 @@ export const AnalyticsSidebar = () => {
               >
                 <S.NavItemLabel>{t(item.labelKey)}</S.NavItemLabel>
                 {"pro" in item && item.pro && (
-                  <S.ProBadge>{t("analytics.menu.proBadge")}</S.ProBadge>
+                  <AnalyticsProBadge>
+                    {t("analytics.menu.proBadge")}
+                  </AnalyticsProBadge>
                 )}
               </S.NavItem>
             );

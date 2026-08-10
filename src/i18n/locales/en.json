@@ -110,7 +110,7 @@
       "products": "Stock levels and assortment performance",
       "instagram": "Messages, content performance and sales conversion",
       "wishlist": "Customer demand for restocking",
-      "customers": "Loyalty, repeat purchases and top clients"
+      "customers": "Who buys, comes back and brings the most value"
     },
     "periodFilter": {
       "presets": {
@@ -186,6 +186,104 @@
             "description": "Demand for restocking items"
           }
         }
+      }
+    },
+    "customers": {
+      "kpi": {
+        "activeClients": "Active clients",
+        "newClients": "New clients",
+        "repeatPurchaseRate": "Repeat purchases",
+        "averageCustomerValue": "Average customer value",
+        "ordersPerClient": "Orders per client",
+        "timeToRepurchaseDays": "To repeat purchase",
+        "daysValue": "{{value}} d.",
+        "changeUnavailable": "—",
+        "scopes": {
+          "allTime": "all time"
+        },
+        "hints": {
+          "activeClients": "Clients who purchased during the selected period.",
+          "newClients": "Clients whose first purchase happened during the selected period.",
+          "repeatPurchaseRate": "Share of clients who purchased again.",
+          "averageCustomerValue": "Average revenue per client.",
+          "ordersPerClient": "Average number of orders per client.",
+          "timeToRepurchaseDays": "Average time before a repeat purchase."
+        }
+      },
+      "salesStructure": {
+        "sectionTitle": "Sales structure"
+      },
+      "newVsRepeat": {
+        "title": "New and repeat clients",
+        "subtitle": "Who drives sales for the selected period",
+        "clients": "{{count}} clients",
+        "revenueShare": "{{percent}} of revenue",
+        "segments": {
+          "new": "New clients",
+          "repeat": "Repeat clients",
+          "fallback": "Segment {{key}}"
+        }
+      },
+      "returning": {
+        "sectionTitle": "Client returns"
+      },
+      "repeatFunnel": {
+        "title": "Repeat purchases",
+        "subtitle": "How many clients come back for another purchase",
+        "steps": {
+          "orders_1_plus": "Made at least 1 purchase",
+          "orders_2_plus": "Made at least 2 purchases",
+          "orders_3_plus": "Made at least 3 purchases",
+          "orders_4_plus": "Made 4+ purchases",
+          "fallback": "Made {{count}}+ purchases"
+        }
+      },
+      "returnTiming": {
+        "title": "When clients return",
+        "subtitle": "Time to the next purchase",
+        "buckets": {
+          "d0_7": "Up to 7 days",
+          "d8_30": "8-30 days",
+          "d31_60": "31-60 days",
+          "d61_90": "61-90 days",
+          "d90_plus": "90+ days",
+          "fallback": "{{key}}"
+        }
+      },
+      "winBack": {
+        "title": "Clients worth bringing back",
+        "subtitle": "Have not purchased compared with their usual cycle",
+        "summaryLabel": "clients worth bringing back",
+        "clientsLink": "View clients",
+        "buckets": {
+          "d25_45": "No purchases for 25-45 days",
+          "d46_90": "No purchases for 46-90 days",
+          "d90_plus": "No purchases for 90+ days",
+          "fallback": "{{key}}"
+        }
+      },
+      "topValuable": {
+        "sectionTitle": "Most valuable clients",
+        "title": "Most valuable clients",
+        "subtitle": "By purchases and activity",
+        "sort": {
+          "lifetimeValue": "By value",
+          "periodRevenue": "By revenue",
+          "orders": "By orders",
+          "lastPurchaseAt": "By last purchase"
+        },
+        "columns": {
+          "client": "Client",
+          "orders": "Orders",
+          "periodRevenue": "Period revenue",
+          "lastPurchaseAt": "Last purchase",
+          "lifetimeValue": "Lifetime value"
+        }
+      },
+      "acquisition": {
+        "sectionTitle": "Acquisition",
+        "title": "Where new clients come from",
+        "subtitle": "First interaction or first purchase channel"
       }
     }
   },
