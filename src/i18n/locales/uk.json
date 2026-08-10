@@ -270,13 +270,13 @@
           "lifetimeValue": "За цінністю",
           "periodRevenue": "За виручкою",
           "orders": "За замовленнями",
-          "lastPurchaseAt": "За останньою покупкою"
+          "lastPurchase": "За останньою покупкою"
         },
         "columns": {
           "client": "Клієнт",
           "orders": "Замовлень",
           "periodRevenue": "Виручка за період",
-          "lastPurchaseAt": "Остання покупка",
+          "lastPurchase": "Остання покупка",
           "lifetimeValue": "Цінність за весь час"
         }
       },
@@ -2949,7 +2949,19 @@
     "itemsCount_other": "{{count}} поля",
     "searchPlaceholder": "Пошук полів…",
     "emptySearch": "За вашим пошуком полів не знайдено",
-    "createCharacteristic": "Нова",
+    "createCharacteristic": "Нове",
+    "library": {
+      "addFromTemplate": "Додати поле з шаблону",
+      "addGroup": "+ групу",
+      "loadFailed": "Не вдалося завантажити шаблони",
+      "installFieldSuccess": "Поле додано з шаблону",
+      "installGroupSuccess_one": "Додано {{count}} поле з групи",
+      "installGroupSuccess_few": "Додано {{count}} поля з групи",
+      "installGroupSuccess_many": "Додано {{count}} полів з групи",
+      "installGroupSuccess_other": "Додано {{count}} поля з групи",
+      "installGroupAllSkipped": "Усі поля цієї групи вже додані",
+      "installFailed": "Не вдалося додати з шаблону"
+    },
     "modalCreateTitle": "Створити поле",
     "name": "Назва",
     "nameRequired": "Потрібна назва поля",

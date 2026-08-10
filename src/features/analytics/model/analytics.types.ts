@@ -71,16 +71,16 @@ export type AnalyticsClientsTopValuableCustomer = {
   avatar: string | null;
   orders: number;
   periodRevenue: number;
-  lastPurchaseAt: string | null;
+  lastPurchase: string | null;
   lifetimeValue: number;
   periodGrossProfit: number;
 };
 
 export type AnalyticsClientsTopValuableSort =
-  | "lifetimeValue"
-  | "periodRevenue"
-  | "orders"
-  | "lastPurchaseAt";
+  | 'lifetimeValue'
+  | 'periodRevenue'
+  | 'orders'
+  | 'lastPurchase';
 
 export type AnalyticsClientsTopValuable = {
   currency: string;

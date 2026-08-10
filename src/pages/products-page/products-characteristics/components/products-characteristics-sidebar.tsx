@@ -1,10 +1,9 @@
 import {
   CaretRightIcon,
   ListChecksIcon,
-  PlusIcon,
   TextTIcon,
 } from "@phosphor-icons/react";
-import { Button, Empty, Flex, Input, Tag, Typography } from "antd";
+import { Empty, Flex, Input, Tag, Typography } from "antd";
 import { useTranslation } from "react-i18next";
 
 import {
@@ -16,6 +15,7 @@ import { PaneNavSplitLayout } from "@/components/layout/pane-nav-split-layout";
 import type { Characteristic } from "@/features/characteristics/model/characteristic.types";
 
 import * as S from "../products-characteristics-layout.styled";
+import { CharacteristicLibraryCreateButton } from "./characteristic-library-create-button";
 
 const { Text } = Typography;
 
@@ -55,9 +55,7 @@ export const ProductsCharacteristicsSidebar = ({
             </Text>
           </div>
 
-          <Button type="primary" icon={<PlusIcon />} onClick={onCreateClick}>
-            {t("characteristics.createCharacteristic")}
-          </Button>
+          <CharacteristicLibraryCreateButton onCreateClick={onCreateClick} />
         </Flex>
 
         <Input.Search

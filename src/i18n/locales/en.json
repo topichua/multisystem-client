@@ -270,13 +270,13 @@
           "lifetimeValue": "By value",
           "periodRevenue": "By revenue",
           "orders": "By orders",
-          "lastPurchaseAt": "By last purchase"
+          "lastPurchase": "By last purchase"
         },
         "columns": {
           "client": "Client",
           "orders": "Orders",
           "periodRevenue": "Period revenue",
-          "lastPurchaseAt": "Last purchase",
+          "lastPurchase": "Last purchase",
           "lifetimeValue": "Lifetime value"
         }
       },
@@ -2890,6 +2890,16 @@
     "searchPlaceholder": "Search fields…",
     "emptySearch": "No fields match your search",
     "createCharacteristic": "New",
+    "library": {
+      "addFromTemplate": "Add field from template",
+      "addGroup": "+ group",
+      "loadFailed": "Failed to load templates",
+      "installFieldSuccess": "Field added from template",
+      "installGroupSuccess_one": "Added {{count}} field from group",
+      "installGroupSuccess_other": "Added {{count}} fields from group",
+      "installGroupAllSkipped": "All fields from this group are already added",
+      "installFailed": "Failed to add from template"
+    },
     "modalCreateTitle": "Create field",
     "name": "Name",
     "nameRequired": "Field name is required",

@@ -4,6 +4,11 @@ import type {
   Characteristic,
   CharacteristicCreatePayload,
   CharacteristicDetail,
+  CharacteristicLibraryInstallGroupPayload,
+  CharacteristicLibraryInstallGroupResponse,
+  CharacteristicLibraryInstallPayload,
+  CharacteristicLibraryInstallResponse,
+  CharacteristicLibraryResponse,
   CharacteristicOptionPayload,
   CharacteristicsListResponse,
   CharacteristicUpdatePayload,
@@ -14,6 +19,37 @@ const basePath = "/workspace/variant-custom-fields";
 export const characteristicsApi = {
   list: async (): Promise<CharacteristicsListResponse> => {
     const { data } = await apiClient.get<CharacteristicsListResponse>(basePath);
+
+    return data;
+  },
+
+  getLibrary: async (): Promise<CharacteristicLibraryResponse> => {
+    const { data } = await apiClient.get<CharacteristicLibraryResponse>(
+      `${basePath}/library`,
+    );
+
+    return data;
+  },
+
+  installFromLibrary: async (
+    payload: CharacteristicLibraryInstallPayload,
+  ): Promise<CharacteristicLibraryInstallResponse> => {
+    const { data } = await apiClient.post<CharacteristicLibraryInstallResponse>(
+      `${basePath}/library/install`,
+      payload,
+    );
+
+    return data;
+  },
+
+  installGroupFromLibrary: async (
+    payload: CharacteristicLibraryInstallGroupPayload,
+  ): Promise<CharacteristicLibraryInstallGroupResponse> => {
+    const { data } =
+      await apiClient.post<CharacteristicLibraryInstallGroupResponse>(
+        `${basePath}/library/install-group`,
+        payload,
+      );
 
     return data;
   },

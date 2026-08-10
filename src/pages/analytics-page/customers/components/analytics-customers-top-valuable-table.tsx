@@ -23,10 +23,10 @@ const { Text } = Typography;
 const SORT_SELECT_WIDTH = 220;
 
 const TOP_VALUABLE_SORT_OPTIONS: readonly AnalyticsClientsTopValuableSort[] = [
-  "lifetimeValue",
-  "periodRevenue",
-  "orders",
-  "lastPurchaseAt",
+  'lifetimeValue',
+  'periodRevenue',
+  'orders',
+  'lastPurchase',
 ];
 
 type AnalyticsCustomersTopValuableTableProps = {
@@ -63,8 +63,8 @@ export const AnalyticsCustomersTopValuableTable = ({
   const columns = useMemo(
     (): TableColumnsType<AnalyticsClientsTopValuableCustomer> => [
       {
-        title: t("analytics.customers.topValuable.columns.client"),
-        key: "client",
+        title: t('analytics.customers.topValuable.columns.client'),
+        key: 'client',
         width: 260,
         render: (_, customer) => (
           <Flex align="center" gap={10} style={{ minWidth: 0 }}>
@@ -75,52 +75,52 @@ export const AnalyticsCustomersTopValuableTable = ({
               style={{ flexShrink: 0 }}
             />
             <Text strong ellipsis style={{ minWidth: 0 }}>
-              {customer.name || "—"}
+              {customer.name || '—'}
             </Text>
           </Flex>
         ),
       },
       {
-        title: t("analytics.customers.topValuable.columns.orders"),
-        dataIndex: "orders",
-        key: "orders",
-        align: "right",
+        title: t('analytics.customers.topValuable.columns.orders'),
+        dataIndex: 'orders',
+        key: 'orders',
+        align: 'right',
         width: 130,
         render: (value: number) => formatNumber(value),
       },
       {
-        title: t("analytics.customers.topValuable.columns.periodRevenue"),
-        dataIndex: "periodRevenue",
-        key: "periodRevenue",
-        align: "right",
+        title: t('analytics.customers.topValuable.columns.periodRevenue'),
+        dataIndex: 'periodRevenue',
+        key: 'periodRevenue',
+        align: 'right',
         width: 170,
         render: (value: number) => (
           <Text strong>{formatMoney(value, currency)}</Text>
         ),
       },
       {
-        title: t("analytics.customers.topValuable.columns.lastPurchaseAt"),
-        dataIndex: "lastPurchaseAt",
-        key: "lastPurchaseAt",
+        title: t('analytics.customers.topValuable.columns.lastPurchase'),
+        dataIndex: 'lastPurchase',
+        key: 'lastPurchase',
         width: 170,
         render: (value: string | null) => (
-          <Text type="secondary">{value ? formatDate(value) || "—" : "—"}</Text>
+          <Text type="secondary">{value ? formatDate(value) || '—' : '—'}</Text>
         ),
       },
       {
-        title: t("analytics.customers.topValuable.columns.lifetimeValue"),
-        dataIndex: "lifetimeValue",
-        key: "lifetimeValue",
-        align: "right",
+        title: t('analytics.customers.topValuable.columns.lifetimeValue'),
+        dataIndex: 'lifetimeValue',
+        key: 'lifetimeValue',
+        align: 'right',
         width: 190,
         render: (value: number) => (
           <Text strong>{formatMoney(value, currency)}</Text>
         ),
       },
       {
-        key: "open",
+        key: 'open',
         width: 40,
-        align: "right",
+        align: 'right',
         render: () => <CaretRightIcon size={16} />,
       },
     ],

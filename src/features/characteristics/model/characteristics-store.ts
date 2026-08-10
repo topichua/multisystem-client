@@ -6,15 +6,18 @@ import type {
   Characteristic,
   CharacteristicCreatePayload,
   CharacteristicDetail,
+  CharacteristicLibraryInstallGroupPayload,
+  CharacteristicLibraryInstallGroupResponse,
+  CharacteristicLibraryInstallPayload,
+  CharacteristicLibraryInstallResponse,
   CharacteristicOptionPayload,
   CharacteristicUpdatePayload,
 } from "@/features/characteristics/model/characteristic.types";
 import { unknownErrorMessage } from "@/utils/unknown-error-message";
 import { throwLoadError } from "@/utils/throw-load-error";
 
-function sortCharacteristics(items: Characteristic[]): Characteristic[] {
-  return [...items].sort((left, right) => left.sortOrder - right.sortOrder);
-}
+const sortCharacteristics = (items: Characteristic[]): Characteristic[] =>
+  [...items].sort((left, right) => left.sortOrder - right.sortOrder);
 
 export class CharacteristicsStore {
   items: Characteristic[] = [];
@@ -128,6 +131,42 @@ export class CharacteristicsStore {
       const created = await characteristicsApi.create(payload);
       await this.loadCharacteristics({ silent: true });
       return created;
+    } finally {
+      runInAction(() => {
+        this.saveLoading = false;
+      });
+    }
+  };
+
+  installLibraryField = async (
+    payload: CharacteristicLibraryInstallPayload,
+  ): Promise<CharacteristicLibraryInstallResponse> => {
+    runInAction(() => {
+      this.saveLoading = true;
+    });
+
+    try {
+      const result = await characteristicsApi.installFromLibrary(payload);
+      await this.loadCharacteristics({ silent: true });
+      return result;
+    } finally {
+      runInAction(() => {
+        this.saveLoading = false;
+      });
+    }
+  };
+
+  installLibraryGroup = async (
+    payload: CharacteristicLibraryInstallGroupPayload,
+  ): Promise<CharacteristicLibraryInstallGroupResponse> => {
+    runInAction(() => {
+      this.saveLoading = true;
+    });
+
+    try {
+      const result = await characteristicsApi.installGroupFromLibrary(payload);
+      await this.loadCharacteristics({ silent: true });
+      return result;
     } finally {
       runInAction(() => {
         this.saveLoading = false;

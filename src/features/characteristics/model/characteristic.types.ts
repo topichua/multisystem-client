@@ -65,3 +65,57 @@ export type CharacteristicUpdatePayload = {
 export type CharacteristicOptionPayload = {
   label: string;
 };
+
+export type CharacteristicLibraryField = {
+  key: string;
+  label: string;
+  displayLabel: string;
+  type: CharacteristicFieldType;
+  typeLabel: string;
+  options: string[];
+  description?: string;
+  sortOrder: number;
+  alreadyInstalled: boolean;
+  workspaceFieldId: number | null;
+};
+
+export type CharacteristicLibraryGroup = {
+  key: string;
+  label: string;
+  icon: string;
+  fieldCount: number;
+  sortOrder: number;
+  fields: CharacteristicLibraryField[];
+};
+
+export type CharacteristicLibraryResponse = {
+  workspaceId: number;
+  featured: CharacteristicLibraryField[];
+  groups: CharacteristicLibraryGroup[];
+};
+
+export type CharacteristicLibraryInstallPayload = {
+  key: string;
+  groupKey: string;
+};
+
+export type CharacteristicLibraryInstallResponse = {
+  field: Characteristic;
+  groupKey: string;
+};
+
+export type CharacteristicLibraryInstallGroupPayload = {
+  groupKey: string;
+};
+
+export type CharacteristicLibraryInstallGroupSkipped = {
+  key: string;
+  workspaceFieldId: number | null;
+  reason: string;
+};
+
+export type CharacteristicLibraryInstallGroupResponse = {
+  groupKey: string;
+  installed: Characteristic[];
+  skipped: CharacteristicLibraryInstallGroupSkipped[];
+};
