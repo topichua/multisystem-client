@@ -174,6 +174,30 @@ export class CharacteristicsStore {
     }
   };
 
+  installLibraryGroups = async (groupKeys: string[]): Promise<number> => {
+    runInAction(() => {
+      this.saveLoading = true;
+    });
+
+    try {
+      let installedCount = 0;
+
+      for (const groupKey of groupKeys) {
+        const result = await characteristicsApi.installGroupFromLibrary({
+          groupKey,
+        });
+        installedCount += result.installed.length;
+      }
+
+      await this.loadCharacteristics({ silent: true });
+      return installedCount;
+    } finally {
+      runInAction(() => {
+        this.saveLoading = false;
+      });
+    }
+  };
+
   updateCharacteristic = async (
     id: number,
     payload: CharacteristicUpdatePayload,

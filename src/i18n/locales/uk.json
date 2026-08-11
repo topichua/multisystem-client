@@ -2960,7 +2960,15 @@
       "installGroupSuccess_many": "Додано {{count}} полів з групи",
       "installGroupSuccess_other": "Додано {{count}} поля з групи",
       "installGroupAllSkipped": "Усі поля цієї групи вже додані",
-      "installFailed": "Не вдалося додати з шаблону"
+      "installFailed": "Не вдалося додати з шаблону",
+      "setupTitle": "Оберіть сфери вашого бізнесу",
+      "setupDescription": "Ми самі створимо типові поля під обрані категорії — їх завжди можна змінити пізніше.",
+      "setupBack": "Назад",
+      "setupSubmit": "Створити поля ({{count}})",
+      "setupSuccess_one": "Створено {{count}} поле",
+      "setupSuccess_few": "Створено {{count}} поля",
+      "setupSuccess_many": "Створено {{count}} полів",
+      "setupSuccess_other": "Створено {{count}} поля"
     },
     "modalCreateTitle": "Створити поле",
     "name": "Назва",
@@ -3057,7 +3065,10 @@
     "optionArchiveFailed": "Не вдалося заархівувати опцію",
     "optionUnarchiveSuccess": "Опцію розархівовано",
     "optionUnarchiveFailed": "Не вдалося розархівувати опцію",
-    "emptyState": "Поки немає полів"
+    "emptyState": "Ще немає полів",
+    "emptyStateDescription": "Створіть поле вручну або додайте готовий набір під вашу діяльність.",
+    "emptyStateCreate": "Створити поле",
+    "emptyStateAddLibrary": "Додати готовий набір"
   },
   "composer": {
     "tabsAria": "Режим введення",

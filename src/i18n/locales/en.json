@@ -2898,7 +2898,13 @@
       "installGroupSuccess_one": "Added {{count}} field from group",
       "installGroupSuccess_other": "Added {{count}} fields from group",
       "installGroupAllSkipped": "All fields from this group are already added",
-      "installFailed": "Failed to add from template"
+      "installFailed": "Failed to add from template",
+      "setupTitle": "Choose your business areas",
+      "setupDescription": "We'll create typical fields for the selected categories — you can always change them later.",
+      "setupBack": "Back",
+      "setupSubmit": "Create fields ({{count}})",
+      "setupSuccess_one": "Created {{count}} field",
+      "setupSuccess_other": "Created {{count}} fields"
     },
     "modalCreateTitle": "Create field",
     "name": "Name",
@@ -2985,7 +2991,10 @@
     "optionArchiveFailed": "Failed to archive option",
     "optionUnarchiveSuccess": "Option unarchived",
     "optionUnarchiveFailed": "Failed to unarchive option",
-    "emptyState": "No fields yet"
+    "emptyState": "No fields yet",
+    "emptyStateDescription": "Create a field manually or add a ready-made set for your activity.",
+    "emptyStateCreate": "Create field",
+    "emptyStateAddLibrary": "Add ready-made set"
   },
   "composer": {
     "tabsAria": "Compose mode",
