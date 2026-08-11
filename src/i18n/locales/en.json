@@ -3020,8 +3020,8 @@
       "note": "Note"
     },
     "createOrderDisabledTooltip": "Create a client first",
-    "placeholder": "Write a message... (Enter — send, Shift+Enter — new line)",
-    "notePlaceholder": "Write a note... (Enter — send, Shift+Enter — new line)",
+    "placeholder": "Write a message... (Enter — new line, Ctrl/⌘+Enter — send)",
+    "notePlaceholder": "Write a note... (Enter — new line, Ctrl/⌘+Enter — send)",
     "send": "Send",
     "templates": "Templates",
     "aiReply": "AI reply",

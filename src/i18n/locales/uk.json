@@ -3094,8 +3094,8 @@
       "note": "Нотатка"
     },
     "createOrderDisabledTooltip": "Спочатку створіть клієнта",
-    "placeholder": "Напишіть повідомлення... (Enter — надіслати, Shift+Enter — новий рядок)",
-    "notePlaceholder": "Напишіть нотатку... (Enter — надіслати, Shift+Enter — новий рядок)",
+    "placeholder": "Напишіть повідомлення... (Enter — новий рядок, Ctrl/⌘+Enter — надіслати)",
+    "notePlaceholder": "Напишіть нотатку... (Enter — новий рядок, Ctrl/⌘+Enter — надіслати)",
     "send": "Надіслати",
     "templates": "Шаблони",
     "aiReply": "AI-відповідь",

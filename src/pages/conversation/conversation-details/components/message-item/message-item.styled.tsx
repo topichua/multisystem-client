@@ -184,6 +184,10 @@ export const MessageBubble = styled.div<{
   opacity: ${({ $muted }) => ($muted ? 0.75 : 1)};
   margin-bottom: ${({ $hasReaction }) => ($hasReaction ? "14px" : "0")};
 
+  .conversation-message-body {
+    white-space: pre-wrap;
+  }
+
   ${({ theme, $isOwn, $channel }) =>
     $isOwn &&
     css`

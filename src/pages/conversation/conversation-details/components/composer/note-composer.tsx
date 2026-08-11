@@ -29,7 +29,7 @@ export function NoteComposer({ draft, onDraftChange }: NoteComposerProps) {
         autoSize={{ minRows: 2, maxRows: 6 }}
         variant="borderless"
         onPressEnter={(event) => {
-          if (!event.shiftKey) {
+          if (event.metaKey || event.ctrlKey) {
             event.preventDefault();
             handleSend();
           }
