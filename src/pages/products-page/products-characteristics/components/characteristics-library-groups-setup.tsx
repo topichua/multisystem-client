@@ -122,12 +122,20 @@ export const CharacteristicsLibraryGroupsSetup = ({
       style={{ minHeight: 0, overflow: "auto", padding: 32 }}
       data-qa="layout-products-characteristics-library-setup"
     >
-      <Flex vertical align="center" gap={24} style={{ width: "100%", maxWidth: 720 }}>
+      <Flex
+        vertical
+        align="center"
+        gap={24}
+        style={{ width: "100%", maxWidth: 720 }}
+      >
         <Flex vertical align="center" style={{ textAlign: "center" }}>
           <Title level={4} style={{ margin: 0 }}>
             {t("characteristics.library.setupTitle")}
           </Title>
-          <Paragraph type="secondary" style={{ marginBottom: 0, maxWidth: 480 }}>
+          <Paragraph
+            type="secondary"
+            style={{ marginBottom: 0, maxWidth: 480 }}
+          >
             {t("characteristics.library.setupDescription")}
           </Paragraph>
         </Flex>
@@ -162,7 +170,10 @@ export const CharacteristicsLibraryGroupsSetup = ({
                   >
                     <Flex vertical align="center" gap={8}>
                       <Flex justify="flex-end" style={{ width: "100%" }}>
-                        <Checkbox checked={selected} style={{ pointerEvents: "none" }} />
+                        <Checkbox
+                          checked={selected}
+                          style={{ pointerEvents: "none" }}
+                        />
                       </Flex>
                       <Text style={{ fontSize: 36, lineHeight: 1 }}>
                         {LIBRARY_GROUP_ICONS[group.icon] ?? "📦"}

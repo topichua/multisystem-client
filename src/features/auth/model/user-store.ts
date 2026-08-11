@@ -1,11 +1,16 @@
 import { makeAutoObservable, runInAction } from "mobx";
 
 import { authApi } from "@/features/auth/api/auth-api";
+import type { MemberWorkStatus } from "@/features/auth/model/auth-session.types";
+import { workspaceMembersApi } from "@/features/workspace-members/api/workspace-members-api";
 
 import type { AuthSessionResponse } from "./auth-session.types";
 
+const DEFAULT_WORK_STATUS: MemberWorkStatus = "not_accepting_new_chats";
+
 export class UserStore {
   session: AuthSessionResponse | null = null;
+  workStatusUpdating = false;
 
   constructor() {
     makeAutoObservable(this);
@@ -24,7 +29,14 @@ export class UserStore {
   }
 
   get isWorkspaceOwner() {
-    return this.session?.workspaceRole?.isOwner === true;
+    return (
+      this.session?.workspaceRole?.isOwner === true ||
+      this.session?.permissions?.isOwner === true
+    );
+  }
+
+  get workStatus(): MemberWorkStatus {
+    return this.session?.work_status ?? DEFAULT_WORK_STATUS;
   }
 
   get displayName(): string | null {
@@ -55,6 +67,41 @@ export class UserStore {
         });
       })
       .then(() => undefined);
+
+  updateWorkStatus = async (workStatus: MemberWorkStatus): Promise<void> => {
+    if (!this.session || this.session.work_status === workStatus) {
+      return;
+    }
+
+    const previous = this.session.work_status ?? DEFAULT_WORK_STATUS;
+
+    runInAction(() => {
+      this.workStatusUpdating = true;
+      if (this.session) {
+        this.session = { ...this.session, work_status: workStatus };
+      }
+    });
+
+    try {
+      const next = await workspaceMembersApi.updateMyWorkStatus(workStatus);
+      runInAction(() => {
+        if (this.session) {
+          this.session = { ...this.session, work_status: next };
+        }
+      });
+    } catch (error) {
+      runInAction(() => {
+        if (this.session) {
+          this.session = { ...this.session, work_status: previous };
+        }
+      });
+      throw error;
+    } finally {
+      runInAction(() => {
+        this.workStatusUpdating = false;
+      });
+    }
+  };
 
   clearSession() {
     this.session = null;

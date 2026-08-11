@@ -111,17 +111,15 @@ export const buildLibraryTreeData = ({
           onInstallGroup={onInstallGroup}
         />
       ),
-      children: [...group.fields]
-        .sort(bySortOrder)
-        .map((field) =>
-          buildFieldTreeNode({
-            field,
-            key: `${treeGroupKey}:${field.key}`,
-            groupKey: group.key,
-            installing: installingKey === `field:${field.key}`,
-            onInstallField,
-          }),
-        ),
+      children: [...group.fields].sort(bySortOrder).map((field) =>
+        buildFieldTreeNode({
+          field,
+          key: `${treeGroupKey}:${field.key}`,
+          groupKey: group.key,
+          installing: installingKey === `field:${field.key}`,
+          onInstallField,
+        }),
+      ),
     };
   });
 

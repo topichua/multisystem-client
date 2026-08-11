@@ -110,3 +110,83 @@ export const IconButton = styled(Button)`
     color: ${({ theme }) => theme.colors.functional.text.subdued};
   }
 `;
+
+export const StyledStatusButton = styled.div`
+  box-sizing: border-box;
+  margin: 0;
+  min-width: 0;
+  height: 32px;
+  padding: 0 10px 0 12px;
+  border: 1px solid ${({ theme }) => theme.colors.functional.border.cardBase};
+  border-radius: ${({ theme }) => theme.radius.extraLarge};
+  color: ${({ theme }) => theme.colors.functional.text.heading};
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  /* justify-content: space-between; */
+  gap: 8px;
+  /* width: 150px; */
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.functional.background.hover};
+  }
+
+  & > svg {
+    color: ${({ theme }) => theme.colors.functional.text.subdued};
+  }
+`;
+
+export const StatusDot = styled.span<{ $color: string }>`
+  display: block;
+  width: 8px;
+  height: 8px;
+  min-width: 8px;
+  max-width: 8px;
+  min-height: 8px;
+  max-height: 8px;
+  flex: 0 0 8px;
+  border-radius: 50%;
+  background: ${({ $color }) => $color};
+`;
+
+export const StatusMenuItem = styled.span`
+  min-width: 220px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+`;
+
+export const StatusMenuItemContent = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+`;
+
+export const StatusButtonWrapper = styled.div`
+  width: 150px;
+`;
+
+export const StatusMenuItemLabel = styled.span<{ $selected?: boolean }>`
+  color: ${({ theme, $selected }) =>
+    $selected
+      ? theme.colors.functional.text.primary
+      : theme.colors.functional.text.subdued};
+  font-weight: ${({ $selected }) => ($selected ? 700 : 400)};
+  line-height: 1.2;
+`;
+
+export const StatusMenuCheck = styled.span`
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: ${({ theme }) => theme.colors.semantic.primary};
+`;
+
+export const CustomDivider = styled.div`
+  width: 1px;
+  height: 24px;
+  background: ${({ theme }) => theme.colors.functional.border.cardBase};
+`;

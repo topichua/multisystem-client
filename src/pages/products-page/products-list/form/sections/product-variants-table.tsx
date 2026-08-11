@@ -126,10 +126,7 @@ export function ProductVariantsTable({
               rowClassName={(variant) => {
                 const classes: string[] = [];
 
-                if (
-                  variant.id != null &&
-                  variant.id === highlightedVariantId
-                ) {
+                if (variant.id != null && variant.id === highlightedVariantId) {
                   classes.push(PRODUCT_VARIANT_SCROLL_HIGHLIGHT_CLASS);
                 }
 

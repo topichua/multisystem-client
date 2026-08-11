@@ -28,7 +28,24 @@
     "createSupply": "Створити поставку",
     "searchAria": "Пошук",
     "searchPlaceholder": "Пошук товарів, замовлень, клієнтів...",
-    "toggleTheme": "Перемкнути тему"
+    "toggleTheme": "Перемкнути тему",
+    "workStatus": {
+      "title": "Робочий статус",
+      "aria": "Робочий статус",
+      "updateError": "Не вдалося оновити робочий статус",
+      "accepting_new_chats": {
+        "menu": "Приймаю нові чати",
+        "button": "Доступний"
+      },
+      "not_accepting_new_chats": {
+        "menu": "Не приймаю нові чати",
+        "button": "Недоступний"
+      },
+      "break": {
+        "menu": "Перерва",
+        "button": "Перерва"
+      }
+    }
   },
   "brand": "MultiSale",
   "instagram": {

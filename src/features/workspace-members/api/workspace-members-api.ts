@@ -1,4 +1,5 @@
 import { apiClient } from "@/api/api-client";
+import type { MemberWorkStatus } from "@/features/auth/model/auth-session.types";
 
 import type {
   WorkspaceMember,
@@ -75,6 +76,18 @@ export const workspaceMembersApi = {
     );
 
     return isWorkspaceMember(data) ? data : null;
+  },
+
+  updateMyWorkStatus: async (
+    workStatus: MemberWorkStatus,
+  ): Promise<MemberWorkStatus> => {
+    const { data } = await apiClient.patch<{
+      work_status?: MemberWorkStatus;
+    }>(`${basePath}/me/work-status`, {
+      work_status: workStatus,
+    });
+
+    return data.work_status ?? workStatus;
   },
 
   removeInvite: async (memberId: number): Promise<void> => {

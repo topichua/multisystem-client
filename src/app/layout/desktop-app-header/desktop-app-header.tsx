@@ -1,5 +1,7 @@
 import {
   CaretDownIcon,
+  CaretUpIcon,
+  CheckIcon,
   CubeIcon,
   MagnifyingGlassIcon,
   MoonIcon,
@@ -10,32 +12,52 @@ import {
   TruckIcon,
   UsersThreeIcon,
 } from "@phosphor-icons/react";
-import { Button, Dropdown, Tooltip } from "antd";
+import { Button, Dropdown, Tooltip, Typography } from "antd";
 import type { MenuProps } from "antd";
 import { observer } from "mobx-react-lite";
-import { useState } from "react";
+import { startTransition, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
+import { useTheme } from "styled-components";
 
+import { getApiErrorMessage } from "@/api/get-api-error-message";
 import { getClientsCreatePath, pagesMap } from "@/app/router/pages-map";
 import { UserAvatar } from "@/components/user-avatar";
+import type { MemberWorkStatus } from "@/features/auth/model/auth-session.types";
 import { useAuth } from "@/features/auth/model/use-auth";
 import { useUserStore } from "@/features/auth/model/use-user-store";
 import { StockSupplyModal } from "@/features/inventory/components/stock-supply-modal/stock-supply-modal";
+import { useNotification } from "@/shared/components/notification/use-notification";
 import { useThemeMode } from "@/theme/use-theme-mode";
 
 import * as S from "./desktop-app-header.styled";
 
+const WORK_STATUS_OPTIONS: readonly MemberWorkStatus[] = [
+  "accepting_new_chats",
+  "not_accepting_new_chats",
+  "break",
+];
+
 export const DesktopAppHeader = observer(() => {
   const { t } = useTranslation();
+  const theme = useTheme();
   const navigate = useNavigate();
+  const notification = useNotification();
   const { logout } = useAuth();
   const userStore = useUserStore();
   const { mode, preference, setPreference } = useThemeMode();
   const isAutoTheme = preference === "system";
   const displayName = userStore.displayName ?? t("profile.user");
   const avatarSrc = userStore.user?.avatar_src ?? undefined;
+  const workStatus = userStore.workStatus;
   const [stockSupplyModalOpen, setStockSupplyModalOpen] = useState(false);
+  const [workStatusOpen, setWorkStatusOpen] = useState(false);
+
+  const workStatusColors = {
+    accepting_new_chats: theme.colors.semantic.success,
+    not_accepting_new_chats: theme.colors.functional.text.subdued,
+    break: theme.colors.base.blue[6],
+  } as const satisfies Record<MemberWorkStatus, string>;
 
   const handleThemeToggle = () => {
     if (isAutoTheme) {
@@ -89,6 +111,66 @@ export const DesktopAppHeader = observer(() => {
     },
   ];
 
+  const workStatusMenuItems: MenuProps["items"] = [
+    {
+      key: "work-status",
+      type: "group",
+      label: (
+        <Typography.Text
+          type="secondary"
+          style={{
+            fontSize: 12,
+            fontWeight: 700,
+            letterSpacing: 0.3,
+            textTransform: "uppercase",
+          }}
+        >
+          {t("appHeader.workStatus.title")}
+        </Typography.Text>
+      ),
+      children: WORK_STATUS_OPTIONS.map((status) => {
+        const selected = status === workStatus;
+
+        return {
+          key: status,
+          disabled: userStore.workStatusUpdating,
+          label: (
+            <S.StatusMenuItem>
+              <S.StatusMenuItemContent>
+                <S.StatusDot $color={workStatusColors[status]} />
+                <S.StatusMenuItemLabel $selected={selected}>
+                  {t(`appHeader.workStatus.${status}.menu`)}
+                </S.StatusMenuItemLabel>
+              </S.StatusMenuItemContent>
+              {selected ? (
+                <S.StatusMenuCheck>
+                  <CheckIcon size={14} weight="bold" />
+                </S.StatusMenuCheck>
+              ) : null}
+            </S.StatusMenuItem>
+          ),
+        };
+      }),
+    },
+  ];
+
+  const handleWorkStatusClick: NonNullable<MenuProps["onClick"]> = ({
+    key,
+  }) => {
+    startTransition(() => {
+      void userStore
+        .updateWorkStatus(key as MemberWorkStatus)
+        .catch((error) => {
+          notification.error({
+            title: getApiErrorMessage(
+              error,
+              t("appHeader.workStatus.updateError"),
+            ),
+          });
+        });
+    });
+  };
+
   return (
     <S.Header>
       <S.BrandButton
@@ -133,6 +215,30 @@ export const DesktopAppHeader = observer(() => {
           </S.ProfileAvatarSlot>
           <S.ProfileName>{displayName}</S.ProfileName>
         </S.ProfileButton>
+
+        <S.StatusButtonWrapper>
+          <Dropdown
+            trigger={["click"]}
+            placement="bottomRight"
+            open={workStatusOpen}
+            onOpenChange={setWorkStatusOpen}
+            menu={{
+              items: workStatusMenuItems,
+              onClick: handleWorkStatusClick,
+            }}
+          >
+            <S.StyledStatusButton
+              aria-expanded={workStatusOpen}
+              aria-label={t("appHeader.workStatus.aria")}
+            >
+              <S.StatusDot $color={workStatusColors[workStatus]} />
+              {t(`appHeader.workStatus.${workStatus}.button`)}
+              {workStatusOpen ? <CaretUpIcon /> : <CaretDownIcon />}
+            </S.StyledStatusButton>
+          </Dropdown>
+        </S.StatusButtonWrapper>
+
+        <S.CustomDivider />
 
         <Tooltip
           placement="bottom"

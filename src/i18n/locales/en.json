@@ -28,7 +28,24 @@
     "createSupply": "Create delivery",
     "searchAria": "Search",
     "searchPlaceholder": "Search products, orders, clients...",
-    "toggleTheme": "Toggle theme"
+    "toggleTheme": "Toggle theme",
+    "workStatus": {
+      "title": "Work status",
+      "aria": "Work status",
+      "updateError": "Could not update work status",
+      "accepting_new_chats": {
+        "menu": "Accepting new chats",
+        "button": "Available"
+      },
+      "not_accepting_new_chats": {
+        "menu": "Not accepting new chats",
+        "button": "Unavailable"
+      },
+      "break": {
+        "menu": "Break",
+        "button": "Break"
+      }
+    }
   },
   "brand": "MultiSale",
   "instagram": {

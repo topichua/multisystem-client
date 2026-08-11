@@ -81,7 +81,9 @@ export const LibraryFieldTitle = ({
       </S.LibraryTreeIcon>
 
       <S.LibraryTreeName>
-        <S.LibraryTreeLabel title={field.label}>{field.label}</S.LibraryTreeLabel>
+        <S.LibraryTreeLabel title={field.label}>
+          {field.label}
+        </S.LibraryTreeLabel>
         <S.LibraryTreeMeta>({field.typeLabel})</S.LibraryTreeMeta>
       </S.LibraryTreeName>
 
@@ -149,7 +151,9 @@ export const LibraryGroupTitle = ({
       </S.LibraryTreeIcon>
 
       <S.LibraryTreeName $strong>
-        <S.LibraryTreeLabel title={group.label}>{group.label}</S.LibraryTreeLabel>
+        <S.LibraryTreeLabel title={group.label}>
+          {group.label}
+        </S.LibraryTreeLabel>
       </S.LibraryTreeName>
 
       {hasInstallableFields ? (

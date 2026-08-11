@@ -36,9 +36,7 @@ export const ProductsCharacteristicsIndex = observer(() => {
 
   if (emptyView === "library-setup") {
     return (
-      <CharacteristicsLibraryGroupsSetup
-        onBack={() => setEmptyView("empty")}
-      />
+      <CharacteristicsLibraryGroupsSetup onBack={() => setEmptyView("empty")} />
     );
   }
 
