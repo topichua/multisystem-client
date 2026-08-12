@@ -33,6 +33,10 @@ export const TeamRoleDetailView = observer(() => {
     integrationGrants,
     integrationGrantsError,
     integrationGrantsLoading,
+    productReferenceGrants,
+    productReferenceGrantsError,
+    productReferenceGrantsLoading,
+    relatedGrantsLoading,
     isInvalidId,
     isLoading,
     isNotFound,
@@ -85,9 +89,10 @@ export const TeamRoleDetailView = observer(() => {
               type="primary"
               loading={
                 store.saveLoading ||
-                store.integrationGrantsSaveLoadingRoleId === role.id
+                store.integrationGrantsSaveLoadingRoleId === role.id ||
+                store.productReferenceGrantsSaveLoadingRoleId === role.id
               }
-              disabled={!store.catalog || integrationGrantsLoading}
+              disabled={!store.catalog || relatedGrantsLoading}
               onClick={() => void handleSave()}
             >
               {t("team.saveRole")}
@@ -165,6 +170,9 @@ export const TeamRoleDetailView = observer(() => {
                 integrationGrants={integrationGrants}
                 integrationGrantsError={integrationGrantsError}
                 integrationGrantsLoading={integrationGrantsLoading}
+                productReferenceGrants={productReferenceGrants}
+                productReferenceGrantsError={productReferenceGrantsError}
+                productReferenceGrantsLoading={productReferenceGrantsLoading}
                 schema={store.catalog}
               />
             </Flex>

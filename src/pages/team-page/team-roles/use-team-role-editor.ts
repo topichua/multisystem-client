@@ -6,17 +6,21 @@ import { useNavigate } from "react-router";
 import { getApiErrorMessage } from "@/api/get-api-error-message";
 import { getTeamRolePath, pagesMap } from "@/app/router/pages-map";
 import type { WorkspaceRoleIntegrationGrant } from "@/features/workspace-roles/model/workspace-role.types";
+import type { WorkspaceRoleProductReferenceGrant } from "@/features/workspace-roles/model/workspace-role.types";
 import { useWorkspaceRolesStore } from "@/features/workspace-roles/model/use-workspace-roles-store";
 import {
   buildWorkspaceRoleIntegrationGrantsPayload,
+  buildWorkspaceRoleProductReferenceGrantsPayload,
   buildWorkspaceRoleUpdatePayload,
   hasIntegrationGrantCatalogItem,
+  hasProductReferenceGrantCatalogItem,
   toWorkspaceRoleFormValues,
   type WorkspaceRoleFormValues,
 } from "@/features/workspace-roles/utils/workspace-role-form";
 import { useNotification } from "@/shared/components/notification/use-notification";
 
 const EMPTY_INTEGRATION_GRANTS: WorkspaceRoleIntegrationGrant[] = [];
+const EMPTY_PRODUCT_REFERENCE_GRANTS: WorkspaceRoleProductReferenceGrant[] = [];
 
 export function useTeamRoleEditor(roleId: string | undefined) {
   const { t } = useTranslation();
@@ -50,15 +54,35 @@ export function useTeamRoleEditor(roleId: string | undefined) {
   const shouldLoadIntegrationGrants =
     store.catalog != null && hasIntegrationGrantCatalogItem(store.catalog);
 
+  const productReferenceGrants = role
+    ? store.getProductReferenceGrants(role.id)
+    : EMPTY_PRODUCT_REFERENCE_GRANTS;
+  const productReferenceGrantsLoaded = role
+    ? store.hasLoadedProductReferenceGrants(role.id)
+    : false;
+  const productReferenceGrantsLoading = role
+    ? store.isProductReferenceGrantsLoading(role.id)
+    : false;
+  const productReferenceGrantsError = role
+    ? store.getProductReferenceGrantsError(role.id)
+    : null;
+  const shouldLoadProductReferenceGrants =
+    store.catalog != null && hasProductReferenceGrantCatalogItem(store.catalog);
+
   useEffect(() => {
     if (!role || !store.catalog) {
       return;
     }
 
     form.setFieldsValue(
-      toWorkspaceRoleFormValues(role, store.catalog, integrationGrants),
+      toWorkspaceRoleFormValues(
+        role,
+        store.catalog,
+        integrationGrants,
+        productReferenceGrants,
+      ),
     );
-  }, [form, integrationGrants, role, store.catalog]);
+  }, [form, integrationGrants, productReferenceGrants, role, store.catalog]);
 
   useEffect(() => {
     if (!role || !shouldLoadIntegrationGrants) {
@@ -67,6 +91,14 @@ export function useTeamRoleEditor(roleId: string | undefined) {
 
     void store.loadIntegrationGrants(role.id);
   }, [role, shouldLoadIntegrationGrants, store]);
+
+  useEffect(() => {
+    if (!role || !shouldLoadProductReferenceGrants) {
+      return;
+    }
+
+    void store.loadProductReferenceGrants(role.id);
+  }, [role, shouldLoadProductReferenceGrants, store]);
 
   const handleSave = useCallback(async () => {
     if (!role || !store.catalog) {
@@ -81,16 +113,26 @@ export function useTeamRoleEditor(roleId: string | undefined) {
     }
 
     try {
-      await store.updateRoleWithIntegrationGrants(
+      await store.updateRoleWithGrants(
         role.id,
         buildWorkspaceRoleUpdatePayload(role, store.catalog, values),
-        shouldLoadIntegrationGrants && integrationGrantsLoaded
-          ? buildWorkspaceRoleIntegrationGrantsPayload(
-              store.catalog,
-              integrationGrants,
-              values,
-            )
-          : undefined,
+        {
+          integrationGrants:
+            shouldLoadIntegrationGrants && integrationGrantsLoaded
+              ? buildWorkspaceRoleIntegrationGrantsPayload(
+                  store.catalog,
+                  integrationGrants,
+                  values,
+                )
+              : undefined,
+          productReferenceGrants:
+            shouldLoadProductReferenceGrants && productReferenceGrantsLoaded
+              ? buildWorkspaceRoleProductReferenceGrantsPayload(
+                  productReferenceGrants,
+                  values,
+                )
+              : undefined,
+        },
       );
       notification.success({ title: t("team.roleUpdated") });
     } catch (e) {
@@ -103,8 +145,11 @@ export function useTeamRoleEditor(roleId: string | undefined) {
     integrationGrants,
     integrationGrantsLoaded,
     notification,
+    productReferenceGrants,
+    productReferenceGrantsLoaded,
     role,
     shouldLoadIntegrationGrants,
+    shouldLoadProductReferenceGrants,
     store,
     t,
   ]);
@@ -144,6 +189,9 @@ export function useTeamRoleEditor(roleId: string | undefined) {
     [navigate, notification, pickNavigateAfterDelete, role, store, t],
   );
 
+  const relatedGrantsLoading =
+    integrationGrantsLoading || productReferenceGrantsLoading;
+
   return {
     idNum,
     role,
@@ -152,7 +200,12 @@ export function useTeamRoleEditor(roleId: string | undefined) {
     integrationGrants,
     integrationGrantsError,
     integrationGrantsLoading,
+    productReferenceGrants,
+    productReferenceGrantsError,
+    productReferenceGrantsLoading,
+    relatedGrantsLoading,
     shouldLoadIntegrationGrants,
+    shouldLoadProductReferenceGrants,
     isInvalidId: !Number.isFinite(idNum),
     isLoading: store.listLoading && !role,
     isNotFound: !store.listLoading && !role,

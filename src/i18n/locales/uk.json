@@ -367,6 +367,9 @@
     "disableAll": "Зняти всі",
     "rolesIntegrationGrantsEmpty": "Немає підключених інтеграцій",
     "rolesIntegrationGrantsError": "Не вдалося завантажити гранти інтеграцій",
+    "rolesProductReferenceGrantsAll": "Усі",
+    "rolesProductReferenceGrantsEmpty": "Немає підключених каналів",
+    "rolesProductReferenceGrantsError": "Не вдалося завантажити гранти референсів",
     "permissions": {
       "integrationGrantFallback": "{{type}} #{{id}}",
       "itemsByKey": {
@@ -388,6 +391,8 @@
         "products_category": "Керування категоріями",
         "products_category_management": "Керування категоріями",
         "products_ai_import": "AI-імпорт з Instagram",
+        "products_reference_management": "Керування референсами",
+        "products_product_reference_grants": "Керування референсами",
         "workspace_chat_groups": "Керування групами чатів",
         "workspace_chat_groups_management": "Керування групами розмов",
         "workspace_templates": "Керування шаблонами",
@@ -444,7 +449,9 @@
           "create_and_edit": "Створення та редагування товарів",
           "custom_fields_management": "Керування полями",
           "category_management": "Керування категоріями",
-          "ai_import": "AI-імпорт з Instagram"
+          "ai_import": "AI-імпорт з Instagram",
+          "reference_management": "Керування референсами",
+          "product_reference_grants": "Керування референсами"
         },
         "workspace": {
           "chat_groups_management": "Керування групами розмов",

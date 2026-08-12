@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next";
 import type {
   WorkspacePermissionsCatalogModule,
   WorkspaceRoleIntegrationGrant,
+  WorkspaceRoleProductReferenceGrant,
 } from "@/features/workspace-roles/model/workspace-role.types";
 
 import { TeamRolePermissionFormRow } from "./team-role-permission-form-row";
@@ -29,6 +30,9 @@ type ModuleCardProps = {
   integrationGrants: WorkspaceRoleIntegrationGrant[];
   integrationGrantsError?: string | null;
   integrationGrantsLoading?: boolean;
+  productReferenceGrants: WorkspaceRoleProductReferenceGrant[];
+  productReferenceGrantsError?: string | null;
+  productReferenceGrantsLoading?: boolean;
   layoutVariant?: "default" | "mobile";
   module: WorkspacePermissionsCatalogModule;
   rows: PermissionFormRow[];
@@ -47,6 +51,9 @@ export const TeamRolePermissionsModuleCard = ({
   integrationGrants,
   integrationGrantsError,
   integrationGrantsLoading,
+  productReferenceGrants,
+  productReferenceGrantsError,
+  productReferenceGrantsLoading,
   layoutVariant = "default",
   module,
   rows,
@@ -140,6 +147,9 @@ export const TeamRolePermissionsModuleCard = ({
           integrationGrants={integrationGrants}
           integrationGrantsLoading={integrationGrantsLoading ?? false}
           integrationGrantsError={integrationGrantsError}
+          productReferenceGrants={productReferenceGrants}
+          productReferenceGrantsLoading={productReferenceGrantsLoading ?? false}
+          productReferenceGrantsError={productReferenceGrantsError}
           setBooleanPermission={setBooleanPermission}
         />
       ))}

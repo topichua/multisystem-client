@@ -10,10 +10,13 @@ import type {
   WorkspaceRoleCreatePayload,
   WorkspaceRoleIntegrationGrant,
   WorkspaceRoleIntegrationGrantsUpdatePayload,
+  WorkspaceRoleProductReferenceGrant,
+  WorkspaceRoleProductReferenceGrantsUpdatePayload,
   WorkspaceRoleUpdatePayload,
 } from "./workspace-role.types";
 
 const EMPTY_INTEGRATION_GRANTS: WorkspaceRoleIntegrationGrant[] = [];
+const EMPTY_PRODUCT_REFERENCE_GRANTS: WorkspaceRoleProductReferenceGrant[] = [];
 
 export class WorkspaceRolesStore {
   roles: WorkspaceRole[] = [];
@@ -23,6 +26,11 @@ export class WorkspaceRolesStore {
     WorkspaceRoleIntegrationGrant[]
   >();
   integrationGrantsErrorByRoleId = new Map<number, string>();
+  productReferenceGrantsByRoleId = new Map<
+    number,
+    WorkspaceRoleProductReferenceGrant[]
+  >();
+  productReferenceGrantsErrorByRoleId = new Map<number, string>();
 
   listLoading = false;
   listError: string | null = null;
@@ -32,6 +40,8 @@ export class WorkspaceRolesStore {
 
   integrationGrantsLoadingRoleId: number | null = null;
   integrationGrantsSaveLoadingRoleId: number | null = null;
+  productReferenceGrantsLoadingRoleId: number | null = null;
+  productReferenceGrantsSaveLoadingRoleId: number | null = null;
 
   saveLoading = false;
   deleteLoadingId: number | null = null;
@@ -58,6 +68,21 @@ export class WorkspaceRolesStore {
 
   getIntegrationGrantsError = (roleId: number): string | null =>
     this.integrationGrantsErrorByRoleId.get(roleId) ?? null;
+
+  getProductReferenceGrants = (
+    roleId: number,
+  ): WorkspaceRoleProductReferenceGrant[] =>
+    this.productReferenceGrantsByRoleId.get(roleId) ??
+    EMPTY_PRODUCT_REFERENCE_GRANTS;
+
+  hasLoadedProductReferenceGrants = (roleId: number): boolean =>
+    this.productReferenceGrantsByRoleId.has(roleId);
+
+  isProductReferenceGrantsLoading = (roleId: number): boolean =>
+    this.productReferenceGrantsLoadingRoleId === roleId;
+
+  getProductReferenceGrantsError = (roleId: number): string | null =>
+    this.productReferenceGrantsErrorByRoleId.get(roleId) ?? null;
 
   loadInitialData = async (): Promise<void> => {
     await Promise.all([this.loadRoles(), this.loadCatalog()]);
@@ -161,6 +186,48 @@ export class WorkspaceRolesStore {
     }
   };
 
+  loadProductReferenceGrants = async (
+    roleId: number,
+    options?: { silent?: boolean },
+  ): Promise<void> => {
+    const silent = options?.silent === true;
+
+    if (!silent) {
+      runInAction(() => {
+        this.productReferenceGrantsLoadingRoleId = roleId;
+        this.productReferenceGrantsErrorByRoleId.delete(roleId);
+      });
+    }
+
+    try {
+      const grants = await workspaceRolesApi.getProductReferenceGrants(roleId);
+
+      runInAction(() => {
+        this.productReferenceGrantsByRoleId.set(roleId, grants);
+        this.productReferenceGrantsErrorByRoleId.delete(roleId);
+      });
+    } catch (e) {
+      runInAction(() => {
+        this.productReferenceGrantsErrorByRoleId.set(
+          roleId,
+          unknownErrorMessage(e),
+        );
+      });
+      throwLoadError(
+        `Failed to load product reference grants for role ${roleId}`,
+        e,
+      );
+    } finally {
+      if (!silent) {
+        runInAction(() => {
+          if (this.productReferenceGrantsLoadingRoleId === roleId) {
+            this.productReferenceGrantsLoadingRoleId = null;
+          }
+        });
+      }
+    }
+  };
+
   createRole = async (payload: WorkspaceRoleCreatePayload): Promise<void> => {
     runInAction(() => {
       this.saveLoading = true;
@@ -194,15 +261,24 @@ export class WorkspaceRolesStore {
     }
   };
 
-  updateRoleWithIntegrationGrants = async (
+  updateRoleWithGrants = async (
     roleId: number,
     rolePayload: WorkspaceRoleUpdatePayload,
-    integrationGrantsPayload?: WorkspaceRoleIntegrationGrantsUpdatePayload,
+    related?: {
+      integrationGrants?: WorkspaceRoleIntegrationGrantsUpdatePayload;
+      productReferenceGrants?: WorkspaceRoleProductReferenceGrantsUpdatePayload;
+    },
   ): Promise<void> => {
+    const integrationGrantsPayload = related?.integrationGrants;
+    const productReferenceGrantsPayload = related?.productReferenceGrants;
+
     runInAction(() => {
       this.saveLoading = true;
       if (integrationGrantsPayload) {
         this.integrationGrantsSaveLoadingRoleId = roleId;
+      }
+      if (productReferenceGrantsPayload) {
+        this.productReferenceGrantsSaveLoadingRoleId = roleId;
       }
     });
 
@@ -216,10 +292,20 @@ export class WorkspaceRolesStore {
         );
       }
 
+      if (productReferenceGrantsPayload) {
+        await workspaceRolesApi.updateProductReferenceGrants(
+          roleId,
+          productReferenceGrantsPayload,
+        );
+      }
+
       await Promise.all([
         this.loadRoles({ silent: true }),
         integrationGrantsPayload
           ? this.loadIntegrationGrants(roleId, { silent: true })
+          : Promise.resolve(),
+        productReferenceGrantsPayload
+          ? this.loadProductReferenceGrants(roleId, { silent: true })
           : Promise.resolve(),
       ]);
     } finally {
@@ -227,6 +313,9 @@ export class WorkspaceRolesStore {
         this.saveLoading = false;
         if (this.integrationGrantsSaveLoadingRoleId === roleId) {
           this.integrationGrantsSaveLoadingRoleId = null;
+        }
+        if (this.productReferenceGrantsSaveLoadingRoleId === roleId) {
+          this.productReferenceGrantsSaveLoadingRoleId = null;
         }
       });
     }

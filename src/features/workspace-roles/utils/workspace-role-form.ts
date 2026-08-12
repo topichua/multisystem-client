@@ -8,6 +8,8 @@ import type {
   WorkspaceRoleIntegrationGrantWriteItem,
   WorkspaceRolePermissionOptionLists,
   WorkspaceRolePermissionOptions,
+  WorkspaceRoleProductReferenceGrant,
+  WorkspaceRoleProductReferenceGrantsUpdatePayload,
   WorkspaceRoleUpdatePayload,
 } from "@/features/workspace-roles/model/workspace-role.types";
 
@@ -15,6 +17,12 @@ export type WorkspaceRoleIntegrationGrantFormValue = {
   integrationType: string;
   integrationId: number;
   permissions: WorkspaceRolePermissionOptions;
+};
+
+export type WorkspaceRoleProductReferenceGrantFormValue = {
+  integrationType: string;
+  integrationId: number;
+  canManage: boolean;
 };
 
 export type WorkspaceRoleFormValues = {
@@ -25,6 +33,10 @@ export type WorkspaceRoleFormValues = {
   permissionOptions?: WorkspaceRolePermissionOptions;
   permissionOptionLists?: WorkspaceRolePermissionOptionLists;
   integrationGrants?: Record<string, WorkspaceRoleIntegrationGrantFormValue>;
+  productReferenceGrants?: Record<
+    string,
+    WorkspaceRoleProductReferenceGrantFormValue
+  >;
 };
 
 type CatalogFieldMeta = {
@@ -129,18 +141,31 @@ const isGrantCatalogItemVisibleForType = (
 ): boolean =>
   !item.integrationTypes || item.integrationTypes.includes(integrationType);
 
-export const hasIntegrationGrantCatalogItem = (
+const hasCatalogItemType = (
   schema: WorkspacePermissionsCatalogSchema,
+  type: string,
 ): boolean =>
   schema.modules.some((module) =>
-    module.items.some((item) => item.type === "integration_grants"),
+    module.items.some((item) => item.type === type),
   );
+
+export const hasIntegrationGrantCatalogItem = (
+  schema: WorkspacePermissionsCatalogSchema,
+): boolean => hasCatalogItemType(schema, "integration_grants");
+
+export const hasProductReferenceGrantCatalogItem = (
+  schema: WorkspacePermissionsCatalogSchema,
+): boolean => hasCatalogItemType(schema, "product_reference_grants");
 
 export const getIntegrationGrantFormKey = (
   grant:
     | Pick<WorkspaceRoleIntegrationGrant, "integrationType" | "integrationId">
     | Pick<
         WorkspaceRoleIntegrationGrantWriteItem,
+        "integrationType" | "integrationId"
+      >
+    | Pick<
+        WorkspaceRoleProductReferenceGrant,
         "integrationType" | "integrationId"
       >,
 ): string => `${grant.integrationType}:${grant.integrationId}`;
@@ -167,6 +192,7 @@ export const toWorkspaceRoleFormValues = (
   role: WorkspaceRole,
   schema: WorkspacePermissionsCatalogSchema,
   integrationGrants: WorkspaceRoleIntegrationGrant[] = [],
+  productReferenceGrants: WorkspaceRoleProductReferenceGrant[] = [],
 ): WorkspaceRoleFormValues => {
   const meta = getCatalogFieldMeta(schema);
   const permissions: Record<string, boolean> = {};
@@ -207,6 +233,17 @@ export const toWorkspaceRoleFormValues = (
     ]),
   );
 
+  const productReferenceGrantValues = Object.fromEntries(
+    productReferenceGrants.map((grant) => [
+      getIntegrationGrantFormKey(grant),
+      {
+        integrationType: grant.integrationType,
+        integrationId: grant.integrationId,
+        canManage: grant.canManage === true,
+      },
+    ]),
+  );
+
   return {
     name: role.name,
     description: role.description ?? "",
@@ -215,6 +252,7 @@ export const toWorkspaceRoleFormValues = (
     permissionOptions,
     permissionOptionLists,
     integrationGrants: integrationGrantValues,
+    productReferenceGrants: productReferenceGrantValues,
   };
 };
 
@@ -319,3 +357,19 @@ export const buildWorkspaceRoleIntegrationGrantsPayload = (
 
   return { grants };
 };
+
+export const buildWorkspaceRoleProductReferenceGrantsPayload = (
+  currentGrants: WorkspaceRoleProductReferenceGrant[],
+  values: WorkspaceRoleFormValues,
+): WorkspaceRoleProductReferenceGrantsUpdatePayload => ({
+  grants: currentGrants.map((grant) => {
+    const key = getIntegrationGrantFormKey(grant);
+    const formGrant = values.productReferenceGrants?.[key];
+
+    return {
+      integrationType: grant.integrationType,
+      integrationId: grant.integrationId,
+      canManage: formGrant?.canManage === true,
+    };
+  }),
+});

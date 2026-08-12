@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import type {
   WorkspacePermissionsCatalogSchema,
   WorkspaceRoleIntegrationGrant,
+  WorkspaceRoleProductReferenceGrant,
 } from "@/features/workspace-roles/model/workspace-role.types";
 
 import { collectRowsFromModule } from "./team-role-permissions-form.utils";
@@ -14,6 +15,9 @@ type TeamRolePermissionsFormProps = {
   integrationGrants: WorkspaceRoleIntegrationGrant[];
   integrationGrantsError?: string | null;
   integrationGrantsLoading?: boolean;
+  productReferenceGrants: WorkspaceRoleProductReferenceGrant[];
+  productReferenceGrantsError?: string | null;
+  productReferenceGrantsLoading?: boolean;
   layoutVariant?: "default" | "mobile";
 };
 
@@ -21,6 +25,9 @@ export const TeamRolePermissionsForm = ({
   integrationGrants,
   integrationGrantsError,
   integrationGrantsLoading,
+  productReferenceGrants,
+  productReferenceGrantsError,
+  productReferenceGrantsLoading,
   schema,
   layoutVariant = "default",
 }: TeamRolePermissionsFormProps) => {
@@ -42,6 +49,9 @@ export const TeamRolePermissionsForm = ({
           integrationGrants={integrationGrants}
           integrationGrantsError={integrationGrantsError}
           integrationGrantsLoading={integrationGrantsLoading}
+          productReferenceGrants={productReferenceGrants}
+          productReferenceGrantsError={productReferenceGrantsError}
+          productReferenceGrantsLoading={productReferenceGrantsLoading}
           module={module}
           rows={rows}
         />

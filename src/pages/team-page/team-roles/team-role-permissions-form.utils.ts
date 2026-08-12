@@ -26,6 +26,10 @@ export type PermissionFormRow =
   | {
       kind: "integration_grants";
       item: WorkspacePermissionsCatalogItem;
+    }
+  | {
+      kind: "product_reference_grants";
+      item: WorkspacePermissionsCatalogItem;
     };
 
 export const toSelectOptions = (
@@ -147,6 +151,9 @@ const collectRowsFromItem = (
     case "integration_grants":
       return [{ kind: "integration_grants", item }];
 
+    case "product_reference_grants":
+      return [{ kind: "product_reference_grants", item }];
+
     default:
       return [];
   }
@@ -192,6 +199,12 @@ export const isPermissionDisabled = (
   permissions: Record<string, boolean>,
   disabledBy: string | undefined,
 ): boolean => disabledBy != null && permissions[disabledBy] !== true;
+
+export const areRequiredPermissionsEnabled = (
+  permissions: Record<string, boolean>,
+  requires: string[] | undefined,
+): boolean =>
+  !requires?.length || requires.every((key) => permissions[key] === true);
 
 export const isGrantItemVisibleForIntegration = (
   item: WorkspacePermissionsCatalogItem,

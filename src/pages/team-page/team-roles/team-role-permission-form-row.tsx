@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 
 import type { WorkspacePermissionsCatalogItem } from "@/features/workspace-roles/model/workspace-role.types";
 import type { WorkspaceRoleIntegrationGrant } from "@/features/workspace-roles/model/workspace-role.types";
+import type { WorkspaceRoleProductReferenceGrant } from "@/features/workspace-roles/model/workspace-role.types";
 import { getIntegrationGrantFormKey } from "@/features/workspace-roles/utils/workspace-role-form";
 
 import {
@@ -19,6 +20,7 @@ import {
   toSelectOptions,
   type PermissionFormRow,
 } from "./team-role-permissions-form.utils";
+import { TeamRoleProductReferenceGrantsSection } from "./team-role-product-reference-grants-section";
 
 const { Text } = Typography;
 
@@ -32,6 +34,9 @@ type TeamRolePermissionFormRowProps = {
   integrationGrants: WorkspaceRoleIntegrationGrant[];
   integrationGrantsLoading: boolean;
   integrationGrantsError?: string | null;
+  productReferenceGrants: WorkspaceRoleProductReferenceGrant[];
+  productReferenceGrantsLoading: boolean;
+  productReferenceGrantsError?: string | null;
   setBooleanPermission: (
     row: Extract<PermissionFormRow, { kind: "boolean" }>,
     checked: boolean,
@@ -66,6 +71,9 @@ export const TeamRolePermissionFormRow = ({
   integrationGrants,
   integrationGrantsLoading,
   integrationGrantsError,
+  productReferenceGrants,
+  productReferenceGrantsLoading,
+  productReferenceGrantsError,
   setBooleanPermission,
 }: TeamRolePermissionFormRowProps) => {
   const { t } = useTranslation();
@@ -76,6 +84,22 @@ export const TeamRolePermissionFormRow = ({
     borderTop,
     padding: rowPadding,
   };
+
+  if (row.kind === "product_reference_grants") {
+    return (
+      <TeamRoleProductReferenceGrantsSection
+        item={row.item}
+        grants={productReferenceGrants}
+        loading={productReferenceGrantsLoading}
+        error={productReferenceGrantsError}
+        borderColor={borderColor}
+        borderRadius={borderRadius}
+        rowPadding={rowPadding}
+        borderTop={borderTop}
+        permissionValues={permissionValues}
+      />
+    );
+  }
 
   if (row.kind === "integration_grants") {
     const fullAccessEnabled =

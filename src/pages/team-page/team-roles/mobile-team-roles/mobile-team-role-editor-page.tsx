@@ -34,6 +34,10 @@ export const MobileTeamRoleEditorPage = observer(() => {
     integrationGrants,
     integrationGrantsError,
     integrationGrantsLoading,
+    productReferenceGrants,
+    productReferenceGrantsError,
+    productReferenceGrantsLoading,
+    relatedGrantsLoading,
     isInvalidId,
     isLoading,
     isNotFound,
@@ -175,6 +179,11 @@ export const MobileTeamRoleEditorPage = observer(() => {
                     integrationGrants={integrationGrants}
                     integrationGrantsError={integrationGrantsError}
                     integrationGrantsLoading={integrationGrantsLoading}
+                    productReferenceGrants={productReferenceGrants}
+                    productReferenceGrantsError={productReferenceGrantsError}
+                    productReferenceGrantsLoading={
+                      productReferenceGrantsLoading
+                    }
                     schema={store.catalog}
                   />
                 </S.PermissionsRegion>
@@ -195,9 +204,10 @@ export const MobileTeamRoleEditorPage = observer(() => {
                 block
                 loading={
                   store.saveLoading ||
-                  store.integrationGrantsSaveLoadingRoleId === role.id
+                  store.integrationGrantsSaveLoadingRoleId === role.id ||
+                  store.productReferenceGrantsSaveLoadingRoleId === role.id
                 }
-                disabled={!store.catalog || integrationGrantsLoading}
+                disabled={!store.catalog || relatedGrantsLoading}
                 data-qa="team-mobile-role-save"
                 onClick={() => void handleSave()}
               >

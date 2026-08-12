@@ -7,6 +7,9 @@ import type {
   WorkspaceRoleIntegrationGrant,
   WorkspaceRoleIntegrationGrantsResponse,
   WorkspaceRoleIntegrationGrantsUpdatePayload,
+  WorkspaceRoleProductReferenceGrant,
+  WorkspaceRoleProductReferenceGrantsResponse,
+  WorkspaceRoleProductReferenceGrantsUpdatePayload,
   WorkspaceRolesListResponse,
   WorkspaceRoleUpdatePayload,
 } from "../model/workspace-role.types";
@@ -44,6 +47,17 @@ export const workspaceRolesApi = {
     return data.grants;
   },
 
+  getProductReferenceGrants: async (
+    roleId: number,
+  ): Promise<WorkspaceRoleProductReferenceGrant[]> => {
+    const { data } =
+      await apiClient.get<WorkspaceRoleProductReferenceGrantsResponse>(
+        `${basePath}/${roleId}/product-reference-grants`,
+      );
+
+    return data.grants;
+  },
+
   create: async (payload: WorkspaceRoleCreatePayload): Promise<void> => {
     await apiClient.post(basePath, payload);
   },
@@ -60,6 +74,16 @@ export const workspaceRolesApi = {
     payload: WorkspaceRoleIntegrationGrantsUpdatePayload,
   ): Promise<void> => {
     await apiClient.put(`${basePath}/${roleId}/integration-grants`, payload);
+  },
+
+  updateProductReferenceGrants: async (
+    roleId: number,
+    payload: WorkspaceRoleProductReferenceGrantsUpdatePayload,
+  ): Promise<void> => {
+    await apiClient.put(
+      `${basePath}/${roleId}/product-reference-grants`,
+      payload,
+    );
   },
 
   delete: async (roleId: number): Promise<void> => {

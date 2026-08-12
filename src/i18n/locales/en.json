@@ -361,6 +361,9 @@
     "disableAll": "Disable all",
     "rolesIntegrationGrantsEmpty": "No connected integrations",
     "rolesIntegrationGrantsError": "Failed to load integration grants",
+    "rolesProductReferenceGrantsAll": "All",
+    "rolesProductReferenceGrantsEmpty": "No connected channels",
+    "rolesProductReferenceGrantsError": "Failed to load product reference grants",
     "permissions": {
       "integrationGrantFallback": "{{type}} #{{id}}",
       "itemsByKey": {
@@ -382,6 +385,8 @@
         "products_category": "Manage categories",
         "products_category_management": "Manage categories",
         "products_ai_import": "AI import from Instagram",
+        "products_reference_management": "Reference management",
+        "products_product_reference_grants": "Reference management",
         "workspace_chat_groups": "Manage chat groups",
         "workspace_chat_groups_management": "Manage conversation groups",
         "workspace_templates": "Manage templates",
@@ -438,7 +443,9 @@
           "create_and_edit": "Create and edit products",
           "custom_fields_management": "Manage fields",
           "category_management": "Manage categories",
-          "ai_import": "AI import from Instagram"
+          "ai_import": "AI import from Instagram",
+          "reference_management": "Reference management",
+          "product_reference_grants": "Reference management"
         },
         "workspace": {
           "chat_groups_management": "Manage conversation groups",

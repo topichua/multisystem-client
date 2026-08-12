@@ -17,6 +17,12 @@ export type WorkspaceIntegrationGrant = {
   instagramCommentsWrite?: boolean;
 };
 
+export type WorkspaceProductReferenceGrantResolved = {
+  integrationType: string;
+  integrationId: number;
+  canManage: boolean;
+};
+
 export type WorkspaceRoleResolvedPermissions = {
   isOwner: boolean;
   products: {
@@ -54,6 +60,7 @@ export type WorkspaceRoleResolvedPermissions = {
     view: boolean;
   };
   integrationGrants: WorkspaceIntegrationGrant[];
+  productReferenceGrants: WorkspaceProductReferenceGrantResolved[];
 };
 
 export type WorkspaceRole = {
@@ -122,11 +129,34 @@ export type WorkspaceRoleIntegrationGrantsUpdatePayload = {
   grants: WorkspaceRoleIntegrationGrantWriteItem[];
 };
 
+export type WorkspaceRoleProductReferenceGrant = {
+  integrationType: string;
+  integrationId: number;
+  integrationName: string;
+  canManage: boolean;
+};
+
+export type WorkspaceRoleProductReferenceGrantsResponse = {
+  roleId: number;
+  grants: WorkspaceRoleProductReferenceGrant[];
+};
+
+export type WorkspaceRoleProductReferenceGrantWriteItem = {
+  integrationType: string;
+  integrationId: number;
+  canManage: boolean;
+};
+
+export type WorkspaceRoleProductReferenceGrantsUpdatePayload = {
+  grants: WorkspaceRoleProductReferenceGrantWriteItem[];
+};
+
 export type WorkspacePermissionsCatalogStorageKey =
   | "permissions"
   | "permissionOptions"
   | "permissionOptionLists"
-  | "integrationGrants";
+  | "integrationGrants"
+  | "productReferenceGrants";
 
 export type WorkspacePermissionsCatalogStorageHint = {
   type: string;
@@ -140,7 +170,13 @@ export type WorkspacePermissionsCatalogOption = {
 };
 
 export type WorkspacePermissionsCatalogItem = {
-  type: "boolean" | "option" | "group" | "integration_grants" | (string & {});
+  type:
+    | "boolean"
+    | "option"
+    | "group"
+    | "integration_grants"
+    | "product_reference_grants"
+    | (string & {});
   key: string;
   label?: string;
   description?: string;
@@ -151,6 +187,7 @@ export type WorkspacePermissionsCatalogItem = {
   items?: WorkspacePermissionsCatalogItem[];
   integrationTypes?: string[];
   manageEndpoint?: string;
+  requires?: string[];
 };
 
 export type WorkspacePermissionsCatalogModule = {
