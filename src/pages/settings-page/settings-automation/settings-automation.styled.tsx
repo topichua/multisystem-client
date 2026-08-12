@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Button, Typography } from "antd";
+import { Button, Card, Typography } from "antd";
 
 export const FormRoot = styled.div`
   box-sizing: border-box;
@@ -39,6 +39,128 @@ export const MobileEditorActions = styled.div`
       width: 100%;
     }
   }
+`;
+
+export const ListContentRoot = styled.div`
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 960px;
+  margin: 24px auto;
+  min-width: 0;
+`;
+
+export const ListIntroRow = styled.div`
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  min-width: 0;
+
+  .ant-btn {
+    flex: 0 0 auto;
+  }
+
+  @media (max-width: 720px) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+`;
+
+export const ListDescription = styled(Typography.Paragraph)`
+  && {
+    max-width: 680px;
+    margin: 0;
+    color: ${({ theme }) => theme.colors.functional.text.subdued};
+    font-size: ${({ theme }) => theme.fontSize.base};
+    line-height: 1.45;
+    min-height: 42px;
+  }
+`;
+
+export const ListTabs = styled.div`
+  margin-top: 24px;
+  min-width: 0;
+
+  .ant-tabs-nav {
+    margin-bottom: 16px;
+  }
+`;
+
+export const ChannelsCard = styled(Card)`
+  && {
+    border-color: ${({ theme }) => theme.colors.functional.border.cardBase};
+    border-radius: ${({ theme }) => theme.radius.semiLarge};
+  }
+
+  .ant-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 24px;
+  }
+
+  @media (max-width: 720px) {
+    .ant-card-body {
+      padding: 16px;
+    }
+  }
+`;
+
+export const ChannelsHeader = styled.div`
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+`;
+
+export const ChannelsTitle = styled(Typography.Title)`
+  && {
+    margin: 0;
+    color: ${({ theme }) => theme.colors.functional.text.heading};
+    font-size: ${({ theme }) => theme.fontSize.large};
+    line-height: 1.35;
+  }
+`;
+
+export const ChannelGroupTitle = styled.span`
+  min-width: 0;
+  color: ${({ theme }) => theme.colors.functional.text.subdued};
+  font-size: ${({ theme }) => theme.fontSize.base};
+  font-weight: 600;
+  line-height: 1.35;
+`;
+
+export const ChannelIntegrationList = styled.div`
+  min-width: 0;
+`;
+
+export const ChannelIntegrationItem = styled.div`
+  min-width: 0;
+  padding-bottom: 18px;
+
+  & + & {
+    padding-top: 18px;
+    border-top: 1px solid ${({ theme }) => theme.colors.functional.border.split};
+  }
+
+  &:last-child {
+    padding-bottom: 0;
+  }
+`;
+
+export const ChannelSettingRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-width: 0;
+`;
+
+export const ChannelSettingCopy = styled.div`
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
 `;
 
 export const ActiveLabel = styled.span`

@@ -3,7 +3,9 @@ import type { AxiosRequestConfig } from "axios";
 import { apiClient } from "@/api/api-client";
 
 import type {
+  ChannelAutoDistributionIntegrationType,
   IntegrationCreatePayload,
+  IntegrationChannelSettingsPayload,
   IntegrationItem,
   IntegrationsListResponse,
   ManualPaymentMethod,
@@ -224,6 +226,20 @@ export const integrationsApi = {
     id: number,
   ): Promise<void> => {
     await apiClient.delete(`${basePath}/${type}/${id}`);
+  },
+
+  updateChannelSettings: async (
+    type: ChannelAutoDistributionIntegrationType,
+    id: number,
+    payload: IntegrationChannelSettingsPayload,
+  ): Promise<IntegrationItem> => {
+    const endpoint =
+      type === "telegram"
+        ? `${telegramIntegrationsBasePath}/${encodeURIComponent(String(id))}`
+        : `${basePath}/${type}/${encodeURIComponent(String(id))}`;
+    const { data } = await apiClient.patch<IntegrationItem>(endpoint, payload);
+
+    return data;
   },
 
   getInstagramOAuthPages: async (

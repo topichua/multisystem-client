@@ -4,6 +4,7 @@ import { integrationsApi } from "@/features/integrations/api/integrations-api";
 import { throwLoadError } from "@/utils/throw-load-error";
 
 import type {
+  ChannelAutoDistributionIntegrationType,
   IntegrationItem,
   IntegrationType,
   ManualPaymentMethod,
@@ -79,6 +80,7 @@ export class IntegrationsStore {
 
   connectLoadingType: IntegrationType | null = null;
   disconnectLoadingKey: string | null = null;
+  channelSettingsLoadingKey: string | null = null;
   integrationsLoadPromise: Promise<void> | null = null;
 
   constructor() {
@@ -95,6 +97,20 @@ export class IntegrationsStore {
 
   isConnecting(type: IntegrationType): boolean {
     return this.connectLoadingType === type;
+  }
+
+  private channelSettingsKey(
+    type: ChannelAutoDistributionIntegrationType,
+    id: number,
+  ): string {
+    return `${type}:${id}`;
+  }
+
+  isUpdatingChannelSettings(
+    type: ChannelAutoDistributionIntegrationType,
+    id: number,
+  ): boolean {
+    return this.channelSettingsLoadingKey === this.channelSettingsKey(type, id);
   }
 
   loadIntegrations = async (options?: {
@@ -412,6 +428,43 @@ export class IntegrationsStore {
       runInAction(() => {
         if (this.disconnectLoadingKey === loadingKey) {
           this.disconnectLoadingKey = null;
+        }
+      });
+    }
+  };
+
+  setChannelAutoDistribution = async (
+    type: ChannelAutoDistributionIntegrationType,
+    id: number,
+    enabled: boolean,
+  ): Promise<void> => {
+    const loadingKey = this.channelSettingsKey(type, id);
+
+    runInAction(() => {
+      this.channelSettingsLoadingKey = loadingKey;
+    });
+
+    try {
+      await integrationsApi.updateChannelSettings(type, id, {
+        chat_auto_distribution: enabled,
+      });
+      runInAction(() => {
+        const index = this.items.findIndex(
+          (item) => item.type === type && item.id === id,
+        );
+
+        if (index >= 0) {
+          this.items[index] = {
+            ...this.items[index],
+            chat_auto_distribution: enabled,
+          };
+        }
+      });
+      await this.loadIntegrations({ silent: true, force: true });
+    } finally {
+      runInAction(() => {
+        if (this.channelSettingsLoadingKey === loadingKey) {
+          this.channelSettingsLoadingKey = null;
         }
       });
     }

@@ -616,7 +616,27 @@
   "automation": {
     "title": "Automation",
     "sectionHint": "Automatically change order status when delivery or payment conditions match. Currently only one action type is supported — changing the order status.",
+    "settingsSectionHint": "General rules for automatic work with conversations.",
     "create": "Create automation",
+    "tabs": {
+      "rules": "Rules",
+      "settings": "Settings"
+    },
+    "channels": {
+      "title": "Channels",
+      "description": "New chat distribution is configured separately for each connected channel.",
+      "empty": "No connected channels yet",
+      "loadError": "Could not load channels",
+      "updateError": "Could not update channel settings",
+      "types": {
+        "instagram": "Instagram",
+        "telegram": "Telegram"
+      },
+      "autoDistribution": {
+        "title": "Automatic distribution",
+        "description": "New chats without an assignee are assigned to managers who accept new chats."
+      }
+    },
     "newTitle": "New automation",
     "editTitle": "Edit automation",
     "backToList": "Automations",

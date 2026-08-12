@@ -1,7 +1,8 @@
 import { ArrowLeftIcon, PlusIcon } from "@phosphor-icons/react";
-import { Alert, Button, Empty, Flex, Switch } from "antd";
+import { Alert, Button, Empty, Flex, Switch, Tabs } from "antd";
+import type { TabsProps } from "antd";
 import { observer } from "mobx-react-lite";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 
@@ -14,13 +15,18 @@ import { useNotification } from "@/shared/components/notification/use-notificati
 import { dataQaAttrs } from "@/styled/data-qa-attrs";
 
 import * as MobileS from "../mobile-settings-page.styled";
+import { AutomationChannelSettings } from "./automation-channel-settings";
 import * as S from "./settings-automation.styled";
+
+type AutomationListTabKey = "rules" | "settings";
 
 export const MobileSettingsAutomationListPage = observer(() => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const notification = useNotification();
   const store = useAutomationStore();
+  const [activeTabKey, setActiveTabKey] =
+    useState<AutomationListTabKey>("rules");
 
   useEffect(() => {
     void store.loadCriteria({ silent: true }).catch(() => undefined);
@@ -41,6 +47,68 @@ export const MobileSettingsAutomationListPage = observer(() => {
     }
   };
 
+  const tabs: TabsProps["items"] = [
+    {
+      key: "rules",
+      label: t("automation.tabs.rules"),
+      children: (
+        <>
+          {store.listError && (
+            <Alert type="error" title={store.listError} showIcon />
+          )}
+
+          {store.listLoading && store.rules.length === 0 ? (
+            <CenteredSpinner />
+          ) : store.rules.length === 0 ? (
+            <Empty description={t("automation.empty")} />
+          ) : (
+            <S.ListStack>
+              {store.rules.map((rule) => (
+                <S.ListItem
+                  key={rule.id}
+                  type="button"
+                  onClick={() => navigate(getSettingsAutomationPath(rule.id))}
+                  data-qa={`settings-mobile-automation-item-${rule.id}`}
+                >
+                  <S.ListItemHeader>
+                    <S.ListItemTitle>{rule.name}</S.ListItemTitle>
+                    <div
+                      onClick={(event) => event.stopPropagation()}
+                      onKeyDown={(event) => event.stopPropagation()}
+                    >
+                      <Flex align="center" gap={8}>
+                        <Switch
+                          checked={rule.isActive}
+                          loading={store.activeToggleLoadingId === rule.id}
+                          onChange={(checked) => {
+                            void handleToggleActive(rule.id, checked);
+                          }}
+                        />
+                      </Flex>
+                    </div>
+                  </S.ListItemHeader>
+                  <S.ListItemSummary>
+                    {formatAutomationRuleSummary(rule, store.criteria, t)}
+                  </S.ListItemSummary>
+                </S.ListItem>
+              ))}
+            </S.ListStack>
+          )}
+        </>
+      ),
+    },
+    {
+      key: "settings",
+      label: t("automation.tabs.settings"),
+      children: <AutomationChannelSettings />,
+    },
+  ];
+
+  const description =
+    activeTabKey === "settings"
+      ? t("automation.settingsSectionHint")
+      : t("automation.sectionHint");
+
   return (
     <MobileS.Root {...dataQaAttrs("settings-mobile-automation-page")}>
       <MobileS.PageHeader>
@@ -56,65 +124,35 @@ export const MobileSettingsAutomationListPage = observer(() => {
             {t("automation.title")}
           </MobileS.PageTitle>
         </MobileS.TitleRow>
-        <MobileS.PageSubtitle>
-          {t("automation.sectionHint")}
-        </MobileS.PageSubtitle>
-        <Button
-          type="primary"
-          block
-          icon={<PlusIcon />}
-          data-qa="settings-mobile-automation-create"
-          onClick={() => navigate(pagesMap.settingsAutomationNew)}
-        >
-          {t("automation.create")}
-        </Button>
       </MobileS.PageHeader>
 
       <MobileS.ScrollRegion>
         <MobileS.ContentSection>
-          {store.listError && (
-            <Alert type="error" title={store.listError} showIcon />
-          )}
+          <S.ListContentRoot>
+            <S.ListIntroRow>
+              <S.ListDescription>{description}</S.ListDescription>
+              {activeTabKey === "rules" && (
+                <Button
+                  type="primary"
+                  block
+                  icon={<PlusIcon />}
+                  data-qa="settings-mobile-automation-create"
+                  onClick={() => navigate(pagesMap.settingsAutomationNew)}
+                >
+                  {t("automation.create")}
+                </Button>
+              )}
+            </S.ListIntroRow>
 
-          {store.listLoading && store.rules.length === 0 ? (
-            <CenteredSpinner />
-          ) : store.rules.length === 0 ? (
-            <Empty description={t("automation.empty")} />
-          ) : (
-            <>
-              <S.ListStack>
-                {store.rules.map((rule) => (
-                  <S.ListItem
-                    key={rule.id}
-                    type="button"
-                    onClick={() => navigate(getSettingsAutomationPath(rule.id))}
-                    data-qa={`settings-mobile-automation-item-${rule.id}`}
-                  >
-                    <S.ListItemHeader>
-                      <S.ListItemTitle>{rule.name}</S.ListItemTitle>
-                      <div
-                        onClick={(event) => event.stopPropagation()}
-                        onKeyDown={(event) => event.stopPropagation()}
-                      >
-                        <Flex align="center" gap={8}>
-                          <Switch
-                            checked={rule.isActive}
-                            loading={store.activeToggleLoadingId === rule.id}
-                            onChange={(checked) => {
-                              void handleToggleActive(rule.id, checked);
-                            }}
-                          />
-                        </Flex>
-                      </div>
-                    </S.ListItemHeader>
-                    <S.ListItemSummary>
-                      {formatAutomationRuleSummary(rule, store.criteria, t)}
-                    </S.ListItemSummary>
-                  </S.ListItem>
-                ))}
-              </S.ListStack>
-            </>
-          )}
+            <S.ListTabs>
+              <Tabs
+                activeKey={activeTabKey}
+                items={tabs}
+                onChange={(key) => setActiveTabKey(key as AutomationListTabKey)}
+                data-qa="settings-mobile-automation-tabs"
+              />
+            </S.ListTabs>
+          </S.ListContentRoot>
         </MobileS.ContentSection>
       </MobileS.ScrollRegion>
     </MobileS.Root>

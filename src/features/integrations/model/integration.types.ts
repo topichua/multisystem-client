@@ -7,6 +7,8 @@ export type IntegrationType =
   | "manualpayment"
   | (string & {});
 
+export type ChannelAutoDistributionIntegrationType = "instagram" | "telegram";
+
 export type IntegrationItem = {
   type: IntegrationType;
   id: number;
@@ -23,6 +25,7 @@ export type IntegrationItem = {
   paymentProvider?: PaymentIntegrationProviderType;
   displayName?: string;
   status?: PaymentIntegrationStatus;
+  scopes?: string;
   isDefault?: boolean;
   credentialsMasked?: string | null;
   lastConnectionCheckAt?: string | null;
@@ -30,6 +33,7 @@ export type IntegrationItem = {
   manualPaymentMethodType?: ManualPaymentMethodType;
   manualPaymentValue?: string;
   manualPaymentDisplayValue?: string;
+  chat_auto_distribution?: boolean;
   updatedAt?: string;
 };
 
@@ -40,6 +44,10 @@ export type IntegrationsListResponse = {
 
 export type IntegrationCreatePayload = {
   integration_type: IntegrationType;
+};
+
+export type IntegrationChannelSettingsPayload = {
+  chat_auto_distribution: boolean;
 };
 
 export type PaymentIntegrationProviderType = "monobank" | (string & {});

@@ -66,7 +66,13 @@ function AntConfigBridge({ children }: { children: ReactNode }) {
   const locale = lang === "uk" ? ukUA : enUS;
 
   return (
-    <ConfigProvider locale={locale} theme={antdTheme}>
+    <ConfigProvider
+      locale={locale}
+      theme={antdTheme}
+      menu={{
+        style: { borderInlineEnd: "none" },
+      }}
+    >
       <AntdApp notification={notificationConfig}>{children}</AntdApp>
     </ConfigProvider>
   );
