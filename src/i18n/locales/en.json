@@ -541,6 +541,38 @@
     "darkTheme": "Dark theme",
     "themeAutoSwitchDisabledTooltip": "Turn off automatic theme switching in settings to switch the theme here."
   },
+  "onboardingTour": {
+    "steps": {
+      "sider": {
+        "title": "Navigation",
+        "description": "Quickly switch between analytics, chats, orders, products, clients, and other sections."
+      },
+      "create": {
+        "title": "Create",
+        "description": "Create products, orders, clients, and deliveries from anywhere in the app."
+      },
+      "search": {
+        "title": "Search",
+        "description": "Quickly find products, orders, and clients across the app."
+      },
+      "profile": {
+        "title": "Your profile",
+        "description": "Update your name, photo, and account details."
+      },
+      "workStatus": {
+        "title": "Work status",
+        "description": "Change your status to control your availability for new chats."
+      },
+      "theme": {
+        "title": "Theme",
+        "description": "Choose Light, Dark, or Auto in General settings. When Auto is off, switch themes directly from the top bar."
+      },
+      "replay": {
+        "title": "You're all set! 🎉",
+        "description": "You can take this tour again anytime in System → General."
+      }
+    }
+  },
   "errors": {
     "somethingWentWrong": "Something went wrong"
   },
@@ -1262,6 +1294,11 @@
     "themeAuto": "System",
     "english": "English",
     "ukrainian": "Ukrainian",
+    "onboardingTour": {
+      "title": "Interface tour",
+      "description": "Replay the guided overview of the main workspace controls.",
+      "start": "Start tour"
+    },
     "inventory": {
       "title": "Inventory management",
       "description": "How products track quantity in stock.",

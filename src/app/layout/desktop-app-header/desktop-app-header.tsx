@@ -188,7 +188,10 @@ export const DesktopAppHeader = observer(() => {
           onClick: handleCreateMenuClick,
         }}
       >
-        <Button icon={<PlusIcon size={16} />}>
+        <Button
+          icon={<PlusIcon size={16} />}
+          data-qa="layout-desktop-create-button"
+        >
           {t("appHeader.create")}
           <CaretDownIcon size={12} />
         </Button>
@@ -230,6 +233,7 @@ export const DesktopAppHeader = observer(() => {
             <S.StyledStatusButton
               aria-expanded={workStatusOpen}
               aria-label={t("appHeader.workStatus.aria")}
+              data-qa="layout-desktop-work-status"
             >
               <S.StatusDot $color={workStatusColors[workStatus]} />
               {t(`appHeader.workStatus.${workStatus}.button`)}

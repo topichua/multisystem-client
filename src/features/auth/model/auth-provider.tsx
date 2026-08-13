@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 
 import { configureApiClientAuth } from "@/api/api-client";
+import { clearOnboardingTourSessionDismissed } from "@/app/layout/onboarding-tour/onboarding-tour-storage";
 
 import { AuthContext } from "./auth-context";
 import { tokenStorage } from "./token-storage";
@@ -21,6 +22,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const logout = useCallback(() => {
     tokenStorage.clearAccessToken();
+    clearOnboardingTourSessionDismissed();
     setIsAuthenticated(false);
   }, []);
 

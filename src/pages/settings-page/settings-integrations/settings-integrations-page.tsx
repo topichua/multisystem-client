@@ -31,10 +31,10 @@ export const SettingsIntegrationsPage = observer(() => {
   );
   const headerTitle = selectedDefinition
     ? t(selectedDefinition.labelKey)
-    : t('integrations.title');
+    : t("integrations.title");
   const headerHint = selectedDefinition
     ? t(selectedDefinition.descriptionKey)
-    : t('integrations.subtitle');
+    : t("integrations.subtitle");
 
   return (
     <>
@@ -71,7 +71,7 @@ export const SettingsIntegrationsPage = observer(() => {
               <PaneDetailLayout.Body data-qa="layout-settings-integrations-body">
                 <S.IntegrationsStack>
                   {controller.visibleIntegrationTypes.length === 0 ? (
-                    <Empty description={t('integrations.noMatchFilters')} />
+                    <Empty description={t("integrations.noMatchFilters")} />
                   ) : (
                     controller.visibleIntegrationTypes.map((definition) => (
                       <IntegrationTypeCard

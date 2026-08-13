@@ -1,18 +1,32 @@
 import {
+  CompassIcon,
   CurrencyDollarIcon,
   DesktopIcon,
   MoonIcon,
   SunIcon,
   TranslateIcon,
 } from "@phosphor-icons/react";
-import { Alert, Flex, Segmented, Select, Spin, Typography, theme } from "antd";
+import {
+  Alert,
+  Button,
+  Flex,
+  Segmented,
+  Select,
+  Spin,
+  Typography,
+  theme,
+} from "antd";
 import type { ReactNode } from "react";
 import { observer } from "mobx-react-lite";
 import { useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router";
 
 import { getApiErrorMessage } from "@/api/get-api-error-message";
+import { resetOnboardingTourForReplay } from "@/app/layout/onboarding-tour/onboarding-tour-storage";
+import { pagesMap } from "@/app/router/pages-map";
 import { FormDivider } from "@/components/layout/form-card";
+import { useUserStore } from "@/features/auth/model/use-user-store";
 import {
   WORKSPACE_CURRENCIES,
   type WorkspaceCurrency,
@@ -45,10 +59,13 @@ export const SettingsSystemPreferences = observer(
   ({ layout = "desktop" }: SettingsSystemPreferencesProps) => {
     const { t, i18n } = useTranslation();
     const { token } = theme.useToken();
+    const navigate = useNavigate();
+    const userStore = useUserStore();
     const { preference, setPreference } = useThemeMode();
     const workspaceSettingsStore = useWorkspaceSettingsStore();
     const notification = useNotification();
     const isMobile = layout === "mobile";
+    const userId = userStore.user?.id;
 
     const langValue = i18n.language.startsWith("uk") ? "uk" : "en";
 
@@ -73,6 +90,15 @@ export const SettingsSystemPreferences = observer(
       },
       [notification, t, workspaceSettingsStore],
     );
+
+    const handleStartOnboardingTour = useCallback(() => {
+      if (typeof userId !== "number") {
+        return;
+      }
+
+      resetOnboardingTourForReplay(userId);
+      navigate(pagesMap.home);
+    }, [navigate, userId]);
 
     const languageOptions = useMemo(
       () => [
@@ -186,6 +212,27 @@ export const SettingsSystemPreferences = observer(
           control={themeControl}
           stackControl={isMobile}
         />
+
+        {!isMobile ? (
+          <>
+            <FormDivider style={{ margin: `${token.marginLG}px 0` }} />
+
+            <SettingsPreferenceRow
+              icon={<CompassIcon size={20} />}
+              title={t("system.onboardingTour.title")}
+              description={t("system.onboardingTour.description")}
+              control={
+                <Button
+                  data-qa="settings-system-onboarding-tour-start"
+                  onClick={handleStartOnboardingTour}
+                  disabled={typeof userId !== "number"}
+                >
+                  {t("system.onboardingTour.start")}
+                </Button>
+              }
+            />
+          </>
+        ) : null}
       </>
     );
 

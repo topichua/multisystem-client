@@ -38,10 +38,8 @@ type MobileCardStyle = CSSProperties & {
   "--card-surface-tint": string;
 };
 
-const getCardAccentBg = (
-  action: QuickActionNavItem,
-  mode: "dark" | "light",
-) => (mode === "dark" ? action.accentBg.dark : action.accentBg.light);
+const getCardAccentBg = (action: QuickActionNavItem, mode: "dark" | "light") =>
+  mode === "dark" ? action.accentBg.dark : action.accentBg.light;
 
 const getMobileCardStyle = (
   action: QuickActionNavItem,
