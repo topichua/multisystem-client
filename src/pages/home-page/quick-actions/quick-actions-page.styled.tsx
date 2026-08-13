@@ -21,12 +21,12 @@ export const PageContainer = styled.div`
   isolation: isolate;
   box-sizing: border-box;
 
+  width: 100%;
   height: 100%;
+  min-width: 0;
   min-height: 0;
-  margin: 0 auto;
-  padding: 64px 32px 0;
-  overflow-x: hidden;
-  overflow-y: auto;
+  padding: 48px 32px;
+  overflow: auto;
 
   display: flex;
   flex-direction: column;
@@ -52,10 +52,15 @@ export const PageContainer = styled.div`
     position: relative;
     z-index: 1;
   }
+`;
 
-  @media (max-width: 768px) {
-    padding: 40px 20px;
-  }
+export const DesktopContent = styled.div`
+  width: 100%;
+  max-width: 1120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 36px;
 `;
 
 export const PageHeader = styled.div`
@@ -79,39 +84,17 @@ export const HeroIcon = styled.div<AccentProps>`
   font-size: 32px;
 `;
 
-const CARD_MIN_WIDTH = "280px";
-const CARD_GAP = "20px";
-
 export const CardsGrid = styled.div`
-  width: min(100%, 1040px);
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: ${CARD_GAP};
-
-  > * {
-    flex: 1 1 ${CARD_MIN_WIDTH};
-    max-width: 100%;
-    min-width: 0;
-  }
-
-  @media (min-width: 993px) {
-    > * {
-      max-width: calc((100% - 2 * ${CARD_GAP}) / 3);
-    }
-  }
-
-  @media (max-width: 992px) and (min-width: 577px) {
-    > * {
-      max-width: calc((100% - ${CARD_GAP}) / 2);
-    }
-  }
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 20px;
 `;
 
 export const QuickActionCard = styled(Card)<AccentProps>`
   position: relative;
   overflow: hidden;
-
+  height: 100%;
   min-height: 190px;
   border-radius: 18px;
   border: 1px solid ${({ theme }) => theme.colors.functional.border.cardBase};
@@ -125,7 +108,13 @@ export const QuickActionCard = styled(Card)<AccentProps>`
 
   .ant-card-body {
     height: 100%;
-    padding: 32px 28px;
+    min-height: 190px;
+    padding: 28px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
   }
 
   &::before {
@@ -222,32 +211,13 @@ export const MobileSubtitle = styled.p`
   line-height: 1.35;
 `;
 
-export const MobileSections = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-`;
-
-export const MobileSection = styled.section`
-  min-width: 0;
-`;
-
-export const MobileSectionTitle = styled.h2`
-  margin: 0 0 10px;
-  color: ${({ theme }) => theme.colors.functional.text.subdued};
-  font-size: ${({ theme }) => theme.fontSize.small};
-  font-weight: 600;
-  line-height: 1.25;
-  letter-spacing: 0;
-`;
-
 export const MobileNavGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
 `;
 
-export const MobileNavCard = styled.button<{ $fullWidth?: boolean }>`
+export const MobileNavCard = styled.button`
   appearance: none;
   position: relative;
   isolation: isolate;
@@ -304,17 +274,6 @@ export const MobileNavCard = styled.button<{ $fullWidth?: boolean }>`
     position: relative;
     z-index: 1;
   }
-
-  ${({ $fullWidth }) =>
-    $fullWidth
-      ? `
-        grid-column: 1 / -1;
-        min-height: 88px;
-        padding: 12px 16px;
-        flex-direction: row;
-        gap: 12px;
-      `
-      : ""}
 
   &:hover,
   &:focus-visible {

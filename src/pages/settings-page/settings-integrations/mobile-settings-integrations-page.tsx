@@ -1,5 +1,5 @@
 import { ArrowLeftIcon } from "@phosphor-icons/react";
-import { Alert, Flex, Spin } from "antd";
+import { Flex, Spin } from "antd";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
@@ -9,11 +9,11 @@ import { dataQaAttrs } from "@/styled/data-qa-attrs";
 
 import * as MobileS from "../mobile-settings-page.styled";
 import { useSettingsIntegrationsController } from "./controllers/use-settings-integrations-controller";
-import { InstagramIntegrationSetup } from "./instagram";
 import { IntegrationTypeCard } from "./integration-type-card";
-import { ManualPaymentMethodsSetup } from "./manual-payment-methods";
-import { MonobankIntegrationForm } from "./monobank";
-import { NovaPoshtaIntegrationWizard } from "./nova-poshta";
+import {
+  renderIntegrationNoticeContent,
+  renderIntegrationSetupContent,
+} from "./integration-type-setup-content";
 import { INTEGRATION_TYPES } from "./settings-integrations.definitions";
 import * as S from "./settings-integrations.styled";
 import { TelegramPasswordModal } from "./telegram-password-modal";
@@ -70,77 +70,15 @@ export const MobileSettingsIntegrationsPage = observer(() => {
                       store.isDisconnecting(type, id)
                     }
                     layout="mobile"
-                    noticeContent={
-                      definition.type === "instagram" &&
-                      controller.instagramHistorySyncNoticeVisible ? (
-                        <Alert
-                          type="info"
-                          showIcon
-                          closable
-                          onClose={controller.dismissInstagramHistorySyncNotice}
-                          title={t(
-                            "integrations.instagramSetup.historySyncTitle",
-                          )}
-                          description={t(
-                            "integrations.instagramSetup.historySyncDescription",
-                          )}
-                        />
-                      ) : undefined
-                    }
-                    setupContent={
-                      definition.type === "novaposhta" &&
-                      controller.novaPoshtaWizardOpen ? (
-                        <NovaPoshtaIntegrationWizard
-                          submitting={store.isConnecting("novaposhta")}
-                          onCancel={controller.closeNovaPoshtaWizard}
-                          onSubmit={controller.handleNovaPoshtaWizardSubmit}
-                        />
-                      ) : definition.type === "monobank" &&
-                        controller.monobankFormOpen ? (
-                        <MonobankIntegrationForm
-                          mode="connect"
-                          submitting={store.isConnecting("monobank")}
-                          onCancel={controller.closeMonobankForm}
-                          onSubmit={controller.handleMonobankSubmit}
-                        />
-                      ) : definition.type === "manualpayment" &&
-                        controller.manualPaymentFormOpen ? (
-                        <ManualPaymentMethodsSetup
-                          integrations={
-                            controller.integrationsByType.manualpayment
-                          }
-                          onCancel={controller.closeManualPaymentForm}
-                          onUpdated={controller.handleIntegrationUpdated}
-                        />
-                      ) : definition.type === "instagram" &&
-                        controller.instagramSetup.open ? (
-                        <InstagramIntegrationSetup
-                          stage={controller.instagramSetup.stage}
-                          pages={controller.instagramSetup.pages}
-                          connecting={controller.instagramSetup.connecting}
-                          awaitingOauth={
-                            controller.instagramSetup.awaitingOauth
-                          }
-                          confirming={controller.instagramSetup.confirming}
-                          sessionExpired={
-                            controller.instagramSetup.sessionExpired
-                          }
-                          errorMessage={controller.instagramSetup.errorMessage}
-                          onContinueWithFacebook={() => {
-                            void controller.startInstagramFacebookLogin();
-                          }}
-                          onConfirm={(pageId) => {
-                            void controller.confirmInstagramPage(pageId);
-                          }}
-                          onCancel={() => {
-                            void controller.cancelInstagramConnectFlow();
-                          }}
-                          onRestart={() => {
-                            void controller.restartInstagramSetup();
-                          }}
-                        />
-                      ) : undefined
-                    }
+                    noticeContent={renderIntegrationNoticeContent(
+                      definition,
+                      controller,
+                      t,
+                    )}
+                    setupContent={renderIntegrationSetupContent(
+                      definition,
+                      controller,
+                    )}
                     onConnectType={(type) =>
                       void controller.handleConnectType(type)
                     }

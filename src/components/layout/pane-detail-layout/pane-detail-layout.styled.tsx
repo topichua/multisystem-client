@@ -46,6 +46,7 @@ export const BodySlot = styled.div`
   overflow: auto;
   padding-top: 16px;
   padding: 12px 24px;
+  background: ${({ theme }) => theme.colors.functional.background.base};
 
   @media (max-width: 767px) {
     padding: 12px 16px;

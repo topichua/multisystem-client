@@ -550,36 +550,32 @@
     "goHome": "Back to home"
   },
   "quickActions": {
-    "title": "Manage your workspace",
-    "subtitle": "Everything you need for daily operations is right at your fingertips.",
-    "mobileSections": {
-      "dailyWork": "Daily work",
-      "customersWorkspace": "Customers & workspace"
-    },
+    "title": "Everything you need, all in one workspace",
+    "subtitle": "Quick access to key sections and settings.",
     "cards": {
-      "chats": {
-        "title": "Chats",
-        "description": "View and manage customer conversations."
+      "analytics": {
+        "description": "Track sales, products, and key metrics."
       },
-      "products": {
-        "title": "Products",
-        "description": "Browse and manage your product catalog."
+      "chats": {
+        "description": "Chat with customers and view conversation history."
       },
       "orders": {
-        "title": "Orders",
-        "description": "Track and manage customer orders."
+        "description": "Track orders and monitor their status."
+      },
+      "products": {
+        "description": "Add products and organize your catalog."
       },
       "clients": {
-        "title": "Clients",
-        "description": "Manage client profiles and contact details."
+        "description": "View and update customer profiles and contact details."
       },
-      "integrations": {
-        "title": "Integrations",
-        "description": "Connect and manage your external services."
+      "instagram": {
+        "description": "Connect social accounts, publish posts, and reply to comments."
+      },
+      "team": {
+        "description": "Add team members and assign roles."
       },
       "settings": {
-        "title": "Settings",
-        "description": "Configure workspace settings."
+        "description": "Configure system and workspace settings."
       }
     }
   },

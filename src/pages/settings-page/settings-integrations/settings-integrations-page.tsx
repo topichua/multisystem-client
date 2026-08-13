@@ -1,22 +1,23 @@
-import { Empty, Flex, Spin, Alert } from "antd";
+import { Empty } from "antd";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
 
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
 import {
-  PaneScrollRegion,
   PaneSectionHint,
   PaneSectionTitle,
 } from "@/components/layout/pane-frame";
 import { PaneNavSplitLayout } from "@/components/layout/pane-nav-split-layout";
+import { CenteredSpinner } from "@/components/loading/centered-spinner";
 
 import { useSettingsIntegrationsController } from "./controllers/use-settings-integrations-controller";
-import { InstagramIntegrationSetup } from "./instagram";
 import { IntegrationTypeCard } from "./integration-type-card";
-import { ManualPaymentMethodsSetup } from "./manual-payment-methods";
-import { MonobankIntegrationForm } from "./monobank";
-import { NovaPoshtaIntegrationWizard } from "./nova-poshta";
 import { IntegrationTypeSidebar } from "./integration-type-sidebar";
+import {
+  renderIntegrationNoticeContent,
+  renderIntegrationSetupContent,
+} from "./integration-type-setup-content";
+import { INTEGRATION_TYPES } from "./settings-integrations.definitions";
 import * as S from "./settings-integrations.styled";
 import { TelegramPasswordModal } from "./telegram-password-modal";
 import { TelegramQrLoginModal } from "./telegram-qr-login-modal";
@@ -25,167 +26,89 @@ export const SettingsIntegrationsPage = observer(() => {
   const { t } = useTranslation();
   const controller = useSettingsIntegrationsController();
   const { store } = controller;
+  const selectedDefinition = INTEGRATION_TYPES.find(
+    (item) => item.type === controller.selectedFilter,
+  );
+  const headerTitle = selectedDefinition
+    ? t(selectedDefinition.labelKey)
+    : t('integrations.title');
+  const headerHint = selectedDefinition
+    ? t(selectedDefinition.descriptionKey)
+    : t('integrations.subtitle');
 
   return (
     <>
-      <PaneDetailLayout.Root inset data-qa="layout-settings-integrations">
-        <PaneDetailLayout.Header data-qa="layout-settings-integrations-header">
-          <PaneSectionTitle>{t("integrations.title")}</PaneSectionTitle>
-          <PaneSectionHint style={{ marginTop: 0 }}>
-            {t("integrations.subtitle")}
-          </PaneSectionHint>
-        </PaneDetailLayout.Header>
-
-        <PaneDetailLayout.Body
-          data-qa="layout-settings-integrations-body"
-          style={{
-            overflow: "hidden",
-            display: "flex",
-            flexDirection: "column",
-            paddingTop: 0,
+      <PaneNavSplitLayout.Root data-qa="layout-settings-integrations-shell">
+        <IntegrationTypeSidebar
+          integrationsCountByType={{
+            instagram: controller.integrationsByType.instagram.length,
+            tiktok: controller.integrationsByType.tiktok.length,
+            telegram: controller.integrationsByType.telegram.length,
+            novaposhta: controller.integrationsByType.novaposhta.length,
+            monobank: controller.integrationsByType.monobank.length,
+            manualpayment: controller.integrationsByType.manualpayment.length,
           }}
-        >
-          {store.listLoading ? (
-            <Flex flex={1} align="center" justify="center">
-              <Spin />
-            </Flex>
-          ) : (
-            <PaneNavSplitLayout.Root data-qa="layout-settings-integrations-shell">
-              <PaneNavSplitLayout.SubSidebar data-qa="layout-settings-integrations-sidebar">
-                <IntegrationTypeSidebar
-                  integrationsCountByType={{
-                    instagram: controller.integrationsByType.instagram.length,
-                    tiktok: controller.integrationsByType.tiktok.length,
-                    telegram: controller.integrationsByType.telegram.length,
-                    novaposhta: controller.integrationsByType.novaposhta.length,
-                    monobank: controller.integrationsByType.monobank.length,
-                    manualpayment:
-                      controller.integrationsByType.manualpayment.length,
-                  }}
-                  menuIntegrationTypes={controller.menuIntegrationTypes}
-                  query={controller.query}
-                  selectedFilter={controller.selectedFilter}
-                  totalCount={store.items.length}
-                  onQueryChange={controller.setQuery}
-                  onFilterChange={controller.setSelectedFilter}
-                />
-              </PaneNavSplitLayout.SubSidebar>
+          menuIntegrationTypes={controller.menuIntegrationTypes}
+          query={controller.query}
+          selectedFilter={controller.selectedFilter}
+          totalCount={store.items.length}
+          onQueryChange={controller.setQuery}
+          onFilterChange={controller.setSelectedFilter}
+        />
 
-              <PaneNavSplitLayout.SubMain data-qa="layout-settings-integrations-main">
-                <PaneScrollRegion data-qa="layout-settings-integrations-content-scroll">
-                  <S.IntegrationsStack>
-                    {controller.visibleIntegrationTypes.length === 0 ? (
-                      <Empty description={t("integrations.noMatchFilters")} />
-                    ) : (
-                      controller.visibleIntegrationTypes.map((definition) => (
-                        <IntegrationTypeCard
-                          key={definition.type}
-                          connectLoading={store.isConnecting(definition.type)}
-                          definition={definition}
-                          integrations={controller.getVisibleIntegrations(
-                            definition,
-                          )}
-                          isDisconnecting={(type, id) =>
-                            store.isDisconnecting(type, id)
-                          }
-                          noticeContent={
-                            definition.type === "instagram" &&
-                            controller.instagramHistorySyncNoticeVisible ? (
-                              <Alert
-                                type="info"
-                                showIcon
-                                closable
-                                onClose={
-                                  controller.dismissInstagramHistorySyncNotice
-                                }
-                                title={t(
-                                  "integrations.instagramSetup.historySyncTitle",
-                                )}
-                                description={t(
-                                  "integrations.instagramSetup.historySyncDescription",
-                                )}
-                              />
-                            ) : undefined
-                          }
-                          setupContent={
-                            definition.type === "novaposhta" &&
-                            controller.novaPoshtaWizardOpen ? (
-                              <NovaPoshtaIntegrationWizard
-                                submitting={store.isConnecting("novaposhta")}
-                                onCancel={controller.closeNovaPoshtaWizard}
-                                onSubmit={
-                                  controller.handleNovaPoshtaWizardSubmit
-                                }
-                              />
-                            ) : definition.type === "monobank" &&
-                              controller.monobankFormOpen ? (
-                              <MonobankIntegrationForm
-                                mode="connect"
-                                submitting={store.isConnecting("monobank")}
-                                onCancel={controller.closeMonobankForm}
-                                onSubmit={controller.handleMonobankSubmit}
-                              />
-                            ) : definition.type === "manualpayment" &&
-                              controller.manualPaymentFormOpen ? (
-                              <ManualPaymentMethodsSetup
-                                integrations={
-                                  controller.integrationsByType.manualpayment
-                                }
-                                onCancel={controller.closeManualPaymentForm}
-                                onUpdated={controller.handleIntegrationUpdated}
-                              />
-                            ) : definition.type === "instagram" &&
-                              controller.instagramSetup.open ? (
-                              <InstagramIntegrationSetup
-                                stage={controller.instagramSetup.stage}
-                                pages={controller.instagramSetup.pages}
-                                connecting={
-                                  controller.instagramSetup.connecting
-                                }
-                                awaitingOauth={
-                                  controller.instagramSetup.awaitingOauth
-                                }
-                                confirming={
-                                  controller.instagramSetup.confirming
-                                }
-                                sessionExpired={
-                                  controller.instagramSetup.sessionExpired
-                                }
-                                errorMessage={
-                                  controller.instagramSetup.errorMessage
-                                }
-                                onContinueWithFacebook={() => {
-                                  void controller.startInstagramFacebookLogin();
-                                }}
-                                onConfirm={(pageId) => {
-                                  void controller.confirmInstagramPage(pageId);
-                                }}
-                                onCancel={() => {
-                                  void controller.cancelInstagramConnectFlow();
-                                }}
-                                onRestart={() => {
-                                  void controller.restartInstagramSetup();
-                                }}
-                              />
-                            ) : undefined
-                          }
-                          onConnectType={(type) =>
-                            void controller.handleConnectType(type)
-                          }
-                          onDisconnect={controller.handleDisconnect}
-                          onIntegrationUpdated={
-                            controller.handleIntegrationUpdated
-                          }
-                        />
-                      ))
-                    )}
-                  </S.IntegrationsStack>
-                </PaneScrollRegion>
-              </PaneNavSplitLayout.SubMain>
-            </PaneNavSplitLayout.Root>
+        <PaneNavSplitLayout.SubMain data-qa="layout-settings-integrations-main">
+          {store.listLoading ? (
+            <CenteredSpinner />
+          ) : (
+            <PaneDetailLayout.Root inset data-qa="layout-settings-integrations">
+              <PaneDetailLayout.Header data-qa="layout-settings-integrations-detail-header">
+                <PaneSectionTitle>{headerTitle}</PaneSectionTitle>
+                <PaneSectionHint style={{ marginTop: 0 }}>
+                  {headerHint}
+                </PaneSectionHint>
+              </PaneDetailLayout.Header>
+
+              <PaneDetailLayout.Body data-qa="layout-settings-integrations-body">
+                <S.IntegrationsStack>
+                  {controller.visibleIntegrationTypes.length === 0 ? (
+                    <Empty description={t('integrations.noMatchFilters')} />
+                  ) : (
+                    controller.visibleIntegrationTypes.map((definition) => (
+                      <IntegrationTypeCard
+                        key={definition.type}
+                        connectLoading={store.isConnecting(definition.type)}
+                        definition={definition}
+                        integrations={controller.getVisibleIntegrations(
+                          definition,
+                        )}
+                        isDisconnecting={(type, id) =>
+                          store.isDisconnecting(type, id)
+                        }
+                        noticeContent={renderIntegrationNoticeContent(
+                          definition,
+                          controller,
+                          t,
+                        )}
+                        setupContent={renderIntegrationSetupContent(
+                          definition,
+                          controller,
+                        )}
+                        onConnectType={(type) =>
+                          void controller.handleConnectType(type)
+                        }
+                        onDisconnect={controller.handleDisconnect}
+                        onIntegrationUpdated={
+                          controller.handleIntegrationUpdated
+                        }
+                      />
+                    ))
+                  )}
+                </S.IntegrationsStack>
+              </PaneDetailLayout.Body>
+            </PaneDetailLayout.Root>
           )}
-        </PaneDetailLayout.Body>
-      </PaneDetailLayout.Root>
+        </PaneNavSplitLayout.SubMain>
+      </PaneNavSplitLayout.Root>
 
       <TelegramQrLoginModal
         open={controller.telegramQrModal.open}

@@ -7,7 +7,7 @@ export const IntegrationsStack = styled.div`
   gap: 16px;
   width: 100%;
   max-width: 860px;
-  margin: 50px auto;
+  margin: 0 auto;
 `;
 
 export const IntegrationCard = styled.div`

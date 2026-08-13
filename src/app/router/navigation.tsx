@@ -5,8 +5,6 @@ import {
   GearSixIcon,
   GlobeIcon,
   HouseIcon,
-  PackageIcon,
-  ReceiptIcon,
   ShareNetworkIcon,
   UsersIcon,
   UsersThreeIcon,
@@ -38,22 +36,20 @@ export type MainNavItem = NavItemBase & {
   icon: ReactNode;
 };
 
-export type QuickActionNavItem = NavItemBase & {
-  key:
-    | "chats"
-    | "products"
-    | "orders"
-    | "clients"
-    | "integrations"
-    | "settings";
+type QuickActionPresentation = {
   descriptionKey: string;
-  icon: ReactNode;
   accent: string;
   accentBg: {
     light: string;
     dark: string;
   };
+  surfaceTint: {
+    light: string;
+    dark: string;
+  };
 };
+
+export type QuickActionNavItem = MainNavItem & QuickActionPresentation;
 
 export type SectionNavItem = NavItemBase & {
   key: string;
@@ -134,80 +130,113 @@ export const mainNavItems: readonly MainNavItem[] = [
   },
 ] as const;
 
-export const quickActionNavItems: readonly QuickActionNavItem[] = [
-  {
-    key: "chats",
-    labelKey: "quickActions.cards.chats.title",
+const quickActionPresentationByKey: Record<
+  MainNavItem["key"],
+  QuickActionPresentation
+> = {
+  analytics: {
+    descriptionKey: "quickActions.cards.analytics.description",
+    accent: base.blue[6],
+    accentBg: {
+      light: base.blue[2],
+      dark: darkColors.base.blue[9],
+    },
+    surfaceTint: {
+      light: base.blue[1],
+      dark: darkColors.base.blue[10],
+    },
+  },
+  chats: {
     descriptionKey: "quickActions.cards.chats.description",
-    path: pagesMap.conversations,
-    icon: <ChatsCircleIcon />,
     accent: base.violet[7],
     accentBg: {
       light: base.violet[2],
       dark: darkColors.functional.background.promotion,
     },
-  },
-  {
-    key: "products",
-    labelKey: "quickActions.cards.products.title",
-    descriptionKey: "quickActions.cards.products.description",
-    path: pagesMap.products,
-    icon: <PackageIcon />,
-    accent: brandPalette[7],
-    accentBg: {
-      light: brandPalette[2],
-      dark: darkColors.functional.background.active,
+    surfaceTint: {
+      light: base.violet[1],
+      dark: darkColors.functional.background.promotion,
     },
   },
-  {
-    key: "orders",
-    labelKey: "quickActions.cards.orders.title",
+  orders: {
     descriptionKey: "quickActions.cards.orders.description",
-    path: pagesMap.orders,
-    icon: <ReceiptIcon />,
     accent: base.volcano[6],
     accentBg: {
       light: base.volcano[2],
       dark: darkColors.base.volcano[9],
     },
+    surfaceTint: {
+      light: base.volcano[1],
+      dark: darkColors.base.volcano[10],
+    },
   },
-  {
-    key: "clients",
-    labelKey: "quickActions.cards.clients.title",
+  products: {
+    descriptionKey: "quickActions.cards.products.description",
+    accent: brandPalette[7],
+    accentBg: {
+      light: brandPalette[2],
+      dark: darkColors.functional.background.active,
+    },
+    surfaceTint: {
+      light: brandPalette[1],
+      dark: darkColors.functional.background.active,
+    },
+  },
+  clients: {
     descriptionKey: "quickActions.cards.clients.description",
-    path: pagesMap.clients,
-    icon: <UsersThreeIcon />,
     accent: base.cyan[6],
     accentBg: {
       light: base.cyan[2],
       dark: darkColors.base.cyan[9],
     },
-  },
-  {
-    key: "integrations",
-    labelKey: "quickActions.cards.integrations.title",
-    descriptionKey: "quickActions.cards.integrations.description",
-    path: pagesMap.settingsIntegrations,
-    icon: <GlobeIcon />,
-    accent: base.green[6],
-    accentBg: {
-      light: base.green[2],
-      dark: darkColors.functional.background.success,
+    surfaceTint: {
+      light: base.cyan[1],
+      dark: darkColors.base.cyan[10],
     },
   },
-  {
-    key: "settings",
-    labelKey: "quickActions.cards.settings.title",
-    descriptionKey: "quickActions.cards.settings.description",
-    path: pagesMap.settings,
-    icon: <GearSixIcon />,
+  instagram: {
+    descriptionKey: "quickActions.cards.instagram.description",
     accent: base.pink[6],
     accentBg: {
       light: base.pink[2],
       dark: darkColors.base.pink[9],
     },
+    surfaceTint: {
+      light: base.pink[1],
+      dark: darkColors.base.pink[10],
+    },
   },
-] as const;
+  team: {
+    descriptionKey: "quickActions.cards.team.description",
+    accent: base.magenta[6],
+    accentBg: {
+      light: base.magenta[2],
+      dark: darkColors.base.magenta[9],
+    },
+    surfaceTint: {
+      light: base.magenta[1],
+      dark: darkColors.base.magenta[10],
+    },
+  },
+  settings: {
+    descriptionKey: "quickActions.cards.settings.description",
+    accent: base.pink[6],
+    accentBg: {
+      light: base.pink[2],
+      dark: darkColors.base.pink[9],
+    },
+    surfaceTint: {
+      light: base.pink[1],
+      dark: darkColors.base.pink[10],
+    },
+  },
+};
+
+export const quickActionNavItems: readonly QuickActionNavItem[] =
+  mainNavItems.map((item) => ({
+    ...item,
+    ...quickActionPresentationByKey[item.key],
+  }));
 
 export const productsSectionNavItems = [
   {

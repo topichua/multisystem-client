@@ -9,7 +9,12 @@ import { Badge, Flex, Input, Menu, Typography } from "antd";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
-import { PaneScrollRegion } from "@/components/layout/pane-frame";
+import {
+  PaneScrollRegion,
+  PaneSectionHeaderStack,
+  PaneSectionTitle,
+} from "@/components/layout/pane-frame";
+import { PaneNavSplitLayout } from "@/components/layout/pane-nav-split-layout";
 import { InstagramLogoIcon } from "@/components/icons/instagram/instagram-logo-icon";
 import { NovaPostIcon } from "@/components/icons/nova-post/nova-post-icon";
 import { TelegramLogoIcon } from "@/components/icons/telegram/telegram-logo-icon";
@@ -113,8 +118,9 @@ export const IntegrationTypeSidebar = ({
   }, [integrationsCountByType, menuIntegrationTypes, totalCount, t]);
 
   return (
-    <>
-      <div style={{ flexShrink: 0, marginBottom: 12 }}>
+    <PaneNavSplitLayout.SubSidebar data-qa="layout-settings-integrations-sidebar">
+      <PaneSectionHeaderStack data-qa="layout-settings-integrations-header">
+        <PaneSectionTitle>{t("integrations.title")}</PaneSectionTitle>
         <Input
           placeholder={t("integrations.searchPlaceholder")}
           prefix={<MagnifyingGlassIcon />}
@@ -122,7 +128,7 @@ export const IntegrationTypeSidebar = ({
           allowClear
           onChange={(event) => onQueryChange(event.target.value)}
         />
-      </div>
+      </PaneSectionHeaderStack>
 
       <PaneScrollRegion data-qa="layout-settings-integrations-nav-scroll">
         <Menu
@@ -134,6 +140,6 @@ export const IntegrationTypeSidebar = ({
           style={{ borderInlineEnd: 0 }}
         />
       </PaneScrollRegion>
-    </>
+    </PaneNavSplitLayout.SubSidebar>
   );
 };
