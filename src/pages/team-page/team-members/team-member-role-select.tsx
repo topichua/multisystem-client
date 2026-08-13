@@ -78,7 +78,6 @@ export function TeamMemberRoleSelect({
 
         void onUpdateMember(member.id, {
           role_id: nextRoleId,
-          can_be_assigned_to_chat: Boolean(member.can_be_assigned_to_chat),
         });
       }}
       {...(dataQa ? { "data-qa": dataQa } : {})}

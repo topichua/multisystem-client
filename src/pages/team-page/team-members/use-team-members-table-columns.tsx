@@ -1,5 +1,4 @@
 import type { TableColumnsType } from "antd";
-import { Switch } from "antd";
 import { Tag } from "@/components/tag/tag";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -9,6 +8,7 @@ import type {
   WorkspaceMemberUpdatePayload,
 } from "@/features/workspace-members/model/workspace-member.types";
 import type { WorkspaceRole } from "@/features/workspace-roles/model/workspace-role.types";
+import { MemberWorkStatusLabel } from "@/shared/components/member-work-status/member-work-status-label";
 import { fromNow } from "@/utils/date-time";
 
 import { TeamMemberActions } from "./team-member-actions";
@@ -74,35 +74,6 @@ export function useTeamMembersTableColumns({
         ),
       },
       {
-        title: t("team.table.canBeAssignedToChat"),
-        dataIndex: "can_be_assigned_to_chat",
-        key: "can_be_assigned_to_chat",
-        width: 250,
-        align: "center",
-        render: (value: boolean | null | undefined, record) => {
-          const checked = Boolean(value);
-          const isUpdating = updatingMemberIdSet.has(record.id);
-
-          return (
-            <Switch
-              checked={checked}
-              loading={isUpdating}
-              disabled={isUpdating}
-              onChange={(nextChecked) => {
-                if (nextChecked === checked) {
-                  return;
-                }
-
-                void onUpdateMember(record.id, {
-                  role_id: record.roleId,
-                  can_be_assigned_to_chat: nextChecked,
-                });
-              }}
-            />
-          );
-        },
-      },
-      {
         title: t("team.table.status"),
         dataIndex: "status",
         key: "status",
@@ -112,6 +83,15 @@ export function useTeamMembersTableColumns({
 
           return <Tag color={status.color}>{t(status.labelKey)}</Tag>;
         },
+      },
+      {
+        title: t("team.table.workStatus"),
+        dataIndex: "work_status",
+        key: "work_status",
+        width: 160,
+        render: (value: WorkspaceMember["work_status"] | null | undefined) => (
+          <MemberWorkStatusLabel status={value} />
+        ),
       },
       {
         title: t("team.table.joinedAt"),

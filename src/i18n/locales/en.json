@@ -504,8 +504,8 @@
     "table": {
       "member": "Member",
       "role": "Role",
-      "canBeAssignedToChat": "Responsible for chat",
       "status": "Status",
+      "workStatus": "Work status",
       "actions": "Actions",
       "statuses": {
         "active": "Active",

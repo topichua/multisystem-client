@@ -510,8 +510,8 @@
     "table": {
       "member": "Учасник",
       "role": "Роль",
-      "canBeAssignedToChat": "Відповідальний за чат",
       "status": "Статус",
+      "workStatus": "Робочий статус",
       "actions": "Дії",
       "statuses": {
         "active": "Активний",

@@ -1,4 +1,3 @@
-import { Switch } from "antd";
 import { Tag } from "@/components/tag/tag";
 import { useTranslation } from "react-i18next";
 
@@ -7,6 +6,7 @@ import type {
   WorkspaceMemberUpdatePayload,
 } from "@/features/workspace-members/model/workspace-member.types";
 import type { WorkspaceRole } from "@/features/workspace-roles/model/workspace-role.types";
+import { MemberWorkStatusLabel } from "@/shared/components/member-work-status/member-work-status-label";
 import { fromNow } from "@/utils/date-time";
 
 import { TeamMemberActions } from "../team-member-actions";
@@ -44,7 +44,6 @@ export function MobileTeamMemberCard({
   const { t } = useTranslation();
   const status = getMemberStatus(member.status);
   const joinedLabel = member.joinedAt ? fromNow(member.joinedAt) : null;
-  const checked = Boolean(member.can_be_assigned_to_chat);
 
   return (
     <S.MemberCard data-qa={`team-mobile-member-card-${member.id}`}>
@@ -77,28 +76,10 @@ export function MobileTeamMemberCard({
         />
       </S.FieldGroup>
 
-      <S.SwitchRow>
-        <S.FieldLabel htmlFor={`team-member-responsible-${member.id}`}>
-          {t("team.table.canBeAssignedToChat")}
-        </S.FieldLabel>
-        <Switch
-          id={`team-member-responsible-${member.id}`}
-          checked={checked}
-          loading={isUpdating}
-          disabled={isUpdating}
-          data-qa={`team-mobile-member-responsible-${member.id}`}
-          onChange={(nextChecked) => {
-            if (nextChecked === checked) {
-              return;
-            }
-
-            void onUpdateMember(member.id, {
-              role_id: member.roleId,
-              can_be_assigned_to_chat: nextChecked,
-            });
-          }}
-        />
-      </S.SwitchRow>
+      <S.FieldGroup>
+        <S.FieldLabel>{t("team.table.workStatus")}</S.FieldLabel>
+        <MemberWorkStatusLabel status={member.work_status} />
+      </S.FieldGroup>
 
       <S.CardFooter align="center" gap={8} wrap="wrap">
         <Tag color={status.color}>{t(status.labelKey)}</Tag>

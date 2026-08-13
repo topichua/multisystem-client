@@ -123,9 +123,7 @@ export const StyledStatusButton = styled.div`
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  /* justify-content: space-between; */
   gap: 8px;
-  /* width: 150px; */
 
   &:hover {
     background: ${({ theme }) => theme.colors.functional.background.hover};
@@ -134,19 +132,6 @@ export const StyledStatusButton = styled.div`
   & > svg {
     color: ${({ theme }) => theme.colors.functional.text.subdued};
   }
-`;
-
-export const StatusDot = styled.span<{ $color: string }>`
-  display: block;
-  width: 8px;
-  height: 8px;
-  min-width: 8px;
-  max-width: 8px;
-  min-height: 8px;
-  max-height: 8px;
-  flex: 0 0 8px;
-  border-radius: 50%;
-  background: ${({ $color }) => $color};
 `;
 
 export const StatusMenuItem = styled.span`

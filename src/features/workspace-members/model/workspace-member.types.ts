@@ -1,3 +1,5 @@
+import type { MemberWorkStatus } from "@/features/auth/model/auth-session.types";
+
 export type WorkspaceMemberUser = {
   id: number;
   email: string;
@@ -13,8 +15,8 @@ export type WorkspaceMember = {
   roleId: number;
   roleSlug: string;
   roleName: string;
-  can_be_assigned_to_chat: boolean;
   status: string;
+  work_status: MemberWorkStatus;
   joinedAt: string;
   updated_at?: string;
   user: WorkspaceMemberUser;
@@ -35,7 +37,6 @@ export type WorkspaceMemberInvitePayload = {
 
 export type WorkspaceMemberUpdatePayload = {
   role_id: number;
-  can_be_assigned_to_chat: boolean;
 };
 
 export type WorkspaceMemberInviteResponse = {

@@ -57,7 +57,8 @@ export const ConversationAssigneeSelect = observer(
       const assignableOptions = membersStore.members
         .filter(
           (member) =>
-            member.status === "active" && member.can_be_assigned_to_chat,
+            member.status === "active" &&
+            member.work_status === "accepting_new_chats",
         )
         .map((member) => ({
           value: member.id,

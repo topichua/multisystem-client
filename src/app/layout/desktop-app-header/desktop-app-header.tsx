@@ -27,6 +27,9 @@ import type { MemberWorkStatus } from "@/features/auth/model/auth-session.types"
 import { useAuth } from "@/features/auth/model/use-auth";
 import { useUserStore } from "@/features/auth/model/use-user-store";
 import { StockSupplyModal } from "@/features/inventory/components/stock-supply-modal/stock-supply-modal";
+import { MemberWorkStatusLabel } from "@/shared/components/member-work-status/member-work-status-label";
+import { MemberWorkStatusDot } from "@/shared/components/member-work-status/member-work-status.styled";
+import { getMemberWorkStatusColors } from "@/shared/components/member-work-status/member-work-status";
 import { useNotification } from "@/shared/components/notification/use-notification";
 import { useThemeMode } from "@/theme/use-theme-mode";
 
@@ -52,12 +55,7 @@ export const DesktopAppHeader = observer(() => {
   const workStatus = userStore.workStatus;
   const [stockSupplyModalOpen, setStockSupplyModalOpen] = useState(false);
   const [workStatusOpen, setWorkStatusOpen] = useState(false);
-
-  const workStatusColors = {
-    accepting_new_chats: theme.colors.semantic.success,
-    not_accepting_new_chats: theme.colors.functional.text.subdued,
-    break: theme.colors.base.blue[6],
-  } as const satisfies Record<MemberWorkStatus, string>;
+  const workStatusColors = getMemberWorkStatusColors(theme);
 
   const handleThemeToggle = () => {
     if (isAutoTheme) {
@@ -137,7 +135,7 @@ export const DesktopAppHeader = observer(() => {
           label: (
             <S.StatusMenuItem>
               <S.StatusMenuItemContent>
-                <S.StatusDot $color={workStatusColors[status]} />
+                <MemberWorkStatusDot $color={workStatusColors[status]} />
                 <S.StatusMenuItemLabel $selected={selected}>
                   {t(`appHeader.workStatus.${status}.menu`)}
                 </S.StatusMenuItemLabel>
@@ -235,8 +233,7 @@ export const DesktopAppHeader = observer(() => {
               aria-label={t("appHeader.workStatus.aria")}
               data-qa="layout-desktop-work-status"
             >
-              <S.StatusDot $color={workStatusColors[workStatus]} />
-              {t(`appHeader.workStatus.${workStatus}.button`)}
+              <MemberWorkStatusLabel status={workStatus} />
               {workStatusOpen ? <CaretUpIcon /> : <CaretDownIcon />}
             </S.StyledStatusButton>
           </Dropdown>

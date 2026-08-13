@@ -139,15 +139,6 @@ export const FieldLabel = styled.label`
   line-height: 1.25;
 `;
 
-export const SwitchRow = styled.div`
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 4px 0;
-`;
-
 export const CardFooter = styled(Flex)`
   && {
     min-width: 0;
