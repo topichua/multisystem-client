@@ -115,10 +115,7 @@ export type NovaPoshtaPayerType = "sender" | "recipient";
 export type NovaPoshtaPaymentMethod = "cash" | "non_cash";
 
 export type NovaPoshtaDeliveryType =
-  | "cargo"
-  | "documents"
-  | "tires_wheels"
-  | "pallet";
+  "cargo" | "documents" | "tires_wheels" | "pallet";
 
 export type NovaPoshtaEstimatedDeliveryPrice = {
   fixed: number | null;
@@ -270,9 +267,7 @@ export type TelegramQrLoginSession = {
 };
 
 export type TelegramIntegrationStatus =
-  | "pending_password"
-  | "active"
-  | (string & {});
+  "pending_password" | "active" | (string & {});
 
 export type TelegramIntegrationConfirmResponse = {
   id: number;

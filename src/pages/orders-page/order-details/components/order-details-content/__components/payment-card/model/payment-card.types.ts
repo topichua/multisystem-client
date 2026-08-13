@@ -3,12 +3,7 @@ import type { Icon } from "@phosphor-icons/react";
 export type PaymentCollectionMethod = "card_transfer" | "online" | "cash";
 
 export type PaymentCardView =
-  | "summary"
-  | "select_method"
-  | "cash"
-  | "card_transfer"
-  | "online"
-  | "refund";
+  "summary" | "select_method" | "cash" | "card_transfer" | "online" | "refund";
 
 export type PaymentCollectionMethodOption = {
   key: PaymentCollectionMethod;

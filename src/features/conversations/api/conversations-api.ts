@@ -40,10 +40,7 @@ export type ListConversationsParams = {
 };
 
 export type ConversationGroupingBy =
-  | "responsible"
-  | "status"
-  | "createdAt"
-  | "channel";
+  "responsible" | "status" | "createdAt" | "channel";
 
 export type ConversationGroupBucketChannel = {
   integrationId: number;

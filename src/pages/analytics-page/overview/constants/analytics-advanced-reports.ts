@@ -10,11 +10,7 @@ import type { Icon } from "@phosphor-icons/react";
 import { pagesMap } from "@/app/router/pages-map";
 
 export type AnalyticsAdvancedReportKey =
-  | "sales"
-  | "products"
-  | "customers"
-  | "instagram"
-  | "wishlist";
+  "sales" | "products" | "customers" | "instagram" | "wishlist";
 
 export type AnalyticsAdvancedReportItem = {
   key: AnalyticsAdvancedReportKey;

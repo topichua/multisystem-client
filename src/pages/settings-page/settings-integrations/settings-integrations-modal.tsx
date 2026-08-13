@@ -27,12 +27,7 @@ import { openIntegrationAuthWindow } from "@/features/integrations/open-integrat
 import { isConnectableIntegrationType } from "@/features/integrations/model/integrations-store";
 
 export type AddIntegrationType =
-  | "instagram"
-  | "telegram"
-  | "whatsapp"
-  | "nova-poshta"
-  | "tiktok"
-  | "prom";
+  "instagram" | "telegram" | "whatsapp" | "nova-poshta" | "tiktok" | "prom";
 
 type AddIntegrationItem = {
   type: AddIntegrationType;

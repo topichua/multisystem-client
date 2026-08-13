@@ -117,8 +117,7 @@ export function useProductVariantsController({
   }, []);
 
   const watchedCharacteristics = Form.useWatch("characteristics", form) as
-    | ProductAddCharacteristicRow[]
-    | undefined;
+    ProductAddCharacteristicRow[] | undefined;
   const watchedSingleCharacteristics = Form.useWatch(
     "singleCharacteristics",
     form,

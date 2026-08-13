@@ -1,8 +1,5 @@
 export type TikTokOAuthSessionStatus =
-  | "awaiting_tiktok"
-  | "connected"
-  | "failed"
-  | (string & {});
+  "awaiting_tiktok" | "connected" | "failed" | (string & {});
 
 export type TikTokOAuthStatusResponse = {
   sessionId: string;

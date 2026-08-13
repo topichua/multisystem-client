@@ -1,9 +1,7 @@
 export type AuthUserRole = "super_admin" | string;
 
 export type MemberWorkStatus =
-  | "accepting_new_chats"
-  | "not_accepting_new_chats"
-  | "break";
+  "accepting_new_chats" | "not_accepting_new_chats" | "break";
 
 export type AuthUser = {
   id: number;

@@ -45,8 +45,7 @@ const invalidTelegramQrLoginResponseError = new Error(
 );
 
 type NovaPoshtaSearchAuth =
-  | { apiKey: string }
-  | { novaPoshtaIntegrationId: number | string };
+  { apiKey: string } | { novaPoshtaIntegrationId: number | string };
 
 type NovaPoshtaSettlementsSearchParams = {
   auth: NovaPoshtaSearchAuth;

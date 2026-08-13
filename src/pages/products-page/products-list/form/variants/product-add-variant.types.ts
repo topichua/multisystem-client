@@ -27,8 +27,7 @@ export type NewCharacteristicFieldRef = {
 };
 
 export type CharacteristicFieldRef =
-  | ExistingCharacteristicFieldRef
-  | NewCharacteristicFieldRef;
+  ExistingCharacteristicFieldRef | NewCharacteristicFieldRef;
 
 export type ProductCharacteristicFormRow = {
   field?: CharacteristicFieldRef;

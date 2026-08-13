@@ -5,10 +5,7 @@ export type InstagramOAuthPage = {
 };
 
 export type InstagramOAuthSessionStatus =
-  | "awaiting_facebook"
-  | "select_page"
-  | "failed"
-  | (string & {});
+  "awaiting_facebook" | "select_page" | "failed" | (string & {});
 
 export type InstagramOAuthPagesResponse = {
   status: InstagramOAuthSessionStatus;

@@ -26,9 +26,7 @@ export type ProductOptionBaselineValidationResult =
   | {
       valid: false;
       reason:
-        | "missing-characteristic"
-        | "missing-value"
-        | "added-characteristic";
+        "missing-characteristic" | "missing-value" | "added-characteristic";
       fieldStableKey: string;
       value?: string;
     };

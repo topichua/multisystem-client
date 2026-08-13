@@ -279,8 +279,7 @@ export type InventoryHistorySupplyItem = {
 };
 
 export type InventoryHistoryItem =
-  | InventoryHistoryMovement
-  | InventoryHistorySupplyItem;
+  InventoryHistoryMovement | InventoryHistorySupplyItem;
 
 export type InventoryHistoryMovementsResponse = {
   items: InventoryHistoryItem[];

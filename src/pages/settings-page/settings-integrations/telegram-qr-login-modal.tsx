@@ -14,11 +14,7 @@ import { Trans, useTranslation } from "react-i18next";
 import { TelegramLogoIcon } from "@/components/icons/telegram/telegram-logo-icon";
 
 export type TelegramQrLoginModalStatus =
-  | "idle"
-  | "loading"
-  | "waiting"
-  | "expired"
-  | "error";
+  "idle" | "loading" | "waiting" | "expired" | "error";
 
 type TelegramQrLoginModalProps = {
   open: boolean;

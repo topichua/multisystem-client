@@ -38,13 +38,17 @@ export const SelectControl = styled.div<{
   ${({ $open, $status, theme }) =>
     $open || $status === "error"
       ? css`
-          border-color: ${$status === "error"
-            ? theme.colors.semantic.error
-            : theme.colors.functional.border.selected};
+          border-color: ${
+            $status === "error"
+              ? theme.colors.semantic.error
+              : theme.colors.functional.border.selected
+          };
           box-shadow: 0 0 0 2px
-            ${$status === "error"
-              ? theme.colors.functional.background.error
-              : theme.colors.functional.background.active};
+            ${
+              $status === "error"
+                ? theme.colors.functional.background.error
+                : theme.colors.functional.background.active
+            };
         `
       : undefined}
 

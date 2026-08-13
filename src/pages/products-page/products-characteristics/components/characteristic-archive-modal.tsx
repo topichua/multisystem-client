@@ -5,8 +5,7 @@ import { useTranslation } from "react-i18next";
 const { Text } = Typography;
 
 export type CharacteristicArchiveTarget =
-  | { type: "characteristic"; label: string }
-  | { type: "option"; label: string };
+  { type: "characteristic"; label: string } | { type: "option"; label: string };
 
 type CharacteristicArchiveModalProps = {
   target: CharacteristicArchiveTarget | null;

@@ -89,11 +89,7 @@ export type OrderNovaPoshtaWaybillResponse = {
 };
 
 export type OrderStatusCategory =
-  | "new"
-  | "confirmed"
-  | "delivery"
-  | "completed"
-  | "canceled";
+  "new" | "confirmed" | "delivery" | "completed" | "canceled";
 
 export const ORDER_STATUS_CATEGORIES = [
   "new",

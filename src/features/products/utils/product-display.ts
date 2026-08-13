@@ -24,11 +24,7 @@ type ProductPriceSource = {
 };
 
 export type ProductStatusColor =
-  | "default"
-  | "processing"
-  | "success"
-  | "warning"
-  | "error";
+  "default" | "processing" | "success" | "warning" | "error";
 
 const PRODUCT_STATUS_COLORS: Record<string, ProductStatusColor> = {
   draft: "default",

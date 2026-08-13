@@ -39,7 +39,9 @@ function groupDisplayName(
 }
 
 export const conversationEventLogComponents: {
-  [key in KnownConversationEventType]: ComponentType<ConversationEventLogComponentProps>;
+  [
+    key in KnownConversationEventType
+  ]: ComponentType<ConversationEventLogComponentProps>;
 } = {
   conversation_created: ({ event, t, actorName }) => (
     <ConversationEventInline createdAt={event.createdAt} actorName={actorName}>

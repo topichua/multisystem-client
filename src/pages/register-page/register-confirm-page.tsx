@@ -16,8 +16,7 @@ type ConfirmationState =
   | { status: "error"; error: unknown };
 
 type ConfirmationResult =
-  | { status: "success" }
-  | { status: "error"; error: unknown };
+  { status: "success" } | { status: "error"; error: unknown };
 
 const confirmationRequests = new Map<string, Promise<ConfirmationResult>>();
 

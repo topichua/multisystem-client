@@ -64,8 +64,7 @@ export const TeamRoleProductReferenceGrantsSection = ({
   const { t } = useTranslation();
   const form = Form.useFormInstance<WorkspaceRoleFormValues>();
   const watchedGrants = Form.useWatch("productReferenceGrants", form) as
-    | Record<string, WorkspaceRoleProductReferenceGrantFormValue>
-    | undefined;
+    Record<string, WorkspaceRoleProductReferenceGrantFormValue> | undefined;
 
   const requirementsMet = areRequiredPermissionsEnabled(
     permissionValues,
