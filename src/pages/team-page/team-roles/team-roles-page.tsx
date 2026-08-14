@@ -59,13 +59,10 @@ export const TeamRolesPage = observer(() => {
       store.sortedRoles.map((role) => ({
         key: getTeamRolePath(role.id),
         label: (
-          <Flex align="flex-start" gap={8} style={{ minWidth: 0 }}>
-            <RoleDot
-              color={role.color ?? DEFAULT_COLOR_PRESET}
-              style={{ marginTop: 5 }}
-            />
+          <Flex align="center" gap={12} style={{ minWidth: 0 }}>
+            <RoleDot size={12} color={role.color ?? DEFAULT_COLOR_PRESET} />
             <Flex vertical gap={0} style={{ minWidth: 0 }}>
-              <Text ellipsis style={{ lineHeight: 1.3 }}>
+              <Text ellipsis style={{ lineHeight: 1.3, fontWeight: 600 }}>
                 {role.name}
               </Text>
               {role.membersCount != null && (
@@ -81,6 +78,11 @@ export const TeamRolesPage = observer(() => {
             </Flex>
           </Flex>
         ),
+        style: {
+          padding: "10px 12px",
+          display: "flex",
+          height: 60,
+        },
       })),
     [store.sortedRoles, t],
   );

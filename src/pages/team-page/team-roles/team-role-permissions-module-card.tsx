@@ -119,7 +119,7 @@ export const TeamRolePermissionsModuleCard = ({
         <Flex align="center" gap={10} wrap="wrap">
           <Icon size={20} />
           <span>{getCatalogModuleLabel(t, module)}</span>
-          <Tag color="green">
+          <Tag color="default">
             {selectedCount}/{booleanRows.length}
           </Tag>
         </Flex>

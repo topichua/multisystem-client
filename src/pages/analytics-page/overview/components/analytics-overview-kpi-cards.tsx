@@ -1,6 +1,7 @@
 import {
   CaretDownIcon,
   CaretUpIcon,
+  ChartBarIcon,
   CreditCardIcon,
   PackageIcon,
   TagIcon,
@@ -62,18 +63,23 @@ const AnalyticsOverviewKpiCard = ({
 type AnalyticsOverviewKpiCardsProps = {
   kpi: AnalyticsKpi | null;
   loading?: boolean;
+  showGrossProfit?: boolean;
 };
 
 export const AnalyticsOverviewKpiCards = ({
   kpi,
   loading = false,
+  showGrossProfit = false,
 }: AnalyticsOverviewKpiCardsProps) => {
   const { t } = useTranslation();
 
+  const canShowGrossProfit = showGrossProfit && kpi?.grossProfit != null;
+  const columns = showGrossProfit ? 5 : 4;
+
   if (loading && !kpi) {
     return (
-      <S.Grid>
-        {Array.from({ length: 4 }, (_, index) => (
+      <S.Grid $columns={columns}>
+        {Array.from({ length: columns }, (_, index) => (
           <S.SkeletonCard key={index}>
             <Skeleton active paragraph={{ rows: 2 }} />
           </S.SkeletonCard>
@@ -87,7 +93,7 @@ export const AnalyticsOverviewKpiCards = ({
   }
 
   return (
-    <S.Grid>
+    <S.Grid $columns={canShowGrossProfit ? 5 : 4}>
       <AnalyticsOverviewKpiCard
         metric={kpi.revenue}
         label={t("analytics.overview.kpi.revenue")}
@@ -95,6 +101,15 @@ export const AnalyticsOverviewKpiCards = ({
         valueFormat="money"
         dataQa="analytics-overview-kpi-revenue"
       />
+      {canShowGrossProfit && kpi.grossProfit ? (
+        <AnalyticsOverviewKpiCard
+          metric={kpi.grossProfit}
+          label={t("analytics.overview.kpi.grossProfit")}
+          icon={<ChartBarIcon weight="duotone" />}
+          valueFormat="money"
+          dataQa="analytics-overview-kpi-gross-profit"
+        />
+      ) : null}
       <AnalyticsOverviewKpiCard
         metric={kpi.orders}
         label={t("analytics.overview.kpi.orders")}

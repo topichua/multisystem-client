@@ -144,6 +144,7 @@
     "overview": {
       "kpi": {
         "revenue": "Виручка",
+        "grossProfit": "Валовий прибуток",
         "orders": "Замовлення",
         "averageOrderValue": "Середній чек",
         "newClients": "Нові клієнти"

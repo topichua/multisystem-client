@@ -144,6 +144,7 @@
     "overview": {
       "kpi": {
         "revenue": "Revenue",
+        "grossProfit": "Gross profit",
         "orders": "Orders",
         "averageOrderValue": "Average order value",
         "newClients": "New clients"

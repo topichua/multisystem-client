@@ -4,9 +4,12 @@ import { dataQaAttrs } from "@/styled/data-qa-attrs";
 
 export const Grid = styled.div.attrs(() =>
   dataQaAttrs("layout-analytics-overview-kpi-grid"),
-)`
+)<{ $columns?: number }>`
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(
+    ${({ $columns = 4 }) => $columns},
+    minmax(0, 1fr)
+  );
   gap: 16px;
 
   @media (max-width: 1100px) {

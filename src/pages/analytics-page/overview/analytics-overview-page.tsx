@@ -3,6 +3,8 @@ import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useAnalyticsStore } from "@/features/analytics/model/use-analytics-store";
+import { useWorkspaceSettingsStore } from "@/features/workspace-settings/model/use-workspace-settings-store";
+import { InventoryMode } from "@/features/workspace-settings/model/workspace-settings.types";
 
 import { AnalyticsContentLayout } from "../components/analytics-content-layout";
 import { AnalyticsPeriodFilter } from "../components/analytics-period-filter";
@@ -18,6 +20,7 @@ import { formatAnalyticsPeriodLabel } from "./utils/format-analytics-period-labe
 export const AnalyticsOverviewPage = observer(() => {
   const { t } = useTranslation();
   const store = useAnalyticsStore();
+  const workspaceSettingsStore = useWorkspaceSettingsStore();
 
   const periodLabel = useMemo(
     () =>
@@ -37,6 +40,18 @@ export const AnalyticsOverviewPage = observer(() => {
     void store.loadOverview();
   }, [store]);
 
+  useEffect(() => {
+    if (
+      !workspaceSettingsStore.initialized &&
+      !workspaceSettingsStore.loadLoading
+    ) {
+      void workspaceSettingsStore.loadSettings({ silent: true });
+    }
+  }, [workspaceSettingsStore]);
+
+  const showGrossProfit =
+    workspaceSettingsStore.inventoryMode === InventoryMode.advanced;
+
   return (
     <AnalyticsSectionLayout
       titleKey="analytics.menu.overview"
@@ -47,6 +62,7 @@ export const AnalyticsOverviewPage = observer(() => {
           <AnalyticsOverviewKpiCards
             kpi={store.kpi}
             loading={store.kpiLoading}
+            showGrossProfit={showGrossProfit}
           />
           <AnalyticsOverviewRevenueChart
             chart={store.revenueChart}

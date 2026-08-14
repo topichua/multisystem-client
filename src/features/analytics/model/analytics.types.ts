@@ -7,6 +7,7 @@ export type AnalyticsKpiMetric = {
 
 export type AnalyticsKpi = {
   revenue: AnalyticsKpiMetric;
+  grossProfit?: AnalyticsKpiMetric;
   orders: AnalyticsKpiMetric;
   averageOrderValue: AnalyticsKpiMetric;
   newClients: AnalyticsKpiMetric;

@@ -155,7 +155,7 @@ export const TeamRoleDetailView = observer(() => {
               >
                 <PresetColorPicker
                   ariaLabel={t("team.roleColorPickerAria")}
-                  columns={5}
+                  columns={10}
                 />
               </Form.Item>
               <Flex vertical gap={4}>
