@@ -2,6 +2,7 @@ import {
   CompassIcon,
   CurrencyDollarIcon,
   DesktopIcon,
+  GlobeIcon,
   MoonIcon,
   SunIcon,
   TranslateIcon,
@@ -27,11 +28,17 @@ import { resetOnboardingTourForReplay } from "@/app/layout/onboarding-tour/onboa
 import { pagesMap } from "@/app/router/pages-map";
 import { FormDivider } from "@/components/layout/form-card";
 import { useUserStore } from "@/features/auth/model/use-user-store";
+import { useWorkspaceSettingsStore } from "@/features/workspace-settings/model/use-workspace-settings-store";
+import {
+  toUiLanguage,
+  toWorkspaceLanguage,
+  type UiLanguage,
+} from "@/features/workspace-settings/model/workspace-language";
 import {
   WORKSPACE_CURRENCIES,
   type WorkspaceCurrency,
 } from "@/features/workspace-settings/model/workspace-settings.types";
-import { useWorkspaceSettingsStore } from "@/features/workspace-settings/model/use-workspace-settings-store";
+import { getWorkspaceTimeZoneOptions } from "@/features/workspace-settings/model/workspace-timezones";
 import type { ThemePreference } from "@/theme/theme-mode.types";
 import { useThemeMode } from "@/theme/use-theme-mode";
 import { useNotification } from "@/shared/components/notification/use-notification";
@@ -67,7 +74,11 @@ export const SettingsSystemPreferences = observer(
     const isMobile = layout === "mobile";
     const userId = userStore.user?.id;
 
-    const langValue = i18n.language.startsWith("uk") ? "uk" : "en";
+    const langValue: UiLanguage = workspaceSettingsStore.language
+      ? toUiLanguage(workspaceSettingsStore.language)
+      : i18n.language.startsWith("uk")
+        ? "uk"
+        : "en";
 
     useEffect(() => {
       if (
@@ -91,6 +102,38 @@ export const SettingsSystemPreferences = observer(
       [notification, t, workspaceSettingsStore],
     );
 
+    const handleTimezoneChange = useCallback(
+      async (timezone: string) => {
+        try {
+          await workspaceSettingsStore.updateTimezone(timezone);
+        } catch (e) {
+          notification.error({
+            title: getApiErrorMessage(e, t("system.timezoneSaveError")),
+          });
+        }
+      },
+      [notification, t, workspaceSettingsStore],
+    );
+
+    const handleLanguageChange = useCallback(
+      async (uiLanguage: UiLanguage) => {
+        const previousUiLanguage = langValue;
+
+        try {
+          await i18n.changeLanguage(uiLanguage);
+          await workspaceSettingsStore.updateLanguage(
+            toWorkspaceLanguage(uiLanguage),
+          );
+        } catch (e) {
+          await i18n.changeLanguage(previousUiLanguage);
+          notification.error({
+            title: getApiErrorMessage(e, t("system.languageSaveError")),
+          });
+        }
+      },
+      [i18n, langValue, notification, t, workspaceSettingsStore],
+    );
+
     const handleStartOnboardingTour = useCallback(() => {
       if (typeof userId !== "number") {
         return;
@@ -100,12 +143,21 @@ export const SettingsSystemPreferences = observer(
       navigate(pagesMap.home);
     }, [navigate, userId]);
 
-    const languageOptions = useMemo(
+    const languageOptions: { value: UiLanguage; label: string }[] = useMemo(
       () => [
         { value: "en", label: t("system.english") },
         { value: "uk", label: t("system.ukrainian") },
       ],
       [t],
+    );
+
+    const timezoneOptions = useMemo(
+      () =>
+        getWorkspaceTimeZoneOptions(
+          i18n.language,
+          workspaceSettingsStore.timezone,
+        ),
+      [i18n.language, workspaceSettingsStore.timezone],
     );
 
     const themeOptions = useMemo(
@@ -161,13 +213,40 @@ export const SettingsSystemPreferences = observer(
     );
 
     const languageControl = (
-      <Segmented
+      <Segmented<UiLanguage>
         block={isMobile}
         value={langValue}
         options={languageOptions}
+        disabled={
+          workspaceSettingsStore.loadLoading ||
+          workspaceSettingsStore.languageSaveLoading ||
+          !workspaceSettingsStore.currency
+        }
+        data-qa="settings-language-segmented"
         onChange={(value) => {
-          void i18n.changeLanguage(String(value));
+          void handleLanguageChange(value);
         }}
+      />
+    );
+
+    const timezoneControl = (
+      <Select<string>
+        value={workspaceSettingsStore.timezone ?? undefined}
+        placeholder={t("system.timezonePlaceholder")}
+        loading={
+          workspaceSettingsStore.loadLoading ||
+          workspaceSettingsStore.timezoneSaveLoading
+        }
+        disabled={
+          workspaceSettingsStore.loadLoading ||
+          workspaceSettingsStore.timezoneSaveLoading
+        }
+        options={timezoneOptions}
+        showSearch={{ optionFilterProp: "searchText" }}
+        popupMatchSelectWidth={false}
+        data-qa="settings-timezone-select"
+        style={isMobile ? { width: "100%" } : { minWidth: 240 }}
+        onChange={(value) => void handleTimezoneChange(value)}
       />
     );
 
@@ -186,6 +265,16 @@ export const SettingsSystemPreferences = observer(
     const preferenceRows = (
       <>
         <SettingsPreferenceRow
+          icon={<TranslateIcon size={20} />}
+          title={t("system.language")}
+          description={t("system.languageDescription")}
+          control={languageControl}
+          stackControl={isMobile}
+        />
+
+        <FormDivider style={{ margin: `${token.marginLG}px 0` }} />
+
+        <SettingsPreferenceRow
           icon={<CurrencyDollarIcon size={20} />}
           title={t("system.currency")}
           description={t("system.currencyDescription")}
@@ -196,10 +285,10 @@ export const SettingsSystemPreferences = observer(
         <FormDivider style={{ margin: `${token.marginLG}px 0` }} />
 
         <SettingsPreferenceRow
-          icon={<TranslateIcon size={20} />}
-          title={t("system.language")}
-          description={t("system.languageDescription")}
-          control={languageControl}
+          icon={<GlobeIcon size={20} />}
+          title={t("system.timezone")}
+          description={t("system.timezoneDescription")}
+          control={timezoneControl}
           stackControl={isMobile}
         />
 

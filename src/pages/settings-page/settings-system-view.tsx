@@ -7,6 +7,7 @@ import { FormCard } from "@/components/layout/form-card";
 import { SettingsInventorySection } from "./settings-inventory-section";
 import { SettingsSystemPreferences } from "./settings-system-preferences";
 import { SettingsWishlistSection } from "./settings-wishlist-section";
+import { SettingsWorkScheduleSection } from "./settings-work-schedule-section";
 import * as S from "./settings-system-view.styled";
 
 export const SettingsSystemView = observer(() => {
@@ -22,10 +23,13 @@ export const SettingsSystemView = observer(() => {
         <PaneDetailLayout.Body data-qa="layout-settings-system-body">
           <S.CardsStack>
             <FormCard>
-              <SettingsInventorySection />
+              <SettingsSystemPreferences layout="desktop" />
             </FormCard>
             <FormCard>
-              <SettingsSystemPreferences layout="desktop" />
+              <SettingsWorkScheduleSection />
+            </FormCard>
+            <FormCard>
+              <SettingsInventorySection />
             </FormCard>
             <FormCard>
               <SettingsWishlistSection />

@@ -9,6 +9,7 @@ import * as MobileS from "./mobile-settings-page.styled";
 import { SettingsInventorySection } from "./settings-inventory-section";
 import { SettingsSystemPreferences } from "./settings-system-preferences";
 import { SettingsWishlistSection } from "./settings-wishlist-section";
+import { SettingsWorkScheduleSection } from "./settings-work-schedule-section";
 
 export const MobileSettingsSystemPage = () => {
   const { t } = useTranslation();
@@ -35,11 +36,15 @@ export const MobileSettingsSystemPage = () => {
 
       <MobileS.ScrollRegion>
         <MobileS.ContentSection>
-          <SettingsInventorySection layout="mobile" />
+          <SettingsSystemPreferences layout="mobile" />
 
           <MobileS.MobileFormDivider />
 
-          <SettingsSystemPreferences layout="mobile" />
+          <SettingsWorkScheduleSection layout="mobile" />
+
+          <MobileS.MobileFormDivider />
+
+          <SettingsInventorySection layout="mobile" />
 
           <MobileS.MobileFormDivider />
 

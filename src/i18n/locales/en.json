@@ -1275,7 +1275,7 @@
   },
   "system": {
     "title": "System",
-    "sectionHint": "Workspace currency is saved on the server. Language and appearance are saved in this browser.",
+    "sectionHint": "Workspace currency, language, and time zone are saved on the server. Appearance is saved in this browser.",
     "currency": "Currency",
     "currencyDescription": "Default currency for prices and orders in this workspace.",
     "currencyPlaceholder": "Select currency",
@@ -1286,7 +1286,12 @@
       "USD": "USD"
     },
     "language": "Language",
-    "languageDescription": "Interface language saved in this browser.",
+    "languageDescription": "Interface language for this workspace.",
+    "languageSaveError": "Could not update language",
+    "timezone": "Time zone",
+    "timezoneDescription": "Workspace time zone for dates and the work schedule.",
+    "timezonePlaceholder": "Select a time zone",
+    "timezoneSaveError": "Could not update time zone",
     "theme": "Theme",
     "themeDescription": "Appearance saved in this browser.",
     "light": "Light",
@@ -1299,6 +1304,26 @@
       "description": "Replay the guided overview of the main workspace controls.",
       "start": "Start tour"
     },
+    "workSchedule": {
+      "sectionTitle": "Business hours",
+      "title": "Work schedule",
+      "description": "Automatic messages and reminders are sent only during these hours.",
+      "dayStart": "Start of day",
+      "dayEnd": "End of day",
+      "workDays": "Work days",
+      "workDaysHint": "Unselected days are treated as days off — delayed messages move to the next working day.",
+      "differentHours": "Different hours for individual days",
+      "saveError": "Could not update the work schedule",
+      "weekdays": {
+        "mon": "Mon",
+        "tue": "Tue",
+        "wed": "Wed",
+        "thu": "Thu",
+        "fri": "Fri",
+        "sat": "Sat",
+        "sun": "Sun"
+      }
+    },
     "inventory": {
       "title": "Inventory management",
       "description": "How products track quantity in stock.",
@@ -1310,7 +1335,7 @@
     },
     "preferences": {
       "title": "Workspace",
-      "description": "Currency is saved on the server. Language and appearance are saved in this browser."
+      "description": "Currency, language, and time zone are saved on the server. Appearance is saved in this browser."
     },
     "wishlist": {
       "title": "Waiting for products",
