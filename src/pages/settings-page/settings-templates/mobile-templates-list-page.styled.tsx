@@ -86,7 +86,7 @@ export const ListCard = styled(Card)`
   }
 `;
 
-export const TemplateItemButton = styled(Button)`
+export const TemplateItemButton = styled(Button)<{ $inactive: boolean }>`
   && {
     width: 100%;
     height: auto;
@@ -97,6 +97,7 @@ export const TemplateItemButton = styled(Button)`
     color: ${({ theme }) => theme.colors.functional.text.primary};
     text-align: left;
     white-space: normal;
+    opacity: ${({ $inactive }) => ($inactive ? 0.5 : 1)};
   }
 
   &&:not(:first-child) {
@@ -160,6 +161,8 @@ export const ItemCopy = styled(Flex)`
 export const ItemTitle = styled(Typography.Text)`
   && {
     display: block;
+    min-width: 0;
+    flex: 1 1 auto;
     max-width: 100%;
     color: ${({ theme }) => theme.colors.functional.text.heading};
     font-size: ${({ theme }) => theme.fontSize.medium};

@@ -8,7 +8,10 @@ import { getSettingsTemplatePath, pagesMap } from "@/app/router/pages-map";
 import { useMessageTemplatesStore } from "@/features/message-templates/model/use-message-templates-store";
 import { useNotification } from "@/shared/components/notification/use-notification";
 
-import type { TemplateFormValues } from "./template-form-modal";
+import {
+  toTemplateWritePayload,
+  type TemplateFormValues,
+} from "./template-form-fields";
 
 export function useSettingsTemplateEditor(templateId: string | undefined) {
   const { t } = useTranslation();
@@ -16,7 +19,6 @@ export function useSettingsTemplateEditor(templateId: string | undefined) {
   const store = useMessageTemplatesStore();
   const notification = useNotification();
   const [form] = Form.useForm<TemplateFormValues>();
-  const templateBody = Form.useWatch("template", form) ?? "";
 
   const idNum = templateId != null ? Number(templateId) : NaN;
 
@@ -32,15 +34,15 @@ export function useSettingsTemplateEditor(templateId: string | undefined) {
     if (template) {
       form.setFieldsValue({
         name: template.name,
+        type: template.type,
         template: template.template,
+        isActive: template.isActive,
       });
     }
   }, [form, template]);
 
   const pickNavigateAfterDelete = useCallback(() => {
-    const sorted = [...store.templates].sort((a, b) =>
-      a.name.localeCompare(b.name, undefined, { sensitivity: "base" }),
-    );
+    const sorted = store.sortedVisibleTemplates;
     const idx = sorted.findIndex((item) => item.id === idNum);
     const next = sorted[idx + 1] ?? sorted[idx - 1];
     if (next) {
@@ -48,7 +50,7 @@ export function useSettingsTemplateEditor(templateId: string | undefined) {
     } else {
       navigate(pagesMap.settingsTemplates);
     }
-  }, [idNum, navigate, store.templates]);
+  }, [idNum, navigate, store.sortedVisibleTemplates]);
 
   const handleSave = useCallback(async () => {
     if (!template) {
@@ -63,10 +65,8 @@ export function useSettingsTemplateEditor(templateId: string | undefined) {
     }
 
     try {
-      await store.updateTemplate(template.id, {
-        name: values.name.trim(),
-        template: values.template ?? "",
-      });
+      await store.updateTemplate(template.id, toTemplateWritePayload(values));
+      store.revealTemplateType(values.type);
       notification.success({ title: t("templates.updated") });
     } catch (e) {
       notification.error({
@@ -92,10 +92,8 @@ export function useSettingsTemplateEditor(templateId: string | undefined) {
   }, [notification, pickNavigateAfterDelete, store, t, template]);
 
   return {
-    idNum,
     template,
     form,
-    templateBody,
     store,
     isInvalidId: !Number.isFinite(idNum),
     isLoading: store.listLoading && !template,

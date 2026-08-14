@@ -1,4 +1,4 @@
-import { Alert, Button, Form, Input } from "antd";
+import { Alert, Button, Form } from "antd";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
@@ -7,9 +7,8 @@ import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
 import { CenteredSpinner } from "@/components/loading/centered-spinner";
 import { FormCard } from "@/components/layout/form-card";
 
-import { getTemplateCharacterCount } from "./settings-templates.utils";
-import { TemplateBodyField } from "./template-body-field";
 import { TemplateDetailHeader } from "./template-detail-header";
+import { TemplateFormFields } from "./template-form-fields";
 import { useSettingsTemplateEditor } from "./use-settings-template-editor";
 
 export const SettingsTemplateDetailView = observer(() => {
@@ -18,7 +17,6 @@ export const SettingsTemplateDetailView = observer(() => {
   const {
     template,
     form,
-    templateBody,
     store,
     isInvalidId,
     isLoading,
@@ -78,23 +76,10 @@ export const SettingsTemplateDetailView = observer(() => {
               requiredMark
               onFinish={handleSave}
             >
-              <Form.Item
-                name="name"
-                label={t("templates.name")}
-                rules={[{ required: true, message: t("templates.required") }]}
-              >
-                <Input />
-              </Form.Item>
-              <Form.Item
-                name="template"
-                label={t("templates.body")}
-                rules={[{ required: true, message: t("templates.required") }]}
-                extra={t("templates.bodyHint", {
-                  count: getTemplateCharacterCount(templateBody),
-                })}
-              >
-                <TemplateBodyField rows={8} data-qa="template-edit-body" />
-              </Form.Item>
+              <TemplateFormFields
+                bodyRows={8}
+                bodyDataQa="template-edit-body"
+              />
             </Form>
           </FormCard>
         </PaneDetailLayout.Body>

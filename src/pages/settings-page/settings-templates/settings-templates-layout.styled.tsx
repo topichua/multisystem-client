@@ -1,6 +1,9 @@
 import styled from "styled-components";
 
-export const TemplateNavItem = styled.button<{ $active: boolean }>`
+export const TemplateNavItem = styled.button<{
+  $active: boolean;
+  $inactive: boolean;
+}>`
   width: 100%;
   padding: 12px;
   border: 0;
@@ -11,6 +14,7 @@ export const TemplateNavItem = styled.button<{ $active: boolean }>`
   cursor: pointer;
   text-align: left;
   margin-bottom: 4px;
+  opacity: ${({ $inactive }) => ($inactive ? 0.5 : 1)};
 
   &:hover {
     background: ${({ $active, theme }) =>

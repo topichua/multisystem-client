@@ -27,7 +27,9 @@ import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 
 import type { ReplyComposeTarget } from "../../reply-compose-target";
+import { getApiErrorMessage } from "@/api/get-api-error-message";
 import { useMessageTemplatesStore } from "@/features/message-templates/model/use-message-templates-store";
+import { useNotification } from "@/shared/components/notification/use-notification";
 import { useThemeMode } from "@/theme/use-theme-mode";
 
 import * as S from "./composer.styled";
@@ -41,6 +43,7 @@ const renderMutedIcon = (children: ReactNode) => (
 );
 
 type MessageComposerProps = {
+  conversationId: string;
   draft: string;
   canSend: boolean;
   replyPreview: ReplyComposeTarget | null;
@@ -51,6 +54,7 @@ type MessageComposerProps = {
 
 export const MessageComposer = observer(
   ({
+    conversationId,
     draft,
     canSend,
     replyPreview,
@@ -60,6 +64,7 @@ export const MessageComposer = observer(
   }: MessageComposerProps) => {
     const { t } = useTranslation();
     const { mode } = useThemeMode();
+    const notification = useNotification();
     const templatesStore = useMessageTemplatesStore();
     const textareaRef = useRef<TextAreaRef>(null);
     const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
@@ -157,14 +162,16 @@ export const MessageComposer = observer(
       [templatesStore.templates],
     );
 
+    const conversationNumericId = Number(conversationId);
+
     const handleTemplateDropdownOpen = useCallback(
       (open: boolean) => {
         if (
           open &&
-          templatesStore.templates.length === 0 &&
+          templatesStore.listType !== "chat" &&
           !templatesStore.listLoading
         ) {
-          void templatesStore.loadTemplates();
+          void templatesStore.loadTemplates({ type: "chat" });
         }
       },
       [templatesStore],
@@ -174,11 +181,39 @@ export const MessageComposer = observer(
       ({ key }) => {
         const template = templatesById.get(key);
 
-        if (template) {
-          insertText(template.template);
+        if (!template || !Number.isFinite(conversationNumericId)) {
+          return;
         }
+
+        void (async () => {
+          try {
+            const text = await templatesStore.renderTemplate(template.id, {
+              conversationId: conversationNumericId,
+            });
+
+            if (text == null) {
+              notification.error({
+                title: t("composer.renderTemplateError"),
+              });
+              return;
+            }
+
+            insertText(text);
+          } catch (e) {
+            notification.error({
+              title: getApiErrorMessage(e, t("composer.renderTemplateError")),
+            });
+          }
+        })();
       },
-      [insertText, templatesById],
+      [
+        conversationNumericId,
+        insertText,
+        notification,
+        t,
+        templatesById,
+        templatesStore,
+      ],
     );
 
     const handleSend = useCallback(() => {

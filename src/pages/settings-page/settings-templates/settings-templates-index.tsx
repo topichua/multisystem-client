@@ -1,6 +1,5 @@
 import { Button, Empty } from "antd";
 import { observer } from "mobx-react-lite";
-import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Navigate, useOutletContext } from "react-router";
 
@@ -14,14 +13,7 @@ export const SettingsTemplatesIndex = observer(() => {
   const { t } = useTranslation();
   const { onCreateClick } = useOutletContext<SettingsTemplatesOutletContext>();
   const store = useMessageTemplatesStore();
-
-  const sortedTemplates = useMemo(
-    () =>
-      [...store.templates].sort((a, b) =>
-        a.name.localeCompare(b.name, undefined, { sensitivity: "base" }),
-      ),
-    [store.templates],
-  );
+  const sortedTemplates = store.sortedVisibleTemplates;
 
   if (store.listLoading && store.templates.length === 0) {
     return <CenteredSpinner />;

@@ -8,14 +8,16 @@ import { getApiErrorMessage } from "@/api/get-api-error-message";
 import { getSettingsTemplatePath, pagesMap } from "@/app/router/pages-map";
 import { PaneNavSplitLayout } from "@/components/layout/pane-nav-split-layout";
 import { useMessageTemplatesStore } from "@/features/message-templates/model/use-message-templates-store";
-
-import { SettingsTemplatesSidebar } from "./settings-templates-sidebar";
 import { useNotification } from "@/shared/components/notification/use-notification";
 import { useIsMobileViewport } from "@/utils/use-media-query";
+
+import { SettingsTemplatesSidebar } from "./settings-templates-sidebar";
 import {
-  TemplateFormModal,
+  DEFAULT_TEMPLATE_FORM_VALUES,
+  toTemplateWritePayload,
   type TemplateFormValues,
-} from "./template-form-modal";
+} from "./template-form-fields";
+import { TemplateFormModal } from "./template-form-modal";
 
 export const SettingsTemplatesLayout = observer(() => {
   const { t } = useTranslation();
@@ -26,18 +28,12 @@ export const SettingsTemplatesLayout = observer(() => {
   const isMobileViewport = useIsMobileViewport();
   const [form] = Form.useForm<TemplateFormValues>();
   const [modalOpen, setModalOpen] = useState(false);
+  const sortedTemplates = store.sortedVisibleTemplates;
 
   useEffect(() => {
     void store.loadTemplates();
+    void store.loadVariables();
   }, [store]);
-
-  const sortedTemplates = useMemo(
-    () =>
-      [...store.templates].sort((a, b) =>
-        a.name.localeCompare(b.name, undefined, { sensitivity: "base" }),
-      ),
-    [store.templates],
-  );
 
   const activeTemplateId = useMemo(() => {
     const match = matchPath(
@@ -54,8 +50,28 @@ export const SettingsTemplatesLayout = observer(() => {
     return Number.isFinite(parsedId) ? parsedId : null;
   }, [location.pathname]);
 
+  useEffect(() => {
+    if (isMobileViewport || store.listLoading || activeTemplateId == null) {
+      return;
+    }
+
+    const isVisible = sortedTemplates.some(
+      (item) => item.id === activeTemplateId,
+    );
+
+    if (!isVisible) {
+      navigate(pagesMap.settingsTemplates, { replace: true });
+    }
+  }, [
+    activeTemplateId,
+    isMobileViewport,
+    navigate,
+    sortedTemplates,
+    store.listLoading,
+  ]);
+
   const openCreate = useCallback(() => {
-    form.setFieldsValue({ name: "", template: "" });
+    form.setFieldsValue(DEFAULT_TEMPLATE_FORM_VALUES);
     setModalOpen(true);
   }, [form]);
 
@@ -73,13 +89,13 @@ export const SettingsTemplatesLayout = observer(() => {
     }
 
     try {
-      const created = await store.createTemplate({
-        name: values.name.trim(),
-        template: values.template ?? "",
-      });
+      const created = await store.createTemplate(
+        toTemplateWritePayload(values),
+      );
       notification.success({ title: t("templates.created") });
       closeModal();
       if (created) {
+        store.revealTemplateType(created.type);
         navigate(getSettingsTemplatePath(created.id));
       }
     } catch (e) {
@@ -99,12 +115,17 @@ export const SettingsTemplatesLayout = observer(() => {
       {isMobileViewport ? (
         <Outlet context={outletContext} />
       ) : (
-        <PaneNavSplitLayout.Root data-qa="layout-settings-templates-shell">
+        <PaneNavSplitLayout.Root
+          $customWidth={360}
+          data-qa="layout-settings-templates-shell"
+        >
           <SettingsTemplatesSidebar
             templates={sortedTemplates}
+            typeFilter={store.typeFilter}
             activeTemplateId={activeTemplateId}
             listLoading={store.listLoading}
             listError={store.listError}
+            onTypeFilterChange={store.setTypeFilter}
             onCreateClick={openCreate}
             onTemplateClick={(templateId) =>
               navigate(getSettingsTemplatePath(templateId))

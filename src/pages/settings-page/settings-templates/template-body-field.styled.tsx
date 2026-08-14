@@ -47,12 +47,6 @@ export const FieldShell = styled.div`
   }
 `;
 
-export const Toolbar = styled.div`
-  display: flex;
-  align-items: center;
-  margin-top: 8px;
-`;
-
 export const EmojiPickerPopoverBody = styled.div`
   line-height: 0;
   border-radius: ${({ theme }) => theme.radius.semiLarge};

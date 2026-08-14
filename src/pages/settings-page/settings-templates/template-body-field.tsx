@@ -1,11 +1,18 @@
 import { SmileyIcon } from "@phosphor-icons/react";
-import { Button, Input, Popover, Typography } from "antd";
+import { Button, Flex, Input, Popover, Typography } from "antd";
 import type { TextAreaProps, TextAreaRef } from "antd/es/input/TextArea";
 import EmojiPicker, {
   EmojiStyle,
   Theme as EmojiPickerTheme,
 } from "emoji-picker-react";
-import { useCallback, useMemo, useRef, useState } from "react";
+import {
+  forwardRef,
+  useCallback,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -30,14 +37,24 @@ type TemplateBodyFieldProps = {
   "data-qa"?: string;
 };
 
-export const TemplateBodyField = ({
-  value = "",
-  onChange,
-  rows = 6,
-  autoSize,
-  placeholder,
-  "data-qa": dataQa = "template-body-field",
-}: TemplateBodyFieldProps) => {
+export type TemplateBodyFieldHandle = {
+  insertText: (text: string) => void;
+};
+
+export const TemplateBodyField = forwardRef<
+  TemplateBodyFieldHandle,
+  TemplateBodyFieldProps
+>(function TemplateBodyField(
+  {
+    value = "",
+    onChange,
+    rows = 6,
+    autoSize,
+    placeholder,
+    "data-qa": dataQa = "template-body-field",
+  },
+  ref,
+) {
   const { t } = useTranslation();
   const { mode } = useThemeMode();
   const textareaRef = useRef<TextAreaRef>(null);
@@ -48,16 +65,15 @@ export const TemplateBodyField = ({
     [mode],
   );
 
-  const insertEmoji = useCallback(
-    (emoji: string) => {
+  const insertText = useCallback(
+    (text: string) => {
       const ta = textareaRef.current?.resizableTextArea?.textArea;
       const start = ta?.selectionStart ?? value.length;
       const end = ta?.selectionEnd ?? value.length;
-      const next = `${value.slice(0, start)}${emoji}${value.slice(end)}`;
-      const caret = start + emoji.length;
+      const next = `${value.slice(0, start)}${text}${value.slice(end)}`;
+      const caret = start + text.length;
 
       onChange?.(next);
-      setEmojiPickerOpen(false);
 
       queueMicrotask(() => {
         requestAnimationFrame(() => {
@@ -70,6 +86,16 @@ export const TemplateBodyField = ({
       });
     },
     [onChange, value],
+  );
+
+  useImperativeHandle(ref, () => ({ insertText }), [insertText]);
+
+  const insertEmoji = useCallback(
+    (emoji: string) => {
+      insertText(emoji);
+      setEmojiPickerOpen(false);
+    },
+    [insertText],
   );
 
   const emojiPickerContent = (
@@ -99,7 +125,7 @@ export const TemplateBodyField = ({
         onChange={(event) => onChange?.(event.target.value)}
       />
 
-      <S.Toolbar>
+      <Flex align="center" style={{ marginTop: 8 }}>
         <Popover
           trigger="click"
           placement="topLeft"
@@ -117,7 +143,7 @@ export const TemplateBodyField = ({
             icon={renderMutedIcon(<SmileyIcon size={18} />)}
           />
         </Popover>
-      </S.Toolbar>
+      </Flex>
     </S.FieldShell>
   );
-};
+});

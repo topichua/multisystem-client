@@ -31,7 +31,7 @@ export const TemplateDetailHeader = ({
         </S.TemplateHeaderIcon>
 
         <Flex vertical gap={4} style={{ minWidth: 0 }}>
-          <Title level={4} style={{ margin: 0 }}>
+          <Title level={4} ellipsis style={{ margin: 0 }}>
             {name}
           </Title>
           <Text type="secondary">{t("templates.editHint")}</Text>

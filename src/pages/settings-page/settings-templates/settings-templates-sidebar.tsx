@@ -9,27 +9,36 @@ import {
 } from "@/components/layout/pane-frame";
 import { PaneNavSplitLayout } from "@/components/layout/pane-nav-split-layout";
 import { CenteredSpinner } from "@/components/loading/centered-spinner";
-import type { MessageTemplate } from "@/features/message-templates/model/message-template.types";
+import type {
+  MessageTemplate,
+  MessageTemplateListFilter,
+} from "@/features/message-templates/model/message-template.types";
 
 import * as S from "./settings-templates-layout.styled";
 import { getTemplatePreview } from "./settings-templates.utils";
+import { TemplateTypeFilter } from "./template-type-filter";
+import { TemplateTypeTag } from "./template-type-tag";
 
 const { Text } = Typography;
 
 type SettingsTemplatesSidebarProps = {
   templates: MessageTemplate[];
+  typeFilter: MessageTemplateListFilter;
   activeTemplateId: number | null;
   listLoading: boolean;
   listError: string | null;
+  onTypeFilterChange: (value: MessageTemplateListFilter) => void;
   onCreateClick: () => void;
   onTemplateClick: (templateId: number) => void;
 };
 
 export const SettingsTemplatesSidebar = ({
   templates,
+  typeFilter,
   activeTemplateId,
   listLoading,
   listError,
+  onTypeFilterChange,
   onCreateClick,
   onTemplateClick,
 }: SettingsTemplatesSidebarProps) => {
@@ -47,6 +56,7 @@ export const SettingsTemplatesSidebar = ({
         >
           {t("templates.createTemplate")}
         </Button>
+        <TemplateTypeFilter value={typeFilter} onChange={onTypeFilterChange} />
       </PaneSectionHeaderStack>
 
       <PaneScrollRegion data-qa="layout-settings-templates-nav-scroll">
@@ -69,25 +79,37 @@ export const SettingsTemplatesSidebar = ({
               />
             ) : (
               templates.map((template) => {
-                const isActive = template.id === activeTemplateId;
+                const isSelected = template.id === activeTemplateId;
 
                 return (
                   <S.TemplateNavItem
                     key={template.id}
                     type="button"
-                    $active={isActive}
-                    aria-current={isActive ? "page" : undefined}
+                    $active={isSelected}
+                    $inactive={!template.isActive}
+                    aria-current={isSelected ? "page" : undefined}
                     onClick={() => onTemplateClick(template.id)}
                   >
                     <Flex align="flex-start" gap={12}>
-                      <S.TemplateNavIcon $active={isActive}>
+                      <S.TemplateNavIcon $active={isSelected}>
                         <ChatTextIcon size={18} />
                       </S.TemplateNavIcon>
 
                       <Flex vertical flex={1} style={{ minWidth: 0 }}>
-                        <Text strong ellipsis={{ tooltip: template.name }}>
-                          {template.name}
-                        </Text>
+                        <Flex
+                          align="center"
+                          gap={8}
+                          style={{ minWidth: 0, overflow: "hidden" }}
+                        >
+                          <Text
+                            strong
+                            ellipsis={{ tooltip: template.name }}
+                            style={{ minWidth: 0, flex: 1 }}
+                          >
+                            {template.name}
+                          </Text>
+                          <TemplateTypeTag type={template.type} />
+                        </Flex>
                         <Text type="secondary" ellipsis>
                           {getTemplatePreview(template.template, t)}
                         </Text>

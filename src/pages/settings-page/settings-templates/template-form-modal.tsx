@@ -1,13 +1,12 @@
-import { Form, Input, Modal } from "antd";
+import { Form, Modal } from "antd";
 import type { FormInstance } from "antd/es/form";
 import { useTranslation } from "react-i18next";
 
-import { TemplateBodyField } from "./template-body-field";
-
-export type TemplateFormValues = {
-  name: string;
-  template: string;
-};
+import {
+  DEFAULT_TEMPLATE_FORM_VALUES,
+  TemplateFormFields,
+  type TemplateFormValues,
+} from "./template-form-fields";
 
 type TemplateFormModalProps = {
   open: boolean;
@@ -35,29 +34,16 @@ export const TemplateFormModal = ({
       confirmLoading={saveLoading}
       destroyOnHidden
       okText={t("templates.modalOk")}
-      width={520}
+      width={560}
     >
       <Form
         form={form}
         layout="vertical"
         requiredMark
         style={{ marginTop: 8 }}
-        initialValues={{ name: "", template: "" }}
+        initialValues={DEFAULT_TEMPLATE_FORM_VALUES}
       >
-        <Form.Item
-          name="name"
-          label={t("templates.name")}
-          rules={[{ required: true, message: t("templates.required") }]}
-        >
-          <Input autoFocus />
-        </Form.Item>
-        <Form.Item
-          name="template"
-          label={t("templates.body")}
-          rules={[{ required: true, message: t("templates.required") }]}
-        >
-          <TemplateBodyField rows={6} data-qa="template-create-body" />
-        </Form.Item>
+        <TemplateFormFields autoFocusName bodyDataQa="template-create-body" />
       </Form>
     </Modal>
   );

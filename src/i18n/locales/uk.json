@@ -868,6 +868,21 @@
   "templates": {
     "title": "Шаблони",
     "createTemplate": "Створити шаблон",
+    "filterAria": "Фільтр шаблонів за типом",
+    "filters": {
+      "all": "Усі",
+      "chat": "Розмова",
+      "order": "Замовлення"
+    },
+    "types": {
+      "chat": "Розмова",
+      "order": "Замовлення"
+    },
+    "type": "Тип шаблону",
+    "typeOptions": {
+      "chat": "Розмова — шаблон повідомлення в чат",
+      "order": "Замовлення — з підстановкою даних клієнта/замовлення"
+    },
     "emptyState": "Шаблонів поки немає",
     "emptyPreview": "Без тексту",
     "noTemplatesYet": "Шаблонів поки немає",
@@ -876,11 +891,36 @@
     "invalidTemplate": "Некоректний ідентифікатор шаблону",
     "backToTemplates": "До шаблонів",
     "editHint": "Готова відповідь для вставки одним кліком у діалозі.",
+    "active": "Активний",
+    "inactive": "Виключений",
+    "activeAria": "Статус активності шаблону",
+    "activeToggleError": "Не вдалося оновити статус шаблону",
     "saveChanges": "Зберегти зміни",
     "delete": "Видалити",
     "name": "Назва шаблону",
     "body": "Текст повідомлення",
     "bodyHint": "{{count}} символів · вставляється в композер діалогу",
+    "variables": {
+      "title": "Змінні для підстановки",
+      "groups": {
+        "client": "Клієнт",
+        "order": "Замовлення"
+      },
+      "keys": {
+        "client": {
+          "name": "Імʼя",
+          "lastName": "Прізвище",
+          "phone": "Телефон",
+          "phoneNumber": "Телефон"
+        },
+        "order": {
+          "status": "Статус замовлення",
+          "ttn": "ТТН",
+          "delivery_status": "Статус доставки",
+          "payment_status": "Спосіб оплати"
+        }
+      }
+    },
     "required": "Обов'язкове поле",
     "modalCreateTitle": "Новий шаблон",
     "modalOk": "Створити",
@@ -3186,6 +3226,7 @@
     "templates": "Шаблони",
     "aiReply": "AI-відповідь",
     "loadingTemplates": "Завантаження шаблонів...",
+    "renderTemplateError": "Не вдалося вставити шаблон",
     "cancelReplyAria": "Скасувати відповідь",
     "openEmojiPickerAria": "Емодзі",
     "attachFileAria": "Додати файл",

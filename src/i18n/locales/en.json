@@ -862,6 +862,21 @@
   "templates": {
     "title": "Templates",
     "createTemplate": "Create template",
+    "filterAria": "Filter templates by type",
+    "filters": {
+      "all": "All",
+      "chat": "Chat",
+      "order": "Order"
+    },
+    "types": {
+      "chat": "Chat",
+      "order": "Order"
+    },
+    "type": "Template type",
+    "typeOptions": {
+      "chat": "Chat — message template for conversations",
+      "order": "Order — with client/order data substitution"
+    },
     "emptyState": "No templates yet",
     "emptyPreview": "No text",
     "noTemplatesYet": "No templates yet",
@@ -870,11 +885,36 @@
     "invalidTemplate": "Invalid template id",
     "backToTemplates": "Back to templates",
     "editHint": "Ready reply for one-click insertion in the conversation.",
+    "active": "Active",
+    "inactive": "Off",
+    "activeAria": "Template active status",
+    "activeToggleError": "Could not update template status",
     "saveChanges": "Save changes",
     "delete": "Delete",
     "name": "Template name",
     "body": "Message text",
     "bodyHint": "{{count}} characters · inserted into the conversation composer",
+    "variables": {
+      "title": "Variables for substitution",
+      "groups": {
+        "client": "Client",
+        "order": "Order"
+      },
+      "keys": {
+        "client": {
+          "name": "Name",
+          "lastName": "Last name",
+          "phone": "Phone",
+          "phoneNumber": "Phone"
+        },
+        "order": {
+          "status": "Order status",
+          "ttn": "TTN",
+          "delivery_status": "Delivery status",
+          "payment_status": "Payment method"
+        }
+      }
+    },
     "required": "Required field",
     "modalCreateTitle": "New template",
     "modalOk": "Create",
@@ -3112,6 +3152,7 @@
     "templates": "Templates",
     "aiReply": "AI reply",
     "loadingTemplates": "Loading templates...",
+    "renderTemplateError": "Could not insert template",
     "cancelReplyAria": "Cancel reply",
     "openEmojiPickerAria": "Emoji",
     "attachFileAria": "Attach file",

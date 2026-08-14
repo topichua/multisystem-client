@@ -1,14 +1,13 @@
 import { ArrowLeftIcon } from "@phosphor-icons/react";
-import { Alert, Button, Form, Input, Popconfirm } from "antd";
+import { Alert, Button, Form, Popconfirm } from "antd";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
 
 import { CenteredSpinner } from "@/components/loading/centered-spinner";
 
-import { getTemplateCharacterCount } from "./settings-templates.utils";
 import * as S from "./mobile-template-editor-page.styled";
-import { TemplateBodyField } from "./template-body-field";
+import { TemplateFormFields } from "./template-form-fields";
 import { useSettingsTemplateEditor } from "./use-settings-template-editor";
 
 export const MobileTemplateEditorPage = observer(() => {
@@ -17,7 +16,6 @@ export const MobileTemplateEditorPage = observer(() => {
   const {
     template,
     form,
-    templateBody,
     store,
     isInvalidId,
     isLoading,
@@ -99,26 +97,10 @@ export const MobileTemplateEditorPage = observer(() => {
             requiredMark
             onFinish={() => void handleSave()}
           >
-            <Form.Item
-              name="name"
-              label={t("templates.name")}
-              rules={[{ required: true, message: t("templates.required") }]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name="template"
-              label={t("templates.body")}
-              rules={[{ required: true, message: t("templates.required") }]}
-              extra={t("templates.bodyHint", {
-                count: getTemplateCharacterCount(templateBody),
-              })}
-            >
-              <TemplateBodyField
-                rows={8}
-                data-qa="settings-mobile-template-body"
-              />
-            </Form.Item>
+            <TemplateFormFields
+              bodyRows={8}
+              bodyDataQa="settings-mobile-template-body"
+            />
           </Form>
         </S.FormSection>
 

@@ -67,6 +67,7 @@ export const Composer = observer(
           <NoteComposer draft={noteDraft} onDraftChange={setNoteDraft} />
         ) : (
           <MessageComposer
+            conversationId={conversationId}
             draft={draft}
             canSend={canSend}
             replyPreview={replyPreview}

@@ -4,9 +4,8 @@ import {
   ChatTextIcon,
   PlusIcon,
 } from "@phosphor-icons/react";
-import { Alert, Empty } from "antd";
+import { Alert, Empty, Flex } from "antd";
 import { observer } from "mobx-react-lite";
-import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useOutletContext } from "react-router";
 
@@ -17,20 +16,15 @@ import { useMessageTemplatesStore } from "@/features/message-templates/model/use
 import type { SettingsTemplatesOutletContext } from "./settings-templates-layout";
 import { getTemplatePreview } from "./settings-templates.utils";
 import * as S from "./mobile-templates-list-page.styled";
+import { TemplateTypeFilter } from "./template-type-filter";
+import { TemplateTypeTag } from "./template-type-tag";
 
 export const MobileTemplatesListPage = observer(() => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const store = useMessageTemplatesStore();
   const { onCreateClick } = useOutletContext<SettingsTemplatesOutletContext>();
-
-  const sortedTemplates = useMemo(
-    () =>
-      [...store.templates].sort((a, b) =>
-        a.name.localeCompare(b.name, undefined, { sensitivity: "base" }),
-      ),
-    [store.templates],
-  );
+  const sortedTemplates = store.sortedVisibleTemplates;
 
   return (
     <S.Root>
@@ -58,6 +52,11 @@ export const MobileTemplatesListPage = observer(() => {
         </S.CreateButton>
       </S.Header>
 
+      <TemplateTypeFilter
+        value={store.typeFilter}
+        onChange={store.setTypeFilter}
+      />
+
       {store.listError && (
         <Alert type="error" title={store.listError} showIcon />
       )}
@@ -80,6 +79,7 @@ export const MobileTemplatesListPage = observer(() => {
               key={template.id}
               type="text"
               block
+              $inactive={!template.isActive}
               data-qa={`settings-mobile-template-item-${template.id}`}
               onClick={() => navigate(getSettingsTemplatePath(template.id))}
             >
@@ -88,7 +88,10 @@ export const MobileTemplatesListPage = observer(() => {
                   <ChatTextIcon />
                 </S.IconTile>
                 <S.ItemCopy vertical gap={2}>
-                  <S.ItemTitle>{template.name}</S.ItemTitle>
+                  <Flex align="center" gap={8} style={{ minWidth: 0 }}>
+                    <S.ItemTitle>{template.name}</S.ItemTitle>
+                    <TemplateTypeTag type={template.type} />
+                  </Flex>
                   <S.ItemPreview>
                     {getTemplatePreview(template.template, t)}
                   </S.ItemPreview>
