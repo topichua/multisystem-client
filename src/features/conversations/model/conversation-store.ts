@@ -34,7 +34,7 @@ import type {
   MessageParticipant,
   MessagesPaging,
   SendMessagePayload,
-} from './types';
+} from "./types";
 import {
   resolveSelfAccountIdForMessage,
   type ConversationSelfIds,
@@ -164,8 +164,8 @@ function replaceOptimisticMessageWithConfirmed(
 export class ConversationStore {
   conversations: Conversation[] = [];
   conversationListGroupFilterIds: number[] = [];
-  conversationListSegment: ConversationListSegment = 'all';
-  conversationListKeyword = '';
+  conversationListSegment: ConversationListSegment = "all";
+  conversationListKeyword = "";
   conversationListChannelIds: number[] = [];
   conversationListResponsibleUserIds: number[] = [];
   conversationGroupingBy: ConversationGroupingBy | null = null;
@@ -363,7 +363,7 @@ export class ConversationStore {
     buckets: ConversationGroupBucket[],
   ): ConversationGroupBucket[] => {
     if (
-      this.conversationGroupingBy !== 'status' ||
+      this.conversationGroupingBy !== "status" ||
       this.conversationListGroupFilterIds.length === 0
     ) {
       return buckets;
@@ -698,11 +698,11 @@ export class ConversationStore {
       params.keyword = this.conversationListKeyword;
     }
 
-    if (this.conversationListSegment === 'unread') {
+    if (this.conversationListSegment === "unread") {
       params.unreadOnly = true;
     }
 
-    if (this.conversationListSegment === 'withoutResponsible') {
+    if (this.conversationListSegment === "withoutResponsible") {
       params.showWithoutResponsibleOnly = true;
     }
 
@@ -744,7 +744,7 @@ export class ConversationStore {
       runInAction(() => {
         this.listError = unknownErrorMessage(e);
       });
-      throwLoadError('Failed to load conversations', e);
+      throwLoadError("Failed to load conversations", e);
     } finally {
       if (!silent) {
         runInAction(() => {
@@ -983,7 +983,7 @@ export class ConversationStore {
   ): Promise<void> => {
     const list = this.messagesByConversationId[conversationId] ?? [];
     const message = list.find(
-      (m) => m.clientTempId === clientTempId && m.outboundStatus === 'failed',
+      (m) => m.clientTempId === clientTempId && m.outboundStatus === "failed",
     );
 
     if (!message) {
@@ -992,7 +992,7 @@ export class ConversationStore {
 
     const payload: SendMessagePayload = {
       message: message.message,
-      ...(message.reply_to_id != null && message.reply_to_id !== ''
+      ...(message.reply_to_id != null && message.reply_to_id !== ""
         ? { reply_to_id: message.reply_to_id }
         : {}),
     };
@@ -1004,7 +1004,7 @@ export class ConversationStore {
           m.clientTempId === clientTempId
             ? {
                 ...m,
-                outboundStatus: 'pending',
+                outboundStatus: "pending",
                 sendError: undefined,
               }
             : m,
@@ -1095,7 +1095,7 @@ export class ConversationStore {
               m.clientTempId === clientTempId
                 ? {
                     ...m,
-                    outboundStatus: 'failed',
+                    outboundStatus: "failed",
                     sendError: unknownErrorMessage(e),
                   }
                 : m,
@@ -1121,7 +1121,7 @@ export class ConversationStore {
             return c;
           }
 
-          if (raw && typeof raw === 'object' && 'id' in raw) {
+          if (raw && typeof raw === "object" && "id" in raw) {
             return raw;
           }
 
@@ -1134,7 +1134,7 @@ export class ConversationStore {
   async updateConversationAssignee(
     conversationId: string,
     responsibleMemberId: number | null,
-    assignee: Conversation['assignee'],
+    assignee: Conversation["assignee"],
   ): Promise<void> {
     const raw = await conversationsApi.update(conversationId, {
       responsible_member_id: responsibleMemberId,
@@ -1147,7 +1147,7 @@ export class ConversationStore {
             return c;
           }
 
-          if (raw && typeof raw === 'object' && 'id' in raw) {
+          if (raw && typeof raw === "object" && "id" in raw) {
             return raw;
           }
 
@@ -1319,7 +1319,7 @@ export class ConversationStore {
       conversation?.participant.id,
     );
     const isFromParticipant =
-      conversation?.channel === 'telegram' &&
+      conversation?.channel === "telegram" &&
       conversation.participant.id != null &&
       normalized.from?.id != null
         ? String(normalized.from.id) === String(conversation.participant.id)

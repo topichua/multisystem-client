@@ -14,7 +14,8 @@ export type SystemGroupKey = (typeof SYSTEM_GROUP_KEYS)[number];
 
 export const FOLLOW_UP_SYSTEM_GROUP_KEYS = ["pending_follow_up"] as const;
 
-export type FollowUpSystemGroupKey = (typeof FOLLOW_UP_SYSTEM_GROUP_KEYS)[number];
+export type FollowUpSystemGroupKey =
+  (typeof FOLLOW_UP_SYSTEM_GROUP_KEYS)[number];
 
 export const FOOTER_SYSTEM_GROUP_KEYS = ["archived", "spam"] as const;
 

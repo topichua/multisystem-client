@@ -49,7 +49,7 @@ export const HeaderText = styled.div.attrs(() =>
 `;
 
 export const HeaderAside = styled.div.attrs(() =>
-  dataQaAttrs('layout-conversation-details-header-actions'),
+  dataQaAttrs("layout-conversation-details-header-actions"),
 )`
   flex-shrink: 0;
   margin-left: 12px;

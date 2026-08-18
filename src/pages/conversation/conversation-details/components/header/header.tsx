@@ -107,7 +107,7 @@ export const Header = observer(
           <S.BackButton
             type="text"
             icon={<ArrowLeftIcon size={20} />}
-            aria-label={t('conversations.mobile.backToListAria')}
+            aria-label={t("conversations.mobile.backToListAria")}
             data-qa="conversations-mobile-detail-back"
             onClick={onBackToList}
           />
@@ -124,7 +124,7 @@ export const Header = observer(
             disabled={!conversation}
             showPlainLabels
             style={
-              isMobileViewport ? { minWidth: 0, width: '100%' } : undefined
+              isMobileViewport ? { minWidth: 0, width: "100%" } : undefined
             }
           />
 
@@ -140,14 +140,14 @@ export const Header = observer(
             assignee={conversation?.assignee ?? null}
             disabled={!conversation}
             style={
-              isMobileViewport ? { minWidth: 0, width: '100%' } : undefined
+              isMobileViewport ? { minWidth: 0, width: "100%" } : undefined
             }
           />
 
           <Button
-            color={clientBlocked ? 'danger' : 'default'}
+            color={clientBlocked ? "danger" : "default"}
             variant={
-              isMobileViewport ? 'filled' : clientBlocked ? 'filled' : 'link'
+              isMobileViewport ? "filled" : clientBlocked ? "filled" : "link"
             }
             icon={clientBlocked ? <LockIcon /> : <UserIcon />}
             aria-label={clientInfoAria}
@@ -163,7 +163,7 @@ export const Header = observer(
             variant="link"
             color="default"
             icon={<ClockCounterClockwiseIcon size={18} />}
-            aria-label={t('conversation.events.openAria')}
+            aria-label={t("conversation.events.openAria")}
             aria-pressed={conversationEventsOpen}
             data-qa="layout-conversation-details-events-toggle"
             disabled={!conversationId || !onConversationEventsOpen}

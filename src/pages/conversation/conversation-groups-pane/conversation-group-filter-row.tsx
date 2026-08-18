@@ -31,7 +31,7 @@ export const ConversationGroupFilterRow = ({
           <IconComponent size={16} />
         </S.GroupIcon>
       ) : (
-        <S.GroupDot $color={color ?? 'darkorange'} aria-hidden="true" />
+        <S.GroupDot $color={color ?? "darkorange"} aria-hidden="true" />
       )}
       <S.GroupName>{name}</S.GroupName>
     </S.GroupIdentity>

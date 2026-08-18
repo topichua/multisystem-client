@@ -156,7 +156,10 @@ export const ConversationGroupsPane = observer(
                     followUpSystemGroups,
                     followUpSystemGroupIcons,
                   )}
-                  {renderSystemGroups(footerSystemGroups, footerSystemGroupIcons)}
+                  {renderSystemGroups(
+                    footerSystemGroups,
+                    footerSystemGroupIcons,
+                  )}
                 </>
               )}
             </S.GroupList>

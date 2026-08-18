@@ -126,10 +126,7 @@ export const ConversationFollowUpModal = observer(
         message: "",
       });
 
-      if (
-        templatesStore.listType !== "chat" &&
-        !templatesStore.listLoading
-      ) {
+      if (templatesStore.listType !== "chat" && !templatesStore.listLoading) {
         void templatesStore.loadTemplates({ type: "chat" });
       }
 
@@ -280,7 +277,10 @@ export const ConversationFollowUpModal = observer(
         onClose();
       } catch (error) {
         notification.error({
-          title: getApiErrorMessage(error, t("conversation.followUp.saveError")),
+          title: getApiErrorMessage(
+            error,
+            t("conversation.followUp.saveError"),
+          ),
         });
         return Promise.reject();
       } finally {
@@ -309,9 +309,7 @@ export const ConversationFollowUpModal = observer(
         onOk={() => handleOk()}
       >
         <Spin spinning={loading}>
-          <Text type="secondary">
-            {t("conversation.followUp.hint")}
-          </Text>
+          <Text type="secondary">{t("conversation.followUp.hint")}</Text>
 
           <Form
             form={form}
@@ -362,7 +360,10 @@ export const ConversationFollowUpModal = observer(
               >
                 <Flex vertical align="start">
                   <Text>{t("conversation.followUp.aiGenerate")}</Text>
-                  <Text type="secondary" style={{ fontSize: 12, whiteSpace: "normal" }}>
+                  <Text
+                    type="secondary"
+                    style={{ fontSize: 12, whiteSpace: "normal" }}
+                  >
                     {t("conversation.followUp.aiGenerateHint")}
                   </Text>
                 </Flex>
