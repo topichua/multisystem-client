@@ -34,6 +34,12 @@ export const formatDateTimeNumeric = (date: Date | string) => {
   return parsed.isValid() ? parsed.format("DD.MM.YYYY HH:mm") : "";
 };
 
+export const formatFollowUpSchedule = (date: Date | string) => {
+  const parsed = dayjs(date);
+
+  return parsed.isValid() ? parsed.format("D MMM, HH:mm") : "";
+};
+
 export const formatDate = (date: Date | string) => {
   const parsed = dayjs(date);
 
@@ -87,54 +93,55 @@ export const formatRelativeTimeShort = (date: Date | string) => {
   }
 };
 
-export const beforeNow = (date: Date | string) => dayjs(date).toNow(true);
-
-export const getCalendarTime = (date: Date | string) =>
-  dayjs(date).calendar(null, {
-    sameDay: "[Today] h:mm A",
-    nextDay: "[Tomorrow] h:mm A",
-    nextWeek: "dddd h:mm A",
-    lastDay: "[Yesterday] h:mm A",
-    lastWeek: "dddd hh:mm A",
-    sameElse: "lll",
-  });
-
-export const getShortCalendarTime = (date: Date | string) =>
-  dayjs(date).calendar(null, {
-    sameDay: "[Today] h:mm A",
-    nextDay: "[Tomorrow] h:mm A",
-    nextWeek: "ddd. h:mm A",
-    lastDay: "[Yesterday] h:mm A",
-    lastWeek: "ddd. h:mm A",
-    sameElse: "MMM D h:mm A",
-  });
-
-export const fullDaysFromEndOfDay = (date: Date | string) =>
-  dayjs().endOf("day").diff(date, "days");
-
-export const passedTimeName = (time: string) => {
-  const now = dayjs();
-  let title;
-  const timeN = dayjs(time).startOf("day");
-
-  const daysFromNow = now.diff(timeN, "days");
-
-  if (now.isSame(timeN, "d")) {
-    title = "Today";
-  } else if (daysFromNow <= 1) {
-    title = "Yesterday";
-  } else if (daysFromNow <= 7) {
-    title = "Last 7 days";
-  } else if (daysFromNow <= 30) {
-    title = "Last 30 days";
-  } else {
-    title = "A while ago";
-  }
-
-  return title;
-};
-export const getEffectiveDate = (date: string | null) =>
-  date ? dayjs(date).format("MMMM D") : "";
+// export const beforeNow = (date: Date | string) => dayjs(date).toNow(true);
+//
+// export const getCalendarTime = (date: Date | string) =>
+//   dayjs(date).calendar(null, {
+//     sameDay: "[Today] h:mm A",
+//     nextDay: "[Tomorrow] h:mm A",
+//     nextWeek: "dddd h:mm A",
+//     lastDay: "[Yesterday] h:mm A",
+//     lastWeek: "dddd hh:mm A",
+//     sameElse: "lll",
+//   });
+//
+// export const getShortCalendarTime = (date: Date | string) =>
+//   dayjs(date).calendar(null, {
+//     sameDay: "[Today] h:mm A",
+//     nextDay: "[Tomorrow] h:mm A",
+//     nextWeek: "ddd. h:mm A",
+//     lastDay: "[Yesterday] h:mm A",
+//     lastWeek: "ddd. h:mm A",
+//     sameElse: "MMM D h:mm A",
+//   });
+//
+// export const fullDaysFromEndOfDay = (date: Date | string) =>
+//   dayjs().endOf("day").diff(date, "days");
+//
+// export const passedTimeName = (time: string) => {
+//   const now = dayjs();
+//   let title;
+//   const timeN = dayjs(time).startOf("day");
+//
+//   const daysFromNow = now.diff(timeN, "days");
+//
+//   if (now.isSame(timeN, "d")) {
+//     title = "Today";
+//   } else if (daysFromNow <= 1) {
+//     title = "Yesterday";
+//   } else if (daysFromNow <= 7) {
+//     title = "Last 7 days";
+//   } else if (daysFromNow <= 30) {
+//     title = "Last 30 days";
+//   } else {
+//     title = "A while ago";
+//   }
+//
+//   return title;
+// };
+//
+// export const getEffectiveDate = (date: string | null) =>
+//   date ? dayjs(date).format("MMMM D") : "";
 
 export const formatMessageTime = (createdTime: string): string => {
   const parsed = dayjs(createdTime);
@@ -149,4 +156,37 @@ export const isSameConversationDay = (isoA: string, isoB: string): boolean => {
 export const formatConversationDayLabel = (iso: string): string => {
   const d = dayjs(iso);
   return d.isValid() ? d.format("LL") : "";
+};
+
+const FOLLOW_UP_DAY_COUNT = 7;
+
+export const getFollowUpDays = (anchor: Dayjs) => {
+  const start = anchor.startOf("day");
+
+  return Array.from({ length: FOLLOW_UP_DAY_COUNT }, (_, offset) => {
+    const date = start.add(offset, "day");
+
+    return {
+      key: formatApiDate(date),
+      date,
+      offset,
+    };
+  });
+};
+
+export const getFollowUpDayKeys = (anchor: Dayjs): string[] =>
+  getFollowUpDays(anchor).map((day) => day.key);
+
+export const startOfNextMinute = (anchor: Dayjs): Dayjs =>
+  anchor.add(1, "minute").second(0).millisecond(0);
+
+export const combineDateAndTime = (dayKey: string, time: Dayjs): Dayjs => {
+  const [year, month, day] = dayKey.split("-").map(Number);
+
+  return time
+    .year(year)
+    .month(month - 1)
+    .date(day)
+    .second(0)
+    .millisecond(0);
 };

@@ -7,11 +7,17 @@ import type {
 type ConversationRowAvatarProps = {
   participant: ConversationParticipant;
   source: Conversation["source"];
+  followUp?: Conversation["followUp"];
 };
 
 export const ConversationRowAvatar = ({
   participant,
   source,
+  followUp = null,
 }: ConversationRowAvatarProps) => (
-  <ConversationParticipantAvatar participant={participant} source={source} />
+  <ConversationParticipantAvatar
+    participant={participant}
+    source={source}
+    followUp={followUp}
+  />
 );

@@ -5,6 +5,9 @@ import type {
   ConversationChannel,
   ConversationEvent,
   ConversationEventsListResponse,
+  ConversationFollowUp,
+  ConversationFollowUpDetails,
+  ConversationFollowUpWritePayload,
   ConversationProductSuggestionsResponse,
   ConversationSource,
   ConversationMessage,
@@ -151,6 +154,64 @@ const getNumber = (value: unknown, fallback = 0): number =>
 const getOptionalNumber = (value: unknown): number | null =>
   typeof value === "number" && Number.isFinite(value) ? value : null;
 
+const getBoolean = (value: unknown, fallback = false): boolean =>
+  typeof value === "boolean" ? value : fallback;
+
+const getOptionalString = (value: unknown): string | null =>
+  typeof value === "string" ? value : null;
+
+const unwrapFollowUpRecord = (value: unknown): Record<string, unknown> => {
+  const record = getRecord(value);
+
+  return record.followUp != null && typeof record.followUp === "object"
+    ? getRecord(record.followUp)
+    : record;
+};
+
+const parseFollowUp = (
+  nested: Record<string, unknown>,
+): ConversationFollowUp | null => {
+  const id = getOptionalNumber(nested.id);
+  const scheduledAt = getOptionalString(nested.scheduledAt);
+
+  if (id == null || scheduledAt == null) {
+    return null;
+  }
+
+  return { id, scheduledAt };
+};
+
+const normalizeFollowUp = (value: unknown): ConversationFollowUp | null =>
+  parseFollowUp(unwrapFollowUpRecord(value));
+
+const normalizeFollowUpDetails = (
+  value: unknown,
+): ConversationFollowUpDetails | null => {
+  const nested = unwrapFollowUpRecord(value);
+  const followUp = parseFollowUp(nested);
+
+  if (followUp == null) {
+    return null;
+  }
+
+  return {
+    ...followUp,
+    message: typeof nested.message === "string" ? nested.message : "",
+    templateId: getOptionalNumber(nested.templateId),
+    cancelOnReply: getBoolean(nested.cancelOnReply, true),
+    status: typeof nested.status === "string" ? nested.status : undefined,
+  };
+};
+
+const toFollowUpFromWriteResponse = (
+  data: unknown,
+  payload: ConversationFollowUpWritePayload,
+): ConversationFollowUp =>
+  normalizeFollowUp(data) ?? { id: 0, scheduledAt: payload.scheduledAt };
+
+const followUpPath = (conversationId: string | number) =>
+  `${basePath}/${encodeURIComponent(String(conversationId))}/follow-up`;
+
 const getConversationListItems = (data: unknown): unknown[] => {
   if (Array.isArray(data)) {
     return data;
@@ -259,6 +320,7 @@ const normalizeConversation = (raw: unknown): Conversation => {
         typeof participant.profilePic === "string"
           ? participant.profilePic
           : null,
+      phone: getOptionalString(participant.phone),
       initials:
         typeof participant.initials === "string"
           ? participant.initials
@@ -304,6 +366,9 @@ const normalizeConversation = (raw: unknown): Conversation => {
           }
         : null,
     instUpdatedAt: getString(record.instUpdatedAt, new Date().toISOString()),
+    canTakeChat: getBoolean(record.canTakeChat),
+    canAssignResponsible: getBoolean(record.canAssignResponsible),
+    followUp: normalizeFollowUp(record.followUp),
   };
 };
 
@@ -623,6 +688,42 @@ export const conversationsApi = {
     );
 
     return normalizeConversationEvents(data);
+  },
+
+  getFollowUp: async (
+    conversationId: string | number,
+  ): Promise<ConversationFollowUpDetails | null> => {
+    const { data } = await apiClient.get<unknown>(followUpPath(conversationId));
+
+    return normalizeFollowUpDetails(data);
+  },
+
+  createFollowUp: async (
+    conversationId: string | number,
+    payload: ConversationFollowUpWritePayload,
+  ): Promise<ConversationFollowUp> => {
+    const { data } = await apiClient.post<unknown>(
+      followUpPath(conversationId),
+      payload,
+    );
+
+    return toFollowUpFromWriteResponse(data, payload);
+  },
+
+  updateFollowUp: async (
+    conversationId: string | number,
+    payload: ConversationFollowUpWritePayload,
+  ): Promise<ConversationFollowUp> => {
+    const { data } = await apiClient.patch<unknown>(
+      followUpPath(conversationId),
+      payload,
+    );
+
+    return toFollowUpFromWriteResponse(data, payload);
+  },
+
+  deleteFollowUp: async (conversationId: string | number): Promise<void> => {
+    await apiClient.delete(followUpPath(conversationId));
   },
 
   sendMessage: async (

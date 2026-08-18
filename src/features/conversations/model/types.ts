@@ -20,8 +20,28 @@ export type ConversationParticipant = {
   name: string;
   username?: string;
   profilePic?: string | null;
+  phone?: string | null;
   initials?: string;
   avatarColor?: string;
+};
+
+export type ConversationFollowUp = {
+  id: number;
+  scheduledAt: string;
+};
+
+export type ConversationFollowUpWritePayload = {
+  scheduledAt: string;
+  message: string;
+  templateId?: number;
+  cancelOnReply?: boolean;
+};
+
+export type ConversationFollowUpDetails = ConversationFollowUp & {
+  message: string;
+  templateId: number | null;
+  cancelOnReply: boolean;
+  status?: string;
 };
 
 export type ConversationListItemResponse = {
@@ -39,7 +59,11 @@ export type ConversationListItemResponse = {
     name: string;
     username: string;
     profilePic: string | null;
+    phone: string | null;
   };
+  canTakeChat: boolean;
+  canAssignResponsible: boolean;
+  followUp: ConversationFollowUp | null;
 };
 
 export type Conversation = {
@@ -55,6 +79,9 @@ export type Conversation = {
   status: ConversationStatus | null;
   assignee: ConversationAssignee | null;
   instUpdatedAt: string;
+  canTakeChat: boolean;
+  canAssignResponsible: boolean;
+  followUp: ConversationFollowUp | null;
 };
 
 export type ConversationUpdatePayload = {
@@ -82,7 +109,16 @@ export type ConversationEventsListResponse = {
   items: ConversationEvent[];
 };
 
-export type ConversationsListResponse = ConversationListItemResponse[];
+export type ConversationsListCountersResponse = {
+  total: number;
+  unread: number;
+  withoutResponsible: number;
+};
+
+export type ConversationsListResponse = {
+  items: ConversationListItemResponse[];
+  counters: ConversationsListCountersResponse;
+};
 
 export type MessageParticipant = {
   id: string;

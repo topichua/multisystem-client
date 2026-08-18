@@ -1436,6 +1436,7 @@
     "systemKeys": {
       "new": "Новий",
       "processing": "Обробка",
+      "pending_follow_up": "Нагадування",
       "archived": "Архів",
       "spam": "Спам"
     },
@@ -1516,6 +1517,8 @@
     "deleteSuccess": "Розмову видалено",
     "deleteFailed": "Не вдалося видалити розмову",
     "rowActionsAria": "Дії з розмовою",
+    "followUpBadgeAria": "Є нагадування",
+    "followUpBadgeTooltip": "Нагадування на {{when}}",
     "instagramSyncInProgress": "Синхронізація чатів з Instagram все ще триває. Це може зайняти декілька хвилин.",
     "instagramSyncCompleted": "Синхронізацію завершено",
     "grouping": {
@@ -1578,6 +1581,34 @@
         "orderCreatedWithNumber": "Створено замовлення №{{orderNumber}}",
         "fallback": "Подія: {{type}}"
       }
+    },
+    "followUp": {
+      "button": "Нагадування",
+      "openAria": "Відкрити нагадування",
+      "modalTitle": "Нагадати клієнту пізніше",
+      "hint": "Якщо клієнт відповість, нагадування скасується і діалог повернеться в попередній статус.",
+      "dayLabel": "Оберіть день",
+      "today": "Сьогодні",
+      "tomorrow": "Завтра",
+      "timeLabel": "Час",
+      "messageLabel": "Повідомлення клієнту",
+      "messagePlaceholder": "Текст повідомлення клієнту",
+      "messageRequired": "Введіть текст повідомлення",
+      "timeInPast": "Оберіть час у майбутньому",
+      "aiGenerate": "Згенерувати текст з AI",
+      "aiGenerateHint": "AI проаналізує переписку та запропонує текст",
+      "orChooseTemplate": "або оберіть шаблон",
+      "templatePlaceholder": "Обрати шаблон...",
+      "cancel": "Скасувати",
+      "submit": "Встановити нагадування",
+      "saveSuccess": "Нагадування встановлено",
+      "saveError": "Не вдалося встановити нагадування",
+      "loadError": "Не вдалося завантажити нагадування",
+      "changeTime": "Змінити час",
+      "cancelReminder": "Скасувати нагадування",
+      "cancelSuccess": "Нагадування скасовано",
+      "cancelError": "Не вдалося скасувати нагадування",
+      "scheduledAria": "Нагадування на {{when}}"
     },
     "noGroup": "Без групи",
     "groupSelectPlaceholder": "Без групи",

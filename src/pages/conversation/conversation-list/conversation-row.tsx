@@ -179,6 +179,7 @@ export const ConversationRow = observer(
           <ConversationRowAvatar
             participant={conversation.participant}
             source={conversation.source}
+            followUp={conversation.followUp}
           />
 
           <Flex

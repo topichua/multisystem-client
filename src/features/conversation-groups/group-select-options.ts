@@ -4,7 +4,7 @@ import type { ConversationGroup } from "@/features/conversation-groups/model/con
 import {
   type FooterSystemGroupKey,
   getConversationGroupDisplayName,
-  isFooterSystemGroup,
+  partitionConversationGroups,
 } from "@/features/conversation-groups/model/system-groups";
 
 export const GROUP_TAG_ON_COLOR = "rgba(255,255,255,1)";
@@ -29,13 +29,8 @@ export const toGroupSelectOptions = (
   groups: ConversationGroup[],
   t: TFunction,
 ): GroupSelectOptionData[] => {
-  const sortedGroups = [...groups].sort(
-    (firstGroup, secondGroup) => firstGroup.sortOrder - secondGroup.sortOrder,
-  );
-  const regularGroups = sortedGroups.filter(
-    (group) => !isFooterSystemGroup(group),
-  );
-  const footerSystemGroups = sortedGroups.filter(isFooterSystemGroup);
+  const { regularGroups, footerSystemGroups } =
+    partitionConversationGroups(groups);
 
   return [
     ...regularGroups.map((group) => toGroupSelectOption(group, t)),

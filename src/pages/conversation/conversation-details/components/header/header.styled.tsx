@@ -49,7 +49,7 @@ export const HeaderText = styled.div.attrs(() =>
 `;
 
 export const HeaderAside = styled.div.attrs(() =>
-  dataQaAttrs("layout-conversation-details-header-actions"),
+  dataQaAttrs('layout-conversation-details-header-actions'),
 )`
   flex-shrink: 0;
   margin-left: 12px;
@@ -62,7 +62,7 @@ export const HeaderAside = styled.div.attrs(() =>
     min-width: 0;
     margin-left: 0;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 44px 44px;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) 44px 44px;
     gap: 8px;
 
     .ant-select {
@@ -75,6 +75,28 @@ export const HeaderAside = styled.div.attrs(() =>
       min-width: 44px;
       height: 35px;
       padding: 0;
+    }
+
+    .conversation-follow-up-toggle.ant-btn {
+      width: auto;
+      min-width: 44px;
+      padding-inline: 12px;
+    }
+  }
+`;
+
+export const ScheduledFollowUpButton = styled(Button)`
+  && {
+    height: 35px;
+    color: ${(props) => props.theme.colors.functional.text.warning};
+    background: ${(props) => props.theme.colors.base.yellow[1]};
+    border-color: ${(props) => props.theme.colors.base.yellow[4]};
+
+    &:hover,
+    &:focus-visible {
+      color: ${(props) => props.theme.colors.functional.text.warning}!important;
+      background: ${(props) => props.theme.colors.base.yellow[2]}!important;
+      border-color: ${(props) => props.theme.colors.base.yellow[6]}!important;
     }
   }
 `;

@@ -1,12 +1,16 @@
-import { Avatar } from "antd";
+import { ClockIcon } from "@phosphor-icons/react";
+import { Avatar, Tooltip } from "antd";
 import type { ComponentType, CSSProperties, SVGProps } from "react";
+import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 
 import { UserAvatar } from "@/components/user-avatar";
 import type {
+  ConversationFollowUp,
   ConversationParticipant,
   ConversationSource,
 } from "@/features/conversations/model/types";
+import { formatFollowUpSchedule } from "@/utils/date-time";
 
 const InstagramLogoIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
@@ -61,6 +65,7 @@ const SOURCE_CONFIG: Record<
 type ConversationParticipantAvatarProps = {
   participant: ConversationParticipant;
   source: ConversationSource;
+  followUp?: ConversationFollowUp | null;
   size?: number;
   badgeSize?: number;
   iconSize?: number;
@@ -71,14 +76,23 @@ type ConversationParticipantAvatarProps = {
 export const ConversationParticipantAvatar = ({
   participant,
   source,
+  followUp = null,
   size = 42,
   badgeSize = 20,
   iconSize = 11,
   className,
   style,
 }: ConversationParticipantAvatarProps) => {
+  const { t } = useTranslation();
   const sourceConfig = SOURCE_CONFIG[source];
   const SourceIcon = sourceConfig.Icon;
+  const followUpLabel = followUp
+    ? formatFollowUpSchedule(followUp.scheduledAt)
+    : "";
+  const followUpTitle =
+    followUpLabel !== ""
+      ? t("conversations.followUpBadgeTooltip", { when: followUpLabel })
+      : t("conversations.followUpBadgeAria");
 
   return (
     <AvatarWithSource className={className} style={style}>
@@ -94,6 +108,18 @@ export const ConversationParticipantAvatar = ({
             : undefined
         }
       />
+
+      {followUp != null && (
+        <FollowUpBadge>
+          <Tooltip title={followUpTitle}>
+            <span>
+              <Avatar size={badgeSize} aria-label={followUpTitle}>
+                <ClockIcon size={iconSize} color="#fff" />
+              </Avatar>
+            </span>
+          </Tooltip>
+        </FollowUpBadge>
+      )}
 
       <SourceBadge>
         <Avatar
@@ -113,15 +139,26 @@ const AvatarWithSource = styled.span`
   flex: 0 0 auto;
 `;
 
-const SourceBadge = styled.span`
+const BadgeRing = styled.span`
   position: absolute;
   right: -5px;
-  bottom: -5px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 2px;
   border-radius: 50%;
   background: ${({ theme }) => theme.colors.functional.background.base};
+`;
+
+const SourceBadge = styled(BadgeRing)`
+  bottom: -5px;
   pointer-events: none;
+`;
+
+const FollowUpBadge = styled(BadgeRing)`
+  top: -5px;
+
+  .ant-avatar {
+    background: ${({ theme }) => theme.colors.base.yellow[4]};
+  }
 `;

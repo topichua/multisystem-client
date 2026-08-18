@@ -1428,6 +1428,7 @@
     "systemKeys": {
       "new": "New",
       "processing": "Processing",
+      "pending_follow_up": "Reminders",
       "archived": "Archived",
       "spam": "Spam"
     },
@@ -1508,6 +1509,8 @@
     "deleteSuccess": "Conversation deleted",
     "deleteFailed": "Failed to delete conversation",
     "rowActionsAria": "Conversation actions",
+    "followUpBadgeAria": "Has a reminder",
+    "followUpBadgeTooltip": "Reminder for {{when}}",
     "instagramSyncInProgress": "Instagram chat synchronization is still in progress. This may take a few minutes.",
     "instagramSyncCompleted": "Syncing was completed",
     "grouping": {
@@ -1570,6 +1573,34 @@
         "orderCreatedWithNumber": "Order №{{orderNumber}} created",
         "fallback": "Event: {{type}}"
       }
+    },
+    "followUp": {
+      "button": "Reminder",
+      "openAria": "Open reminder",
+      "modalTitle": "Remind the client later",
+      "hint": "If the client replies, the reminder will be cancelled and the conversation will return to its previous status.",
+      "dayLabel": "Choose a day",
+      "today": "Today",
+      "tomorrow": "Tomorrow",
+      "timeLabel": "Time",
+      "messageLabel": "Message to the client",
+      "messagePlaceholder": "Message text for the client",
+      "messageRequired": "Enter a message",
+      "timeInPast": "Choose a time in the future",
+      "aiGenerate": "Generate text with AI",
+      "aiGenerateHint": "AI will analyze the conversation and suggest a message",
+      "orChooseTemplate": "or choose a template",
+      "templatePlaceholder": "Choose a template...",
+      "cancel": "Cancel",
+      "submit": "Set reminder",
+      "saveSuccess": "Reminder set",
+      "saveError": "Could not set the reminder",
+      "loadError": "Could not load the reminder",
+      "changeTime": "Change time",
+      "cancelReminder": "Cancel reminder",
+      "cancelSuccess": "Reminder cancelled",
+      "cancelError": "Could not cancel the reminder",
+      "scheduledAria": "Reminder for {{when}}"
     },
     "noGroup": "No group",
     "groupSelectPlaceholder": "No group",

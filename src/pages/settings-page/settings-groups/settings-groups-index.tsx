@@ -5,6 +5,7 @@ import { Navigate, useOutletContext } from "react-router";
 
 import { getSettingsGroupPath } from "@/app/router/pages-map";
 import { CenteredSpinner } from "@/components/loading/centered-spinner";
+import { getManageableConversationGroups } from "@/features/conversation-groups/model/system-groups";
 import { useConversationGroupsStore } from "@/features/conversation-groups/model/use-conversation-groups-store";
 
 import type { SettingsGroupsOutletContext } from "./settings-groups-layout";
@@ -18,7 +19,7 @@ export const SettingsGroupsIndex = observer(() => {
     return <CenteredSpinner />;
   }
 
-  const sorted = [...store.groups].sort((a, b) => a.sortOrder - b.sortOrder);
+  const sorted = getManageableConversationGroups(store.groups);
 
   if (sorted.length > 0) {
     return <Navigate to={getSettingsGroupPath(sorted[0].id)} replace />;

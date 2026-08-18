@@ -3,7 +3,10 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import { CenteredSpinner } from "@/components/loading/centered-spinner";
-import { getConversationGroupDisplayName } from "@/features/conversation-groups/model/system-groups";
+import {
+  getConversationGroupDisplayName,
+  getOrderedConversationGroups,
+} from "@/features/conversation-groups/model/system-groups";
 import { useConversationGroupsStore } from "@/features/conversation-groups/model/use-conversation-groups-store";
 import { useEnsureConversationGroupsLoaded } from "@/features/conversation-groups/model/use-ensure-conversation-groups-loaded";
 import { useConversationsStore } from "@/features/conversations/model/use-conversations-store";
@@ -19,15 +22,15 @@ const MobileConversationGroupFilters = observer(() => {
   const groupsStore = useConversationGroupsStore();
   const conversationsStore = useConversationsStore();
 
-  const sortedGroups = useMemo(
-    () => [...groupsStore.groups].sort((a, b) => a.sortOrder - b.sortOrder),
+  const orderedGroups = useMemo(
+    () => getOrderedConversationGroups(groupsStore.groups),
     [groupsStore.groups],
   );
 
   const selectedGroupId =
     conversationsStore.conversationListGroupFilterIds[0] ?? null;
   const showInitialLoader =
-    groupsStore.listLoading && sortedGroups.length === 0;
+    groupsStore.listLoading && groupsStore.groups.length === 0;
 
   const handleSelectGroup = (groupId: number | null) => {
     conversationsStore.setConversationListGroupFilterIds(
@@ -54,7 +57,7 @@ const MobileConversationGroupFilters = observer(() => {
           <S.GroupCount>{groupsStore.totalConversations}</S.GroupCount>
         </S.GroupChip>
 
-        {sortedGroups.map((group) => (
+        {orderedGroups.map((group) => (
           <S.GroupChip
             key={group.id}
             type="button"

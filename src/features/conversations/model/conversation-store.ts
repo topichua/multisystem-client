@@ -27,12 +27,14 @@ import { unknownErrorMessage } from "@/utils/unknown-error-message";
 import { sortConversationsByInstUpdatedAt } from "./sort-conversations";
 import type {
   Conversation,
+  ConversationFollowUp,
+  ConversationFollowUpWritePayload,
   ConversationMessage,
   ConversationProductSuggestionsResponse,
   MessageParticipant,
   MessagesPaging,
   SendMessagePayload,
-} from "./types";
+} from './types';
 import {
   resolveSelfAccountIdForMessage,
   type ConversationSelfIds,
@@ -52,9 +54,7 @@ const EMPTY_LIST_COUNTERS: ConversationListCounters = {
 };
 
 const normalizeListGroupFilterIds = (ids: number[]): number[] =>
-  [...new Set(ids)]
-    .filter((id) => Number.isInteger(id) && id > 0)
-    .sort((a, b) => a - b);
+  [...new Set(ids)].filter((id) => Number.isInteger(id)).sort((a, b) => a - b);
 
 const sameSortedNumberList = (a: number[], b: number[]): boolean =>
   a.length === b.length && a.every((id, i) => id === b[i]);
@@ -164,8 +164,8 @@ function replaceOptimisticMessageWithConfirmed(
 export class ConversationStore {
   conversations: Conversation[] = [];
   conversationListGroupFilterIds: number[] = [];
-  conversationListSegment: ConversationListSegment = "all";
-  conversationListKeyword = "";
+  conversationListSegment: ConversationListSegment = 'all';
+  conversationListKeyword = '';
   conversationListChannelIds: number[] = [];
   conversationListResponsibleUserIds: number[] = [];
   conversationGroupingBy: ConversationGroupingBy | null = null;
@@ -363,7 +363,7 @@ export class ConversationStore {
     buckets: ConversationGroupBucket[],
   ): ConversationGroupBucket[] => {
     if (
-      this.conversationGroupingBy !== "status" ||
+      this.conversationGroupingBy !== 'status' ||
       this.conversationListGroupFilterIds.length === 0
     ) {
       return buckets;
@@ -698,11 +698,11 @@ export class ConversationStore {
       params.keyword = this.conversationListKeyword;
     }
 
-    if (this.conversationListSegment === "unread") {
+    if (this.conversationListSegment === 'unread') {
       params.unreadOnly = true;
     }
 
-    if (this.conversationListSegment === "withoutResponsible") {
+    if (this.conversationListSegment === 'withoutResponsible') {
       params.showWithoutResponsibleOnly = true;
     }
 
@@ -744,7 +744,7 @@ export class ConversationStore {
       runInAction(() => {
         this.listError = unknownErrorMessage(e);
       });
-      throwLoadError("Failed to load conversations", e);
+      throwLoadError('Failed to load conversations', e);
     } finally {
       if (!silent) {
         runInAction(() => {
@@ -983,7 +983,7 @@ export class ConversationStore {
   ): Promise<void> => {
     const list = this.messagesByConversationId[conversationId] ?? [];
     const message = list.find(
-      (m) => m.clientTempId === clientTempId && m.outboundStatus === "failed",
+      (m) => m.clientTempId === clientTempId && m.outboundStatus === 'failed',
     );
 
     if (!message) {
@@ -992,7 +992,7 @@ export class ConversationStore {
 
     const payload: SendMessagePayload = {
       message: message.message,
-      ...(message.reply_to_id != null && message.reply_to_id !== ""
+      ...(message.reply_to_id != null && message.reply_to_id !== ''
         ? { reply_to_id: message.reply_to_id }
         : {}),
     };
@@ -1004,7 +1004,7 @@ export class ConversationStore {
           m.clientTempId === clientTempId
             ? {
                 ...m,
-                outboundStatus: "pending",
+                outboundStatus: 'pending',
                 sendError: undefined,
               }
             : m,
@@ -1095,7 +1095,7 @@ export class ConversationStore {
               m.clientTempId === clientTempId
                 ? {
                     ...m,
-                    outboundStatus: "failed",
+                    outboundStatus: 'failed',
                     sendError: unknownErrorMessage(e),
                   }
                 : m,
@@ -1121,7 +1121,7 @@ export class ConversationStore {
             return c;
           }
 
-          if (raw && typeof raw === "object" && "id" in raw) {
+          if (raw && typeof raw === 'object' && 'id' in raw) {
             return raw;
           }
 
@@ -1134,7 +1134,7 @@ export class ConversationStore {
   async updateConversationAssignee(
     conversationId: string,
     responsibleMemberId: number | null,
-    assignee: Conversation["assignee"],
+    assignee: Conversation['assignee'],
   ): Promise<void> {
     const raw = await conversationsApi.update(conversationId, {
       responsible_member_id: responsibleMemberId,
@@ -1147,7 +1147,7 @@ export class ConversationStore {
             return c;
           }
 
-          if (raw && typeof raw === "object" && "id" in raw) {
+          if (raw && typeof raw === 'object' && 'id' in raw) {
             return raw;
           }
 
@@ -1156,6 +1156,50 @@ export class ConversationStore {
       );
     });
   }
+
+  private setConversationFollowUp = (
+    conversationId: string,
+    followUp: ConversationFollowUp | null,
+  ): void => {
+    const patch = (conversation: Conversation): Conversation =>
+      String(conversation.id) === conversationId
+        ? { ...conversation, followUp }
+        : conversation;
+
+    this.conversations = this.conversations.map(patch);
+    this.groupedConversationsByKey = Object.fromEntries(
+      Object.entries(this.groupedConversationsByKey).map(([key, items]) => [
+        key,
+        items.map(patch),
+      ]),
+    );
+  };
+
+  saveConversationFollowUp = async (
+    conversationId: string,
+    payload: ConversationFollowUpWritePayload,
+    isEditing: boolean,
+  ): Promise<ConversationFollowUp> => {
+    const followUp = isEditing
+      ? await conversationsApi.updateFollowUp(conversationId, payload)
+      : await conversationsApi.createFollowUp(conversationId, payload);
+
+    runInAction(() => {
+      this.setConversationFollowUp(conversationId, followUp);
+    });
+
+    return followUp;
+  };
+
+  cancelConversationFollowUp = async (
+    conversationId: string,
+  ): Promise<void> => {
+    await conversationsApi.deleteFollowUp(conversationId);
+
+    runInAction(() => {
+      this.setConversationFollowUp(conversationId, null);
+    });
+  };
 
   private matchesListGroupFilter = (conversation: Conversation): boolean => {
     if (this.conversationListGroupFilterIds.length === 0) {
@@ -1275,7 +1319,7 @@ export class ConversationStore {
       conversation?.participant.id,
     );
     const isFromParticipant =
-      conversation?.channel === "telegram" &&
+      conversation?.channel === 'telegram' &&
       conversation.participant.id != null &&
       normalized.from?.id != null
         ? String(normalized.from.id) === String(conversation.participant.id)

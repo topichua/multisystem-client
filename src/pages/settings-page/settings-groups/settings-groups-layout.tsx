@@ -14,6 +14,7 @@ import {
 } from "@/components/layout/pane-frame";
 import { PaneNavSplitLayout } from "@/components/layout/pane-nav-split-layout";
 import type { ConversationGroupWritePayload } from "@/features/conversation-groups/model/conversation-group.types";
+import { getManageableConversationGroups } from "@/features/conversation-groups/model/system-groups";
 import { useConversationGroupsStore } from "@/features/conversation-groups/model/use-conversation-groups-store";
 import { ColorLabelRow } from "@/shared/components/color-label-row/color-label-row";
 import { DEFAULT_COLOR_PRESET } from "@/shared/components/preset-color-picker/color-presets";
@@ -37,7 +38,7 @@ export const SettingsGroupsLayout = observer(() => {
   }, [store]);
 
   const sortedGroups = useMemo(
-    () => [...store.groups].sort((a, b) => a.sortOrder - b.sortOrder),
+    () => getManageableConversationGroups(store.groups),
     [store.groups],
   );
 
