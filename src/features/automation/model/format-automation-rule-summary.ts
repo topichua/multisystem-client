@@ -1,5 +1,7 @@
 import type { TFunction } from "i18next";
 
+import { getConversationGroupDisplayName } from "@/features/conversation-groups/model/system-groups";
+
 import type {
   AutomationCriteria,
   AutomationRule,
@@ -15,21 +17,60 @@ export const getAutomationSourceTypeLabel = (
     return t("automation.sourceType.delivery");
   }
 
-  return t("automation.sourceType.payment");
+  if (sourceType === "PAYMENT_STATUS") {
+    return t("automation.sourceType.payment");
+  }
+
+  return t("automation.sourceType.order");
 };
 
 export const getConditionStatusName = (
   condition: AutomationRuleCondition,
   criteria: AutomationCriteria | null,
 ): string => {
+  if (condition.sourceType === "ORDER_STATUS") {
+    return (
+      criteria?.statuses.find(
+        (item) => String(item.id) === condition.sourceStatus,
+      )?.name ?? condition.sourceStatus
+    );
+  }
+
   const options =
-    condition.sourceType === "DELIVERY_STATUS"
-      ? criteria?.delivery
-      : criteria?.payment;
+    condition.sourceType === "PAYMENT_STATUS"
+      ? criteria?.payment
+      : criteria?.delivery;
 
   return (
     options?.find((item) => item.id === condition.sourceStatus)?.name ??
     condition.sourceStatus
+  );
+};
+
+const getAutomationRuleTargetName = (
+  rule: AutomationRule,
+  criteria: AutomationCriteria | null,
+  t: TFunction,
+): string => {
+  if (rule.actionType === "CHANGE_CONVERSATION_GROUP") {
+    const group =
+      rule.targetConversationGroup ??
+      criteria?.conversationGroups.find(
+        (item) => item.id === rule.targetConversationGroupId,
+      );
+
+    if (group) {
+      return getConversationGroupDisplayName(group, t);
+    }
+
+    return String(rule.targetConversationGroupId ?? "");
+  }
+
+  return (
+    rule.targetOrderStatus?.name ??
+    criteria?.statuses.find((item) => item.id === rule.targetOrderStatusId)
+      ?.name ??
+    String(rule.targetOrderStatusId ?? "")
   );
 };
 
@@ -53,10 +94,15 @@ export const formatAutomationRuleSummary = (
             })
           : null);
 
-      const base = t("automation.summary.condition", {
-        source: sourceLabel,
-        status: statusName,
-      });
+      const base = t(
+        condition.operator === "NEQ"
+          ? "automation.summary.conditionNeq"
+          : "automation.summary.condition",
+        {
+          source: sourceLabel,
+          status: statusName,
+        },
+      );
 
       return delay
         ? `${base} ${t("automation.summary.viaDelay", { delay })}`
@@ -70,11 +116,7 @@ export const formatAutomationRuleSummary = (
       )} `,
     );
 
-  const targetName =
-    rule.targetOrderStatus?.name ??
-    criteria?.statuses.find((item) => item.id === rule.targetOrderStatusId)
-      ?.name ??
-    String(rule.targetOrderStatusId);
+  const targetName = getAutomationRuleTargetName(rule, criteria, t);
 
   return t("automation.summary.full", {
     conditions: conditionsText,

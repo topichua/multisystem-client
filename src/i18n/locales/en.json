@@ -634,7 +634,7 @@
         "groups": "Create and manage conversation groups.",
         "templates": "Create and edit reusable replies.",
         "statuses": "Configure order workflow statuses.",
-        "automation": "Automatically update order status based on delivery or payment conditions.",
+        "automation": "Automatically update order status or conversation group based on delivery, payment, or order status conditions.",
         "integrations": "Connect channels and external services.",
         "user": "Update profile and account details.",
         "system": "Configure system preferences.",
@@ -644,7 +644,7 @@
   },
   "automation": {
     "title": "Automation",
-    "sectionHint": "Automatically change order status when delivery or payment conditions match. Currently only one action type is supported — changing the order status.",
+    "sectionHint": "Automatically change order status or conversation group when delivery, payment, or order status conditions match.",
     "settingsSectionHint": "General rules for automatic work with conversations.",
     "create": "Create automation",
     "tabs": {
@@ -676,7 +676,10 @@
     "empty": "No automations yet",
     "ifBadge": "If",
     "thenBadge": "Then",
-    "equals": "Equals",
+    "operator": {
+      "eq": "Equals",
+      "neq": "Does not equal"
+    },
     "addCondition": "Add condition",
     "removeConditionAria": "Remove condition",
     "atBranchExtension": {
@@ -705,17 +708,21 @@
     "placeholders": {
       "name": "Automation name",
       "sourceStatus": "Select value...",
-      "targetStatus": "Select status..."
+      "targetStatus": "Select status...",
+      "targetGroup": "Select group..."
     },
     "sourceType": {
       "delivery": "Delivery status",
-      "payment": "Payment status"
+      "payment": "Payment status",
+      "order": "Order status"
     },
     "actionType": {
-      "changeOrderStatus": "Change order status"
+      "changeOrderStatus": "Change order status",
+      "changeConversationGroup": "Change conversation group"
     },
     "action": {
-      "changeOrderStatus": "Change order status"
+      "changeOrderStatus": "Change order status",
+      "changeConversationGroup": "Change conversation group"
     },
     "delay": {
       "summary": "{{value}} {{unit}}",
@@ -730,6 +737,7 @@
     },
     "summary": {
       "condition": "If {{source}} = {{status}}",
+      "conditionNeq": "If {{source}} ≠ {{status}}",
       "viaDelay": "after {{delay}}",
       "or": "or",
       "and": "and",
@@ -744,9 +752,12 @@
       "name": "Enter a name",
       "conditions": "Add at least one condition",
       "sourceType": "Select condition type",
+      "operator": "Select an operator",
       "sourceStatus": "Select a value",
       "durationValue": "Enter a positive number",
-      "targetStatus": "Select an order status"
+      "targetStatus": "Select an order status",
+      "targetGroup": "Select a conversation group",
+      "eqSameAsTarget": "The condition status cannot be the same as the target status"
     },
     "mobile": {
       "backToSettingsAria": "Back to settings"

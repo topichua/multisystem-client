@@ -6,6 +6,7 @@ import {
   type FormInstance,
   type FormListFieldData,
 } from "antd";
+import type { TFunction } from "i18next";
 import { useTranslation } from "react-i18next";
 
 import type {
@@ -13,16 +14,86 @@ import type {
   AutomationCriteria,
 } from "@/features/automation/model/automation.types";
 
-import type { AutomationConditionFormValue } from "./automation-rule-form.utils";
 import {
   AT_BRANCH_SOURCE_STATUS,
   createEmptyCondition,
+  DEFAULT_AUTOMATION_OPERATOR,
   isAtBranchCondition,
+  isOrderStatusEqualsTarget,
+  type AutomationConditionFormValue,
+  type AutomationRuleFormValues,
 } from "./automation-rule-form.utils";
 import * as S from "./settings-automation.styled";
 
+const ITEM_NO_MARGIN = { marginBottom: 0 };
+
+const getSourceTypeOptions = (t: TFunction) => [
+  {
+    value: "DELIVERY_STATUS",
+    label: t("automation.sourceType.delivery"),
+  },
+  {
+    value: "PAYMENT_STATUS",
+    label: t("automation.sourceType.payment"),
+  },
+  {
+    value: "ORDER_STATUS",
+    label: t("automation.sourceType.order"),
+  },
+];
+
+const getOperatorOptions = (t: TFunction) => [
+  {
+    value: "EQ",
+    label: t("automation.operator.eq"),
+  },
+  {
+    value: "NEQ",
+    label: t("automation.operator.neq"),
+  },
+];
+
+const getStatusOptions = (
+  sourceType: AutomationConditionFormValue["sourceType"] | undefined,
+  criteria: AutomationCriteria | null,
+) => {
+  if (sourceType === "PAYMENT_STATUS") {
+    return (criteria?.payment ?? []).map((option) => ({
+      value: option.id,
+      label: option.name,
+    }));
+  }
+
+  if (sourceType === "ORDER_STATUS") {
+    return (criteria?.statuses ?? []).map((option) => ({
+      value: String(option.id),
+      label: option.name,
+    }));
+  }
+
+  return (criteria?.delivery ?? []).map((option) => ({
+    value: option.id,
+    label: option.name,
+  }));
+};
+
+const patchCondition = (
+  form: FormInstance<AutomationRuleFormValues>,
+  index: number,
+  patch: Partial<AutomationConditionFormValue>,
+) => {
+  const conditions = (form.getFieldValue("conditions") ??
+    []) as AutomationConditionFormValue[];
+
+  form.setFieldsValue({
+    conditions: conditions.map((condition, conditionIndex) =>
+      conditionIndex === index ? { ...condition, ...patch } : condition,
+    ),
+  });
+};
+
 type AutomationConditionsFieldsProps = {
-  form: FormInstance;
+  form: FormInstance<AutomationRuleFormValues>;
   criteria: AutomationCriteria | null;
   fields: FormListFieldData[];
   add: (defaultValue?: AutomationConditionFormValue) => void;
@@ -79,7 +150,7 @@ export const AutomationConditionsFields = ({
 };
 
 type ConditionBlockProps = {
-  form: FormInstance;
+  form: FormInstance<AutomationRuleFormValues>;
   field: FormListFieldData;
   index: number;
   canRemove: boolean;
@@ -113,22 +184,6 @@ const ConditionBlock = ({
     form,
   ) as number | null | undefined;
 
-  const sourceTypeOptions = [
-    {
-      value: "DELIVERY_STATUS",
-      label: t("automation.sourceType.delivery"),
-    },
-    {
-      value: "PAYMENT_STATUS",
-      label: t("automation.sourceType.payment"),
-    },
-  ];
-
-  const statusOptions =
-    sourceType === "PAYMENT_STATUS"
-      ? (criteria?.payment ?? [])
-      : (criteria?.delivery ?? []);
-
   const showAtBranchExtensionUi =
     sourceType != null &&
     isAtBranchCondition({
@@ -139,11 +194,7 @@ const ConditionBlock = ({
     showAtBranchExtensionUi && durationValue != null;
 
   const clearExtension = () => {
-    form.setFieldValue(["conditions", field.name, "durationValue"], null);
-  };
-
-  const openExtension = () => {
-    form.setFieldValue(["conditions", field.name, "durationValue"], 3);
+    patchCondition(form, field.name, { durationValue: null });
   };
 
   return (
@@ -172,38 +223,80 @@ const ConditionBlock = ({
               message: t("automation.validation.sourceType"),
             },
           ]}
-          style={{ marginBottom: 0 }}
+          style={ITEM_NO_MARGIN}
         >
           <Select
-            options={sourceTypeOptions}
+            options={getSourceTypeOptions(t)}
             onChange={() => {
-              form.setFieldValue(
-                ["conditions", field.name, "sourceStatus"],
-                undefined,
-              );
-              clearExtension();
+              patchCondition(form, field.name, {
+                sourceStatus: undefined,
+                durationValue: null,
+              });
             }}
           />
         </Form.Item>
 
-        <S.EqualsText>{t("automation.equals")}</S.EqualsText>
+        <Form.Item
+          name={[field.name, "operator"]}
+          rules={[
+            {
+              required: true,
+              message: t("automation.validation.operator"),
+            },
+          ]}
+          style={ITEM_NO_MARGIN}
+        >
+          <Select
+            options={getOperatorOptions(t)}
+            data-qa="settings-automation-operator"
+          />
+        </Form.Item>
 
         <Form.Item
           name={[field.name, "sourceStatus"]}
+          dependencies={[
+            "actionType",
+            "targetOrderStatusId",
+            ["conditions", field.name, "operator"],
+            ["conditions", field.name, "sourceType"],
+          ]}
           rules={[
             {
               required: true,
               message: t("automation.validation.sourceStatus"),
             },
+            {
+              validator: async (_, value?: string) => {
+                if (form.getFieldValue("actionType") === "CHANGE_CONVERSATION_GROUP") {
+                  return;
+                }
+
+                const condition = form.getFieldValue([
+                  "conditions",
+                  field.name,
+                ]) as AutomationConditionFormValue | undefined;
+
+                if (
+                  isOrderStatusEqualsTarget(
+                    {
+                      sourceType: condition?.sourceType ?? "DELIVERY_STATUS",
+                      sourceStatus: value,
+                      operator:
+                        condition?.operator ?? DEFAULT_AUTOMATION_OPERATOR,
+                    },
+                    form.getFieldValue("targetOrderStatusId"),
+                  )
+                ) {
+                  throw new Error(t("automation.validation.eqSameAsTarget"));
+                }
+              },
+            },
           ]}
-          style={{ marginBottom: 0 }}
+          style={ITEM_NO_MARGIN}
         >
           <Select
             placeholder={t("automation.placeholders.sourceStatus")}
-            options={statusOptions.map((option) => ({
-              value: option.id,
-              label: option.name,
-            }))}
+            options={getStatusOptions(sourceType, criteria)}
             showSearch
             optionFilterProp="label"
             onChange={(value: string) => {
@@ -225,64 +318,95 @@ const ConditionBlock = ({
         </S.RemoveConditionButton>
       </S.ConditionRow>
 
-      {showAtBranchExtensionUi && !isAtBranchExtensionOpen && (
+      {showAtBranchExtensionUi && (
+        <AtBranchDurationExtension
+          field={field}
+          isOpen={isAtBranchExtensionOpen}
+          onOpen={() => patchCondition(form, field.name, { durationValue: 3 })}
+          onClear={clearExtension}
+        />
+      )}
+    </S.ConditionBlock>
+  );
+};
+
+type AtBranchDurationExtensionProps = {
+  field: FormListFieldData;
+  isOpen: boolean;
+  onOpen: () => void;
+  onClear: () => void;
+};
+
+const AtBranchDurationExtension = ({
+  field,
+  isOpen,
+  onOpen,
+  onClear,
+}: AtBranchDurationExtensionProps) => {
+  const { t } = useTranslation();
+
+  return (
+    <>
+      {!isOpen && (
         <S.AtBranchExtensionCta
           type="button"
           data-qa="settings-automation-add-at-branch-extension"
-          onClick={openExtension}
+          onClick={onOpen}
         >
           <PlusIcon size={16} />
           {t("automation.atBranchExtension.add")}
         </S.AtBranchExtensionCta>
       )}
 
-      {showAtBranchExtensionUi && isAtBranchExtensionOpen && (
-        <S.AtBranchExtensionRow>
-          <S.AtBranchExtensionPrefix>
-            <PlusIcon size={14} />
-          </S.AtBranchExtensionPrefix>
+      <S.AtBranchExtensionRow $open={isOpen} aria-hidden={!isOpen}>
+        <S.AtBranchExtensionPrefix>
+          <PlusIcon size={14} />
+        </S.AtBranchExtensionPrefix>
 
-          <S.AtBranchMoreThanLabel>
-            {t("automation.atBranchExtension.moreThan")}
-          </S.AtBranchMoreThanLabel>
+        <S.AtBranchMoreThanLabel>
+          {t("automation.atBranchExtension.moreThan")}
+        </S.AtBranchMoreThanLabel>
 
-          <Form.Item
-            name={[field.name, "durationValue"]}
-            rules={[
-              {
-                required: true,
-                message: t("automation.validation.durationValue"),
-              },
-              {
-                type: "number",
-                min: 1,
-                message: t("automation.validation.durationValue"),
-              },
-            ]}
-            style={{ marginBottom: 0 }}
-          >
-            <InputNumber
-              min={1}
-              precision={0}
-              style={{ width: 72 }}
-              data-qa="settings-automation-at-branch-days"
-            />
-          </Form.Item>
+        <Form.Item
+          name={[field.name, "durationValue"]}
+          rules={
+            isOpen
+              ? [
+                  {
+                    required: true,
+                    message: t("automation.validation.durationValue"),
+                  },
+                  {
+                    type: "number",
+                    min: 1,
+                    message: t("automation.validation.durationValue"),
+                  },
+                ]
+              : []
+          }
+          style={ITEM_NO_MARGIN}
+        >
+          <InputNumber
+            min={1}
+            precision={0}
+            style={{ width: 72 }}
+            data-qa="settings-automation-at-branch-days"
+          />
+        </Form.Item>
 
-          <S.AtBranchDaysLabel>
-            {t("automation.atBranchExtension.days")}
-          </S.AtBranchDaysLabel>
+        <S.AtBranchDaysLabel>
+          {t("automation.atBranchExtension.days")}
+        </S.AtBranchDaysLabel>
 
-          <S.RemoveConditionButton
-            type="button"
-            aria-label={t("automation.atBranchExtension.removeAria")}
-            onClick={clearExtension}
-            data-qa="settings-automation-remove-at-branch-extension"
-          >
-            <XIcon size={16} />
-          </S.RemoveConditionButton>
-        </S.AtBranchExtensionRow>
-      )}
-    </S.ConditionBlock>
+        <S.RemoveConditionButton
+          type="button"
+          aria-label={t("automation.atBranchExtension.removeAria")}
+          onClick={onClear}
+          data-qa="settings-automation-remove-at-branch-extension"
+        >
+          <XIcon size={16} />
+        </S.RemoveConditionButton>
+      </S.AtBranchExtensionRow>
+    </>
   );
 };

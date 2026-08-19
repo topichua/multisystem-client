@@ -253,25 +253,12 @@ export const OrConnector = styled.button`
 
 export const ConditionRow = styled.div`
   display: grid;
-  grid-template-columns: minmax(160px, 220px) auto minmax(160px, 1fr) 36px;
+  grid-template-columns: minmax(150px, 1fr) minmax(150px, 200px) minmax(160px, 1.2fr) 36px;
   gap: 12px;
   align-items: start;
 
   @media (max-width: 720px) {
     grid-template-columns: 1fr;
-  }
-`;
-
-export const EqualsText = styled.span`
-  display: inline-flex;
-  align-items: center;
-  min-height: 32px;
-  color: ${({ theme }) => theme.colors.functional.text.subdued};
-  font-size: ${({ theme }) => theme.fontSize.base};
-  white-space: nowrap;
-
-  @media (max-width: 720px) {
-    min-height: auto;
   }
 `;
 
@@ -295,8 +282,8 @@ export const AtBranchExtensionCta = styled.button`
   cursor: pointer;
 `;
 
-export const AtBranchExtensionRow = styled.div`
-  display: flex;
+export const AtBranchExtensionRow = styled.div<{ $open?: boolean }>`
+  display: ${({ $open = true }) => ($open ? "flex" : "none")};
   align-items: center;
   gap: 8px;
   margin-top: 8px;

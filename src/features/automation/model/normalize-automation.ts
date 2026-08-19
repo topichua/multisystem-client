@@ -1,9 +1,11 @@
 import type {
   AutomationActionType,
   AutomationConditionType,
+  AutomationConversationGroupOption,
   AutomationCriteria,
   AutomationCriteriaOption,
   AutomationDurationUnit,
+  AutomationOperator,
   AutomationRule,
   AutomationRuleCondition,
   AutomationRulesListResponse,
@@ -41,12 +43,18 @@ const toOptionalNumber = (value: unknown): number | null => {
   return toNumber(value);
 };
 
-const ACTION_TYPES = new Set<AutomationActionType>(["CHANGE_ORDER_STATUS"]);
+const ACTION_TYPES = new Set<AutomationActionType>([
+  "CHANGE_ORDER_STATUS",
+  "CHANGE_CONVERSATION_GROUP",
+]);
 
 const SOURCE_TYPES = new Set<AutomationSourceType>([
   "DELIVERY_STATUS",
   "PAYMENT_STATUS",
+  "ORDER_STATUS",
 ]);
+
+const OPERATORS = new Set<AutomationOperator>(["EQ", "NEQ"]);
 
 const DURATION_UNITS = new Set<AutomationDurationUnit>([
   "MINUTES",
@@ -77,6 +85,11 @@ const normalizeSourceType = (value: unknown): AutomationSourceType | null => {
 
   return null;
 };
+
+const normalizeOperator = (value: unknown): AutomationOperator =>
+  typeof value === "string" && OPERATORS.has(value as AutomationOperator)
+    ? (value as AutomationOperator)
+    : "EQ";
 
 const normalizeDurationUnit = (
   value: unknown,
@@ -125,6 +138,28 @@ const normalizeStatusOption = (
   return { id, name };
 };
 
+const normalizeConversationGroupOption = (
+  value: unknown,
+): AutomationConversationGroupOption | null => {
+  if (!isRecord(value)) {
+    return null;
+  }
+
+  const id = toNumber(value.id);
+  const name = toTrimmedString(value.name);
+  const systemKey = toTrimmedString(value.systemKey) || null;
+
+  if (id == null) {
+    return null;
+  }
+
+  return {
+    id,
+    name: name || systemKey || String(id),
+    systemKey,
+  };
+};
+
 export const normalizeAutomationCriteria = (
   data: unknown,
 ): AutomationCriteria => {
@@ -145,6 +180,11 @@ export const normalizeAutomationCriteria = (
       ? record.statuses
           .map(normalizeStatusOption)
           .filter((item): item is AutomationStatusOption => item != null)
+      : [],
+    conversationGroups: Array.isArray(record.conversationGroups)
+      ? record.conversationGroups
+          .map(normalizeConversationGroupOption)
+          .filter((item): item is AutomationConversationGroupOption => item != null)
       : [],
   };
 };
@@ -187,6 +227,7 @@ const normalizeCondition = (value: unknown): AutomationRuleCondition | null => {
     id: toOptionalNumber(value.id) ?? undefined,
     sourceType,
     sourceStatus,
+    operator: normalizeOperator(value.operator),
     durationValue: toOptionalNumber(value.durationValue),
     durationUnit: normalizeDurationUnit(value.durationUnit),
     durationLabel: toTrimmedString(value.durationLabel) || null,
@@ -202,14 +243,29 @@ export const normalizeAutomationRule = (
 
   const id = toNumber(data.id);
   const name = toTrimmedString(data.name);
-  const targetOrderStatusId = toNumber(data.targetOrderStatusId);
+  const actionType = normalizeActionType(data.actionType);
+  const targetOrderStatusId = toOptionalNumber(data.targetOrderStatusId);
+  const targetConversationGroupId = toOptionalNumber(
+    data.targetConversationGroupId,
+  );
   const conditions = Array.isArray(data.conditions)
     ? data.conditions
         .map(normalizeCondition)
         .filter((item): item is AutomationRuleCondition => item != null)
     : [];
 
-  if (id == null || !name || targetOrderStatusId == null) {
+  if (id == null || !name) {
+    return null;
+  }
+
+  if (actionType === "CHANGE_ORDER_STATUS" && targetOrderStatusId == null) {
+    return null;
+  }
+
+  if (
+    actionType === "CHANGE_CONVERSATION_GROUP" &&
+    targetConversationGroupId == null
+  ) {
     return null;
   }
 
@@ -217,12 +273,16 @@ export const normalizeAutomationRule = (
     id,
     name,
     isActive: data.isActive === true,
-    actionType: normalizeActionType(data.actionType),
+    actionType,
     conditionType: normalizeConditionType(
       data.conditionType ?? data.condition_type,
     ),
     targetOrderStatusId,
     targetOrderStatus: normalizeTargetOrderStatus(data.targetOrderStatus),
+    targetConversationGroupId,
+    targetConversationGroup: normalizeConversationGroupOption(
+      data.targetConversationGroup,
+    ),
     conditions,
     createdAt: toTrimmedString(data.createdAt) || undefined,
     updatedAt: toTrimmedString(data.updatedAt) || undefined,
