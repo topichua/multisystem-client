@@ -28,8 +28,7 @@ export const AutomationRuleFormFields = ({
   const { t } = useTranslation();
   const actionType = (Form.useWatch("actionType", form) ??
     "CHANGE_ORDER_STATUS") as AutomationActionType;
-  const isConversationGroupAction =
-    actionType === "CHANGE_CONVERSATION_GROUP";
+  const isConversationGroupAction = actionType === "CHANGE_CONVERSATION_GROUP";
 
   const handleActionTypeChange = (nextType: AutomationActionType) => {
     form.setFieldValue("actionType", nextType);
@@ -180,7 +179,9 @@ export const AutomationRuleFormFields = ({
                     );
 
                     if (hasNoop) {
-                      throw new Error(t("automation.validation.eqSameAsTarget"));
+                      throw new Error(
+                        t("automation.validation.eqSameAsTarget"),
+                      );
                     }
                   },
                 },

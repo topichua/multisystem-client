@@ -1,11 +1,8 @@
 export type AutomationActionType =
-  | "CHANGE_ORDER_STATUS"
-  | "CHANGE_CONVERSATION_GROUP";
+  "CHANGE_ORDER_STATUS" | "CHANGE_CONVERSATION_GROUP";
 
 export type AutomationSourceType =
-  | "DELIVERY_STATUS"
-  | "PAYMENT_STATUS"
-  | "ORDER_STATUS";
+  "DELIVERY_STATUS" | "PAYMENT_STATUS" | "ORDER_STATUS";
 
 export type AutomationOperator = "EQ" | "NEQ";
 

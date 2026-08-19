@@ -184,7 +184,9 @@ export const normalizeAutomationCriteria = (
     conversationGroups: Array.isArray(record.conversationGroups)
       ? record.conversationGroups
           .map(normalizeConversationGroupOption)
-          .filter((item): item is AutomationConversationGroupOption => item != null)
+          .filter(
+            (item): item is AutomationConversationGroupOption => item != null,
+          )
       : [],
   };
 };

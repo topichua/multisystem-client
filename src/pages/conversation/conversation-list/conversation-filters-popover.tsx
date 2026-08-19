@@ -42,8 +42,8 @@ const normalizeDraftIds = (ids: number[]): number[] =>
     .sort((a, b) => a - b);
 
 const getPanelStyle = (token: GlobalToken): CSSProperties => ({
-  width: 'min(300px, calc(100vw - 32px))',
-  overflow: 'hidden',
+  width: "min(300px, calc(100vw - 32px))",
+  overflow: "hidden",
   borderRadius: token.borderRadiusLG,
   background: token.colorBgElevated,
 });
@@ -458,14 +458,14 @@ export const ConversationFiltersPopover = observer(
       >
         <Button
           aria-expanded={open}
-          aria-label={t('conversations.filtersAria')}
+          aria-label={t("conversations.filtersAria")}
           color={
             conversationsStore.hasConversationListFilters
-              ? 'primary'
-              : 'default'
+              ? "primary"
+              : "default"
           }
           size={size}
-          style={{ padding: '0 8px' }}
+          style={{ padding: "0 8px" }}
           variant="filled"
         >
           <FunnelIcon size={18} weight="regular" />

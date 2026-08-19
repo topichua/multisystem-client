@@ -89,7 +89,7 @@ export const MessageRow = styled.div<{ $isOwn?: boolean }>`
 export const MessageWrap = styled.div<{ $isOwn?: boolean }>`
   display: flex;
   flex-direction: column;
-  align-items: ${({ $isOwn }) => ($isOwn ? 'flex-end' : 'flex-start')};
+  align-items: ${({ $isOwn }) => ($isOwn ? "flex-end" : "flex-start")};
   max-width: min(320px, 85%);
 `;
 
@@ -186,9 +186,9 @@ export const MessageBubble = styled.div<{
   position: relative;
   max-width: 100%;
   width: ${({ $mediaCard }) =>
-    $mediaCard ? 'min(280px, 100%)' : 'fit-content'};
-  padding: ${({ $mediaCard }) => ($mediaCard ? '0' : '6px 12px')};
-  overflow: ${({ $mediaCard }) => ($mediaCard ? 'hidden' : 'visible')};
+    $mediaCard ? "min(280px, 100%)" : "fit-content"};
+  padding: ${({ $mediaCard }) => ($mediaCard ? "0" : "6px 12px")};
+  overflow: ${({ $mediaCard }) => ($mediaCard ? "hidden" : "visible")};
   border-radius: ${({ theme, $isOwn }) =>
     $isOwn
       ? `${theme.radius.extraLarge} ${theme.radius.extraLarge} 4px ${theme.radius.extraLarge}`
@@ -196,7 +196,7 @@ export const MessageBubble = styled.div<{
   border: 1px solid ${({ theme }) => theme.colors.functional.border.split};
   background: ${({ theme }) => theme.colors.functional.background.natural};
   opacity: ${({ $muted }) => ($muted ? 0.75 : 1)};
-  margin-bottom: ${({ $hasReaction }) => ($hasReaction ? '14px' : '0')};
+  margin-bottom: ${({ $hasReaction }) => ($hasReaction ? "14px" : "0")};
 
   .conversation-message-body {
     white-space: pre-wrap;
