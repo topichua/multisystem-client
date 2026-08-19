@@ -1,4 +1,8 @@
 import type { ConversationMessage } from "@/features/conversations/model/types";
+import {
+  getConversationMessageType,
+  getInstagramPostPreview,
+} from "@/features/conversations/utils/conversation-message-type";
 
 import { getAttachmentUrl } from "../message-attachments/message-attachment-utils";
 
@@ -19,6 +23,12 @@ function collectAttachmentUrls(message: ConversationMessage): string[] {
 export const getMessageClipboardText = (
   message: ConversationMessage,
 ): string => {
+  if (getConversationMessageType(message) === "instagram_post") {
+    const { imageUrl, caption } = getInstagramPostPreview(message);
+
+    return [caption, imageUrl].filter(Boolean).join("\n").trim();
+  }
+
   const lines: string[] = [];
   const body = (message.message ?? "").trim();
 

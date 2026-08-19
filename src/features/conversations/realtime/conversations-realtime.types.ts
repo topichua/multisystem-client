@@ -7,6 +7,7 @@ export type InstagramMessageDto = {
   from?: { id: string; name?: string; username?: string; email?: string };
   to?: { data?: Array<{ id: string; name?: string; username?: string }> };
   message?: string;
+  type?: string;
   attachments?: { data?: Array<Record<string, unknown>> };
   shares?: { data?: Array<Record<string, unknown>> };
   story?: Record<string, unknown>;

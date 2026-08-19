@@ -114,6 +114,7 @@ export const createOptimisticOutboundMessage = (
     : undefined,
   to: { data: [] },
   message: payload.message,
+  type: "text",
   is_unsupported: false,
   ...(payload.reply_to_id != null && payload.reply_to_id !== ""
     ? { reply_to_id: payload.reply_to_id }
@@ -568,6 +569,7 @@ export const normalizeSentMessage = (
         : undefined,
       to: { data: [] },
       message: payload.message,
+      type: "text",
       is_unsupported: false,
       ...(payload.reply_to_id != null && payload.reply_to_id !== ""
         ? { reply_to_id: payload.reply_to_id }

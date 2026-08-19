@@ -3287,6 +3287,8 @@
     "seen": "Переглянуто",
     "reactionAria": "Реакція: {{emoji}}",
     "attachmentSnippet": "Вкладення",
+    "instagramPostSnippet": "Публікація Instagram",
+    "instagramPostAria": "Публікація Instagram",
     "ellipsisSnippet": "…",
     "media": {
       "playAudio": "Відтворити аудіо",

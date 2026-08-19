@@ -1,5 +1,6 @@
 export type ConversationChannel = "instagram" | "telegram";
 export type ConversationSource = 1 | 2;
+export type ConversationMessageType = "text" | "instagram_post";
 
 export type ConversationStatus = {
   id: number;
@@ -214,6 +215,7 @@ export type ConversationMessage = {
   from?: MessageParticipant;
   to: MessageToField;
   message: string;
+  type?: ConversationMessageType;
   is_unsupported?: boolean;
   clientTempId?: string;
   outboundStatus?: MessageOutboundStatus;

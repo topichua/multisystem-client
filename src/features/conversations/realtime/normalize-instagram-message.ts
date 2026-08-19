@@ -1,4 +1,5 @@
 import type { ConversationMessage } from "@/features/conversations/model/types";
+import { isConversationMessageType } from "@/features/conversations/utils/conversation-message-type";
 
 import type { InstagramMessageDto } from "./conversations-realtime.types";
 
@@ -10,6 +11,7 @@ export const normalizeInstagramMessage = (
   from: dto.from,
   to: { data: dto.to?.data ?? [] },
   message: dto.message ?? "",
+  type: isConversationMessageType(dto.type) ? dto.type : "text",
   ...(dto.attachments != null
     ? { attachments: dto.attachments as ConversationMessage["attachments"] }
     : {}),

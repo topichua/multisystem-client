@@ -3213,6 +3213,8 @@
     "seen": "Seen",
     "reactionAria": "Reaction: {{emoji}}",
     "attachmentSnippet": "Attachment",
+    "instagramPostSnippet": "Instagram post",
+    "instagramPostAria": "Instagram post",
     "ellipsisSnippet": "…",
     "media": {
       "playAudio": "Play audio",

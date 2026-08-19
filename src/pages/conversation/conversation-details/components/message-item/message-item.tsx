@@ -1,5 +1,4 @@
 import { CopySimpleIcon, TrashIcon } from "@phosphor-icons/react";
-import { Typography } from "antd";
 import type { MenuProps } from "antd";
 import { memo, useCallback, useMemo, useRef, useState } from "react";
 import type { FocusEvent, MouseEvent } from "react";
@@ -11,12 +10,14 @@ import type {
 } from "@/features/conversations/model/types";
 import type { ConversationOwnershipContext } from "@/features/conversations/utils/conversation-message-ownership";
 import { isOwnConversationMessage } from "@/features/conversations/utils/conversation-message-ownership";
-import type { ReplyComposeTarget } from "../../reply-compose-target";
-import { MessageAttachments } from "../message-attachments/message-attachments";
 import {
-  getAttachmentImageUrl,
-  isAttachmentPlaceholderMessage,
-} from "../message-attachments/message-attachment-utils";
+  getConversationMessageType,
+  getInstagramPostPreview,
+} from "@/features/conversations/utils/conversation-message-type";
+import { formatMessageTime } from "@/utils/date-time";
+import { useNotification } from "@/shared/components/notification/use-notification";
+import type { ReplyComposeTarget } from "../../reply-compose-target";
+import { MessageBody } from "./message-body";
 import {
   copyTextToClipboard,
   getMessageClipboardText,
@@ -27,10 +28,6 @@ import * as S from "./message-item.styled";
 import { MessageReplyQuote } from "./message-reply-quote";
 import { normalizeWebhookReactionEmoji } from "./normalize-webhook-reaction-emoji";
 import { replyQuoteAuthorLabel } from "./reply-quote-author-label";
-import { formatMessageTime } from "@/utils/date-time";
-import { useNotification } from "@/shared/components/notification/use-notification";
-
-const { Paragraph } = Typography;
 
 type MessageItemProps = {
   message: ConversationMessage;
@@ -44,6 +41,9 @@ type MessageItemProps = {
   onScrollToMessage: (messageId: string) => void;
   onStartReply: (target: ReplyComposeTarget) => void;
 };
+
+const snippetFromText = (text: string, ellipsis: string): string =>
+  text.length > 80 ? `${text.slice(0, 80)}${ellipsis}` : text;
 
 export const MessageItem = memo(
   ({
@@ -67,6 +67,8 @@ export const MessageItem = memo(
     menuOpenRef.current = menuOpen;
 
     const actionsVisible = rowHovered || menuOpen;
+    const messageType = getConversationMessageType(message);
+    const isMediaCard = messageType === "instagram_post";
 
     const isOwn = isOwnConversationMessage(message, {
       channel,
@@ -80,26 +82,6 @@ export const MessageItem = memo(
     const clientTempId = message.clientTempId;
     const messageText = message.message ?? "";
     const hasAttachments = (message.attachments?.data?.length ?? 0) > 0;
-    const displayMessageText = useMemo(() => {
-      const trimmed = messageText.trim();
-      if (!trimmed || !hasAttachments) {
-        return messageText;
-      }
-
-      if (
-        isAttachmentPlaceholderMessage(trimmed, message.attachments?.data ?? [])
-      ) {
-        return "";
-      }
-
-      const imageUrls = new Set(
-        (message.attachments?.data ?? [])
-          .map(getAttachmentImageUrl)
-          .filter((url): url is string => url != null),
-      );
-
-      return imageUrls.has(trimmed) ? "" : messageText;
-    }, [hasAttachments, message.attachments?.data, messageText]);
     const webhookReaction = message.webhook_messaging?.reaction;
     const reactionEmoji =
       webhookReaction != null
@@ -126,17 +108,27 @@ export const MessageItem = memo(
       message.outboundStatus !== "pending";
 
     const replySnippet = useMemo(() => {
+      const ellipsis = t("messages.ellipsisSnippet");
+
+      if (messageType === "instagram_post") {
+        const caption = getInstagramPostPreview(message).caption.trim();
+
+        if (caption) {
+          return snippetFromText(caption, ellipsis);
+        }
+
+        return t("messages.instagramPostSnippet");
+      }
+
       const trimmed = messageText.trim();
       if (trimmed) {
-        return trimmed.length > 80
-          ? `${trimmed.slice(0, 80)}${t("messages.ellipsisSnippet")}`
-          : trimmed;
+        return snippetFromText(trimmed, ellipsis);
       }
       if (hasAttachments) {
         return t("messages.attachmentSnippet");
       }
-      return t("messages.ellipsisSnippet");
-    }, [messageText, hasAttachments, t]);
+      return ellipsis;
+    }, [hasAttachments, message, messageText, messageType, t]);
 
     const handleReplyClick = useCallback(() => {
       if (!canStartReply) {
@@ -185,13 +177,6 @@ export const MessageItem = memo(
       ],
       [copyDisabled, handleCopy, t],
     );
-
-    const showTextTimeRow =
-      timeLabel !== "" ||
-      displayMessageText.trim().length > 0 ||
-      hasAttachments ||
-      showReactionBadge ||
-      hasReplyQuote;
 
     const handleMessageRowMouseLeave = useCallback(
       (event: MouseEvent<HTMLDivElement>) => {
@@ -259,48 +244,37 @@ export const MessageItem = memo(
               $channel={channel}
               $muted={pendingOutbound}
               $hasReaction={showReactionBadge}
+              $mediaCard={isMediaCard}
             >
               {hasReplyQuote && repliedTo != null && (
-                <MessageReplyQuote
-                  message={repliedTo}
-                  isOwn={isOwn}
-                  scrollable={replyQuoteScrollable}
-                  onActivate={handleReplyQuoteActivate}
-                />
+                <S.MediaCardPad $enabled={isMediaCard}>
+                  <MessageReplyQuote
+                    message={repliedTo}
+                    isOwn={isOwn}
+                    scrollable={replyQuoteScrollable}
+                    onActivate={handleReplyQuoteActivate}
+                  />
+                </S.MediaCardPad>
               )}
 
-              <MessageAttachments
-                messageId={message.id ?? clientTempId ?? `message-${index}`}
-                attachments={message.attachments ?? { data: [] }}
+              <MessageBody
+                type={messageType}
+                message={message}
+                index={index}
+                clientTempId={clientTempId}
+                isOwn={isOwn}
+                timeLabel={timeLabel}
+                hasReplyQuote={hasReplyQuote}
               />
 
-              {showTextTimeRow && (
-                <S.TextTimeRow
-                  $hasAttachments={hasAttachments}
-                  $hasReply={hasReplyQuote}
-                >
-                  {displayMessageText ? (
-                    <Paragraph
-                      className="conversation-message-body"
-                      style={{ flex: 1, marginBottom: 0, minWidth: 0 }}
-                    >
-                      {displayMessageText}
-                    </Paragraph>
-                  ) : (
-                    <S.TextTimeSpacer aria-hidden />
-                  )}
-                  {timeLabel !== "" && (
-                    <S.Timestamp $isOwn={isOwn}>{timeLabel}</S.Timestamp>
-                  )}
-                </S.TextTimeRow>
-              )}
-
               {isOwn && failedOutbound && clientTempId != null && (
-                <MessageFailureActions
-                  error={message.sendError}
-                  resendLabel={t("messages.resend")}
-                  onResend={() => onResend(clientTempId)}
-                />
+                <S.MediaCardPad $enabled={isMediaCard}>
+                  <MessageFailureActions
+                    error={message.sendError}
+                    resendLabel={t("messages.resend")}
+                    onResend={() => onResend(clientTempId)}
+                  />
+                </S.MediaCardPad>
               )}
 
               {showReactionBadge && (
