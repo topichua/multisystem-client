@@ -253,10 +253,9 @@ export const OrConnector = styled.button`
 
 export const ConditionRow = styled.div`
   display: grid;
-  grid-template-columns: minmax(150px, 1fr) minmax(150px, 200px) minmax(
-      160px,
-      1.2fr
-    ) 36px;
+  grid-template-columns:
+    minmax(150px, 1fr) minmax(150px, 200px) minmax(160px, 1.2fr)
+    36px;
   gap: 12px;
   align-items: start;
 

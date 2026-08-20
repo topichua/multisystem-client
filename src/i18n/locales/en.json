@@ -1304,18 +1304,17 @@
       "submitFailed": "Could not verify Telegram password"
     },
     "instagramSetup": {
-      "facebookHint": "Log in with Facebook to grant access to Instagram Business pages.",
-      "continueWithFacebook": "Continue with Facebook",
-      "awaitingOauth": "Complete Facebook login in the popup. This page updates automatically.",
+      "loginHint": "Log in with Instagram to grant access to Instagram Business.",
+      "continueWithInstagram": "Continue with Instagram",
+      "awaitingOauth": "Complete Instagram login in the popup. This page updates automatically.",
       "pageLabel": "Page",
       "pagePlaceholder": "Select",
       "cancel": "Cancel",
-      "logout": "Log out",
       "connect": "Connect",
       "sessionExpired": "This connection session has expired. Start again to continue.",
       "restart": "Start again",
-      "noPages": "No Instagram Business pages were found for this Facebook account.",
-      "oauthFailed": "Facebook login did not complete. Try again.",
+      "noPages": "No Instagram Business pages were found for this Instagram account.",
+      "oauthFailed": "Instagram login did not complete. Try again.",
       "historySyncTitle": "Syncing messages from the last 7 days...",
       "historySyncDescription": "This may take up to 1 minute."
     },

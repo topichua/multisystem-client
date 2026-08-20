@@ -38,6 +38,7 @@ import { formatClientDisplayName } from "@/pages/clients-page/clients-list/clien
 import { useNotification } from "@/shared/components/notification/use-notification";
 import { useIsMobileViewport } from "@/utils/use-media-query";
 
+import { EmptyConversation } from "../empty-conversation";
 import * as S from "./conversation-details.styled";
 import { ClientOrderDrawer } from "./components/client-order-drawer/client-order-drawer";
 import { ConversationEventsDrawer } from "./components/conversation-events-drawer/conversation-events-drawer";
@@ -52,6 +53,7 @@ import { Header } from "./components/header/header";
 import { ProductSuggestionsPanel } from "./components/product-suggestions/product-suggestions-panel";
 import type { ReplyComposeTarget } from "./reply-compose-target";
 import { scrollMessageAnchorIntoView } from "./scroll-to-message-anchor";
+import { useCloseConversationMissingFromList } from "./use-close-conversation-missing-from-list";
 import { useConversationThread } from "./use-conversation-thread";
 
 function areVariantIdSetsEqual(a: Set<number>, b: Set<number>): boolean {
@@ -116,6 +118,9 @@ export const ConversationDetails = observer(() => {
         ? conversations.find((c) => String(c.id) === conversationId)
         : undefined,
     [conversations, conversationId],
+  );
+  const shouldCloseMissingConversation = useCloseConversationMissingFromList(
+    activeConversation != null,
   );
 
   const integrationTelegramAccountId = useMemo(() => {
@@ -529,6 +534,10 @@ export const ConversationDetails = observer(() => {
 
   if (!conversationId) {
     return null;
+  }
+
+  if (shouldCloseMissingConversation) {
+    return <EmptyConversation />;
   }
 
   return (

@@ -96,8 +96,8 @@ export const renderIntegrationSetupContent = (
           confirming={controller.instagramSetup.confirming}
           sessionExpired={controller.instagramSetup.sessionExpired}
           errorMessage={controller.instagramSetup.errorMessage}
-          onContinueWithFacebook={() => {
-            void controller.startInstagramFacebookLogin();
+          onContinueWithInstagram={() => {
+            void controller.startInstagramAuth();
           }}
           onConfirm={(pageId) => {
             void controller.confirmInstagramPage(pageId);
@@ -105,9 +105,7 @@ export const renderIntegrationSetupContent = (
           onCancel={() => {
             void controller.cancelInstagramConnectFlow();
           }}
-          onRestart={() => {
-            void controller.restartInstagramSetup();
-          }}
+          onRestart={controller.openInstagramSetup}
         />
       );
 

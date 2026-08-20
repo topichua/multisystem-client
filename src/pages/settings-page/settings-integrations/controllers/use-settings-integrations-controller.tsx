@@ -6,13 +6,13 @@ import { useLocation, useNavigate, useSearchParams } from "react-router";
 import { pagesMap } from "@/app/router/pages-map";
 import { getApiErrorMessage } from "@/api/get-api-error-message";
 import { isInstagramOAuthSessionExpiredError } from "@/features/integrations/is-instagram-oauth-session-expired";
-import { logoutFacebookSdkSession } from "@/features/integrations/logout-facebook-sdk-session";
 import {
   closeIntegrationAuthWindow,
   navigateIntegrationAuthUrl,
   openIntegrationAuthWindow,
 } from "@/features/integrations/open-integration-auth";
 import type {
+  IntegrationCreateResponse,
   IntegrationItem,
   MonobankIntegrationPayload,
   NovaPoshtaIntegrationCreatePayload,
@@ -39,8 +39,10 @@ const INSTAGRAM_OAUTH_POLL_INTERVAL_MS = 2_000;
 const TIKTOK_OAUTH_POLL_INTERVAL_MS = 2_000;
 const TIKTOK_OAUTH_SESSION_STORAGE_KEY = "tiktok-oauth-session-id";
 
-function readCreatedOAuthSessionId(created: IntegrationItem): string | null {
-  const createdRecord = created as IntegrationItem & {
+function readCreatedOAuthSessionId(
+  created: IntegrationCreateResponse,
+): string | null {
+  const createdRecord = created as IntegrationCreateResponse & {
     session_id?: unknown;
   };
   const sessionIdCandidate =
@@ -48,6 +50,14 @@ function readCreatedOAuthSessionId(created: IntegrationItem): string | null {
 
   return typeof sessionIdCandidate === "string" && sessionIdCandidate.trim()
     ? sessionIdCandidate.trim()
+    : null;
+}
+
+function readCreatedOAuthUrl(
+  created: IntegrationCreateResponse,
+): string | null {
+  return typeof created.url === "string" && created.url.trim()
+    ? created.url.trim()
     : null;
 }
 
@@ -95,7 +105,7 @@ type InstagramSetupState = {
 
 const initialInstagramSetupState: InstagramSetupState = {
   open: false,
-  stage: "facebook_login",
+  stage: "login",
   sessionId: null,
   pages: [],
   expiresAt: null,
@@ -235,12 +245,11 @@ export function useSettingsIntegrationsController() {
 
   /**
    * Abandons an in-progress Instagram connect (before confirm).
-   * Stops polling, clears pending session/UI, and logs out of FB SDK when present.
+   * Stops polling and clears pending session/UI.
    * Does not call DELETE /integrations/instagram/:id and does not clear app JWT.
    */
-  const cancelInstagramConnectFlow = useCallback(async () => {
+  const cancelInstagramConnectFlow = useCallback(() => {
     closeInstagramSetup();
-    await logoutFacebookSdkSession();
   }, [closeInstagramSetup]);
 
   const pollInstagramOAuthSession = useCallback(
@@ -265,13 +274,23 @@ export function useSettingsIntegrationsController() {
           return;
         }
 
-        if (result.status === "awaiting_facebook") {
+        if (result.status === "awaiting_instagram") {
+          return;
+        }
+
+        if (result.status === "connected") {
+          stopInstagramOauthPoll({ closePopup: true });
+          setInstagramSetup(initialInstagramSetupState);
+          await store.loadIntegrations({ silent: true, force: true });
+          showInstagramHistorySyncNotice();
+          notification.success({ title: t("integrations.connectSuccess") });
           return;
         }
 
         if (result.status === "select_page") {
           stopInstagramOauthPoll({ closePopup: true });
-          setInstagramSetup({
+          setInstagramSetup((current) => ({
+            ...current,
             open: true,
             stage: "select_page",
             sessionId: result.sessionId || sessionId,
@@ -282,15 +301,16 @@ export function useSettingsIntegrationsController() {
             confirming: false,
             sessionExpired: false,
             errorMessage: null,
-          });
+          }));
           return;
         }
 
         if (result.status === "failed") {
           stopInstagramOauthPoll({ closePopup: true });
-          setInstagramSetup({
+          setInstagramSetup((current) => ({
+            ...current,
             open: true,
-            stage: "facebook_login",
+            stage: "login",
             sessionId: null,
             pages: [],
             expiresAt: null,
@@ -300,7 +320,7 @@ export function useSettingsIntegrationsController() {
             sessionExpired: false,
             errorMessage:
               result.error || t("integrations.instagramSetup.oauthFailed"),
-          });
+          }));
         }
       } catch (e) {
         if (
@@ -312,9 +332,10 @@ export function useSettingsIntegrationsController() {
 
         if (isInstagramOAuthSessionExpiredError(e)) {
           stopInstagramOauthPoll({ closePopup: true });
-          setInstagramSetup({
+          setInstagramSetup((current) => ({
+            ...current,
             open: true,
-            stage: "facebook_login",
+            stage: "login",
             sessionId: null,
             pages: [],
             expiresAt: null,
@@ -323,7 +344,7 @@ export function useSettingsIntegrationsController() {
             confirming: false,
             sessionExpired: true,
             errorMessage: t("integrations.instagramSetup.sessionExpired"),
-          });
+          }));
           return;
         }
 
@@ -334,7 +355,13 @@ export function useSettingsIntegrationsController() {
         }
       }
     },
-    [stopInstagramOauthPoll, store, t],
+    [
+      notification,
+      showInstagramHistorySyncNotice,
+      stopInstagramOauthPoll,
+      store,
+      t,
+    ],
   );
 
   const startInstagramOauthPoll = useCallback(
@@ -811,29 +838,17 @@ export function useSettingsIntegrationsController() {
     setInstagramSetup({
       ...initialInstagramSetupState,
       open: true,
-      stage: "facebook_login",
     });
   }, [stopInstagramOauthPoll]);
 
-  const restartInstagramSetup = useCallback(async () => {
-    instagramOauthRunIdRef.current += 1;
-    stopInstagramOauthPoll({ closePopup: true });
-    await logoutFacebookSdkSession();
-    setInstagramSetup({
-      ...initialInstagramSetupState,
-      open: true,
-      stage: "facebook_login",
-    });
-  }, [stopInstagramOauthPoll]);
-
-  const startInstagramFacebookLogin = useCallback(async () => {
+  const startInstagramAuth = useCallback(async () => {
     instagramOauthRunIdRef.current += 1;
     stopInstagramOauthPoll({ closePopup: true });
 
     setInstagramSetup((current) => ({
       ...current,
       open: true,
-      stage: "facebook_login",
+      stage: "login",
       sessionId: null,
       pages: [],
       connecting: true,
@@ -849,11 +864,14 @@ export function useSettingsIntegrationsController() {
     });
 
     try {
-      const created = await store.connectIntegration("instagram");
+      const created = await store.connectIntegration("instagram", {
+        auth_flow: "instagram_login",
+      });
       const sessionId = readCreatedOAuthSessionId(created);
+      const authUrl = readCreatedOAuthUrl(created);
 
-      if (created.url && sessionId) {
-        navigateIntegrationAuthUrl(created.url, authWindow, { popup: true });
+      if (authUrl && sessionId) {
+        navigateIntegrationAuthUrl(authUrl, authWindow, { popup: true });
         setInstagramSetup((current) => ({
           ...current,
           sessionId,
@@ -1137,9 +1155,9 @@ export function useSettingsIntegrationsController() {
     instagramSetup,
     closeInstagramSetup,
     cancelInstagramConnectFlow,
-    startInstagramFacebookLogin,
+    startInstagramAuth,
     confirmInstagramPage,
-    restartInstagramSetup,
+    openInstagramSetup,
     instagramHistorySyncNoticeVisible,
     dismissInstagramHistorySyncNotice,
     telegramQrModal,

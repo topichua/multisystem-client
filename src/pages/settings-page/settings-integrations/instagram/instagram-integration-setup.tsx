@@ -3,12 +3,12 @@ import { Alert, Button, Flex, Select, Spin, Typography } from "antd";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { FacebookLogoIcon } from "@/components/icons/facebook/facebook-logo-icon";
+import { InstagramLogoIcon } from "@/components/icons/instagram/instagram-logo-icon";
 import type { InstagramOAuthPage } from "@/features/integrations/model/instagram-oauth.types";
 
 import * as S from "../settings-integrations.styled";
 
-export type InstagramSetupStage = "facebook_login" | "select_page";
+export type InstagramSetupStage = "login" | "select_page";
 
 type InstagramIntegrationSetupProps = {
   stage: InstagramSetupStage;
@@ -18,7 +18,7 @@ type InstagramIntegrationSetupProps = {
   confirming: boolean;
   sessionExpired: boolean;
   errorMessage: string | null;
-  onContinueWithFacebook: () => void;
+  onContinueWithInstagram: () => void;
   onConfirm: (pageId: string) => void;
   onCancel: () => void;
   onRestart: () => void;
@@ -26,7 +26,7 @@ type InstagramIntegrationSetupProps = {
 
 type InstagramSelectPageSetupProps = Omit<
   InstagramIntegrationSetupProps,
-  "stage" | "connecting" | "awaitingOauth" | "onContinueWithFacebook"
+  "stage" | "connecting" | "awaitingOauth" | "onContinueWithInstagram"
 >;
 
 function InstagramSelectPageSetup({
@@ -116,13 +116,9 @@ function InstagramSelectPageSetup({
       </S.InstagramPageField>
 
       <S.InstagramSetupFooter>
-        <S.FacebookLogoutButton
-          disabled={confirming}
-          icon={<FacebookLogoIcon size={16} />}
-          onClick={onCancel}
-        >
-          {t("integrations.instagramSetup.logout")}
-        </S.FacebookLogoutButton>
+        <Button disabled={confirming} onClick={onCancel}>
+          {t("integrations.instagramSetup.cancel")}
+        </Button>
         <Button
           type="primary"
           icon={<CheckIcon />}
@@ -154,14 +150,14 @@ export function InstagramIntegrationSetup({
   confirming,
   sessionExpired,
   errorMessage,
-  onContinueWithFacebook,
+  onContinueWithInstagram,
   onConfirm,
   onCancel,
   onRestart,
 }: InstagramIntegrationSetupProps) {
   const { t } = useTranslation();
 
-  if (stage === "facebook_login") {
+  if (stage === "login") {
     return (
       <S.InstagramSetup>
         {errorMessage && (
@@ -174,7 +170,7 @@ export function InstagramIntegrationSetup({
         )}
 
         <Typography.Text type="secondary">
-          {t("integrations.instagramSetup.facebookHint")}
+          {t("integrations.instagramSetup.loginHint")}
         </Typography.Text>
 
         {awaitingOauth ? (
@@ -183,24 +179,21 @@ export function InstagramIntegrationSetup({
             <Typography.Text type="secondary">
               {t("integrations.instagramSetup.awaitingOauth")}
             </Typography.Text>
-            <S.FacebookLogoutButton
-              icon={<FacebookLogoIcon size={16} />}
-              onClick={onCancel}
-            >
-              {t("integrations.instagramSetup.logout")}
-            </S.FacebookLogoutButton>
+            <Button onClick={onCancel}>
+              {t("integrations.instagramSetup.cancel")}
+            </Button>
           </Flex>
         ) : (
           <>
-            <S.FacebookContinueButton
+            <S.InstagramContinueButton
               block
               loading={connecting}
               disabled={connecting}
-              icon={<FacebookLogoIcon size={16} />}
-              onClick={onContinueWithFacebook}
+              icon={<InstagramLogoIcon size={16} />}
+              onClick={onContinueWithInstagram}
             >
-              {t("integrations.instagramSetup.continueWithFacebook")}
-            </S.FacebookContinueButton>
+              {t("integrations.instagramSetup.continueWithInstagram")}
+            </S.InstagramContinueButton>
 
             <S.InstagramSetupFooter>
               <Button disabled={connecting} onClick={onCancel}>

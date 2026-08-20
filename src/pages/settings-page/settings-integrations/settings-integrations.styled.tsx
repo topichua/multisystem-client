@@ -347,12 +347,12 @@ export const InstagramSetup = styled.div`
   margin-top: 20px;
 `;
 
-export const FacebookContinueButton = styled(Button)`
+export const InstagramContinueButton = styled(Button)`
   && {
     height: 36px;
     margin-top: 4px;
     border: 0;
-    background: #1877f2;
+    background: linear-gradient(135deg, #f9ce34 0%, #ee2a7b 48%, #6228d7 100%);
     color: #fff;
     font-weight: 500;
     font-size: ${({ theme }) => theme.fontSize.small};
@@ -361,38 +361,18 @@ export const FacebookContinueButton = styled(Button)`
 
   &&:hover,
   &&:focus {
-    background: #166fe5 !important;
+    background: linear-gradient(
+      135deg,
+      #f9ce34 0%,
+      #ee2a7b 48%,
+      #6228d7 100%
+    ) !important;
     color: #fff !important;
     box-shadow: none;
+    filter: brightness(1.05);
   }
 
   &&:disabled {
-    background: #1877f2;
-    color: #fff;
-    opacity: 0.65;
-  }
-`;
-
-export const FacebookLogoutButton = styled(Button)`
-  && {
-    height: 36px;
-    border: 0;
-    background: #1877f2;
-    color: #fff;
-    font-weight: 500;
-    font-size: ${({ theme }) => theme.fontSize.small};
-    box-shadow: none;
-  }
-
-  &&:hover,
-  &&:focus {
-    background: #166fe5 !important;
-    color: #fff !important;
-    box-shadow: none;
-  }
-
-  &&:disabled {
-    background: #1877f2;
     color: #fff;
     opacity: 0.65;
   }

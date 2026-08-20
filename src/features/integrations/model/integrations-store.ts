@@ -5,6 +5,8 @@ import { throwLoadError } from "@/utils/throw-load-error";
 
 import type {
   ChannelAutoDistributionIntegrationType,
+  IntegrationAuthFlow,
+  IntegrationCreateResponse,
   IntegrationItem,
   IntegrationType,
   ManualPaymentMethod,
@@ -207,7 +209,8 @@ export class IntegrationsStore {
 
   connectIntegration = async (
     integration_type: string,
-  ): Promise<IntegrationItem> => {
+    options?: { auth_flow?: IntegrationAuthFlow },
+  ): Promise<IntegrationCreateResponse> => {
     if (!isConnectableIntegrationType(integration_type)) {
       throw new Error(INTEGRATION_NOT_AVAILABLE_ERROR);
     }
@@ -217,7 +220,10 @@ export class IntegrationsStore {
     });
 
     try {
-      const created = await integrationsApi.create({ integration_type });
+      const created = await integrationsApi.create({
+        integration_type,
+        auth_flow: options?.auth_flow,
+      });
 
       // OAuth flows finish after external auth / confirm — do not reload as connected yet.
       if (

@@ -5,7 +5,7 @@ export type InstagramOAuthPage = {
 };
 
 export type InstagramOAuthSessionStatus =
-  "awaiting_facebook" | "select_page" | "failed" | (string & {});
+  "awaiting_instagram" | "select_page" | "connected" | "failed" | (string & {});
 
 export type InstagramOAuthPagesResponse = {
   status: InstagramOAuthSessionStatus;
@@ -106,7 +106,7 @@ export function parseInstagramOAuthPagesResponse(
     readString(data.status) ??
     readString(data.nextStep) ??
     readString(data.next_step) ??
-    (parsePages(data.pages).length > 0 ? "select_page" : "awaiting_facebook");
+    (parsePages(data.pages).length > 0 ? "select_page" : "awaiting_instagram");
 
   return {
     status,

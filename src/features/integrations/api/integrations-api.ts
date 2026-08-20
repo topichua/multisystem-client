@@ -5,8 +5,10 @@ import { apiClient } from "@/api/api-client";
 import type {
   ChannelAutoDistributionIntegrationType,
   IntegrationCreatePayload,
+  IntegrationCreateResponse,
   IntegrationChannelSettingsPayload,
   IntegrationItem,
+  IntegrationType,
   IntegrationsListResponse,
   ManualPaymentMethod,
   ManualPaymentMethodPayload,
@@ -207,6 +209,26 @@ function buildNovaPoshtaSearchAuthParams(
   };
 }
 
+function toIntegrationCreateRequestBody(
+  payload: IntegrationCreatePayload,
+): IntegrationCreatePayload {
+  if (
+    payload.integration_type !== "instagram" &&
+    payload.integration_type !== "facebook"
+  ) {
+    return { integration_type: payload.integration_type };
+  }
+
+  if (payload.auth_flow == null) {
+    throw new Error("auth_flow is required");
+  }
+
+  return {
+    integration_type: payload.integration_type,
+    auth_flow: payload.auth_flow,
+  };
+}
+
 export const integrationsApi = {
   list: async (): Promise<IntegrationsListResponse> => {
     const { data } = await apiClient.get<IntegrationsListResponse>(basePath);
@@ -215,15 +237,15 @@ export const integrationsApi = {
 
   create: async (
     payload: IntegrationCreatePayload,
-  ): Promise<IntegrationItem> => {
-    const { data } = await apiClient.post<IntegrationItem>(basePath, payload);
+  ): Promise<IntegrationCreateResponse> => {
+    const { data } = await apiClient.post<IntegrationCreateResponse>(
+      basePath,
+      toIntegrationCreateRequestBody(payload),
+    );
     return data;
   },
 
-  delete: async (
-    type: IntegrationCreatePayload["integration_type"],
-    id: number,
-  ): Promise<void> => {
+  delete: async (type: IntegrationType, id: number): Promise<void> => {
     await apiClient.delete(`${basePath}/${type}/${id}`);
   },
 

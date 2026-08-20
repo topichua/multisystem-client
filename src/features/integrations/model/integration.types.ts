@@ -1,5 +1,6 @@
 export type IntegrationType =
   | "instagram"
+  | "facebook"
   | "tiktok"
   | "telegram"
   | "novaposhta"
@@ -42,9 +43,22 @@ export type IntegrationsListResponse = {
   items: IntegrationItem[];
 };
 
+export type IntegrationAuthFlow = "facebook" | "instagram_login";
+
 export type IntegrationCreatePayload = {
   integration_type: IntegrationType;
+  auth_flow?: IntegrationAuthFlow;
 };
+
+export type IntegrationOAuthStartResponse = {
+  type: IntegrationType;
+  name?: string;
+  url: string;
+  sessionId: string;
+};
+
+export type IntegrationCreateResponse =
+  IntegrationItem | IntegrationOAuthStartResponse;
 
 export type IntegrationChannelSettingsPayload = {
   chat_auto_distribution: boolean;

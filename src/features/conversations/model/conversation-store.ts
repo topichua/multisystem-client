@@ -184,6 +184,7 @@ export class ConversationStore {
   > = {};
 
   listLoading = false;
+  listLoaded = false;
   listError: string | null = null;
   conversationGroupingBucketsLoading = false;
   conversationGroupingBucketsError: string | null = null;
@@ -739,6 +740,11 @@ export class ConversationStore {
       runInAction(() => {
         this.conversations = sortConversationsByInstUpdatedAt(conversations);
         this.listCounters = counters;
+        this.listLoaded = true;
+
+        if (!silent) {
+          this.listLoading = false;
+        }
       });
     } catch (e) {
       runInAction(() => {

@@ -38,6 +38,7 @@ export const MessageBubbleRow = styled.div<{ $isOwn?: boolean }>`
   align-items: center;
   gap: 4px;
   max-width: 100%;
+  justify-content: flex-end;
 `;
 
 export const IconHitButton = styled.button`
@@ -90,7 +91,7 @@ export const MessageWrap = styled.div<{ $isOwn?: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: ${({ $isOwn }) => ($isOwn ? "flex-end" : "flex-start")};
-  max-width: min(320px, 85%);
+  max-width: min(420px, 85%);
 `;
 
 export const ReplyQuote = styled.div<{
