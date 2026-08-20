@@ -9,6 +9,7 @@ import { authApi } from "@/features/auth/api/auth-api";
 import type { AuthUserRole } from "@/features/auth/model/auth-session.types";
 import { useUserStore } from "@/features/auth/model/use-user-store";
 import { useNotification } from "@/shared/components/notification/use-notification";
+import { normalizeClientPhoneForInput } from "@/utils/phone-input";
 
 export type UserSettingsFormValues = {
   firstName: string;
@@ -35,13 +36,6 @@ export function getRoleLabel(t: TFunction, role: AuthUserRole | null): string {
 
   const key = `userSettings.roles.${role}`;
   return t(key, { defaultValue: role });
-}
-
-function getPhoneFromMetadata(
-  metadata: Record<string, unknown> | undefined,
-): string {
-  const phone = metadata?.phone;
-  return typeof phone === "string" ? phone : "";
 }
 
 export function useSettingsUserForm() {
@@ -76,7 +70,7 @@ export function useSettingsUserForm() {
     form.setFieldsValue({
       firstName: user.firstName,
       lastName: user.lastName ?? "",
-      phone: getPhoneFromMetadata(user.metadata),
+      phone: user.phone ? normalizeClientPhoneForInput(user.phone) : "",
       email: user.email,
     });
   }, [form, userStore.user]);

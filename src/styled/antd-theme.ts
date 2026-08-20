@@ -164,6 +164,10 @@ export const lightTheme: ThemeConfig = {
       titleColor: lightColors.text,
     },
 
+    Drawer: {
+      colorBgElevated: lightColors.bgContainer,
+    },
+
     Tabs: {
       inkBarColor: lightColors.primary,
       itemSelectedColor: lightColors.primary,
@@ -322,6 +326,10 @@ export const darkTheme: ThemeConfig = {
       contentBg: darkColors.bgContainer,
       headerBg: darkColors.bgContainer,
       titleColor: darkColors.text,
+    },
+
+    Drawer: {
+      colorBgElevated: darkColors.bgContainer,
     },
 
     Tabs: {

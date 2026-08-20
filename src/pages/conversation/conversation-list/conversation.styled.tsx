@@ -37,7 +37,6 @@ export const CollapsedColumn = styled.div.attrs(() =>
   align-items: center;
   gap: 12px;
   padding: 12px;
-  background: ${(props) => props.theme.colors.functional.background.base};
 `;
 
 export const HeaderActions = styled.div`

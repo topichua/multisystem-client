@@ -246,7 +246,7 @@ export const DesktopAppHeader = observer(() => {
           title={
             isAutoTheme
               ? t("sidebar.themeAutoSwitchDisabledTooltip")
-              : t("appHeader.toggleTheme")
+              : undefined
           }
         >
           <span>
