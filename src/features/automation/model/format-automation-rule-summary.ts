@@ -66,12 +66,39 @@ const getAutomationRuleTargetName = (
     return String(rule.targetConversationGroupId ?? "");
   }
 
+  if (rule.actionType === "SEND_MESSAGE") {
+    return (
+      rule.targetTemplate?.name ??
+      criteria?.orderTemplates.find((item) => item.id === rule.targetTemplateId)
+        ?.name ??
+      String(rule.targetTemplateId ?? "")
+    );
+  }
+
   return (
     rule.targetOrderStatus?.name ??
     criteria?.statuses.find((item) => item.id === rule.targetOrderStatusId)
       ?.name ??
     String(rule.targetOrderStatusId ?? "")
   );
+};
+
+const formatActionDelay = (
+  rule: AutomationRule,
+  t: TFunction,
+): string | null => {
+  if (rule.actionDelayLabel?.trim()) {
+    return rule.actionDelayLabel.trim();
+  }
+
+  if (rule.actionDelayValue == null || !rule.actionDelayUnit) {
+    return null;
+  }
+
+  return t("automation.delay.summary", {
+    value: rule.actionDelayValue,
+    unit: t(`automation.delay.units.${rule.actionDelayUnit.toLowerCase()}`),
+  });
 };
 
 export const formatAutomationRuleSummary = (
@@ -117,6 +144,27 @@ export const formatAutomationRuleSummary = (
     );
 
   const targetName = getAutomationRuleTargetName(rule, criteria, t);
+
+  if (rule.actionType === "SEND_MESSAGE") {
+    const delay = formatActionDelay(rule, t);
+    const suffixParts: string[] = [];
+
+    if (delay) {
+      suffixParts.push(t("automation.summary.viaDelay", { delay }));
+    }
+
+    if (rule.waitForBusinessHours) {
+      suffixParts.push(t("automation.summary.businessHours"));
+    }
+
+    const suffix = suffixParts.length > 0 ? ` ${suffixParts.join(", ")}` : "";
+
+    return t("automation.summary.sendMessage", {
+      conditions: conditionsText,
+      template: targetName,
+      suffix,
+    });
+  }
 
   return t("automation.summary.full", {
     conditions: conditionsText,

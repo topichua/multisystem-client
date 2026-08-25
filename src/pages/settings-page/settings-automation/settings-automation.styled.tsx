@@ -329,6 +329,33 @@ export const ActionRow = styled.div`
   }
 `;
 
+export const SendMessageDelayRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+
+  > .ant-form-item {
+    flex: 0 0 auto;
+  }
+
+  .ant-select {
+    min-width: 200px;
+  }
+`;
+
+export const SendMessageDelaySuffix = styled.span`
+  color: ${({ theme }) => theme.colors.functional.text.heading};
+  font-size: ${({ theme }) => theme.fontSize.base};
+  line-height: 1.4;
+  white-space: nowrap;
+`;
+
+export const SendMessageHoursRow = styled.div`
+  margin-top: 16px;
+`;
+
 export const AddConditionButton = styled(Button)`
   && {
     align-self: flex-start;

@@ -12,6 +12,7 @@ import type {
   AutomationSourceType,
   AutomationStatusOption,
   AutomationTargetOrderStatus,
+  AutomationTemplateOption,
 } from "./automation.types";
 
 type UnknownRecord = Record<string, unknown>;
@@ -46,6 +47,7 @@ const toOptionalNumber = (value: unknown): number | null => {
 const ACTION_TYPES = new Set<AutomationActionType>([
   "CHANGE_ORDER_STATUS",
   "CHANGE_CONVERSATION_GROUP",
+  "SEND_MESSAGE",
 ]);
 
 const SOURCE_TYPES = new Set<AutomationSourceType>([
@@ -160,6 +162,27 @@ const normalizeConversationGroupOption = (
   };
 };
 
+const normalizeTemplateOption = (
+  value: unknown,
+): AutomationTemplateOption | null => {
+  if (!isRecord(value)) {
+    return null;
+  }
+
+  const id = toNumber(value.id);
+  const name = toTrimmedString(value.name);
+
+  if (id == null || !name) {
+    return null;
+  }
+
+  return {
+    id,
+    name,
+    type: toTrimmedString(value.type) || undefined,
+  };
+};
+
 export const normalizeAutomationCriteria = (
   data: unknown,
 ): AutomationCriteria => {
@@ -187,6 +210,11 @@ export const normalizeAutomationCriteria = (
           .filter(
             (item): item is AutomationConversationGroupOption => item != null,
           )
+      : [],
+    orderTemplates: Array.isArray(record.orderTemplates)
+      ? record.orderTemplates
+          .map(normalizeTemplateOption)
+          .filter((item): item is AutomationTemplateOption => item != null)
       : [],
   };
 };
@@ -250,6 +278,9 @@ export const normalizeAutomationRule = (
   const targetConversationGroupId = toOptionalNumber(
     data.targetConversationGroupId,
   );
+  const targetTemplateId = toOptionalNumber(data.targetTemplateId);
+  const actionDelayValue = toOptionalNumber(data.actionDelayValue);
+  const actionDelayUnit = normalizeDurationUnit(data.actionDelayUnit);
   const conditions = Array.isArray(data.conditions)
     ? data.conditions
         .map(normalizeCondition)
@@ -271,6 +302,10 @@ export const normalizeAutomationRule = (
     return null;
   }
 
+  if (actionType === "SEND_MESSAGE" && targetTemplateId == null) {
+    return null;
+  }
+
   return {
     id,
     name,
@@ -285,6 +320,12 @@ export const normalizeAutomationRule = (
     targetConversationGroup: normalizeConversationGroupOption(
       data.targetConversationGroup,
     ),
+    targetTemplateId,
+    targetTemplate: normalizeTemplateOption(data.targetTemplate),
+    actionDelayValue,
+    actionDelayUnit,
+    actionDelayLabel: toTrimmedString(data.actionDelayLabel) || null,
+    waitForBusinessHours: data.waitForBusinessHours === true,
     conditions,
     createdAt: toTrimmedString(data.createdAt) || undefined,
     updatedAt: toTrimmedString(data.updatedAt) || undefined,

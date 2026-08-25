@@ -1,5 +1,5 @@
 export type AutomationActionType =
-  "CHANGE_ORDER_STATUS" | "CHANGE_CONVERSATION_GROUP";
+  "CHANGE_ORDER_STATUS" | "CHANGE_CONVERSATION_GROUP" | "SEND_MESSAGE";
 
 export type AutomationSourceType =
   "DELIVERY_STATUS" | "PAYMENT_STATUS" | "ORDER_STATUS";
@@ -26,11 +26,18 @@ export type AutomationConversationGroupOption = {
   systemKey?: string | null;
 };
 
+export type AutomationTemplateOption = {
+  id: number;
+  name: string;
+  type?: string;
+};
+
 export type AutomationCriteria = {
   delivery: AutomationCriteriaOption[];
   payment: AutomationCriteriaOption[];
   statuses: AutomationStatusOption[];
   conversationGroups: AutomationConversationGroupOption[];
+  orderTemplates: AutomationTemplateOption[];
 };
 
 export type AutomationRuleCondition = {
@@ -60,6 +67,12 @@ export type AutomationRule = {
   targetOrderStatus?: AutomationTargetOrderStatus | null;
   targetConversationGroupId?: number | null;
   targetConversationGroup?: AutomationConversationGroupOption | null;
+  targetTemplateId?: number | null;
+  targetTemplate?: AutomationTemplateOption | null;
+  actionDelayValue?: number | null;
+  actionDelayUnit?: AutomationDurationUnit | null;
+  actionDelayLabel?: string | null;
+  waitForBusinessHours?: boolean;
   conditions: AutomationRuleCondition[];
   createdAt?: string;
   updatedAt?: string;
@@ -90,6 +103,13 @@ export type AutomationRuleCreatePayload = AutomationRulePayloadBase &
         actionType: "CHANGE_CONVERSATION_GROUP";
         targetConversationGroupId: number;
       }
+    | {
+        actionType: "SEND_MESSAGE";
+        targetTemplateId: number;
+        actionDelayValue?: number | null;
+        actionDelayUnit?: AutomationDurationUnit | null;
+        waitForBusinessHours?: boolean;
+      }
   );
 
 export type AutomationRuleUpdatePayload = Partial<{
@@ -100,6 +120,10 @@ export type AutomationRuleUpdatePayload = Partial<{
   actionType: AutomationActionType;
   targetOrderStatusId: number | null;
   targetConversationGroupId: number | null;
+  targetTemplateId: number | null;
+  actionDelayValue: number | null;
+  actionDelayUnit: AutomationDurationUnit | null;
+  waitForBusinessHours: boolean;
 }>;
 
 export type AutomationRulesListParams = {

@@ -268,8 +268,7 @@ const ConditionBlock = ({
             {
               validator: async (_, value?: string) => {
                 if (
-                  form.getFieldValue("actionType") ===
-                  "CHANGE_CONVERSATION_GROUP"
+                  form.getFieldValue("actionType") !== "CHANGE_ORDER_STATUS"
                 ) {
                   return;
                 }

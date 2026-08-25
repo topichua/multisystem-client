@@ -1,17 +1,23 @@
-import { Form, Input, Select } from "antd";
+import { Checkbox, Form, Input, InputNumber, Select } from "antd";
 import type { FormInstance } from "antd/es/form";
 import { useTranslation } from "react-i18next";
 
 import type {
   AutomationActionType,
   AutomationCriteria,
+  AutomationDurationUnit,
 } from "@/features/automation/model/automation.types";
 import { getConversationGroupDisplayName } from "@/features/conversation-groups/model/system-groups";
 import { FormCard } from "@/components/layout/form-card";
 
 import { AutomationConditionsFields } from "./automation-conditions-fields";
 import {
+  ACTION_DELAY_NONE,
+  ACTION_DELAY_UNITS,
+  createDefaultSendMessageActionValues,
+  createEmptyCondition,
   isOrderStatusEqualsTarget,
+  type AutomationActionDelayUnitValue,
   type AutomationRuleFormValues,
 } from "./automation-rule-form.utils";
 import * as S from "./settings-automation.styled";
@@ -28,17 +34,63 @@ export const AutomationRuleFormFields = ({
   const { t } = useTranslation();
   const actionType = (Form.useWatch("actionType", form) ??
     "CHANGE_ORDER_STATUS") as AutomationActionType;
+  const actionDelayUnit = (Form.useWatch("actionDelayUnit", form) ??
+    ACTION_DELAY_NONE) as AutomationActionDelayUnitValue;
   const isConversationGroupAction = actionType === "CHANGE_CONVERSATION_GROUP";
+  const isSendMessageAction = actionType === "SEND_MESSAGE";
+  const hasActionDelay =
+    isSendMessageAction &&
+    actionDelayUnit != null &&
+    actionDelayUnit !== ACTION_DELAY_NONE;
 
   const handleActionTypeChange = (nextType: AutomationActionType) => {
-    form.setFieldValue("actionType", nextType);
+    const conditions = (form.getFieldValue("conditions") ??
+      []) as AutomationRuleFormValues["conditions"];
 
-    if (nextType === "CHANGE_CONVERSATION_GROUP") {
-      form.setFieldValue("targetOrderStatusId", undefined);
+    if (nextType === "SEND_MESSAGE") {
+      form.setFieldsValue({
+        actionType: nextType,
+        targetOrderStatusId: undefined,
+        targetConversationGroupId: undefined,
+        ...createDefaultSendMessageActionValues(),
+        ...(conditions.length === 0
+          ? { conditions: [createEmptyCondition()] }
+          : {}),
+      });
       return;
     }
 
-    form.setFieldValue("targetConversationGroupId", undefined);
+    form.setFieldsValue({
+      actionType: nextType,
+      targetTemplateId: undefined,
+      actionDelayValue: null,
+      actionDelayUnit: ACTION_DELAY_NONE,
+      waitForBusinessHours: false,
+      ...(nextType === "CHANGE_CONVERSATION_GROUP"
+        ? { targetOrderStatusId: undefined }
+        : { targetConversationGroupId: undefined }),
+      ...(conditions.length === 0
+        ? { conditions: [createEmptyCondition()] }
+        : {}),
+    });
+  };
+
+  const handleDelayUnitChange = (nextUnit: AutomationActionDelayUnitValue) => {
+    if (nextUnit === ACTION_DELAY_NONE) {
+      form.setFieldsValue({
+        actionDelayUnit: ACTION_DELAY_NONE,
+        actionDelayValue: null,
+      });
+      return;
+    }
+
+    const currentValue = form.getFieldValue("actionDelayValue") as
+      number | null | undefined;
+
+    form.setFieldsValue({
+      actionDelayUnit: nextUnit,
+      actionDelayValue: currentValue ?? 1,
+    });
   };
 
   const actionTypeOptions = [
@@ -49,6 +101,10 @@ export const AutomationRuleFormFields = ({
     {
       value: "CHANGE_CONVERSATION_GROUP",
       label: t("automation.actionType.changeConversationGroup"),
+    },
+    {
+      value: "SEND_MESSAGE",
+      label: t("automation.actionType.sendMessage"),
     },
   ];
 
@@ -61,6 +117,21 @@ export const AutomationRuleFormFields = ({
       value: "CHANGE_CONVERSATION_GROUP",
       label: t("automation.action.changeConversationGroup"),
     },
+    {
+      value: "SEND_MESSAGE",
+      label: t("automation.action.sendMessage"),
+    },
+  ];
+
+  const delayUnitOptions = [
+    {
+      value: ACTION_DELAY_NONE,
+      label: t("automation.delay.modes.immediately"),
+    },
+    ...ACTION_DELAY_UNITS.map((unit) => ({
+      value: unit,
+      label: t(`automation.delay.modes.${unit.toLowerCase()}`),
+    })),
   ];
 
   return (
@@ -136,10 +207,33 @@ export const AutomationRuleFormFields = ({
           <Select
             value={actionType}
             options={actionOptions}
-            onChange={handleActionTypeChange}
+            disabled
             data-qa="settings-automation-then-action"
           />
-          {isConversationGroupAction ? (
+          {isSendMessageAction ? (
+            <Form.Item
+              name="targetTemplateId"
+              rules={[
+                {
+                  required: true,
+                  message: t("automation.validation.targetTemplate"),
+                },
+              ]}
+              style={{ marginBottom: 0 }}
+            >
+              <Select
+                placeholder={t("automation.placeholders.targetTemplate")}
+                options={(criteria?.orderTemplates ?? []).map((template) => ({
+                  value: template.id,
+                  label: template.name,
+                }))}
+                showSearch
+                optionFilterProp="label"
+                notFoundContent={t("automation.emptyTemplates")}
+                data-qa="settings-automation-target-template"
+              />
+            </Form.Item>
+          ) : isConversationGroupAction ? (
             <Form.Item
               name="targetConversationGroupId"
               rules={[
@@ -201,6 +295,68 @@ export const AutomationRuleFormFields = ({
             </Form.Item>
           )}
         </S.ActionRow>
+
+        {isSendMessageAction && (
+          <>
+            <S.SendMessageDelayRow>
+              <Form.Item name="actionDelayUnit" style={{ marginBottom: 0 }}>
+                <Select
+                  options={delayUnitOptions}
+                  onChange={handleDelayUnitChange}
+                  data-qa="settings-automation-action-delay-unit"
+                />
+              </Form.Item>
+
+              {hasActionDelay && (
+                <>
+                  <Form.Item
+                    name="actionDelayValue"
+                    rules={[
+                      {
+                        required: true,
+                        message: t("automation.validation.durationValue"),
+                      },
+                      {
+                        type: "number",
+                        min: 1,
+                        message: t("automation.validation.durationValue"),
+                      },
+                    ]}
+                    style={{ marginBottom: 0 }}
+                  >
+                    <InputNumber
+                      min={1}
+                      precision={0}
+                      style={{ width: 72 }}
+                      data-qa="settings-automation-action-delay-value"
+                    />
+                  </Form.Item>
+                  <S.SendMessageDelaySuffix>
+                    {t("automation.delay.afterTrigger", {
+                      unit: t(
+                        `automation.delay.afterTriggerUnits.${(
+                          actionDelayUnit as AutomationDurationUnit
+                        ).toLowerCase()}`,
+                      ),
+                    })}
+                  </S.SendMessageDelaySuffix>
+                </>
+              )}
+            </S.SendMessageDelayRow>
+
+            <S.SendMessageHoursRow>
+              <Form.Item
+                name="waitForBusinessHours"
+                valuePropName="checked"
+                style={{ marginBottom: 0 }}
+              >
+                <Checkbox data-qa="settings-automation-wait-for-business-hours">
+                  {t("automation.fields.waitForBusinessHours")}
+                </Checkbox>
+              </Form.Item>
+            </S.SendMessageHoursRow>
+          </>
+        )}
       </FormCard>
     </S.FormRoot>
   );

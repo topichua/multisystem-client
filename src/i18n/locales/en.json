@@ -634,7 +634,7 @@
         "groups": "Create and manage conversation groups.",
         "templates": "Create and edit reusable replies.",
         "statuses": "Configure order workflow statuses.",
-        "automation": "Automatically update order status or conversation group based on delivery, payment, or order status conditions.",
+        "automation": "Automatically update order status, conversation group, or send a client message based on delivery, payment, or order status conditions.",
         "integrations": "Connect channels and external services.",
         "user": "Update profile and account details.",
         "system": "Configure system preferences.",
@@ -644,7 +644,7 @@
   },
   "automation": {
     "title": "Automation",
-    "sectionHint": "Automatically change order status or conversation group when delivery, payment, or order status conditions match.",
+    "sectionHint": "Automatically change order status, conversation group, or send a client message when delivery, payment, or order status conditions match.",
     "settingsSectionHint": "General rules for automatic work with conversations.",
     "create": "Create automation",
     "tabs": {
@@ -703,13 +703,15 @@
     "notFound": "This automation is no longer available.",
     "fields": {
       "name": "Name",
-      "type": "Automation type"
+      "type": "Automation type",
+      "waitForBusinessHours": "Send only during business hours"
     },
     "placeholders": {
       "name": "Automation name",
       "sourceStatus": "Select value...",
       "targetStatus": "Select status...",
-      "targetGroup": "Select group..."
+      "targetGroup": "Select group...",
+      "targetTemplate": "Select template..."
     },
     "sourceType": {
       "delivery": "Delivery status",
@@ -718,14 +720,29 @@
     },
     "actionType": {
       "changeOrderStatus": "Change order status",
-      "changeConversationGroup": "Change conversation group"
+      "changeConversationGroup": "Change conversation group",
+      "sendMessage": "Message to client"
     },
     "action": {
       "changeOrderStatus": "Change order status",
-      "changeConversationGroup": "Change conversation group"
+      "changeConversationGroup": "Change conversation group",
+      "sendMessage": "Send message to client"
     },
+    "emptyTemplates": "No order templates yet",
     "delay": {
       "summary": "{{value}} {{unit}}",
+      "modes": {
+        "immediately": "Immediately",
+        "minutes": "In X minutes",
+        "hours": "In X hours",
+        "days": "In X days"
+      },
+      "afterTrigger": "{{unit}} after the condition is triggered",
+      "afterTriggerUnits": {
+        "minutes": "min.",
+        "hours": "h",
+        "days": "d"
+      },
       "units": {
         "minutes": "min",
         "hours": "h",
@@ -739,9 +756,11 @@
       "condition": "If {{source}} = {{status}}",
       "conditionNeq": "If {{source}} ≠ {{status}}",
       "viaDelay": "after {{delay}}",
+      "businessHours": "during business hours",
       "or": "or",
       "and": "and",
-      "full": "{{conditions}} → {{target}}"
+      "full": "{{conditions}} → {{target}}",
+      "sendMessage": "{{conditions}} → send “{{template}}”{{suffix}}"
     },
     "logic": {
       "or": "Or",
@@ -757,6 +776,7 @@
       "durationValue": "Enter a positive number",
       "targetStatus": "Select an order status",
       "targetGroup": "Select a conversation group",
+      "targetTemplate": "Select an order template",
       "eqSameAsTarget": "The condition status cannot be the same as the target status"
     },
     "mobile": {
