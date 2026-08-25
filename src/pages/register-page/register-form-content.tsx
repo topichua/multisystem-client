@@ -1,8 +1,11 @@
 import { Alert, Button, Checkbox, Form, Input } from "antd";
+import { useMemo } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
 import { pagesMap } from "@/app/router/pages-map";
+import { ClientPhoneFormInput } from "@/components/client-phone-form-input";
+import { phoneFieldRules } from "@/utils/phone-input";
 
 import type { RegisterFormValues } from "./register-page";
 import * as S from "./register-page.styled";
@@ -23,6 +26,14 @@ export const RegisterFormContent = ({
   onSubmit,
 }: RegisterFormContentProps) => {
   const { t } = useTranslation();
+  const phoneRules = useMemo(
+    () =>
+      phoneFieldRules({
+        requiredMessage: t("register.phoneRequired"),
+        invalidMessage: t("register.phoneInvalid"),
+      }),
+    [t],
+  );
 
   return (
     <>
@@ -109,6 +120,13 @@ export const RegisterFormContent = ({
           <Input
             placeholder={t("register.emailPlaceholder")}
             autoComplete="username"
+          />
+        </Form.Item>
+
+        <Form.Item label={t("register.phone")} name="phone" rules={phoneRules}>
+          <ClientPhoneFormInput
+            placeholder={t("register.phonePlaceholder")}
+            autoComplete="tel"
           />
         </Form.Item>
 

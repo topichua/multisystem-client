@@ -67,6 +67,10 @@ export const RegisterCard = styled(Card).attrs(() =>
   }
 
   ${authFormInputStyles}
+
+  .ant-form-item-has-error .ant-form-item-extra {
+    display: none;
+  }
 `;
 
 export const ImageSide = styled.section.attrs(() =>

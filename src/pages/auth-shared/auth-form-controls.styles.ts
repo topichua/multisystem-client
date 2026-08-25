@@ -20,4 +20,9 @@ export const authFormInputStyles = css`
     height: 46px;
     font-weight: 700;
   }
+
+  .PhoneInput {
+    width: 100%;
+    height: 46px;
+  }
 `;

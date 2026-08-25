@@ -1,4 +1,5 @@
 import { Button, Form, Result } from "antd";
+import axios from "axios";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
@@ -15,10 +16,14 @@ export type RegisterFormValues = {
   firstName: string;
   lastName: string;
   email: string;
+  phone: string;
   password: string;
   confirmPassword: string;
   acceptTerms: boolean;
 };
+
+const isEmailAlreadyInUseError = (error: unknown): boolean =>
+  axios.isAxiosError(error) && error.response?.status === 409;
 
 export const RegisterPage = () => {
   const { t } = useTranslation();
@@ -30,6 +35,7 @@ export const RegisterPage = () => {
 
   const handleSubmit = async (values: RegisterFormValues) => {
     setSubmitError(null);
+    form.setFields([{ name: "email", errors: [] }]);
     setIsSubmitting(true);
 
     try {
@@ -40,11 +46,22 @@ export const RegisterPage = () => {
         firstName: values.firstName.trim(),
         lastName: values.lastName.trim(),
         email,
+        phone: values.phone.trim(),
         password: values.password,
       });
 
       setSubmittedEmail(email);
     } catch (error) {
+      if (isEmailAlreadyInUseError(error)) {
+        form.setFields([
+          {
+            name: "email",
+            errors: [t("register.emailExists")],
+          },
+        ]);
+        return;
+      }
+
       setSubmitError(getApiErrorMessage(error, t("register.submitError")));
     } finally {
       setIsSubmitting(false);
