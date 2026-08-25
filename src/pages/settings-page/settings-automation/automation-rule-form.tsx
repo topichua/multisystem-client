@@ -1,26 +1,42 @@
-import { Checkbox, Form, Input, InputNumber, Select } from "antd";
+import {
+  Checkbox,
+  Flex,
+  Form,
+  Input,
+  InputNumber,
+  Select,
+  Typography,
+} from "antd";
 import type { FormInstance } from "antd/es/form";
 import { useTranslation } from "react-i18next";
 
-import type {
-  AutomationActionType,
-  AutomationCriteria,
-  AutomationDurationUnit,
+import {
+  AUTOMATION_ACTION_LABEL_KEYS,
+  AUTOMATION_ACTION_TYPES,
+  AUTOMATION_ACTION_TYPE_LABEL_KEYS,
+  AUTOMATION_DURATION_AFTER_TRIGGER_LABEL_KEYS,
+  AUTOMATION_DURATION_MODE_LABEL_KEYS,
+  AUTOMATION_DURATION_UNITS,
+  DEFAULT_AUTOMATION_ACTION_TYPE,
+  type AutomationActionType,
+  type AutomationCriteria,
 } from "@/features/automation/model/automation.types";
-import { getConversationGroupDisplayName } from "@/features/conversation-groups/model/system-groups";
-import { FormCard } from "@/components/layout/form-card";
+import { FormCard, FormDivider } from "@/components/layout/form-card";
 
+import {
+  AUTOMATION_ACTION_FORM_CONFIGS,
+  getActionTypeChangeValues,
+} from "./automation-action-form-config";
 import { AutomationConditionsFields } from "./automation-conditions-fields";
 import {
   ACTION_DELAY_NONE,
-  ACTION_DELAY_UNITS,
-  createDefaultSendMessageActionValues,
-  createEmptyCondition,
-  isOrderStatusEqualsTarget,
+  hasEqSameAsTargetConflict,
   type AutomationActionDelayUnitValue,
   type AutomationRuleFormValues,
 } from "./automation-rule-form.utils";
 import * as S from "./settings-automation.styled";
+
+const { Text } = Typography;
 
 type AutomationRuleFormFieldsProps = {
   form: FormInstance<AutomationRuleFormValues>;
@@ -33,13 +49,12 @@ export const AutomationRuleFormFields = ({
 }: AutomationRuleFormFieldsProps) => {
   const { t } = useTranslation();
   const actionType = (Form.useWatch("actionType", form) ??
-    "CHANGE_ORDER_STATUS") as AutomationActionType;
+    DEFAULT_AUTOMATION_ACTION_TYPE) as AutomationActionType;
   const actionDelayUnit = (Form.useWatch("actionDelayUnit", form) ??
     ACTION_DELAY_NONE) as AutomationActionDelayUnitValue;
-  const isConversationGroupAction = actionType === "CHANGE_CONVERSATION_GROUP";
-  const isSendMessageAction = actionType === "SEND_MESSAGE";
+  const actionConfig = AUTOMATION_ACTION_FORM_CONFIGS[actionType];
   const hasActionDelay =
-    isSendMessageAction &&
+    actionConfig.extras === "sendMessage" &&
     actionDelayUnit != null &&
     actionDelayUnit !== ACTION_DELAY_NONE;
 
@@ -47,32 +62,7 @@ export const AutomationRuleFormFields = ({
     const conditions = (form.getFieldValue("conditions") ??
       []) as AutomationRuleFormValues["conditions"];
 
-    if (nextType === "SEND_MESSAGE") {
-      form.setFieldsValue({
-        actionType: nextType,
-        targetOrderStatusId: undefined,
-        targetConversationGroupId: undefined,
-        ...createDefaultSendMessageActionValues(),
-        ...(conditions.length === 0
-          ? { conditions: [createEmptyCondition()] }
-          : {}),
-      });
-      return;
-    }
-
-    form.setFieldsValue({
-      actionType: nextType,
-      targetTemplateId: undefined,
-      actionDelayValue: null,
-      actionDelayUnit: ACTION_DELAY_NONE,
-      waitForBusinessHours: false,
-      ...(nextType === "CHANGE_CONVERSATION_GROUP"
-        ? { targetOrderStatusId: undefined }
-        : { targetConversationGroupId: undefined }),
-      ...(conditions.length === 0
-        ? { conditions: [createEmptyCondition()] }
-        : {}),
-    });
+    form.setFieldsValue(getActionTypeChangeValues(nextType, conditions));
   };
 
   const handleDelayUnitChange = (nextUnit: AutomationActionDelayUnitValue) => {
@@ -93,271 +83,206 @@ export const AutomationRuleFormFields = ({
     });
   };
 
-  const actionTypeOptions = [
-    {
-      value: "CHANGE_ORDER_STATUS",
-      label: t("automation.actionType.changeOrderStatus"),
-    },
-    {
-      value: "CHANGE_CONVERSATION_GROUP",
-      label: t("automation.actionType.changeConversationGroup"),
-    },
-    {
-      value: "SEND_MESSAGE",
-      label: t("automation.actionType.sendMessage"),
-    },
-  ];
-
-  const actionOptions = [
-    {
-      value: "CHANGE_ORDER_STATUS",
-      label: t("automation.action.changeOrderStatus"),
-    },
-    {
-      value: "CHANGE_CONVERSATION_GROUP",
-      label: t("automation.action.changeConversationGroup"),
-    },
-    {
-      value: "SEND_MESSAGE",
-      label: t("automation.action.sendMessage"),
-    },
-  ];
+  const actionTypeOptions = AUTOMATION_ACTION_TYPES.map((value) => ({
+    value,
+    label: t(AUTOMATION_ACTION_TYPE_LABEL_KEYS[value]),
+  }));
 
   const delayUnitOptions = [
     {
       value: ACTION_DELAY_NONE,
       label: t("automation.delay.modes.immediately"),
     },
-    ...ACTION_DELAY_UNITS.map((unit) => ({
+    ...AUTOMATION_DURATION_UNITS.map((unit) => ({
       value: unit,
-      label: t(`automation.delay.modes.${unit.toLowerCase()}`),
+      label: t(AUTOMATION_DURATION_MODE_LABEL_KEYS[unit]),
     })),
   ];
 
   return (
-    <S.FormRoot>
-      <FormCard>
+    <FormCard style={{ minWidth: 0 }}>
+      <Form.Item
+        name="name"
+        label={t("automation.fields.name")}
+        rules={[
+          {
+            required: true,
+            whitespace: true,
+            message: t("automation.validation.name"),
+          },
+        ]}
+      >
+        <Input
+          placeholder={t("automation.placeholders.name")}
+          data-qa="settings-automation-name"
+        />
+      </Form.Item>
+
+      <FormDivider />
+
+      <S.TypeRow>
+        <Text strong>{t("automation.fields.type")}</Text>
+        <Form.Item name="actionType" style={{ marginBottom: 0 }}>
+          <Select
+            options={actionTypeOptions}
+            onChange={handleActionTypeChange}
+            data-qa="settings-automation-action-type"
+          />
+        </Form.Item>
+      </S.TypeRow>
+
+      <FormDivider />
+
+      <Form.Item name="conditionType" hidden>
+        <Input />
+      </Form.Item>
+
+      <Form.List
+        name="conditions"
+        rules={[
+          {
+            validator: async (_, value) => {
+              if (!Array.isArray(value) || value.length < 1) {
+                throw new Error(t("automation.validation.conditions"));
+              }
+            },
+          },
+        ]}
+      >
+        {(fields, { add, remove }, { errors }) => (
+          <>
+            <AutomationConditionsFields
+              form={form}
+              criteria={criteria}
+              fields={fields}
+              add={add}
+              remove={remove}
+            />
+            <Form.ErrorList errors={errors} />
+          </>
+        )}
+      </Form.List>
+
+      <FormDivider />
+
+      <S.LogicBadge $tone="then">{t("automation.thenBadge")}</S.LogicBadge>
+
+      <S.ActionRow>
+        <S.ThenActionLabel data-qa="settings-automation-then-action">
+          {t(AUTOMATION_ACTION_LABEL_KEYS[actionType])}
+        </S.ThenActionLabel>
         <Form.Item
-          name="name"
-          label={t("automation.fields.name")}
+          name={actionConfig.targetField}
+          dependencies={
+            actionConfig.validateEqSameAsTarget ? ["conditions"] : undefined
+          }
           rules={[
             {
               required: true,
-              whitespace: true,
-              message: t("automation.validation.name"),
+              message: t(`automation.validation.${actionConfig.validationKey}`),
             },
-          ]}
-        >
-          <Input
-            placeholder={t("automation.placeholders.name")}
-            data-qa="settings-automation-name"
-          />
-        </Form.Item>
-
-        <S.SectionDivider />
-
-        <S.TypeRow>
-          <S.TypeLabel>{t("automation.fields.type")}</S.TypeLabel>
-          <Form.Item name="actionType" style={{ marginBottom: 0 }}>
-            <Select
-              options={actionTypeOptions}
-              onChange={handleActionTypeChange}
-              data-qa="settings-automation-action-type"
-            />
-          </Form.Item>
-        </S.TypeRow>
-
-        <S.SectionDivider />
-
-        <Form.Item name="conditionType" hidden>
-          <Input />
-        </Form.Item>
-
-        <Form.List
-          name="conditions"
-          rules={[
-            {
-              validator: async (_, value) => {
-                if (!Array.isArray(value) || value.length < 1) {
-                  throw new Error(t("automation.validation.conditions"));
-                }
-              },
-            },
-          ]}
-        >
-          {(fields, { add, remove }, { errors }) => (
-            <>
-              <AutomationConditionsFields
-                form={form}
-                criteria={criteria}
-                fields={fields}
-                add={add}
-                remove={remove}
-              />
-              <Form.ErrorList errors={errors} />
-            </>
-          )}
-        </Form.List>
-
-        <S.SectionDivider />
-
-        <S.LogicBadge $tone="then">{t("automation.thenBadge")}</S.LogicBadge>
-
-        <S.ActionRow>
-          <Select
-            value={actionType}
-            options={actionOptions}
-            disabled
-            data-qa="settings-automation-then-action"
-          />
-          {isSendMessageAction ? (
-            <Form.Item
-              name="targetTemplateId"
-              rules={[
-                {
-                  required: true,
-                  message: t("automation.validation.targetTemplate"),
-                },
-              ]}
-              style={{ marginBottom: 0 }}
-            >
-              <Select
-                placeholder={t("automation.placeholders.targetTemplate")}
-                options={(criteria?.orderTemplates ?? []).map((template) => ({
-                  value: template.id,
-                  label: template.name,
-                }))}
-                showSearch
-                optionFilterProp="label"
-                notFoundContent={t("automation.emptyTemplates")}
-                data-qa="settings-automation-target-template"
-              />
-            </Form.Item>
-          ) : isConversationGroupAction ? (
-            <Form.Item
-              name="targetConversationGroupId"
-              rules={[
-                {
-                  required: true,
-                  message: t("automation.validation.targetGroup"),
-                },
-              ]}
-              style={{ marginBottom: 0 }}
-            >
-              <Select
-                placeholder={t("automation.placeholders.targetGroup")}
-                options={(criteria?.conversationGroups ?? []).map((group) => ({
-                  value: group.id,
-                  label: getConversationGroupDisplayName(group, t),
-                }))}
-                showSearch
-                optionFilterProp="label"
-                data-qa="settings-automation-target-group"
-              />
-            </Form.Item>
-          ) : (
-            <Form.Item
-              name="targetOrderStatusId"
-              dependencies={["conditions"]}
-              rules={[
-                {
-                  required: true,
-                  message: t("automation.validation.targetStatus"),
-                },
-                {
-                  validator: async (_, targetOrderStatusId?: number) => {
-                    const conditions = (form.getFieldValue("conditions") ??
-                      []) as AutomationRuleFormValues["conditions"];
-                    const hasNoop = conditions.some((condition) =>
-                      isOrderStatusEqualsTarget(condition, targetOrderStatusId),
-                    );
-
-                    if (hasNoop) {
-                      throw new Error(
-                        t("automation.validation.eqSameAsTarget"),
-                      );
-                    }
+            ...(actionConfig.validateEqSameAsTarget
+              ? [
+                  {
+                    validator: async (
+                      _: unknown,
+                      targetOrderStatusId?: number,
+                    ) => {
+                      if (
+                        hasEqSameAsTargetConflict(
+                          form.getFieldValue("actionType"),
+                          form.getFieldValue("conditions"),
+                          targetOrderStatusId,
+                        )
+                      ) {
+                        throw new Error(
+                          t("automation.validation.eqSameAsTarget"),
+                        );
+                      }
+                    },
                   },
-                },
-              ]}
-              style={{ marginBottom: 0 }}
-            >
+                ]
+              : []),
+          ]}
+          style={{ marginBottom: 0 }}
+        >
+          <Select
+            placeholder={t(
+              `automation.placeholders.${actionConfig.placeholderKey}`,
+            )}
+            options={actionConfig.getOptions(criteria, t)}
+            showSearch
+            optionFilterProp="label"
+            notFoundContent={
+              actionConfig.notFoundContentKey
+                ? t(actionConfig.notFoundContentKey)
+                : undefined
+            }
+            data-qa={actionConfig.qa}
+          />
+        </Form.Item>
+      </S.ActionRow>
+
+      {actionConfig.extras === "sendMessage" && (
+        <>
+          <Flex align="center" gap={12} wrap="wrap" style={{ marginTop: 12 }}>
+            <Form.Item name="actionDelayUnit" style={{ marginBottom: 0 }}>
               <Select
-                placeholder={t("automation.placeholders.targetStatus")}
-                options={(criteria?.statuses ?? []).map((status) => ({
-                  value: status.id,
-                  label: status.name,
-                }))}
-                showSearch
-                optionFilterProp="label"
-                data-qa="settings-automation-target-status"
+                options={delayUnitOptions}
+                onChange={handleDelayUnitChange}
+                style={{ minWidth: 200 }}
+                data-qa="settings-automation-action-delay-unit"
               />
             </Form.Item>
-          )}
-        </S.ActionRow>
 
-        {isSendMessageAction && (
-          <>
-            <S.SendMessageDelayRow>
-              <Form.Item name="actionDelayUnit" style={{ marginBottom: 0 }}>
-                <Select
-                  options={delayUnitOptions}
-                  onChange={handleDelayUnitChange}
-                  data-qa="settings-automation-action-delay-unit"
-                />
-              </Form.Item>
+            {hasActionDelay && (
+              <>
+                <Form.Item
+                  name="actionDelayValue"
+                  rules={[
+                    {
+                      required: true,
+                      message: t("automation.validation.durationValue"),
+                    },
+                    {
+                      type: "number",
+                      min: 1,
+                      message: t("automation.validation.durationValue"),
+                    },
+                  ]}
+                  style={{ marginBottom: 0 }}
+                >
+                  <InputNumber
+                    min={1}
+                    precision={0}
+                    style={{ width: 72 }}
+                    data-qa="settings-automation-action-delay-value"
+                  />
+                </Form.Item>
+                <Text style={{ whiteSpace: "nowrap" }}>
+                  {t("automation.delay.afterTrigger", {
+                    unit: t(
+                      AUTOMATION_DURATION_AFTER_TRIGGER_LABEL_KEYS[
+                        actionDelayUnit
+                      ],
+                    ),
+                  })}
+                </Text>
+              </>
+            )}
+          </Flex>
 
-              {hasActionDelay && (
-                <>
-                  <Form.Item
-                    name="actionDelayValue"
-                    rules={[
-                      {
-                        required: true,
-                        message: t("automation.validation.durationValue"),
-                      },
-                      {
-                        type: "number",
-                        min: 1,
-                        message: t("automation.validation.durationValue"),
-                      },
-                    ]}
-                    style={{ marginBottom: 0 }}
-                  >
-                    <InputNumber
-                      min={1}
-                      precision={0}
-                      style={{ width: 72 }}
-                      data-qa="settings-automation-action-delay-value"
-                    />
-                  </Form.Item>
-                  <S.SendMessageDelaySuffix>
-                    {t("automation.delay.afterTrigger", {
-                      unit: t(
-                        `automation.delay.afterTriggerUnits.${(
-                          actionDelayUnit as AutomationDurationUnit
-                        ).toLowerCase()}`,
-                      ),
-                    })}
-                  </S.SendMessageDelaySuffix>
-                </>
-              )}
-            </S.SendMessageDelayRow>
-
-            <S.SendMessageHoursRow>
-              <Form.Item
-                name="waitForBusinessHours"
-                valuePropName="checked"
-                style={{ marginBottom: 0 }}
-              >
-                <Checkbox data-qa="settings-automation-wait-for-business-hours">
-                  {t("automation.fields.waitForBusinessHours")}
-                </Checkbox>
-              </Form.Item>
-            </S.SendMessageHoursRow>
-          </>
-        )}
-      </FormCard>
-    </S.FormRoot>
+          <Form.Item
+            name="waitForBusinessHours"
+            valuePropName="checked"
+            style={{ marginBottom: 0, marginTop: 16 }}
+          >
+            <Checkbox data-qa="settings-automation-wait-for-business-hours">
+              {t("automation.fields.waitForBusinessHours")}
+            </Checkbox>
+          </Form.Item>
+        </>
+      )}
+    </FormCard>
   );
 };

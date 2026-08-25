@@ -1,81 +1,64 @@
 import { PlusIcon, XIcon } from "@phosphor-icons/react";
 import {
+  Button,
+  Flex,
   Form,
   InputNumber,
   Select,
+  Typography,
   type FormInstance,
   type FormListFieldData,
 } from "antd";
 import type { TFunction } from "i18next";
 import { useTranslation } from "react-i18next";
 
-import type {
-  AutomationConditionType,
-  AutomationCriteria,
+import { getAutomationSourceStatusOptions } from "@/features/automation/model/automation-criteria-options";
+import {
+  AUTOMATION_OPERATORS,
+  AUTOMATION_OPERATOR_LABEL_KEYS,
+  AUTOMATION_SOURCE_TYPES,
+  AUTOMATION_SOURCE_TYPE_LABEL_KEYS,
+  DEFAULT_AUTOMATION_CONDITION_TYPE,
+  DEFAULT_AUTOMATION_OPERATOR,
+  DEFAULT_AUTOMATION_SOURCE_TYPE,
+  type AutomationConditionType,
+  type AutomationCriteria,
 } from "@/features/automation/model/automation.types";
 
 import {
   AT_BRANCH_SOURCE_STATUS,
   createEmptyCondition,
-  DEFAULT_AUTOMATION_OPERATOR,
+  hasEqSameAsTargetConflict,
   isAtBranchCondition,
-  isOrderStatusEqualsTarget,
   type AutomationConditionFormValue,
   type AutomationRuleFormValues,
 } from "./automation-rule-form.utils";
 import * as S from "./settings-automation.styled";
 
+const { Text } = Typography;
+
 const ITEM_NO_MARGIN = { marginBottom: 0 };
 
-const getSourceTypeOptions = (t: TFunction) => [
-  {
-    value: "DELIVERY_STATUS",
-    label: t("automation.sourceType.delivery"),
-  },
-  {
-    value: "PAYMENT_STATUS",
-    label: t("automation.sourceType.payment"),
-  },
-  {
-    value: "ORDER_STATUS",
-    label: t("automation.sourceType.order"),
-  },
-];
+const getSourceTypeOptions = (t: TFunction) =>
+  AUTOMATION_SOURCE_TYPES.map((value) => ({
+    value,
+    label: t(AUTOMATION_SOURCE_TYPE_LABEL_KEYS[value]),
+  }));
 
-const getOperatorOptions = (t: TFunction) => [
-  {
-    value: "EQ",
-    label: t("automation.operator.eq"),
-  },
-  {
-    value: "NEQ",
-    label: t("automation.operator.neq"),
-  },
-];
+const getOperatorOptions = (t: TFunction) =>
+  AUTOMATION_OPERATORS.map((value) => ({
+    value,
+    label: t(AUTOMATION_OPERATOR_LABEL_KEYS[value]),
+  }));
 
 const getStatusOptions = (
   sourceType: AutomationConditionFormValue["sourceType"] | undefined,
   criteria: AutomationCriteria | null,
-) => {
-  if (sourceType === "PAYMENT_STATUS") {
-    return (criteria?.payment ?? []).map((option) => ({
-      value: option.id,
-      label: option.name,
-    }));
-  }
-
-  if (sourceType === "ORDER_STATUS") {
-    return (criteria?.statuses ?? []).map((option) => ({
-      value: String(option.id),
-      label: option.name,
-    }));
-  }
-
-  return (criteria?.delivery ?? []).map((option) => ({
+) =>
+  getAutomationSourceStatusOptions(sourceType, criteria).map((option) => ({
     value: option.id,
     label: option.name,
   }));
-};
 
 const patchCondition = (
   form: FormInstance<AutomationRuleFormValues>,
@@ -109,7 +92,7 @@ export const AutomationConditionsFields = ({
 }: AutomationConditionsFieldsProps) => {
   const { t } = useTranslation();
   const conditionType = (Form.useWatch("conditionType", form) ??
-    "OR") as AutomationConditionType;
+    DEFAULT_AUTOMATION_CONDITION_TYPE) as AutomationConditionType;
 
   const toggleConditionType = () => {
     const nextType: AutomationConditionType =
@@ -121,7 +104,7 @@ export const AutomationConditionsFields = ({
     <>
       <S.LogicBadge $tone="if">{t("automation.ifBadge")}</S.LogicBadge>
 
-      <S.ConditionsStack>
+      <Flex vertical gap={12} style={{ marginTop: 16 }}>
         {fields.map((field, index) => (
           <ConditionBlock
             key={field.key}
@@ -135,16 +118,17 @@ export const AutomationConditionsFields = ({
             onRemove={() => remove(field.name)}
           />
         ))}
-      </S.ConditionsStack>
 
-      <S.AddConditionButton
-        type="link"
-        icon={<PlusIcon />}
-        onClick={() => add(createEmptyCondition())}
-        data-qa="settings-automation-add-condition"
-      >
-        {t("automation.addCondition")}
-      </S.AddConditionButton>
+        <Button
+          type="link"
+          icon={<PlusIcon />}
+          onClick={() => add(createEmptyCondition())}
+          data-qa="settings-automation-add-condition"
+          style={{ alignSelf: "flex-start", paddingInline: 0, height: "auto" }}
+        >
+          {t("automation.addCondition")}
+        </Button>
+      </Flex>
     </>
   );
 };
@@ -198,20 +182,24 @@ const ConditionBlock = ({
   };
 
   return (
-    <S.ConditionBlock>
+    <Flex vertical gap={8}>
       {index > 0 && (
-        <S.OrConnector
-          type="button"
+        <Button
+          color="primary"
+          variant="outlined"
+          size="small"
+          shape="round"
           onClick={onToggleType}
           aria-label={t("automation.logic.toggleAria")}
           data-qa="settings-automation-condition-type"
+          style={{ alignSelf: "flex-start", fontWeight: 600 }}
         >
           {t(
             conditionType === "AND"
               ? "automation.logic.and"
               : "automation.logic.or",
           )}
-        </S.OrConnector>
+        </Button>
       )}
 
       <S.ConditionRow>
@@ -267,25 +255,24 @@ const ConditionBlock = ({
             },
             {
               validator: async (_, value?: string) => {
-                if (
-                  form.getFieldValue("actionType") !== "CHANGE_ORDER_STATUS"
-                ) {
-                  return;
-                }
-
                 const condition = form.getFieldValue([
                   "conditions",
                   field.name,
                 ]) as AutomationConditionFormValue | undefined;
 
                 if (
-                  isOrderStatusEqualsTarget(
-                    {
-                      sourceType: condition?.sourceType ?? "DELIVERY_STATUS",
-                      sourceStatus: value,
-                      operator:
-                        condition?.operator ?? DEFAULT_AUTOMATION_OPERATOR,
-                    },
+                  hasEqSameAsTargetConflict(
+                    form.getFieldValue("actionType"),
+                    [
+                      {
+                        sourceType:
+                          condition?.sourceType ??
+                          DEFAULT_AUTOMATION_SOURCE_TYPE,
+                        sourceStatus: value,
+                        operator:
+                          condition?.operator ?? DEFAULT_AUTOMATION_OPERATOR,
+                      },
+                    ],
                     form.getFieldValue("targetOrderStatusId"),
                   )
                 ) {
@@ -309,15 +296,14 @@ const ConditionBlock = ({
           />
         </Form.Item>
 
-        <S.RemoveConditionButton
-          type="button"
+        <Button
+          type="text"
           disabled={!canRemove}
           aria-label={t("automation.removeConditionAria")}
           onClick={onRemove}
           data-qa="settings-automation-remove-condition"
-        >
-          <XIcon size={16} />
-        </S.RemoveConditionButton>
+          icon={<XIcon size={16} />}
+        />
       </S.ConditionRow>
 
       {showAtBranchExtensionUi && (
@@ -328,7 +314,7 @@ const ConditionBlock = ({
           onClear={clearExtension}
         />
       )}
-    </S.ConditionBlock>
+    </Flex>
   );
 };
 
@@ -350,24 +336,31 @@ const AtBranchDurationExtension = ({
   return (
     <>
       {!isOpen && (
-        <S.AtBranchExtensionCta
-          type="button"
+        <Button
+          color="primary"
+          variant="dashed"
+          icon={<PlusIcon size={16} />}
           data-qa="settings-automation-add-at-branch-extension"
           onClick={onOpen}
+          style={{ alignSelf: "flex-start", marginTop: 4 }}
         >
-          <PlusIcon size={16} />
           {t("automation.atBranchExtension.add")}
-        </S.AtBranchExtensionCta>
+        </Button>
       )}
 
-      <S.AtBranchExtensionRow $open={isOpen} aria-hidden={!isOpen}>
+      <Flex
+        align="center"
+        gap={8}
+        aria-hidden={!isOpen}
+        style={{ marginTop: 8, display: isOpen ? "flex" : "none" }}
+      >
         <S.AtBranchExtensionPrefix>
           <PlusIcon size={14} />
         </S.AtBranchExtensionPrefix>
 
-        <S.AtBranchMoreThanLabel>
+        <Text style={{ flexShrink: 0 }}>
           {t("automation.atBranchExtension.moreThan")}
-        </S.AtBranchMoreThanLabel>
+        </Text>
 
         <Form.Item
           name={[field.name, "durationValue"]}
@@ -396,19 +389,18 @@ const AtBranchDurationExtension = ({
           />
         </Form.Item>
 
-        <S.AtBranchDaysLabel>
+        <Text style={{ flexShrink: 0 }}>
           {t("automation.atBranchExtension.days")}
-        </S.AtBranchDaysLabel>
+        </Text>
 
-        <S.RemoveConditionButton
-          type="button"
+        <Button
+          type="text"
           aria-label={t("automation.atBranchExtension.removeAria")}
           onClick={onClear}
           data-qa="settings-automation-remove-at-branch-extension"
-        >
-          <XIcon size={16} />
-        </S.RemoveConditionButton>
-      </S.AtBranchExtensionRow>
+          icon={<XIcon size={16} />}
+        />
+      </Flex>
     </>
   );
 };

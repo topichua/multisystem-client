@@ -3,9 +3,8 @@ import { apiClient } from "@/api/api-client";
 import type {
   AutomationCriteria,
   AutomationRule,
-  AutomationRuleCreatePayload,
+  AutomationRulePayload,
   AutomationRulesListParams,
-  AutomationRuleUpdatePayload,
 } from "@/features/automation/model/automation.types";
 import {
   normalizeAutomationCriteria,
@@ -14,6 +13,16 @@ import {
 } from "@/features/automation/model/normalize-automation";
 
 const basePath = "/automation_rule";
+
+const parseRule = (data: unknown): AutomationRule => {
+  const rule = normalizeAutomationRule(data);
+
+  if (!rule) {
+    throw new Error("Invalid automation rule response");
+  }
+
+  return rule;
+};
 
 export const automationApi = {
   list: async (
@@ -36,43 +45,23 @@ export const automationApi = {
 
   getById: async (id: number): Promise<AutomationRule> => {
     const { data } = await apiClient.get<unknown>(`${basePath}/${id}`);
-    const rule = normalizeAutomationRule(data);
-
-    if (!rule) {
-      throw new Error("Invalid automation rule response");
-    }
-
-    return rule;
+    return parseRule(data);
   },
 
-  create: async (
-    payload: AutomationRuleCreatePayload,
-  ): Promise<AutomationRule> => {
+  create: async (payload: AutomationRulePayload): Promise<AutomationRule> => {
     const { data } = await apiClient.post<unknown>(basePath, payload);
-    const rule = normalizeAutomationRule(data);
-
-    if (!rule) {
-      throw new Error("Invalid automation rule response");
-    }
-
-    return rule;
+    return parseRule(data);
   },
 
   update: async (
     id: number,
-    payload: AutomationRuleUpdatePayload,
+    payload: AutomationRulePayload,
   ): Promise<AutomationRule> => {
     const { data } = await apiClient.patch<unknown>(
       `${basePath}/${id}`,
       payload,
     );
-    const rule = normalizeAutomationRule(data);
-
-    if (!rule) {
-      throw new Error("Invalid automation rule response");
-    }
-
-    return rule;
+    return parseRule(data);
   },
 
   setActive: async (id: number, isActive: boolean): Promise<AutomationRule> => {
@@ -82,13 +71,7 @@ export const automationApi = {
         isActive,
       },
     );
-    const rule = normalizeAutomationRule(data);
-
-    if (!rule) {
-      throw new Error("Invalid automation rule response");
-    }
-
-    return rule;
+    return parseRule(data);
   },
 
   delete: async (id: number): Promise<void> => {

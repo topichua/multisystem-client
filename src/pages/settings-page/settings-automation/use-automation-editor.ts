@@ -9,7 +9,7 @@ import { useAutomationStore } from "@/features/automation/model/use-automation-s
 import { useNotification } from "@/shared/components/notification/use-notification";
 
 import {
-  buildAutomationCreatePayload,
+  buildAutomationRulePayload,
   createDefaultAutomationFormValues,
   mapRuleToFormValues,
   type AutomationRuleFormValues,
@@ -86,7 +86,7 @@ export const useAutomationEditor = () => {
   }, [form, isCreate, notification, parsedId, store, t]);
 
   const handleSubmit = async (values: AutomationRuleFormValues) => {
-    const payload = buildAutomationCreatePayload(values);
+    const payload = buildAutomationRulePayload(values);
 
     try {
       if (isCreate) {
@@ -155,5 +155,8 @@ export const useAutomationEditor = () => {
     handleSubmit,
     handleDelete,
     navigateToList,
+    showFallback: isInvalidId || isLoading || isNotFound,
   };
 };
+
+export type AutomationEditor = ReturnType<typeof useAutomationEditor>;

@@ -1,18 +1,21 @@
-import type {
-  AutomationActionType,
-  AutomationConditionType,
-  AutomationConversationGroupOption,
-  AutomationCriteria,
-  AutomationCriteriaOption,
-  AutomationDurationUnit,
-  AutomationOperator,
-  AutomationRule,
-  AutomationRuleCondition,
-  AutomationRulesListResponse,
-  AutomationSourceType,
-  AutomationStatusOption,
-  AutomationTargetOrderStatus,
-  AutomationTemplateOption,
+import {
+  AUTOMATION_ACTION_TYPES,
+  AUTOMATION_CONDITION_TYPES,
+  AUTOMATION_DURATION_UNITS,
+  AUTOMATION_OPERATORS,
+  AUTOMATION_SOURCE_TYPES,
+  DEFAULT_AUTOMATION_ACTION_TYPE,
+  DEFAULT_AUTOMATION_CONDITION_TYPE,
+  DEFAULT_AUTOMATION_OPERATOR,
+  type AutomationConversationGroupOption,
+  type AutomationCriteria,
+  type AutomationCriteriaOption,
+  type AutomationRule,
+  type AutomationRuleCondition,
+  type AutomationRulesListResponse,
+  type AutomationStatusOption,
+  type AutomationTargetOrderStatus,
+  type AutomationTemplateOption,
 } from "./automation.types";
 
 type UnknownRecord = Record<string, unknown>;
@@ -44,120 +47,85 @@ const toOptionalNumber = (value: unknown): number | null => {
   return toNumber(value);
 };
 
-const ACTION_TYPES = new Set<AutomationActionType>([
-  "CHANGE_ORDER_STATUS",
-  "CHANGE_CONVERSATION_GROUP",
-  "SEND_MESSAGE",
-]);
+const toOptionalStringId = (value: unknown): string | null =>
+  toTrimmedString(value) || null;
 
-const SOURCE_TYPES = new Set<AutomationSourceType>([
-  "DELIVERY_STATUS",
-  "PAYMENT_STATUS",
-  "ORDER_STATUS",
-]);
-
-const OPERATORS = new Set<AutomationOperator>(["EQ", "NEQ"]);
-
-const DURATION_UNITS = new Set<AutomationDurationUnit>([
-  "MINUTES",
-  "HOURS",
-  "DAYS",
-]);
-
-const CONDITION_TYPES = new Set<AutomationConditionType>(["AND", "OR"]);
-
-const normalizeActionType = (value: unknown): AutomationActionType =>
-  typeof value === "string" && ACTION_TYPES.has(value as AutomationActionType)
-    ? (value as AutomationActionType)
-    : "CHANGE_ORDER_STATUS";
-
-const normalizeConditionType = (value: unknown): AutomationConditionType =>
-  typeof value === "string" &&
-  CONDITION_TYPES.has(value as AutomationConditionType)
-    ? (value as AutomationConditionType)
-    : "OR";
-
-const normalizeSourceType = (value: unknown): AutomationSourceType | null => {
-  if (
-    typeof value === "string" &&
-    SOURCE_TYPES.has(value as AutomationSourceType)
-  ) {
-    return value as AutomationSourceType;
-  }
-
-  return null;
-};
-
-const normalizeOperator = (value: unknown): AutomationOperator =>
-  typeof value === "string" && OPERATORS.has(value as AutomationOperator)
-    ? (value as AutomationOperator)
-    : "EQ";
-
-const normalizeDurationUnit = (
+const isAllowedValue = <T extends string>(
   value: unknown,
-): AutomationDurationUnit | null => {
-  if (
-    typeof value === "string" &&
-    DURATION_UNITS.has(value as AutomationDurationUnit)
-  ) {
-    return value as AutomationDurationUnit;
-  }
+  allowed: readonly T[],
+): value is T =>
+  typeof value === "string" && (allowed as readonly string[]).includes(value);
 
-  return null;
-};
-
-const normalizeCriteriaOption = (
+const normalizeEnum = <T extends string>(
   value: unknown,
-): AutomationCriteriaOption | null => {
+  allowed: readonly T[],
+  fallback: T,
+): T => (isAllowedValue(value, allowed) ? value : fallback);
+
+const normalizeOptionalEnum = <T extends string>(
+  value: unknown,
+  allowed: readonly T[],
+): T | null => (isAllowedValue(value, allowed) ? value : null);
+
+const normalizeList = <T>(
+  value: unknown,
+  normalizeItem: (item: unknown) => T | null,
+): T[] =>
+  Array.isArray(value)
+    ? value.map(normalizeItem).filter((item): item is T => item != null)
+    : [];
+
+const normalizeNamedOption = <Id extends string | number>(
+  value: unknown,
+  parseId: (raw: unknown) => Id | null,
+  options?: { requireName?: boolean },
+): { id: Id; name: string; record: UnknownRecord } | null => {
   if (!isRecord(value)) {
     return null;
   }
 
-  const id = toTrimmedString(value.id);
+  const id = parseId(value.id);
   const name = toTrimmedString(value.name);
-
-  if (!id || !name) {
-    return null;
-  }
-
-  return { id, name };
-};
-
-const normalizeStatusOption = (
-  value: unknown,
-): AutomationStatusOption | null => {
-  if (!isRecord(value)) {
-    return null;
-  }
-
-  const id = toNumber(value.id);
-  const name = toTrimmedString(value.name);
-
-  if (id == null || !name) {
-    return null;
-  }
-
-  return { id, name };
-};
-
-const normalizeConversationGroupOption = (
-  value: unknown,
-): AutomationConversationGroupOption | null => {
-  if (!isRecord(value)) {
-    return null;
-  }
-
-  const id = toNumber(value.id);
-  const name = toTrimmedString(value.name);
-  const systemKey = toTrimmedString(value.systemKey) || null;
 
   if (id == null) {
     return null;
   }
 
+  if ((options?.requireName ?? true) && !name) {
+    return null;
+  }
+
+  return { id, name, record: value };
+};
+
+const normalizeCriteriaOption = (
+  value: unknown,
+): AutomationCriteriaOption | null => {
+  const option = normalizeNamedOption(value, toOptionalStringId);
+  return option ? { id: option.id, name: option.name } : null;
+};
+
+const normalizeStatusOption = (
+  value: unknown,
+): AutomationStatusOption | null => {
+  const option = normalizeNamedOption(value, toNumber);
+  return option ? { id: option.id, name: option.name } : null;
+};
+
+const normalizeConversationGroupOption = (
+  value: unknown,
+): AutomationConversationGroupOption | null => {
+  const option = normalizeNamedOption(value, toNumber, { requireName: false });
+
+  if (!option) {
+    return null;
+  }
+
+  const systemKey = toTrimmedString(option.record.systemKey) || null;
+
   return {
-    id,
-    name: name || systemKey || String(id),
+    id: option.id,
+    name: option.name || systemKey || String(option.id),
     systemKey,
   };
 };
@@ -165,21 +133,33 @@ const normalizeConversationGroupOption = (
 const normalizeTemplateOption = (
   value: unknown,
 ): AutomationTemplateOption | null => {
-  if (!isRecord(value)) {
-    return null;
-  }
+  const option = normalizeNamedOption(value, toNumber);
 
-  const id = toNumber(value.id);
-  const name = toTrimmedString(value.name);
-
-  if (id == null || !name) {
+  if (!option) {
     return null;
   }
 
   return {
-    id,
-    name,
-    type: toTrimmedString(value.type) || undefined,
+    id: option.id,
+    name: option.name,
+    type: toTrimmedString(option.record.type) || undefined,
+  };
+};
+
+const normalizeTargetOrderStatus = (
+  value: unknown,
+): AutomationTargetOrderStatus | null => {
+  const option = normalizeNamedOption(value, toNumber);
+
+  if (!option) {
+    return null;
+  }
+
+  return {
+    id: option.id,
+    name: option.name,
+    category: toTrimmedString(option.record.category) || undefined,
+    color: toTrimmedString(option.record.color) || undefined,
   };
 };
 
@@ -189,55 +169,17 @@ export const normalizeAutomationCriteria = (
   const record = isRecord(data) ? data : {};
 
   return {
-    delivery: Array.isArray(record.delivery)
-      ? record.delivery
-          .map(normalizeCriteriaOption)
-          .filter((item): item is AutomationCriteriaOption => item != null)
-      : [],
-    payment: Array.isArray(record.payment)
-      ? record.payment
-          .map(normalizeCriteriaOption)
-          .filter((item): item is AutomationCriteriaOption => item != null)
-      : [],
-    statuses: Array.isArray(record.statuses)
-      ? record.statuses
-          .map(normalizeStatusOption)
-          .filter((item): item is AutomationStatusOption => item != null)
-      : [],
-    conversationGroups: Array.isArray(record.conversationGroups)
-      ? record.conversationGroups
-          .map(normalizeConversationGroupOption)
-          .filter(
-            (item): item is AutomationConversationGroupOption => item != null,
-          )
-      : [],
-    orderTemplates: Array.isArray(record.orderTemplates)
-      ? record.orderTemplates
-          .map(normalizeTemplateOption)
-          .filter((item): item is AutomationTemplateOption => item != null)
-      : [],
-  };
-};
-
-const normalizeTargetOrderStatus = (
-  value: unknown,
-): AutomationTargetOrderStatus | null => {
-  if (!isRecord(value)) {
-    return null;
-  }
-
-  const id = toNumber(value.id);
-  const name = toTrimmedString(value.name);
-
-  if (id == null || !name) {
-    return null;
-  }
-
-  return {
-    id,
-    name,
-    category: toTrimmedString(value.category) || undefined,
-    color: toTrimmedString(value.color) || undefined,
+    delivery: normalizeList(record.delivery, normalizeCriteriaOption),
+    payment: normalizeList(record.payment, normalizeCriteriaOption),
+    statuses: normalizeList(record.statuses, normalizeStatusOption),
+    conversationGroups: normalizeList(
+      record.conversationGroups,
+      normalizeConversationGroupOption,
+    ),
+    orderTemplates: normalizeList(
+      record.orderTemplates,
+      normalizeTemplateOption,
+    ),
   };
 };
 
@@ -246,7 +188,10 @@ const normalizeCondition = (value: unknown): AutomationRuleCondition | null => {
     return null;
   }
 
-  const sourceType = normalizeSourceType(value.sourceType);
+  const sourceType = normalizeOptionalEnum(
+    value.sourceType,
+    AUTOMATION_SOURCE_TYPES,
+  );
   const sourceStatus = toTrimmedString(value.sourceStatus);
 
   if (!sourceType || !sourceStatus) {
@@ -257,9 +202,16 @@ const normalizeCondition = (value: unknown): AutomationRuleCondition | null => {
     id: toOptionalNumber(value.id) ?? undefined,
     sourceType,
     sourceStatus,
-    operator: normalizeOperator(value.operator),
+    operator: normalizeEnum(
+      value.operator,
+      AUTOMATION_OPERATORS,
+      DEFAULT_AUTOMATION_OPERATOR,
+    ),
     durationValue: toOptionalNumber(value.durationValue),
-    durationUnit: normalizeDurationUnit(value.durationUnit),
+    durationUnit: normalizeOptionalEnum(
+      value.durationUnit,
+      AUTOMATION_DURATION_UNITS,
+    ),
     durationLabel: toTrimmedString(value.durationLabel) || null,
   };
 };
@@ -273,86 +225,98 @@ export const normalizeAutomationRule = (
 
   const id = toNumber(data.id);
   const name = toTrimmedString(data.name);
-  const actionType = normalizeActionType(data.actionType);
-  const targetOrderStatusId = toOptionalNumber(data.targetOrderStatusId);
-  const targetConversationGroupId = toOptionalNumber(
-    data.targetConversationGroupId,
-  );
-  const targetTemplateId = toOptionalNumber(data.targetTemplateId);
-  const actionDelayValue = toOptionalNumber(data.actionDelayValue);
-  const actionDelayUnit = normalizeDurationUnit(data.actionDelayUnit);
-  const conditions = Array.isArray(data.conditions)
-    ? data.conditions
-        .map(normalizeCondition)
-        .filter((item): item is AutomationRuleCondition => item != null)
-    : [];
 
   if (id == null || !name) {
     return null;
   }
 
-  if (actionType === "CHANGE_ORDER_STATUS" && targetOrderStatusId == null) {
-    return null;
-  }
+  const actionType = normalizeEnum(
+    data.actionType,
+    AUTOMATION_ACTION_TYPES,
+    DEFAULT_AUTOMATION_ACTION_TYPE,
+  );
+  const conditions = normalizeList(data.conditions, normalizeCondition);
 
-  if (
-    actionType === "CHANGE_CONVERSATION_GROUP" &&
-    targetConversationGroupId == null
-  ) {
-    return null;
-  }
-
-  if (actionType === "SEND_MESSAGE" && targetTemplateId == null) {
-    return null;
-  }
-
-  return {
+  const base = {
     id,
     name,
     isActive: data.isActive === true,
-    actionType,
-    conditionType: normalizeConditionType(
+    conditionType: normalizeEnum(
       data.conditionType ?? data.condition_type,
+      AUTOMATION_CONDITION_TYPES,
+      DEFAULT_AUTOMATION_CONDITION_TYPE,
     ),
-    targetOrderStatusId,
-    targetOrderStatus: normalizeTargetOrderStatus(data.targetOrderStatus),
-    targetConversationGroupId,
-    targetConversationGroup: normalizeConversationGroupOption(
-      data.targetConversationGroup,
-    ),
-    targetTemplateId,
-    targetTemplate: normalizeTemplateOption(data.targetTemplate),
-    actionDelayValue,
-    actionDelayUnit,
-    actionDelayLabel: toTrimmedString(data.actionDelayLabel) || null,
-    waitForBusinessHours: data.waitForBusinessHours === true,
     conditions,
     createdAt: toTrimmedString(data.createdAt) || undefined,
     updatedAt: toTrimmedString(data.updatedAt) || undefined,
   };
+
+  switch (actionType) {
+    case "CHANGE_ORDER_STATUS": {
+      const targetOrderStatusId = toOptionalNumber(data.targetOrderStatusId);
+
+      if (targetOrderStatusId == null) {
+        return null;
+      }
+
+      return {
+        ...base,
+        actionType,
+        targetOrderStatusId,
+        targetOrderStatus: normalizeTargetOrderStatus(data.targetOrderStatus),
+      };
+    }
+    case "CHANGE_CONVERSATION_GROUP": {
+      const targetConversationGroupId = toOptionalNumber(
+        data.targetConversationGroupId,
+      );
+
+      if (targetConversationGroupId == null) {
+        return null;
+      }
+
+      return {
+        ...base,
+        actionType,
+        targetConversationGroupId,
+        targetConversationGroup: normalizeConversationGroupOption(
+          data.targetConversationGroup,
+        ),
+      };
+    }
+    case "SEND_MESSAGE": {
+      const targetTemplateId = toOptionalNumber(data.targetTemplateId);
+
+      if (targetTemplateId == null) {
+        return null;
+      }
+
+      return {
+        ...base,
+        actionType,
+        targetTemplateId,
+        targetTemplate: normalizeTemplateOption(data.targetTemplate),
+        actionDelayValue: toOptionalNumber(data.actionDelayValue),
+        actionDelayUnit: normalizeOptionalEnum(
+          data.actionDelayUnit,
+          AUTOMATION_DURATION_UNITS,
+        ),
+        actionDelayLabel: toTrimmedString(data.actionDelayLabel) || null,
+        waitForBusinessHours: data.waitForBusinessHours === true,
+      };
+    }
+  }
 };
 
 export const normalizeAutomationRulesList = (
   data: unknown,
 ): AutomationRulesListResponse => {
   if (Array.isArray(data)) {
-    const items = data
-      .map(normalizeAutomationRule)
-      .filter((item): item is AutomationRule => item != null);
-
-    return { items };
+    return { items: normalizeList(data, normalizeAutomationRule) };
   }
 
   const record = isRecord(data) ? data : {};
-  const rawItems = Array.isArray(record.items)
-    ? record.items
-    : Array.isArray(record.data)
-      ? record.data
-      : [];
+  const rawItems = record.items ?? record.data;
 
-  const items = rawItems
-    .map(normalizeAutomationRule)
-    .filter((item): item is AutomationRule => item != null);
-
-  return { items };
+  return { items: normalizeList(rawItems, normalizeAutomationRule) };
 };

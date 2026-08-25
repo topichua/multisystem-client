@@ -1,41 +1,23 @@
 import { ArrowLeftIcon, CheckIcon } from "@phosphor-icons/react";
-import { Alert, Button, Flex, Form, Popconfirm, Switch } from "antd";
+import { Button, Flex, Form, Popconfirm, Switch, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
 
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
-import { CenteredSpinner } from "@/components/loading/centered-spinner";
 
+import { AutomationEditorFallback } from "./automation-editor-fallback";
 import { AutomationRuleFormFields } from "./automation-rule-form";
 import { useAutomationEditor } from "./use-automation-editor";
-import * as S from "./settings-automation.styled";
+
+const { Title, Text } = Typography;
 
 export const SettingsAutomationEditorView = observer(() => {
   const { t } = useTranslation();
   const editor = useAutomationEditor();
+  const isActive = Form.useWatch("isActive", editor.form) ?? false;
 
-  if (editor.isInvalidId) {
-    return <Alert type="error" title={t("automation.invalidId")} showIcon />;
-  }
-
-  if (editor.isLoading) {
-    return <CenteredSpinner />;
-  }
-
-  if (editor.isNotFound) {
-    return (
-      <Alert
-        type="warning"
-        title={t("automation.notFoundTitle")}
-        description={t("automation.notFound")}
-        showIcon
-        action={
-          <Button size="small" onClick={editor.navigateToList}>
-            {t("automation.backToList")}
-          </Button>
-        }
-      />
-    );
+  if (editor.showFallback) {
+    return <AutomationEditorFallback editor={editor} />;
   }
 
   return (
@@ -61,10 +43,18 @@ export const SettingsAutomationEditorView = observer(() => {
                 onClick={editor.navigateToList}
                 data-qa="settings-automation-back"
               />
-              <S.HeaderTitle level={4}>{editor.title}</S.HeaderTitle>
+              <Title level={4} style={{ margin: 0 }}>
+                {editor.title}
+              </Title>
             </Flex>
 
-            <S.HeaderActions>
+            <Flex
+              align="center"
+              justify="flex-end"
+              wrap="wrap"
+              gap={16}
+              style={{ flexShrink: 0 }}
+            >
               <Flex align="center" gap={8}>
                 <Form.Item
                   name="isActive"
@@ -73,7 +63,9 @@ export const SettingsAutomationEditorView = observer(() => {
                 >
                   <Switch data-qa="settings-automation-active-switch" />
                 </Form.Item>
-                <S.ActiveLabel>{t("automation.active")}</S.ActiveLabel>
+                <Text type={isActive ? undefined : "secondary"}>
+                  {isActive ? t("automation.active") : t("automation.inactive")}
+                </Text>
               </Flex>
 
               {!editor.isCreate && (
@@ -102,7 +94,7 @@ export const SettingsAutomationEditorView = observer(() => {
               >
                 {t("automation.save")}
               </Button>
-            </S.HeaderActions>
+            </Flex>
           </Flex>
         </PaneDetailLayout.Header>
 

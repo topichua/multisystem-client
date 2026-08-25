@@ -1,27 +1,22 @@
-import type {
-  AutomationActionType,
-  AutomationConditionType,
-  AutomationDurationUnit,
-  AutomationOperator,
-  AutomationRule,
-  AutomationRuleConditionPayload,
-  AutomationRuleCreatePayload,
-  AutomationSourceType,
+import {
+  DEFAULT_AUTOMATION_ACTION_TYPE,
+  DEFAULT_AUTOMATION_CONDITION_TYPE,
+  DEFAULT_AUTOMATION_DURATION_UNIT,
+  DEFAULT_AUTOMATION_OPERATOR,
+  DEFAULT_AUTOMATION_SOURCE_TYPE,
+  type AutomationActionType,
+  type AutomationConditionType,
+  type AutomationDurationUnit,
+  type AutomationOperator,
+  type AutomationRule,
+  type AutomationRuleConditionPayload,
+  type AutomationRulePayload,
+  type AutomationSourceType,
 } from "@/features/automation/model/automation.types";
 
 export const AT_BRANCH_SOURCE_STATUS = "at_branch";
 
-export const DEFAULT_AUTOMATION_OPERATOR: AutomationOperator = "EQ";
-
-export const DEFAULT_ACTION_DELAY_UNIT: AutomationDurationUnit = "DAYS";
-
 export const ACTION_DELAY_NONE = "NONE";
-
-export const ACTION_DELAY_UNITS: AutomationDurationUnit[] = [
-  "MINUTES",
-  "HOURS",
-  "DAYS",
-];
 
 export type AutomationActionDelayUnitValue =
   AutomationDurationUnit | typeof ACTION_DELAY_NONE;
@@ -53,7 +48,7 @@ export const isAtBranchCondition = (
   condition.sourceType === "DELIVERY_STATUS" &&
   condition.sourceStatus === AT_BRANCH_SOURCE_STATUS;
 
-export const isOrderStatusEqualsTarget = (
+const isOrderStatusEqualsTarget = (
   condition: Pick<
     AutomationConditionFormValue,
     "sourceType" | "sourceStatus" | "operator"
@@ -65,8 +60,18 @@ export const isOrderStatusEqualsTarget = (
   targetOrderStatusId != null &&
   condition.sourceStatus === String(targetOrderStatusId);
 
+export const hasEqSameAsTargetConflict = (
+  actionType: AutomationActionType,
+  conditions: AutomationConditionFormValue[] | undefined,
+  targetOrderStatusId?: number,
+): boolean =>
+  actionType === "CHANGE_ORDER_STATUS" &&
+  (conditions ?? []).some((condition) =>
+    isOrderStatusEqualsTarget(condition, targetOrderStatusId),
+  );
+
 export const createEmptyCondition = (): AutomationConditionFormValue => ({
-  sourceType: "DELIVERY_STATUS",
+  sourceType: DEFAULT_AUTOMATION_SOURCE_TYPE,
   sourceStatus: undefined,
   operator: DEFAULT_AUTOMATION_OPERATOR,
   durationValue: null,
@@ -77,7 +82,7 @@ export const createDefaultSendMessageActionValues = (): Pick<
   "actionDelayValue" | "actionDelayUnit" | "waitForBusinessHours"
 > => ({
   actionDelayValue: 1,
-  actionDelayUnit: DEFAULT_ACTION_DELAY_UNIT,
+  actionDelayUnit: DEFAULT_AUTOMATION_DURATION_UNIT,
   waitForBusinessHours: true,
 });
 
@@ -85,8 +90,8 @@ export const createDefaultAutomationFormValues =
   (): AutomationRuleFormValues => ({
     name: "",
     isActive: true,
-    actionType: "CHANGE_ORDER_STATUS",
-    conditionType: "OR",
+    actionType: DEFAULT_AUTOMATION_ACTION_TYPE,
+    conditionType: DEFAULT_AUTOMATION_CONDITION_TYPE,
     conditions: [createEmptyCondition()],
     targetOrderStatusId: undefined,
     targetConversationGroupId: undefined,
@@ -99,47 +104,67 @@ export const createDefaultAutomationFormValues =
 export const mapRuleToFormValues = (
   rule: AutomationRule,
 ): AutomationRuleFormValues => {
-  const hasActionDelay =
-    rule.actionType === "SEND_MESSAGE" &&
-    rule.actionDelayValue != null &&
-    rule.actionDelayUnit != null;
+  const conditions =
+    rule.conditions.length > 0
+      ? rule.conditions.map((condition) => {
+          const hasExtension =
+            isAtBranchCondition(condition) &&
+            condition.durationValue != null &&
+            condition.durationUnit === DEFAULT_AUTOMATION_DURATION_UNIT;
 
-  return {
+          return {
+            sourceType: condition.sourceType,
+            sourceStatus: condition.sourceStatus,
+            operator: condition.operator ?? DEFAULT_AUTOMATION_OPERATOR,
+            durationValue: hasExtension ? condition.durationValue : null,
+          };
+        })
+      : [createEmptyCondition()];
+
+  const shared = {
     name: rule.name,
     isActive: rule.isActive,
-    actionType: rule.actionType,
     conditionType: rule.conditionType,
-    conditions:
-      rule.conditions.length > 0
-        ? rule.conditions.map((condition) => {
-            const hasExtension =
-              isAtBranchCondition(condition) &&
-              condition.durationValue != null &&
-              condition.durationUnit === "DAYS";
-
-            return {
-              sourceType: condition.sourceType,
-              sourceStatus: condition.sourceStatus,
-              operator: condition.operator ?? DEFAULT_AUTOMATION_OPERATOR,
-              durationValue: hasExtension ? condition.durationValue : null,
-            };
-          })
-        : [createEmptyCondition()],
-    targetOrderStatusId: rule.targetOrderStatusId ?? undefined,
-    targetConversationGroupId: rule.targetConversationGroupId ?? undefined,
-    targetTemplateId: rule.targetTemplateId ?? undefined,
-    actionDelayValue: hasActionDelay ? rule.actionDelayValue : null,
-    actionDelayUnit: hasActionDelay ? rule.actionDelayUnit : ACTION_DELAY_NONE,
-    waitForBusinessHours:
-      rule.actionType === "SEND_MESSAGE"
-        ? rule.waitForBusinessHours === true
-        : false,
+    conditions,
   };
+
+  switch (rule.actionType) {
+    case "CHANGE_ORDER_STATUS":
+      return {
+        ...createDefaultAutomationFormValues(),
+        ...shared,
+        actionType: rule.actionType,
+        targetOrderStatusId: rule.targetOrderStatusId,
+      };
+    case "CHANGE_CONVERSATION_GROUP":
+      return {
+        ...createDefaultAutomationFormValues(),
+        ...shared,
+        actionType: rule.actionType,
+        targetConversationGroupId: rule.targetConversationGroupId,
+      };
+    case "SEND_MESSAGE": {
+      const hasActionDelay =
+        rule.actionDelayValue != null && rule.actionDelayUnit != null;
+
+      return {
+        ...createDefaultAutomationFormValues(),
+        ...shared,
+        actionType: rule.actionType,
+        targetTemplateId: rule.targetTemplateId,
+        actionDelayValue: hasActionDelay ? rule.actionDelayValue : null,
+        actionDelayUnit: hasActionDelay
+          ? rule.actionDelayUnit
+          : ACTION_DELAY_NONE,
+        waitForBusinessHours: rule.waitForBusinessHours === true,
+      };
+    }
+  }
 };
 
-export const buildAutomationCreatePayload = (
+export const buildAutomationRulePayload = (
   values: AutomationRuleFormValues,
-): AutomationRuleCreatePayload => {
+): AutomationRulePayload => {
   const conditions = values.conditions.map(
     (condition): AutomationRuleConditionPayload => {
       const payload: AutomationRuleConditionPayload = {
@@ -150,7 +175,7 @@ export const buildAutomationCreatePayload = (
 
       if (isAtBranchCondition(condition) && condition.durationValue != null) {
         payload.durationValue = condition.durationValue;
-        payload.durationUnit = "DAYS";
+        payload.durationUnit = DEFAULT_AUTOMATION_DURATION_UNIT;
       }
 
       return payload;
@@ -164,35 +189,35 @@ export const buildAutomationCreatePayload = (
     conditions,
   };
 
-  if (values.actionType === "CHANGE_CONVERSATION_GROUP") {
-    return {
-      ...base,
-      actionType: "CHANGE_CONVERSATION_GROUP",
-      targetConversationGroupId: values.targetConversationGroupId as number,
-    };
+  switch (values.actionType) {
+    case "CHANGE_CONVERSATION_GROUP":
+      return {
+        ...base,
+        actionType: "CHANGE_CONVERSATION_GROUP",
+        targetConversationGroupId: values.targetConversationGroupId as number,
+      };
+    case "SEND_MESSAGE": {
+      const hasDelay =
+        values.actionDelayUnit != null &&
+        values.actionDelayUnit !== ACTION_DELAY_NONE &&
+        values.actionDelayValue != null;
+
+      return {
+        ...base,
+        actionType: "SEND_MESSAGE",
+        targetTemplateId: values.targetTemplateId as number,
+        actionDelayValue: hasDelay ? values.actionDelayValue : null,
+        actionDelayUnit: hasDelay
+          ? (values.actionDelayUnit as AutomationDurationUnit)
+          : null,
+        waitForBusinessHours: values.waitForBusinessHours === true,
+      };
+    }
+    case "CHANGE_ORDER_STATUS":
+      return {
+        ...base,
+        actionType: "CHANGE_ORDER_STATUS",
+        targetOrderStatusId: values.targetOrderStatusId as number,
+      };
   }
-
-  if (values.actionType === "SEND_MESSAGE") {
-    const hasDelay =
-      values.actionDelayUnit != null &&
-      values.actionDelayUnit !== ACTION_DELAY_NONE &&
-      values.actionDelayValue != null;
-
-    return {
-      ...base,
-      actionType: "SEND_MESSAGE",
-      targetTemplateId: values.targetTemplateId as number,
-      actionDelayValue: hasDelay ? values.actionDelayValue : null,
-      actionDelayUnit: hasDelay
-        ? (values.actionDelayUnit as AutomationDurationUnit)
-        : null,
-      waitForBusinessHours: values.waitForBusinessHours === true,
-    };
-  }
-
-  return {
-    ...base,
-    actionType: "CHANGE_ORDER_STATUS",
-    targetOrderStatusId: values.targetOrderStatusId as number,
-  };
 };

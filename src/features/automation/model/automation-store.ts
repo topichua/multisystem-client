@@ -7,9 +7,8 @@ import { unknownErrorMessage } from "@/utils/unknown-error-message";
 import type {
   AutomationCriteria,
   AutomationRule,
-  AutomationRuleCreatePayload,
+  AutomationRulePayload,
   AutomationRulesListParams,
-  AutomationRuleUpdatePayload,
 } from "./automation.types";
 
 export class AutomationStore {
@@ -34,6 +33,38 @@ export class AutomationStore {
   constructor() {
     makeAutoObservable(this);
   }
+
+  private replaceRuleInList = (rule: AutomationRule): boolean => {
+    const index = this.rules.findIndex((item) => item.id === rule.id);
+
+    if (index < 0) {
+      return false;
+    }
+
+    this.rules[index] = rule;
+    return true;
+  };
+
+  private upsertRuleInList = (rule: AutomationRule): void => {
+    if (!this.replaceRuleInList(rule)) {
+      this.rules = [rule, ...this.rules];
+    }
+  };
+
+  private syncRule = (
+    rule: AutomationRule,
+    options?: { insertIfMissing?: boolean; setCurrent?: boolean },
+  ): void => {
+    if (options?.insertIfMissing) {
+      this.upsertRuleInList(rule);
+    } else {
+      this.replaceRuleInList(rule);
+    }
+
+    if (options?.setCurrent || this.currentRule?.id === rule.id) {
+      this.currentRule = rule;
+    }
+  };
 
   loadRules = async (
     params: AutomationRulesListParams = {},
@@ -125,13 +156,8 @@ export class AutomationStore {
     try {
       const rule = await automationApi.getById(id);
       runInAction(() => {
-        this.currentRule = rule;
         this.detailError = null;
-
-        const index = this.rules.findIndex((item) => item.id === id);
-        if (index >= 0) {
-          this.rules[index] = rule;
-        }
+        this.syncRule(rule, { setCurrent: true });
       });
       return rule;
     } catch (error) {
@@ -150,7 +176,7 @@ export class AutomationStore {
   };
 
   createRule = async (
-    payload: AutomationRuleCreatePayload,
+    payload: AutomationRulePayload,
   ): Promise<AutomationRule> => {
     runInAction(() => {
       this.saveLoading = true;
@@ -158,7 +184,9 @@ export class AutomationStore {
 
     try {
       const created = await automationApi.create(payload);
-      await this.loadRules({}, { silent: true });
+      runInAction(() => {
+        this.syncRule(created, { insertIfMissing: true });
+      });
       return created;
     } finally {
       runInAction(() => {
@@ -169,7 +197,7 @@ export class AutomationStore {
 
   updateRule = async (
     id: number,
-    payload: AutomationRuleUpdatePayload,
+    payload: AutomationRulePayload,
   ): Promise<AutomationRule> => {
     runInAction(() => {
       this.saveLoading = true;
@@ -178,11 +206,7 @@ export class AutomationStore {
     try {
       const updated = await automationApi.update(id, payload);
       runInAction(() => {
-        this.currentRule = updated;
-        const index = this.rules.findIndex((item) => item.id === id);
-        if (index >= 0) {
-          this.rules[index] = updated;
-        }
+        this.syncRule(updated, { setCurrent: true });
       });
       return updated;
     } finally {
@@ -203,13 +227,7 @@ export class AutomationStore {
     try {
       const updated = await automationApi.setActive(id, isActive);
       runInAction(() => {
-        const index = this.rules.findIndex((item) => item.id === id);
-        if (index >= 0) {
-          this.rules[index] = updated;
-        }
-        if (this.currentRule?.id === id) {
-          this.currentRule = updated;
-        }
+        this.syncRule(updated);
       });
       return updated;
     } finally {

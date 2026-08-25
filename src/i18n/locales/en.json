@@ -670,6 +670,7 @@
     "editTitle": "Edit automation",
     "backToList": "Automations",
     "active": "Active",
+    "inactive": "Inactive",
     "save": "Save",
     "delete": "Delete",
     "deleteConfirmTitle": "Delete this automation?",
@@ -746,10 +747,7 @@
       "units": {
         "minutes": "min",
         "hours": "h",
-        "days": "d",
-        "MINUTES": "min",
-        "HOURS": "h",
-        "DAYS": "d"
+        "days": "d"
       }
     },
     "summary": {

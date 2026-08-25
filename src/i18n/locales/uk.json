@@ -676,6 +676,7 @@
     "editTitle": "Редагувати автоматизацію",
     "backToList": "Автоматизації",
     "active": "Активна",
+    "inactive": "Неактивна",
     "save": "Зберегти",
     "delete": "Видалити",
     "deleteConfirmTitle": "Видалити цю автоматизацію?",
@@ -752,10 +753,7 @@
       "units": {
         "minutes": "хв",
         "hours": "год",
-        "days": "дн",
-        "MINUTES": "хв",
-        "HOURS": "год",
-        "DAYS": "дн"
+        "days": "дн"
       }
     },
     "summary": {

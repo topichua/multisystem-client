@@ -1,4 +1,4 @@
-import { Alert, Empty, Flex, Switch, Typography } from "antd";
+import { Alert, Card, Divider, Empty, Flex, Switch, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
@@ -14,8 +14,6 @@ import type {
 } from "@/features/integrations/model/integration.types";
 import { useIntegrationsStore } from "@/features/integrations/model/use-integrations-store";
 import { useNotification } from "@/shared/components/notification/use-notification";
-
-import * as S from "./settings-automation.styled";
 
 const { Text, Title } = Typography;
 
@@ -130,16 +128,20 @@ export const AutomationChannelSettings = observer(() => {
               </Flex>
             </Flex>
 
-            <S.ChannelIntegrationList>
-              {group.integrations.map((integration) => (
-                <S.ChannelIntegrationItem
-                  key={`${integration.type}:${integration.id}`}
-                >
+            <Flex vertical style={{ minWidth: 0 }}>
+              {group.integrations.map((integration, index) => (
+                <div key={`${integration.type}:${integration.id}`}>
+                  {index > 0 && <Divider style={{ margin: "18px 0" }} />}
                   <Flex vertical gap={8}>
                     <Text strong>{formatChannelName(integration)}</Text>
 
-                    <S.ChannelSettingRow>
-                      <S.ChannelSettingCopy>
+                    <Flex
+                      align="center"
+                      justify="space-between"
+                      gap={16}
+                      style={{ minWidth: 0 }}
+                    >
+                      <Flex vertical style={{ minWidth: 0 }}>
                         <Title level={5}>
                           {t("automation.channels.autoDistribution.title")}
                         </Title>
@@ -148,7 +150,7 @@ export const AutomationChannelSettings = observer(() => {
                             "automation.channels.autoDistribution.description",
                           )}
                         </Text>
-                      </S.ChannelSettingCopy>
+                      </Flex>
                       <Flex flex="0 0 auto">
                         <Switch
                           checked={integration.chat_auto_distribution === true}
@@ -166,24 +168,30 @@ export const AutomationChannelSettings = observer(() => {
                           data-qa={`settings-automation-channel-auto-distribution-${integration.type}-${integration.id}`}
                         />
                       </Flex>
-                    </S.ChannelSettingRow>
+                    </Flex>
                   </Flex>
-                </S.ChannelIntegrationItem>
+                </div>
               ))}
-            </S.ChannelIntegrationList>
+            </Flex>
           </Flex>
         ))}
       </Flex>
     );
 
   return (
-    <S.ChannelsCard data-qa="settings-automation-channels">
-      <S.ChannelsHeader>
-        <S.ChannelsTitle>{t("automation.channels.title")}</S.ChannelsTitle>
-        <Text type="secondary">{t("automation.channels.description")}</Text>
-      </S.ChannelsHeader>
+    <Card data-qa="settings-automation-channels">
+      <Flex vertical gap={24}>
+        <Flex vertical gap={4} style={{ minWidth: 0 }}>
+          <Title level={5}>{t("automation.channels.title")}</Title>
+          <Text type="secondary">{t("automation.channels.description")}</Text>
+        </Flex>
 
-      {loadError ? <Alert type="error" title={loadError} showIcon /> : content}
-    </S.ChannelsCard>
+        {loadError ? (
+          <Alert type="error" title={loadError} showIcon />
+        ) : (
+          content
+        )}
+      </Flex>
+    </Card>
   );
 });

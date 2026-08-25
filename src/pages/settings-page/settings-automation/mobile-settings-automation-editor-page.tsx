@@ -1,50 +1,27 @@
 import { ArrowLeftIcon, CheckIcon } from "@phosphor-icons/react";
-import { Alert, Button, Flex, Form, Popconfirm, Switch } from "antd";
+import { Button, Flex, Form, Popconfirm, Switch, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
 
-import { CenteredSpinner } from "@/components/loading/centered-spinner";
 import { dataQaAttrs } from "@/styled/data-qa-attrs";
 
 import * as MobileS from "../mobile-settings-page.styled";
+import { AutomationEditorFallback } from "./automation-editor-fallback";
 import { AutomationRuleFormFields } from "./automation-rule-form";
 import { useAutomationEditor } from "./use-automation-editor";
 import * as S from "./settings-automation.styled";
 
+const { Text } = Typography;
+
 export const MobileSettingsAutomationEditorPage = observer(() => {
   const { t } = useTranslation();
   const editor = useAutomationEditor();
+  const isActive = Form.useWatch("isActive", editor.form) ?? false;
 
-  if (editor.isInvalidId) {
+  if (editor.showFallback) {
     return (
       <MobileS.Root {...dataQaAttrs("settings-mobile-automation-editor")}>
-        <Alert type="error" title={t("automation.invalidId")} showIcon />
-      </MobileS.Root>
-    );
-  }
-
-  if (editor.isLoading) {
-    return (
-      <MobileS.Root {...dataQaAttrs("settings-mobile-automation-editor")}>
-        <CenteredSpinner />
-      </MobileS.Root>
-    );
-  }
-
-  if (editor.isNotFound) {
-    return (
-      <MobileS.Root {...dataQaAttrs("settings-mobile-automation-editor")}>
-        <Alert
-          type="warning"
-          title={t("automation.notFoundTitle")}
-          description={t("automation.notFound")}
-          showIcon
-          action={
-            <Button size="small" onClick={editor.navigateToList}>
-              {t("automation.backToList")}
-            </Button>
-          }
-        />
+        <AutomationEditorFallback editor={editor} />
       </MobileS.Root>
     );
   }
@@ -82,7 +59,9 @@ export const MobileSettingsAutomationEditorPage = observer(() => {
               >
                 <Switch data-qa="settings-automation-active-switch" />
               </Form.Item>
-              <S.ActiveLabel>{t("automation.active")}</S.ActiveLabel>
+              <Text type={isActive ? undefined : "secondary"}>
+                {isActive ? t("automation.active") : t("automation.inactive")}
+              </Text>
             </Flex>
 
             <Button
