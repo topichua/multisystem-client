@@ -40,6 +40,10 @@ type ChangeAuthPasswordResponse = {
   changed: boolean;
 };
 
+type AuthAvatarResponse = {
+  avatar_src: string | null;
+};
+
 export type RegisterStartRequest = {
   companyName: string;
   firstName: string;
@@ -112,11 +116,17 @@ export const authApi = {
     const formData = new FormData();
     formData.append("image", file, file.name);
 
-    const { data } = await apiClient.put<AuthSessionResponse>(
+    const { data } = await apiClient.put<AuthAvatarResponse>(
       "/auth/avatar",
       formData,
       axiosMultipartFormDataConfig(),
     );
+
+    return data;
+  },
+
+  deleteAvatar: async () => {
+    const { data } = await apiClient.delete<AuthAvatarResponse>("/auth/avatar");
 
     return data;
   },

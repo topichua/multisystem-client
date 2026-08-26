@@ -1,5 +1,5 @@
 import { ArrowLeftIcon } from "@phosphor-icons/react";
-import { Button, Form, Input, Upload } from "antd";
+import { Button, Flex, Form, Input, Popconfirm, Upload } from "antd";
 import ImgCrop from "antd-img-crop";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
@@ -23,9 +23,13 @@ export const MobileSettingsUserPage = observer(() => {
     profileSubtitle,
     roleLabel,
     profileSaving,
+    profileDirty,
     avatarUploading,
+    avatarDeleting,
+    markProfileDirty,
     handleProfileSubmit,
     handleAvatarBeforeUpload,
+    handleAvatarDelete,
   } = useSettingsUserForm();
 
   return (
@@ -70,28 +74,51 @@ export const MobileSettingsUserPage = observer(() => {
               </UserS.ProfileText>
             </UserS.ProfileIdentity>
 
-            <ImgCrop
-              aspect={1}
-              cropShape="round"
-              modalCancel={t("userSettings.cropAvatarCancel")}
-              modalOk={t("userSettings.cropAvatarOk")}
-              modalTitle={t("userSettings.cropAvatarTitle")}
-              quality={0.9}
-              rotationSlider
-              showReset
-            >
-              <Upload
-                accept="image/*"
-                beforeUpload={handleAvatarBeforeUpload}
-                disabled={avatarUploading}
-                maxCount={1}
-                showUploadList={false}
+            <Flex gap={8} vertical>
+              <ImgCrop
+                aspect={1}
+                cropShape="round"
+                modalCancel={t("userSettings.cropAvatarCancel")}
+                modalOk={t("userSettings.cropAvatarOk")}
+                modalTitle={t("userSettings.cropAvatarTitle")}
+                quality={0.9}
+                rotationSlider
+                showReset
               >
-                <Button block loading={avatarUploading}>
-                  {t("userSettings.changePhoto")}
-                </Button>
-              </Upload>
-            </ImgCrop>
+                <Upload
+                  accept="image/*"
+                  beforeUpload={handleAvatarBeforeUpload}
+                  disabled={avatarUploading || avatarDeleting}
+                  maxCount={1}
+                  showUploadList={false}
+                >
+                  <Button
+                    block
+                    loading={avatarUploading}
+                    disabled={avatarDeleting}
+                  >
+                    {t("userSettings.changePhoto")}
+                  </Button>
+                </Upload>
+              </ImgCrop>
+              {avatarSrc ? (
+                <Popconfirm
+                  title={t("userSettings.deletePhotoConfirmTitle")}
+                  okText={t("userSettings.deletePhoto")}
+                  okButtonProps={{ danger: true }}
+                  onConfirm={() => void handleAvatarDelete()}
+                >
+                  <Button
+                    danger
+                    block
+                    loading={avatarDeleting}
+                    disabled={avatarUploading}
+                  >
+                    {t("userSettings.deletePhoto")}
+                  </Button>
+                </Popconfirm>
+              ) : null}
+            </Flex>
           </UserS.MobileProfileSection>
 
           <MobileS.MobileFormDivider />
@@ -100,6 +127,7 @@ export const MobileSettingsUserPage = observer(() => {
             form={form}
             layout="vertical"
             requiredMark={false}
+            onValuesChange={markProfileDirty}
             onFinish={handleProfileSubmit}
           >
             <Form.Item
@@ -147,6 +175,7 @@ export const MobileSettingsUserPage = observer(() => {
                 block
                 htmlType="submit"
                 loading={profileSaving}
+                disabled={!profileDirty}
                 data-qa="settings-mobile-user-save"
               >
                 {t("userSettings.saveChanges")}

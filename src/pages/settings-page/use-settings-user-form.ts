@@ -18,17 +18,6 @@ export type UserSettingsFormValues = {
   email: string;
 };
 
-export type ChangeEmailFormValues = {
-  newEmail: string;
-  existingPassword: string;
-};
-
-export type ChangePasswordFormValues = {
-  existingPassword: string;
-  newPassword: string;
-  confirmPassword: string;
-};
-
 export function getRoleLabel(t: TFunction, role: AuthUserRole | null): string {
   if (!role) {
     return "";
@@ -43,12 +32,10 @@ export function useSettingsUserForm() {
   const userStore = useUserStore();
   const notification = useNotification();
   const [form] = Form.useForm<UserSettingsFormValues>();
-  const [emailForm] = Form.useForm<ChangeEmailFormValues>();
-  const [passwordForm] = Form.useForm<ChangePasswordFormValues>();
   const [profileSaving, setProfileSaving] = useState(false);
-  const [emailSaving, setEmailSaving] = useState(false);
-  const [passwordSaving, setPasswordSaving] = useState(false);
+  const [profileDirty, setProfileDirty] = useState(false);
   const [avatarUploading, setAvatarUploading] = useState(false);
+  const [avatarDeleting, setAvatarDeleting] = useState(false);
 
   const displayName = userStore.displayName ?? t("profile.user");
   const avatarSrc = userStore.user?.avatar_src ?? undefined;
@@ -75,6 +62,10 @@ export function useSettingsUserForm() {
     });
   }, [form, userStore.user]);
 
+  const markProfileDirty = useCallback(() => {
+    setProfileDirty(true);
+  }, []);
+
   const handleProfileSubmit = useCallback(
     async (values: UserSettingsFormValues) => {
       setProfileSaving(true);
@@ -86,6 +77,7 @@ export function useSettingsUserForm() {
           phone: values.phone?.trim() || undefined,
         });
         await userStore.loadAuth();
+        setProfileDirty(false);
         notification.success({ title: t("userSettings.profileUpdateSuccess") });
       } catch (error) {
         notification.error({
@@ -130,71 +122,37 @@ export function useSettingsUserForm() {
     [notification, t, userStore],
   );
 
-  const handleEmailSubmit = useCallback(
-    async (values: ChangeEmailFormValues) => {
-      setEmailSaving(true);
+  const handleAvatarDelete = useCallback(async () => {
+    setAvatarDeleting(true);
 
-      try {
-        await authApi.setEmail({
-          new_email: values.newEmail.trim(),
-          existing_password: values.existingPassword,
-        });
-        await userStore.loadAuth();
-        emailForm.resetFields();
-        notification.success({ title: t("userSettings.emailUpdateSuccess") });
-      } catch (error) {
-        notification.error({
-          title: getApiErrorMessage(error, t("userSettings.emailUpdateError")),
-        });
-      } finally {
-        setEmailSaving(false);
-      }
-    },
-    [emailForm, notification, t, userStore],
-  );
-
-  const handlePasswordSubmit = useCallback(
-    async (values: ChangePasswordFormValues) => {
-      setPasswordSaving(true);
-
-      try {
-        await authApi.changePassword({
-          existing_password: values.existingPassword,
-          new_password: values.newPassword,
-        });
-        passwordForm.resetFields();
-        notification.success({
-          title: t("userSettings.passwordUpdateSuccess"),
-        });
-      } catch (error) {
-        notification.error({
-          title: getApiErrorMessage(
-            error,
-            t("userSettings.passwordUpdateError"),
-          ),
-        });
-      } finally {
-        setPasswordSaving(false);
-      }
-    },
-    [notification, passwordForm, t],
-  );
+    try {
+      await authApi.deleteAvatar();
+      await userStore.loadAuth();
+      notification.success({
+        title: t("userSettings.avatarDeleteSuccess"),
+      });
+    } catch (error) {
+      notification.error({
+        title: getApiErrorMessage(error, t("userSettings.avatarDeleteError")),
+      });
+    } finally {
+      setAvatarDeleting(false);
+    }
+  }, [notification, t, userStore]);
 
   return {
     form,
-    emailForm,
-    passwordForm,
     displayName,
     avatarSrc,
     profileSubtitle,
     roleLabel,
     profileSaving,
-    emailSaving,
-    passwordSaving,
+    profileDirty,
     avatarUploading,
+    avatarDeleting,
+    markProfileDirty,
     handleProfileSubmit,
-    handleEmailSubmit,
-    handlePasswordSubmit,
     handleAvatarBeforeUpload,
+    handleAvatarDelete,
   };
 }

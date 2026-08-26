@@ -1474,6 +1474,8 @@
     "subtitle": "Personal details for your account.",
     "profileSubtitle": "{{role}} · {{company}}",
     "changePhoto": "Change photo",
+    "deletePhoto": "Delete photo",
+    "deletePhotoConfirmTitle": "Delete this photo?",
     "cropAvatarTitle": "Crop photo",
     "cropAvatarOk": "Save",
     "cropAvatarCancel": "Cancel",
@@ -1512,6 +1514,8 @@
     "profileUpdateError": "Could not update profile",
     "avatarUpdateSuccess": "Photo updated",
     "avatarUpdateError": "Could not update photo",
+    "avatarDeleteSuccess": "Photo deleted",
+    "avatarDeleteError": "Could not delete photo",
     "roles": {
       "super_admin": "Administrator",
       "account_owner": "Account owner"

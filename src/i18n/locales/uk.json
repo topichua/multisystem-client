@@ -1482,6 +1482,8 @@
     "subtitle": "Особисті дані вашого облікового запису.",
     "profileSubtitle": "{{role}} · {{company}}",
     "changePhoto": "Змінити фото",
+    "deletePhoto": "Видалити фото",
+    "deletePhotoConfirmTitle": "Видалити це фото?",
     "cropAvatarTitle": "Обрізати фото",
     "cropAvatarOk": "Зберегти",
     "cropAvatarCancel": "Скасувати",
@@ -1520,6 +1522,8 @@
     "profileUpdateError": "Не вдалося оновити профіль",
     "avatarUpdateSuccess": "Фото оновлено",
     "avatarUpdateError": "Не вдалося оновити фото",
+    "avatarDeleteSuccess": "Фото видалено",
+    "avatarDeleteError": "Не вдалося видалити фото",
     "roles": {
       "super_admin": "Адміністратор",
       "account_owner": "Власник акаунта"
