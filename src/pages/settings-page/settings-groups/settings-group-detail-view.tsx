@@ -6,7 +6,9 @@ import { useParams } from "react-router";
 import { PaneDetailLayout } from "@/components/layout/pane-detail-layout";
 import { CenteredSpinner } from "@/components/loading/centered-spinner";
 import { FormCard } from "@/components/layout/form-card";
+import { getConversationGroupDisplayName } from "@/features/conversation-groups/model/system-groups";
 
+import { ConversationGroupSystemBadge } from "./conversation-group-system-badge";
 import { GroupFormFields } from "./group-form-fields";
 import { useSettingsGroupEditor } from "./use-settings-group-editor";
 
@@ -25,6 +27,7 @@ export const SettingsGroupDetailView = observer(() => {
     handleSave,
     handleDelete,
     navigateToGroups,
+    isReadOnly,
   } = useSettingsGroupEditor(groupId);
 
   if (isInvalidId) {
@@ -61,30 +64,42 @@ export const SettingsGroupDetailView = observer(() => {
         <PaneDetailLayout.Header data-qa="layout-settings-group-detail-header">
           <Flex justify="space-between" align="flex-start" gap={16} wrap="wrap">
             <Flex vertical gap={4}>
-              <Title level={4} style={{ margin: 0 }}>
-                {group.name}
-              </Title>
-              <Text type="secondary">{t("groups.editHint")}</Text>
+              <Flex align="center" gap={8} wrap="wrap">
+                <Title level={4} style={{ margin: 0 }}>
+                  {getConversationGroupDisplayName(group, t)}
+                </Title>
+                {group.isSystem ? <ConversationGroupSystemBadge /> : null}
+              </Flex>
+              <Text type="secondary">
+                {t(isReadOnly ? "groups.readOnlyHint" : "groups.editHint")}
+              </Text>
             </Flex>
-            <Flex gap={8} align="center" wrap="wrap" style={{ flexShrink: 0 }}>
-              <Button
-                type="primary"
-                loading={store.saveLoading}
-                onClick={() => void handleSave()}
+            {isReadOnly ? null : (
+              <Flex
+                gap={8}
+                align="center"
+                wrap="wrap"
+                style={{ flexShrink: 0 }}
               >
-                {t("groups.saveChanges")}
-              </Button>
-              <Popconfirm
-                title={t("groups.deleteConfirmTitle")}
-                okText={t("groups.delete")}
-                okButtonProps={{ danger: true }}
-                onConfirm={handleDelete}
-              >
-                <Button danger loading={store.deleteLoadingId === group.id}>
-                  {t("groups.delete")}
+                <Button
+                  type="primary"
+                  loading={store.saveLoading}
+                  onClick={() => void handleSave()}
+                >
+                  {t("groups.saveChanges")}
                 </Button>
-              </Popconfirm>
-            </Flex>
+                <Popconfirm
+                  title={t("groups.deleteConfirmTitle")}
+                  okText={t("groups.delete")}
+                  okButtonProps={{ danger: true }}
+                  onConfirm={handleDelete}
+                >
+                  <Button danger loading={store.deleteLoadingId === group.id}>
+                    {t("groups.delete")}
+                  </Button>
+                </Popconfirm>
+              </Flex>
+            )}
           </Flex>
         </PaneDetailLayout.Header>
         <PaneDetailLayout.Body data-qa="layout-settings-group-detail-body">
@@ -93,6 +108,7 @@ export const SettingsGroupDetailView = observer(() => {
               <GroupFormFields
                 groups={store.groups}
                 editingGroupId={group.id}
+                disabled={isReadOnly}
               />
             </Form>
           </FormCard>

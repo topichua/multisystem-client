@@ -1,9 +1,6 @@
 import {
-  ArchiveIcon,
   CaretDoubleLeftIcon,
   CaretDoubleRightIcon,
-  ClockIcon,
-  WarningIcon,
 } from "@phosphor-icons/react";
 import type { Icon } from "@phosphor-icons/react";
 import { Empty, Typography } from "antd";
@@ -13,11 +10,13 @@ import { useTranslation } from "react-i18next";
 import { CenteredSpinner } from "@/components/loading/centered-spinner";
 import type { ConversationGroup } from "@/features/conversation-groups/model/conversation-group.types";
 import {
-  type FollowUpSystemGroupKey,
-  type FooterSystemGroupKey,
   getConversationGroupDisplayName,
   partitionConversationGroups,
 } from "@/features/conversation-groups/model/system-groups";
+import {
+  followUpSystemGroupIcons,
+  footerSystemGroupIcons,
+} from "@/features/conversation-groups/system-group-icons";
 import { useConversationGroupsStore } from "@/features/conversation-groups/model/use-conversation-groups-store";
 import { useEnsureConversationGroupsLoaded } from "@/features/conversation-groups/model/use-ensure-conversation-groups-loaded";
 import { useConversationsStore } from "@/features/conversations/model/use-conversations-store";
@@ -27,15 +26,6 @@ import { ConversationGroupFilterRow } from "./conversation-group-filter-row";
 import * as S from "./conversation-groups-pane.styled";
 
 const { Text, Title } = Typography;
-
-const followUpSystemGroupIcons: Record<FollowUpSystemGroupKey, Icon> = {
-  pending_follow_up: ClockIcon,
-};
-
-const footerSystemGroupIcons: Record<FooterSystemGroupKey, Icon> = {
-  archived: ArchiveIcon,
-  spam: WarningIcon,
-};
 
 type ConversationGroupsPaneProps = {
   collapsed: boolean;

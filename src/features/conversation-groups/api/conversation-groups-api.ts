@@ -24,9 +24,11 @@ const normalizeConversationGroup = ({
   conversationCount,
   createdById,
   description,
+  color,
   ...group
 }: ConversationGroupResponse): ConversationGroup => ({
   ...group,
+  color: color ?? "",
   description: description ?? "",
   createdById: createdById ?? null,
   counter: conversationCount ?? counter ?? 0,

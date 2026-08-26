@@ -96,9 +96,4 @@ export const getOrderedConversationGroups = (
 
 export const getManageableConversationGroups = (
   groups: ConversationGroup[],
-): ConversationGroup[] =>
-  [...groups]
-    .filter((group) => !isFollowUpSystemGroup(group))
-    .sort(
-      (firstGroup, secondGroup) => firstGroup.sortOrder - secondGroup.sortOrder,
-    );
+): ConversationGroup[] => partitionConversationGroups(groups).regularGroups;

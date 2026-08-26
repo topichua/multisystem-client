@@ -615,7 +615,7 @@
   "settings": {
     "title": "Settings",
     "menu": {
-      "groups": "Groups",
+      "groups": "Conversation statuses",
       "templates": "Templates",
       "statuses": "Order statuses",
       "automation": "Automation",
@@ -631,7 +631,7 @@
     },
     "mobile": {
       "descriptions": {
-        "groups": "Create and manage conversation groups.",
+        "groups": "Create and manage conversation statuses.",
         "templates": "Create and edit reusable replies.",
         "statuses": "Configure order workflow statuses.",
         "automation": "Automatically update order status, conversation group, or send a client message based on delivery, payment, or order status conditions.",
@@ -890,7 +890,7 @@
   },
   "templates": {
     "title": "Templates",
-    "createTemplate": "Create template",
+    "createTemplate": "New template",
     "filterAria": "Filter templates by type",
     "filters": {
       "all": "All",
@@ -1418,33 +1418,34 @@
     }
   },
   "groups": {
-    "title": "Groups",
-    "createGroup": "Create group",
-    "noGroupsYet": "No groups yet",
-    "editHint": "Edit name, description, and color for this group.",
+    "title": "Conversation statuses",
+    "createGroup": "New status",
+    "noGroupsYet": "No statuses yet",
+    "editHint": "Edit name, description, and color for this status.",
+    "readOnlyHint": "This system status cannot be edited.",
     "saveChanges": "Save changes",
     "delete": "Delete",
-    "deleteConfirmTitle": "Delete this group?",
-    "modalCreateTitle": "Create group",
-    "modalEditTitle": "Edit group",
+    "deleteConfirmTitle": "Delete this status?",
+    "modalCreateTitle": "Create status",
+    "modalEditTitle": "Edit status",
     "modalOk": "Save",
-    "created": "Group created",
-    "updated": "Group updated",
-    "deleted": "Group deleted",
-    "createError": "Could not create group",
-    "updateError": "Could not update group",
-    "deleteError": "Could not delete group",
-    "invalidGroup": "Invalid group",
-    "notFoundTitle": "Group not found",
+    "created": "Status created",
+    "updated": "Status updated",
+    "deleted": "Status deleted",
+    "createError": "Could not create status",
+    "updateError": "Could not update status",
+    "deleteError": "Could not delete status",
+    "invalidGroup": "Invalid status",
+    "notFoundTitle": "Status not found",
     "notFoundDescription": "It may have been deleted.",
-    "backToGroups": "Back to groups",
+    "backToGroups": "Back to statuses",
     "fieldName": "Name",
     "fieldDescription": "Description",
     "fieldColor": "Color",
     "nameRequired": "Enter name",
-    "duplicateName": "A group with this name already exists",
+    "duplicateName": "A status with this name already exists",
     "pickColor": "Pick a color",
-    "colorPickerAria": "Group color",
+    "colorPickerAria": "Status color",
     "conversationGroupsFilterAria": "Conversation groups filter",
     "groupsPaneTitle": "Groups",
     "groupsPaneHint": "Segment conversations by status",
@@ -1453,6 +1454,7 @@
     "expandGroupsPaneAria": "Expand groups pane",
     "noGroupsEmpty": "No groups",
     "updateConversationGroupError": "Could not update conversation group",
+    "systemBadge": "SYSTEM",
     "systemKeys": {
       "new": "New",
       "processing": "Processing",
@@ -1462,9 +1464,9 @@
     },
     "mobile": {
       "backToSettingsAria": "Back to settings",
-      "createGroupAria": "Create group",
-      "editorFallbackTitle": "Group",
-      "deleteAria": "Delete group"
+      "createGroupAria": "Create status",
+      "editorFallbackTitle": "Status",
+      "deleteAria": "Delete status"
     }
   },
   "userSettings": {

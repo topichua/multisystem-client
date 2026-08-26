@@ -76,7 +76,7 @@ export class ConversationGroupsStore {
 
     try {
       await conversationGroupsApi.create(payload);
-      await this.loadGroups({ silent: true });
+      await this.loadGroups({ silent: true, includeDistribution: true });
     } finally {
       runInAction(() => {
         this.saveLoading = false;
@@ -94,7 +94,7 @@ export class ConversationGroupsStore {
 
     try {
       await conversationGroupsApi.update(id, payload);
-      await this.loadGroups({ silent: true });
+      await this.loadGroups({ silent: true, includeDistribution: true });
     } finally {
       runInAction(() => {
         this.saveLoading = false;
@@ -109,7 +109,7 @@ export class ConversationGroupsStore {
 
     try {
       await conversationGroupsApi.delete(id);
-      await this.loadGroups({ silent: true });
+      await this.loadGroups({ silent: true, includeDistribution: true });
     } finally {
       runInAction(() => {
         this.deleteLoadingId = null;

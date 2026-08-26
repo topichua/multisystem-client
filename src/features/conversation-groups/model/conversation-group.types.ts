@@ -14,9 +14,10 @@ export type ConversationGroup = {
 
 export type ConversationGroupResponse = Omit<
   ConversationGroup,
-  "description" | "counter" | "createdById"
+  "description" | "counter" | "createdById" | "color"
 > & {
   description: string | null;
+  color: string | null;
   createdById?: number | null;
   conversationCount?: number | null;
   counter?: number | null;

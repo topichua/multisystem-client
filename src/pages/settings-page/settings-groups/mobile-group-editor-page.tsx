@@ -5,7 +5,9 @@ import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
 
 import { CenteredSpinner } from "@/components/loading/centered-spinner";
+import { getConversationGroupDisplayName } from "@/features/conversation-groups/model/system-groups";
 
+import { ConversationGroupSystemBadge } from "./conversation-group-system-badge";
 import { GroupFormFields } from "./group-form-fields";
 import * as S from "./mobile-group-editor-page.styled";
 import { useSettingsGroupEditor } from "./use-settings-group-editor";
@@ -23,6 +25,7 @@ export const MobileGroupEditorPage = observer(() => {
     handleSave,
     handleDelete,
     navigateToGroups,
+    isReadOnly,
   } = useSettingsGroupEditor(groupId);
 
   if (isInvalidId) {
@@ -69,7 +72,9 @@ export const MobileGroupEditorPage = observer(() => {
     return null;
   }
 
-  const pageTitle = group.name.trim() || t("groups.mobile.editorFallbackTitle");
+  const pageTitle =
+    getConversationGroupDisplayName(group, t).trim() ||
+    t("groups.mobile.editorFallbackTitle");
 
   return (
     <S.Root>
@@ -85,6 +90,7 @@ export const MobileGroupEditorPage = observer(() => {
 
         <S.HeaderRow align="center" gap={8}>
           <S.PageTitle level={4}>{pageTitle}</S.PageTitle>
+          {group.isSystem ? <ConversationGroupSystemBadge /> : null}
         </S.HeaderRow>
       </S.PageHeader>
 
@@ -95,40 +101,46 @@ export const MobileGroupEditorPage = observer(() => {
             layout="vertical"
             onFinish={() => void handleSave()}
           >
-            <GroupFormFields groups={store.groups} editingGroupId={group.id} />
+            <GroupFormFields
+              groups={store.groups}
+              editingGroupId={group.id}
+              disabled={isReadOnly}
+            />
           </Form>
         </S.FormSection>
 
-        <S.FooterActions vertical gap={8}>
-          <Button
-            type="primary"
-            block
-            loading={store.saveLoading}
-            data-qa="settings-mobile-group-save"
-            onClick={() => void handleSave()}
-          >
-            {t("groups.saveChanges")}
-          </Button>
-          <Popconfirm
-            title={t("groups.deleteConfirmTitle")}
-            okText={t("groups.delete")}
-            okButtonProps={{
-              danger: true,
-              loading: store.deleteLoadingId === group.id,
-            }}
-            onConfirm={() => void handleDelete()}
-          >
+        {isReadOnly ? null : (
+          <S.FooterActions vertical gap={8}>
             <Button
-              danger
+              type="primary"
               block
-              loading={store.deleteLoadingId === group.id}
-              data-qa="settings-mobile-group-delete"
-              aria-label={t("groups.mobile.deleteAria")}
+              loading={store.saveLoading}
+              data-qa="settings-mobile-group-save"
+              onClick={() => void handleSave()}
             >
-              {t("groups.delete")}
+              {t("groups.saveChanges")}
             </Button>
-          </Popconfirm>
-        </S.FooterActions>
+            <Popconfirm
+              title={t("groups.deleteConfirmTitle")}
+              okText={t("groups.delete")}
+              okButtonProps={{
+                danger: true,
+                loading: store.deleteLoadingId === group.id,
+              }}
+              onConfirm={() => void handleDelete()}
+            >
+              <Button
+                danger
+                block
+                loading={store.deleteLoadingId === group.id}
+                data-qa="settings-mobile-group-delete"
+                aria-label={t("groups.mobile.deleteAria")}
+              >
+                {t("groups.delete")}
+              </Button>
+            </Popconfirm>
+          </S.FooterActions>
+        )}
       </S.ScrollRegion>
     </S.Root>
   );

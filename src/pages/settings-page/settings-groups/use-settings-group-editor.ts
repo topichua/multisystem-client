@@ -6,6 +6,11 @@ import { useNavigate } from "react-router";
 import { getApiErrorMessage } from "@/api/get-api-error-message";
 import { getSettingsGroupPath, pagesMap } from "@/app/router/pages-map";
 import type { ConversationGroupWritePayload } from "@/features/conversation-groups/model/conversation-group.types";
+import {
+  getConversationGroupDisplayName,
+  getManageableConversationGroups,
+  isFollowUpSystemGroup,
+} from "@/features/conversation-groups/model/system-groups";
 import { useConversationGroupsStore } from "@/features/conversation-groups/model/use-conversation-groups-store";
 import { useNotification } from "@/shared/components/notification/use-notification";
 
@@ -31,15 +36,15 @@ export function useSettingsGroupEditor(groupId: string | undefined) {
   useEffect(() => {
     if (group) {
       form.setFieldsValue({
-        name: group.name,
+        name: getConversationGroupDisplayName(group, t),
         description: group.description,
         color: group.color,
       });
     }
-  }, [form, group]);
+  }, [form, group, t]);
 
   const pickNavigateAfterDelete = useCallback(() => {
-    const sorted = [...store.groups].sort((a, b) => a.sortOrder - b.sortOrder);
+    const sorted = getManageableConversationGroups(store.groups);
     const idx = sorted.findIndex((item) => item.id === idNum);
     const next = sorted[idx + 1] ?? sorted[idx - 1];
     if (next) {
@@ -50,7 +55,7 @@ export function useSettingsGroupEditor(groupId: string | undefined) {
   }, [idNum, navigate, store.groups]);
 
   const handleSave = useCallback(async () => {
-    if (!group) {
+    if (!group || isFollowUpSystemGroup(group)) {
       return;
     }
 
@@ -80,7 +85,7 @@ export function useSettingsGroupEditor(groupId: string | undefined) {
   }, [form, group, notification, store, t]);
 
   const handleDelete = useCallback(async () => {
-    if (!group) {
+    if (!group || isFollowUpSystemGroup(group)) {
       return;
     }
 
@@ -103,6 +108,7 @@ export function useSettingsGroupEditor(groupId: string | undefined) {
     isInvalidId: !Number.isFinite(idNum),
     isLoading: store.listLoading && !group,
     isNotFound: !store.listLoading && !group,
+    isReadOnly: group != null && isFollowUpSystemGroup(group),
     handleSave,
     handleDelete,
     navigateToGroups: () => navigate(pagesMap.settingsGroups),

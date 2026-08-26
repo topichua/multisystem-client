@@ -124,6 +124,23 @@ export const GroupItemButton = styled(Button)`
   }
 `;
 
+export const GroupItemStatic = styled.div`
+  width: 100%;
+  min-height: 48px;
+  padding: 12px;
+  box-sizing: border-box;
+  color: ${({ theme }) => theme.colors.functional.text.primary};
+
+  &:not(:first-child) {
+    border-top: 1px solid ${({ theme }) => theme.colors.functional.border.split};
+  }
+`;
+
+export const ListDivider = styled.div`
+  height: 1px;
+  background: ${({ theme }) => theme.colors.functional.border.split};
+`;
+
 export const ItemContent = styled(Flex)`
   && {
     width: 100%;
@@ -159,6 +176,8 @@ export const ItemCopy = styled(Flex)`
 export const ItemTitle = styled(Typography.Text)`
   && {
     display: block;
+    min-width: 0;
+    flex: 1 1 auto;
     max-width: 100%;
     color: ${({ theme }) => theme.colors.functional.text.heading};
     font-size: ${({ theme }) => theme.fontSize.medium};
@@ -180,6 +199,16 @@ export const ItemPreview = styled(Typography.Text)`
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+`;
+
+export const ItemCount = styled(Typography.Text)`
+  && {
+    flex: 0 0 auto;
+    color: ${({ theme }) => theme.colors.functional.text.subdued};
+    font-size: ${({ theme }) => theme.fontSize.small};
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
   }
 `;
 

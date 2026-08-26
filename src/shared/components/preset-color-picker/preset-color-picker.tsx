@@ -12,6 +12,7 @@ export type PresetColorPickerProps = {
   presets?: readonly string[];
   ariaLabel: string;
   columns?: number;
+  disabled?: boolean;
 };
 
 export const PresetColorPicker = ({
@@ -20,6 +21,7 @@ export const PresetColorPicker = ({
   presets: presetValues = COLOR_PRESETS,
   ariaLabel,
   columns,
+  disabled = false,
 }: PresetColorPickerProps) => {
   const presets = useMemo(() => {
     const base = [...presetValues];
@@ -57,6 +59,7 @@ export const PresetColorPicker = ({
               type="button"
               role="option"
               aria-selected={selected}
+              disabled={disabled}
               onClick={() => onChange?.(hex)}
               style={{
                 position: "relative",
@@ -69,7 +72,8 @@ export const PresetColorPicker = ({
                 borderRadius: "50%",
                 background: hex,
                 border: "2px solid rgba(0, 0, 0, 0.12)",
-                cursor: "pointer",
+                cursor: disabled ? "default" : "pointer",
+                opacity: disabled ? 0.6 : 1,
                 flexShrink: 0,
                 boxSizing: "border-box",
               }}

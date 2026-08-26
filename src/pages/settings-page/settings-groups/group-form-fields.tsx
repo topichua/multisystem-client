@@ -18,11 +18,13 @@ export type GroupFormValues = Pick<
 type GroupFormFieldsProps = {
   groups: ConversationGroup[];
   editingGroupId?: number | null;
+  disabled?: boolean;
 };
 
 export const GroupFormFields = ({
   groups,
   editingGroupId,
+  disabled = false,
 }: GroupFormFieldsProps) => {
   const { t } = useTranslation();
   const isMobileViewport = useIsMobileViewport();
@@ -36,7 +38,7 @@ export const GroupFormFields = ({
           { required: true, message: t("groups.nameRequired") },
           {
             validator: async (_, value: string) => {
-              if (value == null || String(value).trim() === "") {
+              if (disabled || value == null || String(value).trim() === "") {
                 return;
               }
 
@@ -49,23 +51,22 @@ export const GroupFormFields = ({
           },
         ]}
       >
-        <Input />
+        <Input disabled={disabled} />
       </Form.Item>
-      <Form.Item
-        name="description"
-        label={t("groups.fieldDescription")}
-        rules={[{ required: true }]}
-      >
-        <Input.TextArea rows={3} />
+      <Form.Item name="description" label={t("groups.fieldDescription")}>
+        <Input.TextArea rows={3} disabled={disabled} />
       </Form.Item>
       <Form.Item
         name="color"
         label={t("groups.fieldColor")}
-        rules={[{ required: true, message: t("groups.pickColor") }]}
+        rules={
+          disabled ? [] : [{ required: true, message: t("groups.pickColor") }]
+        }
       >
         <PresetColorPicker
           ariaLabel={t("groups.colorPickerAria")}
           columns={isMobileViewport ? 5 : undefined}
+          disabled={disabled}
         />
       </Form.Item>
     </>

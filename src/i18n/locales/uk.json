@@ -621,7 +621,7 @@
   "settings": {
     "title": "Налаштування",
     "menu": {
-      "groups": "Групи",
+      "groups": "Статуси розмов",
       "templates": "Шаблони",
       "statuses": "Статуси замовлень",
       "automation": "Автоматизація",
@@ -637,7 +637,7 @@
     },
     "mobile": {
       "descriptions": {
-        "groups": "Створюйте й керуйте групами розмов.",
+        "groups": "Створюйте й керуйте статусами розмов.",
         "templates": "Створюйте й редагуйте готові відповіді.",
         "statuses": "Налаштовуйте статуси робочого процесу замовлень.",
         "automation": "Автоматично змінюйте статус замовлення, групу чату або надсилайте повідомлення клієнту за умовами доставки, оплати чи статусу замовлення.",
@@ -896,7 +896,7 @@
   },
   "templates": {
     "title": "Шаблони",
-    "createTemplate": "Створити шаблон",
+    "createTemplate": "Новий шаблон",
     "filterAria": "Фільтр шаблонів за типом",
     "filters": {
       "all": "Усі",
@@ -1426,33 +1426,34 @@
     }
   },
   "groups": {
-    "title": "Групи",
-    "createGroup": "Створити групу",
-    "noGroupsYet": "Поки немає груп",
-    "editHint": "Змініть назву, опис і колір для цієї групи.",
+    "title": "Статуси розмов",
+    "createGroup": "Новий статус",
+    "noGroupsYet": "Поки немає статусів",
+    "editHint": "Змініть назву, опис і колір для цього статусу.",
+    "readOnlyHint": "Цей системний статус не можна змінити.",
     "saveChanges": "Зберегти зміни",
     "delete": "Видалити",
-    "deleteConfirmTitle": "Видалити цю групу?",
-    "modalCreateTitle": "Створити групу",
-    "modalEditTitle": "Редагувати групу",
+    "deleteConfirmTitle": "Видалити цей статус?",
+    "modalCreateTitle": "Створити статус",
+    "modalEditTitle": "Редагувати статус",
     "modalOk": "Зберегти",
-    "created": "Групу створено",
-    "updated": "Групу оновлено",
-    "deleted": "Групу видалено",
-    "createError": "Не вдалося створити групу",
-    "updateError": "Не вдалося оновити групу",
-    "deleteError": "Не вдалося видалити групу",
-    "invalidGroup": "Некоректна група",
-    "notFoundTitle": "Групу не знайдено",
-    "notFoundDescription": "Можливо, її вже видалили.",
-    "backToGroups": "Назад до груп",
+    "created": "Статус створено",
+    "updated": "Статус оновлено",
+    "deleted": "Статус видалено",
+    "createError": "Не вдалося створити статус",
+    "updateError": "Не вдалося оновити статус",
+    "deleteError": "Не вдалося видалити статус",
+    "invalidGroup": "Некоректний статус",
+    "notFoundTitle": "Статус не знайдено",
+    "notFoundDescription": "Можливо, його вже видалили.",
+    "backToGroups": "Назад до статусів",
     "fieldName": "Назва",
     "fieldDescription": "Опис",
     "fieldColor": "Колір",
     "nameRequired": "Введіть назву",
-    "duplicateName": "Група з такою назвою вже існує",
+    "duplicateName": "Статус з такою назвою вже існує",
     "pickColor": "Оберіть колір",
-    "colorPickerAria": "Колір групи",
+    "colorPickerAria": "Колір статусу",
     "conversationGroupsFilterAria": "Фільтр груп розмов",
     "groupsPaneTitle": "Групи",
     "groupsPaneHint": "Сегментуйте розмови за статусом",
@@ -1461,6 +1462,7 @@
     "expandGroupsPaneAria": "Розгорнути панель груп",
     "noGroupsEmpty": "Немає груп",
     "updateConversationGroupError": "Не вдалося оновити групу розмови",
+    "systemBadge": "СИСТЕМНИЙ",
     "systemKeys": {
       "new": "Новий",
       "processing": "Обробка",
@@ -1470,9 +1472,9 @@
     },
     "mobile": {
       "backToSettingsAria": "До налаштувань",
-      "createGroupAria": "Створити групу",
-      "editorFallbackTitle": "Група",
-      "deleteAria": "Видалити групу"
+      "createGroupAria": "Створити статус",
+      "editorFallbackTitle": "Статус",
+      "deleteAria": "Видалити статус"
     }
   },
   "userSettings": {

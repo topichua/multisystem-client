@@ -7,11 +7,16 @@ import { useNavigate, useOutletContext } from "react-router";
 
 import { getSettingsGroupPath, pagesMap } from "@/app/router/pages-map";
 import { CenteredSpinner } from "@/components/loading/centered-spinner";
-import { getManageableConversationGroups } from "@/features/conversation-groups/model/system-groups";
+import type { ConversationGroup } from "@/features/conversation-groups/model/conversation-group.types";
+import {
+  getConversationGroupDisplayName,
+  partitionConversationGroups,
+} from "@/features/conversation-groups/model/system-groups";
 import { useConversationGroupsStore } from "@/features/conversation-groups/model/use-conversation-groups-store";
+import { getSpecialSystemGroupIcon } from "@/features/conversation-groups/system-group-icons";
 
-import type { SettingsGroupsOutletContext } from "./settings-groups-layout";
 import * as S from "./mobile-groups-list-page.styled";
+import type { SettingsGroupsOutletContext } from "./settings-groups-layout";
 
 export const MobileGroupsListPage = observer(() => {
   const { t } = useTranslation();
@@ -19,10 +24,68 @@ export const MobileGroupsListPage = observer(() => {
   const store = useConversationGroupsStore();
   const { onCreateClick } = useOutletContext<SettingsGroupsOutletContext>();
 
-  const sortedGroups = useMemo(
-    () => getManageableConversationGroups(store.groups),
+  const { regularGroups, followUpSystemGroups, footerSystemGroups } = useMemo(
+    () => partitionConversationGroups(store.groups),
     [store.groups],
   );
+  const lockedGroups = useMemo(
+    () => [...followUpSystemGroups, ...footerSystemGroups],
+    [followUpSystemGroups, footerSystemGroups],
+  );
+  const hasGroups = regularGroups.length > 0 || lockedGroups.length > 0;
+
+  const renderRegularGroup = (group: ConversationGroup) => {
+    const secondaryLine = group.description.trim();
+    const displayName = getConversationGroupDisplayName(group, t);
+
+    return (
+      <S.GroupItemButton
+        key={group.id}
+        type="text"
+        block
+        data-qa={`settings-mobile-group-item-${group.id}`}
+        onClick={() => navigate(getSettingsGroupPath(group.id))}
+      >
+        <S.ItemContent align="center" gap={12}>
+          <S.ColorIconSlot aria-hidden="true">
+            <S.ColorDot $color={group.color || "transparent"} />
+          </S.ColorIconSlot>
+          <S.ItemCopy vertical gap={secondaryLine ? 2 : 0}>
+            <S.ItemTitle>{displayName}</S.ItemTitle>
+            {secondaryLine ? (
+              <S.ItemPreview>{secondaryLine}</S.ItemPreview>
+            ) : null}
+          </S.ItemCopy>
+          <S.ItemCount>{group.counter}</S.ItemCount>
+          <S.Caret aria-hidden="true">
+            <CaretRightIcon size={18} />
+          </S.Caret>
+        </S.ItemContent>
+      </S.GroupItemButton>
+    );
+  };
+
+  const renderLockedGroup = (group: ConversationGroup) => {
+    const displayName = getConversationGroupDisplayName(group, t);
+    const IconComponent = getSpecialSystemGroupIcon(group);
+
+    return (
+      <S.GroupItemStatic
+        key={group.id}
+        data-qa={`settings-mobile-group-item-${group.id}`}
+      >
+        <S.ItemContent align="center" gap={12}>
+          <S.ColorIconSlot aria-hidden="true">
+            {IconComponent ? <IconComponent size={18} /> : null}
+          </S.ColorIconSlot>
+          <S.ItemCopy>
+            <S.ItemTitle>{displayName}</S.ItemTitle>
+          </S.ItemCopy>
+          <S.ItemCount>{group.counter}</S.ItemCount>
+        </S.ItemContent>
+      </S.GroupItemStatic>
+    );
+  };
 
   return (
     <S.Root>
@@ -48,11 +111,11 @@ export const MobileGroupsListPage = observer(() => {
         </S.CreateButton>
       </S.Header>
 
-      {store.listLoading && sortedGroups.length === 0 ? (
+      {store.listLoading && !hasGroups ? (
         <S.StateContainer>
           <CenteredSpinner minHeight={160} />
         </S.StateContainer>
-      ) : sortedGroups.length === 0 ? (
+      ) : !hasGroups ? (
         <S.StateContainer>
           <Empty
             image={Empty.PRESENTED_IMAGE_SIMPLE}
@@ -61,34 +124,11 @@ export const MobileGroupsListPage = observer(() => {
         </S.StateContainer>
       ) : (
         <S.ListCard>
-          {sortedGroups.map((group) => {
-            const secondaryLine = group.description.trim();
-
-            return (
-              <S.GroupItemButton
-                key={group.id}
-                type="text"
-                block
-                data-qa={`settings-mobile-group-item-${group.id}`}
-                onClick={() => navigate(getSettingsGroupPath(group.id))}
-              >
-                <S.ItemContent align="center" gap={12}>
-                  <S.ColorIconSlot aria-hidden="true">
-                    <S.ColorDot $color={group.color} />
-                  </S.ColorIconSlot>
-                  <S.ItemCopy vertical gap={secondaryLine ? 2 : 0}>
-                    <S.ItemTitle>{group.name}</S.ItemTitle>
-                    {secondaryLine && (
-                      <S.ItemPreview>{secondaryLine}</S.ItemPreview>
-                    )}
-                  </S.ItemCopy>
-                  <S.Caret aria-hidden="true">
-                    <CaretRightIcon size={18} />
-                  </S.Caret>
-                </S.ItemContent>
-              </S.GroupItemButton>
-            );
-          })}
+          {regularGroups.map(renderRegularGroup)}
+          {regularGroups.length > 0 && lockedGroups.length > 0 ? (
+            <S.ListDivider />
+          ) : null}
+          {lockedGroups.map(renderLockedGroup)}
         </S.ListCard>
       )}
     </S.Root>

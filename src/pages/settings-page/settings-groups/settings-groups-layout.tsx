@@ -1,5 +1,4 @@
-import type { MenuProps } from "antd";
-import { Button, Form, Menu } from "antd";
+import { Button, Form } from "antd";
 import { observer } from "mobx-react-lite";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -14,14 +13,20 @@ import {
 } from "@/components/layout/pane-frame";
 import { PaneNavSplitLayout } from "@/components/layout/pane-nav-split-layout";
 import type { ConversationGroupWritePayload } from "@/features/conversation-groups/model/conversation-group.types";
-import { getManageableConversationGroups } from "@/features/conversation-groups/model/system-groups";
+import {
+  getConversationGroupDisplayName,
+  partitionConversationGroups,
+} from "@/features/conversation-groups/model/system-groups";
 import { useConversationGroupsStore } from "@/features/conversation-groups/model/use-conversation-groups-store";
-import { ColorLabelRow } from "@/shared/components/color-label-row/color-label-row";
+import { getSpecialSystemGroupIcon } from "@/features/conversation-groups/system-group-icons";
 import { DEFAULT_COLOR_PRESET } from "@/shared/components/preset-color-picker/color-presets";
-
-import { GroupFormModal, type GroupFormValues } from "./group-form-modal";
 import { useNotification } from "@/shared/components/notification/use-notification";
 import { useIsMobileViewport } from "@/utils/use-media-query";
+
+import { GroupFormModal, type GroupFormValues } from "./group-form-modal";
+import { SettingsGroupNavRow } from "./settings-group-nav-row";
+import * as S from "./settings-groups-layout.styled";
+import { PlusIcon } from "@phosphor-icons/react";
 
 export const SettingsGroupsLayout = observer(() => {
   const { t } = useTranslation();
@@ -34,21 +39,17 @@ export const SettingsGroupsLayout = observer(() => {
   const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
-    void store.loadGroups();
+    void store.loadGroups({ includeDistribution: true });
   }, [store]);
 
-  const sortedGroups = useMemo(
-    () => getManageableConversationGroups(store.groups),
+  const { regularGroups, followUpSystemGroups, footerSystemGroups } = useMemo(
+    () => partitionConversationGroups(store.groups),
     [store.groups],
   );
 
-  const menuItems: MenuProps["items"] = useMemo(
-    () =>
-      sortedGroups.map((g) => ({
-        key: getSettingsGroupPath(g.id),
-        label: <ColorLabelRow name={g.name} color={g.color} />,
-      })),
-    [sortedGroups],
+  const lockedGroups = useMemo(
+    () => [...followUpSystemGroups, ...footerSystemGroups],
+    [followUpSystemGroups, footerSystemGroups],
   );
 
   const openCreate = useCallback(() => {
@@ -115,20 +116,40 @@ export const SettingsGroupsLayout = observer(() => {
           <PaneNavSplitLayout.SubSidebar data-qa="layout-settings-groups-sidebar">
             <PaneSectionHeaderStack data-qa="layout-settings-groups-header">
               <PaneSectionTitle>{t("groups.title")}</PaneSectionTitle>
-              <Button type="primary" onClick={openCreate}>
+              <Button icon={<PlusIcon />} type="primary" onClick={openCreate}>
                 {t("groups.createGroup")}
               </Button>
             </PaneSectionHeaderStack>
             <PaneScrollRegion data-qa="layout-settings-groups-nav-scroll">
-              <div data-qa="layout-settings-groups-nav">
-                <Menu
-                  mode="inline"
-                  selectedKeys={[location.pathname]}
-                  items={menuItems}
-                  onClick={({ key }) => navigate(String(key))}
-                  style={{ borderInlineEnd: "none" }}
-                />
-              </div>
+              <S.GroupList data-qa="layout-settings-groups-nav">
+                {regularGroups.map((group) => (
+                  <SettingsGroupNavRow
+                    key={group.id}
+                    color={group.color}
+                    count={group.counter}
+                    isSystem={group.isSystem}
+                    dataQa={`settings-group-nav-${group.id}`}
+                    name={getConversationGroupDisplayName(group, t)}
+                    selected={
+                      location.pathname === getSettingsGroupPath(group.id)
+                    }
+                    onClick={() => navigate(getSettingsGroupPath(group.id))}
+                  />
+                ))}
+                {regularGroups.length > 0 && lockedGroups.length > 0 ? (
+                  <S.GroupListDivider />
+                ) : null}
+                {lockedGroups.map((group) => (
+                  <SettingsGroupNavRow
+                    key={group.id}
+                    count={group.counter}
+                    isSystem={group.isSystem}
+                    dataQa={`settings-group-nav-${group.id}`}
+                    icon={getSpecialSystemGroupIcon(group)}
+                    name={getConversationGroupDisplayName(group, t)}
+                  />
+                ))}
+              </S.GroupList>
             </PaneScrollRegion>
           </PaneNavSplitLayout.SubSidebar>
           <PaneNavSplitLayout.SubMain data-qa="layout-settings-groups-main">
