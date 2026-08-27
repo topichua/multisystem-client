@@ -5,7 +5,6 @@ import {
   GlobeIcon,
   MoonIcon,
   SunIcon,
-  TranslateIcon,
 } from "@phosphor-icons/react";
 import {
   Alert,
@@ -29,11 +28,6 @@ import { pagesMap } from "@/app/router/pages-map";
 import { FormDivider } from "@/components/layout/form-card";
 import { useUserStore } from "@/features/auth/model/use-user-store";
 import { useWorkspaceSettingsStore } from "@/features/workspace-settings/model/use-workspace-settings-store";
-import {
-  toUiLanguage,
-  toWorkspaceLanguage,
-  type UiLanguage,
-} from "@/features/workspace-settings/model/workspace-language";
 import {
   WORKSPACE_CURRENCIES,
   type WorkspaceCurrency,
@@ -74,12 +68,6 @@ export const SettingsSystemPreferences = observer(
     const isMobile = layout === "mobile";
     const userId = userStore.user?.id;
 
-    const langValue: UiLanguage = workspaceSettingsStore.language
-      ? toUiLanguage(workspaceSettingsStore.language)
-      : i18n.language.startsWith("uk")
-        ? "uk"
-        : "en";
-
     useEffect(() => {
       if (
         !workspaceSettingsStore.initialized &&
@@ -115,25 +103,6 @@ export const SettingsSystemPreferences = observer(
       [notification, t, workspaceSettingsStore],
     );
 
-    const handleLanguageChange = useCallback(
-      async (uiLanguage: UiLanguage) => {
-        const previousUiLanguage = langValue;
-
-        try {
-          await i18n.changeLanguage(uiLanguage);
-          await workspaceSettingsStore.updateLanguage(
-            toWorkspaceLanguage(uiLanguage),
-          );
-        } catch (e) {
-          await i18n.changeLanguage(previousUiLanguage);
-          notification.error({
-            title: getApiErrorMessage(e, t("system.languageSaveError")),
-          });
-        }
-      },
-      [i18n, langValue, notification, t, workspaceSettingsStore],
-    );
-
     const handleStartOnboardingTour = useCallback(() => {
       if (typeof userId !== "number") {
         return;
@@ -142,14 +111,6 @@ export const SettingsSystemPreferences = observer(
       resetOnboardingTourForReplay(userId);
       navigate(pagesMap.home);
     }, [navigate, userId]);
-
-    const languageOptions: { value: UiLanguage; label: string }[] = useMemo(
-      () => [
-        { value: "en", label: t("system.english") },
-        { value: "uk", label: t("system.ukrainian") },
-      ],
-      [t],
-    );
 
     const timezoneOptions = useMemo(
       () =>
@@ -212,23 +173,6 @@ export const SettingsSystemPreferences = observer(
       />
     );
 
-    const languageControl = (
-      <Segmented<UiLanguage>
-        block={isMobile}
-        value={langValue}
-        options={languageOptions}
-        disabled={
-          workspaceSettingsStore.loadLoading ||
-          workspaceSettingsStore.languageSaveLoading ||
-          !workspaceSettingsStore.currency
-        }
-        data-qa="settings-language-segmented"
-        onChange={(value) => {
-          void handleLanguageChange(value);
-        }}
-      />
-    );
-
     const timezoneControl = (
       <Select<string>
         value={workspaceSettingsStore.timezone ?? undefined}
@@ -264,16 +208,6 @@ export const SettingsSystemPreferences = observer(
 
     const preferenceRows = (
       <>
-        <SettingsPreferenceRow
-          icon={<TranslateIcon size={20} />}
-          title={t("system.language")}
-          description={t("system.languageDescription")}
-          control={languageControl}
-          stackControl={isMobile}
-        />
-
-        <FormDivider style={{ margin: `${token.marginLG}px 0` }} />
-
         <SettingsPreferenceRow
           icon={<CurrencyDollarIcon size={20} />}
           title={t("system.currency")}
