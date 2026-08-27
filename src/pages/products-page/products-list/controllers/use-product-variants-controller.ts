@@ -44,6 +44,14 @@ export type ProductVariantsControllerParams = {
   isVariantCustomFieldsLoading: boolean;
 };
 
+function hasFormListRows(value: unknown): boolean {
+  return Array.isArray(value) && value.length > 0;
+}
+
+function hasPersistedVariants(variants: ProductVariantUi[]): boolean {
+  return variants.some((variant) => variant.id != null);
+}
+
 export function useProductVariantsController({
   form,
   editingProductId,
@@ -158,10 +166,28 @@ export function useProductVariantsController({
     if (productType !== "variants") {
       return;
     }
+
+    // Keep the one-shot hydrate skip until fields are loaded and Form.useWatch
+    // has caught up. Consuming it on an empty run lets a later generate wipe
+    // API prices / stock / avgPurchasePrice after reload.
+    if (isVariantCustomFieldsLoading) {
+      return;
+    }
+
     if (applyingInitialEditValuesRef.current) {
+      const hasHydratedCharacteristics = hasFormListRows(
+        form.getFieldValue("characteristics"),
+      );
+      const watchHasCharacteristics = hasFormListRows(watchedCharacteristics);
+
+      if (hasHydratedCharacteristics && !watchHasCharacteristics) {
+        return;
+      }
+
       applyingInitialEditValuesRef.current = false;
       return;
     }
+
     if (
       Array.isArray(watchedCharacteristics) &&
       watchedCharacteristics.length > 0 &&
@@ -200,6 +226,14 @@ export function useProductVariantsController({
 
     const nextVariants = [...filteredGeneratedVariants, ...manualVariants];
 
+    if (
+      isEditMode &&
+      nextVariants.length === 0 &&
+      hasPersistedVariants(previousVariants)
+    ) {
+      return;
+    }
+
     setProductVariants(nextVariants);
     syncProductVariantsToForm(form, nextVariants);
     // characteristicsSignature tracks watchedCharacteristics.
@@ -207,6 +241,8 @@ export function useProductVariantsController({
   }, [
     characteristicsSignature,
     form,
+    isEditMode,
+    isVariantCustomFieldsLoading,
     productType,
     variantCustomFields,
     variantCustomFieldsKey,

@@ -41,6 +41,11 @@ type UseProductEditBootstrapParams = {
   resetLoadedOptionBaseline: () => void;
 };
 
+type UseProductEditBootstrapResult = {
+  isInitialEditLoading: boolean;
+  editInitialValues: ProductAddFormValues | null;
+};
+
 export function useProductEditBootstrap({
   editingProductId,
   form,
@@ -54,16 +59,19 @@ export function useProductEditBootstrap({
   setApplyingInitialEditValues,
   setLoadedOptionBaseline,
   resetLoadedOptionBaseline,
-}: UseProductEditBootstrapParams): boolean {
+}: UseProductEditBootstrapParams): UseProductEditBootstrapResult {
   const { t } = useTranslation();
   const [isInitialEditLoading, setIsInitialEditLoading] = useState(
     editingProductId != null,
   );
+  const [editInitialValues, setEditInitialValues] =
+    useState<ProductAddFormValues | null>(null);
 
   useEffect(() => {
     if (!editingProductId) {
       productsStore.clearActiveProduct();
       resetLoadedOptionBaseline();
+      setEditInitialValues(null);
       return;
     }
 
@@ -71,6 +79,8 @@ export function useProductEditBootstrap({
 
     void (async () => {
       setIsInitialEditLoading(true);
+      setEditInitialValues(null);
+      setApplyingInitialEditValues();
       resetLoadedOptionBaseline();
 
       try {
@@ -103,6 +113,7 @@ export function useProductEditBootstrap({
         setProductVariants(detailFormState.variants);
         setExcludedVariantKeys(new Set(detailFormState.excludedVariantKeys));
         setLoadedOptionBaseline(optionBaseline);
+        setEditInitialValues(detailFormState.formValues);
         form.setFieldsValue(detailFormState.formValues);
         syncProductVariantsToForm(form, detailFormState.variants);
       } catch (error) {
@@ -111,6 +122,7 @@ export function useProductEditBootstrap({
         }
 
         resetLoadedOptionBaseline();
+        setEditInitialValues(null);
         notification.error({
           title: getApiErrorMessage(error, t("products.detailLoadFailed")),
         });
@@ -142,5 +154,5 @@ export function useProductEditBootstrap({
     t,
   ]);
 
-  return isInitialEditLoading;
+  return { isInitialEditLoading, editInitialValues };
 }

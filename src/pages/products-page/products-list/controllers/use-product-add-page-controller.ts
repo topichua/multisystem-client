@@ -200,21 +200,23 @@ export const useProductAddPageController =
       syncVariantsToForm: variantsController.syncVariantsToForm,
     });
 
-    const isInitialEditLoading = useProductEditBootstrap({
-      editingProductId,
-      form,
-      notification,
-      navigateToProductsList,
-      productsStore,
-      setProductType: variantsController.setProductType,
-      setProductMedia,
-      setProductVariants: variantsController.setProductVariants,
-      setExcludedVariantKeys: variantsController.setExcludedVariantKeys,
-      setApplyingInitialEditValues:
-        variantsController.setApplyingInitialEditValues,
-      setLoadedOptionBaseline: variantsController.setLoadedOptionBaseline,
-      resetLoadedOptionBaseline: variantsController.resetLoadedOptionBaseline,
-    });
+    const { isInitialEditLoading, editInitialValues } = useProductEditBootstrap(
+      {
+        editingProductId,
+        form,
+        notification,
+        navigateToProductsList,
+        productsStore,
+        setProductType: variantsController.setProductType,
+        setProductMedia,
+        setProductVariants: variantsController.setProductVariants,
+        setExcludedVariantKeys: variantsController.setExcludedVariantKeys,
+        setApplyingInitialEditValues:
+          variantsController.setApplyingInitialEditValues,
+        setLoadedOptionBaseline: variantsController.setLoadedOptionBaseline,
+        resetLoadedOptionBaseline: variantsController.resetLoadedOptionBaseline,
+      },
+    );
 
     const { isSavingProduct, onSubmit } = useProductFormSubmitController({
       editingProductId,
@@ -354,7 +356,7 @@ export const useProductAddPageController =
         (isEditMode && isVariantCustomFieldsLoading) ||
         (!workspaceSettingsReady && !workspaceSettingsStore.loadError),
       form,
-      initialValues: {
+      initialValues: editInitialValues ?? {
         ...defaultCreateValues,
         characteristics: [],
         singleCharacteristics: [],

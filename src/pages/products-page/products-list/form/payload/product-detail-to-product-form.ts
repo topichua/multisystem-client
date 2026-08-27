@@ -15,7 +15,10 @@ import type {
   VariantMediaItem,
 } from "../variants/product-add-variant.types";
 import { buildProductVariantKey } from "../variants/generate-product-variants";
-import { mapResponseFieldTypeToCreateFieldType } from "../variants/product-add-variant.utils";
+import {
+  mapResponseFieldTypeToCreateFieldType,
+  productVariantUiToFormValues,
+} from "../variants/product-add-variant.utils";
 
 export type ProductDetailFormState = {
   formValues: ProductAddFormValues;
@@ -286,7 +289,7 @@ export function productDetailToProductForm(
         productType === "single"
           ? buildSingleCharacteristics(product.variants[0])
           : [],
-      variants: [],
+      variants: mappedVariants.map(productVariantUiToFormValues),
     },
   };
 }
