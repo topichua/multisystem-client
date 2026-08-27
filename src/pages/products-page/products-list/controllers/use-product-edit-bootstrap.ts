@@ -66,12 +66,21 @@ export function useProductEditBootstrap({
   );
   const [editInitialValues, setEditInitialValues] =
     useState<ProductAddFormValues | null>(null);
+  const [editInitialValuesProductId, setEditInitialValuesProductId] = useState<
+    number | null
+  >(editingProductId);
+
+  // Reset hydrated form values during render when the product id changes so we
+  // don't call setState synchronously inside the bootstrap effect.
+  if (editInitialValuesProductId !== editingProductId) {
+    setEditInitialValuesProductId(editingProductId);
+    setEditInitialValues(null);
+  }
 
   useEffect(() => {
     if (!editingProductId) {
       productsStore.clearActiveProduct();
       resetLoadedOptionBaseline();
-      setEditInitialValues(null);
       return;
     }
 
@@ -79,7 +88,6 @@ export function useProductEditBootstrap({
 
     void (async () => {
       setIsInitialEditLoading(true);
-      setEditInitialValues(null);
       setApplyingInitialEditValues();
       resetLoadedOptionBaseline();
 

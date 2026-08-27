@@ -109,7 +109,7 @@ export const HeaderLanguage = observer(() => {
             </Typography.Text>
           </Flex>
 
-          {selected && <CheckIcon size={14} color='purple' weight="bold" />}
+          {selected && <CheckIcon size={14} color="purple" weight="bold" />}
         </Flex>
       ),
     };

@@ -42,7 +42,7 @@ export function CatalogVariantSearchRow({
           <VariantWishlistBadge count={variant.wishlistCount} compact />
           <S.GroupedVariantName>{variant.product.name}</S.GroupedVariantName>
         </S.GroupedVariantNameRow>
-        {meta && <S.GroupedVariantMeta>{meta}</S.GroupedVariantMeta>}
+        {meta && <S.GroupedVariantMeta>{meta}</S.GroupedVariantMeta>}meta
       </S.GroupedVariantCopy>
 
       <S.GroupedVariantInventory>
