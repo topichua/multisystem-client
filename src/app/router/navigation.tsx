@@ -266,6 +266,24 @@ export const productsSectionNavItems = [
   },
 ] as const satisfies readonly SectionNavItem[];
 
+export type ProductsSectionNavItem = (typeof productsSectionNavItems)[number];
+
+const ADVANCED_INVENTORY_PRODUCT_NAV_KEYS = new Set<
+  ProductsSectionNavItem["key"]
+>(["products-supplies", "products-inventory-history"]);
+
+export const getVisibleProductsSectionNavItems = (
+  includeAdvancedInventory: boolean,
+): readonly ProductsSectionNavItem[] => {
+  if (includeAdvancedInventory) {
+    return productsSectionNavItems;
+  }
+
+  return productsSectionNavItems.filter(
+    (item) => !ADVANCED_INVENTORY_PRODUCT_NAV_KEYS.has(item.key),
+  );
+};
+
 export const ordersSectionNavItems = [
   {
     key: "orders-list",

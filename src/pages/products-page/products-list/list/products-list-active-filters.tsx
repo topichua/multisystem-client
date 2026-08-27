@@ -13,6 +13,7 @@ import {
 import type { ProductsListCustomFieldFilter } from "@/features/products/model/products-list-custom-field-filters";
 import { useProductsStore } from "@/features/products/model/use-products-store";
 import { useWorkspaceSettingsStore } from "@/features/workspace-settings/model/use-workspace-settings-store";
+import { InventoryMode } from "@/features/workspace-settings/model/workspace-settings.types";
 
 const { Text } = Typography;
 
@@ -99,7 +100,9 @@ export const ProductsListActiveFilters = observer(
     const hasWishlist =
       productsStore.listWishlistOnly &&
       workspaceSettingsStore.wishlistEnabled === true;
-    const hasReserved = productsStore.listShowOnlyReserved;
+    const hasReserved =
+      productsStore.listShowOnlyReserved &&
+      workspaceSettingsStore.inventoryMode === InventoryMode.advanced;
     const hasSort = productsStore.listSort !== "created_desc";
     const hasCustomFields = productsStore.listCustomFieldFilters.length > 0;
 

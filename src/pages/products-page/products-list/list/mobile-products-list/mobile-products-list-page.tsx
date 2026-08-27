@@ -149,16 +149,18 @@ export const MobileProductsListPage = observer(() => {
           <S.PageTitle level={3}>{t("products.listTitle")}</S.PageTitle>
         </S.TitleCluster>
         <S.HeaderActions>
-          <S.CreateButton
-            icon={<CubeIcon size={16} />}
-            aria-label={t("products.addSupplyCta")}
-            data-qa="products-mobile-list-add-supply"
-            onClick={() => setStockSupplyModalOpen(true)}
-          >
-            <S.CreateButtonLabel>
-              {t("products.addSupplyCta")}
-            </S.CreateButtonLabel>
-          </S.CreateButton>
+          {showInventoryManagement && (
+            <S.CreateButton
+              icon={<CubeIcon size={16} />}
+              aria-label={t("products.addSupplyCta")}
+              data-qa="products-mobile-list-add-supply"
+              onClick={() => setStockSupplyModalOpen(true)}
+            >
+              <S.CreateButtonLabel>
+                {t("products.addSupplyCta")}
+              </S.CreateButtonLabel>
+            </S.CreateButton>
+          )}
           <S.CreateButton
             type="primary"
             icon={<PlusIcon size={16} />}

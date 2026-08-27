@@ -231,13 +231,15 @@ export const ProductsListPage = observer(() => {
         <Flex justify="space-between" align="center" gap={16} wrap="wrap">
           <PaneSectionTitle>{t("products.listTitle")}</PaneSectionTitle>
           <Flex align="center" gap={8} wrap="wrap">
-            <Button
-              icon={<CubeIcon size={16} />}
-              data-qa="products-list-add-supply"
-              onClick={() => setStockSupplyModalOpen(true)}
-            >
-              {t("products.addSupplyCta")}
-            </Button>
+            {showInventoryManagement && (
+              <Button
+                icon={<CubeIcon size={16} />}
+                data-qa="products-list-add-supply"
+                onClick={() => setStockSupplyModalOpen(true)}
+              >
+                {t("products.addSupplyCta")}
+              </Button>
+            )}
             <Button
               type="primary"
               onClick={() => navigate(pagesMap.productsListAdd)}

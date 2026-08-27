@@ -23,6 +23,7 @@ import {
 } from "@/features/products/model/product.types";
 import { useProductsStore } from "@/features/products/model/use-products-store";
 import { useWorkspaceSettingsStore } from "@/features/workspace-settings/model/use-workspace-settings-store";
+import { InventoryMode } from "@/features/workspace-settings/model/workspace-settings.types";
 import { useIsMobileViewport } from "@/utils/use-media-query";
 
 import { ProductsListCustomFieldFiltersSection } from "./products-list-custom-field-filters-section";
@@ -88,6 +89,8 @@ export const ProductsListFiltersPanel = observer(
     const categoriesStore = useCategoriesStore();
     const workspaceSettingsStore = useWorkspaceSettingsStore();
     const wishlistEnabled = workspaceSettingsStore.wishlistEnabled === true;
+    const showAdvancedInventory =
+      workspaceSettingsStore.inventoryMode === InventoryMode.advanced;
     const [categoryQuery, setCategoryQuery] = useState("");
     const filtersPanelWasOpenRef = useRef(false);
 
@@ -350,21 +353,25 @@ export const ProductsListFiltersPanel = observer(
           </>
         )}
 
-        <Divider style={{ margin: 0 }} />
+        {showAdvancedInventory && (
+          <>
+            <Divider style={{ margin: 0 }} />
 
-        <div>
-          <Text strong style={{ display: "block", marginBottom: 8 }}>
-            {t("products.listFilters.panelReserveSection")}
-          </Text>
-          <Checkbox
-            checked={productsStore.draftShowOnlyReserved}
-            onChange={(e) =>
-              productsStore.setDraftShowOnlyReserved(e.target.checked)
-            }
-          >
-            {t("products.listFilters.panelShowOnlyReserved")}
-          </Checkbox>
-        </div>
+            <div>
+              <Text strong style={{ display: "block", marginBottom: 8 }}>
+                {t("products.listFilters.panelReserveSection")}
+              </Text>
+              <Checkbox
+                checked={productsStore.draftShowOnlyReserved}
+                onChange={(e) =>
+                  productsStore.setDraftShowOnlyReserved(e.target.checked)
+                }
+              >
+                {t("products.listFilters.panelShowOnlyReserved")}
+              </Checkbox>
+            </div>
+          </>
+        )}
       </Flex>
     );
 
@@ -408,6 +415,9 @@ export const ProductsListFiltersPanel = observer(
               onClick={() => {
                 if (!wishlistEnabled) {
                   productsStore.setDraftWishlistOnly(false);
+                }
+                if (!showAdvancedInventory) {
+                  productsStore.setDraftShowOnlyReserved(false);
                 }
                 productsStore.applyFiltersFromPanel();
                 onClose();

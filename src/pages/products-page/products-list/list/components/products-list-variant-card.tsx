@@ -201,28 +201,30 @@ export function ProductsListVariantCard({
           )}
         </S.VariantDetailsRow>
 
-        {showInventoryQuantity && (
-          <S.StockMetrics>
-            <S.StockMetric>
-              <S.StockMetricValue>{quantity}</S.StockMetricValue>
-              <S.StockMetricLabel type="secondary">
-                {t("products.variant.quantity")}
-              </S.StockMetricLabel>
-            </S.StockMetric>
-            <S.StockMetric>
-              <S.StockMetricValue>{reservedQuantity}</S.StockMetricValue>
-              <S.StockMetricLabel type="secondary">
-                {t("products.variant.reserved")}
-              </S.StockMetricLabel>
-            </S.StockMetric>
-            <S.StockMetric>
-              <S.StockMetricValue>{availableQuantity}</S.StockMetricValue>
-              <S.StockMetricLabel type="secondary">
-                {t("products.variant.available")}
-              </S.StockMetricLabel>
-            </S.StockMetric>
-          </S.StockMetrics>
-        )}
+        <S.StockMetrics>
+          <S.StockMetric>
+            <S.StockMetricValue>{quantity}</S.StockMetricValue>
+            <S.StockMetricLabel type="secondary">
+              {t("products.variant.quantity")}
+            </S.StockMetricLabel>
+          </S.StockMetric>
+          {showInventoryQuantity && (
+            <>
+              <S.StockMetric>
+                <S.StockMetricValue>{reservedQuantity}</S.StockMetricValue>
+                <S.StockMetricLabel type="secondary">
+                  {t("products.variant.reserved")}
+                </S.StockMetricLabel>
+              </S.StockMetric>
+              <S.StockMetric>
+                <S.StockMetricValue>{availableQuantity}</S.StockMetricValue>
+                <S.StockMetricLabel type="secondary">
+                  {t("products.variant.available")}
+                </S.StockMetricLabel>
+              </S.StockMetric>
+            </>
+          )}
+        </S.StockMetrics>
       </S.VariantBottomRow>
     </S.VariantCard>
   );

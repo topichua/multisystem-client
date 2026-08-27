@@ -6,12 +6,14 @@ import {
   PackageIcon,
   TruckIcon,
 } from "@phosphor-icons/react";
+import { observer } from "mobx-react-lite";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 
 import { productsSectionNavItems } from "@/app/router/navigation";
 
+import { useProductsSectionNavItems } from "../use-products-section-nav-items";
 import * as S from "./mobile-products-hub-page.styled.tsx";
 
 type ProductsMobileItemKey = (typeof productsSectionNavItems)[number]["key"];
@@ -44,9 +46,10 @@ const productsMobilePresentationByKey = {
   },
 } satisfies Record<ProductsMobileItemKey, ProductsMobilePresentation>;
 
-export const MobileProductsHubPage = () => {
+export const MobileProductsHubPage = observer(() => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const visibleNavItems = useProductsSectionNavItems();
 
   return (
     <S.Root>
@@ -55,7 +58,7 @@ export const MobileProductsHubPage = () => {
       </S.Header>
 
       <S.ListCard>
-        {productsSectionNavItems.map((item) => {
+        {visibleNavItems.map((item) => {
           const presentation = productsMobilePresentationByKey[item.key];
 
           return (
@@ -84,4 +87,4 @@ export const MobileProductsHubPage = () => {
       </S.ListCard>
     </S.Root>
   );
-};
+});

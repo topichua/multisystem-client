@@ -69,6 +69,16 @@ export const useProductsListController = () => {
     }
   }, [productsStore, workspaceSettingsStore.wishlistEnabled]);
 
+  useEffect(() => {
+    if (
+      workspaceSettingsStore.inventoryMode != null &&
+      workspaceSettingsStore.inventoryMode !== InventoryMode.advanced &&
+      productsStore.listShowOnlyReserved
+    ) {
+      productsStore.clearListShowOnlyReserved();
+    }
+  }, [productsStore, workspaceSettingsStore.inventoryMode]);
+
   const categoryNameById = useMemo(
     () =>
       new Map(
@@ -205,7 +215,8 @@ export const useProductsListController = () => {
     navigateToProductsList,
     variantCustomFields: productsStore.variantCustomFields,
     isVariantCustomFieldsLoading: productsStore.variantCustomFieldsLoading,
-    showInventoryQuantity: workspaceSettingsStore.inventoryMode != null,
+    showInventoryQuantity:
+      workspaceSettingsStore.inventoryMode === InventoryMode.advanced,
     showInventoryManagement:
       workspaceSettingsStore.inventoryMode === InventoryMode.advanced,
     loadVariantCustomFields,
