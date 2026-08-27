@@ -9,9 +9,7 @@ export type CategoryApiResponse = {
   createdAt: string;
   updatedAt: string;
   productCount?: number;
-  productsCount?: number;
   productVariantCount?: number;
-  productVariantsCount?: number;
   children?: CategoryApiResponse[];
   subcategories?: CategoryApiResponse[];
 };
@@ -24,8 +22,8 @@ export const normalizeCategory = (raw: CategoryApiResponse): Category => ({
   createdByUserId: raw.createdByUserId,
   createdAt: raw.createdAt,
   updatedAt: raw.updatedAt,
-  productCount: raw.productCount ?? raw.productsCount ?? 0,
-  productVariantCount: raw.productVariantCount ?? raw.productVariantsCount ?? 0,
+  productCount: raw.productCount ?? 0,
+  productVariantCount: raw.productVariantCount ?? 0,
   children: (raw.subcategories ?? raw.children ?? []).map(normalizeCategory),
 });
 

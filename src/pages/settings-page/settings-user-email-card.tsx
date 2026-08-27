@@ -75,7 +75,7 @@ export const SettingsUserEmailCard = () => {
             label={t("userSettings.newEmail")}
             rules={newEmailRules}
           >
-            <Input autoComplete="email" />
+            <Input autoComplete="off" />
           </Form.Item>
           <Form.Item
             name="existingPassword"
@@ -87,7 +87,7 @@ export const SettingsUserEmailCard = () => {
               },
             ]}
           >
-            <Input.Password autoComplete="current-password" />
+            <Input.Password autoComplete="off" />
           </Form.Item>
         </S.FormGrid>
 

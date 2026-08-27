@@ -1,3 +1,5 @@
+import { asNumber, isRecord } from "@/api/record-parsing";
+
 import {
   AUTOMATION_ACTION_TYPES,
   AUTOMATION_CONDITION_TYPES,
@@ -18,34 +20,8 @@ import {
   type AutomationTemplateOption,
 } from "./automation.types";
 
-type UnknownRecord = Record<string, unknown>;
-
-const isRecord = (value: unknown): value is UnknownRecord =>
-  typeof value === "object" && value !== null && !Array.isArray(value);
-
 const toTrimmedString = (value: unknown): string =>
   typeof value === "string" ? value.trim() : "";
-
-const toNumber = (value: unknown): number | null => {
-  if (typeof value === "number" && Number.isFinite(value)) {
-    return value;
-  }
-
-  if (typeof value === "string" && value.trim() !== "") {
-    const parsed = Number(value);
-    return Number.isFinite(parsed) ? parsed : null;
-  }
-
-  return null;
-};
-
-const toOptionalNumber = (value: unknown): number | null => {
-  if (value == null || value === "") {
-    return null;
-  }
-
-  return toNumber(value);
-};
 
 const toOptionalStringId = (value: unknown): string | null =>
   toTrimmedString(value) || null;
@@ -79,7 +55,7 @@ const normalizeNamedOption = <Id extends string | number>(
   value: unknown,
   parseId: (raw: unknown) => Id | null,
   options?: { requireName?: boolean },
-): { id: Id; name: string; record: UnknownRecord } | null => {
+): { id: Id; name: string; record: Record<string, unknown> } | null => {
   if (!isRecord(value)) {
     return null;
   }
@@ -108,14 +84,14 @@ const normalizeCriteriaOption = (
 const normalizeStatusOption = (
   value: unknown,
 ): AutomationStatusOption | null => {
-  const option = normalizeNamedOption(value, toNumber);
+  const option = normalizeNamedOption(value, asNumber);
   return option ? { id: option.id, name: option.name } : null;
 };
 
 const normalizeConversationGroupOption = (
   value: unknown,
 ): AutomationConversationGroupOption | null => {
-  const option = normalizeNamedOption(value, toNumber, { requireName: false });
+  const option = normalizeNamedOption(value, asNumber, { requireName: false });
 
   if (!option) {
     return null;
@@ -133,7 +109,7 @@ const normalizeConversationGroupOption = (
 const normalizeTemplateOption = (
   value: unknown,
 ): AutomationTemplateOption | null => {
-  const option = normalizeNamedOption(value, toNumber);
+  const option = normalizeNamedOption(value, asNumber);
 
   if (!option) {
     return null;
@@ -149,7 +125,7 @@ const normalizeTemplateOption = (
 const normalizeTargetOrderStatus = (
   value: unknown,
 ): AutomationTargetOrderStatus | null => {
-  const option = normalizeNamedOption(value, toNumber);
+  const option = normalizeNamedOption(value, asNumber);
 
   if (!option) {
     return null;
@@ -199,7 +175,7 @@ const normalizeCondition = (value: unknown): AutomationRuleCondition | null => {
   }
 
   return {
-    id: toOptionalNumber(value.id) ?? undefined,
+    id: asNumber(value.id) ?? undefined,
     sourceType,
     sourceStatus,
     operator: normalizeEnum(
@@ -207,7 +183,7 @@ const normalizeCondition = (value: unknown): AutomationRuleCondition | null => {
       AUTOMATION_OPERATORS,
       DEFAULT_AUTOMATION_OPERATOR,
     ),
-    durationValue: toOptionalNumber(value.durationValue),
+    durationValue: asNumber(value.durationValue),
     durationUnit: normalizeOptionalEnum(
       value.durationUnit,
       AUTOMATION_DURATION_UNITS,
@@ -223,7 +199,7 @@ export const normalizeAutomationRule = (
     return null;
   }
 
-  const id = toNumber(data.id);
+  const id = asNumber(data.id);
   const name = toTrimmedString(data.name);
 
   if (id == null || !name) {
@@ -242,7 +218,7 @@ export const normalizeAutomationRule = (
     name,
     isActive: data.isActive === true,
     conditionType: normalizeEnum(
-      data.conditionType ?? data.condition_type,
+      data.conditionType,
       AUTOMATION_CONDITION_TYPES,
       DEFAULT_AUTOMATION_CONDITION_TYPE,
     ),
@@ -253,7 +229,7 @@ export const normalizeAutomationRule = (
 
   switch (actionType) {
     case "CHANGE_ORDER_STATUS": {
-      const targetOrderStatusId = toOptionalNumber(data.targetOrderStatusId);
+      const targetOrderStatusId = asNumber(data.targetOrderStatusId);
 
       if (targetOrderStatusId == null) {
         return null;
@@ -267,7 +243,7 @@ export const normalizeAutomationRule = (
       };
     }
     case "CHANGE_CONVERSATION_GROUP": {
-      const targetConversationGroupId = toOptionalNumber(
+      const targetConversationGroupId = asNumber(
         data.targetConversationGroupId,
       );
 
@@ -285,7 +261,7 @@ export const normalizeAutomationRule = (
       };
     }
     case "SEND_MESSAGE": {
-      const targetTemplateId = toOptionalNumber(data.targetTemplateId);
+      const targetTemplateId = asNumber(data.targetTemplateId);
 
       if (targetTemplateId == null) {
         return null;
@@ -296,7 +272,7 @@ export const normalizeAutomationRule = (
         actionType,
         targetTemplateId,
         targetTemplate: normalizeTemplateOption(data.targetTemplate),
-        actionDelayValue: toOptionalNumber(data.actionDelayValue),
+        actionDelayValue: asNumber(data.actionDelayValue),
         actionDelayUnit: normalizeOptionalEnum(
           data.actionDelayUnit,
           AUTOMATION_DURATION_UNITS,
@@ -316,7 +292,7 @@ export const normalizeAutomationRulesList = (
   }
 
   const record = isRecord(data) ? data : {};
-  const rawItems = record.items ?? record.data;
+  const rawItems = record.items;
 
   return { items: normalizeList(rawItems, normalizeAutomationRule) };
 };

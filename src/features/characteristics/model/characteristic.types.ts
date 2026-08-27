@@ -96,12 +96,12 @@ export type CharacteristicLibraryResponse = {
 
 export type CharacteristicLibraryInstallPayload = {
   key: string;
-  groupKey: string;
+  groupKey?: string;
 };
 
 export type CharacteristicLibraryInstallResponse = {
   field: Characteristic;
-  groupKey: string;
+  groupKey: string | null;
 };
 
 export type CharacteristicLibraryInstallGroupPayload = {

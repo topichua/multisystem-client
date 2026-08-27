@@ -21,7 +21,7 @@ import * as S from "./characteristic-library-create-button.styled";
 
 type LibraryFieldTitleProps = {
   field: CharacteristicLibraryField;
-  groupKey: string;
+  groupKey?: string;
   installing: boolean;
   onInstall: (payload: CharacteristicLibraryInstallPayload) => void;
 };
@@ -55,7 +55,9 @@ export const LibraryFieldTitle = ({
       return;
     }
 
-    onInstall({ key: field.key, groupKey });
+    onInstall(
+      groupKey == null ? { key: field.key } : { key: field.key, groupKey },
+    );
   };
 
   return (

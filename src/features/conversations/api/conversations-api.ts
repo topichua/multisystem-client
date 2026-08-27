@@ -1,4 +1,5 @@
 import { apiClient } from "@/api/api-client";
+import { asBoolean, asNumber, asRecord, asString } from "@/api/record-parsing";
 
 import type {
   Conversation,
@@ -143,37 +144,19 @@ const getConversationSourceByChannel = (
   channel: ConversationChannel,
 ): ConversationSource => (channel === "telegram" ? 2 : 1);
 
-const getRecord = (value: unknown): Record<string, unknown> =>
-  value && typeof value === "object" ? (value as Record<string, unknown>) : {};
-
-const getString = (value: unknown, fallback = ""): string =>
-  typeof value === "string" ? value : fallback;
-
-const getNumber = (value: unknown, fallback = 0): number =>
-  typeof value === "number" && Number.isFinite(value) ? value : fallback;
-
-const getOptionalNumber = (value: unknown): number | null =>
-  typeof value === "number" && Number.isFinite(value) ? value : null;
-
-const getBoolean = (value: unknown, fallback = false): boolean =>
-  typeof value === "boolean" ? value : fallback;
-
-const getOptionalString = (value: unknown): string | null =>
-  typeof value === "string" ? value : null;
-
 const unwrapFollowUpRecord = (value: unknown): Record<string, unknown> => {
-  const record = getRecord(value);
+  const record = asRecord(value);
 
   return record.followUp != null && typeof record.followUp === "object"
-    ? getRecord(record.followUp)
+    ? asRecord(record.followUp)
     : record;
 };
 
 const parseFollowUp = (
   nested: Record<string, unknown>,
 ): ConversationFollowUp | null => {
-  const id = getOptionalNumber(nested.id);
-  const scheduledAt = getOptionalString(nested.scheduledAt);
+  const id = asNumber(nested.id);
+  const scheduledAt = asString(nested.scheduledAt);
 
   if (id == null || scheduledAt == null) {
     return null;
@@ -198,8 +181,8 @@ const normalizeFollowUpDetails = (
   return {
     ...followUp,
     message: typeof nested.message === "string" ? nested.message : "",
-    templateId: getOptionalNumber(nested.templateId),
-    cancelOnReply: getBoolean(nested.cancelOnReply, true),
+    templateId: asNumber(nested.templateId),
+    cancelOnReply: asBoolean(nested.cancelOnReply) ?? true,
     status: typeof nested.status === "string" ? nested.status : undefined,
   };
 };
@@ -218,7 +201,7 @@ const getConversationListItems = (data: unknown): unknown[] => {
     return data;
   }
 
-  const record = getRecord(data);
+  const record = asRecord(data);
   return Array.isArray(record.items) ? record.items : [];
 };
 
@@ -237,16 +220,14 @@ const normalizeListCounters = (
   data: unknown,
   conversations: Conversation[],
 ): ConversationListCounters => {
-  const counters = getRecord(getRecord(data).counters);
+  const counters = asRecord(asRecord(data).counters);
   const fallback = getFallbackListCounters(conversations);
 
   return {
-    total: getNumber(counters.total, fallback.total),
-    unread: getNumber(counters.unread, fallback.unread),
-    withoutResponsible: getNumber(
-      counters.withoutResponsible,
-      fallback.withoutResponsible,
-    ),
+    total: asNumber(counters.total) ?? fallback.total,
+    unread: asNumber(counters.unread) ?? fallback.unread,
+    withoutResponsible:
+      asNumber(counters.withoutResponsible) ?? fallback.withoutResponsible,
   };
 };
 
@@ -288,10 +269,10 @@ const buildListQuery = (
 };
 
 const normalizeConversation = (raw: unknown): Conversation => {
-  const record = getRecord(raw);
-  const participant = getRecord(record.participant);
-  const status = getRecord(record.status);
-  const assignee = getRecord(record.assignee);
+  const record = asRecord(raw);
+  const participant = asRecord(record.participant);
+  const status = asRecord(record.status);
+  const assignee = asRecord(record.assignee);
   const channel = isConversationChannel(record.channel)
     ? record.channel
     : "instagram";
@@ -300,19 +281,19 @@ const normalizeConversation = (raw: unknown): Conversation => {
     : getConversationSourceByChannel(channel);
   const unreadCount =
     "unreadCount" in record
-      ? getNumber(record.unreadCount)
+      ? (asNumber(record.unreadCount) ?? 0)
       : record.isUnread
         ? 1
         : 0;
 
   return {
-    id: getNumber(record.id),
+    id: asNumber(record.id) ?? 0,
     participant: {
       id:
         typeof participant.id === "number" || typeof participant.id === "string"
           ? participant.id
           : "",
-      name: getString(participant.name),
+      name: asString(participant.name) ?? "",
       username:
         typeof participant.username === "string"
           ? participant.username
@@ -321,7 +302,7 @@ const normalizeConversation = (raw: unknown): Conversation => {
         typeof participant.profilePic === "string"
           ? participant.profilePic
           : null,
-      phone: getOptionalString(participant.phone),
+      phone: asString(participant.phone),
       initials:
         typeof participant.initials === "string"
           ? participant.initials
@@ -333,8 +314,8 @@ const normalizeConversation = (raw: unknown): Conversation => {
     },
     channel: getConversationChannelBySource(source),
     source,
-    groupId: getOptionalNumber(record.groupId),
-    responsibleMemberId: getOptionalNumber(record.responsibleMemberId),
+    groupId: asNumber(record.groupId),
+    responsibleMemberId: asNumber(record.responsibleMemberId),
     lastMessage:
       typeof record.lastMessage === "string" ? record.lastMessage : null,
     isLastMessageFromMe: Boolean(record.isLastMessageFromMe),
@@ -342,16 +323,16 @@ const normalizeConversation = (raw: unknown): Conversation => {
     status:
       record.status != null
         ? {
-            id: getNumber(status.id),
-            name: getString(status.name),
-            color: getString(status.color),
+            id: asNumber(status.id) ?? 0,
+            name: asString(status.name) ?? "",
+            color: asString(status.color) ?? "",
           }
         : null,
     assignee:
       record.assignee != null
         ? {
-            id: getNumber(assignee.id),
-            name: getString(assignee.name),
+            id: asNumber(assignee.id) ?? 0,
+            name: asString(assignee.name) ?? "",
             profilePic:
               typeof assignee.profilePic === "string"
                 ? assignee.profilePic
@@ -366,30 +347,30 @@ const normalizeConversation = (raw: unknown): Conversation => {
                 : undefined,
           }
         : null,
-    instUpdatedAt: getString(record.instUpdatedAt, new Date().toISOString()),
-    canTakeChat: getBoolean(record.canTakeChat),
-    canAssignResponsible: getBoolean(record.canAssignResponsible),
+    instUpdatedAt: asString(record.instUpdatedAt) ?? new Date().toISOString(),
+    canTakeChat: asBoolean(record.canTakeChat) ?? false,
+    canAssignResponsible: asBoolean(record.canAssignResponsible) ?? false,
     followUp: normalizeFollowUp(record.followUp),
   };
 };
 
 const normalizeConversationEvent = (raw: unknown): ConversationEvent => {
-  const record = getRecord(raw);
+  const record = asRecord(raw);
 
   return {
-    id: getNumber(record.id),
-    conversationId: getNumber(record.conversationId),
-    type: getString(record.type) as ConversationEvent["type"],
-    actorId: getOptionalNumber(record.actorId),
-    payload: getRecord(record.payload),
-    createdAt: getString(record.createdAt),
+    id: asNumber(record.id) ?? 0,
+    conversationId: asNumber(record.conversationId) ?? 0,
+    type: (asString(record.type) ?? "") as ConversationEvent["type"],
+    actorId: asNumber(record.actorId),
+    payload: asRecord(record.payload),
+    createdAt: asString(record.createdAt) ?? "",
   };
 };
 
 const normalizeConversationEvents = (
   raw: unknown,
 ): ConversationEventsListResponse => {
-  const record = getRecord(raw);
+  const record = asRecord(raw);
   const items = Array.isArray(raw)
     ? raw
     : Array.isArray(record.items)
@@ -409,8 +390,8 @@ const normalizeConversationEvents = (
 const normalizeConversationCriteriaChannel = (
   raw: unknown,
 ): ConversationCriteriaChannel | null => {
-  const record = getRecord(raw);
-  const integrationId = getOptionalNumber(record.integrationId);
+  const record = asRecord(raw);
+  const integrationId = asNumber(record.integrationId);
 
   if (integrationId == null) {
     return null;
@@ -418,7 +399,7 @@ const normalizeConversationCriteriaChannel = (
 
   return {
     integrationId,
-    name: getString(record.name),
+    name: asString(record.name) ?? "",
     type: isConversationChannel(record.type) ? record.type : "instagram",
   };
 };
@@ -426,8 +407,8 @@ const normalizeConversationCriteriaChannel = (
 const normalizeConversationCriteriaResponsibleUser = (
   raw: unknown,
 ): ConversationCriteriaResponsibleUser | null => {
-  const record = getRecord(raw);
-  const id = getOptionalNumber(record.id);
+  const record = asRecord(raw);
+  const id = asNumber(record.id);
 
   if (id == null) {
     return null;
@@ -435,14 +416,14 @@ const normalizeConversationCriteriaResponsibleUser = (
 
   return {
     id,
-    name: getString(record.name),
-    email: getString(record.email),
+    name: asString(record.name) ?? "",
+    email: asString(record.email) ?? "",
     avatar: typeof record.avatar === "string" ? record.avatar : null,
   };
 };
 
 const normalizeConversationCriteria = (raw: unknown): ConversationCriteria => {
-  const record = getRecord(raw);
+  const record = asRecord(raw);
   const channels = Array.isArray(record.channels) ? record.channels : [];
   const responsibleUsers = Array.isArray(record.responsibleUsers)
     ? record.responsibleUsers
@@ -465,8 +446,8 @@ const normalizeConversationCriteria = (raw: unknown): ConversationCriteria => {
 const normalizeConversationGroupBucketChannel = (
   raw: unknown,
 ): ConversationGroupBucketChannel | null => {
-  const record = getRecord(raw);
-  const integrationId = getOptionalNumber(record.integrationId);
+  const record = asRecord(raw);
+  const integrationId = asNumber(record.integrationId);
 
   if (integrationId == null) {
     return null;
@@ -475,21 +456,21 @@ const normalizeConversationGroupBucketChannel = (
   return {
     integrationId,
     type: isConversationChannel(record.type) ? record.type : "instagram",
-    name: getString(record.name),
+    name: asString(record.name) ?? "",
   };
 };
 
 const normalizeConversationGroupBucketMeta = (
   raw: unknown,
 ): ConversationGroupBucketMeta => {
-  const record = getRecord(raw);
+  const record = asRecord(raw);
 
   return {
-    responsibleMemberId: getOptionalNumber(record.responsibleMemberId),
-    groupId: getOptionalNumber(record.groupId),
-    systemKey: getString(record.systemKey),
-    color: getString(record.color),
-    createdAtBucket: getString(record.createdAtBucket),
+    responsibleMemberId: asNumber(record.responsibleMemberId),
+    groupId: asNumber(record.groupId),
+    systemKey: asString(record.systemKey) ?? "",
+    color: asString(record.color) ?? "",
+    createdAtBucket: asString(record.createdAtBucket) ?? "",
     channel:
       record.channel == null
         ? null
@@ -500,8 +481,8 @@ const normalizeConversationGroupBucketMeta = (
 const normalizeConversationGroupBucket = (
   raw: unknown,
 ): ConversationGroupBucket | null => {
-  const record = getRecord(raw);
-  const key = getString(record.key).trim();
+  const record = asRecord(raw);
+  const key = (asString(record.key) ?? "").trim();
 
   if (!key) {
     return null;
@@ -509,8 +490,8 @@ const normalizeConversationGroupBucket = (
 
   return {
     key,
-    label: getString(record.label, key),
-    count: getNumber(record.count),
+    label: asString(record.label) ?? key,
+    count: asNumber(record.count) ?? 0,
     meta: normalizeConversationGroupBucketMeta(record.meta),
   };
 };
@@ -519,12 +500,12 @@ const normalizeConversationGroups = (
   raw: unknown,
   fallbackBy: ConversationGroupingBy,
 ): ConversationGroupsResult => {
-  const record = getRecord(raw);
+  const record = asRecord(raw);
   const items = Array.isArray(record.items) ? record.items : [];
 
   return {
     by: isConversationGroupingBy(record.by) ? record.by : fallbackBy,
-    total: getNumber(record.total),
+    total: asNumber(record.total) ?? 0,
     items: items
       .map(normalizeConversationGroupBucket)
       .filter((item): item is ConversationGroupBucket => item !== null),

@@ -1,3 +1,4 @@
+import { asBoolean, asNumber, asString, isRecord } from "@/api/record-parsing";
 import type {
   Client,
   ClientLookupResponse,
@@ -26,10 +27,6 @@ export class ClientsApiParamsError extends Error {
   }
 }
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return value != null && typeof value === "object";
-}
-
 function normalizeStringArray(value: unknown): string[] {
   if (!Array.isArray(value)) {
     return [];
@@ -38,31 +35,13 @@ function normalizeStringArray(value: unknown): string[] {
   return value.filter((item): item is string => typeof item === "string");
 }
 
-function normalizeNullableString(value: unknown): string | null {
-  return typeof value === "string" ? value : null;
-}
-
 function normalizeOptionalPositiveNumber(value: unknown): number | null {
-  if (typeof value === "number" && Number.isFinite(value) && value > 0) {
-    return value;
-  }
-
-  if (typeof value === "string" && value.trim()) {
-    const parsed = Number(value);
-    if (Number.isFinite(parsed) && parsed > 0) {
-      return parsed;
-    }
-  }
-
-  return null;
+  const parsed = asNumber(value);
+  return parsed != null && parsed > 0 ? parsed : null;
 }
 
 function normalizeLastOrderAt(value: unknown): string | null {
-  if (typeof value === "string" && value.length > 0) {
-    return value;
-  }
-
-  return null;
+  return asString(value) || null;
 }
 
 export function normalizeClientOrderStats(
@@ -73,10 +52,9 @@ export function normalizeClientOrderStats(
   }
 
   return {
-    orderCount: typeof value.orderCount === "number" ? value.orderCount : 0,
-    totalSpent: typeof value.totalSpent === "number" ? value.totalSpent : 0,
-    averageOrderPrice:
-      typeof value.averageOrderPrice === "number" ? value.averageOrderPrice : 0,
+    orderCount: asNumber(value.orderCount) ?? 0,
+    totalSpent: asNumber(value.totalSpent) ?? 0,
+    averageOrderPrice: asNumber(value.averageOrderPrice) ?? 0,
     lastOrderAt: normalizeLastOrderAt(value.lastOrderAt),
   };
 }
@@ -86,32 +64,28 @@ export function normalizeClient(value: unknown): Client | null {
     return null;
   }
 
-  if (typeof value.id !== "number") {
+  const id = asNumber(value.id);
+  if (id == null) {
     return null;
   }
 
   const links = normalizeClientSocialLinks(value.links);
 
   return {
-    id: value.id,
-    firstName: typeof value.firstName === "string" ? value.firstName : "",
-    lastName: typeof value.lastName === "string" ? value.lastName : "",
-    createdAt: typeof value.createdAt === "string" ? value.createdAt : "",
-    phone: typeof value.phone === "string" ? value.phone : "",
-    note: normalizeNullableString(value.note),
-    blocked: typeof value.blocked === "boolean" ? value.blocked : false,
+    id,
+    firstName: asString(value.firstName) ?? "",
+    lastName: asString(value.lastName) ?? "",
+    createdAt: asString(value.createdAt) ?? "",
+    phone: asString(value.phone) ?? "",
+    note: asString(value.note),
+    blocked: asBoolean(value.blocked) ?? false,
     instagramUserIds: normalizeStringArray(value.instagramUserIds),
     telegramUserIds: normalizeStringArray(value.telegramUserIds),
     instagramUsers: normalizeClientSocialUsers(value.instagramUsers),
     telegramUsers: normalizeClientSocialUsers(value.telegramUsers),
     links: links.length > 0 ? links : undefined,
-    workspaceId: typeof value.workspaceId === "number" ? value.workspaceId : 0,
-    avatar_src:
-      typeof value.avatar_src === "string"
-        ? value.avatar_src
-        : typeof value.avatarSrc === "string"
-          ? value.avatarSrc
-          : null,
+    workspaceId: asNumber(value.workspaceId) ?? 0,
+    avatar_src: asString(value.avatar_src),
     orderStats: normalizeClientOrderStats(value.orderStats),
   };
 }
@@ -130,12 +104,10 @@ function normalizeClientSocialUsers(value: unknown): ClientSocialUserRecord[] {
 
     users.push({
       id: item.id.trim(),
-      username: normalizeNullableString(item.username),
-      fullName: normalizeNullableString(item.fullName),
-      avatar: normalizeNullableString(item.avatar),
-      conversationId: normalizeOptionalPositiveNumber(
-        item.conversationId ?? item.conversation_id,
-      ),
+      username: asString(item.username),
+      fullName: asString(item.fullName),
+      avatar: asString(item.avatar),
+      conversationId: normalizeOptionalPositiveNumber(item.conversationId),
     });
   }
 
@@ -172,9 +144,7 @@ function normalizeClientSocialLinks(value: unknown): ClientSocialLinkRecord[] {
         typeof item.username === "string" && item.username.trim()
           ? item.username.trim()
           : null,
-      conversationId: normalizeOptionalPositiveNumber(
-        item.conversationId ?? item.conversation_id,
-      ),
+      conversationId: normalizeOptionalPositiveNumber(item.conversationId),
     });
   }
 
@@ -201,20 +171,15 @@ export function normalizeClientsListResponse(
     return { items: [], total: 0, page: 1, pageSize: 50 };
   }
 
-  const rawItems = Array.isArray(data.items)
-    ? data.items
-    : Array.isArray(data.clients)
-      ? data.clients
-      : [];
+  const rawItems = Array.isArray(data.items) ? data.items : [];
 
   const items = rawItems
     .map((item) => normalizeClient(item))
     .filter((item): item is Client => item != null);
 
-  const total = typeof data.total === "number" ? data.total : items.length;
-  const page = typeof data.page === "number" ? data.page : 1;
-  const pageSize =
-    typeof data.pageSize === "number" ? data.pageSize : items.length || 50;
+  const total = asNumber(data.total) ?? items.length;
+  const page = asNumber(data.page) ?? 1;
+  const pageSize = asNumber(data.pageSize) ?? (items.length || 50);
 
   return { items, total, page, pageSize };
 }
@@ -226,8 +191,8 @@ export function normalizeClientLookupResponse(
     return { associated: false, status: "" };
   }
 
-  const associated = Boolean(data.associated);
-  const status = typeof data.status === "string" ? data.status : "";
+  const associated = asBoolean(data.associated) ?? false;
+  const status = asString(data.status) ?? "";
   const client = normalizeClient(data.client) ?? undefined;
 
   return client !== undefined

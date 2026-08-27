@@ -1,32 +1,13 @@
-import {
-  ListChecksIcon,
-  PackageIcon,
-  PencilSimpleIcon,
-  TextTIcon,
-} from "@phosphor-icons/react";
-import { Button, Flex, Input, Tag, Typography } from "antd";
+import { PackageIcon, PencilSimpleIcon } from "@phosphor-icons/react";
+import { Button, Flex, Input, Typography } from "antd";
 import { useTranslation } from "react-i18next";
-import styled from "styled-components";
 
+import { CharacteristicTypeTag } from "@/features/characteristics/components/characteristic-type-tag";
 import type { CharacteristicBase } from "@/features/characteristics/model/characteristic.types";
 
 import { CHARACTERISTIC_NAME_MAX_LENGTH } from "../products-characteristics.constants";
 
 const { Title } = Typography;
-
-const HeaderMetaTag = styled(Tag)`
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-inline-end: 0;
-  border-color: ${({ theme }) => theme.colors.functional.border.primary};
-  color: ${({ theme }) => theme.colors.functional.text.primary};
-  background: ${({ theme }) => theme.colors.functional.background.active};
-
-  svg {
-    color: ${({ theme }) => theme.colors.semantic.primary};
-  }
-`;
 
 type CharacteristicLabelEditState = {
   isEditing: boolean;
@@ -53,8 +34,6 @@ export const CharacteristicDetailHeader = ({
   editDataQa,
 }: CharacteristicDetailHeaderProps) => {
   const { t } = useTranslation();
-  const TypeIcon =
-    characteristic.type === "options" ? ListChecksIcon : TextTIcon;
 
   return (
     <Flex vertical gap={12}>
@@ -96,12 +75,7 @@ export const CharacteristicDetailHeader = ({
       )}
 
       <Flex gap={12} align="center">
-        <HeaderMetaTag>
-          <TypeIcon size={16} />
-          {characteristic.type === "options"
-            ? t("characteristics.typeOptions")
-            : t("characteristics.typeText")}
-        </HeaderMetaTag>
+        <CharacteristicTypeTag type={characteristic.type} />
 
         <Flex gap={4} align="center">
           <PackageIcon size={16} />

@@ -1,5 +1,5 @@
 import { apiClient } from "@/api/api-client";
-import { asRecord, getNumber, getString } from "@/api/record-parsing";
+import { asNumber, asRecord, asString } from "@/api/record-parsing";
 
 import {
   type CreateExportResponse,
@@ -24,16 +24,16 @@ function normalizeExportJob(data: unknown): ExportJob {
   const record = asRecord(data);
 
   return {
-    exportId: getString(record, ["exportId", "id"]) ?? "",
-    status: normalizeStatus(getString(record, ["status"])),
-    progress: getNumber(record, ["progress"]) ?? 0,
-    downloadUrl: getString(record, ["downloadUrl"]),
-    fileName: getString(record, ["fileName"]),
-    fileSize: getNumber(record, ["fileSize"]),
-    errorMessage: getString(record, ["errorMessage"]),
-    createdAt: getString(record, ["createdAt"]) ?? "",
-    completedAt: getString(record, ["completedAt"]),
-    expiresAt: getString(record, ["expiresAt"]),
+    exportId: asString(record.exportId) ?? "",
+    status: normalizeStatus(asString(record.status)),
+    progress: asNumber(record.progress) ?? 0,
+    downloadUrl: asString(record.downloadUrl),
+    fileName: asString(record.fileName),
+    fileSize: asNumber(record.fileSize),
+    errorMessage: asString(record.errorMessage),
+    createdAt: asString(record.createdAt) ?? "",
+    completedAt: asString(record.completedAt),
+    expiresAt: asString(record.expiresAt),
   };
 }
 
@@ -41,7 +41,7 @@ export function normalizeCreateExportResponse(
   data: unknown,
 ): CreateExportResponse {
   const record = asRecord(data);
-  const exportId = getString(record, ["exportId", "id"]);
+  const exportId = asString(record.exportId);
 
   if (!exportId) {
     throw new Error("Export id is missing");
@@ -49,13 +49,13 @@ export function normalizeCreateExportResponse(
 
   return {
     exportId,
-    status: normalizeStatus(getString(record, ["status"])),
+    status: normalizeStatus(asString(record.status)),
   };
 }
 
 function normalizeExportDownload(data: unknown): ExportDownload {
   const record = asRecord(data);
-  const downloadUrl = getString(record, ["downloadUrl", "url"]);
+  const downloadUrl = asString(record.downloadUrl);
 
   if (!downloadUrl) {
     throw new Error("Export download URL is missing");
@@ -63,8 +63,8 @@ function normalizeExportDownload(data: unknown): ExportDownload {
 
   return {
     downloadUrl,
-    fileName: getString(record, ["fileName"]),
-    expiresInSeconds: getNumber(record, ["expiresInSeconds"]),
+    fileName: asString(record.fileName),
+    expiresInSeconds: asNumber(record.expiresInSeconds),
   };
 }
 

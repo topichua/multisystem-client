@@ -1,4 +1,5 @@
 import { apiClient } from "@/api/api-client";
+import { asNumber, asRecord, asString, isRecord } from "@/api/record-parsing";
 
 import { normalizeCreateExportResponse } from "@/features/exports/api/exports-api";
 import type {
@@ -40,103 +41,59 @@ import {
 const basePath = "/orders";
 
 function normalizeOrdersList(data: unknown): OrdersListResponse {
-  if (!data || typeof data !== "object") {
-    return { items: [], total: 0, page: 1, pageSize: 50 };
-  }
-
-  const record = data as Record<string, unknown>;
+  const record = asRecord(data);
   const items = Array.isArray(record.items)
     ? (record.items as OrderListItem[])
     : [];
-  const total = typeof record.total === "number" ? record.total : items.length;
-  const pageSize = typeof record.pageSize === "number" ? record.pageSize : 50;
-  const page = typeof record.page === "number" ? record.page : 1;
 
-  return { items, total, page, pageSize };
+  return {
+    items,
+    total: asNumber(record.total) ?? items.length,
+    page: asNumber(record.page) ?? 1,
+    pageSize: asNumber(record.pageSize) ?? 50,
+  };
 }
 
 function normalizeLastOrderAt(value: unknown): string | null {
-  if (typeof value === "string" && value.length > 0) {
-    return value;
-  }
-
-  return null;
+  return asString(value) || null;
 }
 
 function normalizeClientOrderStats(
   data: unknown,
   clientId: number,
 ): ClientOrderStats {
-  if (!data || typeof data !== "object") {
-    return {
-      clientId,
-      orderCount: 0,
-      totalSpent: 0,
-      averageOrderPrice: 0,
-      lastOrderAt: null,
-    };
-  }
-
-  const record = data as Record<string, unknown>;
+  const record = asRecord(data);
 
   return {
-    clientId: typeof record.clientId === "number" ? record.clientId : clientId,
-    orderCount: typeof record.orderCount === "number" ? record.orderCount : 0,
-    totalSpent: typeof record.totalSpent === "number" ? record.totalSpent : 0,
-    averageOrderPrice:
-      typeof record.averageOrderPrice === "number"
-        ? record.averageOrderPrice
-        : 0,
+    clientId: asNumber(record.clientId) ?? clientId,
+    orderCount: asNumber(record.orderCount) ?? 0,
+    totalSpent: asNumber(record.totalSpent) ?? 0,
+    averageOrderPrice: asNumber(record.averageOrderPrice) ?? 0,
     lastOrderAt: normalizeLastOrderAt(record.lastOrderAt),
   };
 }
 
-function getRecordNumber(
-  record: Record<string, unknown>,
-  keys: string[],
-): number | null {
-  for (const key of keys) {
-    const value = record[key];
-    if (typeof value === "number" && Number.isFinite(value)) {
-      return value;
-    }
-  }
-
-  return null;
-}
-
 function normalizeClientLastOrder(data: unknown): ClientLastOrder | null {
-  if (!data || typeof data !== "object") {
+  if (!isRecord(data)) {
     return null;
   }
 
-  const record = data as Record<string, unknown>;
-  const id = getRecordNumber(record, ["id"]);
-  const totalPrice = getRecordNumber(record, ["total_price", "totalPrice"]);
-  const rawStatus = record.status;
+  const id = asNumber(data.id);
+  const totalPrice = asNumber(data.total_price);
+  const rawStatus = data.status;
 
-  if (
-    id == null ||
-    totalPrice == null ||
-    !rawStatus ||
-    typeof rawStatus !== "object"
-  ) {
+  if (id == null || totalPrice == null || !isRecord(rawStatus)) {
     return null;
   }
 
-  const statusRecord = rawStatus as Record<string, unknown>;
-  const statusId = getRecordNumber(statusRecord, ["id"]);
-  const statusName =
-    typeof statusRecord.name === "string" ? statusRecord.name : "";
-  const rawCategory = statusRecord.category;
+  const statusId = asNumber(rawStatus.id);
+  const statusName = asString(rawStatus.name) ?? "";
+  const rawCategory = rawStatus.category;
   const statusCategory: OrderStatusCategory =
     typeof rawCategory === "string" &&
     ORDER_STATUS_CATEGORIES.includes(rawCategory as OrderStatusCategory)
       ? (rawCategory as OrderStatusCategory)
       : "new";
-
-  const statusColor =
-    typeof statusRecord.color === "string" ? statusRecord.color : "";
 
   return {
     id,
@@ -145,7 +102,7 @@ function normalizeClientLastOrder(data: unknown): ClientLastOrder | null {
       id: statusId ?? 0,
       name: statusName,
       category: statusCategory,
-      color: statusColor,
+      color: asString(rawStatus.color) ?? "",
     },
   };
 }

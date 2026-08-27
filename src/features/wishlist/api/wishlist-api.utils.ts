@@ -1,4 +1,4 @@
-import { asRecord, getNumber, getString } from "@/api/record-parsing";
+import { asNumber, asRecord, asString } from "@/api/record-parsing";
 import { normalizeClient } from "@/features/clients/api/clients-api.utils";
 import { normalizeProduct } from "@/features/products/api/products-api";
 
@@ -15,12 +15,12 @@ export function normalizeWishlistItem(raw: unknown): WishlistItem {
   const record = asRecord(raw);
 
   return {
-    id: getNumber(record, ["id"]) ?? 0,
-    productId: getNumber(record, ["productId", "product_id"]) ?? 0,
-    variantId: getNumber(record, ["variantId", "variant_id"]) ?? 0,
-    at: typeof record.at === "string" ? record.at : "",
-    createdBy: getNumber(record, ["createdBy", "created_by"]) ?? 0,
-    conversationId: getNumber(record, ["conversationId", "conversation_id"]),
+    id: asNumber(record.id) ?? 0,
+    productId: asNumber(record.productId) ?? 0,
+    variantId: asNumber(record.variantId) ?? 0,
+    at: asString(record.at) ?? "",
+    createdBy: asNumber(record.createdBy) ?? 0,
+    conversationId: asNumber(record.conversationId),
   };
 }
 
@@ -33,7 +33,7 @@ export function normalizeClientWishlistProducts(
     : [];
 
   return {
-    clientId: getNumber(record, ["clientId", "client_id"]) ?? 0,
+    clientId: asNumber(record.clientId) ?? 0,
     items,
   };
 }
@@ -42,7 +42,7 @@ function normalizeWishlistClientSocialUser(
   raw: unknown,
 ): WishlistClientSocialUser | null {
   const record = asRecord(raw);
-  const id = getString(record, ["id"]);
+  const id = asString(record.id);
 
   if (!id) {
     return null;
@@ -50,9 +50,9 @@ function normalizeWishlistClientSocialUser(
 
   return {
     id,
-    username: getString(record, ["username"]),
-    fullName: getString(record, ["fullName", "full_name"]),
-    avatar: getString(record, ["avatar"]),
+    username: asString(record.username),
+    fullName: asString(record.fullName),
+    avatar: asString(record.avatar),
   };
 }
 
@@ -81,7 +81,7 @@ function normalizeVariantWishlistClient(
 
   return {
     ...client,
-    note: getString(record, ["note"]),
+    note: asString(record.note),
     instagramUsers: normalizeWishlistClientSocialUsers(record.instagramUsers),
     telegramUsers: normalizeWishlistClientSocialUsers(record.telegramUsers),
   };
@@ -98,9 +98,9 @@ export function normalizeVariantWishlistItem(
   }
 
   return {
-    id: getNumber(record, ["id"]) ?? 0,
-    at: typeof record.at === "string" ? record.at : "",
-    conversationId: getNumber(record, ["conversationId", "conversation_id"]),
+    id: asNumber(record.id) ?? 0,
+    at: asString(record.at) ?? "",
+    conversationId: asNumber(record.conversationId),
     client,
   };
 }
@@ -116,9 +116,9 @@ export function normalizeVariantWishlistResponse(
     : [];
 
   return {
-    productId: getNumber(record, ["productId", "product_id"]) ?? 0,
-    variantId: getNumber(record, ["variantId", "variant_id"]) ?? 0,
-    total: getNumber(record, ["total"]) ?? items.length,
+    productId: asNumber(record.productId) ?? 0,
+    variantId: asNumber(record.variantId) ?? 0,
+    total: asNumber(record.total) ?? items.length,
     items,
   };
 }

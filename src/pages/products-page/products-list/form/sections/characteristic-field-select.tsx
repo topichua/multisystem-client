@@ -6,11 +6,11 @@ import {
   TextTIcon,
 } from "@phosphor-icons/react";
 import { Button, Flex, Select, Tooltip, Typography } from "antd";
-import { Tag } from "@/components/tag/tag";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 
+import { CharacteristicTypeTag } from "@/features/characteristics/components/characteristic-type-tag";
 import type { VariantCustomField } from "@/features/products/model/product-create-api.types";
 
 import type { CharacteristicFieldRef } from "../variants/product-add-variant.types";
@@ -318,18 +318,9 @@ export function CharacteristicFieldSelect({
                   </Text>
                 </Tooltip>
               )}
-              <Tag color="volcano">
-                <Flex align="center" gap={4} style={{ width: "40px" }}>
-                  {data.createType === "OPTION" ? (
-                    <ListBulletsIcon />
-                  ) : (
-                    <TextTIcon />
-                  )}
-                  {data.createType === "OPTION"
-                    ? t("products.characteristics.option")
-                    : t("products.characteristics.text")}
-                </Flex>
-              </Tag>
+              <CharacteristicTypeTag
+                type={data.createType === "OPTION" ? "options" : "text"}
+              />
             </Flex>
           </OptionContent>
         );

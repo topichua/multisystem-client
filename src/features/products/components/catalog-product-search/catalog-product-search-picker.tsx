@@ -20,7 +20,6 @@ import type {
 import { CatalogVariantSearchRow } from "./catalog-variant-search-row";
 import { GroupedProductSearchPopup } from "./grouped-product-search-popup";
 import { buildGroupedSearchProducts } from "./grouped-product-search-popup.utils";
-import { toJS } from "mobx";
 
 const { Text } = Typography;
 
@@ -318,11 +317,6 @@ export function CatalogProductSearchPicker({
           )
         }
         optionRender={(option) => {
-          console.log(
-            "🚀 ~ CatalogProductSearchPicker ~ option:",
-            toJS(option.data?.variant.customFields[0].label),
-            toJS(option.data?.variant.customFields[0].value),
-          );
           const data = option.data as VariantSelectOptionData | undefined;
           if (!data?.variant) {
             return option.label;

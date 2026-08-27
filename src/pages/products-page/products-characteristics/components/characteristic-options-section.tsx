@@ -107,7 +107,7 @@ export const CharacteristicOptionsSection = ({
               {t("characteristics.values")}
             </Title>
 
-            <Badge count={options.length} showZero color="default" />
+            <Badge count={options.length} showZero color="lightgray" />
           </Space>
 
           {!create.isAdding && (

@@ -15,7 +15,7 @@ import {
 type BuildFieldTreeNodeParams = {
   field: CharacteristicLibraryField;
   key: string;
-  groupKey: string;
+  groupKey?: string;
   installing: boolean;
   onInstallField: (payload: CharacteristicLibraryInstallPayload) => void;
 };
@@ -29,19 +29,8 @@ type BuildLibraryTreeDataParams = {
   onInstallGroup: (groupKey: string) => void;
 };
 
-const buildFieldGroupKeyMap = (
-  library: CharacteristicLibraryResponse,
-): Map<string, string> => {
-  const groupKeyByFieldKey = new Map<string, string>();
-
-  for (const group of library.groups) {
-    for (const field of group.fields) {
-      groupKeyByFieldKey.set(field.key, group.key);
-    }
-  }
-
-  return groupKeyByFieldKey;
-};
+const bySortOrder = <T extends { sortOrder: number }>(left: T, right: T) =>
+  left.sortOrder - right.sortOrder;
 
 const buildFieldTreeNode = ({
   field,
@@ -57,15 +46,12 @@ const buildFieldTreeNode = ({
   title: (
     <LibraryFieldTitle
       field={field}
-      groupKey={groupKey}
       installing={installing}
       onInstall={onInstallField}
+      {...(groupKey == null ? {} : { groupKey })}
     />
   ),
 });
-
-const bySortOrder = <T extends { sortOrder: number }>(left: T, right: T) =>
-  left.sortOrder - right.sortOrder;
 
 export const buildLibraryTreeData = ({
   library,
@@ -75,26 +61,16 @@ export const buildLibraryTreeData = ({
   onInstallField,
   onInstallGroup,
 }: BuildLibraryTreeDataParams): DataNode[] => {
-  const groupKeyByFieldKey = buildFieldGroupKeyMap(library);
   const expandedKeySet = new Set(expandedKeys);
 
-  const featuredNodes = library.featured.flatMap((field) => {
-    const groupKey = groupKeyByFieldKey.get(field.key);
-
-    if (groupKey == null) {
-      return [];
-    }
-
-    return [
-      buildFieldTreeNode({
-        field,
-        key: `featured:${field.key}`,
-        groupKey,
-        installing: installingKey === `field:${field.key}`,
-        onInstallField,
-      }),
-    ];
-  });
+  const featuredNodes = library.featured.map((field) =>
+    buildFieldTreeNode({
+      field,
+      key: `featured:${field.key}`,
+      installing: installingKey === `field:${field.key}`,
+      onInstallField,
+    }),
+  );
 
   const groupNodes = [...library.groups].sort(bySortOrder).map((group) => {
     const treeGroupKey = `group:${group.key}`;

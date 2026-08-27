@@ -1,11 +1,5 @@
 import { apiClient } from "@/api/api-client";
-import {
-  asRecord,
-  getBoolean,
-  getNestedRecord,
-  getNumber,
-  getString,
-} from "@/api/record-parsing";
+import { asBoolean, asNumber, asRecord, asString } from "@/api/record-parsing";
 import type {
   CreateProductPayload,
   ProductUploadedMedia,
@@ -112,8 +106,8 @@ function getCustomFieldValue(
 
   for (const customField of customFields) {
     const field = asRecord(customField);
-    if (getString(field, ["key"]) === key) {
-      return getString(field, ["value"]);
+    if (asString(field.key) === key) {
+      return asString(field.value);
     }
   }
 
@@ -122,26 +116,21 @@ function getCustomFieldValue(
 
 function normalizeCatalogVariant(raw: unknown): CatalogVariant {
   const record = asRecord(raw);
-  const product = getNestedRecord(record, ["product", "product_parent"]);
-  const productId =
-    getNumber(record, ["productId"]) ?? getNumber(product, ["id"]) ?? 0;
-  const productName =
-    getString(product, ["name"]) ?? getString(record, ["name"]) ?? "";
-  const unitPrice =
-    getNumber(record, ["unitPrice", "price"]) ??
-    getNumber(product, ["price"]) ??
-    0;
-  const quantity = getNumber(record, ["quantity", "availableQuantity"]) ?? 0;
-  const inStock = getBoolean(record, ["inStock"]) ?? quantity > 0;
+  const product = asRecord(record.product);
+  const productId = asNumber(record.productId) ?? asNumber(product.id) ?? 0;
+  const productName = asString(product.name) ?? asString(record.name) ?? "";
+  const unitPrice = asNumber(record.unitPrice) ?? asNumber(product.price) ?? 0;
+  const quantity = asNumber(record.quantity) ?? 0;
+  const inStock = asBoolean(record.inStock) ?? quantity > 0;
   const color = getCustomFieldValue(record, "color");
   const size = getCustomFieldValue(record, "size");
-  const sku = getString(record, ["sku"]);
-  const variantId = getNumber(record, ["id"]) ?? 0;
+  const sku = asString(record.sku);
+  const variantId = asNumber(record.id) ?? 0;
   const customFields = Array.isArray(record.customFields)
     ? record.customFields.map(normalizeProductVariantCustomField)
     : [];
   const label =
-    getString(record, ["label"]) ??
+    asString(record.label) ??
     buildCatalogVariantLabelFromParts(productName, { color, size, sku });
 
   return {
@@ -152,24 +141,21 @@ function normalizeCatalogVariant(raw: unknown): CatalogVariant {
     sku,
     customFields,
     unitPrice,
-    imageUrl: getString(record, ["imageUrl"]),
+    imageUrl: asString(record.imageUrl),
     inStock,
     quantity,
-    wishlistCount: getNumber(record, ["wishlistCount"]) ?? 0,
-    status: getString(record, ["status"]) ?? "active",
+    wishlistCount: asNumber(record.wishlistCount) ?? 0,
+    status: asString(record.status) ?? "active",
     label: label || `#${variantId}`,
     product: {
       id: productId,
       name: productName,
-      categoryId:
-        getNumber(product, ["categoryId"]) ?? getNumber(record, ["categoryId"]),
-      mainImageUrl: getString(product, ["mainImageUrl"]),
+      categoryId: asNumber(product.categoryId) ?? asNumber(record.categoryId),
+      mainImageUrl: asString(product.mainImageUrl),
       currency:
-        getString(product, ["currency"]) ??
-        getString(record, ["currency"]) ??
-        "UAH",
-      status: getString(product, ["status"]) ?? "active",
-      price: getNumber(product, ["price"]) ?? unitPrice,
+        asString(product.currency) ?? asString(record.currency) ?? "UAH",
+      status: asString(product.status) ?? "active",
+      price: asNumber(product.price) ?? unitPrice,
     },
   };
 }
@@ -177,19 +163,17 @@ function normalizeCatalogVariant(raw: unknown): CatalogVariant {
 function normalizeCatalogVariantsList(
   data: unknown,
 ): CatalogVariantsListResponse {
-  if (!data || typeof data !== "object") {
-    return { items: [], total: 0, page: 1, pageSize: 50 };
-  }
-
-  const record = data as Record<string, unknown>;
+  const record = asRecord(data);
   const items = Array.isArray(record.items)
     ? record.items.map(normalizeCatalogVariant)
     : [];
-  const total = typeof record.total === "number" ? record.total : items.length;
-  const pageSize = typeof record.pageSize === "number" ? record.pageSize : 50;
-  const page = typeof record.page === "number" ? record.page : 1;
 
-  return { items, total, page, pageSize };
+  return {
+    items,
+    total: asNumber(record.total) ?? items.length,
+    page: asNumber(record.page) ?? 1,
+    pageSize: asNumber(record.pageSize) ?? 50,
+  };
 }
 
 function normalizeProductVariantCustomField(
@@ -198,12 +182,12 @@ function normalizeProductVariantCustomField(
   const record = asRecord(raw);
 
   return {
-    fieldId: getNumber(record, ["fieldId"]) ?? 0,
-    key: getString(record, ["key"]) ?? "",
-    label: getString(record, ["label"]) ?? "",
-    type: getString(record, ["type"]) ?? "text",
-    value: getString(record, ["value"]) ?? "",
-    order: getNumber(record, ["order"]) ?? 0,
+    fieldId: asNumber(record.fieldId) ?? 0,
+    key: asString(record.key) ?? "",
+    label: asString(record.label) ?? "",
+    type: asString(record.type) ?? "text",
+    value: asString(record.value) ?? "",
+    order: asNumber(record.order) ?? 0,
   };
 }
 
@@ -211,14 +195,14 @@ function normalizeProductMediaItem(raw: unknown): ProductMediaItem {
   const record = asRecord(raw);
 
   return {
-    id: getNumber(record, ["id"]) ?? 0,
-    uploadMediaId: getNumber(record, ["uploadMediaId"]),
-    productId: getNumber(record, ["productId"]),
-    url: getString(record, ["url"]) ?? "",
-    type: getString(record, ["type"]),
-    sourceUrl: getString(record, ["sourceUrl"]),
-    sortOrder: getNumber(record, ["sortOrder"]),
-    variantId: getNumber(record, ["variantId"]),
+    id: asNumber(record.id) ?? 0,
+    uploadMediaId: asNumber(record.uploadMediaId),
+    productId: asNumber(record.productId),
+    url: asString(record.url) ?? "",
+    type: asString(record.type),
+    sourceUrl: asString(record.sourceUrl),
+    sortOrder: asNumber(record.sortOrder),
+    variantId: asNumber(record.variantId),
   };
 }
 
@@ -232,20 +216,20 @@ function normalizeProductVariant(raw: unknown): ProductVariant {
     : [];
 
   return {
-    id: getNumber(record, ["id"]) ?? 0,
+    id: asNumber(record.id) ?? 0,
     customFields,
-    price: getNumber(record, ["price"]),
-    inStock: getBoolean(record, ["inStock"]),
-    quantity: getNumber(record, ["quantity"]),
-    reservedQuantity: getNumber(record, ["reservedQuantity"]) ?? 0,
-    availableQuantity: getNumber(record, ["availableQuantity"]) ?? 0,
-    avgPurchasePrice: getNumber(record, ["avgPurchasePrice"]),
-    wishlistCount: getNumber(record, ["wishlistCount"]) ?? 0,
-    imageUrl: getString(record, ["imageUrl"]),
-    sku: getString(record, ["sku"]),
-    status: getString(record, ["status"]) ?? "active",
-    createdAt: getString(record, ["createdAt"]) ?? "",
-    updatedAt: getString(record, ["updatedAt"]) ?? "",
+    price: asNumber(record.price),
+    inStock: asBoolean(record.inStock),
+    quantity: asNumber(record.quantity),
+    reservedQuantity: asNumber(record.reservedQuantity) ?? 0,
+    availableQuantity: asNumber(record.availableQuantity) ?? 0,
+    avgPurchasePrice: asNumber(record.avgPurchasePrice),
+    wishlistCount: asNumber(record.wishlistCount) ?? 0,
+    imageUrl: asString(record.imageUrl),
+    sku: asString(record.sku),
+    status: asString(record.status) ?? "active",
+    createdAt: asString(record.createdAt) ?? "",
+    updatedAt: asString(record.updatedAt) ?? "",
     media,
   };
 }
@@ -258,27 +242,27 @@ export function normalizeProduct(raw: unknown): Product {
   const sizes = record.sizes;
 
   return {
-    id: getNumber(record, ["id"]) ?? 0,
-    name: getString(record, ["name"]) ?? "",
-    productType: getString(record, ["productType"]) ?? "single",
-    description: getString(record, ["description"]),
-    status: getString(record, ["status"]) ?? "active",
-    price: getNumber(record, ["price"]),
-    currency: getString(record, ["currency"]) ?? "UAH",
-    inStock: getBoolean(record, ["inStock"]),
-    quantity: getNumber(record, ["quantity"]),
-    wishlistCount: getNumber(record, ["wishlistCount"]) ?? 0,
-    mainImageUrl: getString(record, ["mainImageUrl"]),
-    sourceType: getString(record, ["sourceType"]) ?? undefined,
-    sourceId: getString(record, ["sourceId"]),
-    referenceGroupId: getNumber(record, ["referenceGroupId"]),
-    categoryId: getNumber(record, ["categoryId"]),
-    weightGrams: getNumber(record, ["weightGrams"]),
-    lengthCm: getNumber(record, ["lengthCm"]),
-    widthCm: getNumber(record, ["widthCm"]),
-    heightCm: getNumber(record, ["heightCm"]),
-    createdAt: getString(record, ["createdAt"]) ?? "",
-    updatedAt: getString(record, ["updatedAt"]) ?? "",
+    id: asNumber(record.id) ?? 0,
+    name: asString(record.name) ?? "",
+    productType: asString(record.productType) ?? "single",
+    description: asString(record.description),
+    status: asString(record.status) ?? "active",
+    price: asNumber(record.price),
+    currency: asString(record.currency) ?? "UAH",
+    inStock: asBoolean(record.inStock),
+    quantity: asNumber(record.quantity),
+    wishlistCount: asNumber(record.wishlistCount) ?? 0,
+    mainImageUrl: asString(record.mainImageUrl),
+    sourceType: asString(record.sourceType) ?? undefined,
+    sourceId: asString(record.sourceId),
+    referenceGroupId: asNumber(record.referenceGroupId),
+    categoryId: asNumber(record.categoryId),
+    weightGrams: asNumber(record.weightGrams),
+    lengthCm: asNumber(record.lengthCm),
+    widthCm: asNumber(record.widthCm),
+    heightCm: asNumber(record.heightCm),
+    createdAt: asString(record.createdAt) ?? "",
+    updatedAt: asString(record.updatedAt) ?? "",
     sizes:
       typeof sizes === "string" || Array.isArray(sizes)
         ? (sizes as string | string[])
@@ -288,43 +272,29 @@ export function normalizeProduct(raw: unknown): Product {
 }
 
 function normalizeProductsList(data: unknown): ProductsListResponse {
-  if (!data || typeof data !== "object") {
-    return {
-      items: [],
-      total: 0,
-      page: 1,
-      pageSize: PRODUCTS_DEFAULT_PAGE_SIZE,
-      limit: PRODUCTS_DEFAULT_PAGE_SIZE,
-      offset: 0,
-    };
-  }
-
-  const record = data as Record<string, unknown>;
+  const record = asRecord(data);
   const items = Array.isArray(record.items)
     ? record.items.map(normalizeProduct)
     : [];
-  const total = typeof record.total === "number" ? record.total : items.length;
+  const total = asNumber(record.total) ?? items.length;
   const pageSize =
-    typeof record.pageSize === "number"
-      ? record.pageSize
-      : typeof record.limit === "number"
-        ? record.limit
-        : PRODUCTS_DEFAULT_PAGE_SIZE;
-  const limit = typeof record.limit === "number" ? record.limit : pageSize;
+    asNumber(record.pageSize) ??
+    asNumber(record.limit) ??
+    PRODUCTS_DEFAULT_PAGE_SIZE;
+  const limit = asNumber(record.limit) ?? pageSize;
+  const page = asNumber(record.page);
   const offset =
-    typeof record.offset === "number"
-      ? record.offset
-      : typeof record.page === "number" && pageSize > 0
-        ? (record.page - 1) * pageSize
-        : 0;
-  const page =
-    typeof record.page === "number"
-      ? record.page
-      : limit > 0
-        ? Math.floor(offset / limit) + 1
-        : 1;
+    asNumber(record.offset) ??
+    (page != null && pageSize > 0 ? (page - 1) * pageSize : 0);
 
-  return { items, total, page, pageSize, limit, offset };
+  return {
+    items,
+    total,
+    page: page ?? (limit > 0 ? Math.floor(offset / limit) + 1 : 1),
+    pageSize,
+    limit,
+    offset,
+  };
 }
 
 function axiosMultipartFormDataConfig() {

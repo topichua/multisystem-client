@@ -1,9 +1,10 @@
-import { ListBulletsIcon, PlusIcon, TextTIcon } from "@phosphor-icons/react";
-import { Divider, Flex, Select, Typography, theme } from "antd";
+import { PlusIcon } from "@phosphor-icons/react";
+import { Button, Divider, Flex, Select, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { CharacteristicTypeTag } from "@/features/characteristics/components/characteristic-type-tag";
 import type { VariantCustomField } from "@/features/products/model/product-create-api.types";
 import { getDraftCustomFieldFilter } from "@/features/products/model/products-list-custom-field-filters";
 import { useProductsStore } from "@/features/products/model/use-products-store";
@@ -24,7 +25,6 @@ type ProductsListCustomFieldFiltersSectionProps = {
 export const ProductsListCustomFieldFiltersSection = observer(
   ({ fields }: ProductsListCustomFieldFiltersSectionProps) => {
     const { t } = useTranslation();
-    const { token } = theme.useToken();
     const productsStore = useProductsStore();
     const [pickerOpen, setPickerOpen] = useState(false);
     const selectRef = useRef<{ focus: () => void } | null>(null);
@@ -70,35 +70,23 @@ export const ProductsListCustomFieldFiltersSection = observer(
 
           <Flex vertical gap={12}>
             {!showFieldPicker ? (
-              <button
-                type="button"
+              <Button
+                block
+                color="primary"
+                variant="dashed"
+                icon={<PlusIcon size={16} />}
                 onClick={() => setPickerOpen(true)}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: 8,
-                  width: "100%",
-                  padding: "10px 12px",
-                  border: `1px dashed ${token.colorBorder}`,
-                  borderRadius: token.borderRadius,
-                  background: "transparent",
-                  color: token.colorPrimary,
-                  cursor: "pointer",
-                }}
               >
-                <PlusIcon size={16} />
-                <span>{t("products.listFilters.panelAddField")}</span>
-              </button>
+                {t("products.listFilters.panelAddField")}
+              </Button>
             ) : (
               <Select
                 ref={selectRef as never}
                 mode="multiple"
                 allowClear
-                showSearch
+                showSearch={{ optionFilterProp: "label" }}
                 open={pickerOpen}
                 onOpenChange={setPickerOpen}
-                optionFilterProp="label"
                 placeholder={t(
                   "products.listFilters.panelFieldsSelectPlaceholder",
                 )}
@@ -107,20 +95,14 @@ export const ProductsListCustomFieldFiltersSection = observer(
                 options={activeFields.map((field) => ({
                   value: field.id,
                   label: fieldDisplayLabel(field),
-                  fieldType: field.type,
                 }))}
                 optionRender={(option) => {
-                  const fieldType = (
-                    option.data as { fieldType?: "options" | "text" }
-                  ).fieldType;
+                  const field = fieldById.get(Number(option.value));
+
                   return (
-                    <Flex align="center" gap={8}>
-                      {fieldType === "text" ? (
-                        <TextTIcon size={16} />
-                      ) : (
-                        <ListBulletsIcon size={16} />
-                      )}
+                    <Flex align="center" justify="space-between" gap={8}>
                       <span>{option.label}</span>
+                      {field && <CharacteristicTypeTag type={field.type} />}
                     </Flex>
                   );
                 }}
