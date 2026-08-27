@@ -75,6 +75,7 @@ export function productVariantToCatalogVariant(
     wishlistCount: variant.wishlistCount ?? 0,
     status: variant.status ?? product.status,
     label: buildCatalogVariantLabelFromVariant(product.name, variant),
+    customFields: variant.customFields ?? [],
     product: {
       id: product.id,
       name: product.name,
@@ -103,7 +104,29 @@ export function resolveCatalogVariantImageSrc(variant: CatalogVariant): string {
   return resolveProductImageSrc(getCatalogVariantImageUrl(variant));
 }
 
+function formatCatalogVariantCustomFieldMeta(field: {
+  label?: string | null;
+  value?: string | null;
+}): string | null {
+  const value = field.value?.trim();
+  if (!value) {
+    return null;
+  }
+
+  const label = field.label?.trim();
+  return label ? `${label} - ${value}` : value;
+}
+
 export function getCatalogVariantMeta(variant: CatalogVariant): string {
+  const fromCustomFields = [...(variant.customFields ?? [])]
+    .sort((a, b) => Number(a.order ?? 0) - Number(b.order ?? 0))
+    .map(formatCatalogVariantCustomFieldMeta)
+    .filter((part): part is string => Boolean(part));
+
+  if (fromCustomFields.length > 0) {
+    return fromCustomFields.join(" / ");
+  }
+
   return [variant.color, variant.size].filter(Boolean).join(" / ");
 }
 

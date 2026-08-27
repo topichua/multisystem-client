@@ -110,6 +110,7 @@ const createFallbackCatalogVariant = (
   wishlistCount: 0,
   status: "active",
   label: item.variantName?.trim() || `#${item.productVariantId}`,
+  customFields: [],
   product: {
     id: item.productId,
     name: item.productName?.trim() || `#${item.productId}`,

@@ -20,6 +20,7 @@ import type {
 import { CatalogVariantSearchRow } from "./catalog-variant-search-row";
 import { GroupedProductSearchPopup } from "./grouped-product-search-popup";
 import { buildGroupedSearchProducts } from "./grouped-product-search-popup.utils";
+import { toJS } from "mobx";
 
 const { Text } = Typography;
 
@@ -101,6 +102,7 @@ export function CatalogProductSearchPicker({
       ),
     [categories],
   );
+
   const groupedProducts = useMemo(
     () =>
       catalogSearchMode === "grouped"
@@ -117,14 +119,17 @@ export function CatalogProductSearchPicker({
       selectedVariantIds,
     ],
   );
+
   const [expandedProductKeys, setExpandedProductKeys] = useState<Set<string>>(
     () => new Set(),
   );
+
   const resetGroupedExpansion = useCallback(() => {
     setExpandedProductKeys((current) =>
       current.size === 0 ? current : new Set(),
     );
   }, []);
+
   const toggleGroupedProduct = useCallback((productKey: string) => {
     setExpandedProductKeys((current) => {
       const next = new Set(current);
@@ -138,10 +143,12 @@ export function CatalogProductSearchPicker({
       return next;
     });
   }, []);
+
   const handleClear = useCallback(() => {
     resetGroupedExpansion();
     onClear();
   }, [onClear, resetGroupedExpansion]);
+
   const handleSearch = useCallback(
     (value: string) => {
       resetGroupedExpansion();
@@ -149,6 +156,7 @@ export function CatalogProductSearchPicker({
     },
     [onSearch, resetGroupedExpansion],
   );
+
   const handleCategoryChange = useCallback(
     (categoryId: number | null) => {
       resetGroupedExpansion();
@@ -156,6 +164,7 @@ export function CatalogProductSearchPicker({
     },
     [onCategoryChange, resetGroupedExpansion],
   );
+
   const handleSearchModeChange = useCallback(
     (mode: CatalogSearchMode) => {
       resetGroupedExpansion();
@@ -182,6 +191,7 @@ export function CatalogProductSearchPicker({
       isVariantDisabled,
     ],
   );
+
   const selectOptions = useMemo(
     () =>
       variantSelectOptions.map((option) => ({
@@ -190,6 +200,7 @@ export function CatalogProductSearchPicker({
       })),
     [selectedVariantIds, variantSelectOptions, isVariantDisabled],
   );
+
   const shouldRenderGroupedPopup =
     catalogSearchMode === "grouped" &&
     groupedProducts.length > 0 &&
@@ -307,6 +318,11 @@ export function CatalogProductSearchPicker({
           )
         }
         optionRender={(option) => {
+          console.log(
+            "🚀 ~ CatalogProductSearchPicker ~ option:",
+            toJS(option.data?.variant.customFields[0].label),
+            toJS(option.data?.variant.customFields[0].value),
+          );
           const data = option.data as VariantSelectOptionData | undefined;
           if (!data?.variant) {
             return option.label;

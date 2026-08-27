@@ -173,6 +173,7 @@ export type CatalogVariant = {
   wishlistCount: number;
   status: ProductStatus;
   label: string;
+  customFields: ProductVariantCustomField[];
   product: CatalogVariantProduct;
 };
 

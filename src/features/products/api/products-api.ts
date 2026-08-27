@@ -122,34 +122,26 @@ function getCustomFieldValue(
 
 function normalizeCatalogVariant(raw: unknown): CatalogVariant {
   const record = asRecord(raw);
-  const product = getNestedRecord(record, [
-    "product",
-    "productParent",
-    "product_parent",
-  ]);
+  const product = getNestedRecord(record, ["product", "product_parent"]);
   const productId =
-    getNumber(record, ["productId", "product_id"]) ??
-    getNumber(product, ["id"]) ??
-    0;
+    getNumber(record, ["productId"]) ?? getNumber(product, ["id"]) ?? 0;
   const productName =
-    getString(product, ["name"]) ??
-    getString(record, ["productName", "product_name"]) ??
-    "";
+    getString(product, ["name"]) ?? getString(record, ["name"]) ?? "";
   const unitPrice =
-    getNumber(record, ["unitPrice", "unit_price", "price"]) ??
+    getNumber(record, ["unitPrice", "price"]) ??
     getNumber(product, ["price"]) ??
     0;
-  const quantity =
-    getNumber(record, ["quantity", "availableQuantity", "stockQty"]) ?? 0;
-  const inStock = getBoolean(record, ["inStock", "in_stock"]) ?? quantity > 0;
-  const color =
-    getString(record, ["color"]) ?? getCustomFieldValue(record, "color");
-  const size =
-    getString(record, ["size"]) ?? getCustomFieldValue(record, "size");
+  const quantity = getNumber(record, ["quantity", "availableQuantity"]) ?? 0;
+  const inStock = getBoolean(record, ["inStock"]) ?? quantity > 0;
+  const color = getCustomFieldValue(record, "color");
+  const size = getCustomFieldValue(record, "size");
   const sku = getString(record, ["sku"]);
   const variantId = getNumber(record, ["id"]) ?? 0;
+  const customFields = Array.isArray(record.customFields)
+    ? record.customFields.map(normalizeProductVariantCustomField)
+    : [];
   const label =
-    getString(record, ["label", "name"]) ??
+    getString(record, ["label"]) ??
     buildCatalogVariantLabelFromParts(productName, { color, size, sku });
 
   return {
@@ -158,32 +150,25 @@ function normalizeCatalogVariant(raw: unknown): CatalogVariant {
     color,
     size,
     sku,
+    customFields,
     unitPrice,
-    imageUrl:
-      getString(record, ["imageUrl", "image_url"]) ??
-      getString(record, ["variantImageUrl", "variant_image_url"]),
+    imageUrl: getString(record, ["imageUrl"]),
     inStock,
     quantity,
-    wishlistCount: getNumber(record, ["wishlistCount", "wishlist_count"]) ?? 0,
+    wishlistCount: getNumber(record, ["wishlistCount"]) ?? 0,
     status: getString(record, ["status"]) ?? "active",
     label: label || `#${variantId}`,
     product: {
       id: productId,
       name: productName,
       categoryId:
-        getNumber(product, ["categoryId", "category_id"]) ??
-        getNumber(record, ["categoryId", "category_id"]),
-      mainImageUrl:
-        getString(product, ["mainImageUrl", "main_image_url"]) ??
-        getString(record, ["productImageUrl", "product_image_url"]),
+        getNumber(product, ["categoryId"]) ?? getNumber(record, ["categoryId"]),
+      mainImageUrl: getString(product, ["mainImageUrl"]),
       currency:
         getString(product, ["currency"]) ??
         getString(record, ["currency"]) ??
         "UAH",
-      status:
-        getString(product, ["status"]) ??
-        getString(record, ["productStatus", "product_status"]) ??
-        "active",
+      status: getString(product, ["status"]) ?? "active",
       price: getNumber(product, ["price"]) ?? unitPrice,
     },
   };
@@ -213,7 +198,7 @@ function normalizeProductVariantCustomField(
   const record = asRecord(raw);
 
   return {
-    fieldId: getNumber(record, ["fieldId", "field_id"]) ?? 0,
+    fieldId: getNumber(record, ["fieldId"]) ?? 0,
     key: getString(record, ["key"]) ?? "",
     label: getString(record, ["label"]) ?? "",
     type: getString(record, ["type"]) ?? "text",
@@ -227,13 +212,13 @@ function normalizeProductMediaItem(raw: unknown): ProductMediaItem {
 
   return {
     id: getNumber(record, ["id"]) ?? 0,
-    uploadMediaId: getNumber(record, ["uploadMediaId", "upload_media_id"]),
-    productId: getNumber(record, ["productId", "product_id"]),
+    uploadMediaId: getNumber(record, ["uploadMediaId"]),
+    productId: getNumber(record, ["productId"]),
     url: getString(record, ["url"]) ?? "",
     type: getString(record, ["type"]),
-    sourceUrl: getString(record, ["sourceUrl", "source_url"]),
-    sortOrder: getNumber(record, ["sortOrder", "sort_order"]),
-    variantId: getNumber(record, ["variantId", "variant_id"]),
+    sourceUrl: getString(record, ["sourceUrl"]),
+    sortOrder: getNumber(record, ["sortOrder"]),
+    variantId: getNumber(record, ["variantId"]),
   };
 }
 
@@ -250,24 +235,17 @@ function normalizeProductVariant(raw: unknown): ProductVariant {
     id: getNumber(record, ["id"]) ?? 0,
     customFields,
     price: getNumber(record, ["price"]),
-    inStock: getBoolean(record, ["inStock", "in_stock"]),
+    inStock: getBoolean(record, ["inStock"]),
     quantity: getNumber(record, ["quantity"]),
-    reservedQuantity:
-      getNumber(record, ["reservedQuantity", "reserved_quantity"]) ?? 0,
-    availableQuantity:
-      getNumber(record, ["availableQuantity", "available_quantity"]) ?? 0,
-    avgPurchasePrice: getNumber(record, [
-      "avgPurchasePrice",
-      "avg_purchase_price",
-      "averagePurchasePrice",
-      "average_purchase_price",
-    ]),
-    wishlistCount: getNumber(record, ["wishlistCount", "wishlist_count"]) ?? 0,
-    imageUrl: getString(record, ["imageUrl", "image_url"]),
+    reservedQuantity: getNumber(record, ["reservedQuantity"]) ?? 0,
+    availableQuantity: getNumber(record, ["availableQuantity"]) ?? 0,
+    avgPurchasePrice: getNumber(record, ["avgPurchasePrice"]),
+    wishlistCount: getNumber(record, ["wishlistCount"]) ?? 0,
+    imageUrl: getString(record, ["imageUrl"]),
     sku: getString(record, ["sku"]),
     status: getString(record, ["status"]) ?? "active",
-    createdAt: getString(record, ["createdAt", "created_at"]) ?? "",
-    updatedAt: getString(record, ["updatedAt", "updated_at"]) ?? "",
+    createdAt: getString(record, ["createdAt"]) ?? "",
+    updatedAt: getString(record, ["updatedAt"]) ?? "",
     media,
   };
 }
@@ -282,28 +260,25 @@ export function normalizeProduct(raw: unknown): Product {
   return {
     id: getNumber(record, ["id"]) ?? 0,
     name: getString(record, ["name"]) ?? "",
-    productType: getString(record, ["productType", "product_type"]) ?? "single",
+    productType: getString(record, ["productType"]) ?? "single",
     description: getString(record, ["description"]),
     status: getString(record, ["status"]) ?? "active",
     price: getNumber(record, ["price"]),
     currency: getString(record, ["currency"]) ?? "UAH",
-    inStock: getBoolean(record, ["inStock", "in_stock"]),
+    inStock: getBoolean(record, ["inStock"]),
     quantity: getNumber(record, ["quantity"]),
-    wishlistCount: getNumber(record, ["wishlistCount", "wishlist_count"]) ?? 0,
-    mainImageUrl: getString(record, ["mainImageUrl", "main_image_url"]),
-    sourceType: getString(record, ["sourceType", "source_type"]) ?? undefined,
-    sourceId: getString(record, ["sourceId", "source_id"]),
-    referenceGroupId: getNumber(record, [
-      "referenceGroupId",
-      "reference_group_id",
-    ]),
-    categoryId: getNumber(record, ["categoryId", "category_id"]),
-    weightGrams: getNumber(record, ["weightGrams", "weight_grams"]),
-    lengthCm: getNumber(record, ["lengthCm", "length_cm"]),
-    widthCm: getNumber(record, ["widthCm", "width_cm"]),
-    heightCm: getNumber(record, ["heightCm", "height_cm"]),
-    createdAt: getString(record, ["createdAt", "created_at"]) ?? "",
-    updatedAt: getString(record, ["updatedAt", "updated_at"]) ?? "",
+    wishlistCount: getNumber(record, ["wishlistCount"]) ?? 0,
+    mainImageUrl: getString(record, ["mainImageUrl"]),
+    sourceType: getString(record, ["sourceType"]) ?? undefined,
+    sourceId: getString(record, ["sourceId"]),
+    referenceGroupId: getNumber(record, ["referenceGroupId"]),
+    categoryId: getNumber(record, ["categoryId"]),
+    weightGrams: getNumber(record, ["weightGrams"]),
+    lengthCm: getNumber(record, ["lengthCm"]),
+    widthCm: getNumber(record, ["widthCm"]),
+    heightCm: getNumber(record, ["heightCm"]),
+    createdAt: getString(record, ["createdAt"]) ?? "",
+    updatedAt: getString(record, ["updatedAt"]) ?? "",
     sizes:
       typeof sizes === "string" || Array.isArray(sizes)
         ? (sizes as string | string[])
