@@ -60,6 +60,15 @@ export const useProductsListController = () => {
     }
   }, [workspaceSettingsStore]);
 
+  useEffect(() => {
+    if (
+      workspaceSettingsStore.wishlistEnabled === false &&
+      productsStore.listWishlistOnly
+    ) {
+      productsStore.clearListWishlistOnly();
+    }
+  }, [productsStore, workspaceSettingsStore.wishlistEnabled]);
+
   const categoryNameById = useMemo(
     () =>
       new Map(

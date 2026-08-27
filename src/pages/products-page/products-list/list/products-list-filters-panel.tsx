@@ -22,6 +22,7 @@ import {
   type ProductsListByStatus,
 } from "@/features/products/model/product.types";
 import { useProductsStore } from "@/features/products/model/use-products-store";
+import { useWorkspaceSettingsStore } from "@/features/workspace-settings/model/use-workspace-settings-store";
 import { useIsMobileViewport } from "@/utils/use-media-query";
 
 import { ProductsListCustomFieldFiltersSection } from "./products-list-custom-field-filters-section";
@@ -85,6 +86,8 @@ export const ProductsListFiltersPanel = observer(
     const { token } = theme.useToken();
     const productsStore = useProductsStore();
     const categoriesStore = useCategoriesStore();
+    const workspaceSettingsStore = useWorkspaceSettingsStore();
+    const wishlistEnabled = workspaceSettingsStore.wishlistEnabled === true;
     const [categoryQuery, setCategoryQuery] = useState("");
     const filtersPanelWasOpenRef = useRef(false);
 
@@ -327,21 +330,25 @@ export const ProductsListFiltersPanel = observer(
           </Flex>
         </div>
 
-        <Divider style={{ margin: 0 }} />
+        {wishlistEnabled && (
+          <>
+            <Divider style={{ margin: 0 }} />
 
-        <div>
-          <Text strong style={{ display: "block", marginBottom: 8 }}>
-            {t("products.listFilters.panelWishlistSection")}
-          </Text>
-          <Checkbox
-            checked={productsStore.draftWishlistOnly}
-            onChange={(e) =>
-              productsStore.setDraftWishlistOnly(e.target.checked)
-            }
-          >
-            {t("products.listFilters.panelWishlistOnly")}
-          </Checkbox>
-        </div>
+            <div>
+              <Text strong style={{ display: "block", marginBottom: 8 }}>
+                {t("products.listFilters.panelWishlistSection")}
+              </Text>
+              <Checkbox
+                checked={productsStore.draftWishlistOnly}
+                onChange={(e) =>
+                  productsStore.setDraftWishlistOnly(e.target.checked)
+                }
+              >
+                {t("products.listFilters.panelWishlistOnly")}
+              </Checkbox>
+            </div>
+          </>
+        )}
 
         <Divider style={{ margin: 0 }} />
 
@@ -399,6 +406,9 @@ export const ProductsListFiltersPanel = observer(
               style={{ flex: 1 }}
               icon={<FunnelSimpleIcon size={16} />}
               onClick={() => {
+                if (!wishlistEnabled) {
+                  productsStore.setDraftWishlistOnly(false);
+                }
                 productsStore.applyFiltersFromPanel();
                 onClose();
               }}
