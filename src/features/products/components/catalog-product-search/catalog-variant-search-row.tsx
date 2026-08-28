@@ -1,4 +1,5 @@
 import { CheckIcon, PlusIcon } from "@phosphor-icons/react";
+import type { MouseEvent } from "react";
 import { useTranslation } from "react-i18next";
 
 import type { CatalogVariant } from "@/features/products/model/product.types";
@@ -58,15 +59,55 @@ export function CatalogVariantSearchRow({
       </S.GroupedVariantInventory>
 
       <S.GroupedVariantAction
-        $empty={!selected && !variant.inStock}
+        $empty={disabled && !selected}
         $selected={selected}
       >
         {selected ? (
           <CheckIcon size={14} weight="bold" />
-        ) : variant.inStock ? (
+        ) : disabled ? null : (
           <PlusIcon size={16} weight="bold" />
-        ) : null}
+        )}
       </S.GroupedVariantAction>
     </>
+  );
+}
+
+type CatalogVariantSearchOptionProps = {
+  disabled?: boolean;
+  indented?: boolean;
+  selected?: boolean;
+  variant: CatalogVariant;
+  onMouseDown?: (event: MouseEvent<HTMLButtonElement>) => void;
+  onSelect: (variant: CatalogVariant) => void;
+};
+
+export function CatalogVariantSearchOption({
+  disabled = false,
+  indented = false,
+  selected = false,
+  variant,
+  onMouseDown,
+  onSelect,
+}: CatalogVariantSearchOptionProps) {
+  return (
+    <S.GroupedVariantButton
+      type="button"
+      disabled={disabled}
+      $disabled={disabled}
+      $indented={indented}
+      $selected={selected}
+      onMouseDown={onMouseDown}
+      onClick={() => {
+        if (!disabled) {
+          onSelect(variant);
+        }
+      }}
+    >
+      <CatalogVariantSearchRow
+        disabled={disabled}
+        selected={selected}
+        variant={variant}
+      />
+    </S.GroupedVariantButton>
   );
 }

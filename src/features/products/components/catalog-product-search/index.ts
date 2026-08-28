@@ -11,7 +11,10 @@ export type {
 export { CatalogProductSearchPicker } from "./catalog-product-search-picker";
 export type { CatalogProductSearchPickerProps } from "./catalog-product-search-picker";
 export { CatalogProductSearchPopover } from "./catalog-product-search-popover";
-export { CatalogVariantSearchRow } from "./catalog-variant-search-row";
+export {
+  CatalogVariantSearchOption,
+  CatalogVariantSearchRow,
+} from "./catalog-variant-search-row";
 export { GroupedProductSearchPopup } from "./grouped-product-search-popup";
 export { buildGroupedSearchProducts } from "./grouped-product-search-popup.utils";
 export type { GroupedSearchProduct } from "./grouped-product-search-popup.utils";

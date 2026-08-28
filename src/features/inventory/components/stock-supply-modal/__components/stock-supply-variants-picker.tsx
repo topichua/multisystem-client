@@ -13,21 +13,52 @@ import {
   Spin,
   Typography,
 } from "antd";
-import { memo, useCallback, useEffect, useRef } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { UIEvent } from "react";
 
 import { CategoryTreeSelect } from "@/features/categories/components/category-tree-select";
+import { flattenCategories } from "@/features/categories/model/category-tree";
 import type { useCategoriesStore } from "@/features/categories/model/use-categories-store";
+import {
+  CatalogVariantSearchOption,
+  GroupedProductSearchPopup,
+  type GroupedSearchProduct,
+} from "@/features/products/components/catalog-product-search";
 import type { CatalogVariant } from "@/features/products/model/product.types";
+import { getCatalogVariantImageUrl } from "@/features/products/utils/catalog-variant-display";
 
 import type {
   SupplyPickerMode,
   VariantGroup,
 } from "../stock-supply-modal.types";
 import * as S from "../stock-supply-modal.styled";
-import { SupplyVariantRow } from "./supply-variant-row";
 
 const { Text } = Typography;
+
+const EMPTY_SELECTED_VARIANT_IDS = new Set<number>();
+const allowAllSupplyVariants = () => false;
+
+function toGroupedSearchProducts(
+  groups: VariantGroup[],
+  categoryLabelById: Map<number, string>,
+): GroupedSearchProduct[] {
+  return groups.map((group) => {
+    const categoryId = group.variants[0]?.product.categoryId;
+
+    return {
+      categoryName:
+        categoryId == null ? null : (categoryLabelById.get(categoryId) ?? null),
+      imageUrl:
+        group.variants
+          .map((variant) => getCatalogVariantImageUrl(variant))
+          .find(Boolean) ?? null,
+      productKey: group.key,
+      productName: group.productName,
+      selectedCount: 0,
+      variants: group.variants,
+    };
+  });
+}
 
 type StockSupplyVariantsPickerProps = {
   t: ReturnType<typeof import("react-i18next").useTranslation>["t"];
@@ -68,6 +99,72 @@ export const StockSupplyVariantsPicker = memo(
     onAddVariant,
   }: StockSupplyVariantsPickerProps) {
     const listRef = useRef<HTMLDivElement>(null);
+    const [expandedProductKeys, setExpandedProductKeys] = useState<Set<string>>(
+      () => new Set(),
+    );
+
+    const categoryLabelById = useMemo(
+      () =>
+        new Map(
+          flattenCategories(categoriesStore.categories).map((category) => [
+            category.id,
+            category.name,
+          ]),
+        ),
+      [categoriesStore.categories],
+    );
+
+    const groupedProducts = useMemo(
+      () =>
+        pickerMode === "grouped"
+          ? toGroupedSearchProducts(groupedAvailableVariants, categoryLabelById)
+          : [],
+      [categoryLabelById, groupedAvailableVariants, pickerMode],
+    );
+
+    const resetGroupedExpansion = useCallback(() => {
+      setExpandedProductKeys((current) =>
+        current.size === 0 ? current : new Set(),
+      );
+    }, []);
+
+    const toggleGroupedProduct = useCallback((productKey: string) => {
+      setExpandedProductKeys((current) => {
+        const next = new Set(current);
+
+        if (next.has(productKey)) {
+          next.delete(productKey);
+        } else {
+          next.add(productKey);
+        }
+
+        return next;
+      });
+    }, []);
+
+    const handleSearchChange = useCallback(
+      (value: string) => {
+        resetGroupedExpansion();
+        onSearchChange(value);
+      },
+      [onSearchChange, resetGroupedExpansion],
+    );
+
+    const handlePickerModeChange = useCallback(
+      (mode: SupplyPickerMode) => {
+        resetGroupedExpansion();
+        onPickerModeChange(mode);
+      },
+      [onPickerModeChange, resetGroupedExpansion],
+    );
+
+    const handleCategoryChange = useCallback(
+      (value: number | null) => {
+        resetGroupedExpansion();
+        onCategoryChange(value);
+      },
+      [onCategoryChange, resetGroupedExpansion],
+    );
 
     const handleListScroll = useCallback(
       (event: UIEvent<HTMLDivElement>) => {
@@ -133,13 +230,13 @@ export const StockSupplyVariantsPicker = memo(
             value={selectedCategoryId}
             style={{ flex: 1, minWidth: 0 }}
             onChange={(value) =>
-              onCategoryChange(typeof value === "number" ? value : null)
+              handleCategoryChange(typeof value === "number" ? value : null)
             }
           />
           <Segmented<SupplyPickerMode>
             value={pickerMode}
             aria-label={t("products.stockSupply.viewModeAria")}
-            onChange={onPickerModeChange}
+            onChange={handlePickerModeChange}
             options={[
               {
                 value: "flat",
@@ -158,7 +255,7 @@ export const StockSupplyVariantsPicker = memo(
           value={search}
           prefix={<MagnifyingGlassIcon size={16} />}
           placeholder={t("products.stockSupply.searchPlaceholder")}
-          onChange={(event) => onSearchChange(event.target.value)}
+          onChange={(event) => handleSearchChange(event.target.value)}
         />
 
         <S.VariantsList ref={listRef} onScroll={handleListScroll}>
@@ -176,29 +273,22 @@ export const StockSupplyVariantsPicker = memo(
               />
             </Flex>
           ) : pickerMode === "grouped" ? (
-            groupedAvailableVariants.map((group) => (
-              <div key={group.key} style={{ paddingTop: 12 }}>
-                <Flex align="center" gap={6} style={{ padding: "0 8px 8px" }}>
-                  <Text strong style={{ fontSize: 12 }}>
-                    {group.productName}
-                  </Text>
-                  <S.CountPill>{group.variants.length}</S.CountPill>
-                </Flex>
-                {group.variants.map((variant) => (
-                  <SupplyVariantRow
-                    key={variant.id}
-                    variant={variant}
-                    onAdd={onAddVariant}
-                  />
-                ))}
-              </div>
-            ))
+            <GroupedProductSearchPopup
+              embedded
+              preventPopupClose={false}
+              expandedProductKeys={expandedProductKeys}
+              groupedProducts={groupedProducts}
+              selectedVariantIds={EMPTY_SELECTED_VARIANT_IDS}
+              isVariantDisabled={allowAllSupplyVariants}
+              onToggleProduct={toggleGroupedProduct}
+              onVariantSelect={onAddVariant}
+            />
           ) : (
             filteredAvailableVariants.map((variant) => (
-              <SupplyVariantRow
+              <CatalogVariantSearchOption
                 key={variant.id}
                 variant={variant}
-                onAdd={onAddVariant}
+                onSelect={onAddVariant}
               />
             ))
           )}

@@ -71,10 +71,10 @@ export const ProductSearchVariantOption = styled.div<{ $disabled?: boolean }>`
   opacity: ${({ $disabled }) => ($disabled ? 0.58 : 1)};
 `;
 
-export const GroupedProductSearchPopup = styled.div`
-  max-height: 320px;
-  overflow-y: auto;
-  padding: 8px 0 6px;
+export const GroupedProductSearchPopup = styled.div<{ $embedded?: boolean }>`
+  max-height: ${({ $embedded }) => ($embedded ? "none" : "320px")};
+  overflow-y: ${({ $embedded }) => ($embedded ? "visible" : "auto")};
+  padding: ${({ $embedded }) => ($embedded ? "0" : "8px 0 6px")};
 `;
 
 export const GroupedProductSearchSummary = styled.div`
@@ -172,6 +172,7 @@ export const GroupedProductMeta = styled.div`
 
 export const GroupedVariantButton = styled.button<{
   $disabled: boolean;
+  $indented?: boolean;
   $selected: boolean;
 }>`
   display: grid;
@@ -180,7 +181,8 @@ export const GroupedVariantButton = styled.button<{
   gap: 10px;
   width: 100%;
   min-height: 50px;
-  padding: 7px 12px 7px 42px;
+  padding: ${({ $indented = true }) =>
+    $indented ? "7px 12px 7px 42px" : "7px 12px"};
   border: 0;
   background: ${({ $selected, theme }) =>
     $selected ? theme.colors.functional.background.base : "transparent"};

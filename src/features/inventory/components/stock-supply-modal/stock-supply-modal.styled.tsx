@@ -24,7 +24,7 @@ export const SupplyColumn = styled.section`
   flex-direction: column;
   gap: 14px;
   padding: 18px 24px;
-  overflow: hidden;
+  overflow: auto;
 `;
 
 export const VariantsColumn = styled.section`
@@ -80,8 +80,6 @@ export const SelectedHeader = styled.div`
 export const SelectedLinesList = styled.div`
   min-height: 70px;
   flex: 1 1 auto;
-  overflow-y: auto;
-  overscroll-behavior: contain;
 `;
 
 export const SelectedLineRow = styled.div`
@@ -106,33 +104,4 @@ export const VariantsList = styled.div`
   overflow-y: auto;
   overscroll-behavior: contain;
   padding-right: 4px;
-`;
-
-export const VariantRow = styled.div`
-  display: grid;
-  grid-template-columns: 34px 34px minmax(0, 1fr) auto;
-  gap: 10px;
-  align-items: center;
-  min-height: 60px;
-  padding: 8px 4px;
-  border-bottom: 1px solid
-    ${({ theme }) => theme.colors.functional.border.split};
-`;
-
-export const AddVariantButton = styled.button`
-  display: inline-flex;
-  width: 28px;
-  height: 28px;
-  padding: 0;
-  align-items: center;
-  justify-content: center;
-  border: 0;
-  border-radius: ${({ theme }) => theme.radius.medium};
-  background: ${({ theme }) => theme.colors.functional.background.active};
-  color: ${({ theme }) => theme.colors.functional.border.selected};
-  cursor: pointer;
-
-  &:hover {
-    background: ${({ theme }) => theme.colors.functional.background.hover};
-  }
 `;

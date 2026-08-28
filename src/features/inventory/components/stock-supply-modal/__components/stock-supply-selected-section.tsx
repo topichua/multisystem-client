@@ -41,6 +41,36 @@ export const StockSupplySelectedSection = ({
   onRemoveLine,
 }: StockSupplySelectedSectionProps) => (
   <S.SupplyColumn>
+    <Flex vertical gap={8}>
+      <Text>
+        {t("products.stockSupply.nameLabel")} <Text type="danger">*</Text>
+      </Text>
+      <Input
+        value={name}
+        placeholder={t("products.stockSupply.namePlaceholder")}
+        onChange={(event) => onNameChange(event.target.value)}
+      />
+    </Flex>
+
+    <Flex vertical gap={8}>
+      <Text>{t("products.stockSupply.commentLabel")}</Text>
+      <Input.TextArea
+        value={comment}
+        rows={3}
+        placeholder={t("products.stockSupply.commentPlaceholder")}
+        onChange={(event) => onCommentChange(event.target.value)}
+      />
+    </Flex>
+
+    {showImmediatelyApply && (
+      <Checkbox
+        checked={immediatelyApply}
+        onChange={(event) => onImmediatelyApplyChange(event.target.checked)}
+      >
+        {t("products.stockSupply.immediatelyApplyLabel")}
+      </Checkbox>
+    )}
+
     <Flex align="center" justify="space-between" gap={12}>
       <Text strong>
         {t("products.stockSupply.inSupply")}{" "}
@@ -78,36 +108,6 @@ export const StockSupplySelectedSection = ({
         ))
       )}
     </S.SelectedLinesList>
-
-    <Flex vertical gap={8}>
-      <Text>
-        {t("products.stockSupply.nameLabel")} <Text type="danger">*</Text>
-      </Text>
-      <Input
-        value={name}
-        placeholder={t("products.stockSupply.namePlaceholder")}
-        onChange={(event) => onNameChange(event.target.value)}
-      />
-    </Flex>
-
-    <Flex vertical gap={8}>
-      <Text>{t("products.stockSupply.commentLabel")}</Text>
-      <Input.TextArea
-        value={comment}
-        rows={3}
-        placeholder={t("products.stockSupply.commentPlaceholder")}
-        onChange={(event) => onCommentChange(event.target.value)}
-      />
-    </Flex>
-
-    {showImmediatelyApply && (
-      <Checkbox
-        checked={immediatelyApply}
-        onChange={(event) => onImmediatelyApplyChange(event.target.checked)}
-      >
-        {t("products.stockSupply.immediatelyApplyLabel")}
-      </Checkbox>
-    )}
 
     {submitError && <Alert type="error" title={submitError} showIcon />}
   </S.SupplyColumn>

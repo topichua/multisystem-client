@@ -1,5 +1,11 @@
 import { apiClient } from "@/api/api-client";
-import { asBoolean, asNumber, asRecord, asString } from "@/api/record-parsing";
+import {
+  asBoolean,
+  asNumber,
+  asRecord,
+  asString,
+  isRecord,
+} from "@/api/record-parsing";
 import type {
   CreateProductPayload,
   ProductUploadedMedia,
@@ -114,12 +120,36 @@ function getCustomFieldValue(
   return null;
 }
 
+function asFirstRecord(...values: unknown[]): Record<string, unknown> {
+  for (const value of values) {
+    if (isRecord(value)) {
+      return value;
+    }
+  }
+
+  return {};
+}
+
 function normalizeCatalogVariant(raw: unknown): CatalogVariant {
   const record = asRecord(raw);
-  const product = asRecord(record.product);
-  const productId = asNumber(record.productId) ?? asNumber(product.id) ?? 0;
+  const product = asFirstRecord(
+    record.product,
+    record.productParent,
+    record.product_parent,
+  );
+  const productId =
+    asNumber(record.productId) ??
+    asNumber(record.product_id) ??
+    asNumber(product.id) ??
+    asNumber(record.productParent) ??
+    asNumber(record.product_parent) ??
+    0;
   const productName = asString(product.name) ?? asString(record.name) ?? "";
-  const unitPrice = asNumber(record.unitPrice) ?? asNumber(product.price) ?? 0;
+  const unitPrice =
+    asNumber(record.unitPrice) ??
+    asNumber(record.price) ??
+    asNumber(product.price) ??
+    0;
   const quantity = asNumber(record.quantity) ?? 0;
   const inStock = asBoolean(record.inStock) ?? quantity > 0;
   const color = getCustomFieldValue(record, "color");
@@ -150,8 +180,12 @@ function normalizeCatalogVariant(raw: unknown): CatalogVariant {
     product: {
       id: productId,
       name: productName,
-      categoryId: asNumber(product.categoryId) ?? asNumber(record.categoryId),
-      mainImageUrl: asString(product.mainImageUrl),
+      categoryId:
+        asNumber(product.categoryId) ??
+        asNumber(product.category_id) ??
+        asNumber(record.categoryId),
+      mainImageUrl:
+        asString(product.mainImageUrl) ?? asString(product.main_image_url),
       currency:
         asString(product.currency) ?? asString(record.currency) ?? "UAH",
       status: asString(product.status) ?? "active",

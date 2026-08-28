@@ -70,25 +70,39 @@ export function formatAmount(
   return `${value.toLocaleString("uk-UA")} ${formatCatalogVariantCurrency(currency)}`.trim();
 }
 
+function getVariantProductGroupKey(variant: CatalogVariant): string {
+  if (variant.productId > 0) {
+    return String(variant.productId);
+  }
+
+  if (variant.product.id > 0) {
+    return String(variant.product.id);
+  }
+
+  const productName = variant.product.name.trim();
+  return productName ? `name:${productName}` : `variant:${variant.id}`;
+}
+
 export function groupVariantsByProduct(
   variants: CatalogVariant[],
 ): VariantGroup[] {
   const groups: VariantGroup[] = [];
-  const groupByProductId = new Map<number, VariantGroup>();
+  const groupByProductKey = new Map<string, VariantGroup>();
 
   for (const variant of variants) {
-    const existing = groupByProductId.get(variant.productId);
+    const key = getVariantProductGroupKey(variant);
+    const existing = groupByProductKey.get(key);
     if (existing) {
       existing.variants.push(variant);
       continue;
     }
 
     const group: VariantGroup = {
-      key: String(variant.productId),
+      key,
       productName: variant.product.name,
       variants: [variant],
     };
-    groupByProductId.set(variant.productId, group);
+    groupByProductKey.set(key, group);
     groups.push(group);
   }
 
