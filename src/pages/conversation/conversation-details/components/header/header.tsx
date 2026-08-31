@@ -1,12 +1,12 @@
 import {
   ArrowLeftIcon,
-  CaretRightIcon,
   ClockCounterClockwiseIcon,
   DotsThreeIcon,
   LockIcon,
   UserIcon,
+  UserPlusIcon,
 } from "@phosphor-icons/react";
-import { Button, Popover, Skeleton, Typography } from "antd";
+import { Button, Divider, Popover, Skeleton, Tooltip, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -105,9 +105,12 @@ export const Header = observer(
     const clientInfoLabel = hasLinkedClient
       ? t("conversation.clientInfoTooltip")
       : t("conversation.createClientTooltip");
-    const clientInfoAria = hasLinkedClient
-      ? t("conversation.clientInfoAria")
-      : t("conversation.createClientAria");
+
+    const clientInfoIcon = hasLinkedClient ? (
+      <UserIcon size={18} />
+    ) : (
+      <UserPlusIcon size={18} />
+    );
 
     const getMenuPopupContainer = (triggerNode: HTMLElement) =>
       actionsMenuRef.current ?? triggerNode.parentElement ?? document.body;
@@ -135,15 +138,6 @@ export const Header = observer(
           }
         />
 
-        <ConversationFollowUpButton
-          conversationId={conversationId}
-          followUp={conversation?.followUp ?? null}
-          disabled={!conversation}
-          getPopupContainer={
-            isMobileViewport ? getMenuPopupContainer : undefined
-          }
-        />
-
         <ConversationAssigneeSelect
           conversationId={conversationId}
           responsibleMemberId={conversation?.responsibleMemberId ?? null}
@@ -155,31 +149,45 @@ export const Header = observer(
           }
         />
 
-        <Button
-          color={clientBlocked ? "danger" : "default"}
-          variant={isMobileViewport || clientBlocked ? "filled" : "link"}
-          icon={clientBlocked ? <LockIcon /> : <UserIcon />}
-          aria-label={clientInfoAria}
-          aria-pressed={clientInfoOpen}
-          loading={clientLookupLoading}
-          data-qa="layout-conversation-details-client-info-toggle"
-          onClick={handleClientInfoOpen}
-        >
-          {clientInfoLabel}
-          {isMobileViewport ? null : <CaretRightIcon />}
-        </Button>
-        <Button
-          variant={isMobileViewport ? "filled" : "link"}
-          color="default"
-          icon={<ClockCounterClockwiseIcon size={18} />}
-          aria-label={t("conversation.events.openAria")}
-          aria-pressed={conversationEventsOpen}
-          data-qa="layout-conversation-details-events-toggle"
-          disabled={!conversationId || !onConversationEventsOpen}
-          onClick={handleConversationEventsOpen}
-        >
-          {isMobileViewport ? t("conversation.events.title") : null}
-        </Button>
+        {!isMobileViewport && <Divider orientation="vertical" />}
+
+        <Tooltip title={isMobileViewport ? null : clientInfoLabel}>
+          <Button
+            color={clientBlocked ? "danger" : "default"}
+            variant={isMobileViewport || clientBlocked ? "outlined" : "link"}
+            icon={clientBlocked ? <LockIcon /> : clientInfoIcon}
+            loading={clientLookupLoading}
+            aria-pressed={clientInfoOpen}
+            data-qa="layout-conversation-details-client-info-toggle"
+            onClick={handleClientInfoOpen}
+          >
+            {isMobileViewport ? clientInfoLabel : null}
+          </Button>
+        </Tooltip>
+
+        <ConversationFollowUpButton
+          conversationId={conversationId}
+          followUp={conversation?.followUp ?? null}
+          disabled={!conversation}
+          getPopupContainer={
+            isMobileViewport ? getMenuPopupContainer : undefined
+          }
+        />
+
+        <Tooltip title={t("conversation.events.title")}>
+          <Button
+            variant={isMobileViewport ? "outlined" : "link"}
+            color="default"
+            icon={<ClockCounterClockwiseIcon size={18} />}
+            aria-label={t("conversation.events.openAria")}
+            aria-pressed={conversationEventsOpen}
+            data-qa="layout-conversation-details-events-toggle"
+            disabled={!conversationId || !onConversationEventsOpen}
+            onClick={handleConversationEventsOpen}
+          >
+            {isMobileViewport ? t("conversation.events.title") : null}
+          </Button>
+        </Tooltip>
       </>
     );
 

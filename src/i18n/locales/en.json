@@ -1614,7 +1614,7 @@
       }
     },
     "followUp": {
-      "button": "Reminder",
+      "button": "Schedule follow-up",
       "openAria": "Open reminder",
       "modalTitle": "Remind the client later",
       "hint": "If the client replies, the reminder will be cancelled and the conversation will return to its previous status.",
@@ -1639,7 +1639,8 @@
       "cancelReminder": "Cancel reminder",
       "cancelSuccess": "Reminder cancelled",
       "cancelError": "Could not cancel the reminder",
-      "scheduledAria": "Reminder for {{when}}"
+      "scheduledAria": "Reminder for {{when}}",
+      "scheduledTooltip": "Will be sent {{when}}"
     },
     "noGroup": "No group",
     "groupSelectPlaceholder": "No group",

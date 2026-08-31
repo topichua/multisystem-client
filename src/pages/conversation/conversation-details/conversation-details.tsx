@@ -22,6 +22,7 @@ import type {
 } from "@/features/clients/model/client.types";
 import { useClientsStore } from "@/features/clients/model/use-clients-store";
 import { useConversationsStore } from "@/features/conversations/model/use-conversations-store";
+import { useEnsureConversationsLoaded } from "@/features/conversations/model/use-ensure-conversations-loaded";
 import type { SendMessagePayload } from "@/features/conversations/model/types";
 import { ordersApi } from "@/features/orders/api/orders-api";
 import type { ClientLastOrder } from "@/features/orders/model/order.types";
@@ -110,6 +111,7 @@ export const ConversationDetails = observer(() => {
 
   const { company } = useUserStore();
   const integrationsStore = useIntegrationsStore();
+  useEnsureConversationsLoaded();
   useEnsureIntegrationsLoaded();
 
   const activeConversation = useMemo(

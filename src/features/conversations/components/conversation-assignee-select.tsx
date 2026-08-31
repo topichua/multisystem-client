@@ -15,6 +15,7 @@ import { useEnsureWorkspaceMembersLoaded } from "@/features/workspace-members/mo
 import { useWorkspaceMembersStore } from "@/features/workspace-members/model/use-workspace-members-store";
 import { getWorkspaceMemberName } from "@/features/workspace-members/utils/workspace-member-display";
 import { useNotification } from "@/shared/components/notification/use-notification";
+import { useIsMobileViewport } from "@/utils/use-media-query";
 
 const UNASSIGNED_VALUE = "__unassigned__";
 
@@ -54,6 +55,7 @@ export const ConversationAssigneeSelect = observer(
     const notification = useNotification();
     const [saving, setSaving] = useState(false);
     const currentAssigneeId = responsibleMemberId ?? assignee?.id ?? null;
+    const isMobileViewport = useIsMobileViewport();
 
     const options = useMemo<AssigneeSelectOption[]>(() => {
       const assignableOptions = membersStore.members
@@ -147,7 +149,8 @@ export const ConversationAssigneeSelect = observer(
         <Select
           data-qa="layout-conversation-details-assignee-select"
           className={className}
-          style={{ minWidth: 216, height: 35, ...style }}
+          style={{ height: 35, ...style }}
+          variant={isMobileViewport ? "outlined" : "borderless"}
           placeholder={t("conversation.assigneeSelectPlaceholder")}
           loading={loading}
           disabled={selectDisabled}

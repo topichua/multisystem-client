@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { Button } from "antd";
 
 import { dataQaAttrs } from "@/styled/data-qa-attrs";
@@ -91,24 +91,27 @@ export const HeaderActionsMenu = styled.div`
     width: 100%;
     justify-content: flex-start;
   }
-
-  .conversation-follow-up-toggle.ant-btn {
-    justify-content: center;
-  }
 `;
 
-export const ScheduledFollowUpButton = styled(Button)`
+export const FollowUpButton = styled(Button)<{
+  $scheduled: boolean;
+}>`
   && {
     height: 35px;
-    color: ${(props) => props.theme.colors.functional.text.warning};
-    background: ${(props) => props.theme.colors.base.yellow[1]};
-    border-color: ${(props) => props.theme.colors.base.yellow[4]};
 
-    &:hover,
-    &:focus-visible {
-      color: ${(props) => props.theme.colors.functional.text.warning}!important;
-      background: ${(props) => props.theme.colors.base.yellow[2]}!important;
-      border-color: ${(props) => props.theme.colors.base.yellow[6]}!important;
-    }
+    ${({ $scheduled, theme }) =>
+      $scheduled &&
+      css`
+        color: ${theme.colors.functional.text.warning};
+        background: ${theme.colors.base.yellow[1]};
+        border-color: ${theme.colors.base.yellow[4]};
+
+        &:hover,
+        &:focus-visible {
+          color: ${theme.colors.functional.text.warning} !important;
+          background: ${theme.colors.base.yellow[2]} !important;
+          border-color: ${theme.colors.base.yellow[6]} !important;
+        }
+      `}
   }
 `;

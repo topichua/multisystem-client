@@ -1,8 +1,8 @@
-import { CaretDownIcon, ClockIcon, XIcon } from "@phosphor-icons/react";
-import { Button, Dropdown, type MenuProps } from "antd";
+import { ClockIcon, XIcon } from "@phosphor-icons/react";
+import { Dropdown, Tooltip, type MenuProps } from "antd";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-
+import { useIsMobileViewport } from "@/utils/use-media-query";
 import { getApiErrorMessage } from "@/api/get-api-error-message";
 import type { ConversationFollowUp } from "@/features/conversations/model/types";
 import { useConversationsStore } from "@/features/conversations/model/use-conversations-store";
@@ -30,6 +30,8 @@ export const ConversationFollowUpButton = ({
   const conversationsStore = useConversationsStore();
   const [modalOpen, setModalOpen] = useState(false);
   const [cancelling, setCancelling] = useState(false);
+
+  const isMobileViewport = useIsMobileViewport();
 
   const scheduledLabel = followUp
     ? formatFollowUpSchedule(followUp.scheduledAt)
@@ -85,48 +87,49 @@ export const ConversationFollowUpButton = ({
       });
   };
 
+  const isFollowUpDisabled = disabled || cancelling;
+
+  const followUpButton = (
+    <Tooltip
+      title={
+        hasScheduledFollowUp
+          ? t("conversation.followUp.scheduledTooltip", {
+              when: scheduledLabel,
+            })
+          : t("conversation.followUp.button")
+      }
+    >
+      <S.FollowUpButton
+        $scheduled={hasScheduledFollowUp}
+        className="conversation-follow-up-toggle"
+        disabled={isFollowUpDisabled}
+        loading={hasScheduledFollowUp && cancelling}
+        icon={<ClockIcon size={16} />}
+        data-qa="layout-conversation-details-follow-up-toggle"
+        onClick={hasScheduledFollowUp ? undefined : () => setModalOpen(true)}
+        type={isMobileViewport ? "default" : "text"}
+      >
+        {isMobileViewport ? t("conversation.followUp.button") : null}
+      </S.FollowUpButton>
+    </Tooltip>
+  );
+
   return (
     <>
       {hasScheduledFollowUp ? (
         <Dropdown
           trigger={["click"]}
-          disabled={disabled}
+          disabled={isFollowUpDisabled}
           getPopupContainer={getPopupContainer}
-          menu={{ items: menuItems, onClick: handleMenuClick }}
+          menu={{
+            items: menuItems,
+            onClick: handleMenuClick,
+          }}
         >
-          <S.ScheduledFollowUpButton
-            shape="round"
-            className="conversation-follow-up-toggle"
-            disabled={disabled || cancelling}
-            loading={cancelling}
-            icon={<ClockIcon size={16} />}
-            aria-label={t("conversation.followUp.scheduledAria", {
-              when: scheduledLabel,
-            })}
-            aria-haspopup="menu"
-            data-qa="layout-conversation-details-follow-up-toggle"
-          >
-            {scheduledLabel}
-            <CaretDownIcon size={12} />
-          </S.ScheduledFollowUpButton>
+          {followUpButton}
         </Dropdown>
       ) : (
-        <Button
-          color="default"
-          variant="outlined"
-          shape="round"
-          className="conversation-follow-up-toggle"
-          icon={<ClockIcon size={16} />}
-          disabled={disabled}
-          aria-label={t("conversation.followUp.openAria")}
-          aria-haspopup="dialog"
-          aria-expanded={modalOpen}
-          data-qa="layout-conversation-details-follow-up-toggle"
-          style={{ height: 35 }}
-          onClick={() => setModalOpen(true)}
-        >
-          {t("conversation.followUp.button")}
-        </Button>
+        followUpButton
       )}
 
       <ConversationFollowUpModal

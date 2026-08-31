@@ -23,6 +23,7 @@ import { useEnsureConversationGroupsLoaded } from "@/features/conversation-group
 import { useConversationGroupsStore } from "@/features/conversation-groups/model/use-conversation-groups-store";
 import { useConversationsStore } from "@/features/conversations/model/use-conversations-store";
 import { useNotification } from "@/shared/components/notification/use-notification";
+import { useIsMobileViewport } from "@/utils/use-media-query";
 
 const footerSystemGroupIcons: Record<FooterSystemGroupKey, Icon> = {
   archived: ArchiveIcon,
@@ -56,6 +57,7 @@ export const ConversationGroupSelect = observer(
     const conversationsStore = useConversationsStore();
     const notification = useNotification();
     const [saving, setSaving] = useState(false);
+    const isMobileViewport = useIsMobileViewport();
 
     const options = useMemo(
       () => toGroupSelectOptions(groupsStore.groups, t),
@@ -126,9 +128,10 @@ export const ConversationGroupSelect = observer(
     return (
       <>
         <Select
+          variant={isMobileViewport ? "outlined" : "borderless"}
           data-qa="layout-conversation-details-group-select"
           className={className}
-          style={{ minWidth: 200, height: 35, ...style }}
+          style={{ height: 35, ...style }}
           allowClear
           placeholder={t("conversation.groupSelectPlaceholder")}
           loading={loading}
