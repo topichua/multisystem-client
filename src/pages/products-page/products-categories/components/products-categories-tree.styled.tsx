@@ -77,8 +77,9 @@ export const CategoryRow = styled.div<{
 
   @media (max-width: 767px) {
     min-height: 52px;
-    padding: 6px 8px;
+    padding: 8px;
     border-radius: 0;
+    align-items: flex-start;
   }
 `;
 
@@ -89,12 +90,34 @@ export const CategoryCaret = styled.span`
   flex: 0 0 16px;
   width: 16px;
   color: ${({ theme }) => theme.colors.functional.text.subdued};
+
+  @media (max-width: 767px) {
+    margin-top: 6px;
+  }
 `;
 
 export const CategoryIcon = styled.span`
   display: inline-flex;
   flex: 0 0 auto;
   color: ${({ theme }) => theme.colors.functional.text.subdued};
+
+  @media (max-width: 767px) {
+    margin-top: 4px;
+  }
+`;
+
+export const CategoryMain = styled.div`
+  min-width: 0;
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  @media (max-width: 767px) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+  }
 `;
 
 export const CategoryName = styled.span<{ $hasChildren?: boolean }>`
@@ -104,11 +127,6 @@ export const CategoryName = styled.span<{ $hasChildren?: boolean }>`
   text-overflow: ellipsis;
   white-space: nowrap;
   font-weight: ${({ $hasChildren }) => ($hasChildren ? 600 : 500)};
-
-  @media (max-width: 767px) {
-    overflow-wrap: anywhere;
-    white-space: normal;
-  }
 `;
 
 export const CategoryProductsCount = styled.span`
@@ -119,11 +137,12 @@ export const CategoryProductsCount = styled.span`
   font-size: ${({ theme }) => theme.fontSize.small};
 
   @media (max-width: 767px) {
-    min-width: 32px;
+    min-width: 0;
+    text-align: left;
   }
 `;
 
-export const CategoryActions = styled.span`
+export const CategoryActions = styled.div`
   display: inline-flex;
   align-items: center;
   gap: 2px;
@@ -135,6 +154,7 @@ export const CategoryActions = styled.span`
   @media (max-width: 767px) {
     opacity: 1;
     pointer-events: auto;
+    margin-top: 2px;
 
     .ant-btn-sm {
       width: 36px;

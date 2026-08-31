@@ -1590,7 +1590,8 @@
       "noResponsibleUsers": "Відповідальних немає"
     },
     "mobile": {
-      "backToListAria": "Назад до розмов"
+      "backToListAria": "Назад до розмов",
+      "headerActionsAria": "Дії розмови"
     }
   },
   "conversation": {
@@ -2518,18 +2519,13 @@
     }
   },
   "orders": {
-    "shellTitle": "Замовлення",
     "mobile": {
-      "descriptions": {
-        "list": "Переглядайте та керуйте замовленнями клієнтів."
-      },
       "backToOrdersAria": "Назад до замовлень",
       "filtersAria": "Фільтри",
       "searchAria": "Пошук замовлень",
       "emptyOrders": "Замовлень не знайдено",
       "detailBackAria": "Назад до всіх замовлень"
     },
-    "listTitle": "Усі замовлення",
     "allOrdersTitle": "Усі замовлення",
     "createOrderCta": "Нове замовлення",
     "create": {
@@ -3079,7 +3075,8 @@
   "categories": {
     "title": "Категорії",
     "mobile": {
-      "addSubcategoryAria": "Додати підкатегорію"
+      "addSubcategoryAria": "Додати підкатегорію",
+      "actionsAria": "Дії категорії"
     },
     "itemsCount_one": "{{count}} категорія",
     "itemsCount_few": "{{count}} категорії",
@@ -3153,7 +3150,8 @@
       "deleteCharacteristicAria": "Видалити поле",
       "archiveCharacteristicAria": "Заархівувати поле",
       "unarchiveCharacteristicAria": "Розархівувати поле",
-      "addOptionAria": "Додати опцію"
+      "addOptionAria": "Додати опцію",
+      "optionActionsAria": "Дії опції"
     },
     "itemsCount_one": "{{count}} поле",
     "itemsCount_few": "{{count}} поля",

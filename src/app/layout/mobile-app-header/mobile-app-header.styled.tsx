@@ -23,7 +23,6 @@ export const Header = styled.header.attrs(() =>
 export const ControlSlot = styled.div<{ $align: "left" | "right" }>`
   width: 56px;
   min-width: 0;
-  height: 56px;
   display: inline-flex;
   align-items: center;
   justify-content: ${({ $align }) =>

@@ -1,6 +1,7 @@
 import {
   ArchiveIcon,
   ArrowClockwiseIcon,
+  DotsThreeIcon,
   PencilSimpleIcon,
   PlusIcon,
   TrashIcon,
@@ -9,6 +10,7 @@ import {
   Badge,
   Button,
   Card,
+  Dropdown,
   Empty,
   Flex,
   Input,
@@ -17,10 +19,13 @@ import {
   Space,
   Tag,
   Typography,
+  theme,
 } from "antd";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import type { CharacteristicOption } from "@/features/characteristics/model/characteristic.types";
+import { useIsMobileViewport } from "@/utils/use-media-query";
 
 import { CHARACTERISTIC_OPTION_VALUE_MAX_LENGTH } from "../products-characteristics.constants";
 
@@ -225,9 +230,31 @@ const CharacteristicOptionListItem = ({
   onDelete,
 }: CharacteristicOptionListItemProps) => {
   const { t } = useTranslation();
+  const { token } = theme.useToken();
+  const isMobileViewport = useIsMobileViewport();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const isEditing = rename.optionId === option.optionId;
   const isArchived = option.archivedAt != null;
+  const archiveLabel = isArchived
+    ? t("characteristics.unarchiveValue")
+    : t("characteristics.archiveValue");
+
+  const handleRename = () => {
+    setMenuOpen(false);
+    rename.onOpen(option.optionId, option.label);
+  };
+
+  const handleToggleArchive = () => {
+    setMenuOpen(false);
+
+    if (isArchived) {
+      void onUnarchive(option.optionId);
+      return;
+    }
+
+    onArchive(option.optionId);
+  };
 
   if (isEditing) {
     return (
@@ -242,6 +269,110 @@ const CharacteristicOptionListItem = ({
       />
     );
   }
+
+  const deleteConfirm = (
+    <Popconfirm
+      title={t("characteristics.deleteValueConfirm")}
+      description={t("characteristics.deleteWarning")}
+      okText={t("characteristics.delete")}
+      okButtonProps={{ danger: true }}
+      onConfirm={() => onDelete(option.optionId)}
+    >
+      {isMobileViewport ? (
+        <Button
+          danger
+          type="text"
+          block
+          loading={deleteLoading}
+          icon={<TrashIcon />}
+          style={{ justifyContent: "flex-start" }}
+          aria-label={t("characteristics.deleteValue")}
+        >
+          {t("characteristics.deleteValue")}
+        </Button>
+      ) : (
+        <Button
+          type="text"
+          danger
+          icon={<TrashIcon />}
+          loading={deleteLoading}
+          aria-label={t("characteristics.deleteValue")}
+        />
+      )}
+    </Popconfirm>
+  );
+
+  const actions = isMobileViewport ? (
+    <Dropdown
+      open={menuOpen}
+      trigger={["click"]}
+      placement="bottomRight"
+      menu={{ items: [] }}
+      popupRender={() => (
+        <Flex
+          vertical
+          gap={4}
+          style={{
+            padding: 4,
+            borderRadius: token.borderRadius,
+            background: token.colorBgElevated,
+            boxShadow: token.boxShadowSecondary,
+          }}
+        >
+          <Button
+            type="text"
+            block
+            icon={<PencilSimpleIcon />}
+            style={{ justifyContent: "flex-start" }}
+            aria-label={t("characteristics.renameValue")}
+            onClick={handleRename}
+          >
+            {t("characteristics.renameValue")}
+          </Button>
+          <Button
+            type="text"
+            block
+            loading={archiveLoading}
+            icon={isArchived ? <ArrowClockwiseIcon /> : <ArchiveIcon />}
+            style={{ justifyContent: "flex-start" }}
+            aria-label={archiveLabel}
+            onClick={handleToggleArchive}
+          >
+            {archiveLabel}
+          </Button>
+          {deleteConfirm}
+        </Flex>
+      )}
+      onOpenChange={setMenuOpen}
+    >
+      <Button
+        type="text"
+        size="small"
+        loading={archiveLoading || deleteLoading}
+        icon={<DotsThreeIcon size={24} />}
+        aria-label={t("characteristics.mobile.optionActionsAria")}
+        aria-expanded={menuOpen}
+        data-qa={`products-mobile-characteristic-option-actions-${option.optionId}`}
+      />
+    </Dropdown>
+  ) : (
+    <Space size={4}>
+      <Button
+        type="text"
+        icon={<PencilSimpleIcon />}
+        aria-label={t("characteristics.renameValue")}
+        onClick={() => rename.onOpen(option.optionId, option.label)}
+      />
+      <Button
+        type="text"
+        icon={isArchived ? <ArrowClockwiseIcon /> : <ArchiveIcon />}
+        loading={archiveLoading}
+        aria-label={archiveLabel}
+        onClick={handleToggleArchive}
+      />
+      {deleteConfirm}
+    </Space>
+  );
 
   return (
     <Flex
@@ -277,49 +408,7 @@ const CharacteristicOptionListItem = ({
         </Text>
       </Flex>
 
-      <Space size={4}>
-        <Button
-          type="text"
-          icon={<PencilSimpleIcon />}
-          aria-label={t("characteristics.renameValue")}
-          onClick={() => rename.onOpen(option.optionId, option.label)}
-        />
-
-        <Button
-          type="text"
-          icon={isArchived ? <ArrowClockwiseIcon /> : <ArchiveIcon />}
-          loading={archiveLoading}
-          aria-label={
-            isArchived
-              ? t("characteristics.unarchiveValue")
-              : t("characteristics.archiveValue")
-          }
-          onClick={() => {
-            if (isArchived) {
-              void onUnarchive(option.optionId);
-              return;
-            }
-
-            onArchive(option.optionId);
-          }}
-        />
-
-        <Popconfirm
-          title={t("characteristics.deleteValueConfirm")}
-          description={t("characteristics.deleteWarning")}
-          okText={t("characteristics.delete")}
-          okButtonProps={{ danger: true }}
-          onConfirm={() => onDelete(option.optionId)}
-        >
-          <Button
-            type="text"
-            danger
-            icon={<TrashIcon />}
-            loading={deleteLoading}
-            aria-label={t("characteristics.deleteValue")}
-          />
-        </Popconfirm>
-      </Space>
+      {actions}
     </Flex>
   );
 };

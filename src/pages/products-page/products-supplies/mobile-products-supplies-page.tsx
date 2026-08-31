@@ -38,11 +38,7 @@ export const MobileProductsSuppliesPage = observer(() => {
             aria-label={t("products.addSupplyCta")}
             data-qa="products-mobile-supplies-add-supply"
             onClick={page.openStockSupplyModal}
-          >
-            <S.CreateButtonLabel>
-              {t("products.addSupplyCta")}
-            </S.CreateButtonLabel>
-          </S.CreateButton>
+          />
         </S.HeaderActions>
       </S.Header>
 

@@ -155,11 +155,7 @@ export const MobileProductsListPage = observer(() => {
               aria-label={t("products.addSupplyCta")}
               data-qa="products-mobile-list-add-supply"
               onClick={() => setStockSupplyModalOpen(true)}
-            >
-              <S.CreateButtonLabel>
-                {t("products.addSupplyCta")}
-              </S.CreateButtonLabel>
-            </S.CreateButton>
+            />
           )}
           <S.CreateButton
             type="primary"
@@ -167,11 +163,7 @@ export const MobileProductsListPage = observer(() => {
             aria-label={t("products.mobile.addProductAria")}
             data-qa="products-mobile-list-add"
             onClick={() => navigate(pagesMap.productsListAdd)}
-          >
-            <S.CreateButtonLabel>
-              {t("products.addProductCta")}
-            </S.CreateButtonLabel>
-          </S.CreateButton>
+          />
         </S.HeaderActions>
       </S.Header>
 

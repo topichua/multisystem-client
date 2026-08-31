@@ -8,7 +8,6 @@ import type { ConversationFollowUp } from "@/features/conversations/model/types"
 import { useConversationsStore } from "@/features/conversations/model/use-conversations-store";
 import { formatFollowUpSchedule } from "@/utils/date-time";
 import { useNotification } from "@/shared/components/notification/use-notification";
-import { useIsMobileViewport } from "@/utils/use-media-query";
 
 import { ConversationFollowUpModal } from "./conversation-follow-up-modal";
 import * as S from "./header.styled";
@@ -17,15 +16,16 @@ type ConversationFollowUpButtonProps = {
   conversationId?: string;
   followUp?: ConversationFollowUp | null;
   disabled?: boolean;
+  getPopupContainer?: (triggerNode: HTMLElement) => HTMLElement;
 };
 
 export const ConversationFollowUpButton = ({
   conversationId,
   followUp = null,
   disabled = false,
+  getPopupContainer,
 }: ConversationFollowUpButtonProps) => {
   const { t } = useTranslation();
-  const isMobileViewport = useIsMobileViewport();
   const notification = useNotification();
   const conversationsStore = useConversationsStore();
   const [modalOpen, setModalOpen] = useState(false);
@@ -91,6 +91,7 @@ export const ConversationFollowUpButton = ({
         <Dropdown
           trigger={["click"]}
           disabled={disabled}
+          getPopupContainer={getPopupContainer}
           menu={{ items: menuItems, onClick: handleMenuClick }}
         >
           <S.ScheduledFollowUpButton
@@ -124,7 +125,7 @@ export const ConversationFollowUpButton = ({
           style={{ height: 35 }}
           onClick={() => setModalOpen(true)}
         >
-          {isMobileViewport ? null : t("conversation.followUp.button")}
+          {t("conversation.followUp.button")}
         </Button>
       )}
 

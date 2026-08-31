@@ -2,11 +2,13 @@ import {
   ArrowLeftIcon,
   CaretRightIcon,
   ClockCounterClockwiseIcon,
+  DotsThreeIcon,
   LockIcon,
   UserIcon,
 } from "@phosphor-icons/react";
-import { Button, Skeleton, Typography } from "antd";
+import { Button, Popover, Skeleton, Typography } from "antd";
 import { observer } from "mobx-react-lite";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
 
@@ -47,6 +49,12 @@ export const Header = observer(
     const isMobileViewport = useIsMobileViewport();
     const { conversationId } = useParams();
     const { conversations } = useConversationsStore();
+    const [actionsOpen, setActionsOpen] = useState(false);
+    const actionsMenuRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+      setActionsOpen(false);
+    }, [conversationId]);
 
     const conversation = conversations.find(
       ({ id }) => String(id) === conversationId,
@@ -101,6 +109,80 @@ export const Header = observer(
       ? t("conversation.clientInfoAria")
       : t("conversation.createClientAria");
 
+    const getMenuPopupContainer = (triggerNode: HTMLElement) =>
+      actionsMenuRef.current ?? triggerNode.parentElement ?? document.body;
+
+    const handleClientInfoOpen = () => {
+      setActionsOpen(false);
+      onClientInfoOpen?.();
+    };
+
+    const handleConversationEventsOpen = () => {
+      setActionsOpen(false);
+      onConversationEventsOpen?.();
+    };
+
+    const headerActions = (
+      <>
+        <ConversationGroupSelect
+          conversationId={conversationId}
+          groupId={conversation?.groupId ?? null}
+          disabled={!conversation}
+          showPlainLabels
+          style={isMobileViewport ? { minWidth: 0, width: "100%" } : undefined}
+          getPopupContainer={
+            isMobileViewport ? getMenuPopupContainer : undefined
+          }
+        />
+
+        <ConversationFollowUpButton
+          conversationId={conversationId}
+          followUp={conversation?.followUp ?? null}
+          disabled={!conversation}
+          getPopupContainer={
+            isMobileViewport ? getMenuPopupContainer : undefined
+          }
+        />
+
+        <ConversationAssigneeSelect
+          conversationId={conversationId}
+          responsibleMemberId={conversation?.responsibleMemberId ?? null}
+          assignee={conversation?.assignee ?? null}
+          disabled={!conversation}
+          style={isMobileViewport ? { minWidth: 0, width: "100%" } : undefined}
+          getPopupContainer={
+            isMobileViewport ? getMenuPopupContainer : undefined
+          }
+        />
+
+        <Button
+          color={clientBlocked ? "danger" : "default"}
+          variant={isMobileViewport || clientBlocked ? "filled" : "link"}
+          icon={clientBlocked ? <LockIcon /> : <UserIcon />}
+          aria-label={clientInfoAria}
+          aria-pressed={clientInfoOpen}
+          loading={clientLookupLoading}
+          data-qa="layout-conversation-details-client-info-toggle"
+          onClick={handleClientInfoOpen}
+        >
+          {clientInfoLabel}
+          {isMobileViewport ? null : <CaretRightIcon />}
+        </Button>
+        <Button
+          variant={isMobileViewport ? "filled" : "link"}
+          color="default"
+          icon={<ClockCounterClockwiseIcon size={18} />}
+          aria-label={t("conversation.events.openAria")}
+          aria-pressed={conversationEventsOpen}
+          data-qa="layout-conversation-details-events-toggle"
+          disabled={!conversationId || !onConversationEventsOpen}
+          onClick={handleConversationEventsOpen}
+        >
+          {isMobileViewport ? t("conversation.events.title") : null}
+        </Button>
+      </>
+    );
+
     return (
       <S.Header>
         {onBackToList && (
@@ -118,57 +200,35 @@ export const Header = observer(
         <S.HeaderText>{participantInfo}</S.HeaderText>
 
         <S.HeaderAside>
-          <ConversationGroupSelect
-            conversationId={conversationId}
-            groupId={conversation?.groupId ?? null}
-            disabled={!conversation}
-            showPlainLabels
-            style={
-              isMobileViewport ? { minWidth: 0, width: "100%" } : undefined
-            }
-          />
-
-          <ConversationFollowUpButton
-            conversationId={conversationId}
-            followUp={conversation?.followUp ?? null}
-            disabled={!conversation}
-          />
-
-          <ConversationAssigneeSelect
-            conversationId={conversationId}
-            responsibleMemberId={conversation?.responsibleMemberId ?? null}
-            assignee={conversation?.assignee ?? null}
-            disabled={!conversation}
-            style={
-              isMobileViewport ? { minWidth: 0, width: "100%" } : undefined
-            }
-          />
-
-          <Button
-            color={clientBlocked ? "danger" : "default"}
-            variant={
-              isMobileViewport ? "filled" : clientBlocked ? "filled" : "link"
-            }
-            icon={clientBlocked ? <LockIcon /> : <UserIcon />}
-            aria-label={clientInfoAria}
-            aria-pressed={clientInfoOpen}
-            loading={clientLookupLoading}
-            data-qa="layout-conversation-details-client-info-toggle"
-            onClick={onClientInfoOpen}
-          >
-            {isMobileViewport ? null : clientInfoLabel}
-            {isMobileViewport ? null : <CaretRightIcon />}
-          </Button>
-          <Button
-            variant="link"
-            color="default"
-            icon={<ClockCounterClockwiseIcon size={18} />}
-            aria-label={t("conversation.events.openAria")}
-            aria-pressed={conversationEventsOpen}
-            data-qa="layout-conversation-details-events-toggle"
-            disabled={!conversationId || !onConversationEventsOpen}
-            onClick={onConversationEventsOpen}
-          />
+          {isMobileViewport ? (
+            <Popover
+              arrow={false}
+              trigger="click"
+              placement="bottomRight"
+              open={actionsOpen}
+              destroyOnHidden
+              styles={{ container: { padding: 8, overflow: "visible" } }}
+              content={
+                <S.HeaderActionsMenu
+                  ref={actionsMenuRef}
+                  onMouseDown={(event) => event.stopPropagation()}
+                >
+                  {headerActions}
+                </S.HeaderActionsMenu>
+              }
+              onOpenChange={setActionsOpen}
+            >
+              <S.HeaderMoreButton
+                type="text"
+                icon={<DotsThreeIcon size={24} />}
+                aria-label={t("conversations.mobile.headerActionsAria")}
+                aria-expanded={actionsOpen}
+                data-qa="layout-conversation-details-header-more"
+              />
+            </Popover>
+          ) : (
+            headerActions
+          )}
         </S.HeaderAside>
       </S.Header>
     );

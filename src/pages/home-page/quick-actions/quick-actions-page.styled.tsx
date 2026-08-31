@@ -176,7 +176,7 @@ export const MobileWorkspace = styled.div.attrs(() =>
     height: 100%;
     min-width: 0;
     min-height: 0;
-    padding: 16px 16px 32px;
+    padding: 12px;
     overflow-x: hidden;
     overflow-y: auto;
     display: flex;

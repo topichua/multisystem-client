@@ -26,8 +26,7 @@ export const Header = styled.header`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
+  gap: 8px;
 `;
 
 export const TitleRow = styled.div`
@@ -57,31 +56,21 @@ export const PageTitle = styled(Typography.Title)`
     color: ${({ theme }) => theme.colors.functional.text.heading};
     font-size: ${({ theme }) => theme.fontSize.ultraLarge};
     line-height: 1.25;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 `;
 
 export const HeaderActions = styled.div`
   display: flex;
   flex: 0 0 auto;
-  min-width: 0;
   align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-
-  @media (max-width: 520px) {
-    flex: 1 1 100%;
-  }
 `;
 
 export const CreateButton = styled(Button)`
   && {
     flex: 0 0 auto;
-  }
-`;
-
-export const CreateButtonLabel = styled.span`
-  @media (max-width: 359px) {
-    display: none;
   }
 `;
 

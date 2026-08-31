@@ -37,7 +37,6 @@ import { ProductsSuppliesRoute } from "@/pages/products-page/products-supplies/p
 import { ClientDetailRoute } from "@/pages/clients-page/client-details/client-detail-route";
 import { ClientsListRoute } from "@/pages/clients-page/clients-list/clients-list-route";
 import { ClientsPage } from "@/pages/clients-page/clients-page";
-import { OrdersIndexRoute } from "@/pages/orders-page/orders-index-route";
 import { OrdersPage } from "@/pages/orders-page/orders-page";
 import { OrdersListRoute } from "@/pages/orders-page/orders-list/orders-list-route";
 import { OrdersNewPage } from "@/pages/orders-page/orders-new/orders-new-page";
@@ -175,7 +174,10 @@ export const PageRoutes = () => {
             </Route>
           </Route>
           <Route path="orders">
-            <Route index element={<OrdersIndexRoute />} />
+            <Route
+              index
+              element={<Navigate to={pagesMap.ordersList} replace />}
+            />
             <Route element={<OrdersPage />}>
               <Route path="list" element={<OrdersListRoute />} />
               <Route path="new" element={<OrdersNewPage />} />

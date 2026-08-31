@@ -4,13 +4,14 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router";
 
+import { LanguagePreferenceControl } from "@/app/layout/language-preference-control/language-preference-control";
+import { ThemePreferenceControl } from "@/app/layout/theme-preference-control/theme-preference-control";
 import {
   getSelectedMobileNavKey,
   mobileNavItems,
   mobileNavSections,
   type MobileNavItem,
 } from "@/app/router/navigation";
-import { ThemePreferenceControl } from "@/app/layout/theme-preference-control/theme-preference-control";
 
 import * as S from "./mobile-app-header.styled";
 
@@ -95,6 +96,7 @@ export const MobileAppNavigationDrawer = ({
         </S.DrawerNavScroll>
         <S.DrawerFooter>
           <S.DrawerThemeDivider />
+          <LanguagePreferenceControl />
           <ThemePreferenceControl />
         </S.DrawerFooter>
       </S.DrawerContent>

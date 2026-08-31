@@ -11,12 +11,16 @@ export const Composer = styled.footer.attrs(() =>
   background: ${({ theme }) => theme.colors.functional.background.base};
 
   @media (max-width: 767px) {
-    padding: 10px 12px calc(12px + env(safe-area-inset-bottom, 0px));
+    padding: 0;
   }
 `;
 
 export const ComposerContent = styled.div`
   padding: 16px 24px;
+
+  @media (max-width: 767px) {
+    padding: 8px;
+  }
 `;
 
 export const ReplyBanner = styled.div`
@@ -61,7 +65,7 @@ export const EditorShell = styled.div`
   border-radius: ${({ theme }) => theme.radius.semiLarge};
   background: ${({ theme }) => theme.colors.functional.background.elevated};
   @media (max-width: 767px) {
-    padding: 8px;
+    padding: 4px;
 
     .ant-btn {
       min-width: 36px;

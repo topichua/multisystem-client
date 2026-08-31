@@ -33,6 +33,7 @@ type ConversationAssigneeSelectProps = {
   disabled?: boolean;
   className?: string;
   style?: CSSProperties;
+  getPopupContainer?: (triggerNode: HTMLElement) => HTMLElement;
 };
 
 export const ConversationAssigneeSelect = observer(
@@ -43,6 +44,7 @@ export const ConversationAssigneeSelect = observer(
     disabled,
     className,
     style,
+    getPopupContainer,
   }: ConversationAssigneeSelectProps) => {
     const { t } = useTranslation();
     useEnsureWorkspaceMembersLoaded();
@@ -183,6 +185,7 @@ export const ConversationAssigneeSelect = observer(
             void applyAssignee(next);
           }}
           popupMatchSelectWidth={false}
+          getPopupContainer={getPopupContainer}
           popupRender={(menu) => (
             <>
               <div

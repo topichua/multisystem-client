@@ -13,7 +13,7 @@ export const Conversation = styled.div.attrs(() =>
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  padding: ${({ $variant }) => ($variant === "mobile" ? "16px" : "12px")};
+  padding: ${({ $variant }) => ($variant === "mobile" ? "8px" : "12px")};
   gap: 12px;
   background: ${({ $variant, theme }) =>
     $variant === "mobile"

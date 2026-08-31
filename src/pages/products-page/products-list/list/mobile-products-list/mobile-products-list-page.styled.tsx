@@ -25,8 +25,7 @@ export const Header = styled.header`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
+  gap: 8px;
 `;
 
 export const ScrollRegion = styled.div`
@@ -88,20 +87,8 @@ export const CreateButton = styled(Button)`
 export const HeaderActions = styled.div`
   display: flex;
   flex: 0 0 auto;
-  min-width: 0;
   align-items: center;
-  justify-content: flex-end;
   gap: 8px;
-
-  @media (max-width: 520px) {
-    flex: 1 1 100%;
-  }
-`;
-
-export const CreateButtonLabel = styled.span`
-  @media (max-width: 359px) {
-    display: none;
-  }
 `;
 
 export const ProductList = styled.div`

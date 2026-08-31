@@ -31,6 +31,7 @@ import { getApiErrorMessage } from "@/api/get-api-error-message";
 import { useMessageTemplatesStore } from "@/features/message-templates/model/use-message-templates-store";
 import { useNotification } from "@/shared/components/notification/use-notification";
 import { useThemeMode } from "@/theme/use-theme-mode";
+import { useIsMobileViewport } from "@/utils/use-media-query";
 
 import * as S from "./composer.styled";
 
@@ -64,6 +65,7 @@ export const MessageComposer = observer(
   }: MessageComposerProps) => {
     const { t } = useTranslation();
     const { mode } = useThemeMode();
+    const isMobileViewport = useIsMobileViewport();
     const notification = useNotification();
     const templatesStore = useMessageTemplatesStore();
     const textareaRef = useRef<TextAreaRef>(null);
@@ -312,20 +314,27 @@ export const MessageComposer = observer(
                 }}
                 onOpenChange={handleTemplateDropdownOpen}
               >
-                <Button icon={<StackIcon size={16} />}>
-                  {t("composer.templates")}
+                <Button
+                  size={isMobileViewport ? "small" : undefined}
+                  icon={<StackIcon size={16} />}
+                >
+                  {isMobileViewport ? null : t("composer.templates")}
                 </Button>
               </Dropdown>
-              <Button icon={<SparkleIcon size={16} />}>
-                {t("composer.aiReply")}
+              <Button
+                size={isMobileViewport ? "small" : undefined}
+                icon={<SparkleIcon size={16} />}
+              >
+                {isMobileViewport ? null : t("composer.aiReply")}
               </Button>
               <Button
+                size={isMobileViewport ? "small" : undefined}
                 type="primary"
                 disabled={!canSend}
                 onClick={handleSend}
                 icon={<PaperPlaneTiltIcon size={16} weight="fill" />}
               >
-                {t("composer.send")}
+                {isMobileViewport ? null : t("composer.send")}
               </Button>
             </Flex>
           </Flex>

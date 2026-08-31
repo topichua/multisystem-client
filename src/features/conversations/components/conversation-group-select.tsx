@@ -36,6 +36,7 @@ type ConversationGroupSelectProps = {
   className?: string;
   style?: CSSProperties;
   showPlainLabels?: boolean;
+  getPopupContainer?: (triggerNode: HTMLElement) => HTMLElement;
 };
 
 export const ConversationGroupSelect = observer(
@@ -46,6 +47,7 @@ export const ConversationGroupSelect = observer(
     className,
     style,
     showPlainLabels = false,
+    getPopupContainer,
   }: ConversationGroupSelectProps) => {
     const { t } = useTranslation();
     useEnsureConversationGroupsLoaded();
@@ -204,6 +206,7 @@ export const ConversationGroupSelect = observer(
             void applyGroup(next);
           }}
           popupMatchSelectWidth={false}
+          getPopupContainer={getPopupContainer}
           showSearch={{ optionFilterProp: "label" }}
         />
       </>

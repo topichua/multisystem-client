@@ -12,6 +12,11 @@ export const Toolbar = styled.div.attrs(() =>
   flex-wrap: wrap;
   margin-bottom: 12px;
   min-width: 0;
+
+  @media (max-width: 560px) {
+    gap: 4px;
+    margin-bottom: 4px;
+  }
 `;
 
 export const Tabs = styled.div`
@@ -35,6 +40,7 @@ export const Actions = styled.div`
     flex-basis: 100%;
     flex-wrap: wrap;
     justify-content: stretch;
+    gap: 4px;
 
     .ant-btn {
       flex: 1 1 auto;

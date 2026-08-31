@@ -1582,7 +1582,8 @@
       "noResponsibleUsers": "No responsible users"
     },
     "mobile": {
-      "backToListAria": "Back to conversations"
+      "backToListAria": "Back to conversations",
+      "headerActionsAria": "Conversation actions"
     }
   },
   "conversation": {
@@ -2474,18 +2475,13 @@
     }
   },
   "orders": {
-    "shellTitle": "Orders",
     "mobile": {
-      "descriptions": {
-        "list": "View and manage customer orders."
-      },
       "backToOrdersAria": "Back to orders",
       "filtersAria": "Filters",
       "searchAria": "Search orders",
       "emptyOrders": "No orders found",
       "detailBackAria": "Back to all orders"
     },
-    "listTitle": "All orders",
     "allOrdersTitle": "All orders",
     "createOrderCta": "New order",
     "create": {
@@ -3029,7 +3025,8 @@
   "categories": {
     "title": "Categories",
     "mobile": {
-      "addSubcategoryAria": "Add subcategory"
+      "addSubcategoryAria": "Add subcategory",
+      "actionsAria": "Category actions"
     },
     "itemsCount_one": "{{count}} category",
     "itemsCount_other": "{{count}} categories",
@@ -3095,7 +3092,8 @@
       "deleteCharacteristicAria": "Delete field",
       "archiveCharacteristicAria": "Archive field",
       "unarchiveCharacteristicAria": "Unarchive field",
-      "addOptionAria": "Add option"
+      "addOptionAria": "Add option",
+      "optionActionsAria": "Option actions"
     },
     "itemsCount_one": "{{count}} field",
     "itemsCount_other": "{{count}} fields",

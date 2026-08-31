@@ -284,14 +284,6 @@ export const getVisibleProductsSectionNavItems = (
   );
 };
 
-export const ordersSectionNavItems = [
-  {
-    key: "orders-list",
-    path: pagesMap.ordersList,
-    labelKey: "orders.listTitle",
-  },
-] as const satisfies readonly SectionNavItem[];
-
 export const teamSectionNavItems = [
   {
     key: "team-members",

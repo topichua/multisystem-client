@@ -48,22 +48,6 @@ export const TitleCluster = styled.div`
   gap: 4px;
 `;
 
-export const BackButton = styled(Button)`
-  && {
-    flex: 0 0 auto;
-    width: 44px;
-    height: 44px;
-    padding: 0;
-    margin-inline-start: -8px;
-    color: ${({ theme }) => theme.colors.functional.text.subdued};
-  }
-
-  &&:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.functional.border.selected};
-    outline-offset: 2px;
-  }
-`;
-
 export const PageTitle = styled(Typography.Title)`
   && {
     min-width: 0;
