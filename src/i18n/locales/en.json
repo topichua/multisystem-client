@@ -2814,6 +2814,9 @@
       "eventPaymentRefundCancelled": "Refund cancelled",
       "eventDiscountApplied": "Discount applied",
       "eventStatusUpdated": "Status updated",
+      "historyDate": "Date",
+      "historyEvent": "Event",
+      "historyDetails": "Details",
       "showMore": "Show more",
       "showLess": "Show less"
     },

@@ -44,7 +44,7 @@ export const OrderDetailsContent = ({
         className="print-content"
         gutter={[24, 24]}
         style={{
-          maxWidth: 1300,
+          maxWidth: 1500,
           margin: "0 auto",
           paddingBottom: 50,
         }}
@@ -66,6 +66,7 @@ export const OrderDetailsContent = ({
               onAttachDeliveryTracking={onAttachDeliveryTracking}
               onCreateDeliveryPayment={onCreateDeliveryPayment}
             />
+            <HistoryCard order={order} t={t} />
           </Flex>
         </Col>
 
@@ -84,7 +85,6 @@ export const OrderDetailsContent = ({
               onRefreshOrder={onRefreshOrder}
             />
             <NotesCard order={order} t={t} onEdit={setEditMode} />
-            <HistoryCard order={order} t={t} />
           </Flex>
         </Col>
       </Row>

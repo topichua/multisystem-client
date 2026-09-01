@@ -1,8 +1,9 @@
-import type { TimelineProps } from "antd";
-import { Card, Empty, Flex, Typography } from "antd";
+import type { TableProps } from "antd";
+import { Card, Empty, Flex, Table, Tag, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { useMemo, useState } from "react";
 
+import type { OrderDetailsEvent } from "@/features/orders/model/order.types";
 import { useWorkspaceMembersStore } from "@/features/workspace-members/model/use-workspace-members-store";
 import { getWorkspaceMemberName } from "@/features/workspace-members/utils/workspace-member-display";
 
@@ -11,15 +12,24 @@ import {
   getEventDescription,
 } from "../../../utils/order-details.utils";
 
-import type { OrderSectionProps } from "../order-details-content.types";
+import type {
+  EventTone,
+  OrderSectionProps,
+} from "../order-details-content.types";
 import { getActorLabel, getEventMeta } from "../utils/order-event.utils";
 import { CollapsibleListToggle } from "./collapsible-list-toggle";
-
-import * as S from "../order-details-content.styled";
 
 const { Text } = Typography;
 
 const VISIBLE_EVENTS_LIMIT = 5;
+
+const EVENT_TONE_TAG_COLOR: Record<EventTone, string> = {
+  blue: "blue",
+  green: "green",
+  orange: "orange",
+  purple: "purple",
+  gray: "default",
+};
 
 export const HistoryCard = observer(({ order, t }: OrderSectionProps) => {
   const membersStore = useWorkspaceMembersStore();
@@ -53,56 +63,58 @@ export const HistoryCard = observer(({ order, t }: OrderSectionProps) => {
     return sortedEvents.slice(0, VISIBLE_EVENTS_LIMIT);
   }, [expanded, sortedEvents]);
 
-  const historyItems = useMemo<TimelineProps["items"]>(
-    () =>
-      visibleEvents.map((event, index) => {
-        const eventMeta = getEventMeta(event);
-        const color = eventMeta.tone;
-        const eventTitle = eventMeta.titleKey
-          ? t(eventMeta.titleKey)
-          : event.type;
+  const columns = useMemo<TableProps<OrderDetailsEvent>["columns"]>(
+    () => [
+      {
+        title: t("orders.details.historyDate"),
+        dataIndex: "createdAt",
+        key: "createdAt",
+        width: 160,
+        render: (value: string) => (
+          <Text type="secondary" style={{ whiteSpace: "nowrap" }}>
+            {formatDate(value)}
+          </Text>
+        ),
+      },
+      {
+        title: t("orders.details.historyEvent"),
+        key: "event",
+        width: 200,
+        render: (_, event) => {
+          const eventMeta = getEventMeta(event);
+          const eventTitle = eventMeta.titleKey
+            ? t(eventMeta.titleKey)
+            : event.type;
 
-        return {
-          key: event.id,
-          className: index === 0 ? "history-timeline-current-item" : undefined,
-          color,
-          styles: {
-            icon: {
-              backgroundColor: color,
-              borderColor: color,
-              width: 14,
-              height: 14,
-              marginLeft: -2,
-            },
-          },
-          content: (
-            <Flex vertical gap={2}>
-              <Flex align="baseline" justify="space-between" gap={12}>
-                <Flex align="center" gap={4}>
-                  <Text strong style={{ color }}>
-                    {eventTitle}
-                  </Text>
-                </Flex>
-                <Text
-                  type="secondary"
-                  style={{ whiteSpace: "nowrap", fontSize: 11 }}
-                >
-                  {formatDate(event.createdAt)}
-                </Text>
-              </Flex>
-
-              <Text>
-                {getEventDescription(event, order.items, order.currency, t)}
-              </Text>
-
-              <Text type="secondary">
-                {getActorLabel(event, actorNamesByUserId, t)}
-              </Text>
-            </Flex>
-          ),
-        };
-      }),
-    [actorNamesByUserId, order.currency, order.items, t, visibleEvents],
+          return (
+            <Tag
+              color={EVENT_TONE_TAG_COLOR[eventMeta.tone]}
+              style={{ marginInlineEnd: 0 }}
+            >
+              {eventTitle}
+            </Tag>
+          );
+        },
+      },
+      {
+        title: t("orders.details.historyDetails"),
+        key: "details",
+        render: (_, event) =>
+          getEventDescription(event, order.items, order.currency, t),
+      },
+      {
+        title: t("orders.actor"),
+        key: "actor",
+        width: 160,
+        ellipsis: true,
+        render: (_, event) => (
+          <Text type="secondary">
+            {getActorLabel(event, actorNamesByUserId, t)}
+          </Text>
+        ),
+      },
+    ],
+    [actorNamesByUserId, order.currency, order.items, t],
   );
 
   return (
@@ -110,9 +122,16 @@ export const HistoryCard = observer(({ order, t }: OrderSectionProps) => {
       className="no-print print-card"
       title={t("orders.details.statusHistory")}
     >
-      {historyItems?.length ? (
+      {sortedEvents.length ? (
         <Flex vertical gap={8}>
-          <S.Timeline variant="filled" items={historyItems} />
+          <Table<OrderDetailsEvent>
+            rowKey="id"
+            size="small"
+            pagination={false}
+            columns={columns}
+            dataSource={visibleEvents}
+            scroll={{ x: 640 }}
+          />
           {sortedEvents.length > VISIBLE_EVENTS_LIMIT && (
             <CollapsibleListToggle
               expanded={expanded}

@@ -2862,6 +2862,9 @@
       "eventPaymentRefundCancelled": "Повернення скасовано",
       "eventDiscountApplied": "Знижку застосовано",
       "eventStatusUpdated": "Статус оновлено",
+      "historyDate": "Дата",
+      "historyEvent": "Подія",
+      "historyDetails": "Деталі",
       "showMore": "Показати більше",
       "showLess": "Показати менше"
     },

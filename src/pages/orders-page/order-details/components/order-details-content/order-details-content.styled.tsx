@@ -1,4 +1,4 @@
-import { Timeline as AntdTimeline, Avatar, Typography } from "antd";
+import { Avatar, Typography } from "antd";
 import styled, { createGlobalStyle } from "styled-components";
 
 const { Text, Title } = Typography;
@@ -145,20 +145,5 @@ export const ProductTotal = styled(Text)<{ $compact?: boolean }>`
       grid-column: 2;
       justify-self: start;
     `}
-  }
-`;
-
-export const Timeline = styled(AntdTimeline)`
-  .ant-timeline-item {
-    padding-bottom: 18px;
-  }
-
-  &&.ant-steps-dot .history-timeline-current-item .ant-steps-item-icon::after {
-    width: 28px;
-    height: 28px;
-    border: 4px solid color-mix(in srgb, currentColor 35%, #fff);
-    border-radius: 50%;
-    box-sizing: border-box;
-    background: transparent;
   }
 `;

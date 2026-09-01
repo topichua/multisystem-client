@@ -23,7 +23,7 @@ import * as S from "../payment-card.styled";
 
 const { Text } = Typography;
 
-const VISIBLE_ITEMS_LIMIT = 5;
+const VISIBLE_ITEMS_LIMIT = 3;
 
 type PaymentTransactionsListProps = {
   currency: string;

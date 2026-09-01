@@ -119,7 +119,7 @@ export function CurrentOrderDrawer({
                 </Link>
               </div>
               <Divider size="middle" />
-              <div style={{ padding: "0 18px 18px 18px" }}>
+              <Flex vertical gap={12} style={{ padding: "0 18px 18px 18px" }}>
                 <ProductsCard productCardSize="small" order={order} t={t} />
                 <DeliveryCard
                   order={order}
@@ -142,7 +142,7 @@ export function CurrentOrderDrawer({
                   onDeleteOrderRefund={deleteOrderRefund}
                   onRefreshOrder={refreshOrder}
                 />
-              </div>
+              </Flex>
             </>
           )}
         </Flex>

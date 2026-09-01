@@ -89,12 +89,12 @@ export const getActorLabel = (
   if (event.userId != null) {
     const userName = actorNamesByUserId.get(event.userId);
     if (userName) {
-      return `${t("orders.actor")}: ${userName}`;
+      return userName;
     }
   }
 
   if (event.actorId != null) {
-    return `${t("orders.actor")}: #${event.actorId}`;
+    return `#${event.actorId}`;
   }
 
   return t("orders.details.systemActor");

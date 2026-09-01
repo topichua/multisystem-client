@@ -155,29 +155,29 @@ export function DeliverySummary({
           </Flex>
         )}
 
-        {showSyncPaymentButton && (
-          <Button
-            block
-            type="primary"
-            disabled={removeWaybillLoading || syncPaymentLoading}
-            icon={<ArrowClockwiseIcon size={18} />}
-            loading={syncPaymentLoading}
-            onClick={onSyncPayment}
-          >
-            {t("orders.details.deliveryPaymentSync")}
-          </Button>
-        )}
+        <Flex justify="center" align="center" gap={16}>
+          {showSyncPaymentButton && (
+            <Button
+              type="primary"
+              disabled={removeWaybillLoading || syncPaymentLoading}
+              icon={<ArrowClockwiseIcon size={18} />}
+              loading={syncPaymentLoading}
+              onClick={onSyncPayment}
+            >
+              {t("orders.details.deliveryPaymentSync")}
+            </Button>
+          )}
 
-        <Button
-          block
-          danger
-          disabled={removeWaybillLoading || syncPaymentLoading}
-          icon={<TrashIcon size={18} />}
-          loading={removeWaybillLoading}
-          onClick={onRemoveWaybill}
-        >
-          {t("orders.details.removeDelivery")}
-        </Button>
+          <Button
+            danger
+            disabled={removeWaybillLoading || syncPaymentLoading}
+            icon={<TrashIcon size={18} />}
+            loading={removeWaybillLoading}
+            onClick={onRemoveWaybill}
+          >
+            {t("orders.details.removeDelivery")}
+          </Button>
+        </Flex>
       </Flex>
     </Space>
   );
