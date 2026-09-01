@@ -93,7 +93,7 @@ export const ProductRow = styled.div<{ $compact?: boolean }>`
       : "64px minmax(0, 1fr) minmax(110px, auto) minmax(120px, auto)"};
   gap: ${({ $compact }) => ($compact ? "0" : "20px")};
   align-items: center;
-  padding: ${({ $compact }) => ($compact ? "12px 0" : "16px 0")};
+  padding: 12px 0;
   border-bottom: 1px solid
     ${({ theme }) => theme.colors.functional.border.split};
 

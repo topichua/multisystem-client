@@ -107,6 +107,7 @@ export const OrderDetailsHeader = ({
                 className="no-print"
                 icon={<ArrowLeftIcon size={24} />}
                 onClick={onBack}
+                type="text"
               />
 
               <S.TitleBlock>

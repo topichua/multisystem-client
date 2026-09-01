@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import {
   ArrowClockwiseIcon,
   CheckIcon,
@@ -5,16 +6,8 @@ import {
   MapPinIcon,
   TrashIcon,
 } from "@phosphor-icons/react";
-import {
-  Alert,
-  Button,
-  Card,
-  Descriptions,
-  Flex,
-  Space,
-  Typography,
-} from "antd";
-import type { DescriptionsProps } from "antd";
+import { Alert, Button, Card, Flex, Space, Table, Typography } from "antd";
+import type { TableProps } from "antd";
 
 import {
   EMPTY_VALUE,
@@ -36,6 +29,26 @@ import {
 } from "./delivery-card.utils";
 
 const { Text } = Typography;
+
+type DeliveryDetailRow = {
+  key: string;
+  label: string;
+  value: ReactNode;
+};
+
+const DETAIL_COLUMNS: TableProps<DeliveryDetailRow>["columns"] = [
+  {
+    dataIndex: "label",
+    key: "label",
+    width: 200,
+    render: (label: string) => <Text type="secondary">{label}:</Text>,
+  },
+  {
+    dataIndex: "value",
+    key: "value",
+    render: (value: ReactNode) => <Text strong>{value}</Text>,
+  },
+];
 
 type DeliverySummaryProps = {
   currency: string;
@@ -84,21 +97,21 @@ export function DeliverySummary({
       )}`
     : t(drawerKey("prepayment"));
 
-  const items: DescriptionsProps["items"] = [
+  const details: DeliveryDetailRow[] = [
     {
       key: "provider",
       label: t("orders.deliveryProvider"),
-      children: providerLabel,
+      value: providerLabel,
     },
     {
       key: "type",
       label: t("orders.details.deliveryType"),
-      children: getDeliveryTypeLabel(primaryDeliveryInfo, t),
+      value: getDeliveryTypeLabel(primaryDeliveryInfo, t),
     },
     {
       key: "destination",
       label: t("orders.warehouse"),
-      children: (
+      value: (
         <Flex align="flex-start" gap={6}>
           <MapPinIcon size={16} />
           <span>{destinationText}</span>
@@ -108,12 +121,12 @@ export function DeliverySummary({
     {
       key: "recipient",
       label: t("orders.recipientName"),
-      children: recipientText,
+      value: recipientText,
     },
     {
       key: "payment",
       label: t("orders.payment"),
-      children: <Text type="success">{paymentText}</Text>,
+      value: <Text type="success">{paymentText}</Text>,
     },
   ];
 
@@ -143,7 +156,14 @@ export function DeliverySummary({
         description={primaryDeliveryInfo.providerStatusText || undefined}
       />
 
-      <Descriptions column={{ xs: 1, md: 2 }} items={items} />
+      <Table<DeliveryDetailRow>
+        rowKey="key"
+        size="small"
+        pagination={false}
+        showHeader={false}
+        columns={DETAIL_COLUMNS}
+        dataSource={details}
+      />
 
       <Flex vertical gap={16} style={{ marginTop: 24, width: "100%" }}>
         {isPaymentSynced && (

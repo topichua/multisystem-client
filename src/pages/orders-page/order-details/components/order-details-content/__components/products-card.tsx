@@ -66,7 +66,7 @@ export const ProductsCard = ({
             <S.ProductRow key={item.id} $compact={isCompact}>
               <S.ProductImage
                 shape="square"
-                size={isCompact ? 36 : 64}
+                size={isCompact ? 36 : 48}
                 src={resolveProductImageSrc(item.imageUrlSnapshot)}
               />
 
@@ -114,7 +114,7 @@ export const ProductsCard = ({
         />
       )}
 
-      <Flex vertical gap={isCompact ? 6 : 12} style={{ paddingTop: 20 }}>
+      <Flex vertical gap={isCompact ? 6 : 8} style={{ paddingTop: 20 }}>
         <Flex justify="space-between" gap={16}>
           <Text type="secondary">{t("orders.subtotal")}</Text>
           <Text>{formatMoney(order.subtotalAmount, order.currency)}</Text>
